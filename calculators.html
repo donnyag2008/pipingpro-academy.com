@@ -525,8 +525,8 @@ function cardClick(id,file){
     window.location.href=file;
   } else {
     _pendingFile=file;
-    // Reset to front face first
-    document.getElementById('flip-inner').classList.remove('flipped');
+    // Reset slider to front face
+    document.getElementById('pp-slider').classList.remove('show-back');
     document.getElementById('popup-unlock-err').style.display='none';
     document.getElementById('popup-unlock-input').value='';
     document.getElementById('ppa-popup').style.display='flex';
