@@ -438,8 +438,15 @@ function closePopup(){
 
 function goToUnlock(){
   closePopup();
-  document.getElementById('unlock-strip').scrollIntoView({behavior:'smooth'});
-  setTimeout(function(){document.getElementById('code-input').focus();},300);
+  setTimeout(function(){
+    var el=document.getElementById('code-input');
+    el.scrollIntoView({behavior:'smooth',block:'center'});
+    el.focus();
+    // highlight the input so it's obvious
+    el.style.borderColor='#c45c2a';
+    el.style.boxShadow='0 0 0 3px rgba(196,92,42,0.25)';
+    setTimeout(function(){el.style.boxShadow='';},2000);
+  },200);
 }
 </script>
 </body>
