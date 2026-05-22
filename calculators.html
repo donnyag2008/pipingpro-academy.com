@@ -489,9 +489,10 @@ function cardClick(id,file){
     window.location.href=file;
   } else {
     _pendingFile=file;
-    // Reset popup to front face
-    document.getElementById('popup-front').style.display='block';
-    document.getElementById('popup-back').style.display='none';
+    // Reset to front face first
+    document.getElementById('flip-inner').classList.remove('flipped');
+    document.getElementById('popup-unlock-err').style.display='none';
+    document.getElementById('popup-unlock-input').value='';
     document.getElementById('ppa-popup').style.display='flex';
   }
 }
