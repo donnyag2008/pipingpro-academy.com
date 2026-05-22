@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Trunnion Support Calculator — PipingPro Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+
+<!-- PipingPro Light Theme -->
+<style>
+:root{
+  --ink:#1a1a18;--ink2:#4a4a44;--ink3:#8a8a80;
+  --paper:#f5f2eb;--paper2:#ede9de;--paper3:#e3dfd2;
+  --accent:#c45c2a;--accent2:#e8a06a;--accent-light:#f7ede3;
+  --teal:#1a6b5a;--teal-light:#e0f0eb;
+  --rule:rgba(26,26,24,0.12);
+  --pass:#1a6b5a;--pass-bg:#e0f0eb;
+  --fail:#9b1c1c;--fail-bg:#fde8e8;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);font-size:15px;line-height:1.6;}
+
+/* NAV */
+.back-bar{background:var(--paper2);border-bottom:1px solid var(--rule);padding:.6rem 1.5rem;}
+.back-bar a{font-size:13px;color:var(--ink2);text-decoration:none;}
+.back-bar a:hover{color:var(--accent);}
+
+/* HEADER */
+.header{background:var(--ink);color:var(--paper);padding:1.8rem 2rem;border-bottom:3px solid var(--accent);}
+.header-badge{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:3px 12px;font-size:11px;margin-bottom:.8rem;font-family:'DM Mono',monospace;}
+.header h1{font-family:'DM Serif Display',serif;font-size:clamp(1.5rem,4vw,2.2rem);margin-bottom:.3rem;}
+.header p{font-size:13px;color:rgba(245,242,235,.6);}
+
+/* TABS */
+.tabs{display:flex;background:var(--paper2);border-bottom:1px solid var(--rule);}
+.tab{padding:.9rem 1.8rem;font-size:14px;font-weight:500;color:var(--ink3);border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;font-family:'DM Sans',sans-serif;transition:color .2s,border-color .2s;}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.tab:hover:not(.active){color:var(--ink);}
+
+/* MAIN */
+.main{max-width:900px;margin:0 auto;padding:2rem 1.5rem;}
+.panel{display:none;}
+.panel.active{display:block;}
+
+/* CARDS */
+.card{background:#fff;border:1px solid var(--rule);border-radius:12px;padding:1.5rem;margin-bottom:1.2rem;}
+.card-title{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:1.2rem;padding-bottom:.5rem;border-bottom:1px solid var(--rule);}
+
+/* GRID */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;}
+@media(max-width:600px){.grid2,.grid3{grid-template-columns:1fr;}}
+
+/* FIELD */
+.field{display:flex;flex-direction:column;gap:4px;}
+.field label{font-size:12px;font-weight:500;color:var(--ink2);}
+.field input,.field select{padding:9px 12px;border:1px solid var(--rule);border-radius:8px;font-family:'DM Mono',monospace;font-size:14px;background:var(--paper);color:var(--ink);outline:none;transition:border-color .2s;}
+.field input:focus,.field select:focus{border-color:var(--accent);background:#fff;}
+.field .hint{font-size:11px;color:var(--ink3);}
+.field .auto{font-size:11px;color:var(--teal);}
+
+/* READ ONLY */
+.ro{padding:9px 12px;border:1px solid var(--rule);border-radius:8px;font-family:'DM Mono',monospace;font-size:14px;background:var(--paper3);color:var(--ink2);min-height:40px;}
+
+/* RESULTS */
+.results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.8rem;margin-bottom:1rem;}
+.res-box{background:var(--paper2);border-radius:10px;padding:1rem;}
+.res-box.hi{background:var(--accent-light);border:1px solid rgba(196,92,42,.2);}
+.res-label{font-size:11px;color:var(--ink3);margin-bottom:3px;line-height:1.3;}
+.res-val{font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:500;color:var(--ink);}
+.res-unit{font-size:11px;color:var(--ink3);margin-top:2px;}
+
+/* STATUS BADGES */
+.status{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:13px;font-weight:600;}
+.status.pass{background:var(--pass-bg);color:var(--pass);}
+.status.fail{background:var(--fail-bg);color:var(--fail);}
+
+/* RATIO BAR */
+.ratio-wrap{margin-bottom:.6rem;}
+.ratio-label{font-size:12px;color:var(--ink2);margin-bottom:4px;display:flex;justify-content:space-between;}
+.ratio-bar{height:10px;background:var(--paper3);border-radius:5px;overflow:hidden;}
+.ratio-fill{height:100%;border-radius:5px;transition:width .4s;}
+.ratio-fill.ok{background:var(--teal);}
+.ratio-fill.warn{background:#d97706;}
+.ratio-fill.over{background:#dc2626;}
+
+/* FORMULA BOX */
+.formula{background:var(--paper2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:1rem 1.2rem;font-size:13px;color:var(--ink2);line-height:1.9;margin-bottom:1rem;}
+.formula code{font-family:'DM Mono',monospace;color:var(--ink);font-size:13px;}
+.formula-title{font-weight:600;color:var(--ink);margin-bottom:.4rem;font-size:13px;}
+
+/* NOTE */
+.note{background:var(--teal-light);border:1px solid rgba(26,107,90,.15);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--teal);margin-bottom:1rem;}
+
+/* DISCLAIMER */
+.disclaimer{background:var(--accent-light);border:1px solid rgba(196,92,42,.2);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--accent);margin-bottom:1.5rem;}
+
+/* FOOTER */
+footer{background:var(--ink);color:rgba(245,242,235,.5);text-align:center;padding:2rem;font-size:13px;margin-top:3rem;}
+.fl{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--paper);margin-bottom:.4rem;}
+.fl span{color:var(--accent);}
+</style>
+</head>
+<body>
+
+<div class="back-bar"><a href="calculators.html">← Back to Calculator Suite</a></div>
+
+<div class="header">
+  <div class="header-badge">PipingPro Academy · Pro Suite</div>
+  <h1>Trunnion Support Calculator</h1>
+  <p>M.W. Kellogg Method · Design Manual Subject 3810 · SI Units</p>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('pipe')">Trunnion on Pipe</button>
+  <button class="tab" onclick="switchTab('elbow')">Trunnion on Elbow</button>
+</div>
+
+<div class="main">
+
+  <div class="disclaimer">
+    ⚠️ For preliminary engineering use only. Results must be verified by a competent engineer against the applicable edition of M.W. Kellogg Design Manual before use in any design or construction package.
+  </div>
+
+  <!-- ═══════════════ TRUNNION ON PIPE ═══════════════ -->
+  <div class="panel active" id="panel-pipe">
+
+    <div class="card">
+      <div class="card-title">Geometric Input Data</div>
+      <div class="grid2">
+        <div class="field">
+          <label>Pipe Outside Diameter D1 (mm)</label>
+          <input type="number" id="p-D1" value="355.6" step="0.1" oninput="calcPipe()"/>
+          <span class="hint">ASME B36.10 OD</span>
+        </div>
+        <div class="field">
+          <label>Pipe Nominal Wall Thickness (mm)</label>
+          <input type="number" id="p-tn" value="9.53" step="0.01" oninput="calcPipe()"/>
+        </div>
+        <div class="field">
+          <label>Mill Tolerance (%)</label>
+          <input type="number" id="p-tol" value="12.5" step="0.5" oninput="calcPipe()"/>
+          <span class="hint">Typically 12.5% per ASTM</span>
+        </div>
+        <div class="field">
+          <label>Corrosion Allowance (mm)</label>
+          <input type="number" id="p-ca" value="1.5" step="0.5" oninput="calcPipe()"/>
+        </div>
+        <div class="field">
+          <label>Trunnion Outside Diameter D2 (mm)</label>
+          <input type="number" id="p-D2" value="273" step="0.1" oninput="calcPipe()"/>
+        </div>
+        <div class="field">
+          <label>Moment Arm L (mm)</label>
+          <input type="number" id="p-L" value="1300" step="10" oninput="calcPipe()"/>
+          <span class="hint">Loading point to outside of main pipe</span>
+        </div>
+        <div class="field">
+          <label>Pad Nominal Thickness (mm)</label>
+          <input type="number" id="p-pad" value="0" step="1" oninput="calcPipe()"/>
+          <span class="hint">0 if no pad</span>
+        </div>
+        <div class="field">
+          <label>Material Allowable Stress Sh (N/mm²)</label>
+          <input type="number" id="p-Sh" value="137" step="1" oninput="calcPipe()"/>
+          <span class="hint">From ASME B31.3 Appendix A</span>
+        </div>
+      </div>
+      <div style="margin-top:1rem;" class="grid2">
+        <div class="field"><label>Pipe Min. Wall Thickness T (mm)</label><div class="ro" id="p-T">—</div><span class="auto">Auto-calculated</span></div>
+        <div class="field"><label>Effective Wall Thickness t (mm)</label><div class="ro" id="p-t">—</div><span class="auto">T + pad min thk</span></div>
+        <div class="field"><label>Pipe Radius R (mm)</label><div class="ro" id="p-R">—</div><span class="auto">D1 / 2</span></div>
+        <div class="field"><label>Trunnion Radius r (mm)</label><div class="ro" id="p-r">—</div><span class="auto">D2 / 2</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Loading Input Data</div>
+      <div class="grid2">
+        <div class="field">
+          <label>Design Pressure P (barg)</label>
+          <input type="number" id="p-P" value="7" step="0.5" oninput="calcPipe()"/>
+        </div>
+        <div class="field">
+          <label>Direct Axial Load Fa (N)</label>
+          <input type="number" id="p-Fa" value="0" step="100" oninput="calcPipe()"/>
+        </div>
+        <div class="field">
+          <label>Longitudinal Force Fl (N)</label>
+          <input type="number" id="p-Fl" value="8000" step="100" oninput="calcPipe()"/>
+          <span class="hint">Force producing longitudinal moment</span>
+        </div>
+        <div class="field">
+          <label>Circumferential Force Fc (N)</label>
+          <input type="number" id="p-Fc" value="0" step="100" oninput="calcPipe()"/>
+          <span class="hint">Force producing circumferential moment</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Results — M.W. Kellogg Method</div>
+
+      <div class="formula">
+        <div class="formula-title">Unit Load Calculations:</div>
+        <code>fl = Fl·L / (π·r²)</code> &nbsp;|&nbsp; <code>fc = Fc·L / (π·r²)</code> &nbsp;|&nbsp; <code>fa = Fa / (2·π·r)</code><br>
+        <code>f1 = 1.5·fa + fl</code> (Longitudinal) &nbsp;|&nbsp; <code>f2 = 1.5·(fc + fa)</code> (Circumferential)<br>
+        <div class="formula-title" style="margin-top:.6rem;">Bending Stresses:</div>
+        <code>Sbl = 1.17·f1·√R / t^1.5</code> &nbsp;|&nbsp; <code>Sbc = 1.17·f2·√R / t^1.5</code><br>
+        <div class="formula-title" style="margin-top:.6rem;">Primary Stresses:</div>
+        <code>Sph = P·D1 / (2·T)</code> &nbsp;|&nbsp; <code>Spl = P·D1 / (4·T)</code>
+      </div>
+
+      <div class="results-grid">
+        <div class="res-box"><div class="res-label">Unit Load fl</div><div class="res-val" id="p-fl">—</div><div class="res-unit">N/mm</div></div>
+        <div class="res-box"><div class="res-label">Unit Load fc</div><div class="res-val" id="p-fc">—</div><div class="res-unit">N/mm</div></div>
+        <div class="res-box"><div class="res-label">Unit Load fa</div><div class="res-val" id="p-fa">—</div><div class="res-unit">N/mm</div></div>
+        <div class="res-box"><div class="res-label">f1 (Longitudinal)</div><div class="res-val" id="p-f1">—</div><div class="res-unit">N/mm</div></div>
+        <div class="res-box"><div class="res-label">f2 (Circumferential)</div><div class="res-val" id="p-f2">—</div><div class="res-unit">N/mm</div></div>
+      </div>
+
+      <div class="results-grid">
+        <div class="res-box"><div class="res-label">Bending Stress Sbl (Long.)</div><div class="res-val" id="p-Sbl">—</div><div class="res-unit">N/mm²</div></div>
+        <div class="res-box"><div class="res-label">Bending Stress Sbc (Circ.)</div><div class="res-val" id="p-Sbc">—</div><div class="res-unit">N/mm²</div></div>
+        <div class="res-box"><div class="res-label">Hoop Stress Sph</div><div class="res-val" id="p-Sph">—</div><div class="res-unit">N/mm²</div></div>
+        <div class="res-box"><div class="res-label">Long. Primary Stress Spl</div><div class="res-val" id="p-Spl">—</div><div class="res-unit">N/mm²</div></div>
+        <div class="res-box hi"><div class="res-label">Combined Circumf. Sc</div><div class="res-val" id="p-Sc">—</div><div class="res-unit">N/mm²</div></div>
+        <div class="res-box hi"><div class="res-label">Combined Long. Sl</div><div class="res-val" id="p-Sl">—</div><div class="res-unit">N/mm²</div></div>
+      </div>
+
+      <div style="margin-bottom:1rem;">
+        <div class="ratio-wrap">
+          <div class="ratio-label"><span>Sc / S,allow (Circumferential)</span><span id="p-ratioC-txt">—</span></div>
+          <div class="ratio-bar"><div class="ratio-fill" id="p-ratioC-bar" style="width:0%"></div></div>
+        </div>
+        <div class="ratio-wrap">
+          <div class="ratio-label"><span>Sl / S,allow (Longitudinal)</span><span id="p-ratioL-txt">—</span></div>
+          <div class="ratio-bar"><div class="ratio-fill" id="p-ratioL-bar" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:.8rem;flex-wrap:wrap;">
+        <div><span style="font-size:13px;color:var(--ink2);">Circumferential: </span><span class="status" id="p-statusC">—</span></div>
+        <div><span style="font-size:13px;color:var(--ink2);">Longitudinal: </span><span class="status" id="p-statusL">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ TRUNNION ON ELBOW ═══════════════ -->
+  <div class="panel" id="panel-elbow">
+
+    <div class="card">
+      <div class="card-title">Geometric Input Data</div>
+      <div class="grid2">
+        <div class="field">
+          <label>Pipe Outside Diameter D1 (mm)</label>
+          <input type="number" id="e-D1" value="273" step="0.1" oninput="calcElbow()"/>
+        </div>
+        <div class="field">
+          <label>Pipe Nominal Wall Thickness (mm)</label>
+          <input type="number" id="e-tn" value="18.2" step="0.01" oninput="calcElbow()"/>
+        </div>
+        <div class="field">
+          <label>Mill Tolerance (%)</label>
+          <input type="number" id="e-tol" value="12.5" step="0.5" oninput="calcElbow()"/>
+        </div>
+        <div class="field">
+          <label>Corrosion Allowance (mm)</label>
+          <input type="number" id="e-ca" value="3.2" step="0.5" oninput="calcElbow()"/>
+        </div>
+        <div class="field">
+          <label>Trunnion Outside Diameter D2 (mm)</label>
+          <input type="number" id="e-D2" value="220" step="0.1" oninput="calcElbow()"/>
+        </div>
+        <div class="field">
+          <label>Moment Arm L1 (mm)</label>
+          <input type="number" id="e-L1" value="800" step="10" oninput="calcElbow()"/>
+          <span class="hint">Loading point to centreline of main pipe</span>
+        </div>
+        <div class="field">
+          <label>Elbow Radius (mm)</label>
+          <input type="number" id="e-elbR" value="381" step="1" oninput="calcElbow()"/>
+          <span class="hint">Typically 1.5D for LR elbow</span>
+        </div>
+        <div class="field">
+          <label>Material Allowable Stress Sh (N/mm²)</label>
+          <input type="number" id="e-Sh" value="137" step="1" oninput="calcElbow()"/>
+        </div>
+        <div class="field">
+          <label>Pad Nominal Thickness (mm)</label>
+          <input type="number" id="e-pad" value="0" step="1" oninput="calcElbow()"/>
+        </div>
+      </div>
+      <div style="margin-top:1rem;" class="grid2">
+        <div class="field"><label>Pipe Min. Wall Thickness T (mm)</label><div class="ro" id="e-T">—</div><span class="auto">Auto-calculated</span></div>
+        <div class="field"><label>Adjusted Moment Arm L (mm)</label><div class="ro" id="e-L">—</div><span class="auto">L1 + elbow radius</span></div>
+        <div class="field"><label>Pipe Radius R (mm)</label><div class="ro" id="e-R">—</div></div>
+        <div class="field"><label>Trunnion Radius r (mm)</label><div class="ro" id="e-r">—</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Loading Input Data</div>
+      <div class="grid2">
+        <div class="field">
+          <label>Design Pressure P (barg)</label>
+          <input type="number" id="e-P" value="82" step="0.5" oninput="calcElbow()"/>
+        </div>
+        <div class="field">
+          <label>Direct Axial Load Fa (N)</label>
+          <input type="number" id="e-Fa" value="22000" step="100" oninput="calcElbow()"/>
+        </div>
+        <div class="field">
+          <label>Longitudinal Force Fl (N)</label>
+          <input type="number" id="e-Fl" value="6000" step="100" oninput="calcElbow()"/>
+        </div>
+        <div class="field">
+          <label>Circumferential Force Fc (N)</label>
+          <input type="number" id="e-Fc" value="3000" step="100" oninput="calcElbow()"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Results — M.W. Kellogg Method</div>
+
+      <div class="note">For trunnion on elbow, the moment arm is adjusted: <strong>L = L1 + elbow radius</strong>, to account for the distance from loading point to the pipe centreline.</div>
+
+      <div class="results-grid">
+        <div class="res-box"><div class="res-label">Unit Load fl</div><div class="res-val" id="e-fl">—</div><div class="res-unit">N/mm</div></div>
+        <div class="res-box"><div class="res-label">Unit Load fc</div><div class="res-val" id="e-fc">—</div><div class="res-unit">N/mm</div></div>
+        <div class="res-box"><div class="res-label">Unit Load fa</div><div class="res-val" id="e-fa">—</div><div class="res-unit">N/mm</div></div>
+        <div class="res-box"><div class="res-label">f1 (Longitudinal)</div><div class="res-val" id="e-f1">—</div><div class="res-unit">N/mm</div></div>
+        <div class="res-box"><div class="res-label">f2 (Circumferential)</div><div class="res-val" id="e-f2">—</div><div class="res-unit">N/mm</div></div>
+      </div>
+
+      <div class="results-grid">
+        <div class="res-box"><div class="res-label">Bending Stress Sbl</div><div class="res-val" id="e-Sbl">—</div><div class="res-unit">N/mm²</div></div>
+        <div class="res-box"><div class="res-label">Bending Stress Sbc</div><div class="res-val" id="e-Sbc">—</div><div class="res-unit">N/mm²</div></div>
+        <div class="res-box"><div class="res-label">Hoop Stress Sph</div><div class="res-val" id="e-Sph">—</div><div class="res-unit">N/mm²</div></div>
+        <div class="res-box"><div class="res-label">Long. Primary Stress Spl</div><div class="res-val" id="e-Spl">—</div><div class="res-unit">N/mm²</div></div>
+        <div class="res-box hi"><div class="res-label">Combined Circumf. Sc</div><div class="res-val" id="e-Sc">—</div><div class="res-unit">N/mm²</div></div>
+        <div class="res-box hi"><div class="res-label">Combined Long. Sl</div><div class="res-val" id="e-Sl">—</div><div class="res-unit">N/mm²</div></div>
+      </div>
+
+      <div style="margin-bottom:1rem;">
+        <div class="ratio-wrap">
+          <div class="ratio-label"><span>Sc / S,allow (Circumferential)</span><span id="e-ratioC-txt">—</span></div>
+          <div class="ratio-bar"><div class="ratio-fill" id="e-ratioC-bar" style="width:0%"></div></div>
+        </div>
+        <div class="ratio-wrap">
+          <div class="ratio-label"><span>Sl / S,allow (Longitudinal)</span><span id="e-ratioL-txt">—</span></div>
+          <div class="ratio-bar"><div class="ratio-fill" id="e-ratioL-bar" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:.8rem;flex-wrap:wrap;">
+        <div><span style="font-size:13px;color:var(--ink2);">Circumferential: </span><span class="status" id="e-statusC">—</span></div>
+        <div><span style="font-size:13px;color:var(--ink2);">Longitudinal: </span><span class="status" id="e-statusL">—</span></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- PDF Button -->
+<div style="text-align:center;padding:1.5rem 1rem 2rem;border-top:1px solid rgba(26,26,24,0.1);margin-top:1rem;">
+  <p style="font-size:12px;color:#8a8a80;margin-bottom:.8rem;font-family:sans-serif;">Reference documentation for this calculator</p>
+  <a href="pdf/trunnion-support-guide.pdf" target="_blank"
+     style="display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:#c45c2a;color:#fff;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;font-family:sans-serif;">
+    📄 Download PDF Guide — Trunnion Support Calculator
+  </a>
+  <p style="font-size:11px;color:#aaa;margin-top:.6rem;font-family:sans-serif;">PDF coming soon — check back at pipingpro-academy.com</p>
+</div>
+
+<footer>
+  <div class="fl">Piping<span>Pro</span> Academy</div>
+  <p>PipingPro Academy is a trademark of Zephrum Konsultan Limited, registered in England and Wales. Company Registration No. 13537626.</p>
+  <p style="margin-top:.4rem">© 2026 Zephrum Konsultan Limited. All rights reserved.</p>
+</footer>
+
+<script>
+function gv(id){return parseFloat(document.getElementById(id).value)||0;}
+function sv(id,v){document.getElementById(id).textContent=v;}
+
+function switchTab(tab){
+  document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('active',(i===0&&tab==='pipe')||(i===1&&tab==='elbow')));
+  document.getElementById('panel-pipe').classList.toggle('active',tab==='pipe');
+  document.getElementById('panel-elbow').classList.toggle('active',tab==='elbow');
+}
+
+function setRatio(barId, txtId, ratio){
+  var pct=Math.min(ratio*100,100);
+  var bar=document.getElementById(barId);
+  bar.style.width=pct+'%';
+  bar.className='ratio-fill '+(ratio<=0.8?'ok':ratio<=1.0?'warn':'over');
+  document.getElementById(txtId).textContent=ratio.toFixed(4)+(ratio<=1.0?' ✓':' ✗');
+}
+
+function setStatus(id, ratio){
+  var el=document.getElementById(id);
+  if(ratio<=1.0){el.textContent='✓ OK';el.className='status pass';}
+  else{el.textContent='✗ OVERSTRESS';el.className='status fail';}
+}
+
+function calcPipe(){
+  var D1=gv('p-D1'), tn=gv('p-tn'), tol=gv('p-tol'), ca=gv('p-ca');
+  var D2=gv('p-D2'), L=gv('p-L'), pad=gv('p-pad'), Sh=gv('p-Sh');
+  var P=gv('p-P'), Fa=gv('p-Fa'), Fl=gv('p-Fl'), Fc=gv('p-Fc');
+
+  var T = tn*(1-tol/100) - ca;
+  var padMin = pad*(1-tol/100);
+  var t = T + padMin;
+  var R = D1/2, r = D2/2;
+  var Sallow = 1.5*Sh;
+
+  sv('p-T', T.toFixed(4)+' mm');
+  sv('p-t', t.toFixed(4)+' mm');
+  sv('p-R', R.toFixed(3)+' mm');
+  sv('p-r', r.toFixed(3)+' mm');
+
+  if(!r||!t||!R) return;
+
+  var fl = Fl*L/(Math.PI*r*r);
+  var fc = Fc*L/(Math.PI*r*r);
+  var fa = Fa/(2*Math.PI*r);
+  var f1 = 1.5*fa + fl;
+  var f2 = 1.5*(fc + fa);
+
+  sv('p-fl', fl.toFixed(4));
+  sv('p-fc', fc.toFixed(4));
+  sv('p-fa', fa.toFixed(4));
+  sv('p-f1', f1.toFixed(4));
+  sv('p-f2', f2.toFixed(4));
+
+  var Sbl = 1.17*f1*Math.sqrt(R)/Math.pow(t,1.5);
+  var Sbc = 1.17*f2*Math.sqrt(R)/Math.pow(t,1.5);
+  // P in barg → N/mm² = bar (1 bar = 0.1 N/mm²)
+  var Pmpa = P*0.1;
+  var Sph = Pmpa*D1/(2*T);
+  var Spl = Pmpa*D1/(4*T);
+  var Sc = Sbc + Sph;
+  var Sl = Sbl + Spl;
+
+  sv('p-Sbl', Sbl.toFixed(4));
+  sv('p-Sbc', Sbc.toFixed(4));
+  sv('p-Sph', Sph.toFixed(4));
+  sv('p-Spl', Spl.toFixed(4));
+  sv('p-Sc', Sc.toFixed(4));
+  sv('p-Sl', Sl.toFixed(4));
+
+  var ratioC = Sc/Sallow;
+  var ratioL = Sl/Sallow;
+  setRatio('p-ratioC-bar','p-ratioC-txt',ratioC);
+  setRatio('p-ratioL-bar','p-ratioL-txt',ratioL);
+  setStatus('p-statusC',ratioC);
+  setStatus('p-statusL',ratioL);
+}
+
+function calcElbow(){
+  var D1=gv('e-D1'), tn=gv('e-tn'), tol=gv('e-tol'), ca=gv('e-ca');
+  var D2=gv('e-D2'), L1=gv('e-L1'), elbR=gv('e-elbR');
+  var pad=gv('e-pad'), Sh=gv('e-Sh');
+  var P=gv('e-P'), Fa=gv('e-Fa'), Fl=gv('e-Fl'), Fc=gv('e-Fc');
+
+  var T = tn*(1-tol/100) - ca;
+  var padMin = pad*(1-tol/100);
+  var t = T + padMin;
+  var R = D1/2, r = D2/2;
+  // Adjusted moment arm for elbow: L = L1 + elbow radius
+  var L = L1 + elbR;
+  var Sallow = 1.5*Sh;
+
+  sv('e-T', T.toFixed(4)+' mm');
+  sv('e-L', L.toFixed(3)+' mm');
+  sv('e-R', R.toFixed(3)+' mm');
+  sv('e-r', r.toFixed(3)+' mm');
+
+  if(!r||!t||!R) return;
+
+  var fl = Fl*L/(Math.PI*r*r);
+  var fc = Fc*L/(Math.PI*r*r);
+  var fa = Fa/(2*Math.PI*r);
+  var f1 = 1.5*fa + fl;
+  var f2 = 1.5*(fc + fa);
+
+  sv('e-fl', fl.toFixed(4));
+  sv('e-fc', fc.toFixed(4));
+  sv('e-fa', fa.toFixed(4));
+  sv('e-f1', f1.toFixed(4));
+  sv('e-f2', f2.toFixed(4));
+
+  var Sbl = 1.17*f1*Math.sqrt(R)/Math.pow(t,1.5);
+  var Sbc = 1.17*f2*Math.sqrt(R)/Math.pow(t,1.5);
+  var Pmpa = P*0.1;
+  var Sph = Pmpa*D1/(2*T);
+  var Spl = Pmpa*D1/(4*T);
+  var Sc = Sbc + Sph;
+  var Sl = Sbl + Spl;
+
+  sv('e-Sbl', Sbl.toFixed(4));
+  sv('e-Sbc', Sbc.toFixed(4));
+  sv('e-Sph', Sph.toFixed(4));
+  sv('e-Spl', Spl.toFixed(4));
+  sv('e-Sc', Sc.toFixed(4));
+  sv('e-Sl', Sl.toFixed(4));
+
+  var ratioC = Sc/Sallow;
+  var ratioL = Sl/Sallow;
+  setRatio('e-ratioC-bar','e-ratioC-txt',ratioC);
+  setRatio('e-ratioL-bar','e-ratioL-txt',ratioL);
+  setStatus('e-statusC',ratioC);
+  setStatus('e-statusL',ratioL);
+}
+
+// Run on load with default values
+calcPipe();
+calcElbow();
+</script>
+</body>
+</html>
