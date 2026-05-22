@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nozzle Loads Checker — PipingPro Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --gold: #b45309;
+  --gold-light: #d97706;
+  --gold-pale: #fef3e2;
+  --gold-border: rgba(217,119,6,0.18);
+  --paper: #fdf8f0;
+  --paper2: #fef6ed;
+  --ink: #1c1917;
+  --ink-mid: #78716c;
+  --ink-light: #a8a09a;
+  --pass: #065f46;
+  --pass-bg: #d1fae5;
+  --pass-bd: #6ee7b7;
+  --fail: #991b1b;
+  --fail-bg: #fee2e2;
+  --fail-bd: #fca5a5;
+  --warn: #92400e;
+  --warn-bg: #fef3c7;
+  --warn-bd: #fcd34d;
+  --serif: 'DM Serif Display', Georgia, serif;
+  --sans: 'DM Sans', system-ui, sans-serif;
+}
+
+html { font-size: 16px; }
+
+body {
+  font-family: var(--sans);
+  background: linear-gradient(135deg, var(--paper) 0%, var(--gold-pale) 50%, var(--paper2) 100%);
+  min-height: 100vh;
+  padding: 2rem 1rem 3rem;
+  color: var(--ink);
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0; opacity: 0.4;
+}
+
+.wrapper { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; }
+
+/* Header */
+.header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 2rem; animation: fadeUp 0.5s ease both; }
+.header-icon {
+  width: 50px; height: 50px; min-width: 50px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  box-shadow: 0 4px 14px rgba(180,83,9,0.28);
+}
+.header-title { font-family: var(--serif); font-size: 1.8rem; color: var(--ink); line-height: 1.1; }
+.header-sub { font-size: 11px; color: #a78150; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; margin-top: 3px; }
+.header-desc { font-size: 13px; color: var(--ink-mid); margin-top: 6px; max-width: 600px; line-height: 1.6; }
+
+/* Cards */
+.card {
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--gold-border);
+  border-radius: 14px;
+  box-shadow: 0 4px 24px rgba(120,80,20,0.08), 0 1px 3px rgba(120,80,20,0.05);
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+  animation: fadeUp 0.5s ease both;
+}
+.card:nth-child(2) { animation-delay: 0.07s; }
+.card:nth-child(3) { animation-delay: 0.14s; }
+
+.card-title {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  color: var(--ink);
+  margin-bottom: 1.1rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid var(--gold-border);
+}
+
+/* Form grid */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; }
+@media(max-width:640px) {
+  .form-grid, .form-grid-2, .form-grid-4 { grid-template-columns: 1fr 1fr; }
+}
+
+.field { display: flex; flex-direction: column; }
+label {
+  font-size: 10.5px; font-weight: 700;
+  color: #8a7560; text-transform: uppercase;
+  letter-spacing: 0.08em; margin-bottom: 5px;
+}
+select, input[type="number"] {
+  width: 100%; padding: 9px 12px;
+  border: 1.5px solid #e0cc9e; border-radius: 8px;
+  background: #fffbf4; font-family: var(--sans);
+  font-size: 13.5px; color: var(--ink); outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none; appearance: none;
+}
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23b45309' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px;
+}
+select:focus, input[type="number"]:focus {
+  border-color: var(--gold-light);
+  box-shadow: 0 0 0 3px rgba(217,119,6,0.12);
+}
+
+/* Load input groups */
+.load-group {
+  background: rgba(254,248,240,0.6);
+  border: 1px solid var(--gold-border);
+  border-radius: 10px;
+  padding: 1rem;
+}
+.load-group-title {
+  font-size: 10.5px; font-weight: 700;
+  color: #a38060; text-transform: uppercase;
+  letter-spacing: 0.08em; margin-bottom: 10px;
+}
+.load-input-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+@media(max-width:500px) { .load-input-row { grid-template-columns: 1fr 1fr; } }
+
+.unit-tag {
+  display: inline-block; font-size: 10px;
+  color: #b89060; font-weight: 600;
+  margin-left: 4px; letter-spacing: 0.04em;
+}
+
+/* Button */
+.btn-calc {
+  display: block; width: 100%; padding: 14px;
+  background: linear-gradient(135deg, #b45309, #d97706);
+  color: #fff; border: none; border-radius: 9px;
+  font-family: var(--sans); font-size: 15px; font-weight: 700;
+  letter-spacing: 0.03em; cursor: pointer;
+  box-shadow: 0 4px 14px rgba(180,83,9,0.3);
+  transition: all 0.2s; margin-top: 1.25rem;
+}
+.btn-calc:hover { background: linear-gradient(135deg, #92400e, #b45309); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(180,83,9,0.38); }
+.btn-calc:active { transform: translateY(0); }
+
+/* Results */
+.results-section { display: none; animation: fadeUp 0.45s ease both; }
+.results-section.visible { display: block; }
+
+/* Overall verdict */
+.verdict {
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 1.25rem;
+  border: 2px solid;
+}
+.verdict.pass { background: var(--pass-bg); border-color: var(--pass-bd); }
+.verdict.fail { background: var(--fail-bg); border-color: var(--fail-bd); }
+.verdict-icon { font-size: 2rem; }
+.verdict-title { font-family: var(--serif); font-size: 1.3rem; }
+.verdict.pass .verdict-title { color: var(--pass); }
+.verdict.fail .verdict-title { color: var(--fail); }
+.verdict-sub { font-size: 12.5px; color: var(--ink-mid); margin-top: 3px; }
+
+/* Results table */
+.results-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.results-table th {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.07em; color: #a38060;
+  padding: 8px 12px; text-align: left;
+  border-bottom: 2px solid var(--gold-border);
+}
+.results-table td { padding: 9px 12px; border-bottom: 1px solid rgba(217,119,6,0.08); }
+.results-table tr:last-child td { border-bottom: none; }
+.results-table tr:hover td { background: rgba(254,243,226,0.4); }
+
+.status-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 9px; border-radius: 20px;
+  font-size: 10.5px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.pill-pass { background: var(--pass-bg); color: var(--pass); border: 1px solid var(--pass-bd); }
+.pill-fail { background: var(--fail-bg); color: var(--fail); border: 1px solid var(--fail-bd); }
+.pill-na   { background: #f3f4f6; color: #6b7280; border: 1px solid #d1d5db; }
+
+.ratio-bar-bg {
+  height: 6px; border-radius: 3px;
+  background: rgba(217,119,6,0.12);
+  margin-top: 4px; overflow: hidden;
+}
+.ratio-bar-fill {
+  height: 100%; border-radius: 3px;
+  transition: width 0.6s ease;
+}
+.bar-pass { background: linear-gradient(90deg, #6ee7b7, #10b981); }
+.bar-fail { background: linear-gradient(90deg, #fca5a5, #ef4444); }
+.bar-warn { background: linear-gradient(90deg, #fcd34d, #f59e0b); }
+
+/* Combined check */
+.combined-box {
+  background: rgba(254,243,226,0.5);
+  border: 1px solid var(--gold-border);
+  border-radius: 10px; padding: 1rem 1.25rem;
+  margin-top: 1rem;
+}
+.combined-title { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #a38060; margin-bottom: 8px; }
+.combined-formula {
+  font-family: 'Courier New', monospace; font-size: 13px;
+  color: #78350f; background: rgba(254,243,226,0.9);
+  border: 1px solid rgba(217,119,6,0.2);
+  border-radius: 6px; padding: 8px 12px; margin-bottom: 8px;
+  letter-spacing: 0.02em;
+}
+.combined-result { display: flex; align-items: center; gap: 10px; }
+.combined-val { font-family: var(--serif); font-size: 1.4rem; color: #92400e; }
+
+/* Notes */
+.notes { margin-top: 1rem; }
+.note-item {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 8px 12px;
+  background: rgba(254,243,226,0.7);
+  border-left: 3px solid #d97706;
+  border-radius: 0 6px 6px 0;
+  margin-bottom: 6px; font-size: 12.5px; color: #78350f; line-height: 1.5;
+}
+.note-arrow { flex-shrink: 0; color: #d97706; margin-top: 1px; }
+.note-item.note-fail { border-left-color: #ef4444; background: rgba(254,226,226,0.5); color: #7f1d1d; }
+
+.disclaimer {
+  font-size: 10.5px; color: var(--ink-light);
+  border-top: 1px solid var(--gold-border);
+  padding-top: 10px; margin-top: 1rem; line-height: 1.5;
+}
+
+/* Allowables summary */
+.allowables-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+@media(max-width:500px) { .allowables-grid { grid-template-columns: 1fr 1fr; } }
+.allow-block {
+  background: rgba(254,243,226,0.5); border: 1px solid rgba(217,119,6,0.12);
+  border-radius: 7px; padding: 8px 10px; text-align: center;
+}
+.allow-val { font-family: var(--serif); font-size: 1.1rem; color: #92400e; }
+.allow-label { font-size: 10px; color: var(--ink-mid); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px; }
+
+@keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+<!-- Header -->
+<div class="header">
+  <div class="header-icon">⚙️</div>
+  <div>
+    <div class="header-title">Nozzle Loads Checker</div>
+    <div class="header-sub">PipingPro Academy · Calculator Suite</div>
+    <p class="header-desc">Checks piping nozzle loads against allowables per <strong>API 610</strong> (pumps), <strong>API 617</strong> (compressors), <strong>API 661</strong> (air coolers), and <strong>WRC 107/297</strong> (vessels). Enter Caesar II or manual load outputs.</p>
+  </div>
+</div>
+
+<!-- Equipment & Nozzle Setup -->
+<div class="card">
+  <div class="card-title">Equipment &amp; Nozzle Configuration</div>
+  <div class="form-grid">
+    <div class="field">
+      <label>Equipment Type</label>
+      <select id="equip-type" onchange="onEquipChange()">
+        <option value="api610_pump">Centrifugal Pump (API 610)</option>
+        <option value="api617_comp">Compressor (API 617)</option>
+        <option value="api661_ac">Air Cooler (API 661)</option>
+        <option value="wrc_vessel">Pressure Vessel / Column (WRC 107/297)</option>
+      </select>
+    </div>
+    <div class="field" id="nozzle-type-field">
+      <label>Nozzle / Connection</label>
+      <select id="nozzle-type">
+        <option value="suction">Suction Nozzle</option>
+        <option value="discharge">Discharge Nozzle</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Pipe Size (NPS)</label>
+      <select id="nozzle-nps">
+        <option value="1">1"</option><option value="1.5">1½"</option>
+        <option value="2">2"</option><option value="3">3"</option>
+        <option value="4">4"</option><option value="6">6"</option>
+        <option value="8">8"</option><option value="10">10"</option>
+        <option value="12">12"</option><option value="16">16"</option>
+        <option value="18">18"</option><option value="20">20"</option>
+        <option value="24">24"</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-grid-2" style="margin-top:14px;">
+    <div class="field">
+      <label>Unit System</label>
+      <select id="units" onchange="onUnitsChange()">
+        <option value="imperial">Imperial (lbf, lbf·ft)</option>
+        <option value="si">SI (N, N·m)</option>
+      </select>
+    </div>
+    <div class="field" id="vessel-thk-field" style="display:none;">
+      <label>Vessel Shell Thickness (mm)</label>
+      <input type="number" id="vessel-thk" value="20" min="5" max="200">
+    </div>
+  </div>
+</div>
+
+<!-- Applied Loads -->
+<div class="card">
+  <div class="card-title">Applied Loads <span class="unit-tag" id="force-unit-label">(lbf / lbf·ft)</span></div>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+    <!-- Forces -->
+    <div class="load-group">
+      <div class="load-group-title">Forces <span class="unit-tag" id="f-unit">lbf</span></div>
+      <div class="load-input-row">
+        <div class="field">
+          <label>Fx (Axial)</label>
+          <input type="number" id="fx" value="800" step="1">
+        </div>
+        <div class="field">
+          <label>Fy (Vertical)</label>
+          <input type="number" id="fy" value="600" step="1">
+        </div>
+        <div class="field">
+          <label>Fz (Lateral)</label>
+          <input type="number" id="fz" value="500" step="1">
+        </div>
+      </div>
+    </div>
+    <!-- Moments -->
+    <div class="load-group">
+      <div class="load-group-title">Moments <span class="unit-tag" id="m-unit">lbf·ft</span></div>
+      <div class="load-input-row">
+        <div class="field">
+          <label>Mx (Torsion)</label>
+          <input type="number" id="mx" value="400" step="1">
+        </div>
+        <div class="field">
+          <label>My</label>
+          <input type="number" id="my" value="600" step="1">
+        </div>
+        <div class="field">
+          <label>Mz</label>
+          <input type="number" id="mz" value="500" step="1">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-calc" onclick="calculate()">Check Nozzle Loads →</button>
+</div>
+
+<!-- RESULTS -->
+<div class="results-section" id="results-section">
+
+  <!-- Verdict -->
+  <div class="verdict" id="verdict-box">
+    <div class="verdict-icon" id="verdict-icon">✅</div>
+    <div>
+      <div class="verdict-title" id="verdict-title">PASS — All loads within allowable limits</div>
+      <div class="verdict-sub" id="verdict-sub"></div>
+    </div>
+  </div>
+
+  <!-- Allowables summary -->
+  <div class="card">
+    <div class="card-title">Allowable Loads <span id="code-ref-label" style="font-family:var(--sans);font-size:12px;color:#a38060;"></span></div>
+    <div class="allowables-grid" id="allowables-grid"></div>
+  </div>
+
+  <!-- Load check table -->
+  <div class="card">
+    <div class="card-title">Load Check Results</div>
+    <div style="overflow-x:auto;">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th>Applied</th>
+            <th>Allowable</th>
+            <th>Ratio</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="results-tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- Combined check -->
+    <div class="combined-box" id="combined-box"></div>
+
+    <!-- Notes -->
+    <div class="notes" id="notes"></div>
+
+    <div class="disclaimer">
+      Per API 610 12th Ed. Table 4 · API 617 8th Ed. Annex E · API 661 · WRC Bulletin 107/297.<br>
+      Allowables are for nozzle connection point loads. Additional vendor-specific multipliers may apply. Verify against equipment vendor drawing and datasheet. For preliminary engineering use only.
+    </div>
+  </div>
+
+</div>
+
+</div><!-- /wrapper -->
+
+<script>
+// ── API 610 Table 4 allowables (lbf, lbf·ft) — by NPS
+// Forces: Fx(axial), Fy(vertical), Fz(lateral)
+// Moments: Mx(torsion), My, Mz
+// Suction nozzle typically 1.0× multiplier, discharge 1.0×
+// API 610 12th Ed Table 4 — representative values
+const API610 = {
+  forces: {
+    "1":   [170,270,200],  "1.5": [260,400,300],
+    "2":   [340,530,400],  "3":   [510,800,600],
+    "4":   [680,1060,800], "6":   [1020,1590,1200],
+    "8":   [1360,2120,1600],"10":  [1700,2650,2000],
+    "12":  [2040,3180,2400],"16":  [2720,4240,3200],
+    "18":  [3060,4770,3600],"20":  [3400,5300,4000],
+    "24":  [4080,6360,4800]
+  },
+  moments: {
+    "1":   [280,380,350],  "1.5": [420,580,530],
+    "2":   [560,770,700],  "3":   [840,1150,1060],
+    "4":   [1120,1530,1410],"6":  [1680,2300,2110],
+    "8":   [2240,3060,2820],"10": [2800,3830,3530],
+    "12":  [3360,4600,4230],"16": [4480,6130,5640],
+    "18":  [5040,6900,6350],"20": [5600,7660,7060],
+    "24":  [6720,9190,8470]
+  }
+};
+
+// API 617 compressor — typically 1.85× API 610 for some directions
+// Using simplified allowables (lbf, lbf·ft)
+const API617_FACTOR = 1.85;
+
+// API 661 air cooler header box nozzle allowables (lbf, lbf·ft)
+// Simplified per API 661 Annex B
+const API661 = {
+  forces: {
+    "2":  [500,700,600], "3":  [750,1050,900],
+    "4":  [1000,1400,1200],"6": [1500,2100,1800],
+    "8":  [2000,2800,2400],"10":[2500,3500,3000],
+    "12": [3000,4200,3600],"16":[4000,5600,4800],
+    "18": [4500,6300,5400],"20":[5000,7000,6000],
+    "24": [6000,8400,7200]
+  },
+  moments: {
+    "2":  [400,600,500], "3":  [600,900,750],
+    "4":  [800,1200,1000],"6": [1200,1800,1500],
+    "8":  [1600,2400,2000],"10":[2000,3000,2500],
+    "12": [2400,3600,3000],"16":[3200,4800,4000],
+    "18": [3600,5400,4500],"20":[4000,6000,5000],
+    "24": [4800,7200,6000]
+  }
+};
+
+// WRC vessel — allowable based on nozzle size & shell thickness
+// Pm ≤ S, Pl ≤ 1.5S, Pb ≤ 1.5S per ASME VIII / WRC 107
+// Simplified as force/moment limits (lbf, lbf·ft)
+const WRC_BASE = {
+  forces: {
+    "2":  [600,800,700], "3":  [900,1200,1050],
+    "4":  [1200,1600,1400],"6": [1800,2400,2100],
+    "8":  [2400,3200,2800],"10":[3000,4000,3500],
+    "12": [3600,4800,4200],"16":[4800,6400,5600],
+    "18": [5400,7200,6300],"20":[6000,8000,7000],
+    "24": [7200,9600,8400]
+  },
+  moments: {
+    "2":  [500,700,600], "3":  [750,1050,900],
+    "4":  [1000,1400,1200],"6": [1500,2100,1800],
+    "8":  [2000,2800,2400],"10":[2500,3500,3000],
+    "12": [3000,4200,3600],"16":[4000,5600,4800],
+    "18": [4500,6300,5400],"20":[5000,7000,6000],
+    "24": [6000,8400,7200]
+  }
+};
+
+const NPS_KEYS = ["1","1.5","2","3","4","6","8","10","12","16","18","20","24"];
+
+function getNearestNPS(nps) {
+  // find nearest key
+  const n = parseFloat(nps);
+  let best = NPS_KEYS[0], bestDiff = 999;
+  for (const k of NPS_KEYS) {
+    const d = Math.abs(parseFloat(k) - n);
+    if (d < bestDiff) { bestDiff = d; best = k; }
+  }
+  return best;
+}
+
+function getAllowables(equipType, nps) {
+  const key = getNearestNPS(nps);
+  let fArr, mArr, code, name;
+
+  if (equipType === 'api610_pump') {
+    fArr = API610.forces[key] || [500,700,600];
+    mArr = API610.moments[key] || [400,600,500];
+    code = 'API 610 12th Ed. Table 4';
+    name = 'Centrifugal Pump';
+  } else if (equipType === 'api617_comp') {
+    const bf = API610.forces[key] || [500,700,600];
+    const bm = API610.moments[key] || [400,600,500];
+    fArr = bf.map(v => Math.round(v * API617_FACTOR));
+    mArr = bm.map(v => Math.round(v * API617_FACTOR));
+    code = 'API 617 8th Ed. Annex E (1.85× API 610)';
+    name = 'Compressor';
+  } else if (equipType === 'api661_ac') {
+    fArr = (API661.forces[key] || API661.forces["6"]);
+    mArr = (API661.moments[key] || API661.moments["6"]);
+    code = 'API 661 Annex B';
+    name = 'Air Cooler';
+  } else {
+    fArr = WRC_BASE.forces[key] || [1200,1600,1400];
+    mArr = WRC_BASE.moments[key] || [1000,1400,1200];
+    code = 'WRC 107/297 + ASME VIII';
+    name = 'Pressure Vessel';
+  }
+  return { fArr, mArr, code, name };
+}
+
+function onEquipChange() {
+  const t = document.getElementById('equip-type').value;
+  const ntSel = document.getElementById('nozzle-type');
+  const vesField = document.getElementById('vessel-thk-field');
+
+  if (t === 'api610_pump') {
+    ntSel.innerHTML = '<option value="suction">Suction Nozzle</option><option value="discharge">Discharge Nozzle</option>';
+  } else if (t === 'api617_comp') {
+    ntSel.innerHTML = '<option value="suction">Suction Nozzle</option><option value="discharge">Discharge Nozzle</option><option value="balance">Balance Line</option>';
+  } else if (t === 'api661_ac') {
+    ntSel.innerHTML = '<option value="inlet">Inlet Header Nozzle</option><option value="outlet">Outlet Header Nozzle</option>';
+  } else {
+    ntSel.innerHTML = '<option value="shell">Shell Nozzle</option><option value="top">Top Head Nozzle</option><option value="bottom">Bottom Head Nozzle</option>';
+  }
+  vesField.style.display = (t === 'wrc_vessel') ? 'block' : 'none';
+}
+
+function onUnitsChange() {
+  const si = document.getElementById('units').value === 'si';
+  document.getElementById('force-unit-label').textContent = si ? '(N / N·m)' : '(lbf / lbf·ft)';
+  document.getElementById('f-unit').textContent = si ? 'N' : 'lbf';
+  document.getElementById('m-unit').textContent = si ? 'N·m' : 'lbf·ft';
+}
+
+function toImperial(val, isForce, si) {
+  if (!si) return val;
+  return isForce ? val * 0.2248 : val * 0.7376; // N→lbf, N·m→lbf·ft
+}
+
+function calculate() {
+  const equipType = document.getElementById('equip-type').value;
+  const nps       = document.getElementById('nozzle-nps').value;
+  const si        = document.getElementById('units').value === 'si';
+  const fUnit     = si ? 'N' : 'lbf';
+  const mUnit     = si ? 'N·m' : 'lbf·ft';
+
+  // Read applied loads (convert to imperial for comparison)
+  const fxRaw = parseFloat(document.getElementById('fx').value) || 0;
+  const fyRaw = parseFloat(document.getElementById('fy').value) || 0;
+  const fzRaw = parseFloat(document.getElementById('fz').value) || 0;
+  const mxRaw = parseFloat(document.getElementById('mx').value) || 0;
+  const myRaw = parseFloat(document.getElementById('my').value) || 0;
+  const mzRaw = parseFloat(document.getElementById('mz').value) || 0;
+
+  const fx = toImperial(fxRaw, true, si);
+  const fy = toImperial(fyRaw, true, si);
+  const fz = toImperial(fzRaw, true, si);
+  const mx = toImperial(mxRaw, false, si);
+  const my = toImperial(myRaw, false, si);
+  const mz = toImperial(mzRaw, false, si);
+
+  const { fArr, mArr, code, name } = getAllowables(equipType, nps);
+  const [fxA, fyA, fzA] = fArr;
+  const [mxA, myA, mzA] = mArr;
+
+  // Convert allowables back to display units
+  function toDisplay(v, isForce) {
+    if (!si) return v;
+    return isForce ? Math.round(v / 0.2248) : Math.round(v / 0.7376);
+  }
+
+  // Resultant force & moment
+  const FR  = Math.sqrt(fx*fx + fy*fy + fz*fz);
+  const MR  = Math.sqrt(mx*mx + my*my + mz*mz);
+  // Allowable resultants — typically 1.5× minimum individual per API 610 clause 5.3.3
+  const FRA = Math.min(fxA, fyA, fzA) * 1.5;
+  const MRA = Math.min(mxA, myA, mzA) * 1.5;
+
+  // Combined check per API 610: FR/FRA + MR/MRA ≤ 2.0
+  const combined = FR/FRA + MR/MRA;
+
+  // Build rows
+  const rows = [
+    { comp:'Fx (Axial)',    applied:fx, allow:fxA, raw:fxRaw, araw:toDisplay(fxA,true),  isForce:true },
+    { comp:'Fy (Vertical)', applied:fy, allow:fyA, raw:fyRaw, araw:toDisplay(fyA,true),  isForce:true },
+    { comp:'Fz (Lateral)',  applied:fz, allow:fzA, raw:fzRaw, araw:toDisplay(fzA,true),  isForce:true },
+    { comp:'Mx (Torsion)',  applied:mx, allow:mxA, raw:mxRaw, araw:toDisplay(mxA,false), isForce:false },
+    { comp:'My',            applied:my, allow:myA, raw:myRaw, araw:toDisplay(myA,false), isForce:false },
+    { comp:'Mz',            applied:mz, allow:mzA, raw:mzRaw, araw:toDisplay(mzA,false), isForce:false },
+  ];
+
+  const anyFail = rows.some(r => r.applied > r.allow);
+  const combinedFail = combined > 2.0;
+  const overallFail = anyFail || combinedFail;
+
+  // ── Render results ──
+
+  // Verdict
+  const vbox  = document.getElementById('verdict-box');
+  const vtitle = document.getElementById('verdict-title');
+  const vsub   = document.getElementById('verdict-sub');
+  const vicon  = document.getElementById('verdict-icon');
+  vbox.className = 'verdict ' + (overallFail ? 'fail' : 'pass');
+  vicon.textContent = overallFail ? '❌' : '✅';
+  vtitle.textContent = overallFail
+    ? 'FAIL — Nozzle loads exceed allowable limits'
+    : 'PASS — All loads within allowable limits';
+  vsub.textContent = `${name} · NPS ${nps}" · ${code}`;
+
+  // Code ref
+  document.getElementById('code-ref-label').textContent = `— ${code}`;
+
+  // Allowables grid
+  const ag = document.getElementById('allowables-grid');
+  ag.innerHTML = [
+    { l:'Fx Allow', v:toDisplay(fxA,true), u:fUnit },
+    { l:'Fy Allow', v:toDisplay(fyA,true), u:fUnit },
+    { l:'Fz Allow', v:toDisplay(fzA,true), u:fUnit },
+    { l:'Mx Allow', v:toDisplay(mxA,false), u:mUnit },
+    { l:'My Allow', v:toDisplay(myA,false), u:mUnit },
+    { l:'Mz Allow', v:toDisplay(mzA,false), u:mUnit },
+  ].map(a => `
+    <div class="allow-block">
+      <div class="allow-val">${a.v.toLocaleString()}</div>
+      <div class="allow-label">${a.l} <span style="font-weight:400;color:#c4a87a">${a.u}</span></div>
+    </div>`).join('');
+
+  // Results table
+  const tbody = document.getElementById('results-tbody');
+  tbody.innerHTML = rows.map(r => {
+    const ratio = r.applied > 0 ? (r.applied / r.allow) : 0;
+    const pct   = Math.min(ratio * 100, 100);
+    const fail  = r.applied > r.allow;
+    const warn  = !fail && ratio > 0.85;
+    const barCls = fail ? 'bar-fail' : warn ? 'bar-warn' : 'bar-pass';
+    const pillCls = fail ? 'pill-fail' : 'pill-pass';
+    const pillTxt = fail ? '✗ FAIL' : '✓ PASS';
+    const unit    = r.isForce ? fUnit : mUnit;
+    return `<tr>
+      <td style="font-weight:600">${r.comp}</td>
+      <td>${r.raw.toLocaleString(undefined,{maximumFractionDigits:0})} <span style="font-size:10px;color:#a38060">${unit}</span></td>
+      <td>${r.araw.toLocaleString(undefined,{maximumFractionDigits:0})} <span style="font-size:10px;color:#a38060">${unit}</span></td>
+      <td style="min-width:80px">
+        <span style="font-weight:700;color:${fail?'#dc2626':warn?'#d97706':'#059669'}">${(ratio).toFixed(3)}</span>
+        <div class="ratio-bar-bg"><div class="ratio-bar-fill ${barCls}" style="width:${pct}%"></div></div>
+      </td>
+      <td><span class="status-pill ${pillCls}">${pillTxt}</span></td>
+    </tr>`;
+  }).join('');
+
+  // Combined check
+  const combFail = combined > 2.0;
+  const combWarn = !combFail && combined > 1.7;
+  const combColor = combFail ? '#dc2626' : combWarn ? '#d97706' : '#059669';
+  document.getElementById('combined-box').innerHTML = `
+    <div class="combined-title">Combined Load Check (API 610 Cl. 5.3.3)</div>
+    <div class="combined-formula">FR/FR_allow + MR/MR_allow ≤ 2.0</div>
+    <div class="combined-result">
+      <div class="combined-val" style="color:${combColor}">${combined.toFixed(3)}</div>
+      <span class="status-pill ${combFail?'pill-fail':combWarn?'':'pill-pass'}" style="${combWarn?'background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-bd)':''}">
+        ${combFail ? '✗ FAIL > 2.0' : combined > 1.7 ? '⚠ MARGINAL' : '✓ PASS ≤ 2.0'}
+      </span>
+      <span style="font-size:12px;color:#a38060;margin-left:4px">
+        FR = ${Math.round(si ? FR/0.2248 : FR).toLocaleString()} ${fUnit} &nbsp;|&nbsp; 
+        MR = ${Math.round(si ? MR/0.7376 : MR).toLocaleString()} ${mUnit}
+      </span>
+    </div>`;
+
+  // Engineering notes
+  const notes = [];
+  const failedRows = rows.filter(r => r.applied > r.allow);
+
+  if (failedRows.length > 0) {
+    failedRows.forEach(r => {
+      const unit = r.isForce ? fUnit : mUnit;
+      const excess = Math.round((r.applied/r.allow - 1)*100);
+      notes.push({ text:`${r.comp} exceeds allowable by ${excess}% — review pipe routing or add flexibility (expansion loop, offsets, or spring support).`, fail:true });
+    });
+  }
+  if (combinedFail) {
+    notes.push({ text:'Combined load ratio > 2.0 — re-route piping to reduce overall load resultants. Consider cold spring or flexible connections.', fail:true });
+  }
+  if (equipType === 'api610_pump') {
+    notes.push({ text:'Verify loads are at operating temperature with hydrotest excluded. Check both operating and upset cases per vendor data sheet.', fail:false });
+    notes.push({ text:'If pump is vertically mounted, confirm Fy limits apply to vertical nozzle axis — vendor confirmation recommended.', fail:false });
+  }
+  if (equipType === 'api617_comp') {
+    notes.push({ text:'API 617 allowables assume 1.85× API 610 base values. For critical equipment, request vendor-specific allowable load table.', fail:false });
+  }
+  if (equipType === 'wrc_vessel') {
+    notes.push({ text:'WRC 107/297 stress indices (Pm, Pl, Pb) should be verified against vessel shell thickness and nozzle reinforcement pad.', fail:false });
+  }
+  if (!overallFail && combined > 1.5) {
+    notes.push({ text:'Loads pass but combined ratio is above 1.5 — marginal. Recheck if process conditions change or if fatigue cases apply.', fail:false });
+  }
+
+  const notesEl = document.getElementById('notes');
+  notesEl.innerHTML = notes.length ? notes.map(n =>
+    `<div class="note-item${n.fail?' note-fail':''}"><span class="note-arrow">▸</span><span>${n.text}</span></div>`
+  ).join('') : '';
+
+  // Show results
+  const sec = document.getElementById('results-section');
+  sec.classList.remove('visible');
+  sec.style.display = 'block';
+  requestAnimationFrame(() => sec.classList.add('visible'));
+
+  sec.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+window.addEventListener('DOMContentLoaded', () => { onEquipChange(); onUnitsChange(); });
+</script>
+</body>
+</html>

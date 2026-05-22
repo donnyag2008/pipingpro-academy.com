@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Special Pipe Support Calculator</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f8f7f4;color:#1a1a18;font-size:14px;line-height:1.6}
+.app{max-width:960px;margin:0 auto;padding:1.5rem}
+.header{margin-bottom:1.25rem}
+.header h1{font-size:22px;font-weight:500;color:#1a1a18;margin-bottom:4px}
+.header p{font-size:13px;color:#5f5e5a}
+.code-bar{display:flex;align-items:center;gap:8px;margin-bottom:1.25rem;padding:10px 14px;background:#f1efe8;border-radius:8px;border:0.5px solid #d3d1c7;flex-wrap:wrap}
+.code-bar label{font-size:12px;font-weight:500;color:#5f5e5a}
+.code-btn{padding:5px 14px;font-size:12px;font-weight:500;border:0.5px solid #b4b2a9;border-radius:8px;background:transparent;color:#5f5e5a;cursor:pointer;transition:all .15s}
+.code-btn.active{background:#ffffff;color:#1a1a18;border-color:#888780}
+.code-badge{margin-left:auto;font-size:11px;padding:3px 10px;border-radius:8px;font-weight:500}
+.badge-bs{background:#E6F1FB;color:#0C447C}
+.badge-aisc-asd{background:#EAF3DE;color:#27500A}
+.badge-aisc-lrfd{background:#FAEEDA;color:#633806}
+.tabs{display:flex;gap:4px;margin-bottom:1.5rem;border-bottom:0.5px solid #d3d1c7}
+.tab{padding:8px 14px;font-size:13px;font-weight:500;border:none;background:none;cursor:pointer;color:#5f5e5a;border-bottom:2px solid transparent;margin-bottom:-1px;border-radius:4px 4px 0 0;transition:color .15s}
+.tab:hover{color:#1a1a18;background:#f1efe8}
+.tab.active{color:#1a1a18;border-bottom-color:#1a1a18}
+.two-col{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1rem}
+.card{background:#ffffff;border:0.5px solid #d3d1c7;border-radius:12px;padding:.9rem 1.1rem;margin-bottom:.75rem}
+.card-title{font-size:11px;font-weight:500;color:#5f5e5a;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+.field{margin-bottom:8px}
+.field label{display:block;font-size:12px;color:#5f5e5a;margin-bottom:3px}
+.field input,.field select{width:100%;padding:6px 8px;font-size:13px;border:0.5px solid #d3d1c7;border-radius:8px;background:#ffffff;color:#1a1a18;outline:none}
+.field input:focus,.field select:focus{border-color:#888780}
+.unit{font-size:11px;color:#b4b2a9;margin-top:1px}
+.calc-btn{width:100%;padding:9px;font-size:13px;font-weight:500;border:0.5px solid #b4b2a9;border-radius:8px;background:#ffffff;color:#1a1a18;cursor:pointer;margin-top:2px;transition:background .15s}
+.calc-btn:hover{background:#f1efe8}
+.calc-btn:active{transform:scale(.98)}
+.results{display:none}
+.results.show{display:block}
+.uc-section{margin-bottom:12px}
+.uc-label{font-size:12px;color:#5f5e5a;margin-bottom:4px}
+.bar-bg{height:7px;background:#f1efe8;border-radius:4px;overflow:hidden;margin-bottom:4px}
+.bar-fill{height:7px;border-radius:4px;transition:width .4s}
+.uc-val{font-size:12px;font-weight:500}
+.pass{color:#3B6D11}
+.fail{color:#A32D2D}
+.stress-table{width:100%;font-size:12px;border-collapse:collapse;margin-top:6px;table-layout:fixed}
+.stress-table th{background:#f1efe8;padding:5px 7px;text-align:left;font-weight:500;color:#5f5e5a;border-bottom:0.5px solid #d3d1c7;font-size:11px}
+.stress-table td{padding:4px 7px;border-bottom:0.5px solid #d3d1c7;color:#1a1a18;font-size:12px}
+.stress-table tr:last-child td{border-bottom:none}
+.diag svg{max-width:100%;height:auto;display:block;margin:0 auto}
+.note{font-size:11px;color:#b4b2a9;margin-top:4px;line-height:1.5}
+.code-ref{font-size:11px;color:#5f5e5a;padding:6px 8px;background:#f1efe8;border-radius:8px;margin-top:8px;line-height:1.6}
+.sec-props{font-size:11px;color:#5f5e5a;line-height:1.7;margin-top:5px}
+.disclaimer{margin-top:2rem;padding:1rem 1.25rem;border:0.5px solid #b4b2a9;border-radius:12px;background:#f1efe8}
+.disclaimer-title{font-size:12px;font-weight:500;color:#1a1a18;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.disclaimer-body{font-size:11px;color:#5f5e5a;line-height:1.8}
+.disclaimer-body p{margin-bottom:6px}
+.disclaimer-body p:last-child{margin-bottom:0}
+.disclaimer-items{padding-left:0;list-style:none;margin:6px 0}
+.disclaimer-items li{padding:2px 0 2px 14px;font-size:11px;color:#5f5e5a;position:relative}
+.disclaimer-items li::before{content:"--";position:absolute;left:0;color:#b4b2a9}
+@media(max-width:640px){.two-col{grid-template-columns:1fr}.code-bar{flex-direction:column;align-items:flex-start}.code-badge{margin-left:0}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="header">
+  <h1>Special pipe support &mdash; structural calculator</h1>
+  <p>Dual-code: BS 5950 &nbsp;&middot;&nbsp; AISC 360 ASD &nbsp;&middot;&nbsp; AISC 360 LRFD &nbsp;|&nbsp; DIN sections &nbsp;&middot;&nbsp; Grade 50 / A572 Gr.50 / S355</p>
+</div>
+
+<div class="code-bar">
+  <label>Design code:</label>
+  <button class="code-btn active" onclick="setCode('bs5950',this)">BS 5950 (Gr 50)</button>
+  <button class="code-btn" onclick="setCode('aisc_asd',this)">AISC 360 ASD (A572 Gr.50)</button>
+  <button class="code-btn" onclick="setCode('aisc_lrfd',this)">AISC 360 LRFD (A572 Gr.50)</button>
+  <span id="code-badge" class="code-badge badge-bs">BS 5950 &middot; Pbc = 230 N/mm&sup2;</span>
+</div>
+
+<div class="tabs" role="tablist">
+  <button class="tab active" onclick="switchTab('goalpost')" role="tab">Goal post</button>
+  <button class="tab" onclick="switchTab('inverted')" role="tab">Inverted goal post</button>
+  <button class="tab" onclick="switchTab('cantilever')" role="tab">Cantilever / post</button>
+  <button class="tab" onclick="switchTab('tpost')" role="tab">T-post</button>
+</div>
+
+<!-- GOAL POST -->
+<div id="tab-goalpost">
+  <div class="two-col">
+    <div>
+      <div class="card">
+        <div class="card-title">Geometry</div>
+        <div class="field"><label>Column height H</label><input type="number" id="gp-H" value="168"><span class="unit">mm</span></div>
+        <div class="field"><label>Beam span L</label><input type="number" id="gp-L" value="500"><span class="unit">mm</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Applied loads</div>
+        <div class="field"><label>Px &mdash; horizontal (along beam)</label><input type="number" id="gp-Px" value="6000"><span class="unit">N</span></div>
+        <div class="field"><label>Py &mdash; horizontal (transverse)</label><input type="number" id="gp-Py" value="2000"><span class="unit">N</span></div>
+        <div class="field"><label>Pa &mdash; axial / vertical</label><input type="number" id="gp-Pa" value="0"><span class="unit">N</span></div>
+        <div id="gp-lrfd-note" class="note" style="display:none">LRFD: enter unfactored (service) loads. Calculator applies 1.4D.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Section</div>
+        <div class="field"><select id="gp-sec" onchange="updateProps('gp-sec','gp-props')"></select></div>
+        <div id="gp-props" class="sec-props"></div>
+      </div>
+      <button class="calc-btn" onclick="calcGoalpost()">Calculate &rarr;</button>
+    </div>
+    <div>
+      <div class="diag">
+        <svg viewBox="0 0 220 190" width="200">
+          <line x1="40" y1="50" x2="40" y2="165" stroke="#888780" stroke-width="4"/>
+          <line x1="180" y1="50" x2="180" y2="165" stroke="#888780" stroke-width="4"/>
+          <line x1="40" y1="50" x2="180" y2="50" stroke="#888780" stroke-width="4"/>
+          <line x1="28" y1="165" x2="52" y2="165" stroke="#888780" stroke-width="2"/>
+          <line x1="168" y1="165" x2="192" y2="165" stroke="#888780" stroke-width="2"/>
+          <text x="110" y="42" text-anchor="middle" font-size="9" fill="#888780">Member A</text>
+          <text x="22" y="112" text-anchor="middle" font-size="9" fill="#888780">B</text>
+          <text x="198" y="112" text-anchor="middle" font-size="9" fill="#888780">C</text>
+          <text x="110" y="14" text-anchor="middle" font-size="10" fill="#1a1a18" font-weight="500">Goal post</text>
+          <text x="40" y="182" text-anchor="middle" font-size="8" fill="#b4b2a9">fixed</text>
+          <text x="180" y="182" text-anchor="middle" font-size="8" fill="#b4b2a9">fixed</text>
+          <text x="150" y="36" font-size="8" fill="#185FA5">&larr; Px &rarr;</text>
+          <text x="148" y="62" font-size="8" fill="#185FA5">&updownarrow; Py</text>
+        </svg>
+      </div>
+      <div id="gp-results" class="results">
+        <div class="card">
+          <div class="card-title">Unity checks</div>
+          <div class="uc-section"><div class="uc-label">Member A &mdash; beam</div><div class="bar-bg"><div id="gp-barA" class="bar-fill" style="width:0%"></div></div><div id="gp-ucA" class="uc-val"></div></div>
+          <div class="uc-section"><div class="uc-label">Members B &amp; C &mdash; columns</div><div class="bar-bg"><div id="gp-barBC" class="bar-fill" style="width:0%"></div></div><div id="gp-ucBC" class="uc-val"></div></div>
+        </div>
+        <div class="card"><div class="card-title">Deflection</div><table class="stress-table"><thead><tr><th>Member</th><th>Axis</th><th>Actual</th><th>Allow.</th><th>Status</th></tr></thead><tbody id="gp-defl"></tbody></table></div>
+        <div class="card"><div class="card-title">Bending stresses</div><table class="stress-table"><thead><tr><th>Member</th><th>Axis</th><th>Stress</th><th>Allow.</th><th>Status</th></tr></thead><tbody id="gp-stress"></tbody></table></div>
+        <div class="card"><div class="card-title">Weld utilisation</div><table class="stress-table"><thead><tr><th>Member</th><th>Section</th><th>6mm weld</th><th>8mm weld</th></tr></thead><tbody id="gp-weld"></tbody></table><div id="gp-coderef" class="code-ref"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INVERTED GOAL POST -->
+<div id="tab-inverted" style="display:none">
+  <div class="two-col">
+    <div>
+      <div class="card">
+        <div class="card-title">Geometry</div>
+        <div class="field"><label>Column height H</label><input type="number" id="ig-H" value="650"><span class="unit">mm</span></div>
+        <div class="field"><label>Beam span L</label><input type="number" id="ig-L" value="1800"><span class="unit">mm</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Applied loads</div>
+        <div class="field"><label>Px &mdash; horizontal (along beam)</label><input type="number" id="ig-Px" value="3000"><span class="unit">N</span></div>
+        <div class="field"><label>Py &mdash; horizontal (transverse)</label><input type="number" id="ig-Py" value="2000"><span class="unit">N</span></div>
+        <div class="field"><label>Pa &mdash; axial / vertical</label><input type="number" id="ig-Pa" value="3000"><span class="unit">N</span></div>
+        <div id="ig-lrfd-note" class="note" style="display:none">LRFD: enter unfactored (service) loads.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Section</div>
+        <div class="field"><select id="ig-sec" onchange="updateProps('ig-sec','ig-props')"></select></div>
+        <div id="ig-props" class="sec-props"></div>
+      </div>
+      <button class="calc-btn" onclick="calcInverted()">Calculate &rarr;</button>
+    </div>
+    <div>
+      <div class="diag">
+        <svg viewBox="0 0 220 190" width="200">
+          <line x1="40" y1="30" x2="40" y2="145" stroke="#888780" stroke-width="4"/>
+          <line x1="180" y1="30" x2="180" y2="145" stroke="#888780" stroke-width="4"/>
+          <line x1="40" y1="145" x2="180" y2="145" stroke="#888780" stroke-width="4"/>
+          <line x1="28" y1="30" x2="52" y2="30" stroke="#888780" stroke-width="2"/>
+          <line x1="168" y1="30" x2="192" y2="30" stroke="#888780" stroke-width="2"/>
+          <text x="110" y="160" text-anchor="middle" font-size="9" fill="#888780">Member A</text>
+          <text x="22" y="92" text-anchor="middle" font-size="9" fill="#888780">B</text>
+          <text x="198" y="92" text-anchor="middle" font-size="9" fill="#888780">C</text>
+          <text x="110" y="14" text-anchor="middle" font-size="10" fill="#1a1a18" font-weight="500">Inverted goal post</text>
+          <text x="40" y="22" text-anchor="middle" font-size="8" fill="#b4b2a9">wall</text>
+          <text x="180" y="22" text-anchor="middle" font-size="8" fill="#b4b2a9">wall</text>
+          <text x="95" y="140" font-size="8" fill="#185FA5">&darr; pipe loads</text>
+        </svg>
+      </div>
+      <div id="ig-results" class="results">
+        <div class="card">
+          <div class="card-title">Unity checks</div>
+          <div class="uc-section"><div class="uc-label">Member A &mdash; beam</div><div class="bar-bg"><div id="ig-barA" class="bar-fill" style="width:0%"></div></div><div id="ig-ucA" class="uc-val"></div></div>
+          <div class="uc-section"><div class="uc-label">Members B &amp; C &mdash; columns</div><div class="bar-bg"><div id="ig-barBC" class="bar-fill" style="width:0%"></div></div><div id="ig-ucBC" class="uc-val"></div></div>
+        </div>
+        <div class="card"><div class="card-title">Deflection</div><table class="stress-table"><thead><tr><th>Member</th><th>Axis</th><th>Actual</th><th>Allow.</th><th>Status</th></tr></thead><tbody id="ig-defl"></tbody></table></div>
+        <div class="card"><div class="card-title">Bending stresses</div><table class="stress-table"><thead><tr><th>Member</th><th>Axis</th><th>Stress</th><th>Allow.</th><th>Status</th></tr></thead><tbody id="ig-stress"></tbody></table></div>
+        <div class="card"><div class="card-title">Weld utilisation</div><table class="stress-table"><thead><tr><th>Member</th><th>Section</th><th>6mm weld</th><th>8mm weld</th></tr></thead><tbody id="ig-weld"></tbody></table><div id="ig-coderef" class="code-ref"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CANTILEVER -->
+<div id="tab-cantilever" style="display:none">
+  <div class="two-col">
+    <div>
+      <div class="card">
+        <div class="card-title">Geometry</div>
+        <div class="field"><label>Cantilever length L</label><input type="number" id="ct-L" value="616"><span class="unit">mm</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Applied loads</div>
+        <div class="field"><label>Px &mdash; horizontal (along axis)</label><input type="number" id="ct-Px" value="5000"><span class="unit">N</span></div>
+        <div class="field"><label>Py &mdash; horizontal (transverse)</label><input type="number" id="ct-Py" value="1500"><span class="unit">N</span></div>
+        <div class="field"><label>Pa &mdash; axial</label><input type="number" id="ct-Pa" value="0"><span class="unit">N</span></div>
+        <div id="ct-lrfd-note" class="note" style="display:none">LRFD: enter unfactored (service) loads.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Section</div>
+        <div class="field"><select id="ct-sec" onchange="updateProps('ct-sec','ct-props')"></select></div>
+        <div id="ct-props" class="sec-props"></div>
+      </div>
+      <button class="calc-btn" onclick="calcCantilever()">Calculate &rarr;</button>
+    </div>
+    <div>
+      <div class="diag">
+        <svg viewBox="0 0 220 190" width="200">
+          <rect x="8" y="60" width="28" height="70" fill="#f1efe8" stroke="#b4b2a9" stroke-width="1"/>
+          <line x1="36" y1="95" x2="185" y2="95" stroke="#888780" stroke-width="5"/>
+          <circle cx="185" cy="95" r="7" fill="none" stroke="#888780" stroke-width="2"/>
+          <text x="110" y="83" text-anchor="middle" font-size="9" fill="#888780">&larr; L &rarr;</text>
+          <text x="110" y="14" text-anchor="middle" font-size="10" fill="#1a1a18" font-weight="500">Cantilever / post</text>
+          <text x="22" y="52" text-anchor="middle" font-size="8" fill="#b4b2a9">fixed</text>
+          <text x="185" y="116" text-anchor="middle" font-size="8" fill="#185FA5">pipe</text>
+          <text x="192" y="88" font-size="8" fill="#185FA5">&uarr;Px</text>
+          <text x="178" y="112" font-size="8" fill="#185FA5">&rarr;Py</text>
+        </svg>
+      </div>
+      <div id="ct-results" class="results">
+        <div class="card"><div class="card-title">Unity check</div><div class="uc-section"><div class="bar-bg"><div id="ct-bar" class="bar-fill" style="width:0%"></div></div><div id="ct-uc" class="uc-val"></div></div></div>
+        <div class="card"><div class="card-title">Deflection</div><table class="stress-table"><thead><tr><th>Axis</th><th>Actual</th><th>Allow.</th><th>Status</th></tr></thead><tbody id="ct-defl"></tbody></table></div>
+        <div class="card"><div class="card-title">Bending stresses</div><table class="stress-table"><thead><tr><th>Axis</th><th>Moment</th><th>Stress</th><th>Allow.</th><th>Status</th></tr></thead><tbody id="ct-stress"></tbody></table></div>
+        <div class="card"><div class="card-title">Section utilisation</div><table class="stress-table"><thead><tr><th>Check</th><th>UC ratio</th><th>Status</th></tr></thead><tbody id="ct-weld"></tbody></table><div id="ct-coderef" class="code-ref"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- T-POST -->
+<div id="tab-tpost" style="display:none">
+  <div class="two-col">
+    <div>
+      <div class="card">
+        <div class="card-title">Geometry</div>
+        <div class="field"><label>Column height H</label><input type="number" id="tp-H" value="800"><span class="unit">mm</span></div>
+        <div class="field"><label>Arm length La (each side)</label><input type="number" id="tp-La" value="400"><span class="unit">mm</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Applied loads (per arm)</div>
+        <div class="field"><label>Px &mdash; horizontal (along arm)</label><input type="number" id="tp-Px" value="4000"><span class="unit">N</span></div>
+        <div class="field"><label>Py &mdash; horizontal (transverse)</label><input type="number" id="tp-Py" value="2000"><span class="unit">N</span></div>
+        <div class="field"><label>Pa &mdash; vertical per arm</label><input type="number" id="tp-Pa" value="5000"><span class="unit">N</span></div>
+        <div id="tp-lrfd-note" class="note" style="display:none">LRFD: enter unfactored (service) loads.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Sections</div>
+        <div class="field"><label>Column</label><select id="tp-col-sec" onchange="updateTpProps()"></select></div>
+        <div class="field"><label>Arm</label><select id="tp-arm-sec" onchange="updateTpProps()"></select></div>
+        <div id="tp-props" class="sec-props"></div>
+      </div>
+      <button class="calc-btn" onclick="calcTpost()">Calculate &rarr;</button>
+    </div>
+    <div>
+      <div class="diag">
+        <svg viewBox="0 0 220 190" width="200">
+          <line x1="110" y1="50" x2="110" y2="165" stroke="#888780" stroke-width="5"/>
+          <line x1="38" y1="88" x2="182" y2="88" stroke="#888780" stroke-width="4"/>
+          <line x1="98" y1="165" x2="122" y2="165" stroke="#888780" stroke-width="2"/>
+          <circle cx="38" cy="88" r="5" fill="none" stroke="#888780" stroke-width="1.5"/>
+          <circle cx="182" cy="88" r="5" fill="none" stroke="#888780" stroke-width="1.5"/>
+          <text x="110" y="14" text-anchor="middle" font-size="10" fill="#1a1a18" font-weight="500">T-post</text>
+          <text x="120" y="130" font-size="9" fill="#888780">col.</text>
+          <text x="55" y="80" font-size="8" fill="#888780">arm L</text>
+          <text x="148" y="80" font-size="8" fill="#888780">arm R</text>
+          <text x="110" y="182" text-anchor="middle" font-size="8" fill="#b4b2a9">fixed base</text>
+          <text x="36" y="106" font-size="8" fill="#185FA5">&darr;Pa</text>
+          <text x="172" y="106" font-size="8" fill="#185FA5">&darr;Pa</text>
+        </svg>
+      </div>
+      <div id="tp-results" class="results">
+        <div class="card"><div class="card-title">Unity checks</div>
+          <div class="uc-section"><div class="uc-label">Column &mdash; combined bending + axial</div><div class="bar-bg"><div id="tp-barCol" class="bar-fill" style="width:0%"></div></div><div id="tp-ucCol" class="uc-val"></div></div>
+          <div class="uc-section"><div class="uc-label">Arm &mdash; cantilever</div><div class="bar-bg"><div id="tp-barArm" class="bar-fill" style="width:0%"></div></div><div id="tp-ucArm" class="uc-val"></div></div>
+        </div>
+        <div class="card"><div class="card-title">Deflection</div><table class="stress-table"><thead><tr><th>Member</th><th>Actual</th><th>Allow.</th><th>Status</th></tr></thead><tbody id="tp-defl"></tbody></table></div>
+        <div class="card"><div class="card-title">Bending stresses</div><table class="stress-table"><thead><tr><th>Member</th><th>Axis</th><th>Stress</th><th>Allow.</th><th>Status</th></tr></thead><tbody id="tp-stress"></tbody></table></div>
+        <div class="card"><div class="card-title">Section utilisation</div><table class="stress-table"><thead><tr><th>Check</th><th>UC ratio</th><th>Status</th></tr></thead><tbody id="tp-weld"></tbody></table><div id="tp-coderef" class="code-ref"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DISCLAIMER -->
+<div class="disclaimer">
+  <div class="disclaimer-title">
+    <i class="ti ti-alert-triangle" style="font-size:15px;color:#BA7517"></i>
+    Engineering disclaimer
+  </div>
+  <div class="disclaimer-body">
+    <p>This calculator is provided as a <strong>preliminary design and checking aid only</strong>. Results must not be used as the sole basis for construction, fabrication, or procurement without independent review and sign-off by a qualified Chartered or Licensed Structural/Mechanical Engineer.</p>
+    <ul class="disclaimer-items">
+      <li>BS 5950 was withdrawn on 30 March 2010 and superseded by BS EN 1993 (Eurocode 3). Its use on new UK/European projects requires explicit client or regulatory acceptance.</li>
+      <li>AISC 360 ASD and LRFD resistance values are approximated by proportional scaling from BS 5950 MOMENTS 50 tabulated data. A fully code-compliant AISC submission requires independent calculation of &phi;Mn (LRFD) or Mn/&Omega; (ASD) per AISC 360 Chapter F using section-specific compact/non-compact classification.</li>
+      <li>Weld checks use the same proportional scaling. Rigorous weld design must follow AISC 360 Chapter J (fillet weld: 0.6F<sub>EXX</sub> &times; 0.707 &times; throat) or BS EN 1993-1-8 as applicable.</li>
+      <li>Deflection limits (L/720 beam, H/300 column) are indicative. Project-specific limits from the applicable piping specification, client standard (e.g. Aramco SAES-L-310), or structural engineer of record shall govern.</li>
+      <li>The T-post configuration is not included in the original reference spreadsheet. The structural model (symmetric arms, fixed base column) is an engineering approximation and should be validated for each specific geometry.</li>
+      <li>No account is taken of dynamic loads, vibration, wind, seismic, thermal expansion forces, or friction effects from pipe movement. These must be assessed separately per the applicable project loading specification.</li>
+      <li>Section properties are based on DIN/European sections (SSMS database). Verify section availability and dimensional equivalence before specifying on projects using ASTM/AISC sections.</li>
+      <li>This tool has not been independently verified or validated. It shall not be stamped, sealed, or submitted as a formal engineering calculation without full independent review.</li>
+    </ul>
+    <p style="margin-top:8px">Reference codes: BS 5950-1:2000 (withdrawn) &nbsp;&middot;&nbsp; BS EN 1993-1-1:2022 (Eurocode 3) &nbsp;&middot;&nbsp; ANSI/AISC 360-22 &nbsp;&middot;&nbsp; MSS SP-58 &nbsp;&middot;&nbsp; ASME B31.3 &nbsp;&middot;&nbsp; Aramco SAES-L-310</p>
+  </div>
+</div>
+
+</div>
+
+<script>
+const SECS={"80X80X10L":{type:"Angle",mass:11.9,area:15.1,Ixx:87.5,Iyy:87.5,rxx:2.42,ryy:2.42,Zxx:15.4,Zyy:15.4},"100X100X12L":{type:"Angle",mass:17.8,area:22.7,Ixx:208,Iyy:208,rxx:3.02,ryy:3.02,Zxx:29.1,Zyy:29.1},"140CH":{type:"Channel",mass:16,area:20.4,Ixx:606,Iyy:62.7,rxx:5.45,ryy:1.75,Zxx:86.4,Zyy:14.8},"160CH":{type:"Channel",mass:18.8,area:24,Ixx:925,Iyy:85.3,rxx:6.21,ryy:1.89,Zxx:116,Zyy:18.3},"200CH":{type:"Channel",mass:25.3,area:32.2,Ixx:1910,Iyy:148,rxx:7.7,ryy:2.14,Zxx:191,Zyy:27},"HEA140":{type:"UC",mass:24.7,area:31.4,Ixx:1033,Iyy:389,rxx:5.73,ryy:3.52,Zxx:155,Zyy:55.6},"HEA200":{type:"UC",mass:42.3,area:53.8,Ixx:3692,Iyy:1336,rxx:8.28,ryy:4.98,Zxx:389,Zyy:134},"HEA240":{type:"UC",mass:60.3,area:76.8,Ixx:7763,Iyy:2769,rxx:10.1,ryy:6,Zxx:675,Zyy:231},"100SHS6.3":{type:"SHS",mass:18.39,area:23.4,Ixx:336,Iyy:336,rxx:3.82,ryy:3.82,Zxx:68.6,Zyy:68.2},"140SHS8.0":{type:"SHS",mass:32.92,area:41.6,Ixx:1195,Iyy:1195,rxx:5.33,ryy:5.33,Zxx:171,Zyy:171},"200SHS8.0":{type:"SHS",mass:47.99,area:59.8,Ixx:3620,Iyy:3620,rxx:7.78,ryy:7.78,Zxx:362,Zyy:362}};
+const MOM50={"80X80X10L":{sxx:3542,w6xx:2374,w8xx:3166,syy:3542,w6yy:2374,w8yy:3166,sa:374,w6a:160,w8a:214},"100X100X12L":{sxx:6693,w6xx:3710,w8xx:4947,syy:6693,w6yy:3710,w8yy:4947,sa:522,w6a:200,w8a:267},"140CH":{sxx:19872,w6xx:15583,w8xx:20777,syy:3404,w6yy:2725,w8yy:3633,sa:469,w6a:347,w8a:463},"160CH":{sxx:26680,w6xx:19590,w8xx:26119,syy:4209,w6yy:3219,w8yy:4292,sa:552,w6a:387,w8a:516},"200CH":{sxx:43930,w6xx:28939,w8xx:38586,syy:6210,w6yy:4326,w8yy:5768,sa:741,w6a:467,w8a:623},"HEA140":{sxx:35650,w6xx:28808,w8xx:38410,syy:12788,w6yy:9064,w8yy:12086,sa:722,w6a:552,w8a:735},"HEA200":{sxx:89470,w6xx:58791,w8xx:78388,syy:23690,w6yy:18390,w8yy:24520,sa:1237,w6a:788,w8a:1051},"HEA240":{sxx:155250,w6xx:89756,w8xx:119674,syy:40940,w6yy:26466,w8yy:35288,sa:1766,w6a:962,w8a:1282},"100SHS6.3":{sxx:15686,w6xx:8904,w8xx:11872,syy:15686,w6yy:8904,w8yy:11872,sa:538,w6a:267,w8a:356},"140SHS8.0":{sxx:41860,w6xx:17453,w8xx:23270,syy:41860,w6yy:17453,w8yy:23270,sa:1035,w6a:374,w8a:499},"200SHS8.0":{sxx:86020,w6xx:35617,w8xx:47490,syy:86020,w6yy:35617,w8yy:47490,sa:1405,w6a:534,w8a:712}};
+let currentCode='bs5950';
+const E=210000;
+function codeParams(){if(currentCode==='bs5950')return{Fb:230,name:'BS 5950',ref:'Pbc = 230 N/mm² (Cl.4.2.3) · Py = 350 N/mm² · Section: Zxx plastic modulus'};if(currentCode==='aisc_asd')return{Fb:207,name:'AISC 360 ASD',ref:'Fb = 0.6 × Fy = 207 MPa (Ch.F compact) · Ω = 1.67 embedded · Fy = 345 MPa (A572 Gr.50)'};if(currentCode==='aisc_lrfd')return{Fb:207*0.9,name:'AISC 360 LRFD',ref:'φMn = 0.9 × Mp (Ch.F compact) · Load factor 1.4D · Fy = 345 MPa (A572 Gr.50) · φ = 0.90'};}
+function setCode(code,btn){currentCode=code;document.querySelectorAll('.code-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');let p=codeParams();let badge=document.getElementById('code-badge');badge.className='code-badge '+(code==='bs5950'?'badge-bs':code==='aisc_asd'?'badge-aisc-asd':'badge-aisc-lrfd');badge.textContent=p.name+' · Fb = '+p.Fb.toFixed(0)+' N/mm²';['gp','ig','ct','tp'].forEach(id=>{let n=document.getElementById(id+'-lrfd-note');if(n)n.style.display=code==='aisc_lrfd'?'block':'none';});}
+function getMomCap(sid){let m=MOM50[sid];if(!m)return null;let f=currentCode==='bs5950'?1:currentCode==='aisc_asd'?207/230:(0.9*345)/350;let fa=currentCode==='bs5950'?1:0.9;return{sxx:m.sxx*f,w6xx:m.w6xx*f,w8xx:m.w8xx*f,syy:m.syy*f,w6yy:m.w6yy*f,w8yy:m.w8yy*f,sa:m.sa*fa,w6a:m.w6a*fa,w8a:m.w8a*fa};}
+function getLoads(Px,Py,Pa){if(currentCode==='aisc_lrfd')return{Px:Px*1.4,Py:Py*1.4,Pa:Pa*1.4};return{Px,Py,Pa};}
+function getAllowStress(){return codeParams().Fb;}
+function secOpts(){return Object.keys(SECS).map(k=>`<option value="${k}">${k} (${SECS[k].type})</option>`).join('');}
+function populateSel(){['gp-sec','ig-sec','ct-sec'].forEach(id=>{let el=document.getElementById(id);if(el)el.innerHTML=secOpts();});['tp-col-sec','tp-arm-sec'].forEach(id=>{let el=document.getElementById(id);if(el)el.innerHTML=secOpts();});document.getElementById('gp-sec').value='80X80X10L';document.getElementById('ig-sec').value='100SHS6.3';document.getElementById('ct-sec').value='200CH';document.getElementById('tp-col-sec').value='HEA200';document.getElementById('tp-arm-sec').value='HEA140';updateProps('gp-sec','gp-props');updateProps('ig-sec','ig-props');updateProps('ct-sec','ct-props');updateTpProps();}
+function updateProps(selId,propsId){let s=SECS[document.getElementById(selId).value];if(!s)return;document.getElementById(propsId).innerHTML=`${s.type} · ${s.mass} kg/m · A=${s.area}cm² · Ixx=${s.Ixx}cm⁴ · Iyy=${s.Iyy}cm⁴ · Zxx=${s.Zxx}cm³ · Zyy=${s.Zyy}cm³`;}
+function updateTpProps(){let cs=SECS[document.getElementById('tp-col-sec').value],as=SECS[document.getElementById('tp-arm-sec').value];if(!cs||!as)return;document.getElementById('tp-props').innerHTML=`Col: Ixx=${cs.Ixx}cm⁴ Zxx=${cs.Zxx}cm³ &nbsp;|&nbsp; Arm: Ixx=${as.Ixx}cm⁴ Zxx=${as.Zxx}cm³`;}
+function bc(uc){return uc<=0.7?'#3B6D11':uc<=1.0?'#BA7517':'#A32D2D';}
+function st(ok,v){return`<span class="${ok?'pass':'fail'}">${v.toFixed(3)} ${ok?'OK':'FAIL'}</span>`;}
+function stOk(ok){return ok?'<span class="pass">OK</span>':'<span class="fail">FAIL</span>';}
+function setBar(id,uc){let el=document.getElementById(id);el.style.width=Math.min(uc*100,100)+'%';el.style.background=bc(uc);}
+function calcGoalpost(){let H=+document.getElementById('gp-H').value,L=+document.getElementById('gp-L').value;let {Px,Py,Pa}=getLoads(+document.getElementById('gp-Px').value,+document.getElementById('gp-Py').value,+document.getElementById('gp-Pa').value);let sid=document.getElementById('gp-sec').value,s=SECS[sid],m=getMomCap(sid);if(!s||!m){alert('Section not in library');return;}let Ixx=s.Ixx*1e4,Iyy=s.Iyy*1e4,Zxx=s.Zxx*1e3,Zyy=s.Zyy*1e3,ry=s.ryy*10,Fa=getAllowStress();let MxxA=Px*L/4,MyyA=Py*L/4,MxxBC=Pa/2*H,MyyBC=Py/2*H,PaxBC=Px/2;let uAs=MxxA/m.sxx+MyyA/m.syy+Pa/(m.sa*1e3),uAw6=MxxA/(m.w6xx*2)+MyyA/(m.w6yy*2)+Pa/(m.w6a*1e3*2),uAw8=MxxA/(m.w8xx*2)+MyyA/(m.w8yy*2)+Pa/(m.w8a*1e3*2);let uBs=MxxBC/m.sxx+MyyBC/m.syy+PaxBC/(m.sa*1e3),uBw6=MxxBC/m.w6xx+MyyBC/m.w6yy+PaxBC/(m.w6a*1e3),uBw8=MxxBC/m.w8xx+MyyBC/m.w8yy+PaxBC/(m.w8a*1e3);let dAxx=Px*Math.pow(L,3)/(48*E*Ixx),dAyy=Py*Math.pow(L,3)/(48*E*Iyy),dBxx=Pa/2*Math.pow(H,3)/(3*E*Ixx),dByy=Py/2*Math.pow(H,3)/(3*E*Iyy),daA=L/720,daB=H/300;let sAxx=MxxA/Zxx,sAyy=MyyA/Zyy,sBxx=MxxBC/Zxx,sByy=MyyBC/Zyy,sl=2*H/ry;setBar('gp-barA',uAs);document.getElementById('gp-ucA').innerHTML=`Section: ${st(uAs<=1,uAs)} &nbsp;6mm: ${st(uAw6<=1,uAw6)} &nbsp;8mm: ${st(uAw8<=1,uAw8)}`;setBar('gp-barBC',uBs);document.getElementById('gp-ucBC').innerHTML=`Section: ${st(uBs<=1,uBs)} &nbsp;6mm: ${st(uBw6<=1,uBw6)} &nbsp;8mm: ${st(uBw8<=1,uBw8)}`;document.getElementById('gp-defl').innerHTML=`<tr><td>Mbr A</td><td>XX</td><td>${dAxx.toFixed(3)}mm</td><td>${daA.toFixed(3)}mm</td><td>${stOk(dAxx<=daA)}</td></tr><tr><td>Mbr A</td><td>YY</td><td>${dAyy.toFixed(3)}mm</td><td>${daA.toFixed(3)}mm</td><td>${stOk(dAyy<=daA)}</td></tr><tr><td>B&amp;C</td><td>XX</td><td>${dBxx.toFixed(3)}mm</td><td>${daB.toFixed(3)}mm</td><td>${stOk(dBxx<=daB)}</td></tr><tr><td>B&amp;C</td><td>YY</td><td>${dByy.toFixed(3)}mm</td><td>${daB.toFixed(3)}mm</td><td>${stOk(dByy<=daB)}</td></tr>`;document.getElementById('gp-stress').innerHTML=`<tr><td>Mbr A</td><td>XX</td><td>${sAxx.toFixed(1)} N/mm²</td><td>${Fa} N/mm²</td><td>${stOk(sAxx<=Fa)}</td></tr><tr><td>Mbr A</td><td>YY</td><td>${sAyy.toFixed(1)} N/mm²</td><td>${Fa} N/mm²</td><td>${stOk(sAyy<=Fa)}</td></tr><tr><td>B&amp;C</td><td>XX</td><td>${sBxx.toFixed(1)} N/mm²</td><td>${Fa} N/mm²</td><td>${stOk(sBxx<=Fa)}</td></tr><tr><td>B&amp;C</td><td>YY</td><td>${sByy.toFixed(1)} N/mm²</td><td>${Fa} N/mm²</td><td>${stOk(sByy<=Fa)}</td></tr><tr><td colspan="5" style="color:#b4b2a9;font-size:11px">Slenderness L/ry = ${sl.toFixed(1)} (eff. length factor = 2)</td></tr>`;document.getElementById('gp-weld').innerHTML=`<tr><td>Mbr A</td><td>${uAs.toFixed(3)}</td><td>${uAw6.toFixed(3)}</td><td>${uAw8.toFixed(3)}</td></tr><tr><td>B&amp;C</td><td>${uBs.toFixed(3)}</td><td>${uBw6.toFixed(3)}</td><td>${uBw8.toFixed(3)}</td></tr>`;document.getElementById('gp-coderef').textContent=codeParams().ref;document.getElementById('gp-results').classList.add('show');}
+function calcInverted(){let H=+document.getElementById('ig-H').value,L=+document.getElementById('ig-L').value;let {Px,Py,Pa}=getLoads(+document.getElementById('ig-Px').value,+document.getElementById('ig-Py').value,+document.getElementById('ig-Pa').value);let sid=document.getElementById('ig-sec').value,s=SECS[sid],m=getMomCap(sid);if(!s||!m){alert('Section not in library');return;}let Ixx=s.Ixx*1e4,Iyy=s.Iyy*1e4,Zxx=s.Zxx*1e3,Zyy=s.Zyy*1e3,ry=s.ryy*10,Fa=getAllowStress();let MxxA=Px*L/4,MyyA=Py*L/4,MxxBC=Pa/2*H,MyyBC=Py/2*H,PaxBC=Px/2;let uAs=MxxA/m.sxx+MyyA/m.syy+Pa/(m.sa*1e3),uAw6=MxxA/(m.w6xx*2)+MyyA/(m.w6yy*2)+Pa/(m.w6a*1e3*2),uAw8=MxxA/(m.w8xx*2)+MyyA/(m.w8yy*2)+Pa/(m.w8a*1e3*2);let uBs=MxxBC/m.sxx+MyyBC/m.syy+PaxBC/(m.sa*1e3),uBw6=MxxBC/m.w6xx+MyyBC/m.w6yy+PaxBC/(m.w6a*1e3),uBw8=MxxBC/m.w8xx+MyyBC/m.w8yy+PaxBC/(m.w8a*1e3);let dAxx=Px*Math.pow(L,3)/(48*E*Ixx),dAyy=Py*Math.pow(L,3)/(48*E*Iyy),dBxx=Pa/2*Math.pow(H,3)/(3*E*Ixx),dByy=Py/2*Math.pow(H,3)/(3*E*Iyy),daA=L/400,daB=H/300;let sAxx=MxxA/Zxx,sAyy=MyyA/Zyy,sBxx=MxxBC/Zxx,sByy=MyyBC/Zyy,sl=2*H/ry;setBar('ig-barA',uAs);document.getElementById('ig-ucA').innerHTML=`Section: ${st(uAs<=1,uAs)} &nbsp;6mm: ${st(uAw6<=1,uAw6)} &nbsp;8mm: ${st(uAw8<=1,uAw8)}`;setBar('ig-barBC',uBs);document.getElementById('ig-ucBC').innerHTML=`Section: ${st(uBs<=1,uBs)} &nbsp;6mm: ${st(uBw6<=1,uBw6)} &nbsp;8mm: ${st(uBw8<=1,uBw8)}`;document.getElementById('ig-defl').innerHTML=`<tr><td>Mbr A</td><td>XX</td><td>${dAxx.toFixed(3)}mm</td><td>${daA.toFixed(3)}mm</td><td>${stOk(dAxx<=daA)}</td></tr><tr><td>Mbr A</td><td>YY</td><td>${dAyy.toFixed(3)}mm</td><td>${daA.toFixed(3)}mm</td><td>${stOk(dAyy<=daA)}</td></tr><tr><td>B&amp;C</td><td>XX</td><td>${dBxx.toFixed(3)}mm</td><td>${daB.toFixed(3)}mm</td><td>${stOk(dBxx<=daB)}</td></tr><tr><td>B&amp;C</td><td>YY</td><td>${dByy.toFixed(3)}mm</td><td>${daB.toFixed(3)}mm</td><td>${stOk(dByy<=daB)}</td></tr>`;document.getElementById('ig-stress').innerHTML=`<tr><td>Mbr A</td><td>XX</td><td>${sAxx.toFixed(1)} N/mm²</td><td>${Fa} N/mm²</td><td>${stOk(sAxx<=Fa)}</td></tr><tr><td>Mbr A</td><td>YY</td><td>${sAyy.toFixed(1)} N/mm²</td><td>${Fa} N/mm²</td><td>${stOk(sAyy<=Fa)}</td></tr><tr><td>B&amp;C</td><td>XX</td><td>${sBxx.toFixed(1)} N/mm²</td><td>${Fa} N/mm²</td><td>${stOk(sBxx<=Fa)}</td></tr><tr><td>B&amp;C</td><td>YY</td><td>${sByy.toFixed(1)} N/mm²</td><td>${Fa} N/mm²</td><td>${stOk(sByy<=Fa)}</td></tr><tr><td colspan="5" style="color:#b4b2a9;font-size:11px">Slenderness L/ry = ${sl.toFixed(1)}</td></tr>`;document.getElementById('ig-weld').innerHTML=`<tr><td>Mbr A</td><td>${uAs.toFixed(3)}</td><td>${uAw6.toFixed(3)}</td><td>${uAw8.toFixed(3)}</td></tr><tr><td>B&amp;C</td><td>${uBs.toFixed(3)}</td><td>${uBw6.toFixed(3)}</td><td>${uBw8.toFixed(3)}</td></tr>`;document.getElementById('ig-coderef').textContent=codeParams().ref;document.getElementById('ig-results').classList.add('show');}
+function calcCantilever(){let L=+document.getElementById('ct-L').value;let {Px,Py,Pa}=getLoads(+document.getElementById('ct-Px').value,+document.getElementById('ct-Py').value,+document.getElementById('ct-Pa').value);let sid=document.getElementById('ct-sec').value,s=SECS[sid],m=getMomCap(sid);if(!s||!m){alert('Section not in library');return;}let Ixx=s.Ixx*1e4,Iyy=s.Iyy*1e4,Zxx=s.Zxx*1e3,Zyy=s.Zyy*1e3,Fa=getAllowStress();let Mxx=Px*L,Myy=Py*L;let us=Mxx/m.sxx+Myy/m.syy+Pa/(m.sa*1e3),uw6=Mxx/m.w6xx+Myy/m.w6yy+Pa/(m.w6a*1e3),uw8=Mxx/m.w8xx+Myy/m.w8yy+Pa/(m.w8a*1e3);let dxx=Px*Math.pow(L,3)/(3*E*Ixx),dyy=Py*Math.pow(L,3)/(3*E*Iyy),da=L/300;let sxx=Mxx/Zxx,syy=Myy/Zyy;setBar('ct-bar',us);document.getElementById('ct-uc').innerHTML=`Section: ${st(us<=1,us)} &nbsp;6mm: ${st(uw6<=1,uw6)} &nbsp;8mm: ${st(uw8<=1,uw8)}`;document.getElementById('ct-defl').innerHTML=`<tr><td>XX</td><td>${dxx.toFixed(3)}mm</td><td>${da.toFixed(3)}mm</td><td>${stOk(dxx<=da)}</td></tr><tr><td>YY</td><td>${dyy.toFixed(3)}mm</td><td>${da.toFixed(3)}mm</td><td>${stOk(dyy<=da)}</td></tr>`;document.getElementById('ct-stress').innerHTML=`<tr><td>XX</td><td>${(Mxx/1e6).toFixed(3)}kNm</td><td>${sxx.toFixed(1)} N/mm²</td><td>${Fa} N/mm²</td><td>${stOk(sxx<=Fa)}</td></tr><tr><td>YY</td><td>${(Myy/1e6).toFixed(3)}kNm</td><td>${syy.toFixed(1)} N/mm²</td><td>${Fa} N/mm²</td><td>${stOk(syy<=Fa)}</td></tr>`;document.getElementById('ct-weld').innerHTML=`<tr><td>Section</td><td>${us.toFixed(3)}</td><td>${stOk(us<=1)}</td></tr><tr><td>6mm weld</td><td>${uw6.toFixed(3)}</td><td>${stOk(uw6<=1)}</td></tr><tr><td>8mm weld</td><td>${uw8.toFixed(3)}</td><td>${stOk(uw8<=1)}</td></tr>`;document.getElementById('ct-coderef').textContent=codeParams().ref;document.getElementById('ct-results').classList.add('show');}
+function calcTpost(){let H=+document.getElementById('tp-H').value,La=+document.getElementById('tp-La').value;let {Px,Py,Pa}=getLoads(+document.getElementById('tp-Px').value,+document.getElementById('tp-Py').value,+document.getElementById('tp-Pa').value);let csid=document.getElementById('tp-col-sec').value,asid=document.getElementById('tp-arm-sec').value;let sc=SECS[csid],mc=getMomCap(csid),sa=SECS[asid],ma=getMomCap(asid);if(!sc||!mc||!sa||!ma){alert('Section not in library');return;}let IxxC=sc.Ixx*1e4,IyyC=sc.Iyy*1e4,ZxxC=sc.Zxx*1e3,ZyyC=sc.Zyy*1e3;let IxxA=sa.Ixx*1e4,IyyA=sa.Iyy*1e4,ZxxA=sa.Zxx*1e3,ZyyA=sa.Zyy*1e3,Fa=getAllowStress();let totV=2*Pa,MxC=Px*H,MyC=Py*H;let uCs=MxC/mc.sxx+MyC/mc.syy+totV/(mc.sa*1e3),uCw6=MxC/mc.w6xx+MyC/mc.w6yy+totV/(mc.w6a*1e3),uCw8=MxC/mc.w8xx+MyC/mc.w8yy+totV/(mc.w8a*1e3);let MxA=Pa*La,MyA=Py*La;let uAs=MxA/ma.sxx+MyA/ma.syy,uAw6=MxA/ma.w6xx+MyA/ma.w6yy,uAw8=MxA/ma.w8xx+MyA/ma.w8yy;let dCxx=Px*Math.pow(H,3)/(3*E*IxxC),dCyy=Py*Math.pow(H,3)/(3*E*IyyC),daC=H/300;let dAxx=Pa*Math.pow(La,3)/(3*E*IxxA),dAyy=Py*Math.pow(La,3)/(3*E*IyyA),daA=La/300;let sCxx=MxC/ZxxC,sCyy=MyC/ZyyC,sAxx=MxA/ZxxA,sAyy=MyA/ZyyA;setBar('tp-barCol',uCs);document.getElementById('tp-ucCol').innerHTML=`Section: ${st(uCs<=1,uCs)} &nbsp;6mm: ${st(uCw6<=1,uCw6)} &nbsp;8mm: ${st(uCw8<=1,uCw8)}`;setBar('tp-barArm',uAs);document.getElementById('tp-ucArm').innerHTML=`Section: ${st(uAs<=1,uAs)} &nbsp;6mm: ${st(uAw6<=1,uAw6)} &nbsp;8mm: ${st(uAw8<=1,uAw8)}`;document.getElementById('tp-defl').innerHTML=`<tr><td>Column XX</td><td>${dCxx.toFixed(3)}mm</td><td>${daC.toFixed(3)}mm</td><td>${stOk(dCxx<=daC)}</td></tr><tr><td>Column YY</td><td>${dCyy.toFixed(3)}mm</td><td>${daC.toFixed(3)}mm</td><td>${stOk(dCyy<=daC)}</td></tr><tr><td>Arm XX</td><td>${dAxx.toFixed(3)}mm</td><td>${daA.toFixed(3)}mm</td><td>${stOk(dAxx<=daA)}</td></tr><tr><td>Arm YY</td><td>${dAyy.toFixed(3)}mm</td><td>${daA.toFixed(3)}mm</td><td>${stOk(dAyy<=daA)}</td></tr>`;document.getElementById('tp-stress').innerHTML=`<tr><td>Column</td><td>XX</td><td>${sCxx.toFixed(1)} N/mm²</td><td>${Fa} N/mm²</td><td>${stOk(sCxx<=Fa)}</td></tr><tr><td>Column</td><td>YY</td><td>${sCyy.toFixed(1)} N/mm²</td><td>${Fa} N/mm²</td><td>${stOk(sCyy<=Fa)}</td></tr><tr><td>Arm</td><td>XX</td><td>${sAxx.toFixed(1)} N/mm²</td><td>${Fa} N/mm²</td><td>${stOk(sAxx<=Fa)}</td></tr><tr><td>Arm</td><td>YY</td><td>${sAyy.toFixed(1)} N/mm²</td><td>${Fa} N/mm²</td><td>${stOk(sAyy<=Fa)}</td></tr>`;document.getElementById('tp-weld').innerHTML=`<tr><td>Column section</td><td>${uCs.toFixed(3)}</td><td>${stOk(uCs<=1)}</td></tr><tr><td>Column 6mm weld</td><td>${uCw6.toFixed(3)}</td><td>${stOk(uCw6<=1)}</td></tr><tr><td>Column 8mm weld</td><td>${uCw8.toFixed(3)}</td><td>${stOk(uCw8<=1)}</td></tr><tr><td>Arm section</td><td>${uAs.toFixed(3)}</td><td>${stOk(uAs<=1)}</td></tr>`;document.getElementById('tp-coderef').textContent=codeParams().ref;document.getElementById('tp-results').classList.add('show');}
+function switchTab(t){['goalpost','inverted','cantilever','tpost'].forEach(id=>{document.getElementById('tab-'+id).style.display=id===t?'block':'none';});document.querySelectorAll('.tab').forEach((btn,i)=>{btn.classList.toggle('active',['goalpost','inverted','cantilever','tpost'][i]===t);});}
+populateSel();
+</script>
+</body>
+</html>
