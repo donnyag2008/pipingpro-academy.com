@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pipe Wall Thickness Calculator — PipingPro Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F7F6F3;--surface:#FFFFFF;--border:#E2E0D8;--border-strong:#C8C5BA;
+  --text:#1A1917;--text-2:#5C5A54;--text-3:#9C9A94;
+  --accent:#1A5C3A;--accent-light:#E8F4EE;--accent-border:#A8D4B8;
+  --info:#1A4A7A;--info-light:#E8F0F8;--info-border:#A8C4E0;
+  --warn:#7A4A0A;--warn-light:#FDF3E3;--warn-border:#F0C878;
+  --danger:#7A1A1A;--danger-light:#FDE8E8;--danger-border:#F0A0A0;
+  --success:#1A5C3A;--success-light:#E8F4EE;
+  --radius:6px;--radius-lg:10px;
+  --font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.6;min-height:100vh}
+.header{background:var(--accent);color:#fff;padding:1.5rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem}
+.header-title{font-size:20px;font-weight:600;letter-spacing:-0.02em}
+.header-sub{font-size:12px;opacity:0.75;margin-top:2px}
+.header-badge{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:500}
+.container{max-width:980px;margin:0 auto;padding:1.5rem 1rem}
+.disclaimer{background:var(--warn-light);border:1px solid var(--warn-border);border-radius:var(--radius);padding:0.75rem 1rem;margin-bottom:1.5rem;font-size:12px;color:var(--warn);line-height:1.6}
+.disclaimer strong{font-weight:600}
+
+/* CODE TABS */
+.code-bar{display:flex;gap:0;margin-bottom:1.5rem;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--surface)}
+.code-btn{flex:1;padding:11px 16px;font-size:13px;font-weight:500;border:none;background:transparent;color:var(--text-2);cursor:pointer;font-family:var(--font);transition:all 0.15s;border-right:1px solid var(--border);line-height:1.3}
+.code-btn:last-child{border-right:none}
+.code-btn.on{background:var(--accent);color:#fff;font-weight:600}
+.code-btn:hover:not(.on){background:var(--accent-light);color:var(--accent)}
+.code-desc{font-size:10px;opacity:0.8;display:block;margin-top:1px}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1rem}
+.card-title{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 16px}
+.grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 16px}
+@media(max-width:700px){.grid2,.grid3,.grid4{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:11px;font-weight:500;color:var(--text-2)}
+.field input,.field select{font-size:13px;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius);background:#FAFAF8;color:var(--text);outline:none;transition:border-color 0.15s;font-family:var(--mono)}
+.field input:focus,.field select:focus{border-color:var(--accent);background:#fff}
+.field .hint{font-size:10px;color:var(--text-3)}
+.field .auto{background:#F0F4F0;color:var(--accent);font-weight:500;cursor:default}
+.hr{border:none;border-top:1px solid var(--border);margin:1rem 0}
+
+/* FORMULA DISPLAY */
+.formula-box{background:var(--info-light);border:1px solid var(--info-border);border-radius:var(--radius);padding:0.75rem 1rem;margin-bottom:1rem;font-family:var(--mono);font-size:13px;color:var(--info);line-height:1.8}
+.formula-box .eq{font-size:15px;font-weight:600;margin-bottom:4px}
+.formula-box .vars{font-size:11px;color:var(--text-2);font-family:var(--font);line-height:1.7}
+
+.calcbtn{width:100%;padding:13px;font-size:14px;font-weight:600;border:none;border-radius:var(--radius);background:var(--accent);color:#fff;cursor:pointer;margin-top:0.75rem;transition:opacity 0.15s;font-family:var(--font);letter-spacing:0.01em}
+.calcbtn:hover{opacity:0.88}
+
+/* RESULTS */
+.results{display:none;margin-top:1.5rem}
+
+/* RESULT HERO */
+.result-hero{background:var(--accent);border-radius:var(--radius-lg);padding:1.5rem 2rem;margin-bottom:1rem;color:#fff;display:flex;gap:2rem;flex-wrap:wrap;align-items:center}
+.hero-main{flex:1;min-width:160px}
+.hero-label{font-size:11px;opacity:0.7;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px}
+.hero-val{font-size:36px;font-weight:600;font-family:var(--mono);letter-spacing:-0.02em;line-height:1}
+.hero-unit{font-size:14px;opacity:0.8;margin-top:4px}
+.hero-divider{width:1px;background:rgba(255,255,255,0.2);align-self:stretch}
+.hero-sub{display:flex;flex-direction:column;gap:0.75rem}
+.hero-item{}
+.hero-item-label{font-size:10px;opacity:0.65;text-transform:uppercase;letter-spacing:0.06em}
+.hero-item-val{font-size:16px;font-weight:600;font-family:var(--mono)}
+
+/* SCHEDULE TABLE */
+.sched-table{width:100%;border-collapse:collapse;font-size:12px}
+.sched-table th{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.06em;text-align:left;padding:5px 8px;border-bottom:2px solid var(--border);background:var(--bg)}
+.sched-table td{padding:6px 8px;border-bottom:1px solid var(--border);font-family:var(--mono)}
+.sched-table tr:last-child td{border-bottom:none}
+.sched-table .label-col{font-family:var(--font);color:var(--text-2)}
+.sched-table .selected-row td{background:var(--accent-light);font-weight:600}
+.sched-table .selected-row .label-col{color:var(--accent)}
+.pass-tag{display:inline-block;background:var(--success-light);color:var(--success);font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px;margin-left:6px}
+.fail-tag{display:inline-block;background:var(--danger-light);color:var(--danger);font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px;margin-left:6px}
+
+.rs{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1rem}
+.rs-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:0.5rem}
+.rs-title{font-size:13px;font-weight:600;color:var(--text)}
+
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:0.75rem}
+.metric{background:var(--bg);border-radius:var(--radius);padding:0.6rem 0.75rem}
+.m-label{font-size:10px;font-weight:500;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px}
+.m-val{font-size:15px;font-weight:600;color:var(--text);font-family:var(--mono)}
+.m-unit{font-size:10px;color:var(--text-3);margin-top:1px}
+
+/* WORKINGS */
+.wt-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;padding:0.5rem 0.75rem;background:var(--info-light);border:1px solid var(--info-border);border-radius:var(--radius);margin-top:0.75rem;user-select:none}
+.wt-toggle:hover{background:#D0E4F5}
+.wt-label{font-size:12px;font-weight:600;color:var(--info);flex:1}
+.wt-icon{font-size:14px;color:var(--info);transition:transform 0.2s}
+.wt-toggle.open .wt-icon{transform:rotate(180deg)}
+.wb{display:none;margin-top:0.75rem;border:1px solid var(--info-border);border-radius:var(--radius);overflow:hidden}
+.wb.open{display:block}
+.step{display:grid;grid-template-columns:30px 1fr;border-bottom:1px solid var(--border)}
+.step:last-child{border-bottom:none}
+.step-n{background:var(--info-light);color:var(--info);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--info-border)}
+.step-c{padding:0.55rem 0.85rem;background:#fff}
+.step-name{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px}
+.step-formula{font-family:var(--mono);font-size:12px;color:var(--info);background:var(--info-light);padding:2px 7px;border-radius:3px;display:inline-block;margin-bottom:4px;word-break:break-all}
+.step-sub{font-family:var(--mono);font-size:11px;color:var(--text-2);margin-bottom:3px;line-height:1.5}
+.step-result{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent)}
+
+.refs{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-top:1.5rem}
+.refs-title{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem}
+.ref-item{font-size:12px;color:var(--text-2);margin-bottom:0.4rem;padding-left:1rem;position:relative;line-height:1.5}
+.ref-item::before{content:'—';position:absolute;left:0;color:var(--text-3)}
+.footer{text-align:center;padding:2rem 1rem;font-size:11px;color:var(--text-3)}
+.info-box{font-size:12px;color:var(--info);background:var(--info-light);border:1px solid var(--info-border);border-radius:var(--radius);padding:0.6rem 0.75rem;margin-top:0.75rem;line-height:1.7}
+.warn-box{font-size:12px;color:var(--warn);background:var(--warn-light);border:1px solid var(--warn-border);border-radius:var(--radius);padding:0.6rem 0.75rem;margin-top:0.5rem;line-height:1.6}
+
+/* code-specific panels */
+.panel{display:none}
+.panel.active{display:block}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-title">Pipe Wall Thickness Calculator</div>
+    <div class="header-sub">ASME B31.3 · ASME B31.4 · ASME B31.8 — with Schedule Selection per ASME B36.10</div>
+  </div>
+  <div class="header-badge">PipingPro Academy</div>
+</div>
+
+<div class="container">
+
+
+
+  <!-- CODE SELECTOR -->
+  <div class="code-bar">
+    <button class="code-btn on" onclick="setCode('b313')">
+      ASME B31.3
+      <span class="code-desc">Process Piping</span>
+    </button>
+    <button class="code-btn" onclick="setCode('b314')">
+      ASME B31.4
+      <span class="code-desc">Liquid Pipelines</span>
+    </button>
+    <button class="code-btn" onclick="setCode('b318')">
+      ASME B31.8
+      <span class="code-desc">Gas Pipelines</span>
+    </button>
+  </div>
+
+  <!-- FORMULA BOX (changes by code) -->
+  <div class="formula-box" id="formula-box">
+    <div class="eq" id="formula-eq">t = P · D / [ 2 · (S · E · W + P · Y) ]</div>
+    <div class="vars" id="formula-vars">
+      t = required minimum wall thickness (mm) &nbsp;|&nbsp; P = design pressure (barg) &nbsp;|&nbsp; D = outside diameter (mm)<br>
+      S = allowable stress at design temp (MPa) &nbsp;|&nbsp; E = longitudinal joint factor &nbsp;|&nbsp; W = weld strength reduction factor &nbsp;|&nbsp; Y = temp coefficient
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- SECTION 1: PIPE DATA (COMMON) -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="card">
+    <div class="card-title">1 — Pipe Geometry</div>
+    <div class="grid4">
+      <div class="field">
+        <label>Nominal Pipe Size (NPS)</label>
+        <select id="nps" onchange="onNpsChange()">
+          <option value="0.5">½"</option><option value="0.75">¾"</option>
+          <option value="1">1"</option><option value="1.25">1¼"</option>
+          <option value="1.5">1½"</option><option value="2">2"</option>
+          <option value="2.5">2½"</option><option value="3">3"</option>
+          <option value="4">4"</option><option value="6">6"</option>
+          <option value="8">8"</option><option value="10">10"</option>
+          <option value="12" selected>12"</option><option value="14">14"</option>
+          <option value="16">16"</option><option value="18">18"</option>
+          <option value="20">20"</option><option value="24">24"</option>
+          <option value="30">30"</option><option value="36">36"</option>
+          <option value="42">42"</option><option value="48">48"</option>
+          <option value="custom">Custom OD</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Pipe OD D (mm)</label>
+        <input type="number" id="od" value="323.85" step="0.01">
+        <span class="hint">ASME B36.10 — auto-filled from NPS</span>
+      </div>
+      <div class="field">
+        <label>Corrosion Allowance CA (mm)</label>
+        <input type="number" id="ca" value="3.0" step="0.5" min="0">
+        <span class="hint">Typically 1.5–6 mm for carbon steel</span>
+      </div>
+      <div class="field">
+        <label>Mill Tolerance MT (%)</label>
+        <input type="number" id="mt" value="12.5" step="0.5" min="0" max="20">
+        <span class="hint">12.5% for ASME B36.10 / API 5L</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- SECTION 2: DESIGN CONDITIONS (COMMON) -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="card">
+    <div class="card-title">2 — Design Conditions</div>
+    <div class="grid3">
+      <div class="field">
+        <label>Design Pressure P (barg)</label>
+        <input type="number" id="pres" value="50.0" step="0.1" min="0">
+      </div>
+      <div class="field">
+        <label>Design Temperature T (°C)</label>
+        <input type="number" id="temp" value="120" step="5" onchange="onTempChange()">
+      </div>
+      <div class="field">
+        <label>Fluid / Service</label>
+        <select id="fluid">
+          <option value="hydrocarbon">Hydrocarbon (liquid / gas)</option>
+          <option value="water">Water / Utility</option>
+          <option value="steam">Steam</option>
+          <option value="acid">Acid / Corrosive</option>
+          <option value="co2">CO₂ (dense phase)</option>
+          <option value="h2">Hydrogen</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- B31.3 PANEL -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="panel active" id="panel-b313">
+    <div class="card">
+      <div class="card-title">3 — ASME B31.3 Material &amp; Code Factors</div>
+      <div class="grid3">
+        <div class="field">
+          <label>Material</label>
+          <select id="b313-mat" onchange="onB313MatChange()">
+            <optgroup label="Carbon Steel">
+              <option value="a106b">A106 Gr. B — SMTS 414 MPa</option>
+              <option value="a106c">A106 Gr. C — SMTS 483 MPa</option>
+              <option value="a333-6">A333 Gr. 6 (LT) — SMTS 414 MPa</option>
+              <option value="a53b">A53 Gr. B — SMTS 414 MPa</option>
+            </optgroup>
+            <optgroup label="Chrome-Moly">
+              <option value="a335-p11">A335-P11 (1¼Cr½Mo) — SMTS 415 MPa</option>
+              <option value="a335-p22">A335-P22 (2¼Cr1Mo) — SMTS 415 MPa</option>
+              <option value="a335-p91">A335-P91 (9Cr1Mo) — SMTS 585 MPa</option>
+            </optgroup>
+            <optgroup label="Stainless Steel">
+              <option value="a312-tp304">A312 TP304 — SMTS 515 MPa</option>
+              <option value="a312-tp316">A312 TP316 — SMTS 515 MPa</option>
+              <option value="a312-tp316l">A312 TP316L — SMTS 485 MPa</option>
+              <option value="a312-tp321">A312 TP321 — SMTS 515 MPa</option>
+            </optgroup>
+            <optgroup label="Duplex / Super Duplex">
+              <option value="duplex-2205">UNS S31803 (Duplex 2205) — SMTS 620 MPa</option>
+              <option value="sduplex-2507">UNS S32750 (Super Duplex 2507) — SMTS 795 MPa</option>
+            </optgroup>
+            <optgroup label="Custom">
+              <option value="custom">Custom — enter S directly</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="field">
+          <label>Allowable Stress S at Design Temp (MPa)</label>
+          <input type="number" id="b313-S" value="137.9" step="0.1">
+          <span class="hint">ASME B31.3 Table A-1 — auto-filled, editable</span>
+        </div>
+        <div class="field">
+          <label>Longitudinal Joint Factor E</label>
+          <select id="b313-E">
+            <option value="1.0" selected>1.00 — Seamless</option>
+            <option value="1.0">1.00 — SAW (double)</option>
+            <option value="0.85">0.85 — ERW</option>
+            <option value="0.80">0.80 — SAW (single)</option>
+            <option value="0.60">0.60 — Furnace butt weld</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Weld Strength Reduction Factor W</label>
+          <select id="b313-W">
+            <option value="1.0" selected>1.00 — T ≤ 510°C (standard)</option>
+            <option value="0.95">0.95 — T = 510–566°C</option>
+            <option value="0.91">0.91 — T = 566–593°C</option>
+            <option value="0.87">0.87 — T = 593–621°C</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Temperature Coefficient Y</label>
+          <select id="b313-Y">
+            <option value="0.4" selected>0.40 — Ferritic steel T &lt; 482°C</option>
+            <option value="0.5">0.50 — Ferritic steel T = 482–510°C</option>
+            <option value="0.7">0.70 — Austenitic steel T ≥ 950°F (510°C)</option>
+            <option value="0.0">0.00 — Cast iron, ductile iron</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Additional Mechanical Allowance c₂ (mm)</label>
+          <input type="number" id="b313-c2" value="0" step="0.5" min="0">
+          <span class="hint">Threading, grooving — 0 for welded pipe</span>
+        </div>
+      </div>
+      <div class="info-box">
+        ℹ️ <strong>B31.3 Eq. 304.1.2(a):</strong> t = P·D / [2·(S·E·W + P·Y)] &nbsp;+&nbsp; CA + c₂<br>
+        Final specified thickness = t<sub>calc</sub> / (1 − MT/100) rounded up to next commercial schedule.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- B31.4 PANEL -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="panel" id="panel-b314">
+    <div class="card">
+      <div class="card-title">3 — ASME B31.4 Material &amp; Code Factors</div>
+      <div class="grid3">
+        <div class="field">
+          <label>Material / Grade</label>
+          <select id="b314-mat" onchange="onB314MatChange()">
+            <option value="x42">API 5L X42 — SMYS 290 MPa</option>
+            <option value="x46">API 5L X46 — SMYS 317 MPa</option>
+            <option value="x52">API 5L X52 — SMYS 358 MPa</option>
+            <option value="x56">API 5L X56 — SMYS 386 MPa</option>
+            <option value="x60">API 5L X60 — SMYS 413 MPa</option>
+            <option value="x65" selected>API 5L X65 — SMYS 448 MPa</option>
+            <option value="x70">API 5L X70 — SMYS 482 MPa</option>
+            <option value="x80">API 5L X80 — SMYS 551 MPa</option>
+            <option value="grb">API 5L Grade B — SMYS 241 MPa</option>
+            <option value="custom">Custom SMYS</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>SMYS (MPa)</label>
+          <input type="number" id="b314-smys" value="448" step="1">
+        </div>
+        <div class="field">
+          <label>Design Factor F</label>
+          <select id="b314-F" onchange="onB314FChange()">
+            <option value="0.72" selected>0.72 — Class 1, Div 1 (open country)</option>
+            <option value="0.60">0.60 — Class 1, Div 2</option>
+            <option value="0.50">0.50 — Class 2</option>
+            <option value="0.40">0.40 — Class 3 (populated)</option>
+            <option value="custom">Custom F</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Design Factor F value</label>
+          <input type="number" id="b314-Fval" value="0.72" step="0.01" min="0.1" max="1.0">
+        </div>
+        <div class="field">
+          <label>Longitudinal Joint Factor E</label>
+          <select id="b314-E">
+            <option value="1.0" selected>1.00 — Seamless / SAW</option>
+            <option value="0.85">0.85 — ERW</option>
+            <option value="0.60">0.60 — Furnace butt weld</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Temperature Derating Factor T</label>
+          <select id="b314-T">
+            <option value="1.00" selected>1.00 — T ≤ 120°C</option>
+            <option value="0.967">0.967 — T = 149°C</option>
+            <option value="0.933">0.933 — T = 177°C</option>
+            <option value="0.900">0.900 — T = 204°C</option>
+            <option value="0.867">0.867 — T = 232°C</option>
+          </select>
+        </div>
+      </div>
+      <div class="info-box">
+        ℹ️ <strong>B31.4 Eq. 403.2.1:</strong> t = P·D / (2·S·F·E·T) + CA<br>
+        S = SMYS of pipe material. Final thickness includes mill tolerance per API 5L / ASME B36.10.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- B31.8 PANEL -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="panel" id="panel-b318">
+    <div class="card">
+      <div class="card-title">3 — ASME B31.8 Material &amp; Code Factors</div>
+      <div class="grid3">
+        <div class="field">
+          <label>Material / Grade</label>
+          <select id="b318-mat" onchange="onB318MatChange()">
+            <option value="x42">API 5L X42 — SMYS 290 MPa</option>
+            <option value="x46">API 5L X46 — SMYS 317 MPa</option>
+            <option value="x52">API 5L X52 — SMYS 358 MPa</option>
+            <option value="x56">API 5L X56 — SMYS 386 MPa</option>
+            <option value="x60">API 5L X60 — SMYS 413 MPa</option>
+            <option value="x65" selected>API 5L X65 — SMYS 448 MPa</option>
+            <option value="x70">API 5L X70 — SMYS 482 MPa</option>
+            <option value="x80">API 5L X80 — SMYS 551 MPa</option>
+            <option value="grb">API 5L Grade B — SMYS 241 MPa</option>
+            <option value="custom">Custom SMYS</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>SMYS (MPa)</label>
+          <input type="number" id="b318-smys" value="448" step="1">
+        </div>
+        <div class="field">
+          <label>Location Class &amp; Design Factor F</label>
+          <select id="b318-F" onchange="onB318FChange()">
+            <option value="0.80">0.80 — Class 1, Div 1 (offshore / remote)</option>
+            <option value="0.72" selected>0.72 — Class 1, Div 2 (open country)</option>
+            <option value="0.60">0.60 — Class 2 (semi-rural)</option>
+            <option value="0.50">0.50 — Class 3 (suburban)</option>
+            <option value="0.40">0.40 — Class 4 (urban / dense)</option>
+            <option value="custom">Custom F</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Design Factor F value</label>
+          <input type="number" id="b318-Fval" value="0.72" step="0.01" min="0.1" max="1.0">
+        </div>
+        <div class="field">
+          <label>Longitudinal Joint Factor E</label>
+          <select id="b318-E">
+            <option value="1.0" selected>1.00 — Seamless / SAW</option>
+            <option value="0.80">0.80 — ERW (T ≥ ¼")</option>
+            <option value="0.60">0.60 — Furnace butt weld</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Temperature Derating Factor T</label>
+          <select id="b318-T">
+            <option value="1.00" selected>1.00 — T ≤ 120°C</option>
+            <option value="0.967">0.967 — T = 149°C</option>
+            <option value="0.933">0.933 — T = 177°C</option>
+            <option value="0.900">0.900 — T = 204°C</option>
+            <option value="0.867">0.867 — T = 232°C</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Seismic / Location Factor L</label>
+          <select id="b318-L">
+            <option value="1.0" selected>1.00 — Standard (non-seismic)</option>
+            <option value="0.9">0.90 — Seismic zone consideration</option>
+          </select>
+        </div>
+      </div>
+      <div class="info-box">
+        ℹ️ <strong>B31.8 Eq. 841.1.1:</strong> t = P·D / (2·S·F·E·T·L) + CA<br>
+        S = SMYS. Hoop stress limited to F·E·T·S. Note: B31.8 uses SMYS (not allowable stress from tables).
+      </div>
+    </div>
+  </div>
+
+  <button class="calcbtn" onclick="calculate()">▶ Calculate Required Wall Thickness</button>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- RESULTS -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="results" id="results">
+
+    <!-- HERO RESULT -->
+    <div class="result-hero" id="result-hero">
+      <div class="hero-main">
+        <div class="hero-label">Calculated Min. Thickness t<sub>min</sub></div>
+        <div class="hero-val" id="hero-tmin">—</div>
+        <div class="hero-unit">mm (before mill tolerance)</div>
+      </div>
+      <div class="hero-divider"></div>
+      <div class="hero-sub">
+        <div class="hero-item">
+          <div class="hero-item-label">With CA + Tolerance</div>
+          <div class="hero-item-val" id="hero-tspec">—</div>
+        </div>
+        <div class="hero-item">
+          <div class="hero-item-label">Recommended Schedule</div>
+          <div class="hero-item-val" id="hero-sched">—</div>
+        </div>
+        <div class="hero-item">
+          <div class="hero-item-label">Selected t<sub>nom</sub></div>
+          <div class="hero-item-val" id="hero-tnom">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTERMEDIATE VALUES -->
+    <div class="rs">
+      <div class="rs-head"><div class="rs-title">Intermediate Calculation Values</div></div>
+      <div class="metrics" id="metrics-grid"></div>
+    </div>
+
+    <!-- SCHEDULE SELECTION TABLE -->
+    <div class="rs">
+      <div class="rs-head">
+        <div class="rs-title">Schedule Selection</div>
+        <span id="sched-std-label" style="font-size:11px;color:var(--text-3)">ASME B36.10M — Carbon &amp; Alloy Steel · ★ = recommended minimum</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="sched-table">
+          <thead>
+            <tr>
+              <th>Schedule</th>
+              <th>Wall t<sub>nom</sub> (mm)</th>
+              <th>Wall (inch)</th>
+              <th>Hoop Stress (MPa)</th>
+              <th>% SMYS / S</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="sched-tbody"></tbody>
+        </table>
+      </div>
+      <div class="warn-box" id="sched-warn" style="display:none"></div>
+    </div>
+
+    <!-- STEP BY STEP -->
+    <div class="rs">
+      <div class="rs-head">
+        <div class="rs-title">Step-by-Step Calculation</div>
+        <span style="font-size:11px;color:var(--text-3)" id="code-ref-label">ASME B31.3</span>
+      </div>
+      <div class="wt-toggle" id="wt-toggle" onclick="toggleWB()">
+        <span class="wt-label">▼ Show Step-by-Step Workings</span>
+        <span class="wt-icon">▼</span>
+      </div>
+      <div class="wb" id="wb-steps"></div>
+    </div>
+
+  </div><!-- /results -->
+
+  <div class="refs">
+    <div class="refs-title">References</div>
+    <div class="ref-item">ASME B31.3-2022, Process Piping — Table 304.1.1, Eq. 3a, Table A-1</div>
+    <div class="ref-item">ASME B31.4-2019, Pipeline Transportation Systems for Liquids and Slurries — Eq. 403.2.1</div>
+    <div class="ref-item">ASME B31.8-2020, Gas Transmission and Distribution Piping Systems — Eq. 841.1.1</div>
+    <div class="ref-item">ASME B36.10M-2018, Welded and Seamless Wrought Steel Pipe — schedules STD, XS, XXS, 10–160 for CS/alloy steel</div>
+    <div class="ref-item">ASME B36.19M-2018, Stainless Steel Pipe — schedules 5S, 10S, 40S, 80S for SS and duplex (NPS ⅛"–12")</div>
+    <div class="ref-item">API Spec 5L, Specification for Line Pipe — mill tolerance 12.5% under</div>
+    <div class="ref-item">Schedule selection auto-switches: B36.19M for SS/Duplex materials (B31.3), B36.10M for CS/alloy and all pipeline codes (B31.4/B31.8)</div>
+    <div class="ref-item">Allowable stress values (B31.3) are approximate representations of ASME B31.3 Table A-1. Always verify against current code edition for final design.</div>
+  </div>
+
+  <div class="footer">PipingPro Academy · Pipe Wall Thickness Calculator · ASME B31.3 / B31.4 / B31.8<br>© Zephrum Konsultan Limited · For preliminary engineering use only — verify all results against the applicable code edition before use in any design or construction package.</div>
+
+</div>
+
+<script>
+// ============================================================
+// PIPE DATA (ASME B36.10 OD + schedules)
+// ============================================================
+const PIPE = {
+  "0.5": {od:21.34, s:{"SCH40":2.77,"SCH80":3.73,"SCH160":4.78,"XXS":7.47}},
+  "0.75":{od:26.67, s:{"SCH40":2.87,"SCH80":3.91,"SCH160":5.56,"XXS":7.82}},
+  "1":   {od:33.40, s:{"SCH40":3.38,"SCH80":4.55,"SCH160":6.35,"XXS":9.09}},
+  "1.25":{od:42.16, s:{"SCH40":3.56,"SCH80":4.85,"SCH160":6.35,"XXS":9.70}},
+  "1.5": {od:48.26, s:{"SCH40":3.68,"SCH80":5.08,"SCH160":7.14,"XXS":10.16}},
+  "2":   {od:60.33, s:{"SCH40":3.91,"SCH80":5.54,"SCH160":8.74,"XXS":11.07}},
+  "2.5": {od:73.03, s:{"SCH40":5.16,"SCH80":7.01,"SCH160":9.53,"XXS":14.02}},
+  "3":   {od:88.90, s:{"SCH40":5.49,"SCH80":7.62,"SCH160":11.13,"XXS":15.24}},
+  "4":   {od:114.30,s:{"SCH40":6.02,"SCH80":8.56,"SCH120":11.13,"SCH160":13.49,"XXS":17.12}},
+  "6":   {od:168.28,s:{"SCH40":7.11,"SCH80":10.97,"SCH120":14.27,"SCH160":18.26,"XXS":21.95}},
+  "8":   {od:219.08,s:{"SCH20":6.35,"SCH30":7.04,"SCH40":8.18,"SCH60":10.31,"SCH80":12.70,"SCH100":15.09,"SCH120":17.48,"SCH140":19.05,"SCH160":23.01}},
+  "10":  {od:273.05,s:{"SCH20":6.35,"SCH30":7.80,"SCH40":9.27,"SCH60":12.70,"SCH80":15.09,"SCH100":18.26,"SCH120":21.44,"SCH140":25.40,"SCH160":28.58}},
+  "12":  {od:323.85,s:{"SCH20":6.35,"SCH30":8.38,"SCH40":10.31,"SCH60":14.27,"SCH80":17.48,"SCH100":21.44,"SCH120":25.40,"SCH140":28.58,"SCH160":33.32}},
+  "14":  {od:355.60,s:{"SCH10":6.35,"SCH20":7.92,"SCH30":9.53,"SCH40":11.13,"SCH60":15.09,"SCH80":19.05,"SCH100":23.83,"SCH120":27.79,"SCH140":31.75,"SCH160":35.71}},
+  "16":  {od:406.40,s:{"SCH10":6.35,"SCH20":7.92,"SCH30":9.53,"SCH40":12.70,"SCH60":16.66,"SCH80":21.44,"SCH100":26.19,"SCH120":30.96,"SCH140":36.53,"SCH160":40.49}},
+  "18":  {od:457.20,s:{"SCH10":6.35,"SCH20":7.92,"SCH30":11.13,"SCH40":14.27,"SCH60":19.05,"SCH80":23.83,"SCH100":29.36,"SCH120":34.93,"SCH140":39.67,"SCH160":45.24}},
+  "20":  {od:508.00,s:{"SCH10":6.35,"SCH20":9.53,"SCH30":12.70,"SCH40":15.09,"SCH60":20.62,"SCH80":26.19,"SCH100":32.54,"SCH120":38.10,"SCH140":44.45,"SCH160":50.01}},
+  "24":  {od:609.60,s:{"SCH10":6.35,"SCH20":9.53,"SCH30":14.27,"SCH40":17.48,"SCH60":24.61,"SCH80":30.96,"SCH100":38.89,"SCH120":46.02,"SCH140":52.37,"SCH160":59.54}},
+  "30":  {od:762.00,s:{"SCH10":7.92,"SCH20":12.70,"SCH30":15.88,"STD":9.53,"XS":12.70}},
+  "36":  {od:914.40,s:{"SCH10":9.53,"SCH20":12.70,"SCH30":15.88,"STD":9.53,"XS":12.70}},
+  "42":  {od:1066.80,s:{"SCH10":9.53,"SCH20":12.70,"STD":9.53,"XS":12.70}},
+  "48":  {od:1219.20,s:{"SCH10":9.53,"SCH20":12.70,"STD":9.53,"XS":12.70}},
+};
+
+// B31.3 Allowable Stress lookup (approx Table A-1, kPa → MPa)
+// [material_key]: [[temp_C, S_MPa], ...]
+const B313_S = {
+  "a106b":    [[38,137.9],[100,137.9],[200,125.5],[300,116.5],[400,108.3],[480,103.4]],
+  "a106c":    [[38,155.1],[100,155.1],[200,144.8],[300,134.5],[400,120.7],[480,113.8]],
+  "a333-6":   [[38,137.9],[100,137.9],[-50,137.9]],
+  "a53b":     [[38,137.9],[100,137.9],[200,125.5],[300,116.5],[400,108.3]],
+  "a335-p11": [[38,138.0],[100,138.0],[200,138.0],[300,138.0],[400,136.5],[500,125.5],[550,113.8],[600,75.2]],
+  "a335-p22": [[38,138.0],[100,138.0],[200,138.0],[300,138.0],[400,134.5],[500,122.1],[550,107.6],[600,72.4]],
+  "a335-p91": [[38,165.0],[100,165.0],[200,165.0],[300,165.0],[400,163.0],[500,155.0],[550,148.0],[600,122.0],[625,95.0]],
+  "a312-tp304":  [[38,138.0],[100,130.0],[200,118.0],[300,108.0],[400,101.0],[500,94.0],[600,84.0],[700,67.0]],
+  "a312-tp316":  [[38,138.0],[100,130.0],[200,118.0],[300,110.0],[400,103.0],[500,99.0],[600,91.0],[700,74.0]],
+  "a312-tp316l": [[38,115.0],[100,110.0],[200,98.0],[300,89.0],[400,83.0],[500,78.0]],
+  "a312-tp321":  [[38,138.0],[100,130.0],[200,118.0],[300,110.0],[400,104.0],[500,99.0],[600,90.0]],
+  "duplex-2205":     [[38,172.0],[100,162.0],[200,148.0],[300,138.0]],
+  "sduplex-2507":    [[38,206.0],[100,195.0],[200,176.0],[260,165.0]],
+};
+
+// ============================================================
+// PIPE DATA — ASME B36.19M (Stainless Steel — 5S, 10S, 40S, 80S)
+// OD same as B36.10 for matching NPS. Wall thicknesses per B36.19M.
+// ============================================================
+const PIPE_SS = {
+  "0.5": {od:21.34, s:{"SCH5S":1.65,"SCH10S":2.11,"SCH40S":2.77,"SCH80S":3.73}},
+  "0.75":{od:26.67, s:{"SCH5S":1.65,"SCH10S":2.11,"SCH40S":2.87,"SCH80S":3.91}},
+  "1":   {od:33.40, s:{"SCH5S":1.65,"SCH10S":2.77,"SCH40S":3.38,"SCH80S":4.55}},
+  "1.25":{od:42.16, s:{"SCH5S":1.65,"SCH10S":2.77,"SCH40S":3.56,"SCH80S":4.85}},
+  "1.5": {od:48.26, s:{"SCH5S":1.65,"SCH10S":2.77,"SCH40S":3.68,"SCH80S":5.08}},
+  "2":   {od:60.33, s:{"SCH5S":1.65,"SCH10S":2.77,"SCH40S":3.91,"SCH80S":5.54}},
+  "2.5": {od:73.03, s:{"SCH5S":2.11,"SCH10S":3.05,"SCH40S":5.16,"SCH80S":7.01}},
+  "3":   {od:88.90, s:{"SCH5S":2.11,"SCH10S":3.05,"SCH40S":5.49,"SCH80S":7.62}},
+  "4":   {od:114.30,s:{"SCH5S":2.11,"SCH10S":3.05,"SCH40S":6.02,"SCH80S":8.56}},
+  "6":   {od:168.28,s:{"SCH5S":2.77,"SCH10S":3.40,"SCH40S":7.11,"SCH80S":10.97}},
+  "8":   {od:219.08,s:{"SCH5S":2.77,"SCH10S":3.76,"SCH40S":8.18,"SCH80S":12.70}},
+  "10":  {od:273.05,s:{"SCH5S":3.40,"SCH10S":4.19,"SCH40S":9.27,"SCH80S":15.09}},
+  "12":  {od:323.85,s:{"SCH5S":3.96,"SCH10S":4.57,"SCH40S":10.31,"SCH80S":17.48}},
+};
+
+// Which materials use B36.19 SS schedules
+const SS_MATERIALS = new Set([
+  'a312-tp304','a312-tp316','a312-tp316l','a312-tp321',
+  'duplex-2205','sduplex-2507'
+]);
+
+// Detect if current B31.3 material is SS/duplex
+function isSSMaterial(){
+  if(currentCode !== 'b313') return false;
+  return SS_MATERIALS.has(sv('b313-mat'));
+}
+
+const SMYS_MAP = {x42:290,x46:317,x52:358,x56:386,x60:413,x65:448,x70:482,x80:551,grb:241};
+
+let currentCode = 'b313';
+
+// ============================================================
+// UI
+// ============================================================
+function v(id){return parseFloat(document.getElementById(id).value)||0;}
+function sv(id){return document.getElementById(id).value;}
+function f(x,d){return x.toFixed(d===undefined?2:d);}
+
+function setCode(code){
+  currentCode = code;
+  ['b313','b314','b318'].forEach(c=>{
+    document.getElementById('panel-'+c).classList.toggle('active', c===code);
+    document.querySelectorAll('.code-btn')[['b313','b314','b318'].indexOf(c)].classList.toggle('on', c===code);
+  });
+  // Update formula
+  const fEq = document.getElementById('formula-eq');
+  const fVars = document.getElementById('formula-vars');
+  if(code==='b313'){
+    fEq.textContent = 't = P · D / [ 2 · (S · E · W + P · Y) ] + CA + c₂';
+    fVars.innerHTML = 't = required minimum wall thickness (mm) &nbsp;|&nbsp; P = design pressure (MPa) &nbsp;|&nbsp; D = outside diameter (mm)<br>S = allowable stress at design temp (MPa, Table A-1) &nbsp;|&nbsp; E = joint factor &nbsp;|&nbsp; W = weld strength reduction factor &nbsp;|&nbsp; Y = temp coefficient';
+  } else if(code==='b314'){
+    fEq.textContent = 't = P · D / ( 2 · S · F · E · T ) + CA';
+    fVars.innerHTML = 't = required minimum wall thickness (mm) &nbsp;|&nbsp; P = design pressure (MPa) &nbsp;|&nbsp; D = outside diameter (mm)<br>S = SMYS (MPa) &nbsp;|&nbsp; F = design factor (0.72–0.40) &nbsp;|&nbsp; E = longitudinal joint factor &nbsp;|&nbsp; T = temperature derating factor';
+  } else {
+    fEq.textContent = 't = P · D / ( 2 · S · F · E · T · L ) + CA';
+    fVars.innerHTML = 't = required minimum wall thickness (mm) &nbsp;|&nbsp; P = design pressure (MPa) &nbsp;|&nbsp; D = outside diameter (mm)<br>S = SMYS (MPa) &nbsp;|&nbsp; F = design factor (class-based) &nbsp;|&nbsp; E = joint factor &nbsp;|&nbsp; T = temp derating &nbsp;|&nbsp; L = seismic/location factor';
+  }
+  document.getElementById('results').style.display='none';
+}
+
+function onNpsChange(){
+  const nps = sv('nps');
+  if(nps!=='custom' && PIPE[nps]) document.getElementById('od').value = PIPE[nps].od;
+}
+
+function onTempChange(){/* placeholder for future auto T factor */}
+
+function onB313MatChange(){
+  const mat = sv('b313-mat');
+  if(mat==='custom') return;
+  const T = v('temp');
+  const S = interpS(mat, T);
+  document.getElementById('b313-S').value = S.toFixed(1);
+}
+
+function interpS(mat, T){
+  const tbl = B313_S[mat];
+  if(!tbl) return 137.9;
+  // sort by temp
+  const sorted = [...tbl].sort((a,b)=>a[0]-b[0]);
+  if(T <= sorted[0][0]) return sorted[0][1];
+  if(T >= sorted[sorted.length-1][0]) return sorted[sorted.length-1][1];
+  for(let i=0;i<sorted.length-1;i++){
+    if(T >= sorted[i][0] && T <= sorted[i+1][0]){
+      const frac = (T - sorted[i][0]) / (sorted[i+1][0] - sorted[i][0]);
+      return sorted[i][1] + frac*(sorted[i+1][1]-sorted[i][1]);
+    }
+  }
+  return sorted[0][1];
+}
+
+function onB314MatChange(){
+  const mat = sv('b314-mat');
+  if(mat!=='custom' && SMYS_MAP[mat]) document.getElementById('b314-smys').value = SMYS_MAP[mat];
+}
+function onB318MatChange(){
+  const mat = sv('b318-mat');
+  if(mat!=='custom' && SMYS_MAP[mat]) document.getElementById('b318-smys').value = SMYS_MAP[mat];
+}
+function onB314FChange(){
+  const fv = sv('b314-F');
+  if(fv!=='custom') document.getElementById('b314-Fval').value = fv;
+}
+function onB318FChange(){
+  const fv = sv('b318-F');
+  if(fv!=='custom') document.getElementById('b318-Fval').value = fv;
+}
+
+function toggleWB(){
+  const t = document.getElementById('wt-toggle');
+  const wb = document.getElementById('wb-steps');
+  const open = wb.classList.toggle('open');
+  t.classList.toggle('open', open);
+  t.querySelector('.wt-label').textContent = open ? '▲ Hide Step-by-Step Workings' : '▼ Show Step-by-Step Workings';
+}
+
+function ST(n,name,formula,sub,result){
+  return `<div class="step"><div class="step-n">${n}</div><div class="step-c">
+    <div class="step-name">${name}</div>
+    <div class="step-formula">${formula}</div>
+    <div class="step-sub">${sub}</div>
+    <div class="step-result">= ${result}</div>
+  </div></div>`;
+}
+
+// ============================================================
+// CALCULATE
+// ============================================================
+function calculate(){
+  const nps   = sv('nps');
+  const D     = v('od');       // mm
+  const CA    = v('ca');       // mm
+  const MT    = v('mt');       // %
+  const P_barg = v('pres');
+  const P     = P_barg / 10;  // MPa (1 bar = 0.1 MPa)
+  const T_deg = v('temp');
+
+  let t_calc, denominator, steps='', S_eff, code_label;
+
+  if(currentCode === 'b313'){
+    code_label = 'ASME B31.3';
+    const S  = v('b313-S');     // MPa
+    const E  = parseFloat(sv('b313-E'));
+    const W  = parseFloat(sv('b313-W'));
+    const Y  = parseFloat(sv('b313-Y'));
+    const c2 = v('b313-c2');
+    denominator = 2*(S*E*W + P*Y);
+    t_calc = (P*D) / denominator;
+    S_eff = S;
+
+    steps += ST(1,'Convert Pressure to MPa','P (MPa) = P (barg) × 0.1',`= ${f(P_barg,1)} × 0.1`,`${f(P,3)} MPa`);
+    steps += ST(2,'Denominator','2(S·E·W + P·Y)',`= 2×(${f(S,1)}×${f(E,2)}×${f(W,2)} + ${f(P,3)}×${f(Y,1)})`,`${f(denominator,4)} MPa`);
+    steps += ST(3,'Required thickness t (Eq. 3a)','t = P·D / [2·(S·E·W + P·Y)]',`= ${f(P,3)} × ${f(D,2)} / ${f(denominator,4)}`,`${f(t_calc,3)} mm`);
+    steps += ST(4,'Add corrosion allowance','t_CA = t + CA',`= ${f(t_calc,3)} + ${f(CA,1)}`,`${f(t_calc+CA,3)} mm`);
+    if(c2>0) steps += ST(5,'Add mechanical allowance c₂','t_c2 = t_CA + c₂',`= ${f(t_calc+CA,3)} + ${f(c2,1)}`,`${f(t_calc+CA+c2,3)} mm`);
+    const t_with_ca = t_calc + CA + c2;
+    const t_spec = t_with_ca / (1 - MT/100);
+    steps += ST(6,'Account for mill tolerance','t_spec = (t + CA + c₂) / (1 − MT/100)',`= ${f(t_with_ca,3)} / (1 − ${MT}/100)`,`${f(t_spec,3)} mm`);
+    buildResults(D, P, t_calc, t_calc+CA+c2, t_spec, S_eff, nps, steps, code_label, MT, CA, denominator);
+
+  } else if(currentCode === 'b314'){
+    code_label = 'ASME B31.4';
+    const S = v('b314-smys'); // MPa
+    const F = v('b314-Fval');
+    const E = parseFloat(sv('b314-E'));
+    const Tv = parseFloat(sv('b314-T'));
+    denominator = 2*S*F*E*Tv;
+    t_calc = (P*D) / denominator;
+    S_eff = S*F*E*Tv; // effective allowable hoop
+
+    steps += ST(1,'Convert Pressure to MPa','P (MPa) = P (barg) × 0.1',`= ${f(P_barg,1)} × 0.1`,`${f(P,3)} MPa`);
+    steps += ST(2,'Denominator','2·S·F·E·T',`= 2×${f(S,0)}×${f(F,2)}×${f(E,2)}×${f(Tv,3)}`,`${f(denominator,3)} MPa`);
+    steps += ST(3,'Required thickness (Eq. 403.2.1)','t = P·D / (2·S·F·E·T)',`= ${f(P,3)} × ${f(D,2)} / ${f(denominator,3)}`,`${f(t_calc,3)} mm`);
+    steps += ST(4,'Add corrosion allowance','t_CA = t + CA',`= ${f(t_calc,3)} + ${f(CA,1)}`,`${f(t_calc+CA,3)} mm`);
+    const t_spec = (t_calc+CA)/(1-MT/100);
+    steps += ST(5,'Account for mill tolerance','t_spec = (t+CA) / (1−MT/100)',`= ${f(t_calc+CA,3)} / (1−${MT}/100)`,`${f(t_spec,3)} mm`);
+    buildResults(D, P, t_calc, t_calc+CA, t_spec, S*F*E*Tv, nps, steps, code_label, MT, CA, denominator);
+
+  } else {
+    code_label = 'ASME B31.8';
+    const S = v('b318-smys');
+    const F = v('b318-Fval');
+    const E = parseFloat(sv('b318-E'));
+    const Tv = parseFloat(sv('b318-T'));
+    const L = parseFloat(sv('b318-L'));
+    denominator = 2*S*F*E*Tv*L;
+    t_calc = (P*D) / denominator;
+    S_eff = S*F*E*Tv*L;
+
+    steps += ST(1,'Convert Pressure to MPa','P (MPa) = P (barg) × 0.1',`= ${f(P_barg,1)} × 0.1`,`${f(P,3)} MPa`);
+    steps += ST(2,'Denominator','2·S·F·E·T·L',`= 2×${f(S,0)}×${f(F,2)}×${f(E,2)}×${f(Tv,3)}×${f(L,2)}`,`${f(denominator,3)} MPa`);
+    steps += ST(3,'Required thickness (Eq. 841.1.1)','t = P·D / (2·S·F·E·T·L)',`= ${f(P,3)} × ${f(D,2)} / ${f(denominator,3)}`,`${f(t_calc,3)} mm`);
+    steps += ST(4,'Add corrosion allowance','t_CA = t + CA',`= ${f(t_calc,3)} + ${f(CA,1)}`,`${f(t_calc+CA,3)} mm`);
+    const t_spec = (t_calc+CA)/(1-MT/100);
+    steps += ST(5,'Account for mill tolerance','t_spec = (t+CA) / (1−MT/100)',`= ${f(t_calc+CA,3)} / (1−${MT}/100)`,`${f(t_spec,3)} mm`);
+    buildResults(D, P, t_calc, t_calc+CA, t_spec, S*F*E*Tv*L, nps, steps, code_label, MT, CA, denominator);
+  }
+
+  document.getElementById('code-ref-label').textContent = code_label;
+  document.getElementById('wb-steps').innerHTML = steps;
+  document.getElementById('results').style.display='block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function buildResults(D, P_MPa, t_calc, t_with_ca, t_spec, S_allow, nps, steps, code_label, MT, CA, denom){
+  document.getElementById('hero-tmin').textContent = f(t_calc,3) + ' mm';
+  document.getElementById('hero-tspec').textContent = f(t_spec,3) + ' mm';
+
+  // Auto-select pipe table: B36.19 for SS/Duplex, B36.10 for CS/alloy
+  const useB3619 = isSSMaterial();
+  const pipeTable = useB3619 ? PIPE_SS : PIPE;
+  const pipeData  = pipeTable[nps];
+  const stdLabel  = useB3619
+    ? 'ASME B36.19M — Stainless Steel (5S / 10S / 40S / 80S)'
+    : 'ASME B36.10M — Carbon & Alloy Steel';
+
+  // Update schedule table header label
+  document.getElementById('sched-std-label').textContent = stdLabel + ' · ★ = recommended minimum';
+
+  let schedRows = '';
+  let recommended = null;
+  let firstPass = true;
+
+  if(pipeData){
+    const scheds = pipeData.s;
+    const entries = Object.entries(scheds).sort((a,b)=>a[1]-b[1]);
+    for(const [sched, tw] of entries){
+      const hoop = (P_MPa * D) / (2 * tw); // MPa
+      const pctS = (hoop / S_allow * 100);
+      const adequate = tw >= t_spec;
+      const isRec = adequate && firstPass;
+      if(isRec){
+        firstPass = false;
+        recommended = {sched, tw};
+      }
+      const tag = adequate
+        ? `<span class="pass-tag">✓ ADEQUATE</span>`
+        : `<span class="fail-tag">✗ THIN</span>`;
+      schedRows += `<tr class="${isRec?'selected-row':''}">
+        <td class="label-col">${sched}${isRec?' ★':''}</td>
+        <td>${f(tw,2)}</td>
+        <td>${(tw/25.4).toFixed(3)}"</td>
+        <td>${f(hoop,1)}</td>
+        <td>${f(pctS,1)}%</td>
+        <td>${tag}</td>
+      </tr>`;
+    }
+  } else if(useB3619 && !pipeData){
+    // B36.19 only goes to 12" — show note for larger SS
+    schedRows = `<tr><td colspan="6" style="color:var(--text-3);font-family:var(--font);text-align:center;padding:1rem">
+      ℹ️ ASME B36.19M covers NPS ⅛" – 12" only. For NPS ${nps}" stainless steel pipe, use ASME B36.10M schedules (10S/40S/80S designation may still apply — verify with pipe supplier). Required t<sub>spec</sub> = ${f(t_spec,3)} mm.
+    </td></tr>`;
+  } else {
+    // Custom OD — just show result
+    schedRows = `<tr><td colspan="6" style="color:var(--text-3);text-align:center;padding:1rem">Schedule lookup not available for custom OD. Required t<sub>spec</sub> = ${f(t_spec,3)} mm</td></tr>`;
+  }
+  document.getElementById('sched-tbody').innerHTML = schedRows;
+
+  if(recommended){
+    document.getElementById('hero-sched').textContent = recommended.sched;
+    document.getElementById('hero-tnom').textContent = f(recommended.tw,2) + ' mm';
+    document.getElementById('sched-warn').style.display='none';
+  } else {
+    document.getElementById('hero-sched').textContent = 'See table ↓';
+    document.getElementById('hero-tnom').textContent = '—';
+    if(pipeData){
+      document.getElementById('sched-warn').style.display='block';
+      document.getElementById('sched-warn').textContent =
+        `⚠️ No standard schedule for NPS ${nps}" meets the required t_spec = ${f(t_spec,3)} mm. Consider: increasing pipe OD, reducing pressure, using a higher grade material, or specifying a custom wall thickness.`;
+    }
+  }
+
+  // Metrics
+  const hoopCalc = (P_MPa*D)/(2*t_calc);
+  document.getElementById('metrics-grid').innerHTML = `
+    <div class="metric"><div class="m-label">P (MPa)</div><div class="m-val">${f(P_MPa,3)}</div><div class="m-unit">${f(v('pres'),1)} barg</div></div>
+    <div class="metric"><div class="m-label">Allowable Stress</div><div class="m-val">${f(S_allow,1)}</div><div class="m-unit">MPa</div></div>
+    <div class="metric"><div class="m-label">Denominator</div><div class="m-val">${f(denom,2)}</div><div class="m-unit">MPa</div></div>
+    <div class="metric"><div class="m-label">t calculated</div><div class="m-val">${f(t_calc,3)}</div><div class="m-unit">mm (code min)</div></div>
+    <div class="metric"><div class="m-label">t + CA</div><div class="m-val">${f(t_with_ca,3)}</div><div class="m-unit">mm</div></div>
+    <div class="metric"><div class="m-label">t specified</div><div class="m-val">${f(t_spec,3)}</div><div class="m-unit">mm (inc. ${MT}% tolerance)</div></div>
+    <div class="metric"><div class="m-label">Hoop Stress</div><div class="m-val">${f(hoopCalc,1)}</div><div class="m-unit">MPa at t_calc</div></div>
+    <div class="metric"><div class="m-label">D/t ratio</div><div class="m-val">${f(D/t_calc,1)}</div><div class="m-unit">at t_calc</div></div>
+  `;
+}
+
+// Init
+onNpsChange();
+onB313MatChange();
+</script>
+</body>
+</html>

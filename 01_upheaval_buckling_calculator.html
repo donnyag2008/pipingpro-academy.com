@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upheaval Buckling Calculator — PipingPro Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F7F6F3;--surface:#FFFFFF;--border:#E2E0D8;--border-strong:#C8C5BA;
+  --text:#1A1917;--text-2:#5C5A54;--text-3:#9C9A94;
+  --accent:#1A5C3A;--accent-light:#E8F4EE;--accent-border:#A8D4B8;
+  --info:#1A4A7A;--info-light:#E8F0F8;--info-border:#A8C4E0;
+  --warn:#7A4A0A;--warn-light:#FDF3E3;--warn-border:#F0C878;
+  --danger:#7A1A1A;--danger-light:#FDE8E8;--danger-border:#F0A0A0;
+  --success:#1A5C3A;--success-light:#E8F4EE;
+  --radius:6px;--radius-lg:10px;
+  --font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.6;min-height:100vh}
+.header{background:var(--accent);color:#fff;padding:1.5rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem}
+.header-title{font-size:20px;font-weight:600;letter-spacing:-0.02em}
+.header-sub{font-size:12px;opacity:0.75;margin-top:2px}
+.header-badge{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:500}
+.container{max-width:920px;margin:0 auto;padding:1.5rem 1rem}
+.disclaimer{background:var(--warn-light);border:1px solid var(--warn-border);border-radius:var(--radius);padding:0.75rem 1rem;margin-bottom:1.5rem;font-size:12px;color:var(--warn);line-height:1.6}
+.disclaimer strong{font-weight:600}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1rem}
+.card-title{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border)}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 16px}
+@media(max-width:600px){.grid3{grid-template-columns:1fr 1fr}}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:11px;font-weight:500;color:var(--text-2)}
+.field input,.field select{font-size:13px;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius);background:#FAFAF8;color:var(--text);outline:none;transition:border-color 0.15s;font-family:var(--mono)}
+.field input:focus,.field select:focus{border-color:var(--accent);background:#fff}
+.field .hint{font-size:10px;color:var(--text-3)}
+.toggle-row{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap}
+.tbtn{flex:1;min-width:100px;padding:7px 10px;font-size:12px;font-weight:500;border:1px solid var(--border);border-radius:var(--radius);background:#FAFAF8;color:var(--text-2);cursor:pointer;transition:all 0.15s;font-family:var(--font)}
+.tbtn:hover{border-color:var(--border-strong);background:#fff}
+.tbtn.on{background:var(--accent-light);color:var(--accent);border-color:var(--accent-border);font-weight:600}
+.calcbtn{width:100%;padding:12px;font-size:14px;font-weight:600;border:none;border-radius:var(--radius);background:var(--accent);color:#fff;cursor:pointer;margin-top:0.5rem;transition:opacity 0.15s;font-family:var(--font)}
+.calcbtn:hover{opacity:0.9}
+.results{display:none;margin-top:1.5rem}
+.rs{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1rem}
+.rs-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:0.5rem}
+.rs-title{font-size:14px;font-weight:600;color:var(--text)}
+.badge{font-size:11px;font-weight:600;padding:3px 12px;border-radius:20px}
+.badge-pass{background:var(--success-light);color:var(--success)}
+.badge-fail{background:var(--danger-light);color:var(--danger)}
+.badge-na{background:#F0EFE8;color:var(--text-2)}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:0.75rem}
+.metric{background:var(--bg);border-radius:var(--radius);padding:0.6rem 0.75rem}
+.m-label{font-size:10px;font-weight:500;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px}
+.m-val{font-size:15px;font-weight:600;color:var(--text);font-family:var(--mono)}
+.m-unit{font-size:10px;color:var(--text-3);margin-top:1px}
+.note{font-size:12px;color:var(--text-2);line-height:1.6;margin-top:0.5rem}
+.warn-box{font-size:12px;color:var(--warn);background:var(--warn-light);border:1px solid var(--warn-border);border-radius:var(--radius);padding:0.6rem 0.75rem;margin-top:0.5rem;line-height:1.6}
+.cam-box{background:var(--info-light);border:1px solid var(--info-border);border-radius:var(--radius);padding:0.75rem;margin-top:0.75rem}
+.sub-section{border-top:1px solid var(--border);margin-top:0.75rem;padding-top:0.75rem}
+.sub-title{font-size:11px;font-weight:600;color:var(--text-2);margin-bottom:0.5rem}
+.sum-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.sum-card{border-radius:var(--radius);padding:0.75rem;text-align:center}
+.sum-card.pass{background:var(--success-light);border:1px solid var(--accent-border)}
+.sum-card.fail{background:var(--danger-light);border:1px solid var(--danger-border)}
+.sum-label{font-size:11px;color:var(--text-2);margin-bottom:4px}
+.sum-val{font-size:14px;font-weight:700}
+.sum-card.pass .sum-val{color:var(--accent)}
+.sum-card.fail .sum-val{color:var(--danger)}
+.wt-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;padding:0.5rem 0.75rem;background:var(--info-light);border:1px solid var(--info-border);border-radius:var(--radius);margin-top:0.75rem;user-select:none}
+.wt-toggle:hover{background:#D0E4F5}
+.wt-label{font-size:12px;font-weight:600;color:var(--info);flex:1}
+.wt-icon{font-size:14px;color:var(--info);transition:transform 0.2s;display:inline-block}
+.wt-toggle.open .wt-icon{transform:rotate(180deg)}
+.wb{display:none;margin-top:0.75rem;border:1px solid var(--info-border);border-radius:var(--radius);overflow:hidden}
+.wb.open{display:block}
+.step{display:grid;grid-template-columns:30px 1fr;border-bottom:1px solid var(--border)}
+.step:last-child{border-bottom:none}
+.step-n{background:var(--info-light);color:var(--info);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--info-border)}
+.step-c{padding:0.6rem 0.85rem;background:#fff}
+.step-name{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px}
+.step-formula{font-family:var(--mono);font-size:12px;color:var(--info);background:var(--info-light);padding:2px 7px;border-radius:3px;display:inline-block;margin-bottom:5px;word-break:break-all}
+.step-sub{font-family:var(--mono);font-size:11px;color:var(--text-2);margin-bottom:4px;line-height:1.5}
+.step-result{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent)}
+.refs{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-top:1.5rem}
+.refs-title{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem}
+.ref-item{font-size:12px;color:var(--text-2);margin-bottom:0.4rem;padding-left:1rem;position:relative;line-height:1.5}
+.ref-item::before{content:'—';position:absolute;left:0;color:var(--text-3)}
+.footer{text-align:center;padding:2rem 1rem;font-size:11px;color:var(--text-3)}
+.pip-hide{display:none}
+.dnv-tri-params{display:none}
+</style>
+</head>
+<body>
+<div class="header">
+  <div>
+    <div class="header-title">Upheaval Buckling Calculator</div>
+    <div class="header-sub">Three independent methods · Full calculation working</div>
+  </div>
+  <div class="header-badge">PipingPro Academy</div>
+</div>
+<div class="container">
+<div class="disclaimer"><strong>Educational disclaimer:</strong> This calculator implements standard engineering equations for educational purposes. Results must be verified against the user's licensed copy of applicable codes and project-specific geotechnical data. PipingPro Academy accepts no liability for engineering decisions made on the basis of these results.</div>
+
+<div class="toggle-row">
+  <button class="tbtn on" id="btn-single" onclick="setPipe('single')">Single pipe</button>
+  <button class="tbtn" id="btn-pip" onclick="setPipe('pip')">Pipe-in-pipe (PIP)</button>
+</div>
+<div class="card">
+  <div class="card-title">Pipeline conditions — inner / single pipe</div>
+  <div class="grid3">
+    <div class="field"><label>OD (mm)</label><input type="number" id="D" value="219.1" step="0.1"></div>
+    <div class="field"><label>Wall thickness (mm)</label><input type="number" id="t" value="14.27" step="0.01"></div>
+    <div class="field"><label>Design pressure (MPa)</label><input type="number" id="Pi" value="33.5" step="0.1"></div>
+    <div class="field"><label>Install temp T1 (°C)</label><input type="number" id="T1" value="4" step="1"></div>
+    <div class="field"><label>Design temp T2 (°C)</label><input type="number" id="T2" value="120" step="1"></div>
+    <div class="field"><label>Coating thickness (mm)</label><input type="number" id="tc1" value="10" step="0.5"></div>
+    <div class="field"><label>Coating density (kg/m³)</label><input type="number" id="rhoCoat" value="160" step="10"></div>
+    <div class="field"><label>Contents density (kg/m³)</label><input type="number" id="rhoCont" value="300" step="10"></div>
+    <div class="field"><label>Pipe length (m)</label><input type="number" id="Lpipe" value="10000" step="100"></div>
+  </div>
+</div>
+<div class="card pip-hide" id="pip-section">
+  <div class="card-title">Carrier pipe — PIP outer</div>
+  <div class="grid3">
+    <div class="field"><label>OD (mm)</label><input type="number" id="Dc" value="323.8" step="0.1"></div>
+    <div class="field"><label>Wall thickness (mm)</label><input type="number" id="tc" value="14.27" step="0.01"></div>
+    <div class="field"><label>Coating thickness (mm)</label><input type="number" id="tcc" value="3" step="0.5"></div>
+    <div class="field"><label>Coating density (kg/m³)</label><input type="number" id="rhoCcoat" value="900" step="10"></div>
+    <div class="field"><label>Annulus density (kg/m³)</label><input type="number" id="rhoAnn" value="0" step="10"></div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-title">Steel properties</div>
+  <div class="grid3">
+    <div class="field"><label>E — elastic modulus (MPa)</label><input type="number" id="E" value="207000" step="1000"></div>
+    <div class="field"><label>α — thermal exp (×10⁻⁵/°C)</label><input type="number" id="alpha" value="1.17" step="0.01"></div>
+    <div class="field"><label>ν — Poisson's ratio</label><input type="number" id="nu" value="0.3" step="0.01"></div>
+    <div class="field"><label>ρ steel (kg/m³)</label><input type="number" id="rhoS" value="7850" step="10"></div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-title">Soil properties</div>
+  <div class="toggle-row">
+    <button class="tbtn on" id="btn-cl" onclick="setSoil('cohesionless')">Cohesionless (sand/rock)</button>
+    <button class="tbtn" id="btn-co" onclick="setSoil('cohesive')">Cohesive (clay)</button>
+  </div>
+  <div class="grid3">
+    <div class="field"><label>Cover depth H (m)</label><input type="number" id="H" value="0.6" step="0.1"><span class="hint">top of pipe to surface</span></div>
+    <div class="field"><label>Imperfection δ (mm)</label><input type="number" id="delta" value="100" step="10"></div>
+    <div class="field"><label>Soil unit weight γ' (N/m³)</label><input type="number" id="rhoSoil" value="9000" step="500"></div>
+    <div class="field" id="f-fs"><label>Schaminée factor fs</label><input type="number" id="fs" value="0.5" step="0.05"><span class="hint">loose: 0.1–0.3 | dense: 0.4–0.6</span></div>
+    <div class="field" id="f-fp"><label>Pedersen factor fp</label><input type="number" id="fp" value="0.5" step="0.05"></div>
+    <div class="field" id="f-su" style="display:none"><label>Shear strength su (N/m²)</label><input type="number" id="su" value="25000" step="1000"></div>
+    <div class="field"><label>Axial friction µ</label><input type="number" id="mu" value="0.6" step="0.05"></div>
+    <div class="field"><label>Sbmax (MPa)</label><input type="number" id="Sbmax" value="200" step="10"></div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-title">DNV-RP-F110 mode</div>
+  <div class="toggle-row">
+    <button class="tbtn on" id="btn-dnv-s" onclick="setDNV('simple')">Simplified check</button>
+    <button class="tbtn" id="btn-dnv-t" onclick="setDNV('trilinear')">Full tri-linear model</button>
+  </div>
+  <div class="dnv-tri-params" id="tri-params">
+    <div class="grid3" style="margin-top:0.5rem">
+      <div class="field"><label>α — initial resistance fraction</label><input type="number" id="dnv-alpha" value="0.75" step="0.05"><span class="hint">loose sand: 0.75–0.85</span></div>
+      <div class="field"><label>β — shape parameter</label><input type="number" id="dnv-beta" value="0.2" step="0.05"></div>
+      <div class="field"><label>γ_UR</label><input type="number" id="dnv-gur" value="0.925" step="0.005"><span class="hint">min 0.925 cohesionless</span></div>
+      <div class="field"><label>δf design mm (0 = Cambridge auto)</label><input type="number" id="dnv-df" value="0" step="1"></div>
+    </div>
+  </div>
+</div>
+<button class="calcbtn" onclick="calculate()">Calculate upheaval buckling</button>
+
+<div class="results" id="results">
+
+<div class="rs">
+  <div class="rs-head"><span class="rs-title">Method 1 — K. Peters (3R International, 2006)</span><span class="badge" id="badge-kp">—</span></div>
+  <div class="metrics">
+    <div class="metric"><div class="m-label">F_restr</div><div class="m-val" id="kp-F">—</div><div class="m-unit">kN</div></div>
+    <div class="metric"><div class="m-label">LB</div><div class="m-val" id="kp-LB">—</div><div class="m-unit">m</div></div>
+    <div class="metric"><div class="m-label">H_eff</div><div class="m-val" id="kp-Heff">—</div><div class="m-unit">mm</div></div>
+    <div class="metric"><div class="m-label">R_up</div><div class="m-val" id="kp-Rup">—</div><div class="m-unit">N/m</div></div>
+    <div class="metric"><div class="m-label">R_tot</div><div class="m-val" id="kp-Rtot">—</div><div class="m-unit">N/m</div></div>
+    <div class="metric"><div class="m-label">φ_all</div><div class="m-val" id="kp-phi">—</div><div class="m-unit">rad</div></div>
+  </div>
+  <div class="note" id="kp-note"></div>
+  <div class="wt-toggle" id="wt-kp" onclick="toggleW('kp','K. Peters method')">
+    <span class="wt-label">Show calculation working — K. Peters method</span><span class="wt-icon">▼</span>
+  </div>
+  <div class="wb" id="wb-kp"></div>
+</div>
+
+<div class="rs">
+  <div class="rs-head"><span class="rs-title">Method 2 — OTC 6335 (Palmer et al., 1990)</span><span class="badge" id="badge-otc">—</span></div>
+  <div class="metrics">
+    <div class="metric"><div class="m-label">S0</div><div class="m-val" id="otc-S0">—</div><div class="m-unit">kN</div></div>
+    <div class="metric"><div class="m-label">Uplift q</div><div class="m-val" id="otc-q">—</div><div class="m-unit">N/m</div></div>
+    <div class="metric"><div class="m-label">w_sub</div><div class="m-val" id="otc-w">—</div><div class="m-unit">N/m</div></div>
+    <div class="metric"><div class="m-label">Total Q</div><div class="m-val" id="otc-Q">—</div><div class="m-unit">N/m</div></div>
+    <div class="metric"><div class="m-label">Wr required</div><div class="m-val" id="otc-Wr">—</div><div class="m-unit">N/m</div></div>
+  </div>
+  <div class="note" id="otc-note"></div>
+  <div class="wt-toggle" id="wt-otc" onclick="toggleW('otc','OTC 6335')">
+    <span class="wt-label">Show calculation working — OTC 6335</span><span class="wt-icon">▼</span>
+  </div>
+  <div class="wb" id="wb-otc"></div>
+</div>
+
+<div class="rs">
+  <div class="rs-head"><span class="rs-title">Method 3 — DNV-RP-F110 (2007)</span><span class="badge" id="badge-dnv">—</span></div>
+  <div class="sub-title" id="dnv-mode-label"></div>
+  <div class="metrics" id="dnv-simple-metrics">
+    <div class="metric"><div class="m-label">Hc</div><div class="m-val" id="ds-Hc">—</div><div class="m-unit">m</div></div>
+    <div class="metric"><div class="m-label">R_peak Schaminée</div><div class="m-val" id="ds-Rpeak">—</div><div class="m-unit">N/m</div></div>
+    <div class="metric"><div class="m-label">R_peak Pedersen</div><div class="m-val" id="ds-Rped">—</div><div class="m-unit">N/m</div></div>
+    <div class="metric"><div class="m-label">Total resistance</div><div class="m-val" id="ds-Q">—</div><div class="m-unit">N/m</div></div>
+    <div class="metric"><div class="m-label">S0</div><div class="m-val" id="ds-S0">—</div><div class="m-unit">kN</div></div>
+  </div>
+  <div id="dnv-tri-metrics" style="display:none">
+    <div class="metrics">
+      <div class="metric"><div class="m-label">R_max Pedersen</div><div class="m-val" id="dt-Rmax">—</div><div class="m-unit">N/m</div></div>
+      <div class="metric"><div class="m-label">R_design</div><div class="m-val" id="dt-Rdes">—</div><div class="m-unit">N/m</div></div>
+      <div class="metric"><div class="m-label">δf</div><div class="m-val" id="dt-df">—</div><div class="m-unit">mm</div></div>
+      <div class="metric"><div class="m-label">δ1 = β·δf</div><div class="m-val" id="dt-d1">—</div><div class="m-unit">mm</div></div>
+      <div class="metric"><div class="m-label">δ2 = α·δf</div><div class="m-val" id="dt-d2">—</div><div class="m-unit">mm</div></div>
+      <div class="metric"><div class="m-label">R at δ</div><div class="m-val" id="dt-Rdelta">—</div><div class="m-unit">N/m</div></div>
+    </div>
+    <div class="note" id="dt-curvenote"></div>
+  </div>
+  <div class="sub-section">
+    <div class="sub-title">Cambridge mobilisation distance — Thusyanthan et al. (OPT 2010) Eq. 5: δf/D = 0.02·e^(H/2D)</div>
+    <div class="cam-box">
+      <div class="metrics" style="margin-bottom:0">
+        <div class="metric" style="background:transparent;padding:0"><div class="m-label" style="color:var(--info)">H/D</div><div class="m-val" style="color:var(--info);font-size:14px" id="cam-HD">—</div></div>
+        <div class="metric" style="background:transparent;padding:0"><div class="m-label" style="color:var(--info)">Cambridge δf</div><div class="m-val" style="color:var(--info);font-size:14px" id="cam-df">—</div><div class="m-unit" style="color:var(--info)">mm</div></div>
+        <div class="metric" style="background:transparent;padding:0"><div class="m-label" style="color:var(--info)">DNV δf (mid)</div><div class="m-val" style="color:var(--info);font-size:14px" id="cam-dnv">—</div><div class="m-unit" style="color:var(--info)">mm</div></div>
+        <div class="metric" style="background:transparent;padding:0"><div class="m-label" style="color:var(--info)">Cam/DNV ratio</div><div class="m-val" style="color:var(--info);font-size:14px" id="cam-ratio">—</div><div class="m-unit" style="color:var(--info)">×</div></div>
+      </div>
+    </div>
+    <div class="note" id="cam-note"></div>
+  </div>
+  <div class="note" id="dnv-note" style="margin-top:0.5rem"></div>
+  <div class="warn-box" id="dnv-warn" style="display:none"></div>
+  <div class="wt-toggle" id="wt-dnv" onclick="toggleW('dnv','DNV-RP-F110')">
+    <span class="wt-label">Show calculation working — DNV-RP-F110</span><span class="wt-icon">▼</span>
+  </div>
+  <div class="wb" id="wb-dnv"></div>
+</div>
+
+<div class="rs">
+  <div class="rs-head"><span class="rs-title">Summary — all three methods</span></div>
+  <div class="sum-grid" id="sum-grid"></div>
+  <div class="note" id="sum-note" style="margin-top:0.75rem"></div>
+</div>
+
+</div>
+
+<div class="refs">
+  <div class="refs-title">Methodology &amp; references</div>
+  <div class="ref-item">Peter, K. (2006). <em>About Upheaval and Lateral Buckling of Embedded Pipelines.</em> 3R International. R+K Consulting Engineers, Rijswijk, NL.</div>
+  <div class="ref-item">Palmer, A.C., Ellinas, C.P., Richards, D.M. &amp; Guijt, J. (1990). <em>Design of Submarine Pipelines Against Upheaval Buckling.</em> OTC 6335, Offshore Technology Conference, Houston.</div>
+  <div class="ref-item">Thusyanthan, N.I., Mesmar, S., Wang, J. &amp; Haigh, S.K. (2010). <em>Uplift Resistance of Buried Pipelines and DNV-RP-F110 Guidelines.</em> OPT 2010, Amsterdam. KW Ltd. &amp; University of Cambridge.</div>
+  <div class="ref-item">DNV-RP-F110 (2007). <em>Global Buckling of Submarine Pipelines.</em> Det Norske Veritas, Norway.</div>
+</div>
+<div class="footer">PipingPro Academy · pipingpro-academy.com · Educational use only · Verify all results against applicable codes</div>
+</div>
+
+<script>
+let pipeMode='single',soilMode='cohesionless',dnvMode='simple';
+
+function setPipe(m){pipeMode=m;document.getElementById('btn-single').classList.toggle('on',m==='single');document.getElementById('btn-pip').classList.toggle('on',m==='pip');document.getElementById('pip-section').classList.toggle('pip-hide',m==='single');}
+function setSoil(m){soilMode=m;document.getElementById('btn-cl').classList.toggle('on',m==='cohesionless');document.getElementById('btn-co').classList.toggle('on',m==='cohesive');document.getElementById('f-su').style.display=m==='cohesive'?'flex':'none';document.getElementById('f-fs').style.display=m==='cohesionless'?'flex':'none';document.getElementById('f-fp').style.display=m==='cohesionless'?'flex':'none';}
+function setDNV(m){dnvMode=m;document.getElementById('btn-dnv-s').classList.toggle('on',m==='simple');document.getElementById('btn-dnv-t').classList.toggle('on',m==='trilinear');document.getElementById('tri-params').style.display=m==='trilinear'?'block':'none';}
+
+function toggleW(id,label){
+  const tog=document.getElementById('wt-'+id),wb=document.getElementById('wb-'+id);
+  const open=wb.classList.toggle('open');
+  tog.classList.toggle('open',open);
+  tog.querySelector('.wt-label').textContent=(open?'Hide':'Show')+' calculation working — '+label;
+}
+
+function v(id){return parseFloat(document.getElementById(id).value)||0;}
+function f(n,dp=2){return isFinite(n)&&!isNaN(n)?n.toFixed(dp):'—';}
+
+function ST(num,name,formula,sub,result){
+  return`<div class="step"><div class="step-n">${num}</div><div class="step-c"><div class="step-name">${name}</div><div class="step-formula">${formula}</div><div class="step-sub">${sub}</div><div class="step-result">= ${result}</div></div></div>`;
+}
+
+function setBadge(id,pass){
+  const el=document.getElementById(id);
+  el.textContent=pass?'No buckling':'BUCKLES';
+  el.className='badge '+(pass?'badge-pass':'badge-fail');
+}
+
+function calculate(){
+  const D_mm=v('D'),t_mm=v('t'),Pi_MPa=v('Pi'),T1=v('T1'),T2=v('T2');
+  const tc1=v('tc1'),rhoCoat=v('rhoCoat'),rhoCont=v('rhoCont'),Lpipe=v('Lpipe');
+  const E_MPa=v('E'),alpha_e5=v('alpha'),nu=v('nu'),rhoS=v('rhoS');
+  const H=v('H'),delta_mm=v('delta'),gammaSoil=v('rhoSoil');
+  const fs=v('fs'),fp_val=v('fp'),mu=v('mu'),Sbmax_MPa=v('Sbmax'),su_val=v('su');
+  const Pi=Pi_MPa*1e6,E=E_MPa*1e6,alpha=alpha_e5*1e-5,dT=T2-T1;
+  const D=D_mm/1000,t=t_mm/1000,Din=D-2*t;
+  const Ai=Math.PI*Din*Din/4,As=Math.PI*(D*D-Din*Din)/4;
+  const I_inner=Math.PI*(Math.pow(D,4)-Math.pow(Din,4))/64;
+  const OD1=D+2*(tc1/1000);
+  let OD_m,EI,Wto,Wte,Buoy;
+  if(pipeMode==='pip'){
+    const Dc=v('Dc')/1000,tc=v('tc')/1000,tcc=v('tcc')/1000,rhoCcoat=v('rhoCcoat'),rhoAnn=v('rhoAnn');
+    const Dc_in=Dc-2*tc,As_c=Math.PI*(Dc*Dc-Dc_in*Dc_in)/4,I_c=Math.PI*(Math.pow(Dc,4)-Math.pow(Dc_in,4))/64;
+    EI=E*(I_inner+I_c);OD_m=Dc+2*tcc;
+    Wte=rhoS*As*9.81+rhoCoat*Math.PI*(OD1*OD1-D*D)/4*9.81+rhoS*As_c*9.81+rhoCcoat*Math.PI*((Dc+2*tcc)*(Dc+2*tcc)-Dc*Dc)/4*9.81;
+    Wto=Wte+rhoCont*Ai*9.81+Math.max(0,rhoAnn*Math.PI*(Dc_in*Dc_in-OD1*OD1)/4*9.81);
+    Buoy=1025*9.81*Math.PI*OD_m*OD_m/4;
+  } else {
+    EI=E*I_inner;OD_m=OD1;
+    Wte=rhoS*As*9.81+rhoCoat*Math.PI*(OD_m*OD_m-D*D)/4*9.81;
+    Wto=Wte+rhoCont*Ai*9.81;Buoy=1025*9.81*Math.PI*OD_m*OD_m/4;
+  }
+  const w_sub=Wto-Buoy;
+
+  // === K. PETERS ===
+  const Frestr=alpha*dT*E*As+(1-2*nu)*Pi*Ai;
+  const LB=1000*Math.sqrt(4*Math.PI*Math.PI*EI/Frestr);
+  const Heff_m=H*(1-(delta_mm/1000)/H);
+  const uf_val=soilMode==='cohesionless'?Math.min(1+fs*Heff_m/OD_m,1+Heff_m/OD_m):1;
+  const Rup=soilMode==='cohesionless'?1000*Heff_m*OD_m*gammaSoil*uf_val:OD_m*su_val;
+  const Rtot=Rup+Wto;
+  const ratio_kp=Sbmax_MPa*1e6*Frestr/(OD_m*E*Rtot);
+  let eta=0.5;
+  for(let i=0;i<200;i++){const s=Math.sin(Math.PI*eta);if(Math.abs(s)<1e-10)break;const lhs=0.5*(1-(Math.PI*eta*Math.cos(Math.PI*eta))/s);eta-=(lhs-ratio_kp)*0.08;eta=Math.max(0.01,Math.min(0.99,eta));}
+  const phi_all=eta*LB*Rtot/Frestr;
+  const kp_pass=Rtot>w_sub;
+
+  document.getElementById('kp-F').textContent=f(Frestr/1000,1);
+  document.getElementById('kp-LB').textContent=f(LB,1);
+  document.getElementById('kp-Heff').textContent=f(Heff_m*1000,0);
+  document.getElementById('kp-Rup').textContent=f(Rup,0);
+  document.getElementById('kp-Rtot').textContent=f(Rtot,0);
+  document.getElementById('kp-phi').textContent=f(phi_all,4);
+  setBadge('badge-kp',kp_pass);
+  document.getElementById('kp-note').textContent=kp_pass?'Total uplift resistance ('+f(Rtot,0)+' N/m) exceeds submerged pipe weight. No additional cover required.':'Uplift resistance insufficient. Increase cover depth H or add ballast weight.';
+
+  document.getElementById('wb-kp').innerHTML=
+    ST(1,'Internal diameter','Din = D − 2t',`= ${D_mm} − 2×${t_mm}`,`${f(Din*1000,2)} mm`)+
+    ST(2,'Metal cross-section area','As = π(D² − Din²)/4',`= π(${f(D*1000,2)}² − ${f(Din*1000,2)}²)/4 × 10⁻⁶`,`${f(As*1e6,1)} mm²`)+
+    ST(3,'Internal pipe area','Ai = π·Din²/4',`= π × ${f(Din*1000,2)}² / 4 × 10⁻⁶`,`${f(Ai*1e6,1)} mm²`)+
+    ST(4,'Second moment of area','I = π(D⁴ − Din⁴)/64',`= π(${f(D,5)}⁴ − ${f(Din,5)}⁴)/64`,`${(I_inner).toExponential(3)} m⁴`)+
+    ST(5,'Flexural rigidity','EI = E × I',`= ${E_MPa} MPa × ${(I_inner).toExponential(3)} m⁴`,`${f(EI,0)} N·m²`)+
+    ST(6,'Temperature difference','ΔT = T2 − T1',`= ${T2} − ${T1}`,`${f(dT,1)} °C`)+
+    ST(7,'Compressive restraining force','Frestr = α·ΔT·E·As + (1−2ν)·Pi·Ai',`= ${alpha_e5}e-5 × ${dT} × ${E_MPa}e6 × ${f(As*1e6,1)}e-6 + (1−2×${nu}) × ${Pi_MPa}e6 × ${f(Ai*1e6,1)}e-6`,`${f(Frestr/1000,2)} kN`)+
+    ST(8,'Buckling length','LB = 1000 × √(4π²·EI / Frestr)',`= 1000 × √(4π² × ${f(EI,0)} / ${f(Frestr,0)})`,`${f(LB,2)} m`)+
+    ST(9,'Effective depth of cover','Heff = H × (1 − δ/H)',`= ${H} × (1 − ${f(delta_mm/1000,4)}/${H})`,`${f(Heff_m*1000,1)} mm`)+
+    ST(10,'Uplift factor (Schaminée)','uf = min(1+fs·Heff/D, 1+Heff/D)',`= min(1+${fs}×${f(Heff_m,4)}/${f(OD_m,4)}, 1+√(${f(Heff_m,4)}/${f(OD_m,4)}))`,`${f(uf_val,4)}`)+
+    ST(11,'Soil uplift resistance','Rup = 1000·Heff·D·γ·uf',`= 1000 × ${f(Heff_m,4)} × ${f(OD_m,4)} × ${gammaSoil} × ${f(uf_val,4)}`,`${f(Rup,1)} N/m`)+
+    ST(12,'Pipeline total weight (operating)','Wto = Wsteel + Wcoat + Wcontents',`= ${f(Wte,1)} + ${f(Wto-Wte,1)}`,`${f(Wto,1)} N/m`)+
+    ST(13,'Total uplift resistance','Rtot = Rup + Wto',`= ${f(Rup,1)} + ${f(Wto,1)}`,`${f(Rtot,1)} N/m`)+
+    ST(14,'RHS of η equation','RHS = Sbmax·Frestr / (D·E·Rtot)',`= ${Sbmax_MPa}e6 × ${f(Frestr,0)} / (${f(OD_m,4)} × ${E_MPa}e6 × ${f(Rtot,1)})`,`${f(ratio_kp,4)}`)+
+    ST(15,'Dimensionless overbend angle η','Solve: 0.5(1 − πη·cos(πη)/sin(πη)) = RHS','Iterative Newton-Raphson solution',`η = ${f(eta,4)}`)+
+    ST(16,'Allowable deflection angle','φ_all = η × LB × Rtot / Frestr',`= ${f(eta,4)} × ${f(LB,2)} × ${f(Rtot,1)} / ${f(Frestr,0)}`,`${f(phi_all,4)} rad (${f(phi_all*180/Math.PI,2)}°)`)+
+    ST(17,'Verdict','Rtot vs w_sub',`Rtot = ${f(Rtot,1)} N/m | w_sub = ${f(w_sub,1)} N/m`,kp_pass?'PASS — stable, no upheaval buckling':'FAIL — pipeline susceptible to UHB');
+
+  // === OTC 6335 ===
+  const Px=mu*(gammaSoil*H+(w_sub/OD_m))*OD_m;
+  const S_virtual=Px*Lpipe/2,S0=Math.min(Frestr,S_virtual);
+  const q_otc=soilMode==='cohesionless'?gammaSoil*H*OD_m*(1+fs*H/OD_m):su_val*OD_m;
+  const Q_otc=q_otc+w_sub,Wr_otc=Math.max(0,-Q_otc),otc_pass=Q_otc>=0;
+
+  document.getElementById('otc-S0').textContent=f(S0/1000,1);
+  document.getElementById('otc-q').textContent=f(q_otc,0);
+  document.getElementById('otc-w').textContent=f(w_sub,0);
+  document.getElementById('otc-Q').textContent=f(Q_otc,0);
+  document.getElementById('otc-Wr').textContent=f(Wr_otc,0);
+  setBadge('badge-otc',otc_pass);
+  document.getElementById('otc-note').textContent=otc_pass?'Total download Q = '+f(Q_otc,0)+' N/m > 0. Stable — no additional weight required.':'Q < 0. Additional download of '+f(Wr_otc,0)+' N/m required (rock dump or concrete coating).';
+
+  document.getElementById('wb-otc').innerHTML=
+    ST(1,'Fully restrained effective axial force','S_full = α·ΔT·E·As + (1−2ν)·Pi·Ai','Same as Frestr from K. Peters',`${f(Frestr/1000,2)} kN`)+
+    ST(2,'Axial friction resistance per unit length','Px = µ·(γ·H + w_sub/D)·D',`= ${mu}×(${gammaSoil}×${H} + ${f(w_sub,1)}/${f(OD_m,4)})×${f(OD_m,4)}`,`${f(Px,1)} N/m`)+
+    ST(3,'Force at virtual anchor (half-pipeline)','S_virtual = Px × L/2',`= ${f(Px,1)} × ${Lpipe}/2`,`${f(S_virtual/1000,2)} kN`)+
+    ST(4,'Governing compressive axial force','S0 = min(S_full, S_virtual)',`= min(${f(Frestr/1000,2)}, ${f(S_virtual/1000,2)}) kN`,`${f(S0/1000,2)} kN`)+
+    ST(5,'Uplift resistance per unit length','q = γ·H·D·(1 + fs·H/D)',`= ${gammaSoil}×${H}×${f(OD_m,4)}×(1+${fs}×${H}/${f(OD_m,4)})`,`${f(q_otc,1)} N/m`)+
+    ST(6,'Submerged pipeline weight','w_sub = Wto − Buoyancy',`= ${f(Wto,1)} − ${f(Buoy,1)}`,`${f(w_sub,1)} N/m`)+
+    ST(7,'Total download available','Q = q + w_sub',`= ${f(q_otc,1)} + ${f(w_sub,1)}`,`${f(Q_otc,1)} N/m`)+
+    ST(8,'Additional weight if required','Wr = max(0, −Q)','If Q negative, ballast weight required',`${Wr_otc>0?f(Wr_otc,1)+' N/m':'Not required'}`)+
+    ST(9,'Verdict','Q vs 0',`Q = ${f(Q_otc,1)} N/m`,otc_pass?'PASS — Q > 0, no upheaval buckling':'FAIL — provide '+f(Wr_otc,1)+' N/m additional ballast');
+
+  // === CAMBRIDGE ===
+  const HD=H/OD_m,cam_r=0.02*Math.exp(HD/2),cam_df=cam_r*OD_m*1000,dnv_mid=0.0075*H*1000,cam_ratio_val=cam_df/dnv_mid;
+  document.getElementById('cam-HD').textContent=f(HD,2);
+  document.getElementById('cam-df').textContent=f(cam_df,1);
+  document.getElementById('cam-dnv').textContent=f(dnv_mid,1);
+  document.getElementById('cam-ratio').textContent=f(cam_ratio_val,1);
+  document.getElementById('cam-note').textContent='Cambridge full-scale test data (Thusyanthan et al., 2010) gives peak mobilisation δf = '+f(cam_df,1)+'mm vs DNV mid-range '+f(dnv_mid,1)+'mm — ratio '+f(cam_ratio_val,1)+'× at H/D = '+f(HD,2)+'. '+(cam_ratio_val>3?'DNV significantly underestimates mobilisation distance. Tri-linear model with Cambridge δf is recommended.':'DNV mobilisation is within reasonable range for this H/D.');
+
+  // === DNV ===
+  const Rped=gammaSoil*H*OD_m*(1+0.1*OD_m/H+fp_val*(OD_m/H)*Math.pow(H/OD_m+0.5,2));
+  const Rsch=gammaSoil*H*OD_m*(1+fs*H/OD_m),Hc=H+OD_m/2;
+  let dnv_pass,dnv_wb='';
+
+  if(dnvMode==='simple'){
+    document.getElementById('dnv-mode-label').textContent='Simplified — peak resistance check only';
+    document.getElementById('dnv-simple-metrics').style.display='grid';
+    document.getElementById('dnv-tri-metrics').style.display='none';
+    const Rtot_dnv=soilMode==='cohesionless'?Rped+w_sub:su_val*OD_m+w_sub;
+    dnv_pass=Rtot_dnv>=0;
+    document.getElementById('ds-Hc').textContent=f(Hc,3);
+    document.getElementById('ds-Rpeak').textContent=f(Rsch,0);
+    document.getElementById('ds-Rped').textContent=f(Rped,0);
+    document.getElementById('ds-Q').textContent=f(Rtot_dnv,0);
+    document.getElementById('ds-S0').textContent=f(S0/1000,1);
+    document.getElementById('dnv-warn').style.display='none';
+    dnv_wb=
+      ST(1,'Depth to pipe centre','Hc = H + D/2',`= ${H} + ${f(OD_m/2,4)}`,`${f(Hc,4)} m`)+
+      ST(2,'Schaminée peak uplift (Eq. 3)','R_sch/γHD = 1 + fs·H/D',`R_sch = ${gammaSoil}×${H}×${f(OD_m,4)}×(1+${fs}×${H}/${f(OD_m,4)})`,`${f(Rsch,1)} N/m`)+
+      ST(3,'Pedersen peak uplift (Eq. 2)','R_ped/γHD = 1+0.1D/H+fp·[D/H·(H/D+0.5)²]',`R_ped = ${gammaSoil}×${H}×${f(OD_m,4)}×(1+0.1×${f(OD_m,4)}/${H}+${fp_val}×${f(OD_m/H,4)}×${f(Math.pow(H/OD_m+0.5,2),4)})`,`${f(Rped,1)} N/m`)+
+      ST(4,'Cambridge mobilisation check','δf/D = 0.02·e^(H/2D)',`δf = 0.02×e^(${H}/(2×${f(OD_m,4)}))×${f(OD_m*1000,1)} = ${f(cam_df,1)}mm vs DNV ${f(dnv_mid,1)}mm`,`Ratio = ${f(cam_ratio_val,1)}× — ${cam_ratio_val>3?'use tri-linear model':'within range'}`)+
+      ST(5,'Total resistance','Q = R_ped + w_sub',`= ${f(Rped,1)} + ${f(w_sub,1)}`,`${f(Rtot_dnv,1)} N/m`)+
+      ST(6,'Verdict','Q vs 0',`Q = ${f(Rtot_dnv,1)} N/m`,dnv_pass?'PASS — positive total resistance, pipeline stable':'FAIL — cover or ballast required');
+  } else {
+    document.getElementById('dnv-mode-label').textContent='Full tri-linear model — mobilisation curve applied';
+    document.getElementById('dnv-simple-metrics').style.display='none';
+    document.getElementById('dnv-tri-metrics').style.display='block';
+    const gur=v('dnv-gur'),da=v('dnv-alpha'),db=v('dnv-beta');
+    let df_d=v('dnv-df');if(df_d<=0)df_d=cam_df;
+    const Rdes=Rped/gur,d1=db*df_d,d2=da*df_d,imp=delta_mm;
+    let R_at_delta;
+    if(imp<=d1)R_at_delta=(da/gur)*Rped*(imp/d1);
+    else if(imp<=d2)R_at_delta=(da/gur)*Rped;
+    else if(imp<=df_d)R_at_delta=(da/gur)*Rped+((1/gur-da/gur)*Rped)*((imp-d2)/(df_d-d2));
+    else R_at_delta=Rdes;
+    const total_at_delta=R_at_delta+w_sub;
+    dnv_pass=total_at_delta>=0;
+    document.getElementById('dt-Rmax').textContent=f(Rped,0);
+    document.getElementById('dt-Rdes').textContent=f(Rdes,0);
+    document.getElementById('dt-df').textContent=f(df_d,1);
+    document.getElementById('dt-d1').textContent=f(d1,1);
+    document.getElementById('dt-d2').textContent=f(d2,1);
+    document.getElementById('dt-Rdelta').textContent=f(R_at_delta,0);
+    let branch='';
+    if(imp<=d1)branch='Initial linear branch (δ ≤ δ1='+f(d1,1)+'mm). R = (α/γ_UR)·Rmax·(δ/δ1). Mobilised: '+f(R_at_delta/Rped*100,1)+'%';
+    else if(imp<=d2)branch='Plateau branch (δ1='+f(d1,1)+'mm ≤ δ ≤ δ2='+f(d2,1)+'mm). R = α/γ_UR · Rmax';
+    else branch='Rising branch (δ2='+f(d2,1)+'mm ≤ δ ≤ δf='+f(df_d,1)+'mm). R interpolated to Rmax/γ_UR';
+    document.getElementById('dt-curvenote').textContent='Imperfection δ = '+delta_mm+'mm — '+branch;
+    if(cam_ratio_val>2){document.getElementById('dnv-warn').style.display='block';document.getElementById('dnv-warn').textContent='Warning: Cambridge δf='+f(cam_df,1)+'mm vs DNV mid-range '+f(dnv_mid,1)+'mm ('+f(cam_ratio_val,1)+'×). Using DNV δf overestimates initial soil stiffness — unconservative result (Thusyanthan et al., OPT 2010).';}
+    else document.getElementById('dnv-warn').style.display='none';
+    dnv_wb=
+      ST(1,'Pedersen peak uplift resistance','Rmax/γHD = 1+0.1D/H+fp·[D/H·(H/D+0.5)²]',`Rmax = ${gammaSoil}×${H}×${f(OD_m,4)}×(...)`,`${f(Rped,1)} N/m`)+
+      ST(2,'Design uplift resistance','R_des = Rmax / γ_UR',`= ${f(Rped,1)} / ${gur}`,`${f(Rdes,1)} N/m`)+
+      ST(3,'Mobilisation distance','δf/D = 0.02·e^(H/2D) or user input',`δf = ${f(df_d,1)} mm ${v('dnv-df')<=0?'(Cambridge Eq. 5 auto)':'(user input)'}`,`DNV mid = ${f(dnv_mid,1)} mm | ratio = ${f(cam_ratio_val,1)}×`)+
+      ST(4,'Tri-linear branch points','δ1 = β·δf | δ2 = α·δf',`δ1 = ${db}×${f(df_d,1)} | δ2 = ${da}×${f(df_d,1)}`,`δ1 = ${f(d1,1)} mm | δ2 = ${f(d2,1)} mm`)+
+      ST(5,'Mobilised resistance at δ = '+delta_mm+'mm','Tri-linear interpolation',branch,`R = ${f(R_at_delta,1)} N/m (${f(R_at_delta/Rped*100,1)}% of Rmax)`)+
+      ST(6,'Total resistance at imperfection','R_total = R_at_δ + w_sub',`= ${f(R_at_delta,1)} + ${f(w_sub,1)}`,`${f(total_at_delta,1)} N/m`)+
+      ST(7,'Verdict','R_total vs 0',`R_total = ${f(total_at_delta,1)} N/m`,dnv_pass?'PASS — sufficient resistance at imperfection height':'FAIL — insufficient resistance, increase cover or ballast');
+  }
+  document.getElementById('dnv-note').textContent='Uplift equations sourced from Thusyanthan et al. (OPT 2010) reproducing DNV-RP-F110 (2007) Appendix B formulations.';
+  setBadge('badge-dnv',dnv_pass);
+  document.getElementById('wb-dnv').innerHTML=dnv_wb;
+
+  // Summary
+  const results=[{label:'K. Peters',pass:kp_pass},{label:'OTC 6335',pass:otc_pass},{label:'DNV-RP-F110',pass:dnv_pass}];
+  document.getElementById('sum-grid').innerHTML=results.map(r=>`<div class="sum-card ${r.pass?'pass':'fail'}"><div class="sum-label">${r.label}</div><div class="sum-val">${r.pass?'No buckling':'BUCKLES'}</div></div>`).join('');
+  const allPass=kp_pass&&otc_pass&&dnv_pass;
+  document.getElementById('sum-note').textContent=allPass?'All three methods confirm no propensity for upheaval buckling at this cover depth and imperfection height.':'One or more methods flag UHB risk. Consider increasing cover depth, adding rock dump or concrete coating, or reducing operating temperature differential.';
+  document.getElementById('results').style.display='block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+</script>
+</body>
+</html>

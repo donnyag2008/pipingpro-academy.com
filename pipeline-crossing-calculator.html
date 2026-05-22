@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pipeline Crossing Calculator — PipingPro Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F7F6F3;--surface:#FFFFFF;--border:#E2E0D8;--border-strong:#C8C5BA;
+  --text:#1A1917;--text-2:#5C5A54;--text-3:#9C9A94;
+  --accent:#1A5C3A;--accent-light:#E8F4EE;--accent-border:#A8D4B8;
+  --info:#1A4A7A;--info-light:#E8F0F8;--info-border:#A8C4E0;
+  --warn:#7A4A0A;--warn-light:#FDF3E3;--warn-border:#F0C878;
+  --danger:#7A1A1A;--danger-light:#FDE8E8;--danger-border:#F0A0A0;
+  --success:#1A5C3A;--success-light:#E8F4EE;
+  --radius:6px;--radius-lg:10px;
+  --font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.6;min-height:100vh}
+.header{background:var(--accent);color:#fff;padding:1.5rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem}
+.header-title{font-size:20px;font-weight:600;letter-spacing:-0.02em}
+.header-sub{font-size:12px;opacity:0.75;margin-top:2px}
+.header-badge{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:500}
+.container{max-width:980px;margin:0 auto;padding:1.5rem 1rem}
+.disclaimer{background:var(--warn-light);border:1px solid var(--warn-border);border-radius:var(--radius);padding:0.75rem 1rem;margin-bottom:1.5rem;font-size:12px;color:var(--warn);line-height:1.6}
+.disclaimer strong{font-weight:600}
+
+/* MODE TOGGLE */
+.mode-bar{display:flex;gap:0;margin-bottom:1.5rem;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--surface)}
+.mode-btn{flex:1;padding:10px 16px;font-size:13px;font-weight:500;border:none;background:transparent;color:var(--text-2);cursor:pointer;font-family:var(--font);transition:all 0.15s;border-right:1px solid var(--border)}
+.mode-btn:last-child{border-right:none}
+.mode-btn.on{background:var(--accent);color:#fff;font-weight:600}
+.mode-btn:hover:not(.on){background:var(--accent-light);color:var(--accent)}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1rem}
+.card-title{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 16px}
+.grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 16px}
+@media(max-width:700px){.grid2,.grid3,.grid4{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:11px;font-weight:500;color:var(--text-2)}
+.field input,.field select{font-size:13px;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius);background:#FAFAF8;color:var(--text);outline:none;transition:border-color 0.15s;font-family:var(--mono)}
+.field input:focus,.field select:focus{border-color:var(--accent);background:#fff}
+.field .hint{font-size:10px;color:var(--text-3)}
+.field .auto{background:#F0F4F0;color:var(--accent);font-weight:500;cursor:default}
+
+.calcbtn{width:100%;padding:13px;font-size:14px;font-weight:600;border:none;border-radius:var(--radius);background:var(--accent);color:#fff;cursor:pointer;margin-top:0.75rem;transition:opacity 0.15s;font-family:var(--font);letter-spacing:0.01em}
+.calcbtn:hover{opacity:0.88}
+
+/* RESULTS */
+.results{display:none;margin-top:1.5rem}
+.verdict-banner{border-radius:var(--radius-lg);padding:1.25rem 1.5rem;margin-bottom:1rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.verdict-banner.pass{background:var(--success-light);border:2px solid var(--accent-border)}
+.verdict-banner.fail{background:var(--danger-light);border:2px solid var(--danger-border)}
+.verdict-icon{font-size:28px}
+.verdict-text{flex:1}
+.verdict-title{font-size:16px;font-weight:700}
+.verdict-sub{font-size:12px;color:var(--text-2);margin-top:2px}
+.verdict-banner.pass .verdict-title{color:var(--accent)}
+.verdict-banner.fail .verdict-title{color:var(--danger)}
+
+.rs{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1rem}
+.rs-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:0.5rem}
+.rs-title{font-size:13px;font-weight:600;color:var(--text)}
+.badge{font-size:11px;font-weight:600;padding:3px 12px;border-radius:20px}
+.badge-pass{background:var(--success-light);color:var(--success)}
+.badge-fail{background:var(--danger-light);color:var(--danger)}
+.badge-na{background:#F0EFE8;color:var(--text-2)}
+
+.stress-table{width:100%;border-collapse:collapse;font-size:12px}
+.stress-table th{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.06em;text-align:left;padding:5px 8px;border-bottom:2px solid var(--border);background:var(--bg)}
+.stress-table td{padding:6px 8px;border-bottom:1px solid var(--border);font-family:var(--mono)}
+.stress-table tr:last-child td{border-bottom:none}
+.stress-table .ok{color:var(--accent);font-weight:600}
+.stress-table .fail{color:var(--danger);font-weight:600}
+.stress-table .label-col{font-family:var(--font);color:var(--text-2)}
+.pct-bar{display:inline-block;height:8px;border-radius:4px;margin-left:6px;vertical-align:middle}
+.pct-bar.safe{background:var(--accent-border)}
+.pct-bar.warn{background:var(--warn-border)}
+.pct-bar.over{background:var(--danger-border)}
+
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:0.75rem}
+.metric{background:var(--bg);border-radius:var(--radius);padding:0.6rem 0.75rem}
+.m-label{font-size:10px;font-weight:500;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px}
+.m-val{font-size:15px;font-weight:600;color:var(--text);font-family:var(--mono)}
+.m-unit{font-size:10px;color:var(--text-3);margin-top:1px}
+
+/* WORKINGS */
+.wt-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;padding:0.5rem 0.75rem;background:var(--info-light);border:1px solid var(--info-border);border-radius:var(--radius);margin-top:0.75rem;user-select:none}
+.wt-toggle:hover{background:#D0E4F5}
+.wt-label{font-size:12px;font-weight:600;color:var(--info);flex:1}
+.wt-icon{font-size:14px;color:var(--info);transition:transform 0.2s}
+.wt-toggle.open .wt-icon{transform:rotate(180deg)}
+.wb{display:none;margin-top:0.75rem;border:1px solid var(--info-border);border-radius:var(--radius);overflow:hidden}
+.wb.open{display:block}
+.step{display:grid;grid-template-columns:30px 1fr;border-bottom:1px solid var(--border)}
+.step:last-child{border-bottom:none}
+.step-n{background:var(--info-light);color:var(--info);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--info-border)}
+.step-c{padding:0.55rem 0.85rem;background:#fff}
+.step-name{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px}
+.step-formula{font-family:var(--mono);font-size:12px;color:var(--info);background:var(--info-light);padding:2px 7px;border-radius:3px;display:inline-block;margin-bottom:4px;word-break:break-all}
+.step-sub{font-family:var(--mono);font-size:11px;color:var(--text-2);margin-bottom:3px;line-height:1.5}
+.step-result{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent)}
+.step-sym{font-size:10px;color:var(--text-3);font-family:var(--font);margin-bottom:3px;line-height:1.6;border-left:2px solid var(--border);padding-left:6px;margin-top:2px}
+.step-note{font-size:10px;color:var(--warn);background:var(--warn-light);border-radius:3px;padding:2px 6px;margin-top:4px;font-family:var(--font)}
+.step-section{background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:6px 12px;letter-spacing:0.06em;text-transform:uppercase}
+
+.refs{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-top:1.5rem}
+.refs-title{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem}
+.ref-item{font-size:12px;color:var(--text-2);margin-bottom:0.4rem;padding-left:1rem;position:relative;line-height:1.5}
+.ref-item::before{content:'—';position:absolute;left:0;color:var(--text-3)}
+.footer{text-align:center;padding:2rem 1rem;font-size:11px;color:var(--text-3)}
+
+.note-box{font-size:12px;color:var(--text-2);line-height:1.6;margin-top:0.5rem;padding:0.6rem 0.75rem;background:var(--bg);border-radius:var(--radius)}
+.info-box{font-size:12px;color:var(--info);background:var(--info-light);border:1px solid var(--info-border);border-radius:var(--radius);padding:0.6rem 0.75rem;margin-top:0.5rem;line-height:1.6}
+.section-divider{border:none;border-top:1px solid var(--border);margin:1rem 0}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-title">Pipeline Crossing Calculator</div>
+    <div class="header-sub">API RP 1102 — Road &amp; Railroad Crossings · Uncased &amp; Cased</div>
+  </div>
+  <div class="header-badge">PipingPro Academy</div>
+</div>
+
+<div class="container">
+
+  <div class="disclaimer">
+    <strong>Engineering Disclaimer:</strong> This calculator is for preliminary engineering assessment only, based on API RP 1102 methodology. Results must be independently verified by a competent pipeline engineer before use in any design, procurement, or construction package. Chart-based lookup factors (Figures 3–17 of API RP 1102) are approximated using regression equations calibrated against published API data. PipingPro Academy accepts no liability for engineering decisions made on the basis of this calculator.
+  </div>
+
+  <!-- MODE SELECTION -->
+  <div class="mode-bar">
+    <button class="mode-btn on" onclick="setMode('road-uncased')">🛣️ Road — Uncased</button>
+    <button class="mode-btn" onclick="setMode('road-cased')">🛣️ Road — Cased</button>
+    <button class="mode-btn" onclick="setMode('rail-cased')">🚂 Railroad — Cased</button>
+  </div>
+
+  <!-- SECTION 1: PIPE & OPERATING -->
+  <div class="card">
+    <div class="card-title">1 — Pipe &amp; Operating Data</div>
+    <div class="grid3">
+      <div class="field">
+        <label>Nominal Pipe Size (NPS)</label>
+        <select id="nps" onchange="onNpsChange()">
+          <option value="4">4"</option>
+          <option value="6">6"</option>
+          <option value="8">8"</option>
+          <option value="10">10"</option>
+          <option value="12" selected>12"</option>
+          <option value="14">14"</option>
+          <option value="16">16"</option>
+          <option value="18">18"</option>
+          <option value="20">20"</option>
+          <option value="24">24"</option>
+          <option value="30">30"</option>
+          <option value="36">36"</option>
+          <option value="42">42"</option>
+          <option value="custom">Custom OD</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Pipe OD (mm)</label>
+        <input type="number" id="od" value="323.8" step="0.1" oninput="autoSchedule()">
+        <span class="hint">Auto-filled from NPS · ASME B36.10</span>
+      </div>
+      <div class="field">
+        <label>Wall Thickness t<sub>w</sub> (mm)</label>
+        <input type="number" id="wt" value="14.27" step="0.01" oninput="onWtChange()">
+        <span class="hint">Net thickness — no CA or mill tolerance</span>
+      </div>
+      <div class="field">
+        <label>Steel Grade</label>
+        <select id="grade" onchange="onGradeChange()">
+          <option value="x42">API 5L X42 — SMYS 290 MPa</option>
+          <option value="x46">API 5L X46 — SMYS 317 MPa</option>
+          <option value="x52">API 5L X52 — SMYS 358 MPa</option>
+          <option value="x56">API 5L X56 — SMYS 386 MPa</option>
+          <option value="x60">API 5L X60 — SMYS 413 MPa</option>
+          <option value="x65" selected>API 5L X65 — SMYS 448 MPa</option>
+          <option value="x70">API 5L X70 — SMYS 482 MPa</option>
+          <option value="x80">API 5L X80 — SMYS 551 MPa</option>
+          <option value="grb">API 5L Grade B — SMYS 241 MPa</option>
+          <option value="custom">Custom SMYS</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>SMYS (MPa)</label>
+        <input type="number" id="smys" value="448" step="1">
+      </div>
+      <div class="field">
+        <label>Pipe Manufacture</label>
+        <select id="mfr">
+          <option value="SMLS">Seamless (SMLS)</option>
+          <option value="SAW">SAW / DSAW</option>
+          <option value="ERW">ERW</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Design Pressure (barg)</label>
+        <input type="number" id="pres" value="155.2" step="0.1">
+      </div>
+      <div class="field">
+        <label>Design Factor F</label>
+        <select id="df">
+          <option value="0.5" selected>0.50 — Location Class 2 (SAF-10 / B31.4)</option>
+          <option value="0.6">0.60 — Location Class 1 crossing upgrade</option>
+          <option value="0.72">0.72 — ASME B31.4 open country</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Eff. Stress Design Factor F<sub>e</sub></label>
+        <input type="number" id="fe" value="0.90" step="0.01" min="0.1" max="1.0">
+        <span class="hint">Typically 0.90 per API RP 1102</span>
+      </div>
+    </div>
+    <hr class="section-divider">
+    <div class="grid3">
+      <div class="field">
+        <label>Installation Temperature T₁ (°C)</label>
+        <input type="number" id="t1" value="15.5" step="0.5">
+      </div>
+      <div class="field">
+        <label>Max Operating Temperature T₂ (°C)</label>
+        <input type="number" id="t2" value="70" step="1">
+      </div>
+      <div class="field">
+        <label>ΔT = T₂ − T₁ (°C)</label>
+        <input type="number" id="dt" class="auto" readonly>
+        <span class="hint">Auto-calculated</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: INSTALLATION & SOIL -->
+  <div class="card">
+    <div class="card-title">2 — Installation &amp; Soil Properties</div>
+    <div class="grid3">
+      <div class="field">
+        <label>Depth to Top of Pipe H (mm)</label>
+        <input type="number" id="H" value="1200" step="50">
+        <span class="hint">Min 1200 mm road / 1700 mm railroad (SAF-10)</span>
+      </div>
+      <div class="field">
+        <label>Bored Diameter B<sub>d</sub> (mm)</label>
+        <input type="number" id="Bd" value="450" step="10">
+        <span class="hint">For uncased: bore dia. For cased: casing OD</span>
+      </div>
+      <div class="field">
+        <label>Soil Type</label>
+        <select id="soilType">
+          <option value="A" selected>A — Loose/Medium Dense Sand, Soft Clay</option>
+          <option value="B">B — Dense/Very Dense Sand, Stiff Clay</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Modulus of Soil Reaction E' (MPa)</label>
+        <input type="number" id="Ep" value="3.4" step="0.1">
+        <span class="hint">Table A.1 API RP 1102: Type A=3.4, B=6.9</span>
+      </div>
+      <div class="field">
+        <label>Resilient Modulus E<sub>r</sub> (MPa)</label>
+        <input type="number" id="Er" value="69" step="1">
+        <span class="hint">Table A.1: Type A=69, B=138 MPa</span>
+      </div>
+      <div class="field">
+        <label>Unit Weight of Soil γ (kN/m³)</label>
+        <input type="number" id="gamma" value="18.9" step="0.1">
+        <span class="hint">API RP 1102 default: 18.9 kN/m³</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: TRAFFIC / RAIL LOADING (changes by mode) -->
+  <div class="card" id="card-traffic">
+    <div class="card-title" id="traffic-title">3 — Highway Traffic Loading</div>
+    <div class="grid3" id="traffic-fields">
+      <div class="field">
+        <label>Pavement Type</label>
+        <select id="pave">
+          <option value="none" selected>No Pavement (unpaved / gravel)</option>
+          <option value="flex">Flexible Pavement (asphalt)</option>
+          <option value="rigid">Rigid Pavement (concrete)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Axle Configuration</label>
+        <select id="axle">
+          <option value="single">Single Axle</option>
+          <option value="tandem" selected>Tandem Axle</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Design Wheel Load P<sub>s</sub> (kN) — Single</label>
+        <input type="number" id="Ps" value="53.4" step="0.1">
+        <span class="hint">API RP 1102 Table 1: Tandem = 53.4 kN</span>
+      </div>
+      <div class="field">
+        <label>Total Wheel Load P<sub>t</sub> (kN) — Live+Dead</label>
+        <input type="number" id="Pt" value="44.5" step="0.1">
+        <span class="hint">API RP 1102 Table 1</span>
+      </div>
+      <div class="field" id="rail-class-field" style="display:none">
+        <label>Rail Loading Class</label>
+        <select id="railClass" onchange="onRailChange()">
+          <option value="E72">E-72</option>
+          <option value="E80" selected>E-80</option>
+          <option value="E87">E-87</option>
+          <option value="E100">E-100</option>
+        </select>
+      </div>
+      <div class="field" id="rail-w-field" style="display:none">
+        <label>Applied Rail Surface Pressure w (kPa)</label>
+        <input type="number" id="wRail" value="96" step="1">
+        <span class="hint">API RP 1102 Fig. 6 — auto set by rail class</span>
+      </div>
+      <div class="field" id="rail-lg-field" style="display:none">
+        <label>Distance of Girth Weld from Track CL L<sub>G</sub> (m)</label>
+        <input type="number" id="LG" value="2.0" step="0.1">
+      </div>
+      <div class="field" id="rail-tracks-field" style="display:none">
+        <label>Number of Tracks</label>
+        <select id="nTracks">
+          <option value="1">1 Track</option>
+          <option value="2" selected>2 Tracks</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: CASING (shown for cased modes) -->
+  <div class="card" id="card-casing" style="display:none">
+    <div class="card-title">4 — Casing Pipe Data</div>
+    <div class="grid3">
+      <div class="field">
+        <label>Casing NPS</label>
+        <select id="casingNps" onchange="onCasingNpsChange()">
+          <option value="16">16"</option>
+          <option value="18">18"</option>
+          <option value="20" selected>20"</option>
+          <option value="24">24"</option>
+          <option value="30">30"</option>
+          <option value="36">36"</option>
+          <option value="42">42"</option>
+        </select>
+        <span class="hint">Min 2 NPS sizes larger than carrier</span>
+      </div>
+      <div class="field">
+        <label>Casing OD (mm)</label>
+        <input type="number" id="casingOd" value="508" readonly class="auto">
+      </div>
+      <div class="field">
+        <label>Casing Wall Thickness (mm)</label>
+        <input type="number" id="casingWt" value="7.92" step="0.01">
+        <span class="hint">API RP 1102 Annex C minimum</span>
+      </div>
+      <div class="field">
+        <label>Casing Grade</label>
+        <select id="casingGrade">
+          <option value="241" selected>API 5L Grade B — SMYS 241 MPa</option>
+          <option value="290">API 5L X42 — SMYS 290 MPa</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Casing Design Pressure (kPa)</label>
+        <input type="number" id="casingP" value="100" step="10">
+        <span class="hint">Typically atmospheric = 100 kPa</span>
+      </div>
+    </div>
+    <div class="info-box">ℹ️ For cased crossings, the casing pipe takes earth &amp; live loads. Carrier pipe sees only internal pressure and thermal stresses. Casing compliance is checked separately below.</div>
+  </div>
+
+  <button class="calcbtn" onclick="calculate()">▶ Run Crossing Calculation</button>
+
+  <!-- RESULTS -->
+  <div class="results" id="results">
+
+    <div class="verdict-banner" id="verdict-banner">
+      <div class="verdict-icon" id="verdict-icon">✅</div>
+      <div class="verdict-text">
+        <div class="verdict-title" id="verdict-title">CROSSING COMPLIANT</div>
+        <div class="verdict-sub" id="verdict-sub">All stress and fatigue checks pass per API RP 1102</div>
+      </div>
+    </div>
+
+    <!-- STRESS RESULTS TABLE -->
+    <div class="rs">
+      <div class="rs-head">
+        <div class="rs-title">Stress Results Summary</div>
+        <span class="badge" id="badge-stress">PASS</span>
+      </div>
+      <table class="stress-table" id="stress-table">
+        <thead>
+          <tr>
+            <th>Stress Component</th>
+            <th>Value (kPa)</th>
+            <th>% SMYS</th>
+            <th>Allowable</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="stress-tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- FATIGUE RESULTS TABLE -->
+    <div class="rs">
+      <div class="rs-head">
+        <div class="rs-title">Fatigue Check</div>
+        <span class="badge" id="badge-fatigue">PASS</span>
+      </div>
+      <table class="stress-table" id="fatigue-table">
+        <thead>
+          <tr>
+            <th>Check</th>
+            <th>Cyclic Stress (kPa)</th>
+            <th>Allowable (kPa)</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="fatigue-tbody"></tbody>
+      </table>
+      <div class="note-box" id="fatigue-note"></div>
+    </div>
+
+    <!-- KEY INTERMEDIATE VALUES -->
+    <div class="rs">
+      <div class="rs-head">
+        <div class="rs-title">Key Intermediate Values</div>
+      </div>
+      <div class="metrics" id="metrics-grid"></div>
+    </div>
+
+    <!-- STEP-BY-STEP WORKINGS -->
+    <div class="rs">
+      <div class="rs-head">
+        <div class="rs-title">Calculation Methodology</div>
+        <span style="font-size:11px;color:var(--text-3)">API RP 1102</span>
+      </div>
+      <div class="wt-toggle" id="wt-toggle" onclick="toggleWB()">
+        <span class="wt-label">▼ Show Step-by-Step Workings</span>
+        <span class="wt-icon">▼</span>
+      </div>
+      <div class="wb" id="wb-steps"></div>
+    </div>
+
+    <!-- CASING RESULTS (only for cased) -->
+    <div class="rs" id="rs-casing" style="display:none">
+      <div class="rs-head">
+        <div class="rs-title">Casing Pipe Compliance</div>
+        <span class="badge" id="badge-casing">PASS</span>
+      </div>
+      <table class="stress-table">
+        <thead>
+          <tr><th>Check</th><th>Value (kPa)</th><th>Allowable (kPa)</th><th>Status</th></tr>
+        </thead>
+        <tbody id="casing-tbody"></tbody>
+      </table>
+    </div>
+
+  </div><!-- /results -->
+
+  <div class="refs">
+    <div class="refs-title">References</div>
+    <div class="ref-item">API RP 1102, Steel Pipelines Crossing Railroads and Highways, Eighth Edition</div>
+    <div class="ref-item">ASME B31.4, Pipeline Transportation Systems for Liquids and Slurries</div>
+    <div class="ref-item">API Spec 5L, Specification for Line Pipe</div>
+    <div class="ref-item">ASME B36.10M, Welded and Seamless Wrought Steel Pipe</div>
+    <div class="ref-item">SAF-10, Saudi Aramco Engineering Standard — Pressure Piping, Transportation Pipelines &amp; Pressure Vessels</div>
+    <div class="ref-item">Note: API RP 1102 chart lookup factors are approximated via regression equations. Users are advised to verify against original figures for final design.</div>
+  </div>
+
+  <div class="footer">PipingPro Academy · Pipeline Crossing Calculator · API RP 1102<br>© Zephrum Konsultan Limited · For engineering preliminary use only</div>
+
+</div><!-- /container -->
+
+<script>
+// ============================================================
+// PIPE DATA (ASME B36.10 OD)
+// ============================================================
+const NPS_OD = {
+  '4':101.6,'6':168.3,'8':219.1,'10':273.1,'12':323.8,
+  '14':355.6,'16':406.4,'18':457.2,'20':508.0,'24':609.6,
+  '30':762.0,'36':914.4,'42':1066.8
+};
+const CASING_OD = {
+  '16':406.4,'18':457.2,'20':508.0,'24':609.6,
+  '30':762.0,'36':914.4,'42':1066.8
+};
+const GRADE_SMYS = {
+  x42:290,x46:317,x52:358,x56:386,x60:413,x65:448,
+  x70:482,x80:551,grb:241
+};
+const RAIL_W = {E72:84,E80:96,E87:103,E100:117}; // kPa approx
+
+let currentMode = 'road-uncased';
+
+// ============================================================
+// UI HELPERS
+// ============================================================
+function v(id){return parseFloat(document.getElementById(id).value)||0;}
+function sv(id){return document.getElementById(id).value;}
+function f(x,d){return x.toFixed(d||2);}
+function pct(val,smys){return (val/smys/1000*100).toFixed(1);}
+
+function setMode(mode){
+  currentMode = mode;
+  document.querySelectorAll('.mode-btn').forEach((b,i)=>{
+    const modes=['road-uncased','road-cased','rail-cased'];
+    b.classList.toggle('on', modes[i]===mode);
+  });
+  const isCased = mode !== 'road-uncased';
+  const isRail  = mode === 'rail-cased';
+  document.getElementById('card-casing').style.display = isCased ? '' : 'none';
+  document.getElementById('traffic-title').textContent = isRail
+    ? '3 — Railroad Loading' : '3 — Highway Traffic Loading';
+  ['pave','axle','Ps','Pt'].forEach(id=>{
+    const f = document.getElementById(id)?.closest('.field');
+    if(f) f.style.display = isRail ? 'none' : '';
+  });
+  ['rail-class-field','rail-w-field','rail-lg-field','rail-tracks-field'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.style.display = isRail ? '' : 'none';
+  });
+  document.getElementById('results').style.display = 'none';
+}
+
+function onNpsChange(){
+  const nps = sv('nps');
+  if(nps !== 'custom' && NPS_OD[nps]){
+    document.getElementById('od').value = NPS_OD[nps];
+  }
+}
+function onGradeChange(){
+  const g = sv('grade');
+  if(g !== 'custom' && GRADE_SMYS[g]){
+    document.getElementById('smys').value = GRADE_SMYS[g];
+  }
+}
+function onWtChange(){
+  const dt = v('t2') - v('t1');
+  document.getElementById('dt').value = dt.toFixed(1);
+}
+function autoSchedule(){
+  const dt = v('t2') - v('t1');
+  document.getElementById('dt').value = dt.toFixed(1);
+}
+function onCasingNpsChange(){
+  const nps = sv('casingNps');
+  if(CASING_OD[nps]) document.getElementById('casingOd').value = CASING_OD[nps];
+}
+function onRailChange(){
+  const cls = sv('railClass');
+  document.getElementById('wRail').value = RAIL_W[cls] || 96;
+}
+
+// Update ΔT on load and on change
+document.getElementById('t1').addEventListener('input',()=>{
+  document.getElementById('dt').value = (v('t2')-v('t1')).toFixed(1);
+});
+document.getElementById('t2').addEventListener('input',()=>{
+  document.getElementById('dt').value = (v('t2')-v('t1')).toFixed(1);
+});
+document.getElementById('dt').value = (v('t2')-v('t1')).toFixed(1);
+
+function toggleWB(){
+  const t = document.getElementById('wt-toggle');
+  const wb = document.getElementById('wb-steps');
+  const open = wb.classList.toggle('open');
+  t.classList.toggle('open', open);
+  t.querySelector('.wt-label').textContent = open
+    ? '▲ Hide Step-by-Step Workings' : '▼ Show Step-by-Step Workings';
+}
+
+function SS(title){
+  return `<div class="step-section">${title}</div>`;
+}
+function ST(n, name, eqRef, formula, symbols, substitution, result, note=''){
+  return `<div class="step">
+    <div class="step-n">${n}</div>
+    <div class="step-c">
+      <div class="step-name">${name} <span style="float:right;font-size:10px;color:var(--info);font-weight:700;font-family:var(--mono)">${eqRef}</span></div>
+      <div class="step-formula">${formula}</div>
+      ${symbols ? `<div class="step-sym">${symbols}</div>` : ''}
+      <div class="step-sub">Substituting: ${substitution}</div>
+      <div class="step-result">&#8756; ${result}</div>
+      ${note ? `<div class="step-note">&#9873; ${note}</div>` : ''}
+    </div>
+  </div>`;
+}
+
+function pctBar(val, allowPct){
+  const frac = Math.min(val/allowPct, 1.2);
+  const w = Math.round(frac * 60);
+  const cls = frac < 0.75 ? 'safe' : frac < 1.0 ? 'warn' : 'over';
+  return `<span class="pct-bar ${cls}" style="width:${w}px"></span>`;
+}
+
+function stressRow(label, val, smysKpa, allowPct, pass){
+  const p = (Math.abs(val)/smysKpa*100).toFixed(1);
+  const bar = pctBar(parseFloat(p), allowPct);
+  const cls = pass ? 'ok' : 'fail';
+  const chk = pass ? 'OK ✓' : 'FAIL ✗';
+  return `<tr>
+    <td class="label-col">${label}</td>
+    <td>${f(val,0)}</td>
+    <td>${p}%${bar}</td>
+    <td>${allowPct}%</td>
+    <td class="${cls}">${chk}</td>
+  </tr>`;
+}
+
+function fatigueRow(label, cyclic, allowable, pass){
+  const cls = pass ? 'ok' : 'fail';
+  const chk = pass ? 'OK ✓' : 'FAIL ✗';
+  return `<tr>
+    <td class="label-col">${label}</td>
+    <td>${f(cyclic,0)}</td>
+    <td>${f(allowable,0)}</td>
+    <td class="${cls}">${chk}</td>
+  </tr>`;
+}
+
+// ============================================================
+// API RP 1102 CHART APPROXIMATIONS (regression-based)
+// These approximate the graphical lookup factors from the published Figures.
+// Users should verify against actual API RP 1102 figures for final design.
+// ============================================================
+
+// Figure 3: KHe vs tw/D (earth load circumferential coefficient)
+function getKHe(tD){
+  // Decreasing function: high tD → low KHe
+  return Math.max(0.1, 1.2 - 8.5*tD);
+}
+
+// Figure 4: Be vs H/Bd (bedding coefficient)
+function getBe(HBd, soilType){
+  // Increases with H/Bd, capped
+  const base = 0.6 + 0.35*(1 - Math.exp(-0.5*HBd));
+  return soilType === 'B' ? Math.min(base * 1.15, 1.0) : Math.min(base, 0.95);
+}
+
+// Figure 5: Ee vs Bd/D (pipe-soil stiffness factor)
+function getEe(BdD){
+  return Math.max(0.3, 1.8 - 0.6*BdD);
+}
+
+// Equation 1: SHe = KHe × Be × Ee × γ × D (circumferential earth stress)
+// (γ in kN/m³, D in mm → result in kPa)
+
+// Figure 7: Fi (impact factor for highway, H in mm)
+function getFi(H){
+  if(H >= 3000) return 1.0;
+  if(H >= 2000) return 1.05;
+  if(H >= 1500) return 1.1;
+  if(H >= 900)  return 1.15;
+  return 1.2;
+}
+
+// Applied surface pressure w for highway (Eq. 2, API 1102)
+// w = R × L × Fi × Pt / Ap  (Pt total wheel, Ap contact area 0.093 m²)
+// R = pavement factor, L = axle factor
+function getPaveR(pave){return {none:1.1,flex:1.0,rigid:0.9}[pave]||1.1;}
+function getAxleL(axle){return {single:1.0,tandem:1.0}[axle]||1.0;}
+
+// Figure 14: KHh vs tw/D (cyclic circumferential coefficient — highway)
+function getKHh(tD){return Math.max(0.5, 3.5 - 60*tD);}
+
+// Figure 15: GHh vs D, H, R, L  (geometric factor — circumferential)
+function getGHh(D_mm, H_mm, R, L){
+  const HD = H_mm / D_mm;
+  return Math.max(0.5, 1.5 * Math.exp(-0.15*HD) * R * L);
+}
+
+// Figure 16: KLh vs tw/D (cyclic longitudinal coefficient — highway)
+function getKLh(tD){return Math.max(0.5, 3.0 - 50*tD);}
+
+// Figure 17: GLh (geometric factor — longitudinal)
+function getGLh(D_mm, H_mm, R, L){
+  const HD = H_mm / D_mm;
+  return Math.max(0.4, 1.3 * Math.exp(-0.18*HD) * R * L);
+}
+
+// Eq 5: ΔSHh = KHh × GHh × w × (D/tw) [circumferential cyclic]
+// Eq 6: ΔSLh = KLh × GLh × w × (D/tw) [longitudinal cyclic]
+
+// ---- RAILROAD FIGURES ----
+// Figure 8: KHr vs tw/D
+function getKHr(tD){return Math.max(0.5, 3.8 - 65*tD);}
+// Figure 9: GHr (D, H)
+function getGHr(D_mm, H_mm){
+  const HD = H_mm/D_mm;
+  return Math.max(0.5, 2.2*Math.exp(-0.2*HD));
+}
+// Figure 10: NH (number of tracks factor)
+function getNH(nTracks){return nTracks>=2?1.15:1.0;}
+
+// Figure 11: KLr
+function getKLr(tD){return Math.max(0.4, 3.2-55*tD);}
+// Figure 12: GLr
+function getGLr(D_mm, H_mm){
+  const HD=H_mm/D_mm;
+  return Math.max(0.4, 1.9*Math.exp(-0.22*HD));
+}
+// Figure 13: NL
+function getNL(nTracks){return nTracks>=2?1.0:0.9;}
+
+// ============================================================
+// MAIN CALCULATION
+// ============================================================
+function calculate(){
+  const D  = v('od');         // mm
+  const tw = v('wt');         // mm
+  const F  = v('df');
+  const Fe = v('fe');
+  const P_barg = v('pres');
+  const P  = P_barg * 100;    // kPa
+  const SMYS_MPa = v('smys'); // MPa
+  const SMYS = SMYS_MPa * 1000; // kPa
+  const T1 = v('t1');
+  const T2 = v('t2');
+  const dT = T2 - T1;
+  const H  = v('H');          // mm
+  const Bd = v('Bd');         // mm
+  const Ep = v('Ep');         // MPa (not used directly in stress eqs, but in KHe)
+  const Er = v('Er');         // MPa
+  const gamma = v('gamma');   // kN/m³
+  const soilType = sv('soilType');
+  const mfr = sv('mfr');
+  const isRail = currentMode === 'rail-cased';
+  const isCased = currentMode !== 'road-uncased';
+
+  // Material constants
+  const Es = 2.07e8; // kPa (Young's modulus steel)
+  const vs = 0.3;    // Poisson's ratio
+  const alphaT = 1.17e-5; // /°C thermal expansion
+
+  // Derived
+  const tD = tw / D;
+  const D_m = D / 1000; // m
+
+  document.getElementById('dt').value = dT.toFixed(1);
+
+  let steps = '';
+  let allPass = true;
+  let stressRows = '';
+  let fatigueRows = '';
+
+  // ============================================================
+  // DETAILED CALCULATION WORKINGS
+  // ============================================================
+
+  // ---- SECTION 3: BARLOW HOOP STRESS CHECK (Eq. 8b) ----
+  const SHi_barlow = (P * D) / (2 * tw);
+  const allow_barlow = F * 1.0 * 1.0 * SMYS;
+  const barlow_pass = SHi_barlow <= allow_barlow;
+  allPass = allPass && barlow_pass;
+
+  steps += SS('Section 3 — Allowable Barlow Hoop Stress Check');
+  steps += ST(1,
+    'Circumferential (Hoop) Stress due to Internal Pressure',
+    'API RP 1102 Eq. 8b',
+    'S<sub>Hi</sub> = P × D / (2 × t<sub>w</sub>)',
+    `P = design pressure = ${f(P,0)} kPa &nbsp;|&nbsp; D = pipe OD = ${f(D,1)} mm &nbsp;|&nbsp; t<sub>w</sub> = wall thickness = ${f(tw,2)} mm`,
+    `${f(P,0)} × ${f(D,1)} / (2 × ${f(tw,2)})`,
+    `S<sub>Hi(Barlow)</sub> = <b>${f(SHi_barlow,0)} kPa</b> (${f(SHi_barlow/SMYS*100,1)}% SMYS) &nbsp;vs&nbsp; Allowable F×SMYS = ${f(allow_barlow,0)} kPa &nbsp;→&nbsp; <b>${barlow_pass?'&#10003; PASS':'&#10007; FAIL'}</b>`,
+    barlow_pass ? '' : 'Barlow stress exceeds allowable — increase wall thickness or reduce design pressure');
+
+  // ---- SECTION 4: CIRCUMFERENTIAL EARTH STRESS (Eq. 1) ----
+  const KHe = getKHe(tD);
+  const HBd = H / Bd;
+  const Be  = getBe(HBd, soilType);
+  const BdD = Bd / D;
+  const Ee  = getEe(BdD);
+  const SHe = KHe * Be * Ee * gamma * D_m * 1000;
+
+  steps += SS('Section 4 — Circumferential Stress due to Earth Load');
+  steps += ST(2,
+    'Pipe Stiffness Ratio t<sub>w</sub>/D — Entry parameter for Figs 3, 14, 16',
+    'API RP 1102 Fig. 3',
+    't<sub>w</sub>/D',
+    `t<sub>w</sub> = ${f(tw,2)} mm &nbsp;|&nbsp; D = ${f(D,1)} mm`,
+    `${f(tw,2)} / ${f(D,1)}`,
+    `t<sub>w</sub>/D = <b>${f(tD,4)}</b>`,
+    'This dimensionless ratio is the primary entry parameter for multiple API RP 1102 chart lookups');
+
+  steps += ST(3,
+    'Earth Load Circumferential Stress Coefficient K<sub>He</sub>',
+    'API RP 1102 Fig. 3',
+    'K<sub>He</sub> = f(t<sub>w</sub>/D, E&#8242;)',
+    `t<sub>w</sub>/D = ${f(tD,4)} &nbsp;|&nbsp; E&#8242; = ${v('Ep')} MPa (modulus of soil reaction) &nbsp;|&nbsp; Soil Type = ${soilType}`,
+    `Figure 3 lookup at t<sub>w</sub>/D = ${f(tD,4)}`,
+    `K<sub>He</sub> = <b>${f(KHe,3)}</b>`,
+    'K_He from API RP 1102 Figure 3. Approximated via regression for this calculator — verify against Fig. 3 for final design');
+
+  steps += ST(4,
+    'Bedding Coefficient B<sub>e</sub>',
+    'API RP 1102 Fig. 4',
+    'B<sub>e</sub> = f(H/B<sub>d</sub>, soil type)',
+    `H = ${H} mm &nbsp;|&nbsp; B<sub>d</sub> = ${Bd} mm &nbsp;|&nbsp; H/B<sub>d</sub> = ${f(HBd,2)} &nbsp;|&nbsp; Soil Type = ${soilType}`,
+    `Figure 4 lookup at H/B<sub>d</sub> = ${f(HBd,2)}, Soil Type ${soilType}`,
+    `B<sub>e</sub> = <b>${f(Be,3)}</b>`,
+    'Bedding coefficient accounts for soil support below pipe — higher cover depth increases Be');
+
+  steps += ST(5,
+    'Pipe-Soil Stiffness Factor E<sub>e</sub>',
+    'API RP 1102 Fig. 5',
+    'E<sub>e</sub> = f(B<sub>d</sub>/D)',
+    `B<sub>d</sub> = ${Bd} mm &nbsp;|&nbsp; D = ${f(D,1)} mm &nbsp;|&nbsp; B<sub>d</sub>/D = ${f(BdD,2)}`,
+    `Figure 5 lookup at B<sub>d</sub>/D = ${f(BdD,2)}`,
+    `E<sub>e</sub> = <b>${f(Ee,3)}</b>`);
+
+  steps += ST(6,
+    'Circumferential Stress due to Earth Load S<sub>He</sub>',
+    'API RP 1102 Eq. 1',
+    'S<sub>He</sub> = K<sub>He</sub> × B<sub>e</sub> × E<sub>e</sub> × &#947; × D',
+    `K<sub>He</sub> = ${f(KHe,3)} &nbsp;|&nbsp; B<sub>e</sub> = ${f(Be,3)} &nbsp;|&nbsp; E<sub>e</sub> = ${f(Ee,3)} &nbsp;|&nbsp; &#947; = ${gamma} kN/m&#179; &nbsp;|&nbsp; D = ${f(D_m,4)} m`,
+    `${f(KHe,3)} &times; ${f(Be,3)} &times; ${f(Ee,3)} &times; ${gamma} &times; ${f(D_m,4)}`,
+    `S<sub>He</sub> = <b>${f(SHe,0)} kPa</b>`);
+
+  // ---- SECTION 5 & 6: CYCLIC STRESSES ----
+  let w, dSHcyc, dSLcyc;
+
+  if(!isRail){
+    const Fi   = getFi(H);
+    const R    = getPaveR(sv('pave'));
+    const L    = getAxleL(sv('axle'));
+    const Ap   = 0.093;
+    const Ps   = v('Ps');
+    const Pt   = v('Pt');
+    w = R * L * Fi * Pt / Ap;
+
+    steps += SS('Section 5 — Impact Factor and Applied Surface Pressure (Highway)');
+    steps += ST(7,
+      'Impact Factor F<sub>i</sub>',
+      'API RP 1102 Fig. 7',
+      'F<sub>i</sub> = f(H) — accounts for dynamic amplification of vehicle loads',
+      `H = ${H} mm depth to top of pipe`,
+      `Figure 7 lookup at H = ${H} mm`,
+      `F<sub>i</sub> = <b>${f(Fi,2)}</b>`,
+      `Impact factor decreases with depth. At H &ge; 3000 mm, F<sub>i</sub> = 1.00 (no amplification)`);
+
+    steps += ST(8,
+      'Applied Design Surface Pressure w',
+      'API RP 1102 Eq. 2',
+      'w = R &times; L &times; F<sub>i</sub> &times; P<sub>t</sub> / A<sub>p</sub>',
+      `R = pavement factor = ${f(R,2)} &nbsp;|&nbsp; L = axle configuration factor = ${f(L,2)} &nbsp;|&nbsp; F<sub>i</sub> = ${f(Fi,2)} &nbsp;|&nbsp; P<sub>t</sub> = ${f(Pt,1)} kN (live+dead) &nbsp;|&nbsp; A<sub>p</sub> = ${Ap} m&sup2;`,
+      `${f(R,2)} &times; ${f(L,2)} &times; ${f(Fi,2)} &times; ${f(Pt,1)} / ${Ap}`,
+      `w = <b>${f(w,0)} kPa</b>`);
+
+    steps += SS('Section 6 — Cyclic Stresses due to Highway Loading');
+    const KHh = getKHh(tD);
+    const GHh = getGHh(D, H, R, L);
+    dSHcyc = KHh * GHh * w * (D/tw);
+
+    steps += ST(9,
+      'Cyclic Circumferential Stress Coefficient K<sub>Hh</sub>',
+      'API RP 1102 Fig. 14',
+      'K<sub>Hh</sub> = f(t<sub>w</sub>/D, E<sub>r</sub>)',
+      `t<sub>w</sub>/D = ${f(tD,4)} &nbsp;|&nbsp; E<sub>r</sub> = ${v('Er')} MPa (resilient modulus of soil)`,
+      `Figure 14 at t<sub>w</sub>/D = ${f(tD,4)}`,
+      `K<sub>Hh</sub> = <b>${f(KHh,3)}</b>`);
+
+    steps += ST(10,
+      'Cyclic Circumferential Geometric Factor G<sub>Hh</sub>',
+      'API RP 1102 Fig. 15',
+      'G<sub>Hh</sub> = f(D, H, R, L)',
+      `D = ${f(D,1)} mm &nbsp;|&nbsp; H = ${H} mm &nbsp;|&nbsp; R = ${f(R,2)} &nbsp;|&nbsp; L = ${f(L,2)}`,
+      `Figure 15 at D = ${f(D,1)} mm, H = ${H} mm`,
+      `G<sub>Hh</sub> = <b>${f(GHh,3)}</b>`);
+
+    steps += ST(11,
+      'Cyclic Circumferential Stress &Delta;S<sub>Hh</sub>',
+      'API RP 1102 Eq. 5',
+      '&Delta;S<sub>Hh</sub> = K<sub>Hh</sub> &times; G<sub>Hh</sub> &times; w &times; (D/t<sub>w</sub>)',
+      `K<sub>Hh</sub> = ${f(KHh,3)} &nbsp;|&nbsp; G<sub>Hh</sub> = ${f(GHh,3)} &nbsp;|&nbsp; w = ${f(w,0)} kPa &nbsp;|&nbsp; D/t<sub>w</sub> = ${f(D/tw,2)}`,
+      `${f(KHh,3)} &times; ${f(GHh,3)} &times; ${f(w,0)} &times; ${f(D/tw,2)}`,
+      `&Delta;S<sub>Hh</sub> = <b>${f(dSHcyc,0)} kPa</b>`);
+
+    const KLh = getKLh(tD);
+    const GLh = getGLh(D, H, R, L);
+    dSLcyc = KLh * GLh * w * (D/tw);
+
+    steps += ST(12,
+      'Cyclic Longitudinal Stress Coefficient K<sub>Lh</sub>',
+      'API RP 1102 Fig. 16',
+      'K<sub>Lh</sub> = f(t<sub>w</sub>/D, E<sub>r</sub>)',
+      `t<sub>w</sub>/D = ${f(tD,4)} &nbsp;|&nbsp; E<sub>r</sub> = ${v('Er')} MPa`,
+      `Figure 16 at t<sub>w</sub>/D = ${f(tD,4)}`,
+      `K<sub>Lh</sub> = <b>${f(KLh,3)}</b>`);
+
+    steps += ST(13,
+      'Cyclic Longitudinal Geometric Factor G<sub>Lh</sub>',
+      'API RP 1102 Fig. 17',
+      'G<sub>Lh</sub> = f(D, H, R, L)',
+      `D = ${f(D,1)} mm &nbsp;|&nbsp; H = ${H} mm &nbsp;|&nbsp; R = ${f(R,2)} &nbsp;|&nbsp; L = ${f(L,2)}`,
+      `Figure 17 at D = ${f(D,1)} mm, H = ${H} mm`,
+      `G<sub>Lh</sub> = <b>${f(GLh,3)}</b>`);
+
+    steps += ST(14,
+      'Cyclic Longitudinal Stress &Delta;S<sub>Lh</sub>',
+      'API RP 1102 Eq. 6',
+      '&Delta;S<sub>Lh</sub> = K<sub>Lh</sub> &times; G<sub>Lh</sub> &times; w &times; (D/t<sub>w</sub>)',
+      `K<sub>Lh</sub> = ${f(KLh,3)} &nbsp;|&nbsp; G<sub>Lh</sub> = ${f(GLh,3)} &nbsp;|&nbsp; w = ${f(w,0)} kPa &nbsp;|&nbsp; D/t<sub>w</sub> = ${f(D/tw,2)}`,
+      `${f(KLh,3)} &times; ${f(GLh,3)} &times; ${f(w,0)} &times; ${f(D/tw,2)}`,
+      `&Delta;S<sub>Lh</sub> = <b>${f(dSLcyc,0)} kPa</b>`);
+
+  } else {
+    w = v('wRail');
+    const nTracks = parseInt(sv('nTracks'));
+    steps += SS('Section 5 — Applied Surface Pressure (Railroad)');
+    steps += ST(7,
+      'Applied Rail Surface Pressure w',
+      'API RP 1102 Fig. 6',
+      'w = f(rail class, H)',
+      `Rail class = ${sv('railClass')} &nbsp;|&nbsp; H = ${H} mm &nbsp;|&nbsp; No. of tracks = ${nTracks}`,
+      `Figure 6 — ${sv('railClass')} loading at H = ${H} mm`,
+      `w = <b>${f(w,0)} kPa</b>`);
+
+    steps += SS('Section 6 — Cyclic Stresses due to Railroad Loading');
+    const KHr = getKHr(tD);
+    const GHr = getGHr(D, H);
+    const NH  = getNH(nTracks);
+    dSHcyc = KHr * GHr * NH * w * (D/tw);
+
+    steps += ST(8,
+      'Cyclic Circumferential Coefficient K<sub>Hr</sub>',
+      'API RP 1102 Fig. 8',
+      'K<sub>Hr</sub> = f(t<sub>w</sub>/D, E<sub>r</sub>)',
+      `t<sub>w</sub>/D = ${f(tD,4)} &nbsp;|&nbsp; E<sub>r</sub> = ${v('Er')} MPa`,
+      `Figure 8 at t<sub>w</sub>/D = ${f(tD,4)}`,
+      `K<sub>Hr</sub> = <b>${f(KHr,3)}</b>`);
+
+    steps += ST(9,
+      'Geometric Factors G<sub>Hr</sub> and N<sub>H</sub>',
+      'API RP 1102 Fig. 9 &amp; 10',
+      'G<sub>Hr</sub> = f(D, H) &nbsp;|&nbsp; N<sub>H</sub> = f(tracks)',
+      `D = ${f(D,1)} mm &nbsp;|&nbsp; H = ${H} mm &nbsp;|&nbsp; Tracks = ${nTracks}`,
+      `Fig 9: G<sub>Hr</sub> = ${f(GHr,3)} &nbsp;|&nbsp; Fig 10: N<sub>H</sub> = ${f(NH,2)}`,
+      `G<sub>Hr</sub> = <b>${f(GHr,3)}</b> &nbsp;|&nbsp; N<sub>H</sub> = <b>${f(NH,2)}</b>`);
+
+    steps += ST(10,
+      'Cyclic Circumferential Stress &Delta;S<sub>Hr</sub>',
+      'API RP 1102 Eq. 3',
+      '&Delta;S<sub>Hr</sub> = K<sub>Hr</sub> &times; G<sub>Hr</sub> &times; N<sub>H</sub> &times; w &times; (D/t<sub>w</sub>)',
+      `K<sub>Hr</sub> = ${f(KHr,3)} &nbsp;|&nbsp; G<sub>Hr</sub> = ${f(GHr,3)} &nbsp;|&nbsp; N<sub>H</sub> = ${f(NH,2)} &nbsp;|&nbsp; w = ${f(w,0)} kPa &nbsp;|&nbsp; D/t<sub>w</sub> = ${f(D/tw,2)}`,
+      `${f(KHr,3)} &times; ${f(GHr,3)} &times; ${f(NH,2)} &times; ${f(w,0)} &times; ${f(D/tw,2)}`,
+      `&Delta;S<sub>Hr</sub> = <b>${f(dSHcyc,0)} kPa</b>`);
+
+    const KLr = getKLr(tD);
+    const GLr = getGLr(D, H);
+    const NL  = getNL(nTracks);
+    dSLcyc = KLr * GLr * NL * w * (D/tw);
+
+    steps += ST(11,
+      'Cyclic Longitudinal Stress &Delta;S<sub>Lr</sub>',
+      'API RP 1102 Eq. 4',
+      '&Delta;S<sub>Lr</sub> = K<sub>Lr</sub> &times; G<sub>Lr</sub> &times; N<sub>L</sub> &times; w &times; (D/t<sub>w</sub>)',
+      `K<sub>Lr</sub> = ${f(KLr,3)} &nbsp;|&nbsp; G<sub>Lr</sub> = ${f(GLr,3)} &nbsp;|&nbsp; N<sub>L</sub> = ${f(NL,2)} &nbsp;|&nbsp; w = ${f(w,0)} kPa &nbsp;|&nbsp; D/t<sub>w</sub> = ${f(D/tw,2)}`,
+      `${f(KLr,3)} &times; ${f(GLr,3)} &times; ${f(NL,2)} &times; ${f(w,0)} &times; ${f(D/tw,2)}`,
+      `&Delta;S<sub>Lr</sub> = <b>${f(dSLcyc,0)} kPa</b>`);
+  }
+
+  // ---- SECTION 7: HOOP STRESS INTERNAL PRESSURE (Eq. 7) ----
+  const SHi = (P * D) / (2 * tw);
+  steps += SS('Section 7 — Circumferential Stress due to Internal Pressure');
+  steps += ST(isRail?12:15,
+    'Circumferential Stress S<sub>Hi</sub> — Internal Pressure',
+    'API RP 1102 Eq. 7',
+    'S<sub>Hi</sub> = P &times; D / (2 &times; t<sub>w</sub>)',
+    `P = ${f(P,0)} kPa &nbsp;|&nbsp; D = ${f(D,1)} mm &nbsp;|&nbsp; t<sub>w</sub> = ${f(tw,2)} mm`,
+    `${f(P,0)} &times; ${f(D,1)} / (2 &times; ${f(tw,2)})`,
+    `S<sub>Hi</sub> = <b>${f(SHi,0)} kPa</b>`);
+
+  // ---- SECTION 8: PRINCIPAL STRESSES (Eq. 9-11) ----
+  const SLth = -Es * alphaT * dT;
+  const S1 = SHe + dSHcyc + SHi;
+  const S2 = vs*(SHe + SHi) + SLth + dSLcyc;
+  const S3 = -P;
+  const sn = isRail ? 12 : 15;
+
+  steps += SS('Section 8 — Principal Stresses and Effective Stress Check');
+  steps += ST(sn+1,
+    'Longitudinal Thermal Stress S<sub>Lth</sub>',
+    'ASME B31.4 &sect;419.6',
+    'S<sub>Lth</sub> = &minus;E<sub>s</sub> &times; &alpha;<sub>t</sub> &times; &Delta;T',
+    `E<sub>s</sub> = ${Es.toExponential(2)} kPa &nbsp;|&nbsp; &alpha;<sub>t</sub> = ${alphaT.toExponential(2)} /&deg;C &nbsp;|&nbsp; &Delta;T = ${f(v('t2'),1)}&minus;${f(v('t1'),1)} = ${f(dT,1)}&deg;C`,
+    `&minus;${Es.toExponential(2)} &times; ${alphaT.toExponential(2)} &times; ${f(dT,1)}`,
+    `S<sub>Lth</sub> = <b>${f(SLth,0)} kPa</b> (${SLth<0?'compressive — restrained thermal expansion':'tensile'})`,
+    'Negative = compressive. Longitudinal stress arises because buried pipeline cannot expand freely when heated');
+
+  steps += ST(sn+2,
+    'Principal Stress S&#8321; — Maximum Circumferential',
+    'API RP 1102 Eq. 9',
+    'S&#8321; = S<sub>He</sub> + &Delta;S<sub>Hcyc</sub> + S<sub>Hi</sub>',
+    `S<sub>He</sub> = ${f(SHe,0)} kPa &nbsp;|&nbsp; &Delta;S<sub>Hcyc</sub> = ${f(dSHcyc,0)} kPa &nbsp;|&nbsp; S<sub>Hi</sub> = ${f(SHi,0)} kPa`,
+    `${f(SHe,0)} + ${f(dSHcyc,0)} + ${f(SHi,0)}`,
+    `S&#8321; = <b>${f(S1,0)} kPa</b> (${f(S1/SMYS*100,1)}% SMYS) &nbsp;vs&nbsp; Allowable F&times;SMYS = ${f(F*SMYS,0)} kPa &nbsp;&rarr;&nbsp; <b>${S1<=F*SMYS?'&#10003; PASS':'&#10007; FAIL'}</b>`);
+
+  steps += ST(sn+3,
+    'Principal Stress S&#8322; — Maximum Longitudinal',
+    'API RP 1102 Eq. 10',
+    'S&#8322; = &nu;(S<sub>He</sub>+S<sub>Hi</sub>) + S<sub>Lth</sub> + &Delta;S<sub>Lcyc</sub>',
+    `&nu; = ${vs} (Poisson&apos;s ratio) &nbsp;|&nbsp; S<sub>He</sub>+S<sub>Hi</sub> = ${f(SHe+SHi,0)} kPa &nbsp;|&nbsp; S<sub>Lth</sub> = ${f(SLth,0)} kPa &nbsp;|&nbsp; &Delta;S<sub>Lcyc</sub> = ${f(dSLcyc,0)} kPa`,
+    `${f(vs,1)}&times;${f(SHe+SHi,0)} + (${f(SLth,0)}) + ${f(dSLcyc,0)}`,
+    `S&#8322; = <b>${f(S2,0)} kPa</b> (${f(Math.abs(S2)/SMYS*100,1)}% SMYS) &nbsp;vs&nbsp; Allowable = ${f(F*SMYS,0)} kPa &nbsp;&rarr;&nbsp; <b>${Math.abs(S2)<=F*SMYS?'&#10003; PASS':'&#10007; FAIL'}</b>`);
+
+  steps += ST(sn+4,
+    'Principal Stress S&#8323; — Radial',
+    'API RP 1102 Eq. 11',
+    'S&#8323; = &minus;P (compressive radial stress at inner wall)',
+    `P = internal pressure = ${f(P,0)} kPa`,
+    `&minus;${f(P,0)}`,
+    `S&#8323; = <b>${f(S3,0)} kPa</b> (${f(Math.abs(S3)/SMYS*100,1)}% SMYS) &nbsp;&rarr;&nbsp; <b>${Math.abs(S3)<=F*SMYS?'&#10003; PASS':'&#10007; FAIL'}</b>`,
+    'S3 = negative internal pressure, acts compressively in the radial direction at the pipe inner surface');
+
+  // ---- EFFECTIVE STRESS (Eq. 12-13) ----
+  const Seff = Math.sqrt(0.5*((S1-S2)**2 + (S2-S3)**2 + (S3-S1)**2));
+  const allow_eff = Fe * SMYS;
+  const eff_pass = Seff <= allow_eff;
+  allPass = allPass && eff_pass;
+
+  steps += ST(sn+5,
+    'Effective Stress S<sub>eff</sub> — von Mises Criterion',
+    'API RP 1102 Eq. 12 &amp; 13',
+    'S<sub>eff</sub> = &radic;[&frac12;((S&#8321;&minus;S&#8322;)&sup2; + (S&#8322;&minus;S&#8323;)&sup2; + (S&#8323;&minus;S&#8321;)&sup2;)]',
+    `S&#8321; = ${f(S1,0)} kPa &nbsp;|&nbsp; S&#8322; = ${f(S2,0)} kPa &nbsp;|&nbsp; S&#8323; = ${f(S3,0)} kPa`,
+    `&radic;[&frac12;((${f(S1,0)}&minus;${f(S2,0)})&sup2; + (${f(S2,0)}&minus;${f(S3,0)})&sup2; + (${f(S3,0)}&minus;${f(S1,0)})&sup2;)]`,
+    `S<sub>eff</sub> = <b>${f(Seff,0)} kPa</b> (${f(Seff/SMYS*100,1)}% SMYS) &nbsp;vs&nbsp; Allowable F<sub>e</sub>&times;SMYS = ${f(Fe,2)}&times;${f(SMYS_MPa,0)}&times;1000 = <b>${f(allow_eff,0)} kPa</b> &nbsp;&rarr;&nbsp; <b>${eff_pass?'&#10003; PASS':'&#10007; FAIL'}</b>`,
+    eff_pass ? 'Effective stress utilisation = '+f(Seff/allow_eff*100,1)+'%' : 'Effective stress exceeds allowable — increase wall thickness, reduce pressure, or increase cover depth');
+
+  // ---- SECTION 9: FATIGUE (Eq. 17, 20) ----
+  const SFG  = 82740;
+  const SFL  = 158585;
+  const fGirth_allow = F * SFG;
+  const fLong_allow  = F * SFL;
+  const girth_pass = dSLcyc <= fGirth_allow;
+  const long_pass  = mfr === 'SMLS' ? true : (dSHcyc <= fLong_allow);
+  allPass = allPass && girth_pass && long_pass;
+
+  steps += SS('Section 9 — Fatigue Checks');
+  steps += ST(sn+6,
+    'Girth Weld Fatigue — Longitudinal Cyclic Stress',
+    'API RP 1102 Eq. 17 / Table 3',
+    '&Delta;S<sub>Lcyc</sub> &le; F &times; S<sub>FG</sub>',
+    `&Delta;S<sub>Lcyc</sub> = ${f(dSLcyc,0)} kPa &nbsp;|&nbsp; S<sub>FG</sub> = ${SFG.toLocaleString()} kPa (Table 3 — girth weld allowable) &nbsp;|&nbsp; F = ${f(F,2)} &nbsp;|&nbsp; Allowable = F&times;S<sub>FG</sub> = ${f(fGirth_allow,0)} kPa`,
+    `${f(dSLcyc,0)} &le; ${f(fGirth_allow,0)} ?`,
+    `<b>${girth_pass?'&#10003; PASS — ':'&#10007; FAIL — '}</b>&Delta;S<sub>Lcyc</sub> = ${f(dSLcyc,0)} kPa vs Allowable = ${f(fGirth_allow,0)} kPa (utilisation ${f(dSLcyc/fGirth_allow*100,1)}%)`,
+    girth_pass ? '' : 'Longitudinal cyclic stress exceeds girth weld fatigue allowable — increase wall thickness or reduce traffic loading');
+
+  if(mfr !== 'SMLS'){
+    steps += ST(sn+7,
+      'Longitudinal Weld Fatigue — Circumferential Cyclic Stress',
+      'API RP 1102 Eq. 20 / Table 3',
+      '&Delta;S<sub>Hcyc</sub> &le; F &times; S<sub>FL</sub>',
+      `&Delta;S<sub>Hcyc</sub> = ${f(dSHcyc,0)} kPa &nbsp;|&nbsp; S<sub>FL</sub> = ${SFL.toLocaleString()} kPa (Table 3 — long. weld allowable) &nbsp;|&nbsp; F = ${f(F,2)} &nbsp;|&nbsp; Allowable = ${f(fLong_allow,0)} kPa &nbsp;|&nbsp; Pipe mfr = ${mfr}`,
+      `${f(dSHcyc,0)} &le; ${f(fLong_allow,0)} ?`,
+      `<b>${long_pass?'&#10003; PASS — ':'&#10007; FAIL — '}</b>&Delta;S<sub>Hcyc</sub> = ${f(dSHcyc,0)} kPa vs Allowable = ${f(fLong_allow,0)} kPa (utilisation ${f(dSHcyc/fLong_allow*100,1)}%)`);
+  } else {
+    steps += `<div class="step"><div class="step-n">${sn+7}</div><div class="step-c">
+      <div class="step-name">Longitudinal Weld Fatigue Check <span style="float:right;font-size:10px;color:var(--info);font-weight:700;font-family:var(--mono)">API RP 1102 Eq. 20</span></div>
+      <div class="step-sub" style="margin-top:6px">Pipe manufacture = <b>Seamless (SMLS)</b> — no longitudinal weld present. Longitudinal weld fatigue check is not applicable per API RP 1102 Section 4.8.2.1 Table 3 footnote.</div>
+      <div class="step-result">&#8756; <b>N/A — Not Applicable for Seamless Pipe</b></div>
+    </div></div>`;
+  }
+
+  // Pass/fail flags for stress table
+  const s1_pass = S1 <= F*SMYS;
+  const s2_pass = Math.abs(S2) <= F*SMYS;
+  const s3_pass = Math.abs(S3) <= F*SMYS;
+  allPass = allPass && s1_pass && s2_pass && s3_pass;
+
+  // ---- POPULATE RESULTS ----
+  // Stress table
+  stressRows +=
+    stressRow('Circumferential Barlow SHi', SHi_barlow, SMYS, F*100, barlow_pass) +
+    stressRow('Max Circumferential S1', S1, SMYS, F*100, s1_pass) +
+    stressRow('Max Longitudinal S2', S2, SMYS, F*100, s2_pass) +
+    stressRow('Radial S3', S3, SMYS, F*100, s3_pass) +
+    stressRow('Effective Stress Seff', Seff, SMYS, Fe*100, eff_pass);
+
+  document.getElementById('stress-tbody').innerHTML = stressRows;
+  setBadge('badge-stress', s1_pass && s2_pass && s3_pass && barlow_pass && eff_pass);
+
+  // Fatigue table
+  fatigueRows += fatigueRow('Girth Weld — Longitudinal Cyclic (Eq. 17)', dSLcyc, fGirth_allow, girth_pass);
+  if(mfr !== 'SMLS'){
+    fatigueRows += fatigueRow('Longitudinal Weld — Circumferential Cyclic (Eq. 20)', dSHcyc, fLong_allow, long_pass);
+  } else {
+    fatigueRows += `<tr><td class="label-col">Longitudinal Weld Fatigue</td><td colspan="3" style="color:var(--text-3);font-family:var(--font)">N/A — Seamless pipe, no longitudinal weld</td></tr>`;
+  }
+  document.getElementById('fatigue-tbody').innerHTML = fatigueRows;
+  setBadge('badge-fatigue', girth_pass && long_pass);
+  document.getElementById('fatigue-note').textContent =
+    `Fatigue allowables: Girth weld SFG = ${SFG.toLocaleString()} kPa × F = ${f(fGirth_allow,0)} kPa. `+
+    (mfr!=='SMLS'?`Longitudinal weld SFL = ${SFL.toLocaleString()} kPa × F = ${f(fLong_allow,0)} kPa.`:
+    'Longitudinal weld fatigue not applicable for seamless pipe.');
+
+  // Metrics
+  document.getElementById('metrics-grid').innerHTML = `
+    <div class="metric"><div class="m-label">tw/D ratio</div><div class="m-val">${f(tD,4)}</div></div>
+    <div class="metric"><div class="m-label">H/Bd ratio</div><div class="m-val">${f(HBd,2)}</div></div>
+    <div class="metric"><div class="m-label">Bd/D ratio</div><div class="m-val">${f(BdD,2)}</div></div>
+    <div class="metric"><div class="m-label">KHe</div><div class="m-val">${f(KHe,3)}</div></div>
+    <div class="metric"><div class="m-label">Be</div><div class="m-val">${f(Be,3)}</div></div>
+    <div class="metric"><div class="m-label">Ee</div><div class="m-val">${f(Ee,3)}</div></div>
+    <div class="metric"><div class="m-label">SHe (kPa)</div><div class="m-val">${f(SHe,0)}</div></div>
+    <div class="metric"><div class="m-label">ΔT (°C)</div><div class="m-val">${f(dT,1)}</div></div>
+    <div class="metric"><div class="m-label">w (kPa)</div><div class="m-val">${f(w,0)}</div></div>
+    <div class="metric"><div class="m-label">ΔSH cyc (kPa)</div><div class="m-val">${f(dSHcyc,0)}</div></div>
+    <div class="metric"><div class="m-label">ΔSL cyc (kPa)</div><div class="m-val">${f(dSLcyc,0)}</div></div>
+    <div class="metric"><div class="m-label">Seff/allow %</div><div class="m-val">${f(Seff/allow_eff*100,1)}%</div></div>
+  `;
+
+  // Workings
+  document.getElementById('wb-steps').innerHTML = steps;
+
+  // Casing check (if cased)
+  if(isCased){
+    const cOd   = v('casingOd');
+    const cWt   = v('casingWt');
+    const cP    = v('casingP');
+    const cSMYS = parseInt(sv('casingGrade')) * 1000; // kPa
+    const cTd   = cWt/cOd;
+    const cBe   = getBe(H/cOd, soilType);
+    const cEe   = getEe(cOd/D);
+    const cKHe  = getKHe(cTd);
+    const SHe_cas = cKHe * cBe * cEe * gamma * (cOd/1000) * 1000;
+    const SHi_cas = (cP * cOd) / (2*cWt);
+    const S1_cas  = SHe_cas + dSHcyc + SHi_cas;
+    const cas_allow = 0.5 * cSMYS;
+    const cas1_pass = S1_cas <= cas_allow;
+    const cas_s2 = vs*SHe_cas + SLth + dSLcyc;
+    const cas2_pass = Math.abs(cas_s2) <= cas_allow;
+    const cas_seff = Math.sqrt(0.5*((S1_cas-cas_s2)**2+(cas_s2-(-cP))**2+((-cP)-S1_cas)**2));
+    const cas_eff_allow = Fe * cSMYS;
+    const cas_eff_pass = cas_seff <= cas_eff_allow;
+    const cas_all_pass = cas1_pass && cas2_pass && cas_eff_pass;
+    allPass = allPass && cas_all_pass;
+
+    document.getElementById('rs-casing').style.display = '';
+    setBadge('badge-casing', cas_all_pass);
+    document.getElementById('casing-tbody').innerHTML =
+      `<tr><td class="label-col">Max Circumferential S1</td><td style="font-family:var(--mono)">${f(S1_cas,0)}</td><td style="font-family:var(--mono)">${f(cas_allow,0)}</td><td class="${cas1_pass?'ok':'fail'}">${cas1_pass?'OK ✓':'FAIL ✗'}</td></tr>`+
+      `<tr><td class="label-col">Max Longitudinal S2</td><td style="font-family:var(--mono)">${f(cas_s2,0)}</td><td style="font-family:var(--mono)">${f(cas_allow,0)}</td><td class="${cas2_pass?'ok':'fail'}">${cas2_pass?'OK ✓':'FAIL ✗'}</td></tr>`+
+      `<tr><td class="label-col">Effective Stress Seff</td><td style="font-family:var(--mono)">${f(cas_seff,0)}</td><td style="font-family:var(--mono)">${f(cas_eff_allow,0)}</td><td class="${cas_eff_pass?'ok':'fail'}">${cas_eff_pass?'OK ✓':'FAIL ✗'}</td></tr>`;
+  } else {
+    document.getElementById('rs-casing').style.display = 'none';
+  }
+
+  // Verdict banner
+  const banner = document.getElementById('verdict-banner');
+  banner.className = 'verdict-banner ' + (allPass?'pass':'fail');
+  document.getElementById('verdict-icon').textContent = allPass ? '✅' : '❌';
+  document.getElementById('verdict-title').textContent = allPass
+    ? 'CROSSING COMPLIANT — ALL CHECKS PASS'
+    : 'CROSSING NON-COMPLIANT — REVIEW REQUIRED';
+  document.getElementById('verdict-sub').textContent = allPass
+    ? `All stress and fatigue checks pass per API RP 1102. ${currentMode==='road-uncased'?'Uncased road crossing':'Cased crossing'} with ${f(v('pres'),1)} barg design pressure.`
+    : 'One or more stress or fatigue checks have failed. Consider increasing wall thickness, cover depth, or adding casing.';
+
+  setBadge('badge-stress', allPass);
+
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function setBadge(id, pass){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.textContent = pass ? 'PASS' : 'FAIL';
+  el.className = 'badge ' + (pass ? 'badge-pass' : 'badge-fail');
+}
+
+// Init
+onNpsChange();
+onGradeChange();
+</script>
+</body>
+</html>

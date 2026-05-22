@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Engineering Calculators — PipingPro Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --ink:#1a1a18;--ink2:#4a4a44;--ink3:#8a8a80;
+  --paper:#f5f2eb;--paper2:#ede9de;--paper3:#e3dfd2;
+  --accent:#c45c2a;--accent2:#e8a06a;--accent-light:#f7ede3;
+  --teal:#1a6b5a;--teal-light:#e0f0eb;
+  --rule:rgba(26,26,24,0.12);
+  --gold:#b8922a;--gold-light:#fdf3dc;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);font-size:15px;line-height:1.6;min-height:100vh;}
+
+/* ─── NAV ─── */
+nav{background:rgba(245,242,235,0.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--rule);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:200;}
+.nav-logo{font-family:'DM Serif Display',serif;font-size:17px;color:var(--ink);text-decoration:none;}
+.nav-logo span{color:var(--accent);}
+.nav-back{font-size:13px;color:var(--ink2);text-decoration:none;display:flex;align-items:center;gap:5px;}
+.nav-back:hover{color:var(--accent);}
+
+/* ─── HERO ─── */
+.hero{background:var(--ink);color:var(--paper);padding:3.5rem 2rem 3rem;text-align:center;border-bottom:3px solid var(--accent);position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 60px),repeating-linear-gradient(0deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 60px);}
+.hero-eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);margin-bottom:.9rem;font-family:'DM Mono',monospace;position:relative;}
+.hero h1{font-family:'DM Serif Display',serif;font-size:clamp(2rem,5vw,3.2rem);line-height:1.1;margin-bottom:.9rem;position:relative;}
+.hero p{font-size:14px;color:rgba(245,242,235,0.6);max-width:500px;margin:0 auto;position:relative;}
+
+/* ─── UNLOCK STRIP ─── */
+.unlock-strip{background:var(--accent-light);border-bottom:1px solid rgba(196,92,42,.18);padding:1rem 2rem;display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap;}
+.unlock-strip.ok{background:var(--teal-light);border-bottom-color:rgba(26,107,90,.18);}
+.us-text{flex:1;min-width:200px;font-size:13px;color:var(--ink2);}
+.us-text strong{color:var(--ink);}
+.us-row{display:flex;gap:8px;align-items:center;}
+.us-input{padding:8px 12px;border:1px solid rgba(196,92,42,.35);border-radius:7px;font-family:'DM Mono',monospace;font-size:13px;background:#fff;color:var(--ink);width:210px;outline:none;letter-spacing:.04em;}
+.us-input:focus{border-color:var(--accent);}
+.us-btn{padding:8px 16px;border-radius:7px;background:var(--accent);color:#fff;font-size:13px;font-weight:500;border:none;cursor:pointer;white-space:nowrap;}
+.us-btn:hover{background:#a84d22;}
+.us-err{font-size:11px;color:#b91c1c;margin-top:3px;display:none;}
+.us-revoke{font-size:12px;color:var(--teal);background:none;border:1px solid rgba(26,107,90,.3);border-radius:6px;padding:6px 12px;cursor:pointer;}
+
+/* ─── MAIN ─── */
+.main{max-width:960px;margin:0 auto;padding:2.5rem 1.5rem;}
+.section-row{display:flex;align-items:center;gap:1rem;margin-bottom:1.4rem;}
+.section-label{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);white-space:nowrap;}
+.section-line{flex:1;height:1px;background:var(--rule);}
+
+/* ─── GRID ─── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1.2rem;margin-bottom:2.8rem;}
+
+/* ─── CALC CARD ─── */
+.calc-card{background:#fff;border:1px solid var(--rule);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer;transition:box-shadow .22s,transform .22s;position:relative;}
+.calc-card:hover{box-shadow:0 6px 28px rgba(26,26,24,0.11);transform:translateY(-3px);}
+.calc-card.free{border-top:3px solid var(--teal);}
+.calc-card.paid{border-top:3px solid var(--accent);}
+
+/* Card illustration area */
+.card-img{height:140px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.card-img.bg-teal{background:linear-gradient(135deg,#1a6b5a 0%,#2d9679 100%);}
+.card-img.bg-accent{background:linear-gradient(135deg,#7a3518 0%,#c45c2a 100%);}
+.card-img.bg-navy{background:linear-gradient(135deg,#1a2a5a 0%,#2d4a8a 100%);}
+.card-img.bg-slate{background:linear-gradient(135deg,#2a3a4a 0%,#4a6a7a 100%);}
+.card-img.bg-olive{background:linear-gradient(135deg,#3a4a1a 0%,#6a8a2a 100%);}
+.card-img.bg-maroon{background:linear-gradient(135deg,#4a1a1a 0%,#8a2a2a 100%);}
+.card-img.bg-teal2{background:linear-gradient(135deg,#0a4a5a 0%,#1a7a8a 100%);}
+
+.card-img svg{width:90px;height:90px;opacity:.9;}
+
+/* Lock overlay on image */
+.card-lock{position:absolute;inset:0;background:rgba(26,26,24,.45);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px);}
+.card-lock-icon{width:38px;height:38px;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;}
+
+/* Badge */
+.card-badge{position:absolute;top:10px;right:10px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:20px;}
+.badge-free{background:rgba(26,107,90,.85);color:#fff;}
+.badge-pro{background:rgba(196,92,42,.85);color:#fff;}
+.badge-unlocked{background:rgba(26,107,90,.85);color:#fff;}
+
+/* Card body */
+.card-body{padding:1.2rem 1.3rem 1.4rem;display:flex;flex-direction:column;gap:.7rem;flex:1;}
+.card-name{font-family:'DM Serif Display',serif;font-size:1rem;color:var(--ink);line-height:1.25;}
+.card-desc{font-size:12px;color:var(--ink2);line-height:1.6;}
+.card-tags{display:flex;flex-wrap:wrap;gap:4px;}
+.tag{font-size:10px;font-family:'DM Mono',monospace;background:var(--paper2);color:var(--ink3);padding:2px 7px;border-radius:4px;}
+.card-action{margin-top:auto;padding-top:.6rem;}
+.card-btn{display:block;text-align:center;padding:9px;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;border:none;cursor:pointer;width:100%;font-family:'DM Sans',sans-serif;transition:background .18s;}
+.btn-free{background:var(--teal);color:#fff;}
+.btn-free:hover{background:#155a4a;}
+.btn-locked{background:var(--paper2);color:var(--ink3);cursor:default;}
+.btn-pro{background:var(--accent);color:#fff;}
+.btn-pro:hover{background:#a84d22;}
+
+/* ─── MODAL PREVIEW ─── */
+.modal-bg{position:fixed;inset:0;background:rgba(26,26,24,.7);z-index:300;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .2s;}
+.modal-bg.show{opacity:1;pointer-events:all;}
+.modal{background:#fff;border-radius:16px;width:100%;max-width:520px;overflow:hidden;transform:translateY(20px);transition:transform .2s;box-shadow:0 24px 80px rgba(0,0,0,.3);}
+.modal-bg.show .modal{transform:translateY(0);}
+.modal-header{padding:0;position:relative;}
+.modal-img{height:160px;display:flex;align-items:center;justify-content:center;}
+.modal-img svg{width:100px;height:100px;opacity:.9;}
+.modal-close{position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.2);border:none;cursor:pointer;font-size:16px;color:#fff;display:flex;align-items:center;justify-content:center;line-height:1;}
+.modal-close:hover{background:rgba(255,255,255,.35);}
+.modal-body{padding:1.5rem 1.8rem 1.8rem;}
+.modal-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:20px;margin-bottom:.8rem;}
+.modal-name{font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--ink);margin-bottom:.5rem;line-height:1.2;}
+.modal-desc{font-size:13px;color:var(--ink2);line-height:1.7;margin-bottom:1rem;}
+.modal-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:1.3rem;}
+.modal-what{background:var(--paper);border-radius:8px;padding:.9rem 1rem;margin-bottom:1.3rem;}
+.modal-what-title{font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;}
+.modal-what ul{list-style:none;display:flex;flex-direction:column;gap:4px;}
+.modal-what li{font-size:12px;color:var(--ink2);padding-left:1.1rem;position:relative;}
+.modal-what li::before{content:'→';position:absolute;left:0;color:var(--accent);font-size:11px;}
+.modal-actions{display:flex;gap:.7rem;}
+.modal-btn{flex:1;padding:11px;border-radius:9px;font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:none;text-align:center;display:block;}
+.modal-btn-open{background:var(--accent);color:#fff;}
+.modal-btn-open:hover{background:#a84d22;}
+.modal-btn-open.teal{background:var(--teal);}
+.modal-btn-open.teal:hover{background:#155a4a;}
+.modal-btn-lock{background:var(--paper2);color:var(--ink3);cursor:default;}
+.modal-unlock-hint{font-size:11px;color:var(--ink3);text-align:center;margin-top:.7rem;}
+.modal-unlock-hint a{color:var(--accent);text-decoration:none;cursor:pointer;}
+
+/* ─── FOOTER ─── */
+footer{background:var(--ink);color:rgba(245,242,235,0.5);text-align:center;padding:2rem;font-size:13px;margin-top:2rem;}
+footer a{color:var(--accent2);text-decoration:none;}
+.fl{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--paper);margin-bottom:.4rem;}
+.fl span{color:var(--accent);}
+
+@media(max-width:600px){
+  .unlock-strip{flex-direction:column;align-items:flex-start;}
+  .us-input{width:100%;}
+  .us-row{width:100%;flex-wrap:wrap;}
+  .modal-actions{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Piping<span>Pro</span> Academy</a>
+  <a href="index.html" class="nav-back">← Back to course</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">Engineering Calculator Suite · PipingPro Academy</div>
+  <h1>Piping &amp; Pipeline <em>Calculators</em></h1>
+  <p>Professional-grade tools based on ASME, API, DNV and industry-standard codes — by Donny A. Bachtiar CEng MIMechE.</p>
+</div>
+
+<!-- UNLOCK STRIP -->
+<div class="unlock-strip" id="unlock-strip">
+  <div class="us-text"><strong>🔒 Pro Suite</strong> — Enter your access code to unlock all 6 paid calculators.</div>
+  <div>
+    <div class="us-row">
+      <input class="us-input" id="code-input" type="text" placeholder="PPA-PRO-XXXX-XXXX" maxlength="20"/>
+      <button class="us-btn" onclick="tryUnlock()">Unlock All</button>
+    </div>
+    <div class="us-err" id="code-err">Invalid code — please check and try again.</div>
+  </div>
+</div>
+<div class="unlock-strip ok" id="unlocked-strip" style="display:none;">
+  <div class="us-text" id="unlocked-msg"><strong>✅ Pro Suite Unlocked</strong> — All calculators are accessible. Welcome, Engineer.</div>
+  <button class="us-revoke" onclick="revoke()">Revoke access</button>
+</div>
+
+<div class="main">
+
+  <!-- FREE -->
+  <div class="section-row"><div class="section-label">Free</div><div class="section-line"></div></div>
+  <div class="grid">
+
+    <div class="calc-card free" onclick="openModal('pw')">
+      <div class="card-img bg-teal">
+        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Pipe cross-section -->
+          <circle cx="45" cy="45" r="30" stroke="rgba(255,255,255,0.7)" stroke-width="3" fill="none"/>
+          <circle cx="45" cy="45" r="20" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none"/>
+          <!-- Weight arrow -->
+          <line x1="45" y1="20" x2="45" y2="70" stroke="rgba(255,255,255,0.9)" stroke-width="2.5" stroke-dasharray="none"/>
+          <polygon points="45,72 41,64 49,64" fill="rgba(255,255,255,0.9)"/>
+          <!-- horizontal dimension -->
+          <line x1="15" y1="45" x2="75" y2="45" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-dasharray="4 3"/>
+        </svg>
+        <span class="card-badge badge-free">✓ Free</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Pipe Weight &amp; Section Properties</div>
+        <div class="card-desc">Calculate pipe weight, fluid weight, moment of inertia, section modulus, and flow area per ASME B36.10.</div>
+        <div class="card-tags"><span class="tag">ASME B36.10</span><span class="tag">Nayyar 7th Ed.</span></div>
+        <div class="card-action"><span class="card-btn btn-free">Open Calculator →</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PAID -->
+  <div class="section-row"><div class="section-label">Pro Suite</div><div class="section-line"></div></div>
+  <div class="grid">
+
+    <div class="calc-card paid" onclick="openModal('wt')">
+      <div class="card-img bg-accent">
+        <div class="card-lock" id="card-lock-wt"><div class="card-lock-icon">🔒</div></div>
+        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Pipe with wall annotation -->
+          <circle cx="45" cy="45" r="28" stroke="rgba(255,255,255,0.8)" stroke-width="7" fill="none"/>
+          <!-- t annotation lines -->
+          <line x1="45" y1="17" x2="45" y2="10" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/>
+          <line x1="45" y1="73" x2="45" y2="80" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/>
+          <line x1="40" y1="10" x2="50" y2="10" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/>
+          <line x1="40" y1="80" x2="50" y2="80" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/>
+          <!-- pressure arrows inward -->
+          <line x1="75" y1="45" x2="62" y2="45" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
+          <polygon points="63,45 70,41 70,49" fill="rgba(255,255,255,0.7)"/>
+        </svg>
+        <span class="card-badge badge-pro" id="badge-wt">🔒 Pro</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Pipe Wall Thickness</div>
+        <div class="card-desc">Minimum wall thickness per ASME B31.3, B31.4, B31.8 with mill tolerance, corrosion allowance, and schedule selection.</div>
+        <div class="card-tags"><span class="tag">ASME B31.3</span><span class="tag">B31.4</span><span class="tag">B31.8</span></div>
+        <div class="card-action"><span class="card-btn btn-locked" id="btn-wt">🔒 Pro Access Required</span></div>
+      </div>
+    </div>
+
+    <div class="calc-card paid" onclick="openModal('el')">
+      <div class="card-img bg-navy">
+        <div class="card-lock" id="card-lock-el"><div class="card-lock-icon">🔒</div></div>
+        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Expansion loop shape -->
+          <path d="M10 55 L10 35 Q10 20 25 20 L45 20 Q60 20 60 35 L60 55 Q60 70 75 70 L80 70" stroke="rgba(255,255,255,0.85)" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <!-- arrows showing expansion -->
+          <line x1="5" y1="55" x2="5" y2="70" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+          <polygon points="5,72 2,65 8,65" fill="rgba(255,255,255,0.6)"/>
+          <line x1="85" y1="55" x2="85" y2="70" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+          <polygon points="85,72 82,65 88,65" fill="rgba(255,255,255,0.6)"/>
+        </svg>
+        <span class="card-badge badge-pro" id="badge-el">🔒 Pro</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Expansion Loop Calculator</div>
+        <div class="card-desc">Size expansion loops for thermal growth in process piping. Loop dimensions, thermal expansion, and stress check per ASME B31.3.</div>
+        <div class="card-tags"><span class="tag">ASME B31.3</span><span class="tag">Thermal</span></div>
+        <div class="card-action"><span class="card-btn btn-locked" id="btn-el">🔒 Pro Access Required</span></div>
+      </div>
+    </div>
+
+    <div class="calc-card paid" onclick="openModal('pc')">
+      <div class="card-img bg-slate">
+        <div class="card-lock" id="card-lock-pc"><div class="card-lock-icon">🔒</div></div>
+        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Road surface -->
+          <rect x="5" y="52" width="80" height="8" rx="1" fill="rgba(255,255,255,0.25)"/>
+          <!-- Pipeline under road -->
+          <ellipse cx="45" cy="68" rx="14" ry="10" stroke="rgba(255,255,255,0.8)" stroke-width="3.5" fill="none"/>
+          <!-- soil/cover -->
+          <path d="M31 58 Q45 52 59 58" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" fill="none" stroke-dasharray="3 2"/>
+          <!-- load arrows -->
+          <line x1="30" y1="35" x2="30" y2="50" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
+          <polygon points="30,52 26,44 34,44" fill="rgba(255,255,255,0.7)"/>
+          <line x1="45" y1="30" x2="45" y2="50" stroke="rgba(255,255,255,0.85)" stroke-width="2.5"/>
+          <polygon points="45,52 41,44 49,44" fill="rgba(255,255,255,0.85)"/>
+          <line x1="60" y1="35" x2="60" y2="50" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
+          <polygon points="60,52 56,44 64,44" fill="rgba(255,255,255,0.7)"/>
+        </svg>
+        <span class="card-badge badge-pro" id="badge-pc">🔒 Pro</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Pipeline Crossing Calculator</div>
+        <div class="card-desc">Road and railway crossing stress analysis. Casing design, soil load, traffic load, and combined stress per API RP 1102.</div>
+        <div class="card-tags"><span class="tag">API RP 1102</span><span class="tag">Road / Rail</span></div>
+        <div class="card-action"><span class="card-btn btn-locked" id="btn-pc">🔒 Pro Access Required</span></div>
+      </div>
+    </div>
+
+    <div class="calc-card paid" onclick="openModal('ub')">
+      <div class="card-img bg-olive">
+        <div class="card-lock" id="card-lock-ub"><div class="card-lock-icon">🔒</div></div>
+        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Ground surface -->
+          <line x1="5" y1="50" x2="85" y2="50" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-dasharray="5 3"/>
+          <!-- Pipe buckling upward -->
+          <path d="M5 65 Q22 65 35 50 Q45 38 55 50 Q68 65 85 65" stroke="rgba(255,255,255,0.9)" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <!-- upward force arrow -->
+          <line x1="45" y1="55" x2="45" y2="30" stroke="rgba(255,255,255,0.75)" stroke-width="2"/>
+          <polygon points="45,28 41,36 49,36" fill="rgba(255,255,255,0.75)"/>
+          <!-- soil weight arrows down -->
+          <line x1="25" y1="25" x2="25" y2="48" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-dasharray="3 2"/>
+          <line x1="65" y1="25" x2="65" y2="48" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-dasharray="3 2"/>
+        </svg>
+        <span class="card-badge badge-pro" id="badge-ub">🔒 Pro</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Upheaval Buckling Calculator</div>
+        <div class="card-desc">Buried pipeline stability against upheaval buckling. Driving force, soil resistance, and required cover depth per DNV-RP-F110.</div>
+        <div class="card-tags"><span class="tag">DNV-RP-F110</span><span class="tag">Buried Pipeline</span></div>
+        <div class="card-action"><span class="card-btn btn-locked" id="btn-ub">🔒 Pro Access Required</span></div>
+      </div>
+    </div>
+
+    <div class="calc-card paid" onclick="openModal('df')">
+      <div class="card-img bg-maroon">
+        <div class="card-lock" id="card-lock-df"><div class="card-lock-icon">🔒</div></div>
+        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Pipeline with crack propagation -->
+          <line x1="10" y1="45" x2="80" y2="45" stroke="rgba(255,255,255,0.6)" stroke-width="8" stroke-linecap="round"/>
+          <!-- Crack/fracture zigzag -->
+          <polyline points="45,30 48,38 42,45 48,52 45,60" stroke="rgba(255,120,100,0.95)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- propagation arrows -->
+          <line x1="45" y1="28" x2="25" y2="28" stroke="rgba(255,200,180,0.7)" stroke-width="1.5"/>
+          <polygon points="23,28 30,25 30,31" fill="rgba(255,200,180,0.7)"/>
+          <line x1="45" y1="28" x2="65" y2="28" stroke="rgba(255,200,180,0.7)" stroke-width="1.5"/>
+          <polygon points="67,28 60,25 60,31" fill="rgba(255,200,180,0.7)"/>
+        </svg>
+        <span class="card-badge badge-pro" id="badge-df">🔒 Pro</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Ductile Fracture Propagation</div>
+        <div class="card-desc">Battelle Two-Curve Method for gas pipeline arrest toughness per SAES-L-131, API 5L Annex G, and ASME B31.8.</div>
+        <div class="card-tags"><span class="tag">BTCM</span><span class="tag">SAES-L-131</span><span class="tag">API 5L</span></div>
+        <div class="card-action"><span class="card-btn btn-locked" id="btn-df">🔒 Pro Access Required</span></div>
+      </div>
+    </div>
+
+    <div class="calc-card paid" onclick="openModal('sp')">
+      <div class="card-img bg-teal2">
+        <div class="card-lock" id="card-lock-sp"><div class="card-lock-icon">🔒</div></div>
+        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Ocean waves -->
+          <path d="M5 35 Q20 28 35 35 Q50 42 65 35 Q80 28 88 35" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/>
+          <path d="M5 42 Q20 35 35 42 Q50 49 65 42 Q80 35 88 42" stroke="rgba(255,255,255,0.25)" stroke-width="1" fill="none"/>
+          <!-- Seabed -->
+          <line x1="5" y1="78" x2="85" y2="78" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+          <!-- Subsea pipeline on seabed -->
+          <line x1="10" y1="72" x2="80" y2="72" stroke="rgba(255,255,255,0.85)" stroke-width="6" stroke-linecap="round"/>
+          <!-- Water depth arrow -->
+          <line x1="80" y1="38" x2="80" y2="72" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+          <polygon points="80,74 77,67 83,67" fill="rgba(255,255,255,0.6)"/>
+          <polygon points="80,36 77,43 83,43" fill="rgba(255,255,255,0.6)"/>
+        </svg>
+        <span class="card-badge badge-pro" id="badge-sp">🔒 Pro</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Subsea Pipeline Calculator</div>
+        <div class="card-desc">Offshore pipeline mechanical design — wall thickness, collapse, propagating buckling, on-bottom stability, and spanning per DNV-ST-F101.</div>
+        <div class="card-tags"><span class="tag">DNV-ST-F101</span><span class="tag">Subsea</span><span class="tag">Offshore</span></div>
+        <div class="card-action"><span class="card-btn btn-locked" id="btn-sp">🔒 Pro Access Required</span></div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /main -->
+
+<footer>
+  <div class="fl">Piping<span>Pro</span> Academy</div>
+  <p>PipingPro Academy is a trademark of Zephrum Konsultan Limited, registered in England and Wales. Company Registration No. 13537626.</p>
+  <p style="margin-top:.4rem">© 2026 Zephrum Konsultan Limited. All rights reserved.</p>
+</footer>
+
+<!-- ═══════════════════════════ MODAL ═══════════════════════════ -->
+<div class="modal-bg" id="modal-bg" onclick="closeModalBg(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div class="modal-img" id="modal-img"></div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-badge" id="modal-badge"></div>
+      <div class="modal-name" id="modal-name"></div>
+      <div class="modal-desc" id="modal-desc"></div>
+      <div class="modal-tags" id="modal-tags"></div>
+      <div class="modal-what">
+        <div class="modal-what-title">What this calculator computes</div>
+        <ul id="modal-what-list"></ul>
+      </div>
+      <div class="modal-actions" id="modal-actions"></div>
+      <div class="modal-unlock-hint" id="modal-hint" style="display:none">
+        Don't have a code? <a onclick="closeModal();document.getElementById('code-input').focus();document.getElementById('unlock-strip').scrollIntoView({behavior:'smooth'})">Enter your Pro access code ↑</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────
+const CALCS = {
+  pw: {
+    tier:'free',
+    name:'Pipe Weight & Section Properties',
+    desc:'Calculate pipe weight per foot, fluid weight, inside diameter, metal area, moment of inertia, section modulus, and radius of gyration — based on Piping Handbook 7th Ed. (Nayyar) formulas.',
+    tags:['ASME B36.10','Nayyar 7th Ed.'],
+    what:['Pipe weight per foot (lb/ft)','Fluid weight per foot','Total weight per foot and per length','Inside diameter (ID)','Metal cross-sectional area (Am)','Moment of inertia (I)','Section modulus (Z)','Radius of gyration (r)'],
+    file:'pipe-calculator.html',
+    bg:'bg-teal',
+    svgId:'pw'
+  },
+  wt: {
+    tier:'paid',
+    name:'Pipe Wall Thickness',
+    desc:'Minimum wall thickness design for process and pipeline systems. Covers all three major ASME B31 codes with full input traceability and schedule selection guidance.',
+    tags:['ASME B31.3','B31.4','B31.8'],
+    what:['Minimum wall thickness (t_min)','Corrosion-adjusted wall thickness','Mill-tolerance-adjusted required wall','Schedule adequacy check','Design pressure back-calculation','Code: ASME B31.3 Para 304.1.2'],
+    file:'pipe-wall-thickness-calculator.html',
+    bg:'bg-accent',
+    svgId:'wt'
+  },
+  el: {
+    tier:'paid',
+    name:'Expansion Loop Calculator',
+    desc:'Size and verify expansion loops for thermal expansion management in process piping systems, with full calculation sheet output per ASME B31.3.',
+    tags:['ASME B31.3','Thermal Expansion'],
+    what:['Thermal expansion (ΔL)','Loop leg length (H & W)','Guided cantilever bending stress','Allowable stress check','Pipe reaction forces','Printable calculation sheet (PDF)'],
+    file:'expansion-loop-calculator.html',
+    bg:'bg-navy',
+    svgId:'el'
+  },
+  pc: {
+    tier:'paid',
+    name:'Pipeline Crossing Calculator',
+    desc:'Comprehensive stress analysis for pipeline crossings under roads and railways. Regression-based API RP 1102 approach with combined stress checks.',
+    tags:['API RP 1102','Road','Rail'],
+    what:['Soil dead load stress','Surface live load stress (road/rail)','Internal pressure hoop stress','Combined longitudinal stress','Equivalent stress (von Mises)','Casing pipe adequacy check'],
+    file:'pipeline-crossing-calculator.html',
+    bg:'bg-slate',
+    svgId:'pc'
+  },
+  ub: {
+    tier:'paid',
+    name:'Upheaval Buckling Calculator',
+    desc:'Assess buried pipeline stability against upheaval buckling. Calculate driving force, soil resistance, and required cover to prevent buckling.',
+    tags:['DNV-RP-F110','Buried Pipeline'],
+    what:['Effective axial compressive force','Thermal + pressure driving force','Soil passive resistance','Required soil cover depth','Imperfection amplitude sensitivity','DNV-RP-F110 design checks'],
+    file:'01_upheaval_buckling_calculator.html',
+    bg:'bg-olive',
+    svgId:'ub'
+  },
+  df: {
+    tier:'paid',
+    name:'Ductile Fracture Propagation',
+    desc:'Battelle Two-Curve Method (BTCM) for gas transmission pipeline fracture arrest assessment. Covers lean gas, rich gas, and H₂S-bearing streams.',
+    tags:['BTCM','SAES-L-131','API 5L Annex G','ASME B31.8'],
+    what:['Decompression wave speed','Fracture propagation speed','Arrest toughness (Charpy CVN)','BCL formula (lean gas)','BTCM graphical method','EMC²PDFA / GASDECOM approach guidance'],
+    file:'ductile-fracture-calculator-v2.html',
+    bg:'bg-maroon',
+    svgId:'df'
+  },
+  sp: {
+    tier:'paid',
+    name:'Subsea Pipeline Calculator',
+    desc:'Full offshore pipeline mechanical design suite covering pressure containment, external collapse, propagating buckle, on-bottom stability, and free-span assessment.',
+    tags:['DNV-ST-F101','Subsea','Offshore'],
+    what:['Pressure containment wall thickness','External collapse check (D/t limit)','Propagating buckle (buckle arrestor)','On-bottom stability (hydrodynamic loads)','Free-span natural frequency & VIV','Installation bending check'],
+    file:'subsea_pipeline_calculator.html',
+    bg:'bg-teal2',
+    svgId:'sp'
+  }
+};
+
+// ─── SVG BANK (reuse from cards) ─────────────────────────────
+const SVGS = {
+  pw:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="45" cy="45" r="30" stroke="rgba(255,255,255,0.7)" stroke-width="3" fill="none"/><circle cx="45" cy="45" r="20" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none"/><line x1="45" y1="20" x2="45" y2="70" stroke="rgba(255,255,255,0.9)" stroke-width="2.5"/><polygon points="45,72 41,64 49,64" fill="rgba(255,255,255,0.9)"/><line x1="15" y1="45" x2="75" y2="45" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-dasharray="4 3"/></svg>`,
+  wt:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="45" cy="45" r="28" stroke="rgba(255,255,255,0.8)" stroke-width="7" fill="none"/><line x1="45" y1="17" x2="45" y2="10" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/><line x1="45" y1="73" x2="45" y2="80" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/><line x1="40" y1="10" x2="50" y2="10" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/><line x1="40" y1="80" x2="50" y2="80" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/><line x1="75" y1="45" x2="62" y2="45" stroke="rgba(255,255,255,0.7)" stroke-width="2"/><polygon points="63,45 70,41 70,49" fill="rgba(255,255,255,0.7)"/></svg>`,
+  el:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 55 L10 35 Q10 20 25 20 L45 20 Q60 20 60 35 L60 55 Q60 70 75 70 L80 70" stroke="rgba(255,255,255,0.85)" stroke-width="4" fill="none" stroke-linecap="round"/><line x1="5" y1="55" x2="5" y2="70" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/><polygon points="5,72 2,65 8,65" fill="rgba(255,255,255,0.6)"/><line x1="85" y1="55" x2="85" y2="70" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/><polygon points="85,72 82,65 88,65" fill="rgba(255,255,255,0.6)"/></svg>`,
+  pc:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="52" width="80" height="8" rx="1" fill="rgba(255,255,255,0.25)"/><ellipse cx="45" cy="68" rx="14" ry="10" stroke="rgba(255,255,255,0.8)" stroke-width="3.5" fill="none"/><path d="M31 58 Q45 52 59 58" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" fill="none" stroke-dasharray="3 2"/><line x1="30" y1="35" x2="30" y2="50" stroke="rgba(255,255,255,0.7)" stroke-width="2"/><polygon points="30,52 26,44 34,44" fill="rgba(255,255,255,0.7)"/><line x1="45" y1="30" x2="45" y2="50" stroke="rgba(255,255,255,0.85)" stroke-width="2.5"/><polygon points="45,52 41,44 49,44" fill="rgba(255,255,255,0.85)"/><line x1="60" y1="35" x2="60" y2="50" stroke="rgba(255,255,255,0.7)" stroke-width="2"/><polygon points="60,52 56,44 64,44" fill="rgba(255,255,255,0.7)"/></svg>`,
+  ub:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="5" y1="50" x2="85" y2="50" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-dasharray="5 3"/><path d="M5 65 Q22 65 35 50 Q45 38 55 50 Q68 65 85 65" stroke="rgba(255,255,255,0.9)" stroke-width="4" fill="none" stroke-linecap="round"/><line x1="45" y1="55" x2="45" y2="30" stroke="rgba(255,255,255,0.75)" stroke-width="2"/><polygon points="45,28 41,36 49,36" fill="rgba(255,255,255,0.75)"/><line x1="25" y1="25" x2="25" y2="48" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="65" y1="25" x2="65" y2="48" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-dasharray="3 2"/></svg>`,
+  df:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="45" x2="80" y2="45" stroke="rgba(255,255,255,0.6)" stroke-width="8" stroke-linecap="round"/><polyline points="45,30 48,38 42,45 48,52 45,60" stroke="rgba(255,120,100,0.95)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="45" y1="28" x2="25" y2="28" stroke="rgba(255,200,180,0.7)" stroke-width="1.5"/><polygon points="23,28 30,25 30,31" fill="rgba(255,200,180,0.7)"/><line x1="45" y1="28" x2="65" y2="28" stroke="rgba(255,200,180,0.7)" stroke-width="1.5"/><polygon points="67,28 60,25 60,31" fill="rgba(255,200,180,0.7)"/></svg>`,
+  sp:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 35 Q20 28 35 35 Q50 42 65 35 Q80 28 88 35" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/><path d="M5 42 Q20 35 35 42 Q50 49 65 42 Q80 35 88 42" stroke="rgba(255,255,255,0.25)" stroke-width="1" fill="none"/><line x1="5" y1="78" x2="85" y2="78" stroke="rgba(255,255,255,0.3)" stroke-width="2"/><line x1="10" y1="72" x2="80" y2="72" stroke="rgba(255,255,255,0.85)" stroke-width="6" stroke-linecap="round"/><line x1="80" y1="38" x2="80" y2="72" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/><polygon points="80,74 77,67 83,67" fill="rgba(255,255,255,0.6)"/><polygon points="80,36 77,43 83,43" fill="rgba(255,255,255,0.6)"/></svg>`
+};
+
+// ─── UNLOCK LOGIC ─────────────────────────────────────────────
+const HASH='273b796a015b32c0907ab1c38ce843343d4b2acf632302968dbd4e146e32fe28';
+async function sha256(m){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(m));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
+
+const ADMIN_KEY='PPA-ADMIN-2026';
+function isUnlocked(){return localStorage.getItem('ppa_pro')==='1'||localStorage.getItem('ppa_admin')==='1';}
+function isAdmin(){return localStorage.getItem('ppa_admin')==='1';}
+
+// Silent admin bypass via URL parameter
+(function(){
+  var params=new URLSearchParams(window.location.search);
+  if(params.get('admin')===ADMIN_KEY){
+    localStorage.setItem('ppa_admin','1');
+    window.history.replaceState({},'',window.location.pathname);
+  }
+})();
+
+function applyUnlocked(){
+  document.getElementById('unlock-strip').style.display='none';
+  document.getElementById('unlocked-strip').style.display='flex';
+  if(isAdmin()){document.getElementById('unlocked-msg').innerHTML='<strong>🛡️ Admin Mode</strong> — Full access active. All calculators unlocked.';}
+  ['wt','el','pc','ub','df','sp'].forEach(id=>{
+    const lock=document.getElementById('card-lock-'+id);
+    if(lock) lock.style.display='none';
+    const badge=document.getElementById('badge-'+id);
+    if(badge){badge.textContent='✓ Pro';badge.classList.remove('badge-pro');badge.classList.add('badge-unlocked');}
+    const btn=document.getElementById('btn-'+id);
+    if(btn){btn.textContent='Open Calculator →';btn.className='card-btn btn-pro';}
+  });
+}
+
+async function tryUnlock(){
+  const code=document.getElementById('code-input').value.trim().toUpperCase();
+  const h=await sha256(code);
+  if(h===HASH){localStorage.setItem('ppa_pro','1');applyUnlocked();}
+  else{document.getElementById('code-err').style.display='block';}
+}
+
+function revoke(){localStorage.removeItem('ppa_pro');localStorage.removeItem('ppa_admin');location.reload();}
+
+document.getElementById('code-input').addEventListener('keydown',e=>{if(e.key==='Enter')tryUnlock();});
+if(isUnlocked()) applyUnlocked();
+
+// ─── MODAL ────────────────────────────────────────────────────
+function openModal(id){
+  const c=CALCS[id];
+  const unlocked=isUnlocked();
+  const free=c.tier==='free';
+  const canOpen=free||unlocked;
+
+  // Image
+  const img=document.getElementById('modal-img');
+  img.className='modal-img '+c.bg;
+  img.innerHTML=SVGS[c.svgId];
+
+  // Badge
+  const badge=document.getElementById('modal-badge');
+  if(free){badge.textContent='✓ Free';badge.style.cssText='background:var(--teal-light);color:var(--teal);';}
+  else if(unlocked){badge.textContent='✓ Pro Unlocked';badge.style.cssText='background:var(--teal-light);color:var(--teal);';}
+  else{badge.textContent='🔒 Pro';badge.style.cssText='background:var(--accent-light);color:var(--accent);';}
+
+  document.getElementById('modal-name').textContent=c.name;
+  document.getElementById('modal-desc').textContent=c.desc;
+
+  // Tags
+  document.getElementById('modal-tags').innerHTML=c.tags.map(t=>`<span class="tag">${t}</span>`).join('');
+
+  // What list
+  document.getElementById('modal-what-list').innerHTML=c.what.map(w=>`<li>${w}</li>`).join('');
+
+  // Actions
+  const actions=document.getElementById('modal-actions');
+  if(canOpen){
+    const btnClass=free?'modal-btn modal-btn-open teal':'modal-btn modal-btn-open';
+    actions.innerHTML=`<a href="${c.file}" class="${btnClass}">Open Calculator →</a>`;
+  } else {
+    actions.innerHTML=`<span class="modal-btn modal-btn-lock">🔒 Pro Access Required</span>`;
+  }
+
+  // Hint
+  const hint=document.getElementById('modal-hint');
+  hint.style.display=(!canOpen)?'block':'none';
+
+  document.getElementById('modal-bg').classList.add('show');
+  document.body.style.overflow='hidden';
+}
+
+function closeModal(){
+  document.getElementById('modal-bg').classList.remove('show');
+  document.body.style.overflow='';
+}
+
+function closeModalBg(e){
+  if(e.target===document.getElementById('modal-bg')) closeModal();
+}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape') closeModal();});
+</script>
+</body>
+</html>

@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Expansion Loop Calculator — ASME B31.3 | PipingPro Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#0b1520;color:#e2e8f0;min-height:100vh;padding:24px 16px}
+h1{font-family:'DM Serif Display',serif;font-size:26px;color:#c8a85a;letter-spacing:1px}
+.header{text-align:center;margin-bottom:24px}
+.sub{font-size:11px;color:#64748b;letter-spacing:2px;text-transform:uppercase;margin-top:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px;max-width:1000px;margin:0 auto}
+.card{background:#111e2d;border:1px solid #1e3048;border-radius:10px;padding:18px 20px}
+.card-title{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#c8a85a;margin-bottom:14px;border-bottom:1px solid #1e3048;padding-bottom:7px}
+label{display:block;font-size:11px;color:#94a3b8;margin-bottom:3px;margin-top:10px}
+input,select{width:100%;background:#0f1923;border:1px solid #1e3048;border-radius:6px;padding:7px 10px;color:#e2e8f0;font-size:13px;outline:none;font-family:'DM Sans',sans-serif}
+.hint{font-size:11px;color:#475569;margin-top:4px}
+.btn{background:linear-gradient(135deg,#c8a85a,#a07840);color:#0b1520;border:none;border-radius:8px;padding:11px 24px;font-weight:700;font-size:13px;cursor:pointer;width:100%;margin-top:14px;font-family:'DM Sans',sans-serif;letter-spacing:.5px}
+.btn-pdf{background:#0f1923;color:#c8a85a;border:1px solid #c8a85a;border-radius:8px;padding:10px 24px;font-weight:700;font-size:12px;cursor:pointer;width:100%;margin-top:8px;font-family:'DM Sans',sans-serif}
+.r-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.m-box{background:#0f1923;border-radius:7px;padding:10px 12px}
+.m-label{font-size:8.5px;color:#64748b;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px}
+.m-val{font-size:18px;font-weight:700;color:#c8a85a;font-family:monospace}
+.m-unit{font-size:9.5px;color:#64748b;margin-top:1px}
+.m-full{grid-column:1/-1}
+.pass-badge{background:#052e16;border:1px solid #16a34a;border-radius:7px;padding:12px 16px;text-align:center;font-size:14px;font-weight:700;color:#4ade80;margin-top:10px}
+.fail-badge{background:#2d0a0a;border:1px solid #dc2626;border-radius:7px;padding:12px 16px;text-align:center;font-size:14px;font-weight:700;color:#f87171;margin-top:10px}
+.warn{background:#1a1500;border:1px solid #854d0e;border-radius:7px;padding:10px 14px;font-size:10.5px;color:#fbbf24;margin-top:10px;line-height:1.6}
+.sec-title{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#c8a85a;margin:16px 0 8px;border-bottom:1px solid #1e3048;padding-bottom:6px}
+.step-box{background:#0f1923;border-radius:7px;padding:10px 13px;margin-bottom:8px;font-family:monospace;font-size:11.5px;color:#cbd5e1;line-height:1.8;border-left:3px solid #c8a85a}
+.step-lbl{font-size:9px;color:#c8a85a;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
+.green{color:#4ade80;font-weight:700}
+.amber{color:#f59e0b;font-weight:700}
+.red{color:#f87171;font-weight:700}
+table.geo{width:100%;border-collapse:collapse;font-size:11.5px}
+table.geo th{background:#0b1520;color:#c8a85a;padding:6px 10px;text-align:left;font-size:9.5px}
+table.geo td{padding:5px 10px;border-bottom:1px solid #1e3048;color:#cbd5e1}
+table.geo td.val{color:#c8a85a;font-family:monospace}
+.footer{text-align:center;margin-top:24px;font-size:10px;color:#1e3048}
+.hidden{display:none}
+.span2{grid-column:span 2}
+@media(max-width:640px){.span2{grid-column:span 1}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>EXPANSION LOOP CALCULATOR</h1>
+  <div class="sub">ASME B31.3 Process Piping · PipingPro Academy</div>
+</div>
+
+<div class="grid">
+
+  <!-- PROJECT INFO -->
+  <div class="card">
+    <div class="card-title">Project Information</div>
+    <label>Project Name</label><input id="projectName" placeholder="e.g. Al Hada Gas Plant"/>
+    <label>Project Number</label><input id="projectNo" placeholder="e.g. AHG-2025-001"/>
+    <label>Engineer Name</label><input id="engineer" placeholder="e.g. D. Bachtiar CEng"/>
+    <label>Revision</label><input id="revision" value="0"/>
+  </div>
+
+  <!-- PIPE GEOMETRY -->
+  <div class="card">
+    <div class="card-title">Pipe Geometry (ASME B36.10)</div>
+    <label>Nominal Pipe Size (NPS)</label>
+    <select id="pipeSize" onchange="updateSchedules()">
+      <option>1"</option><option>1.5"</option><option>2"</option><option>3"</option>
+      <option>4"</option><option selected>6"</option><option>8"</option><option>10"</option>
+      <option>12"</option><option>16"</option><option>20"</option><option>24"</option>
+    </select>
+    <label>Schedule</label>
+    <select id="schedule" onchange="updateHint()"></select>
+    <div class="hint" id="pipeHint"></div>
+    <label>Material</label>
+    <select id="material">
+      <option>Carbon Steel (A106 Gr.B)</option>
+      <option>Stainless Steel 316L</option>
+      <option>Stainless Steel 304</option>
+      <option>Duplex SS 2205</option>
+    </select>
+  </div>
+
+  <!-- OPERATING CONDITIONS -->
+  <div class="card">
+    <div class="card-title">Operating Conditions</div>
+    <label>Installation Temperature (°C)</label><input id="T_install" type="number" value="21" oninput="updateDT()"/>
+    <label>Operating Temperature (°C)</label><input id="T_op" type="number" value="150" oninput="updateDT()"/>
+    <div class="hint" id="dtHint">ΔT = 129 °C</div>
+    <label>Anchor-to-Anchor Distance (m)</label><input id="L_anchor" type="number" value="30"/>
+    <label>Stress Range Factor f (ASME B31.3 Cl.302.3.5)</label>
+    <select id="f_factor">
+      <option value="1.0">1.0 (≤7,000 cycles)</option>
+      <option value="0.9">0.9 (≤14,000 cycles)</option>
+      <option value="0.8">0.8 (≤22,000 cycles)</option>
+      <option value="0.7">0.7 (≤45,000 cycles)</option>
+      <option value="0.6">0.6 (≤100,000 cycles)</option>
+      <option value="0.5">0.5 (≤200,000 cycles)</option>
+    </select>
+    <button class="btn" onclick="runCalc()">CALCULATE</button>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="card hidden" id="resultsCard">
+    <div class="card-title">Results Summary</div>
+    <div class="r-grid" id="metricsGrid"></div>
+    <div id="passBadge"></div>
+    <div class="warn" id="warnBox"></div>
+    <button class="btn-pdf" onclick="generatePDF()">⬇ Download PDF Report</button>
+  </div>
+
+</div>
+
+<!-- BREAKDOWN + GEOMETRY + ISOMETRIC -->
+<div class="grid hidden" id="detailGrid" style="margin-top:14px">
+
+  <!-- STEP BY STEP -->
+  <div class="card span2" id="breakdownCard">
+    <div class="card-title">Step-by-Step Calculation Breakdown</div>
+    <div id="breakdownContent"></div>
+  </div>
+
+  <!-- GEOMETRY TABLE -->
+  <div class="card" id="geoCard">
+    <div class="card-title">Loop Geometry</div>
+    <table class="geo">
+      <thead><tr><th>Segment</th><th>Length (m)</th><th>Note</th></tr></thead>
+      <tbody id="geoBody"></tbody>
+    </table>
+  </div>
+
+  <!-- ISOMETRIC -->
+  <div class="card" id="isoCard">
+    <div class="card-title">Isometric Sketch — Nodal Displacements</div>
+    <div id="isoContainer"></div>
+  </div>
+
+</div>
+
+<div class="footer">PipingPro Academy Calculator Suite · ASME B31.3 Expansion Loop · Preliminary Engineering Use Only</div>
+
+<script>
+// ── PIPE DATA (ASME B36.10) ──────────────────────────────────────────────────
+const PIPE_DATA = {
+  '1"':   {od:33.40,  sch:{"STD/40":3.38,"80":4.55,"160":6.35,"XXS":9.09}},
+  '1.5"': {od:48.26,  sch:{"STD/40":3.68,"80":5.08,"160":7.14,"XXS":10.16}},
+  '2"':   {od:60.33,  sch:{"STD/40":3.91,"80":5.54,"160":8.74,"XXS":11.07}},
+  '3"':   {od:88.90,  sch:{"STD/40":5.49,"80":7.62,"160":11.13,"XXS":15.24}},
+  '4"':   {od:114.30, sch:{"STD/40":6.02,"80":8.56,"160":13.49,"XXS":17.12}},
+  '6"':   {od:168.28, sch:{"STD/40":7.11,"80":10.97,"160":18.26,"XXS":21.95}},
+  '8"':   {od:219.08, sch:{"STD/40":8.18,"80":12.70,"160":23.01,"XXS":22.23}},
+  '10"':  {od:273.05, sch:{"STD/40":9.27,"80":15.09,"160":28.58,"XXS":25.40}},
+  '12"':  {od:323.85, sch:{"STD/40":9.53,"80":17.48,"160":33.32,"XXS":25.40}},
+  '16"':  {od:406.40, sch:{"STD/40":9.53,"80":21.44,"160":40.49,"XXS":30.96}},
+  '20"':  {od:508.00, sch:{"STD/40":9.53,"80":23.83,"160":44.45,"XXS":38.10}},
+  '24"':  {od:609.60, sch:{"STD/40":9.53,"80":25.40,"160":46.02,"XXS":46.02}},
+};
+
+// ── MATERIAL PROPERTIES (ASME B31.3 App A & C) ───────────────────────────────
+const MATERIALS = {
+  "Carbon Steel (A106 Gr.B)": {
+    alpha:12.2e-6,
+    E_table:[[20,203000],[100,198000],[150,195000],[200,192000],[250,189000],[300,185000],[350,181000],[400,176000]],
+    Sc:138.0,
+    Sh_table:[[20,138],[100,130],[150,126],[200,121],[250,116],[300,110],[350,103],[400,95]]
+  },
+  "Stainless Steel 316L": {
+    alpha:17.2e-6,
+    E_table:[[20,195000],[100,189000],[150,186000],[200,182000],[250,178000],[300,174000],[350,170000],[400,165000]],
+    Sc:115.0,
+    Sh_table:[[20,115],[100,103],[150,97],[200,93],[250,90],[300,87],[350,85],[400,83]]
+  },
+  "Stainless Steel 304": {
+    alpha:17.2e-6,
+    E_table:[[20,195000],[100,189000],[150,186000],[200,182000],[250,178000],[300,174000],[350,170000],[400,165000]],
+    Sc:115.0,
+    Sh_table:[[20,115],[100,103],[150,97],[200,93],[250,90],[300,87],[350,85],[400,83]]
+  },
+  "Duplex SS 2205": {
+    alpha:13.0e-6,
+    E_table:[[20,200000],[100,195000],[150,192000],[200,188000],[250,184000],[300,180000],[350,175000],[400,169000]],
+    Sc:172.0,
+    Sh_table:[[20,172],[100,159],[150,153],[200,148],[250,144],[300,140],[350,136],[400,132]]
+  }
+};
+
+function interp(table, x) {
+  if (x <= table[0][0]) return table[0][1];
+  if (x >= table[table.length-1][0]) return table[table.length-1][1];
+  for (let i=0;i<table.length-1;i++) {
+    if (x>=table[i][0] && x<=table[i+1][0]) {
+      const t=(x-table[i][0])/(table[i+1][0]-table[i][0]);
+      return table[i][1]+t*(table[i+1][1]-table[i][1]);
+    }
+  }
+}
+
+// ── UI HELPERS ───────────────────────────────────────────────────────────────
+function updateSchedules() {
+  const ps = document.getElementById('pipeSize').value;
+  const sel = document.getElementById('schedule');
+  sel.innerHTML = '';
+  Object.keys(PIPE_DATA[ps].sch).forEach(s => {
+    const o = document.createElement('option'); o.value=s; o.text=s; sel.appendChild(o);
+  });
+  updateHint();
+}
+function updateHint() {
+  const ps=document.getElementById('pipeSize').value;
+  const sc=document.getElementById('schedule').value;
+  const p=PIPE_DATA[ps];
+  document.getElementById('pipeHint').textContent=`OD = ${p.od} mm  ·  t = ${p.sch[sc]} mm`;
+}
+function updateDT() {
+  const t0=parseFloat(document.getElementById('T_install').value)||0;
+  const t1=parseFloat(document.getElementById('T_op').value)||0;
+  document.getElementById('dtHint').textContent=`ΔT = ${(t1-t0).toFixed(0)} °C`;
+}
+window.onload = () => { updateSchedules(); updateDT(); };
+
+// ── CALCULATION ───────────────────────────────────────────────────────────────
+let R = null;
+function runCalc() {
+  const ps   = document.getElementById('pipeSize').value;
+  const sc   = document.getElementById('schedule').value;
+  const mat  = document.getElementById('material').value;
+  const T0   = parseFloat(document.getElementById('T_install').value);
+  const T1   = parseFloat(document.getElementById('T_op').value);
+  const Lanc = parseFloat(document.getElementById('L_anchor').value);
+  const f    = parseFloat(document.getElementById('f_factor').value);
+
+  const p    = PIPE_DATA[ps];
+  const OD   = p.od;
+  const wt   = p.sch[sc];
+  const m    = MATERIALS[mat];
+  const dT   = T1-T0;
+  const alpha= m.alpha;
+  const E    = interp(m.E_table, T1);
+  const Sc   = m.Sc;
+  const Sh   = interp(m.Sh_table, T1);
+
+  const S_allow = f*(1.25*Sc+0.25*Sh);
+  const dL_mm   = alpha*(Lanc*1000)*dT;
+  const H_mm    = Math.sqrt((3*E*OD*dL_mm)/S_allow);
+  const H       = H_mm/1000;
+  const L1      = 0.8*H;
+  const L2      = 0.8*H;
+  const sigma   = (3*E*OD*dL_mm)/(H_mm**2);
+  const util    = (sigma/S_allow)*100;
+  const pass    = sigma<=S_allow;
+
+  const disp_E1   = dL_mm/2;
+  const disp_E4   = dL_mm/2;
+  const disp_apex = dL_mm/2;
+
+  const ID    = OD-2*wt;
+  const I_mm4 = Math.PI*(OD**4-ID**4)/64;
+
+  const F_N   = (12*E*I_mm4*(dL_mm/2))/(H_mm**3);
+  const F_kN  = F_N/1000;
+  const M_Nmm = (6*E*I_mm4*(dL_mm/2))/(H_mm**2);
+  const M_kNm = M_Nmm/1e6;
+
+  R = {ps,sc,mat,T0,T1,Lanc,f,OD,wt,ID,I_mm4,dT,alpha,E,Sc,Sh,S_allow,
+       dL_mm,H,L1,L2,sigma,util,pass,disp_E1,disp_E4,disp_apex,F_kN,M_kNm};
+
+  renderResults();
+}
+
+// ── RENDER RESULTS ────────────────────────────────────────────────────────────
+function renderResults() {
+  const r=R;
+
+  // Metrics
+  document.getElementById('metricsGrid').innerHTML = `
+    <div class="m-box"><div class="m-label">Total ΔL</div><div class="m-val">${r.dL_mm.toFixed(1)}</div><div class="m-unit">mm</div></div>
+    <div class="m-box"><div class="m-label">Loop Leg H</div><div class="m-val">${r.H.toFixed(3)}</div><div class="m-unit">m</div></div>
+    <div class="m-box"><div class="m-label">δ at E1 (axial)</div><div class="m-val">${r.disp_E1.toFixed(1)}</div><div class="m-unit">mm</div></div>
+    <div class="m-box"><div class="m-label">δ at E4 (axial)</div><div class="m-val">${r.disp_E4.toFixed(1)}</div><div class="m-unit">mm</div></div>
+    <div class="m-box"><div class="m-label">δ apex E2/E3 (lateral)</div><div class="m-val">${r.disp_apex.toFixed(1)}</div><div class="m-unit">mm</div></div>
+    <div class="m-box"><div class="m-label">Actual Stress σ</div><div class="m-val">${r.sigma.toFixed(1)}</div><div class="m-unit">MPa</div></div>
+    <div class="m-box"><div class="m-label">Allowable S_A</div><div class="m-val">${r.S_allow.toFixed(1)}</div><div class="m-unit">MPa</div></div>
+    <div class="m-box"><div class="m-label">Utilisation</div><div class="m-val" style="color:${r.util>100?'#f87171':'#4ade80'}">${r.util.toFixed(1)}</div><div class="m-unit">%</div></div>
+    <div class="m-box"><div class="m-label">Anchor Force (each)</div><div class="m-val">${r.F_kN.toFixed(2)}</div><div class="m-unit">kN</div></div>
+    <div class="m-box m-full"><div class="m-label">Elbow Moment at E1/E4</div><div class="m-val">${r.M_kNm.toFixed(2)}</div><div class="m-unit">kN·m</div></div>
+  `;
+
+  document.getElementById('passBadge').innerHTML =
+    `<div class="${r.pass?'pass-badge':'fail-badge'}">${r.pass?'✅ STRESS CHECK — PASS':'❌ STRESS CHECK — FAIL'}</div>`;
+
+  document.getElementById('warnBox').innerHTML =
+    `⚠ Guided Cantilever method — preliminary sizing only. Verify δE1/E4 (${r.disp_E1.toFixed(1)} mm axial) and apex lateral movement (${r.disp_apex.toFixed(1)} mm) against available rack/sleeper clearance. Elbow SIF, sustained loads and occasional loads not included. Full Caesar II model required for final qualification.`;
+
+  // Breakdown
+  const pc = r.pass ? 'green' : 'red';
+  document.getElementById('breakdownContent').innerHTML = `
+    <div class="sec-title">Step 1 — Allowable Expansion Stress Range (ASME B31.3 Cl.302.3.5)</div>
+    <div class="step-box">
+      <div class="step-lbl">Formula: S_A = f × (1.25×Sc + 0.25×Sh)</div>
+      S_A = ${r.f} × (1.25 × ${r.Sc.toFixed(1)} + 0.25 × ${r.Sh.toFixed(1)})<br/>
+      <span class="green">S_A = ${r.S_allow.toFixed(2)} MPa</span>
+    </div>
+
+    <div class="sec-title">Step 2 — Total Thermal Expansion (ASME B31.3 Cl.319.2.1)</div>
+    <div class="step-box">
+      <div class="step-lbl">Formula: ΔL = α × L × ΔT</div>
+      ΔL = ${(r.alpha*1e6).toFixed(1)}×10⁻⁶ × ${(r.Lanc*1000).toFixed(0)} mm × ${r.dT} °C<br/>
+      <span class="green">ΔL = ${r.dL_mm.toFixed(2)} mm</span>
+    </div>
+
+    <div class="sec-title">Step 3 — Nodal Displacements at Loop Corners</div>
+    <div class="step-box">
+      <div class="step-lbl">Symmetric loop — each half absorbs ΔL/2</div>
+      δ(E1) = ΔL/2 = ${r.dL_mm.toFixed(2)}/2 = <span class="amber">${r.disp_E1.toFixed(2)} mm</span> &nbsp;← axial movement at E1, along main run +X (toward loop centre)<br/>
+      δ(E4) = ΔL/2 = ${r.dL_mm.toFixed(2)}/2 = <span class="amber">${r.disp_E4.toFixed(2)} mm</span> &nbsp;← axial movement at E4, along main run +X (toward loop centre)<br/>
+      δ(E2/E3) = ΔL/2 = <span class="amber">${r.disp_apex.toFixed(2)} mm</span> &nbsp;← lateral movement at loop apex, perpendicular to main run (−Y direction)
+    </div>
+
+    <div class="sec-title">Step 4 — Required Loop Leg H (Guided Cantilever Method)</div>
+    <div class="step-box">
+      <div class="step-lbl">Formula: H = √(3 × E × D × ΔL / S_A)</div>
+      H = √(3 × ${(r.E/1000).toFixed(0)}×10³ × ${r.OD.toFixed(2)} × ${r.dL_mm.toFixed(2)} / ${r.S_allow.toFixed(2)})<br/>
+      <span class="green">H = ${r.H.toFixed(3)} m</span>
+    </div>
+
+    <div class="sec-title">Step 5 — Actual Expansion Stress Check</div>
+    <div class="step-box">
+      <div class="step-lbl">Formula: σ_E = 3 × E × D × ΔL / H²</div>
+      σ_E = 3 × ${(r.E/1000).toFixed(0)}×10³ × ${r.OD.toFixed(2)} × ${r.dL_mm.toFixed(2)} / ${(r.H*1000).toFixed(1)}²<br/>
+      σ_E = <span class="${pc}">${r.sigma.toFixed(2)} MPa</span> &nbsp; vs &nbsp; S_A = ${r.S_allow.toFixed(2)} MPa<br/>
+      Utilisation = ${r.util.toFixed(1)}% &nbsp;&nbsp; <span class="${pc} " style="font-size:13px">${r.pass?'✅ PASS — σ_E ≤ S_A':'❌ FAIL — σ_E > S_A'}</span>
+    </div>
+
+    <div class="sec-title">Step 6 — Section Properties</div>
+    <div class="step-box">
+      ID = OD − 2t = ${r.OD.toFixed(2)} − ${(2*r.wt).toFixed(2)} = <span class="green">${r.ID.toFixed(2)} mm</span><br/>
+      I = π(OD⁴ − ID⁴)/64 = <span class="green">${r.I_mm4.toExponential(3)} mm⁴</span>
+    </div>
+
+    <div class="sec-title">Step 7 — Anchor Reaction Force & Elbow Bending Moment</div>
+    <div class="step-box">
+      <div class="step-lbl">Fixed-fixed beam: imposed displacement δ = ΔL/2 = ${r.disp_E1.toFixed(2)} mm, span = H = ${(r.H*1000).toFixed(1)} mm</div>
+      F = 12×E×I×δ / H³ = 12 × ${(r.E/1000).toFixed(0)}×10³ × ${r.I_mm4.toExponential(3)} × ${r.disp_E1.toFixed(2)} / ${(r.H*1000).toFixed(1)}³<br/>
+      <span class="amber">F_anchor = ${r.F_kN.toFixed(2)} kN</span> &nbsp;(each anchor, each loop leg)<br/><br/>
+      M = 6×E×I×δ / H² = 6 × ${(r.E/1000).toFixed(0)}×10³ × ${r.I_mm4.toExponential(3)} × ${r.disp_E1.toFixed(2)} / ${(r.H*1000).toFixed(1)}²<br/>
+      <span class="amber">M_elbow = ${r.M_kNm.toFixed(2)} kN·m</span> &nbsp;(bending moment at E1 and E4 elbows)
+    </div>
+  `;
+
+  // Geometry table
+  document.getElementById('geoBody').innerHTML = [
+    ['L1 — A1 → E1', R.L1.toFixed(3), 'Run leg = 0.8 × H'],
+    ['H — E1 → E2',  R.H.toFixed(3),  'Loop leg (−Y)'],
+    ['H — E2 → E3',  R.H.toFixed(3),  'Crossover (+X)'],
+    ['H — E3 → E4',  R.H.toFixed(3),  'Loop leg (+Y)'],
+    ['L2 — E4 → A2', R.L2.toFixed(3), 'Run leg = 0.8 × H'],
+    ['TOTAL',        (R.L1+3*R.H+R.L2).toFixed(3), 'L1 + 3H + L2'],
+  ].map(([a,b,c])=>`<tr><td>${a}</td><td class="val">${b}</td><td>${c}</td></tr>`).join('');
+
+  // Isometric SVG
+  document.getElementById('isoContainer').innerHTML = buildISO();
+
+  document.getElementById('resultsCard').classList.remove('hidden');
+  document.getElementById('detailGrid').classList.remove('hidden');
+}
+
+// ── ISOMETRIC SVG ─────────────────────────────────────────────────────────────
+function buildISO() {
+  const r=R;
+  const H=r.H, L1=r.L1, L2=r.L2;
+  // Isometric unit vectors (px per H-unit):
+  //  +X → (86, 50)   +Y → (-86, 50)   -Y → (86, -50)
+  const ox=90, oy=230;
+  const pt=(x,y)=>({sx:ox+x*86+y*(-86), sy:oy+x*50+y*50});
+
+  const A1=pt(0,0), E1=pt(0.8,0), E2=pt(0.8,-1), E3=pt(1.8,-1), E4=pt(1.8,0), A2=pt(2.6,0);
+
+  const PIPE='#e2e8f0', LOOP='#4ade80', ANCH='#c8a85a', DIM='#4a6080', ELB='#60a5fa', DISP='#f59e0b';
+
+  const anchor=(p,lbl)=>`
+    <polygon points="${p.sx},${p.sy} ${p.sx-13},${p.sy-20} ${p.sx+13},${p.sy-20}" fill="none" stroke="${ANCH}" stroke-width="1.8"/>
+    <polygon points="${p.sx},${p.sy-6} ${p.sx-8},${p.sy-20} ${p.sx+8},${p.sy-20}" fill="${ANCH}" opacity="0.25"/>
+    <line x1="${p.sx-16}" y1="${p.sy-20}" x2="${p.sx+16}" y2="${p.sy-20}" stroke="${ANCH}" stroke-width="2"/>
+    ${[-11,-4,3,10].map(o=>`<line x1="${p.sx+o}" y1="${p.sy-20}" x2="${p.sx+o-5}" y2="${p.sy-13}" stroke="${ANCH}" stroke-width="1" opacity="0.7"/>`).join('')}
+    <text x="${p.sx}" y="${p.sy-27}" fill="${ANCH}" font-size="8.5" font-weight="700" text-anchor="middle" font-family="monospace">${lbl}</text>`;
+
+  const dim=(x1,y1,x2,y2,lbl,offY)=>{
+    const mx=(x1+x2)/2, my=(y1+y2)/2+offY;
+    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${DIM}" stroke-width="0.8" stroke-dasharray="3 2"/>
+            <text x="${mx}" y="${my}" fill="${DIM}" font-size="7.5" text-anchor="middle" font-family="monospace">${lbl}</text>`;
+  };
+
+  const disp=(px,py,dx,dy,lbl)=>`
+    <line x1="${px}" y1="${py}" x2="${px+dx}" y2="${py+dy}" stroke="${DISP}" stroke-width="1.5" stroke-dasharray="3 2" marker-end="url(#da)"/>
+    <text x="${px+dx+4}" y="${py+dy+3}" fill="${DISP}" font-size="7" font-family="monospace">${lbl}</text>`;
+
+  return `<svg viewBox="0 0 490 300" style="width:100%;display:block">
+  <defs>
+    <marker id="da" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M2 2L8 5L2 8" fill="none" stroke="${DISP}" stroke-width="1.5" stroke-linecap="round"/>
+    </marker>
+    <marker id="fa" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 2L8 5L2 8" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
+    </marker>
+  </defs>
+  <rect width="490" height="300" fill="#0a1420" rx="8"/>
+  <text x="245" y="13" fill="#334155" font-size="7.5" text-anchor="middle" font-family="monospace">EXPANSION LOOP ISOMETRIC — FLAT HORIZONTAL PLANE (LOOP INTO −Y)</text>
+
+  <!-- pipes -->
+  <line x1="${A1.sx}" y1="${A1.sy}" x2="${E1.sx}" y2="${E1.sy}" stroke="${PIPE}" stroke-width="4.5" stroke-linecap="round" opacity="0.9"/>
+  <line x1="${E1.sx}" y1="${E1.sy}" x2="${E2.sx}" y2="${E2.sy}" stroke="${LOOP}" stroke-width="4.5" stroke-linecap="round"/>
+  <line x1="${E2.sx}" y1="${E2.sy}" x2="${E3.sx}" y2="${E3.sy}" stroke="${LOOP}" stroke-width="4.5" stroke-linecap="round"/>
+  <line x1="${E3.sx}" y1="${E3.sy}" x2="${E4.sx}" y2="${E4.sy}" stroke="${LOOP}" stroke-width="4.5" stroke-linecap="round"/>
+  <line x1="${E4.sx}" y1="${E4.sy}" x2="${A2.sx}" y2="${A2.sy}" stroke="${PIPE}" stroke-width="4.5" stroke-linecap="round" opacity="0.9"/>
+
+  <!-- dimensions -->
+  ${dim(A1.sx, A1.sy+14, E1.sx, E1.sy+14, `L1=${L1.toFixed(2)}m`, 8)}
+  <line x1="${A1.sx}" y1="${A1.sy+8}" x2="${A1.sx}" y2="${A1.sy+20}" stroke="${DIM}" stroke-width="1"/>
+  <line x1="${E1.sx}" y1="${E1.sy+8}" x2="${E1.sx}" y2="${E1.sy+20}" stroke="${DIM}" stroke-width="1"/>
+
+  ${dim(E1.sx+14, E1.sy-8, E2.sx+14, E2.sy-8, `H=${H.toFixed(2)}m`, -4)}
+  <line x1="${E1.sx+8}" y1="${E1.sy-4}" x2="${E1.sx+20}" y2="${E1.sy-12}" stroke="${LOOP}" stroke-width="1" opacity="0.6"/>
+  <line x1="${E2.sx+8}" y1="${E2.sy-4}" x2="${E2.sx+20}" y2="${E2.sy-12}" stroke="${LOOP}" stroke-width="1" opacity="0.6"/>
+
+  ${dim(E2.sx, E2.sy-14, E3.sx, E3.sy-14, `H (crossover)`, -4)}
+  <line x1="${E2.sx}" y1="${E2.sy-8}" x2="${E2.sx}" y2="${E2.sy-20}" stroke="${LOOP}" stroke-width="1" opacity="0.6"/>
+  <line x1="${E3.sx}" y1="${E3.sy-8}" x2="${E3.sx}" y2="${E3.sy-20}" stroke="${LOOP}" stroke-width="1" opacity="0.6"/>
+
+  ${dim(E3.sx+14, E3.sy+8, E4.sx+14, E4.sy+8, `H=${H.toFixed(2)}m`, 10)}
+  <line x1="${E3.sx+8}" y1="${E3.sy+4}" x2="${E3.sx+20}" y2="${E3.sy+12}" stroke="${LOOP}" stroke-width="1" opacity="0.6"/>
+  <line x1="${E4.sx+8}" y1="${E4.sy+4}" x2="${E4.sx+20}" y2="${E4.sy+12}" stroke="${LOOP}" stroke-width="1" opacity="0.6"/>
+
+  ${dim(E4.sx, E4.sy+14, A2.sx, A2.sy+14, `L2=${L2.toFixed(2)}m`, 8)}
+  <line x1="${E4.sx}" y1="${E4.sy+8}" x2="${E4.sx}" y2="${E4.sy+20}" stroke="${DIM}" stroke-width="1"/>
+  <line x1="${A2.sx}" y1="${A2.sy+8}" x2="${A2.sx}" y2="${A2.sy+20}" stroke="${DIM}" stroke-width="1"/>
+
+  <!-- displacement arrows -->
+  ${disp(E1.sx, E1.sy, 22, 13, `δE1=${r.disp_E1.toFixed(1)}mm`)}
+  ${disp(E4.sx, E4.sy, 22, 13, `δE4=${r.disp_E4.toFixed(1)}mm`)}
+  ${disp(E2.sx, E2.sy, 22,-13, `δE2=${r.disp_apex.toFixed(1)}mm`)}
+  ${disp(E3.sx, E3.sy, 22,-13, `δE3=${r.disp_apex.toFixed(1)}mm`)}
+
+  <!-- elbows -->
+  <circle cx="${E1.sx}" cy="${E1.sy}" r="5" fill="${ELB}"/>
+  <text x="${E1.sx-14}" y="${E1.sy+8}" fill="${ELB}" font-size="8" font-family="monospace" font-weight="700">E1</text>
+  <circle cx="${E2.sx}" cy="${E2.sy}" r="5" fill="${ELB}"/>
+  <text x="${E2.sx-14}" y="${E2.sy-4}" fill="${ELB}" font-size="8" font-family="monospace" font-weight="700">E2</text>
+  <circle cx="${E3.sx}" cy="${E3.sy}" r="5" fill="${ELB}"/>
+  <text x="${E3.sx-14}" y="${E3.sy-4}" fill="${ELB}" font-size="8" font-family="monospace" font-weight="700">E3</text>
+  <circle cx="${E4.sx}" cy="${E4.sy}" r="5" fill="${ELB}"/>
+  <text x="${E4.sx+6}" y="${E4.sy+8}" fill="${ELB}" font-size="8" font-family="monospace" font-weight="700">E4</text>
+
+  <!-- anchors -->
+  ${anchor(A1,'ANCHOR A1')}
+  ${anchor(A2,'ANCHOR A2')}
+
+  <!-- flow arrow -->
+  <g transform="translate(${(A1.sx+E1.sx)/2},${(A1.sy+E1.sy)/2-14}) rotate(30)">
+    <line x1="-16" y1="0" x2="16" y2="0" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#fa)"/>
+    <text x="0" y="-5" fill="#f59e0b" font-size="7" text-anchor="middle" font-family="monospace">FLOW</text>
+  </g>
+
+  <!-- axis indicator -->
+  <circle cx="440" cy="268" r="2.5" fill="#94a3b8" opacity="0.6"/>
+  <line x1="440" y1="268" x2="458" y2="278" stroke="#e2e8f0" stroke-width="1.2" marker-end="url(#fa)" opacity="0.6"/>
+  <text x="461" y="282" fill="#e2e8f0" font-size="7" font-family="monospace" opacity="0.6">+X</text>
+  <line x1="440" y1="268" x2="458" y2="258" stroke="${LOOP}" stroke-width="1.2" marker-end="url(#da)" opacity="0.6"/>
+  <text x="461" y="256" fill="${LOOP}" font-size="7" font-family="monospace" opacity="0.6">−Y</text>
+
+  <!-- legend -->
+  <rect x="6" y="264" width="152" height="30" fill="#111e2d" rx="4" opacity="0.9"/>
+  <line x1="14" y1="275" x2="30" y2="275" stroke="${PIPE}" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
+  <text x="34" y="279" fill="#94a3b8" font-size="7.5" font-family="monospace">Main pipe run</text>
+  <line x1="14" y1="289" x2="30" y2="289" stroke="${LOOP}" stroke-width="3" stroke-linecap="round"/>
+  <text x="34" y="293" fill="#94a3b8" font-size="7.5" font-family="monospace">Loop legs (H)</text>
+  <line x1="86" y1="275" x2="102" y2="275" stroke="${DISP}" stroke-width="1.5" stroke-dasharray="3 2"/>
+  <text x="106" y="279" fill="#94a3b8" font-size="7.5" font-family="monospace">δ displacement</text>
+</svg>`;
+}
+
+// ── PDF REPORT ─────────────────────────────────────────────────────────────────
+function generatePDF() {
+  if (!R) return;
+  const r=R;
+  const now=new Date().toLocaleDateString('en-GB');
+  const pc=r.pass?'pass':'fail';
+  const html=`<!DOCTYPE html><html><head><meta charset="utf-8"/>
+<style>
+body{font-family:'Helvetica Neue',Arial,sans-serif;font-size:11pt;color:#1a1a1a;margin:0}
+.cover{background:#0f1923;color:#fff;padding:50px}
+.cover h1{font-size:26pt;margin:0 0 6px;color:#c8a85a}
+.cover h2{font-size:13pt;margin:0 0 26px;color:#9ca3af;font-weight:400}
+.cover table{width:100%;border-collapse:collapse;color:#d1d5db;font-size:10pt}
+.cover td{padding:3px 0;border-bottom:1px solid #1e3a50}
+.cover td:first-child{width:160px;color:#9ca3af}
+.body{padding:36px 50px}
+h3{font-size:12pt;color:#0f1923;border-bottom:2px solid #c8a85a;padding-bottom:5px;margin-top:26px}
+table.d{width:100%;border-collapse:collapse;font-size:10pt;margin-top:8px}
+table.d th{background:#0f1923;color:#c8a85a;padding:6px 10px;text-align:left;font-size:9pt}
+table.d td{padding:5px 10px;border-bottom:1px solid #e5e7eb}
+table.d tr:nth-child(even) td{background:#f9fafb}
+.formula{font-family:monospace;background:#f0f4f8;padding:7px 12px;border-radius:4px;border-left:3px solid #c8a85a;margin:6px 0;font-size:10pt;line-height:1.7}
+.step{font-weight:bold;color:#0f1923;margin:14px 0 4px;font-size:11pt}
+.pass{background:#d1fae5;color:#065f46;padding:11px;border-radius:6px;font-size:13pt;font-weight:700;text-align:center;margin:16px 0}
+.fail{background:#fee2e2;color:#991b1b;padding:11px;border-radius:6px;font-size:13pt;font-weight:700;text-align:center;margin:16px 0}
+.warn{background:#fef3c7;color:#92400e;padding:10px;border-radius:6px;font-size:9pt;margin-top:10px}
+.disc{background:#f3f4f6;padding:12px;border-radius:6px;font-size:9pt;color:#6b7280;margin-top:36px;line-height:1.6}
+</style></head><body>
+<div class="cover">
+  <h1>EXPANSION LOOP CALCULATOR</h1>
+  <h2>ASME B31.3 — Process Piping (Guided Cantilever Method)</h2>
+  <table>
+    <tr><td>Project Name</td><td>${document.getElementById('projectName').value||'—'}</td></tr>
+    <tr><td>Project No.</td><td>${document.getElementById('projectNo').value||'—'}</td></tr>
+    <tr><td>Engineer</td><td>${document.getElementById('engineer').value||'—'}</td></tr>
+    <tr><td>Date</td><td>${now}</td></tr>
+    <tr><td>Revision</td><td>${document.getElementById('revision').value||'0'}</td></tr>
+    <tr><td>Tool</td><td>PipingPro Academy Calculator Suite</td></tr>
+  </table>
+</div>
+<div class="body">
+<h3>1. Input Parameters</h3>
+<table class="d">
+  <tr><th>Parameter</th><th>Value</th><th>Unit</th></tr>
+  <tr><td>Pipe Size (NPS)</td><td>${r.ps}</td><td>—</td></tr>
+  <tr><td>Schedule</td><td>${r.sc}</td><td>—</td></tr>
+  <tr><td>Outside Diameter (OD)</td><td>${r.OD.toFixed(2)}</td><td>mm</td></tr>
+  <tr><td>Wall Thickness (t)</td><td>${r.wt.toFixed(2)}</td><td>mm</td></tr>
+  <tr><td>Inside Diameter (ID)</td><td>${r.ID.toFixed(2)}</td><td>mm</td></tr>
+  <tr><td>Second Moment of Area (I)</td><td>${r.I_mm4.toExponential(3)}</td><td>mm⁴</td></tr>
+  <tr><td>Material</td><td colspan="2">${r.mat}</td></tr>
+  <tr><td>Installation Temperature T₀</td><td>${r.T0}</td><td>°C</td></tr>
+  <tr><td>Operating Temperature T₁</td><td>${r.T1}</td><td>°C</td></tr>
+  <tr><td>Temperature Range ΔT</td><td>${r.dT}</td><td>°C</td></tr>
+  <tr><td>Anchor-to-Anchor Distance</td><td>${r.Lanc}</td><td>m</td></tr>
+  <tr><td>Stress Range Factor f</td><td>${r.f}</td><td>—</td></tr>
+</table>
+<h3>2. Material Properties (ASME B31.3 App A & C)</h3>
+<table class="d">
+  <tr><th>Property</th><th>Value</th><th>Unit</th></tr>
+  <tr><td>Thermal Expansion Coeff. α</td><td>${(r.alpha*1e6).toFixed(1)} × 10⁻⁶</td><td>mm/mm/°C</td></tr>
+  <tr><td>Young's Modulus at T₁ (E)</td><td>${(r.E/1000).toFixed(1)}</td><td>GPa</td></tr>
+  <tr><td>Cold Allowable Stress Sc</td><td>${r.Sc.toFixed(1)}</td><td>MPa</td></tr>
+  <tr><td>Hot Allowable Stress Sh at T₁</td><td>${r.Sh.toFixed(1)}</td><td>MPa</td></tr>
+</table>
+<h3>3. Step-by-Step Calculations</h3>
+<p class="step">Step 1 — Allowable Expansion Stress Range (ASME B31.3 Cl.302.3.5)</p>
+<div class="formula">S_A = f × (1.25×Sc + 0.25×Sh)<br/>
+S_A = ${r.f} × (1.25 × ${r.Sc.toFixed(1)} + 0.25 × ${r.Sh.toFixed(1)})<br/>
+<b>S_A = ${r.S_allow.toFixed(2)} MPa</b></div>
+<p class="step">Step 2 — Total Thermal Expansion (ASME B31.3 Cl.319.2.1)</p>
+<div class="formula">ΔL = α × L × ΔT<br/>
+ΔL = ${(r.alpha*1e6).toFixed(1)}×10⁻⁶ × ${(r.Lanc*1000).toFixed(0)} mm × ${r.dT} °C<br/>
+<b>ΔL = ${r.dL_mm.toFixed(2)} mm</b></div>
+<p class="step">Step 3 — Nodal Displacements at Loop Corners</p>
+<div class="formula">Symmetric loop — each half absorbs ΔL/2<br/>
+δ(E1) = ΔL/2 = <b>${r.disp_E1.toFixed(2)} mm</b> — axial movement at E1, along main run +X<br/>
+δ(E4) = ΔL/2 = <b>${r.disp_E4.toFixed(2)} mm</b> — axial movement at E4, along main run +X<br/>
+δ(E2/E3) = ΔL/2 = <b>${r.disp_apex.toFixed(2)} mm</b> — lateral movement at apex, perpendicular to main run</div>
+<p class="step">Step 4 — Required Loop Leg H (Guided Cantilever)</p>
+<div class="formula">H = √(3 × E × D × ΔL / S_A)<br/>
+H = √(3 × ${(r.E/1000).toFixed(0)}×10³ × ${r.OD.toFixed(2)} × ${r.dL_mm.toFixed(2)} / ${r.S_allow.toFixed(2)})<br/>
+<b>H = ${r.H.toFixed(3)} m</b></div>
+<p class="step">Step 5 — Actual Expansion Stress Check</p>
+<div class="formula">σ_E = 3 × E × D × ΔL / H²<br/>
+σ_E = 3 × ${(r.E/1000).toFixed(0)}×10³ × ${r.OD.toFixed(2)} × ${r.dL_mm.toFixed(2)} / ${(r.H*1000).toFixed(1)}²<br/>
+<b>σ_E = ${r.sigma.toFixed(2)} MPa</b> &nbsp; vs &nbsp; S_A = ${r.S_allow.toFixed(2)} MPa<br/>
+Utilisation = ${r.util.toFixed(1)}% &nbsp; → &nbsp; <b>${r.pass?'PASS — σ_E ≤ S_A':'FAIL — σ_E > S_A'}</b></div>
+<p class="step">Step 6 — Section Properties</p>
+<div class="formula">ID = ${r.OD.toFixed(2)} − ${(2*r.wt).toFixed(2)} = <b>${r.ID.toFixed(2)} mm</b><br/>
+I = π(OD⁴ − ID⁴)/64 = <b>${r.I_mm4.toExponential(3)} mm⁴</b></div>
+<p class="step">Step 7 — Anchor Reaction Force & Elbow Bending Moment</p>
+<div class="formula">Fixed-fixed beam: δ = ΔL/2 = ${r.disp_E1.toFixed(2)} mm, span H = ${(r.H*1000).toFixed(1)} mm<br/>
+F = 12×E×I×δ / H³ = <b>${r.F_kN.toFixed(2)} kN</b> (each anchor / each loop leg)<br/>
+M = 6×E×I×δ / H²  = <b>${r.M_kNm.toFixed(2)} kN·m</b> (bending moment at E1 and E4)</div>
+<h3>4. Results Summary</h3>
+<table class="d">
+  <tr><th>Parameter</th><th>Value</th><th>Unit</th></tr>
+  <tr><td>Total thermal expansion ΔL</td><td>${r.dL_mm.toFixed(2)}</td><td>mm</td></tr>
+  <tr><td>Displacement δ at E1 (axial)</td><td>${r.disp_E1.toFixed(2)}</td><td>mm</td></tr>
+  <tr><td>Displacement δ at E4 (axial)</td><td>${r.disp_E4.toFixed(2)}</td><td>mm</td></tr>
+  <tr><td>Displacement δ at E2/E3 apex (lateral)</td><td>${r.disp_apex.toFixed(2)}</td><td>mm</td></tr>
+  <tr><td>Required loop leg H</td><td>${r.H.toFixed(3)}</td><td>m</td></tr>
+  <tr><td>Run leg L1 (= 0.8H)</td><td>${r.L1.toFixed(3)}</td><td>m</td></tr>
+  <tr><td>Crossover (= H)</td><td>${r.H.toFixed(3)}</td><td>m</td></tr>
+  <tr><td>Run leg L2 (= 0.8H)</td><td>${r.L2.toFixed(3)}</td><td>m</td></tr>
+  <tr><td>Total pipe in loop section</td><td>${(r.L1+3*r.H+r.L2).toFixed(3)}</td><td>m</td></tr>
+  <tr><td>Actual expansion stress σ_E</td><td>${r.sigma.toFixed(2)}</td><td>MPa</td></tr>
+  <tr><td>Allowable stress range S_A</td><td>${r.S_allow.toFixed(2)}</td><td>MPa</td></tr>
+  <tr><td>Utilisation</td><td>${r.util.toFixed(1)}</td><td>%</td></tr>
+  <tr><td>Anchor reaction force (each)</td><td>${r.F_kN.toFixed(2)}</td><td>kN</td></tr>
+  <tr><td>Elbow bending moment at E1/E4</td><td>${r.M_kNm.toFixed(2)}</td><td>kN·m</td></tr>
+</table>
+<div class="${pc}">${r.pass?'✅ STRESS CHECK — PASS':'❌ STRESS CHECK — FAIL'} | σ_E = ${r.sigma.toFixed(1)} MPa | S_A = ${r.S_allow.toFixed(1)} MPa | Utilisation = ${r.util.toFixed(1)}%</div>
+<div class="warn">⚠ Verify δE1/E4 (${r.disp_E1.toFixed(1)} mm) and apex lateral movement (${r.disp_apex.toFixed(1)} mm) against available rack clearance. Elbow SIF, sustained loads, and occasional loads not included. Full Caesar II model required for final qualification.</div>
+<h3>5. Code References</h3>
+<table class="d">
+  <tr><th>Clause</th><th>Description</th></tr>
+  <tr><td>ASME B31.3 Cl.319.2.1</td><td>Thermal expansion — displacement calculation</td></tr>
+  <tr><td>ASME B31.3 Cl.302.3.5</td><td>Allowable stress range for displacement stresses</td></tr>
+  <tr><td>ASME B31.3 Appendix A</td><td>Allowable stresses (Sc, Sh) by material and temperature</td></tr>
+  <tr><td>ASME B31.3 Appendix C</td><td>Physical properties: E, α by material and temperature</td></tr>
+  <tr><td>ASME B31.3 Appendix D</td><td>Stress Intensification Factors — for Caesar II follow-up</td></tr>
+  <tr><td>ASME B36.10M</td><td>Pipe dimensions — OD and wall thickness</td></tr>
+</table>
+<div class="disc"><b>DISCLAIMER</b><br/>
+This calculation is prepared using the PipingPro Academy Expansion Loop Calculator based on ASME B31.3.
+It is intended for preliminary engineering purposes only. Results must be verified by a competent 
+Chartered Piping/Stress Engineer before inclusion in final design documentation.
+The calculator author and PipingPro Academy accept no liability for engineering decisions made solely on the basis of these results.</div>
+</div></body></html>`;
+  const w=window.open('','_blank');
+  w.document.write(html);
+  w.document.close();
+}
+</script>
+</body>
+</html>
