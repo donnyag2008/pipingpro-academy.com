@@ -198,7 +198,7 @@ footer a{color:var(--accent2);text-decoration:none;}
   <div class="section-row"><div class="section-label">Pro Suite</div><div class="section-line"></div></div>
   <div class="grid">
 
-    <div class="calc-card paid" id="card-wt" onclick="cardClick('wt','pipe-wall-thickness-calculator.html')">
+    <div class="calc-card paid" id="card-wt" onclick="if(localStorage.getItem('ppa_pro')==='1'||localStorage.getItem('ppa_admin')==='1'){window.location.href='pipe-wall-thickness-calculator.html';}else{document.getElementById('pp-slider').classList.remove('show-back');document.getElementById('ppa-popup').style.display='flex';}">
       <div class="card-img bg-accent">
         <div class="card-lock" id="card-lock-wt"><div class="card-lock-icon">👑</div></div>
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -223,7 +223,7 @@ footer a{color:var(--accent2);text-decoration:none;}
       </div>
     </div>
 
-    <div class="calc-card paid" id="card-el" onclick="cardClick('el','expansion-loop-calculator.html')">
+    <div class="calc-card paid" id="card-el" onclick="if(localStorage.getItem('ppa_pro')==='1'||localStorage.getItem('ppa_admin')==='1'){window.location.href='expansion-loop-calculator.html';}else{document.getElementById('pp-slider').classList.remove('show-back');document.getElementById('ppa-popup').style.display='flex';}">
       <div class="card-img bg-navy">
         <div class="card-lock" id="card-lock-el"><div class="card-lock-icon">👑</div></div>
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -245,7 +245,7 @@ footer a{color:var(--accent2);text-decoration:none;}
       </div>
     </div>
 
-    <div class="calc-card paid" id="card-pc" onclick="cardClick('pc','pipeline-crossing-calculator.html')">
+    <div class="calc-card paid" id="card-pc" onclick="if(localStorage.getItem('ppa_pro')==='1'||localStorage.getItem('ppa_admin')==='1'){window.location.href='pipeline-crossing-calculator.html';}else{document.getElementById('pp-slider').classList.remove('show-back');document.getElementById('ppa-popup').style.display='flex';}">
       <div class="card-img bg-slate">
         <div class="card-lock" id="card-lock-pc"><div class="card-lock-icon">👑</div></div>
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -273,7 +273,7 @@ footer a{color:var(--accent2);text-decoration:none;}
       </div>
     </div>
 
-    <div class="calc-card paid" id="card-ub" onclick="cardClick('ub','01_upheaval_buckling_calculator.html')">
+    <div class="calc-card paid" id="card-ub" onclick="if(localStorage.getItem('ppa_pro')==='1'||localStorage.getItem('ppa_admin')==='1'){window.location.href='01_upheaval_buckling_calculator.html';}else{document.getElementById('pp-slider').classList.remove('show-back');document.getElementById('ppa-popup').style.display='flex';}">
       <div class="card-img bg-olive">
         <div class="card-lock" id="card-lock-ub"><div class="card-lock-icon">👑</div></div>
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -298,7 +298,7 @@ footer a{color:var(--accent2);text-decoration:none;}
       </div>
     </div>
 
-    <div class="calc-card paid" id="card-df" onclick="cardClick('df','ductile-fracture-calculator-v2.html')">
+    <div class="calc-card paid" id="card-df" onclick="if(localStorage.getItem('ppa_pro')==='1'||localStorage.getItem('ppa_admin')==='1'){window.location.href='ductile-fracture-calculator-v2.html';}else{document.getElementById('pp-slider').classList.remove('show-back');document.getElementById('ppa-popup').style.display='flex';}">
       <div class="card-img bg-maroon">
         <div class="card-lock" id="card-lock-df"><div class="card-lock-icon">👑</div></div>
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -322,7 +322,7 @@ footer a{color:var(--accent2);text-decoration:none;}
       </div>
     </div>
 
-    <div class="calc-card paid" id="card-sp" onclick="cardClick('sp','subsea_pipeline_calculator.html')">
+    <div class="calc-card paid" id="card-sp" onclick="if(localStorage.getItem('ppa_pro')==='1'||localStorage.getItem('ppa_admin')==='1'){window.location.href='subsea_pipeline_calculator.html';}else{document.getElementById('pp-slider').classList.remove('show-back');document.getElementById('ppa-popup').style.display='flex';}">
       <div class="card-img bg-teal2">
         <div class="card-lock" id="card-lock-sp"><div class="card-lock-icon">👑</div></div>
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -348,7 +348,7 @@ footer a{color:var(--accent2);text-decoration:none;}
       </div>
     </div>
 
-    <div class="calc-card paid" id="card-tr" onclick="cardClick('tr','trunnion-calculator.html')">
+    <div class="calc-card paid" id="card-tr" onclick="if(localStorage.getItem('ppa_pro')==='1'||localStorage.getItem('ppa_admin')==='1'){window.location.href='trunnion-calculator.html';}else{document.getElementById('pp-slider').classList.remove('show-back');document.getElementById('ppa-popup').style.display='flex';}">
       <div class="card-img bg-brown">
         <div class="card-lock" id="card-lock-tr"><div class="card-lock-icon">👑</div></div>
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
