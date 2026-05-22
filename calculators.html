@@ -121,18 +121,6 @@ nav{background:rgba(245,242,235,0.96);backdrop-filter:blur(14px);border-bottom:1
 .modal-unlock-hint{font-size:11px;color:var(--ink3);text-align:center;margin-top:.7rem;}
 .modal-unlock-hint a{color:var(--accent);text-decoration:none;cursor:pointer;}
 
-/* ─── INLINE UNLOCK BOX ─── */
-.card-unlock{display:none;position:absolute;inset:0;background:#fff;border-radius:14px;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem;text-align:center;z-index:10;}
-.card-unlock.show{display:flex;}
-.card-unlock-icon{font-size:2rem;margin-bottom:.5rem;}
-.card-unlock-title{font-family:'DM Serif Display',serif;font-size:1rem;color:var(--ink);margin-bottom:.4rem;}
-.card-unlock-sub{font-size:12px;color:var(--ink3);margin-bottom:1rem;line-height:1.5;}
-.card-unlock-input{width:100%;padding:9px 12px;border:2px solid var(--accent);border-radius:8px;font-family:'DM Mono',monospace;font-size:13px;color:var(--ink);outline:none;text-align:center;margin-bottom:.5rem;letter-spacing:.04em;}
-.card-unlock-btn{width:100%;padding:9px;border-radius:8px;background:var(--accent);color:#fff;font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:.5rem;}
-.card-unlock-btn:hover{background:#a84d22;}
-.card-unlock-err{font-size:11px;color:#b91c1c;display:none;margin-bottom:.3rem;}
-.card-unlock-cancel{font-size:12px;color:var(--ink3);background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:underline;}
-
 /* ─── FOOTER ─── */
 footer{background:var(--ink);color:rgba(245,242,235,0.5);text-align:center;padding:2rem;font-size:13px;margin-top:2rem;}
 footer a{color:var(--accent2);text-decoration:none;}
@@ -233,15 +221,6 @@ footer a{color:var(--accent2);text-decoration:none;}
         <div class="card-tags"><span class="tag">ASME B31.3</span><span class="tag">B31.4</span><span class="tag">B31.8</span></div>
         <div class="card-action"><span class="card-btn btn-locked" id="btn-wt">👑 Pro Access Required</span></div>
       </div>
-      <div class="card-unlock" id="unlock-wt">
-        <div class="card-unlock-icon">👑</div>
-        <div class="card-unlock-title">Enter Access Code</div>
-        <div class="card-unlock-sub">Pipe Wall Thickness</div>
-        <input class="card-unlock-input" id="cinput-wt" type="text" placeholder="PPA-PRO-XXXX-XXXX" maxlength="20"/>
-        <div class="card-unlock-err" id="cerr-wt">Invalid code — try again.</div>
-        <button class="card-unlock-btn" onclick="event.stopPropagation();tryCardUnlock('wt','pipe-wall-thickness-calculator.html')">Unlock &amp; Open →</button>
-        <button class="card-unlock-cancel" onclick="event.stopPropagation();cancelUnlock('wt')">Cancel</button>
-      </div>
     </div>
 
     <div class="calc-card paid" id="card-el" onclick="cardClick('el','expansion-loop-calculator.html')">
@@ -263,15 +242,6 @@ footer a{color:var(--accent2);text-decoration:none;}
         <div class="card-desc">Size expansion loops for thermal growth in process piping. Loop dimensions, thermal expansion, and stress check per ASME B31.3.</div>
         <div class="card-tags"><span class="tag">ASME B31.3</span><span class="tag">Thermal</span></div>
         <div class="card-action"><span class="card-btn btn-locked" id="btn-el">👑 Pro Access Required</span></div>
-      </div>
-      <div class="card-unlock" id="unlock-el">
-        <div class="card-unlock-icon">👑</div>
-        <div class="card-unlock-title">Enter Access Code</div>
-        <div class="card-unlock-sub">Expansion Loop</div>
-        <input class="card-unlock-input" id="cinput-el" type="text" placeholder="PPA-PRO-XXXX-XXXX" maxlength="20"/>
-        <div class="card-unlock-err" id="cerr-el">Invalid code — try again.</div>
-        <button class="card-unlock-btn" onclick="event.stopPropagation();tryCardUnlock('el','expansion-loop-calculator.html')">Unlock &amp; Open →</button>
-        <button class="card-unlock-cancel" onclick="event.stopPropagation();cancelUnlock('el')">Cancel</button>
       </div>
     </div>
 
@@ -301,15 +271,6 @@ footer a{color:var(--accent2);text-decoration:none;}
         <div class="card-tags"><span class="tag">API RP 1102</span><span class="tag">Road / Rail</span></div>
         <div class="card-action"><span class="card-btn btn-locked" id="btn-pc">👑 Pro Access Required</span></div>
       </div>
-      <div class="card-unlock" id="unlock-pc">
-        <div class="card-unlock-icon">👑</div>
-        <div class="card-unlock-title">Enter Access Code</div>
-        <div class="card-unlock-sub">Pipeline Crossing</div>
-        <input class="card-unlock-input" id="cinput-pc" type="text" placeholder="PPA-PRO-XXXX-XXXX" maxlength="20"/>
-        <div class="card-unlock-err" id="cerr-pc">Invalid code — try again.</div>
-        <button class="card-unlock-btn" onclick="event.stopPropagation();tryCardUnlock('pc','pipeline-crossing-calculator.html')">Unlock &amp; Open →</button>
-        <button class="card-unlock-cancel" onclick="event.stopPropagation();cancelUnlock('pc')">Cancel</button>
-      </div>
     </div>
 
     <div class="calc-card paid" id="card-ub" onclick="cardClick('ub','01_upheaval_buckling_calculator.html')">
@@ -335,15 +296,6 @@ footer a{color:var(--accent2);text-decoration:none;}
         <div class="card-tags"><span class="tag">DNV-RP-F110</span><span class="tag">Buried Pipeline</span></div>
         <div class="card-action"><span class="card-btn btn-locked" id="btn-ub">👑 Pro Access Required</span></div>
       </div>
-      <div class="card-unlock" id="unlock-ub">
-        <div class="card-unlock-icon">👑</div>
-        <div class="card-unlock-title">Enter Access Code</div>
-        <div class="card-unlock-sub">Upheaval Buckling</div>
-        <input class="card-unlock-input" id="cinput-ub" type="text" placeholder="PPA-PRO-XXXX-XXXX" maxlength="20"/>
-        <div class="card-unlock-err" id="cerr-ub">Invalid code — try again.</div>
-        <button class="card-unlock-btn" onclick="event.stopPropagation();tryCardUnlock('ub','01_upheaval_buckling_calculator.html')">Unlock &amp; Open →</button>
-        <button class="card-unlock-cancel" onclick="event.stopPropagation();cancelUnlock('ub')">Cancel</button>
-      </div>
     </div>
 
     <div class="calc-card paid" id="card-df" onclick="cardClick('df','ductile-fracture-calculator-v2.html')">
@@ -367,15 +319,6 @@ footer a{color:var(--accent2);text-decoration:none;}
         <div class="card-desc">Battelle Two-Curve Method for gas pipeline arrest toughness per SAES-L-131, API 5L Annex G, and ASME B31.8.</div>
         <div class="card-tags"><span class="tag">BTCM</span><span class="tag">SAES-L-131</span><span class="tag">API 5L</span></div>
         <div class="card-action"><span class="card-btn btn-locked" id="btn-df">👑 Pro Access Required</span></div>
-      </div>
-      <div class="card-unlock" id="unlock-df">
-        <div class="card-unlock-icon">👑</div>
-        <div class="card-unlock-title">Enter Access Code</div>
-        <div class="card-unlock-sub">Ductile Fracture</div>
-        <input class="card-unlock-input" id="cinput-df" type="text" placeholder="PPA-PRO-XXXX-XXXX" maxlength="20"/>
-        <div class="card-unlock-err" id="cerr-df">Invalid code — try again.</div>
-        <button class="card-unlock-btn" onclick="event.stopPropagation();tryCardUnlock('df','ductile-fracture-calculator-v2.html')">Unlock &amp; Open →</button>
-        <button class="card-unlock-cancel" onclick="event.stopPropagation();cancelUnlock('df')">Cancel</button>
       </div>
     </div>
 
@@ -403,15 +346,6 @@ footer a{color:var(--accent2);text-decoration:none;}
         <div class="card-tags"><span class="tag">DNV-ST-F101</span><span class="tag">Subsea</span><span class="tag">Offshore</span></div>
         <div class="card-action"><span class="card-btn btn-locked" id="btn-sp">👑 Pro Access Required</span></div>
       </div>
-      <div class="card-unlock" id="unlock-sp">
-        <div class="card-unlock-icon">👑</div>
-        <div class="card-unlock-title">Enter Access Code</div>
-        <div class="card-unlock-sub">Subsea Pipeline</div>
-        <input class="card-unlock-input" id="cinput-sp" type="text" placeholder="PPA-PRO-XXXX-XXXX" maxlength="20"/>
-        <div class="card-unlock-err" id="cerr-sp">Invalid code — try again.</div>
-        <button class="card-unlock-btn" onclick="event.stopPropagation();tryCardUnlock('sp','subsea_pipeline_calculator.html')">Unlock &amp; Open →</button>
-        <button class="card-unlock-cancel" onclick="event.stopPropagation();cancelUnlock('sp')">Cancel</button>
-      </div>
     </div>
 
   </div>
@@ -423,6 +357,37 @@ footer a{color:var(--accent2);text-decoration:none;}
   <p style="margin-top:.4rem">© 2026 Zephrum Konsultan Limited. All rights reserved.</p>
 </footer>
 
+
+<!-- ── POPUP ── -->
+<div id="ppa-popup" style="display:none;position:fixed;inset:0;background:rgba(26,26,24,.7);z-index:400;align-items:center;justify-content:center;padding:1rem;">
+  <div style="background:#fff;border-radius:14px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.35);overflow:hidden;">
+
+    <!-- FRONT FACE: Pro Required -->
+    <div id="popup-front" style="padding:2rem 1.8rem;text-align:center;">
+      <div style="font-size:2.5rem;margin-bottom:.8rem;">👑</div>
+      <h3 style="font-family:'DM Serif Display',serif;font-size:1.3rem;color:#1a1a18;margin-bottom:.6rem;">Pro Access Required</h3>
+      <p style="font-size:13px;color:#4a4a44;line-height:1.7;margin-bottom:1.3rem;">This calculator is part of the <strong>PipingPro Academy Pro Suite</strong>. Purchase access to unlock all 6 professional calculators.</p>
+      <div style="display:flex;flex-direction:column;gap:.7rem;">
+        <button onclick="goToUnlock()" style="padding:11px;border-radius:8px;background:#c45c2a;color:#fff;font-size:14px;font-weight:600;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;">Enter Access Code</button>
+        <a href="https://pipingpro-academy.com/#pricing" style="padding:11px;border-radius:8px;background:#e0f0eb;color:#1a6b5a;font-size:14px;font-weight:600;text-decoration:none;display:block;font-family:'DM Sans',sans-serif;">Get Pro Access →</a>
+        <button onclick="closePopup()" style="padding:8px;border-radius:8px;background:transparent;color:#8a8a80;font-size:13px;border:1px solid #e3dfd2;cursor:pointer;font-family:'DM Sans',sans-serif;">Maybe Later</button>
+      </div>
+    </div>
+
+    <!-- BACK FACE: Code Input -->
+    <div id="popup-back" style="display:none;padding:2rem 1.8rem;text-align:center;flex-direction:column;align-items:center;">
+      <div style="font-size:2rem;margin-bottom:.6rem;">🔑</div>
+      <h3 style="font-family:'DM Serif Display',serif;font-size:1.2rem;color:#1a1a18;margin-bottom:.4rem;">Enter Your Code</h3>
+      <p style="font-size:12px;color:#8a8a80;margin-bottom:1rem;">Enter your Pro access code to unlock and open this calculator.</p>
+      <input id="popup-unlock-input" type="text" placeholder="PPA-PRO-XXXX-XXXX" maxlength="20"
+        style="width:100%;padding:10px 12px;border:2px solid #c45c2a;border-radius:8px;font-family:monospace;font-size:14px;color:#1a1a18;outline:none;text-align:center;margin-bottom:.5rem;letter-spacing:.05em;"/>
+      <div id="popup-unlock-err" style="font-size:11px;color:#b91c1c;display:none;margin-bottom:.5rem;">Invalid code — please check and try again.</div>
+      <button onclick="tryPopupUnlock()" style="width:100%;padding:11px;border-radius:8px;background:#c45c2a;color:#fff;font-size:14px;font-weight:600;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:.6rem;">Unlock &amp; Open →</button>
+      <button onclick="closePopup()" style="background:none;border:none;font-size:12px;color:#8a8a80;cursor:pointer;font-family:'DM Sans',sans-serif;">← Back</button>
+    </div>
+
+  </div>
+</div>
 
 <script>
 const HASH='273b796a015b32c0907ab1c38ce843343d4b2acf632302968dbd4e146e32fe28';
@@ -477,66 +442,48 @@ document.getElementById('code-input').addEventListener('keydown',function(e){if(
 if(isUnlocked()) applyUnlocked();
 
 // ── CARD CLICK ──────────────────────────────────────────────
+var _pendingFile='';
+
 function cardClick(id,file){
   if(isUnlocked()){
     window.location.href=file;
   } else {
-    // Hide any other open unlock boxes first
-    ['wt','el','pc','ub','df','sp'].forEach(function(x){
-      var u=document.getElementById('unlock-'+x);
-      if(u) u.classList.remove('show');
-    });
-    var box=document.getElementById('unlock-'+id);
-    box.classList.add('show');
-    // Scroll card into view and focus input
-    var card=document.getElementById('card-'+id);
-    card.scrollIntoView({behavior:'smooth',block:'center'});
-    setTimeout(function(){
-      var inp=document.getElementById('cinput-'+id);
-      inp.focus();
-    },400);
-  }
-}
-
-function cancelUnlock(id){
-  var box=document.getElementById('unlock-'+id);
-  box.classList.remove('show');
-  document.getElementById('cerr-'+id).style.display='none';
-  document.getElementById('cinput-'+id).value='';
-}
-
-async function tryCardUnlock(id,file){
-  var code=document.getElementById('cinput-'+id).value.trim().toUpperCase();
-  var h=await sha256(code);
-  if(h===HASH){
-    localStorage.setItem('ppa_pro','1');
-    applyUnlocked();
-    window.location.href=file;
-  } else {
-    document.getElementById('cerr-'+id).style.display='block';
+    _pendingFile=file;
+    // Reset popup to front face
+    document.getElementById('popup-front').style.display='block';
+    document.getElementById('popup-back').style.display='none';
+    document.getElementById('ppa-popup').style.display='flex';
   }
 }
 
 function closePopup(){
   document.getElementById('ppa-popup').style.display='none';
+  document.getElementById('popup-unlock-err').style.display='none';
+  document.getElementById('popup-unlock-input').value='';
 }
 
 function goToUnlock(){
-  closePopup();
+  // Flip popup to back face (code input)
+  document.getElementById('popup-front').style.display='none';
+  document.getElementById('popup-back').style.display='flex';
+  setTimeout(function(){document.getElementById('popup-unlock-input').focus();},100);
 }
 
-// Enter key support for card inline unlock inputs
-['wt','el','pc','ub','df','sp'].forEach(function(id){
-  var inp=document.getElementById('cinput-'+id);
-  if(inp){
-    inp.addEventListener('keydown',function(e){
-      if(e.key==='Enter'){
-        var card=document.querySelector('#card-'+id);
-        var file=card.getAttribute('onclick').match(/'([^']+\.html)'/)[1];
-        tryCardUnlock(id,file);
-      }
-    });
+async function tryPopupUnlock(){
+  var code=document.getElementById('popup-unlock-input').value.trim().toUpperCase();
+  var h=await sha256(code);
+  if(h===HASH){
+    localStorage.setItem('ppa_pro','1');
+    applyUnlocked();
+    closePopup();
+    window.location.href=_pendingFile;
+  } else {
+    document.getElementById('popup-unlock-err').style.display='block';
   }
+}
+
+document.getElementById('popup-unlock-input').addEventListener('keydown',function(e){
+  if(e.key==='Enter') tryPopupUnlock();
 });
 </script>
 </body>
