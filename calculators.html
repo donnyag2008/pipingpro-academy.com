@@ -150,7 +150,7 @@ footer a{color:var(--accent2);text-decoration:none;}
 
 <!-- UNLOCK STRIP -->
 <div class="unlock-strip" id="unlock-strip">
-  <div class="us-text"><strong>🔒 Pro Suite</strong> — Enter your access code to unlock all 13 paid calculators.</div>
+  <div class="us-text"><strong>🔒 Pro Suite</strong> — Enter your access code to unlock all 14 paid calculators.</div>
   <div>
     <div class="us-row">
       <input class="us-input" id="code-input" type="text" placeholder="PPA-PRO-XXXX-XXXX" maxlength="20"/>
@@ -529,6 +529,38 @@ footer a{color:var(--accent2);text-decoration:none;}
       </div>
     </div>
 
+    <div class="calc-card paid" onclick="cardClick('pid-mto-calculator.html')">
+      <div class="card-img bg-slate">
+        <div class="card-lock" id="card-lock-mt"><div class="card-lock-icon">👑</div></div>
+        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- P&ID drawing border -->
+          <rect x="10" y="12" width="70" height="55" rx="3" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" fill="none"/>
+          <!-- Vessel symbol -->
+          <rect x="18" y="22" width="12" height="18" rx="2" stroke="rgba(255,255,255,0.85)" stroke-width="1.5" fill="none"/>
+          <!-- Pipe lines -->
+          <line x1="30" y1="28" x2="48" y2="28" stroke="rgba(255,255,255,0.75)" stroke-width="1.5"/>
+          <line x1="48" y1="28" x2="48" y2="42" stroke="rgba(255,255,255,0.75)" stroke-width="1.5"/>
+          <line x1="48" y1="42" x2="65" y2="42" stroke="rgba(255,255,255,0.75)" stroke-width="1.5"/>
+          <!-- Valve symbol -->
+          <polygon points="52,38 58,42 52,46" stroke="rgba(255,255,255,0.85)" stroke-width="1.2" fill="none"/>
+          <polygon points="58,38 52,42 58,46" stroke="rgba(255,255,255,0.85)" stroke-width="1.2" fill="none"/>
+          <!-- Instrument circle -->
+          <circle cx="36" cy="52" r="5" stroke="rgba(255,200,100,0.85)" stroke-width="1.5" fill="none"/>
+          <line x1="36" y1="47" x2="36" y2="44" stroke="rgba(255,200,100,0.7)" stroke-width="1"/>
+          <!-- AI spark -->
+          <circle cx="68" cy="20" r="7" fill="rgba(217,119,6,0.3)" stroke="rgba(217,119,6,0.7)" stroke-width="1.5"/>
+          <text x="68" y="24" text-anchor="middle" font-size="8" fill="rgba(255,200,100,0.9)">AI</text>
+        </svg>
+        <span class="card-badge badge-pro" id="badge-mt">👑 Pro</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">P&amp;ID MTO Calculator</div>
+        <div class="card-desc">AI-powered P&amp;ID reader — upload a drawing and automatically extract pipe lines, valves, instruments, equipment, and special items into a structured MTO.</div>
+        <div class="card-tags"><span class="tag">AI-Powered</span><span class="tag">P&amp;ID</span><span class="tag">MTO</span></div>
+        <div class="card-action"><span class="card-btn btn-locked" id="btn-mt">👑 Pro Access Required</span></div>
+      </div>
+    </div>
+
   </div>
 </div><!-- /main -->
 
@@ -614,7 +646,7 @@ footer a{color:var(--accent2);text-decoration:none;}
         <button class="flip-close" onclick="closePopup()">✕</button>
         <div class="flip-crown">👑</div>
         <div class="flip-title">Pro Access Required</div>
-        <div class="flip-desc">This calculator is part of the <strong>PipingPro Academy Pro Suite</strong>. Unlock all 13 professional calculators with a single access code.</div>
+        <div class="flip-desc">This calculator is part of the <strong>PipingPro Academy Pro Suite</strong>. Unlock all 14 professional calculators with a single access code.</div>
         <button class="flip-btn-primary" onclick="flipToCode()">🔑 Enter Access Code</button>
         <a href="https://pipingpro-academy.com/#pricing" class="flip-btn-secondary">Get Pro Access →</a>
         <button class="flip-btn-ghost" onclick="closePopup()">Maybe Later</button>
@@ -666,7 +698,7 @@ function applyUnlocked(){
   document.getElementById('unlock-strip').style.display='none';
   document.getElementById('unlocked-strip').style.display='flex';
   if(isAdmin()){document.getElementById('unlocked-msg').innerHTML='<strong>🛡️ Admin Mode</strong> — Full access active. All calculators unlocked.';}
-  ['wt','el','pc','ub','df','sp','tr','nl','ps','ss','fl','c2','hp'].forEach(function(id){
+  ['wt','el','pc','ub','df','sp','tr','nl','ps','ss','fl','c2','hp','mt'].forEach(function(id){
     var lock=document.getElementById('card-lock-'+id);
     if(lock) lock.style.display='none';
     var badge=document.getElementById('badge-'+id);
