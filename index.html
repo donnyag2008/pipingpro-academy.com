@@ -1225,8 +1225,19 @@
     sp:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 35 Q20 28 35 35 Q50 42 65 35 Q80 28 88 35" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/><path d="M5 42 Q20 35 35 42 Q50 49 65 42 Q80 35 88 42" stroke="rgba(255,255,255,0.25)" stroke-width="1" fill="none"/><line x1="5" y1="78" x2="85" y2="78" stroke="rgba(255,255,255,0.3)" stroke-width="2"/><line x1="10" y1="72" x2="80" y2="72" stroke="rgba(255,255,255,0.85)" stroke-width="6" stroke-linecap="round"/><line x1="80" y1="38" x2="80" y2="72" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/><polygon points="80,74 77,67 83,67" fill="rgba(255,255,255,0.6)"/><polygon points="80,36 77,43 83,43" fill="rgba(255,255,255,0.6)"/></svg>`
   };
 
+  // ── ADMIN BYPASS ─────────────────────────────────────────────
+  const ADMIN_KEY='PPA-ADMIN-2026';
+  (function(){
+    var p=new URLSearchParams(window.location.search);
+    if(p.get('admin')===ADMIN_KEY){
+      localStorage.setItem('ppa_admin','1');
+      window.history.replaceState({},'',window.location.pathname);
+    }
+  })();
+
   // ── MEMBER CHECK (Memberstack integration point) ─────────────
   function isMember() {
+    if(localStorage.getItem('ppa_admin')==='1') return true;
     // Replace with Memberstack's member check once integrated:
     // return window.$memberstackDom?.getMemberCookie() != null;
     return localStorage.getItem('ppa_member') === '1';
