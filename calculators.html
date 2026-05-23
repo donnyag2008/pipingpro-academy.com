@@ -61,8 +61,7 @@ nav{background:rgba(245,242,235,0.96);backdrop-filter:blur(14px);border-bottom:1
 
 /* Badge */
 .card-badge{position:absolute;top:10px;right:10px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:20px;}
-.badge-free{background:rgba(26,107,90,.85);color:#fff;}
-.badge-pro{background:rgba(196,92,42,.85);color:#fff;}
+.badge-member{background:rgba(184,134,11,.85);color:#fff;}
 .badge-unlocked{background:rgba(26,107,90,.85);color:#fff;}
 
 /* Card body */
@@ -73,11 +72,9 @@ nav{background:rgba(245,242,235,0.96);backdrop-filter:blur(14px);border-bottom:1
 .tag{font-size:10px;font-family:'DM Mono',monospace;background:var(--paper2);color:var(--ink3);padding:2px 7px;border-radius:4px;}
 .card-action{margin-top:auto;padding-top:.6rem;}
 .card-btn{display:block;text-align:center;padding:9px;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;border:none;cursor:pointer;width:100%;font-family:'DM Sans',sans-serif;transition:background .18s;}
-.btn-free{background:var(--teal);color:#fff;}
-.btn-free:hover{background:#155a4a;}
 .btn-locked{background:var(--paper2);color:var(--ink3);cursor:default;}
-.btn-pro{background:var(--accent);color:#fff;}
-.btn-pro:hover{background:#a84d22;}
+.btn-pro{background:var(--gold);color:var(--ink);}
+.btn-pro:hover{background:#c9a020;}
 
 /* ─── MODAL PREVIEW ─── */
 .modal-bg{position:fixed;inset:0;background:rgba(26,26,24,.7);z-index:300;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .2s;}
@@ -146,7 +143,7 @@ footer a{color:var(--accent2);text-decoration:none;}
           <polygon points="45,72 41,64 49,64" fill="rgba(255,255,255,0.9)"/>
           <line x1="15" y1="45" x2="75" y2="45" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-dasharray="4 3"/>
         </svg>
-        <span class="card-badge badge-pro" id="badge-pw">🔒 Members</span>
+        <span class="card-badge badge-member" id="badge-pw">🔒 Members</span>
       </div>
       <div class="card-body">
         <div class="card-name">Pipe Weight &amp; Section Properties</div>
@@ -171,7 +168,7 @@ footer a{color:var(--accent2);text-decoration:none;}
           <line x1="75" y1="45" x2="62" y2="45" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
           <polygon points="63,45 70,41 70,49" fill="rgba(255,255,255,0.7)"/>
         </svg>
-        <span class="card-badge badge-pro" id="badge-wt">🔒 Members</span>
+        <span class="card-badge badge-member" id="badge-wt">🔒 Members</span>
       </div>
       <div class="card-body">
         <div class="card-name">Pipe Wall Thickness</div>
@@ -193,7 +190,7 @@ footer a{color:var(--accent2);text-decoration:none;}
           <line x1="85" y1="55" x2="85" y2="70" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
           <polygon points="85,72 82,65 88,65" fill="rgba(255,255,255,0.6)"/>
         </svg>
-        <span class="card-badge badge-pro" id="badge-el">🔒 Members</span>
+        <span class="card-badge badge-member" id="badge-el">🔒 Members</span>
       </div>
       <div class="card-body">
         <div class="card-name">Expansion Loop Calculator</div>
@@ -221,7 +218,7 @@ footer a{color:var(--accent2);text-decoration:none;}
           <line x1="60" y1="35" x2="60" y2="50" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
           <polygon points="60,52 56,44 64,44" fill="rgba(255,255,255,0.7)"/>
         </svg>
-        <span class="card-badge badge-pro" id="badge-pc">🔒 Members</span>
+        <span class="card-badge badge-member" id="badge-pc">🔒 Members</span>
       </div>
       <div class="card-body">
         <div class="card-name">Pipeline Crossing Calculator</div>
@@ -246,7 +243,7 @@ footer a{color:var(--accent2);text-decoration:none;}
           <line x1="25" y1="25" x2="25" y2="48" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-dasharray="3 2"/>
           <line x1="65" y1="25" x2="65" y2="48" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-dasharray="3 2"/>
         </svg>
-        <span class="card-badge badge-pro" id="badge-ub">🔒 Members</span>
+        <span class="card-badge badge-member" id="badge-ub">🔒 Members</span>
       </div>
       <div class="card-body">
         <div class="card-name">Upheaval Buckling Calculator</div>
@@ -270,7 +267,7 @@ footer a{color:var(--accent2);text-decoration:none;}
           <line x1="45" y1="28" x2="65" y2="28" stroke="rgba(255,200,180,0.7)" stroke-width="1.5"/>
           <polygon points="67,28 60,25 60,31" fill="rgba(255,200,180,0.7)"/>
         </svg>
-        <span class="card-badge badge-pro" id="badge-df">🔒 Members</span>
+        <span class="card-badge badge-member" id="badge-df">🔒 Members</span>
       </div>
       <div class="card-body">
         <div class="card-name">Ductile Fracture Propagation</div>
@@ -296,7 +293,7 @@ footer a{color:var(--accent2);text-decoration:none;}
           <polygon points="80,74 77,67 83,67" fill="rgba(255,255,255,0.6)"/>
           <polygon points="80,36 77,43 83,43" fill="rgba(255,255,255,0.6)"/>
         </svg>
-        <span class="card-badge badge-pro" id="badge-sp">🔒 Members</span>
+        <span class="card-badge badge-member" id="badge-sp">🔒 Members</span>
       </div>
       <div class="card-body">
         <div class="card-name">Subsea Pipeline Calculator</div>
@@ -568,102 +565,42 @@ const SVGS = {
   sp:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 35 Q20 28 35 35 Q50 42 65 35 Q80 28 88 35" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/><path d="M5 42 Q20 35 35 42 Q50 49 65 42 Q80 35 88 42" stroke="rgba(255,255,255,0.25)" stroke-width="1" fill="none"/><line x1="5" y1="78" x2="85" y2="78" stroke="rgba(255,255,255,0.3)" stroke-width="2"/><line x1="10" y1="72" x2="80" y2="72" stroke="rgba(255,255,255,0.85)" stroke-width="6" stroke-linecap="round"/><line x1="80" y1="38" x2="80" y2="72" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/><polygon points="80,74 77,67 83,67" fill="rgba(255,255,255,0.6)"/><polygon points="80,36 77,43 83,43" fill="rgba(255,255,255,0.6)"/></svg>`
 };
 
-// ─── UNLOCK LOGIC ─────────────────────────────────────────────
-const HASH='273b796a015b32c0907ab1c38ce843343d4b2acf632302968dbd4e146e32fe28';
-async function sha256(m){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(m));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
-
+// ─── ADMIN BYPASS ─────────────────────────────────────────────
 const ADMIN_KEY='PPA-ADMIN-2026';
-function isUnlocked(){return localStorage.getItem('ppa_pro')==='1'||localStorage.getItem('ppa_admin')==='1';}
-function isAdmin(){return localStorage.getItem('ppa_admin')==='1';}
-
-// Silent admin bypass via URL parameter
 (function(){
-  var params=new URLSearchParams(window.location.search);
-  if(params.get('admin')===ADMIN_KEY){
+  var p=new URLSearchParams(window.location.search);
+  if(p.get('admin')===ADMIN_KEY){
     localStorage.setItem('ppa_admin','1');
     window.history.replaceState({},'',window.location.pathname);
   }
 })();
 
-function applyUnlocked(){
-  document.getElementById('unlock-strip').style.display='none';
-  document.getElementById('unlocked-strip').style.display='flex';
-  if(isAdmin()){document.getElementById('unlocked-msg').innerHTML='<strong>🛡️ Admin Mode</strong> — Full access active. All calculators unlocked.';}
-  ['wt','el','pc','ub','df','sp'].forEach(id=>{
+// ─── MEMBER CHECK (Memberstack integration point) ─────────────
+function isMember(){
+  if(localStorage.getItem('ppa_admin')==='1') return true;
+  // Replace with Memberstack check once integrated:
+  // return window.$memberstackDom?.getMemberCookie() != null;
+  return localStorage.getItem('ppa_member')==='1';
+}
+
+// ─── APPLY MEMBER VIEW ON LOAD ────────────────────────────────
+function applyMemberView(){
+  if(!isMember()) return;
+  const isAdmin=localStorage.getItem('ppa_admin')==='1';
+  ['pw','wt','el','pc','ub','df','sp'].forEach(id=>{
     const lock=document.getElementById('card-lock-'+id);
     if(lock) lock.style.display='none';
     const badge=document.getElementById('badge-'+id);
-    if(badge){badge.textContent='✓ Pro';badge.classList.remove('badge-pro');badge.classList.add('badge-unlocked');}
+    if(badge){
+      badge.textContent=isAdmin?'🛡️ Admin':'✓ Member';
+      badge.className='card-badge badge-unlocked';
+    }
     const btn=document.getElementById('btn-'+id);
     if(btn){btn.textContent='Open Calculator →';btn.className='card-btn btn-pro';}
   });
 }
 
-async function tryUnlock(){
-  const code=document.getElementById('code-input').value.trim().toUpperCase();
-  const h=await sha256(code);
-  if(h===HASH){localStorage.setItem('ppa_pro','1');applyUnlocked();}
-  else{document.getElementById('code-err').style.display='block';}
-}
-
-function revoke(){localStorage.removeItem('ppa_pro');localStorage.removeItem('ppa_admin');location.reload();}
-
-document.getElementById('code-input').addEventListener('keydown',e=>{if(e.key==='Enter')tryUnlock();});
-if(isUnlocked()) applyUnlocked();
-
-// ─── MODAL ────────────────────────────────────────────────────
-function openModal(id){
-  const c=CALCS[id];
-  const unlocked=isUnlocked();
-  const free=c.tier==='free';
-  const canOpen=free||unlocked;
-
-  // Image
-  const img=document.getElementById('modal-img');
-  img.className='modal-img '+c.bg;
-  img.innerHTML=SVGS[c.svgId];
-
-  // Badge
-  const badge=document.getElementById('modal-badge');
-  if(free){badge.textContent='✓ Free';badge.style.cssText='background:var(--teal-light);color:var(--teal);';}
-  else if(unlocked){badge.textContent='✓ Pro Unlocked';badge.style.cssText='background:var(--teal-light);color:var(--teal);';}
-  else{badge.textContent='🔒 Pro';badge.style.cssText='background:var(--accent-light);color:var(--accent);';}
-
-  document.getElementById('modal-name').textContent=c.name;
-  document.getElementById('modal-desc').textContent=c.desc;
-
-  // Tags
-  document.getElementById('modal-tags').innerHTML=c.tags.map(t=>`<span class="tag">${t}</span>`).join('');
-
-  // What list
-  document.getElementById('modal-what-list').innerHTML=c.what.map(w=>`<li>${w}</li>`).join('');
-
-  // Actions
-  const actions=document.getElementById('modal-actions');
-  if(canOpen){
-    const btnClass=free?'modal-btn modal-btn-open teal':'modal-btn modal-btn-open';
-    actions.innerHTML=`<a href="${c.file}" class="${btnClass}">Open Calculator →</a>`;
-  } else {
-    actions.innerHTML=`<span class="modal-btn modal-btn-lock">🔒 Members Only</span>`;
-  }
-
-  // Hint
-  const hint=document.getElementById('modal-hint');
-  hint.style.display=(!canOpen)?'block':'none';
-
-  document.getElementById('modal-bg').classList.add('show');
-  document.body.style.overflow='hidden';
-}
-
-function closeModal(){
-  document.getElementById('modal-bg').classList.remove('show');
-  document.body.style.overflow='';
-}
-
-function closeModalBg(e){
-  if(e.target===document.getElementById('modal-bg')) closeModal();
-}
-
+document.addEventListener('DOMContentLoaded', applyMemberView);
 document.addEventListener('keydown',e=>{if(e.key==='Escape') closeModal();});
 </script>
 </body>
