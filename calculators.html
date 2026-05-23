@@ -115,14 +115,72 @@ footer a{color:var(--accent2);text-decoration:none;}
 @media(max-width:600px){
   .modal-actions{flex-direction:column;}
 }
+
+/* ─── LOGIN MODAL ─── */
+.login-btn{font-size:12px;font-weight:600;padding:7px 16px;border-radius:6px;background:var(--gold);color:var(--ink);border:none;cursor:pointer;font-family:'DM Sans',sans-serif;text-transform:uppercase;letter-spacing:.06em;transition:background .18s;}
+.login-btn:hover{background:#c9a020;}
+.login-btn.logged-in{background:var(--teal);color:#fff;}
+.lmodal-bg{position:fixed;inset:0;background:rgba(26,26,24,.75);z-index:500;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .2s;}
+.lmodal-bg.show{opacity:1;pointer-events:all;}
+.lmodal{background:#fff;border-radius:14px;width:100%;max-width:400px;overflow:hidden;transform:translateY(20px);transition:transform .2s;box-shadow:0 24px 80px rgba(0,0,0,.3);}
+.lmodal-bg.show .lmodal{transform:translateY(0);}
+.lmodal-header{background:var(--ink);padding:1.6rem 1.8rem 1.4rem;position:relative;}
+.lmodal-title{font-family:'DM Serif Display',serif;font-size:1.3rem;color:#fff;margin-bottom:.2rem;}
+.lmodal-sub{font-size:11px;color:rgba(255,255,255,.5);letter-spacing:.06em;text-transform:uppercase;}
+.lmodal-close{position:absolute;top:12px;right:12px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.15);border:none;cursor:pointer;font-size:15px;color:#fff;display:flex;align-items:center;justify-content:center;}
+.lmodal-close:hover{background:rgba(255,255,255,.3);}
+.lmodal-body{padding:1.6rem 1.8rem;}
+.lmodal-field{margin-bottom:1rem;}
+.lmodal-label{display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:.4rem;}
+.lmodal-input{width:100%;padding:10px 12px;border:1px solid var(--rule);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);outline:none;transition:border-color .18s;}
+.lmodal-input:focus{border-color:var(--gold);}
+.lmodal-err{font-size:11px;color:#b91c1c;margin-top:.5rem;display:none;}
+.lmodal-submit{width:100%;padding:11px;background:var(--gold);color:var(--ink);font-weight:700;font-size:13px;letter-spacing:.05em;text-transform:uppercase;border:none;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .18s;margin-top:.4rem;}
+.lmodal-submit:hover{background:#c9a020;}
+.lmodal-logout{width:100%;padding:10px;background:var(--paper2);color:var(--ink2);font-weight:600;font-size:12px;border:none;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:.7rem;}
+.lmodal-logout:hover{background:var(--paper3);}
 </style>
 </head>
 <body>
 
 <nav>
   <a href="index.html" class="nav-logo">Piping<span>Pro</span> Academy</a>
-  <a href="index.html" class="nav-back">← Back to course</a>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <a href="index.html" class="nav-back">← Back</a>
+    <button class="login-btn" id="nav-login-btn" onclick="openLoginModal()">Login</button>
+  </div>
 </nav>
+
+<!-- LOGIN MODAL -->
+<div class="lmodal-bg" id="lmodal-bg" onclick="closeLModalBg(event)">
+  <div class="lmodal">
+    <div class="lmodal-header">
+      <div class="lmodal-title">Member Login</div>
+      <div class="lmodal-sub">PipingPro Academy</div>
+      <button class="lmodal-close" onclick="closeLModal()">✕</button>
+    </div>
+    <div class="lmodal-body">
+      <div id="lmodal-form-view">
+        <div class="lmodal-field">
+          <label class="lmodal-label">Email</label>
+          <input class="lmodal-input" id="lmodal-email" type="email" placeholder="your@email.com" autocomplete="email"/>
+        </div>
+        <div class="lmodal-field">
+          <label class="lmodal-label">Password</label>
+          <input class="lmodal-input" id="lmodal-password" type="password" placeholder="••••••••••••" autocomplete="current-password"/>
+        </div>
+        <div class="lmodal-err" id="lmodal-err">Incorrect email or password. Please try again.</div>
+        <button class="lmodal-submit" onclick="doLogin()">Sign In →</button>
+      </div>
+      <div id="lmodal-member-view" style="display:none;text-align:center;padding:.5rem 0;">
+        <div style="font-size:2.2rem;margin-bottom:.8rem;" id="lmodal-avatar">🛡️</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--ink);margin-bottom:.3rem;" id="lmodal-welcome">Admin Access Active</div>
+        <div style="font-size:11px;color:var(--ink3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:1.4rem;" id="lmodal-email-display">admin@pipingpro-academy.com</div>
+        <button class="lmodal-logout" onclick="doLogout()">Sign Out</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="hero">
   <div class="hero-eyebrow">Engineering Calculator Suite · PipingPro Academy</div>
@@ -600,8 +658,87 @@ function applyMemberView(){
   });
 }
 
-document.addEventListener('DOMContentLoaded', applyMemberView);
-document.addEventListener('keydown',e=>{if(e.key==='Escape') closeModal();});
+// ─── LOGIN MODAL LOGIC ────────────────────────────────────────
+const ADMIN_EMAIL='admin@pipingpro-academy.com';
+
+function openLoginModal(){
+  const loggedIn=isMember();
+  document.getElementById('lmodal-form-view').style.display=loggedIn?'none':'block';
+  document.getElementById('lmodal-member-view').style.display=loggedIn?'block':'none';
+  document.getElementById('lmodal-err').style.display='none';
+  if(!loggedIn){
+    document.getElementById('lmodal-email').value='';
+    document.getElementById('lmodal-password').value='';
+  }
+  document.getElementById('lmodal-bg').classList.add('show');
+  document.body.style.overflow='hidden';
+  if(!loggedIn) setTimeout(()=>document.getElementById('lmodal-email').focus(),200);
+}
+
+function closeLModal(){
+  document.getElementById('lmodal-bg').classList.remove('show');
+  document.body.style.overflow='';
+}
+
+function closeLModalBg(e){
+  if(e.target===document.getElementById('lmodal-bg')) closeLModal();
+}
+
+function updateNavBtn(){
+  const btn=document.getElementById('nav-login-btn');
+  if(isMember()){
+    btn.textContent='My Account';
+    btn.classList.add('logged-in');
+  } else {
+    btn.textContent='Login';
+    btn.classList.remove('logged-in');
+  }
+}
+
+function doLogin(){
+  const email=document.getElementById('lmodal-email').value.trim();
+  const password=document.getElementById('lmodal-password').value.trim();
+  const err=document.getElementById('lmodal-err');
+  err.style.display='none';
+
+  // Admin check
+  if(email===ADMIN_EMAIL && password===ADMIN_KEY){
+    localStorage.setItem('ppa_admin','1');
+    applyMemberView();
+    updateNavBtn();
+    document.getElementById('lmodal-form-view').style.display='none';
+    document.getElementById('lmodal-member-view').style.display='block';
+    return;
+  }
+
+  // ── Memberstack member login hook (add when ready) ──
+  // window.$memberstackDom.loginMemberEmailPassword({email, password}).then(...)
+
+  err.style.display='block';
+}
+
+function doLogout(){
+  localStorage.removeItem('ppa_admin');
+  localStorage.removeItem('ppa_member');
+  closeLModal();
+  location.reload();
+}
+
+// ─── HIDDEN ADMIN SHORTCUT (Ctrl+Shift+A) ─────────────────────
+document.addEventListener('keydown',function(e){
+  if(e.ctrlKey && e.shiftKey && e.key==='A'){
+    openLoginModal();
+  }
+  if(e.key==='Escape'){
+    closeLModal();
+    closeModal();
+  }
+});
+
+document.addEventListener('DOMContentLoaded',function(){
+  applyMemberView();
+  updateNavBtn();
+});
 </script>
 </body>
 </html>
