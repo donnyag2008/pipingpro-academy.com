@@ -827,11 +827,9 @@
   </div>
 
   <div class="tab-panel" id="tab-calculators">
-
-    <!-- FREE -->
-    <div class="calc-section-row"><div class="calc-section-label">Free</div><div class="calc-section-line"></div></div>
     <div class="calc-grid">
-      <div class="calc-card free" onclick="openCalcModal('pw')">
+
+      <div class="calc-card paid" onclick="openCalcModal('pw')">
         <div class="calc-card-img bg-teal">
           <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="45" cy="45" r="30" stroke="rgba(255,255,255,0.7)" stroke-width="3" fill="none"/>
@@ -840,20 +838,16 @@
             <polygon points="45,72 41,64 49,64" fill="rgba(255,255,255,0.9)"/>
             <line x1="15" y1="45" x2="75" y2="45" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-dasharray="4 3"/>
           </svg>
-          <span class="calc-badge badge-free">✓ Free</span>
+          <div class="card-lock-overlay" id="card-lock-pw"><div class="card-lock-icon">🔒</div></div>
+          <span class="calc-badge badge-pro" id="badge-pw">🔒 Members</span>
         </div>
         <div class="calc-card-body">
           <div class="calc-card-name">Pipe Weight &amp; Section Properties</div>
           <div class="calc-card-desc">Weight per foot, fluid weight, moment of inertia, section modulus, and flow area per ASME B36.10.</div>
           <div class="calc-card-tags"><span class="ctag">ASME B36.10</span><span class="ctag">Nayyar 7th Ed.</span></div>
-          <div class="calc-card-action"><span class="cbtn cbtn-free">Open Calculator →</span></div>
+          <div class="calc-card-action"><span class="cbtn cbtn-locked" id="btn-pw">🔒 Members Only</span></div>
         </div>
       </div>
-    </div>
-
-    <!-- PRO SUITE -->
-    <div class="calc-section-row"><div class="calc-section-label">Pro Suite — Members Only</div><div class="calc-section-line"></div></div>
-    <div class="calc-grid">
 
       <div class="calc-card paid" onclick="openCalcModal('wt')">
         <div class="calc-card-img bg-accent">
@@ -1157,7 +1151,7 @@
   // ── CALCULATOR DATA ──────────────────────────────────────────
   const CALCS = {
     pw: {
-      tier:'free',
+      tier:'paid',
       name:'Pipe Weight & Section Properties',
       desc:'Calculate pipe weight per foot, fluid weight, inside diameter, metal area, moment of inertia, section modulus, and radius of gyration — based on ASME B36.10 and Nayyar Piping Handbook 7th Ed.',
       tags:['ASME B36.10','Nayyar 7th Ed.'],
