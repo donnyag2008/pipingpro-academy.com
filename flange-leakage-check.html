@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flange Leakage Check — PipingPro Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --ink:#1c1917;--ink2:#57534e;--ink3:#a8a29e;
+  --paper:#fdf8f0;--paper2:#fef3e2;--paper3:#fde8c8;
+  --gold:#b45309;--gold2:#d97706;--gold-bd:rgba(217,119,6,0.2);
+  --pass:#065f46;--pass-bg:#d1fae5;--pass-bd:#6ee7b7;
+  --fail:#991b1b;--fail-bg:#fee2e2;--fail-bd:#fca5a5;
+  --warn:#92400e;--warn-bg:#fef3c7;--warn-bd:#fcd34d;
+  --serif:'DM Serif Display',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'DM Mono',monospace;
+}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);min-height:100vh;padding:2rem 1rem 3rem;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 15% 15%,rgba(217,119,6,0.07) 0%,transparent 55%),radial-gradient(ellipse at 85% 85%,rgba(180,83,9,0.04) 0%,transparent 55%);pointer-events:none;z-index:0;}
+.wrapper{position:relative;z-index:1;max-width:880px;margin:0 auto;}
+
+/* Header */
+.header{display:flex;align-items:flex-start;gap:14px;margin-bottom:2rem;animation:fadeUp .5s ease both;}
+.hicon{width:50px;height:50px;min-width:50px;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 14px rgba(180,83,9,0.28);}
+.htitle{font-family:var(--serif);font-size:1.8rem;color:var(--ink);line-height:1.1;}
+.hsub{font-size:11px;color:#a78150;letter-spacing:.08em;text-transform:uppercase;font-weight:600;margin-top:3px;}
+.hdesc{font-size:13px;color:var(--ink2);margin-top:6px;max-width:600px;line-height:1.6;}
+
+/* Cards */
+.card{background:rgba(255,255,255,.9);border:1px solid var(--gold-bd);border-radius:14px;box-shadow:0 4px 24px rgba(120,80,20,.07);padding:1.5rem;margin-bottom:1.25rem;animation:fadeUp .5s ease both;}
+.ctitle{font-family:var(--serif);font-size:1.05rem;color:var(--ink);margin-bottom:1.1rem;padding-bottom:.65rem;border-bottom:1px solid var(--gold-bd);}
+
+/* Form */
+.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.fg4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;}
+@media(max-width:600px){.fg3,.fg4{grid-template-columns:1fr 1fr;}.fg2{grid-template-columns:1fr;}}
+.field{display:flex;flex-direction:column;margin-bottom:0;}
+label{font-size:10.5px;font-weight:700;color:#8a7560;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;}
+select,input[type=number]{width:100%;padding:9px 12px;border:1.5px solid #e0cc9e;border-radius:8px;background:#fffbf4;font-family:var(--sans);font-size:13.5px;color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none;appearance:none;}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23b45309' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
+select:focus,input[type=number]:focus{border-color:var(--gold2);box-shadow:0 0 0 3px rgba(217,119,6,.12);}
+.gap{margin-top:14px;}
+
+/* Load group */
+.load-group{background:rgba(254,248,240,.6);border:1px solid var(--gold-bd);border-radius:10px;padding:1rem;}
+.lgtitle{font-size:10.5px;font-weight:700;color:#a38060;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;}
+
+/* Gasket G display */
+.g-display{background:rgba(254,243,226,.7);border:1px solid rgba(217,119,6,.18);border-radius:8px;padding:8px 14px;display:flex;align-items:center;justify-content:space-between;margin-top:10px;}
+.g-val{font-family:var(--serif);font-size:1.3rem;color:#92400e;}
+.g-label{font-size:11px;color:#a78150;font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
+
+/* Button */
+.btn{display:block;width:100%;padding:14px;background:linear-gradient(135deg,#b45309,#d97706);color:#fff;border:none;border-radius:9px;font-family:var(--sans);font-size:15px;font-weight:700;letter-spacing:.03em;cursor:pointer;box-shadow:0 4px 14px rgba(180,83,9,.3);transition:all .2s;margin-top:1.25rem;}
+.btn:hover{background:linear-gradient(135deg,#92400e,#b45309);transform:translateY(-1px);box-shadow:0 6px 18px rgba(180,83,9,.38);}
+.btn:active{transform:translateY(0);}
+
+/* Results */
+.results{display:none;animation:fadeUp .45s ease both;}
+.results.show{display:block;}
+
+/* Verdict */
+.verdict{border-radius:12px;padding:1.2rem 1.5rem;display:flex;align-items:center;gap:14px;margin-bottom:1.25rem;border:2px solid;}
+.verdict.pass{background:var(--pass-bg);border-color:var(--pass-bd);}
+.verdict.fail{background:var(--fail-bg);border-color:var(--fail-bd);}
+.verdict.warn{background:var(--warn-bg);border-color:var(--warn-bd);}
+.vicon{font-size:2rem;}
+.vtitle{font-family:var(--serif);font-size:1.25rem;}
+.verdict.pass .vtitle{color:var(--pass);}
+.verdict.fail .vtitle{color:var(--fail);}
+.verdict.warn .vtitle{color:var(--warn);}
+.vsub{font-size:12.5px;color:var(--ink2);margin-top:3px;}
+
+/* Metrics */
+.mrow{display:grid;gap:8px;margin-bottom:10px;}
+.m2{grid-template-columns:1fr 1fr;}
+.m3{grid-template-columns:1fr 1fr 1fr;}
+.m4{grid-template-columns:1fr 1fr 1fr 1fr;}
+@media(max-width:500px){.m2,.m3,.m4{grid-template-columns:1fr 1fr;}}
+.metric{background:rgba(254,243,226,.6);border:1px solid rgba(217,119,6,.12);border-radius:8px;padding:10px 8px;text-align:center;}
+.metric.hi{background:rgba(180,83,9,.07);border-color:rgba(180,83,9,.22);}
+.metric.pass-m{background:var(--pass-bg);border-color:var(--pass-bd);}
+.metric.fail-m{background:var(--fail-bg);border-color:var(--fail-bd);}
+.metric.warn-m{background:var(--warn-bg);border-color:var(--warn-bd);}
+.mv{font-family:var(--serif);font-size:1.55rem;color:#92400e;line-height:1.1;}
+.mv.sm{font-size:1.15rem;}
+.mu{font-size:10px;color:#a87a40;text-transform:uppercase;letter-spacing:.07em;margin-top:1px;}
+.ml{font-size:10px;color:var(--ink2);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-top:3px;}
+
+/* Progress bar */
+.pbar-bg{height:8px;border-radius:4px;background:rgba(217,119,6,.12);margin-top:6px;overflow:hidden;}
+.pbar-fill{height:100%;border-radius:4px;transition:width .7s ease;}
+.bar-pass{background:linear-gradient(90deg,#6ee7b7,#10b981);}
+.bar-warn{background:linear-gradient(90deg,#fcd34d,#f59e0b);}
+.bar-fail{background:linear-gradient(90deg,#fca5a5,#ef4444);}
+
+/* Formula box */
+.formula-box{background:#fffbf4;border:1px solid rgba(217,119,6,.2);border-radius:8px;padding:10px 14px;font-family:var(--mono);font-size:12px;color:#78350f;margin-bottom:10px;line-height:1.8;}
+
+/* Section title */
+.stitle{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#a38060;margin-bottom:8px;}
+
+/* Notes */
+.note{display:flex;align-items:flex-start;gap:7px;padding:8px 12px;border-left:3px solid #d97706;border-radius:0 6px 6px 0;margin-bottom:6px;font-size:12.5px;color:#78350f;line-height:1.5;}
+.note.fail-n{border-left-color:#ef4444;background:rgba(254,226,226,.5);color:#7f1d1d;}
+.note.ok-n{border-left-color:#10b981;background:rgba(209,250,229,.5);color:#064e3b;}
+.note-arr{flex-shrink:0;margin-top:1px;color:#d97706;}
+.note.fail-n .note-arr{color:#ef4444;}
+.note.ok-n .note-arr{color:#10b981;}
+
+.disclaimer{font-size:10.5px;color:var(--ink3);border-top:1px solid var(--gold-bd);padding-top:10px;margin-top:1rem;line-height:1.6;}
+
+/* Pill */
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;}
+.p-pass{background:var(--pass-bg);color:var(--pass);border:1px solid var(--pass-bd);}
+.p-fail{background:var(--fail-bg);color:var(--fail);border:1px solid var(--fail-bd);}
+.p-warn{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-bd);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+<!-- Header -->
+<div class="header">
+  <div class="hicon">🔩</div>
+  <div>
+    <div class="htitle">Flange Leakage Check</div>
+    <div class="hsub">PipingPro Academy · Calculator Suite</div>
+    <p class="hdesc">Pressure Equivalent (PEQ) method — checks flange leakage under combined pressure, bending moment, and axial force per <strong>ASME B16.5</strong> pressure-temperature ratings. Gasket G dimensions auto-populated from ASME B16.20 / B16.21 tables.</p>
+  </div>
+</div>
+
+<!-- Flange Setup -->
+<div class="card">
+  <div class="ctitle">Flange Configuration</div>
+  <div class="fg3">
+    <div class="field">
+      <label>Pipe Size (NPS)</label>
+      <select id="nps" onchange="updateG()">
+        <option value="1">1"</option><option value="1.5">1.5"</option>
+        <option value="2">2"</option><option value="3">3"</option>
+        <option value="4">4"</option><option value="6">6"</option>
+        <option value="8">8"</option><option value="10">10"</option>
+        <option value="12">12"</option><option value="14">14"</option>
+        <option value="16">16"</option><option value="18">18"</option>
+        <option value="20">20"</option><option value="24">24"</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Flange Rating (ASME B16.5)</label>
+      <select id="rating" onchange="updateG()">
+        <option value="150">Class 150</option>
+        <option value="300">Class 300</option>
+        <option value="600">Class 600</option>
+        <option value="900">Class 900</option>
+        <option value="1500">Class 1500</option>
+        <option value="2500">Class 2500</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Gasket Type</label>
+      <select id="gasket" onchange="updateG()">
+        <option value="flat">Flat Face / Raised Face (FF/RF)</option>
+        <option value="sw" selected>Spiral Wound (SW)</option>
+        <option value="rj">Ring Joint (RTJ)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="fg2 gap">
+    <div class="field">
+      <label>Material Group (ASME B16.5)</label>
+      <select id="matgroup">
+        <option value="1.1">Group 1.1 — Carbon Steel (A105, A516)</option>
+        <option value="1.2">Group 1.2 — Carbon Steel (A350 LF2)</option>
+        <option value="2.1">Group 2.1 — Low Alloy (1¼Cr-½Mo)</option>
+        <option value="2.2">Group 2.2 — Low Alloy (2¼Cr-1Mo)</option>
+        <option value="2.3">Group 2.3 — Low Alloy (5Cr-½Mo)</option>
+        <option value="3.1">Group 3.1 — Stainless 304/316</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Operating Temperature (°C)</label>
+      <input type="number" id="temp" value="186" min="-50" max="500" step="1" onchange="updateP165()">
+    </div>
+  </div>
+
+  <div class="g-display">
+    <div>
+      <div class="g-label">Gasket Mean Diameter G (auto from table)</div>
+      <div style="font-size:11px;color:#b8a070;margin-top:2px;" id="g-source">ASME B16.20 Spiral Wound · NPS 6" · Class 150</div>
+    </div>
+    <div style="text-align:right;">
+      <div class="g-val"><span id="g-val">196.5</span> <span style="font-size:14px;color:#a87a40;">mm</span></div>
+      <div style="font-size:11px;color:#b8a070;margin-top:2px;">Override below if needed</div>
+    </div>
+  </div>
+  <div class="fg2 gap">
+    <div class="field">
+      <label>G — Gasket Mean Dia. (mm) <span style="color:#d97706;font-weight:400;text-transform:none;letter-spacing:0;">(override if needed)</span></label>
+      <input type="number" id="g-override" placeholder="Auto from table" min="10" max="2000" step="0.1">
+    </div>
+    <div class="field">
+      <label>P16.5 Allowable at Temperature (barg) <span style="color:#d97706;font-weight:400;text-transform:none;letter-spacing:0;">(auto-calc below)</span></label>
+      <input type="number" id="p165" step="0.01" min="0" max="700">
+    </div>
+  </div>
+</div>
+
+<!-- Operating Conditions -->
+<div class="card" style="animation-delay:.07s">
+  <div class="ctitle">Operating Conditions</div>
+  <div class="fg2">
+    <div class="field">
+      <label>Design Pressure Pdes (barg)</label>
+      <input type="number" id="pdes" value="7" min="0" max="700" step="0.1">
+    </div>
+    <div class="field">
+      <label>Unit System for Loads</label>
+      <select id="units" onchange="onUnitsChange()">
+        <option value="si">SI — N and N·m</option>
+        <option value="imp">Imperial — lbf and lbf·ft</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- Applied Loads -->
+<div class="card" style="animation-delay:.14s">
+  <div class="ctitle">Applied Loads <span style="font-family:var(--sans);font-size:12px;color:#a38060;" id="load-unit-hint">(from Caesar II or manual calculation)</span></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+    <div class="load-group">
+      <div class="lgtitle">Bending Moments <span id="m-unit" style="font-weight:400;color:#b8a070;">N·m</span></div>
+      <div class="fg2">
+        <div class="field">
+          <label>Mb1 (In-plane)</label>
+          <input type="number" id="mb1" value="1300" step="1">
+        </div>
+        <div class="field">
+          <label>Mb2 (Out-of-plane)</label>
+          <input type="number" id="mb2" value="1900" step="1">
+        </div>
+      </div>
+    </div>
+    <div class="load-group">
+      <div class="lgtitle">Axial Force <span id="f-unit" style="font-weight:400;color:#b8a070;">N</span></div>
+      <div class="field">
+        <label>Fa (Axial / Thrust)</label>
+        <input type="number" id="fa" value="5300" step="1">
+      </div>
+    </div>
+  </div>
+  <button class="btn" onclick="calculate()">Check Flange Leakage →</button>
+</div>
+
+<!-- RESULTS -->
+<div class="results" id="results">
+
+  <!-- Verdict -->
+  <div class="verdict" id="verdict">
+    <div class="vicon" id="vicon">✅</div>
+    <div>
+      <div class="vtitle" id="vtitle">PASS — Flange is leak-tight</div>
+      <div class="vsub" id="vsub"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="stitle">PEQ Calculation Summary</div>
+
+    <div class="formula-box" id="formula-box"></div>
+
+    <div class="mrow m4" style="margin-bottom:12px;">
+      <div class="metric">
+        <div class="mv sm" id="r-peqm">—</div>
+        <div class="mu">N/mm²</div>
+        <div class="ml">PEQ-M (Moment)</div>
+      </div>
+      <div class="metric">
+        <div class="mv sm" id="r-peqf">—</div>
+        <div class="mu">N/mm²</div>
+        <div class="ml">PEQ-F (Force)</div>
+      </div>
+      <div class="metric hi">
+        <div class="mv sm" id="r-peq">—</div>
+        <div class="mu">barg</div>
+        <div class="ml">Peq Total</div>
+      </div>
+      <div class="metric">
+        <div class="mv sm" id="r-p165">—</div>
+        <div class="mu">barg</div>
+        <div class="ml">P16.5 Allow.</div>
+      </div>
+    </div>
+
+    <!-- Utilisation -->
+    <div class="stitle">Utilisation</div>
+    <div class="mrow m3" style="margin-bottom:12px;">
+      <div class="metric" id="m-pct">
+        <div class="mv" id="r-pct">—</div>
+        <div class="mu">%</div>
+        <div class="ml">Peq / P16.5</div>
+        <div class="pbar-bg"><div class="pbar-fill" id="pbar" style="width:0%"></div></div>
+      </div>
+      <div class="metric">
+        <div class="mv sm" id="r-g">—</div>
+        <div class="mu">mm</div>
+        <div class="ml">Gasket G Used</div>
+      </div>
+      <div class="metric">
+        <div class="mv sm" id="r-mr">—</div>
+        <div class="mu">N·m</div>
+        <div class="ml">Resultant Mr</div>
+      </div>
+    </div>
+
+    <!-- Notes -->
+    <div class="stitle">Engineering Notes</div>
+    <div id="notes"></div>
+
+    <div class="disclaimer">
+      PEQ Method per ASME B16.5 / EN 1591 principles · Gasket G from ASME B16.20 (spiral wound) / B16.21 (flat/raised face) / B16.20 (ring joint).<br>
+      P16.5 ratings interpolated for Group 1.1 carbon steel. For other material groups adjust P16.5 accordingly.<br>
+      For preliminary engineering use only. Formal flange integrity analysis per ASME VIII App.2 / EN 1591-1 required for safety-critical applications.
+    </div>
+  </div>
+</div>
+
+</div><!-- /wrapper -->
+
+<!-- PDF Button -->
+<div style="text-align:center;padding:1.5rem 1rem 2rem;border-top:1px solid rgba(180,83,9,0.12);margin-top:1rem;">
+  <p style="font-size:12px;color:#a8a09a;margin-bottom:.8rem;font-family:'DM Sans',sans-serif;">Reference documentation for this calculator</p>
+  <a href="pdf/flange-leakage-check-guide.pdf" target="_blank"
+     style="display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:#b45309;color:#fff;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;font-family:'DM Sans',sans-serif;">
+    📄 Download PDF Guide — Flange Leakage Check (PEQ Method)
+  </a>
+  <p style="font-size:11px;color:#c4b8a8;margin-top:.6rem;font-family:'DM Sans',sans-serif;">Covers PEQ method theory, ASME B16.5 P-T ratings, gasket G dimensions, and worked examples.</p>
+</div>
+
+<footer style="background:#1c1917;color:rgba(245,242,235,0.5);text-align:center;padding:2rem;font-size:13px;margin-top:2rem;">
+  <div style="font-family:'DM Serif Display',serif;font-size:1.1rem;color:#fdf8f0;margin-bottom:.4rem;">Piping<span style="color:#d97706;">Pro</span> Academy</div>
+  <p>PipingPro Academy is a trademark of Zephrum Konsultan Limited, registered in England and Wales. Company Registration No. 13537626.</p>
+  <p style="margin-top:.4rem;">© 2026 Zephrum Konsultan Limited. All rights reserved.</p>
+</footer>
+
+<script>
+// ── Gasket G dimension tables (mm) — ASME B16.20 / B16.21
+// [NPS] → { flat: [150,300,600,900,1500,2500], sw: [...], rj: [...] }
+const G_TABLE = {
+  "1":   { flat:[42,42,42,42,42,42],       sw:[39.8,39.8,39.8,null,39.5,39.8],   rj:[47.6,50.8,50.8,null,50.8,60.32] },
+  "1.5": { flat:[60.5,60.5,60.5,60.5,60.5,60.5], sw:[62,62,62,null,58.9,58.9],  rj:[65.1,68.3,68.3,null,68.3,82.6] },
+  "2":   { flat:[77.7,77.7,77.7,77.7,77.7,77.7], sw:[77.9,77.9,77.9,null,72.8,72.8], rj:[82.6,82.6,82.6,95.3,95.3,101.6] },
+  "3":   { flat:[111.5,111.5,111.5,111.5,111.5,111.5], sw:[111.2,111.2,111.2,108,107.2,107.2], rj:[114.3,123.8,123.8,123.8,136.5,127] },
+  "4":   { flat:[140.5,140.5,140.5,140.5,140.5,140.5], sw:[138.2,138.2,135.9,135.9,135.2,135.2], rj:[149.2,149.2,149.2,149.2,161.9,157.2] },
+  "6":   { flat:[198.5,198.5,198.5,198.5,198.5,198.5], sw:[196.5,196.5,194.7,194.7,194.0,194.0], rj:[193.7,211.2,211.2,211.2,211.2,228.6] },
+  "8":   { flat:[252,252,252,252,252,252], sw:[249.8,249.8,248.1,242.4,241.1,241.1], rj:[247.7,269.9,269.9,269.9,269.9,279.4] },
+  "10":  { flat:[317,317,317,317,317,317], sw:[303.7,303.7,301.0,296.3,294.4,295], rj:[304.8,323.9,323.9,323.9,323.9,342.9] },
+  "12":  { flat:[362,362,362,362,362,362], sw:[359.8,359.8,358.3,351.5,351.5,350.3], rj:[381,381,381,381,381,406.4] },
+  "14":  { flat:[394,394,394,394,394,null], sw:[391.5,391.5,389.6,383.2,384.5,null], rj:[396.9,419.1,419.1,419.1,419.1,null] },
+  "16":  { flat:[449,449,449,449,449,null], sw:[447.4,447.4,445.6,440.4,439.2,null], rj:[454,469.9,469.9,469.9,469.9,null] },
+  "18":  { flat:[511,511,511,511,511,null], sw:[508.9,508.9,508.0,501.7,501.7,null], rj:[517.5,533.4,533.4,533.4,533.4,null] },
+  "20":  { flat:[562,562,562,562,562,null], sw:[559.7,559.7,558.8,553.5,552.5,null], rj:[558.8,584.2,584.2,584.2,584.2,null] },
+  "24":  { flat:[669.2,669.2,669.2,669.2,669.2,null], sw:[666.8,666.8,666.8,661.5,659.3,null], rj:[673.1,692.2,692.2,692.2,692.2,null] }
+};
+const RATINGS = [150,300,600,900,1500,2500];
+const RATING_IDX = {150:0,300:1,600:2,900:3,1500:4,2500:5};
+
+// ASME B16.5 Group 1.1 Carbon Steel pressure-temperature ratings (barg)
+// [temp_C, 150, 300, 600, 900, 1500, 2500]
+const P165_GRP11 = [
+  [-29,19.6,51.1,102.1,153.2,255.3,425.5],
+  [38,19.6,51.1,102.1,153.2,255.3,425.5],
+  [50,19.6,51.1,102.1,153.2,255.3,425.5],
+  [100,17.7,46.6,93.2,139.8,233.0,388.3],
+  [150,15.8,41.4,82.7,124.1,206.8,344.7],
+  [200,13.8,36.0,72.1,108.1,180.1,300.2],
+  [250,12.1,31.6,63.2,94.9,158.1,263.5],
+  [300,10.2,26.8,53.6,80.4,134.0,223.3],
+  [350,8.4,22.0,44.0,66.0,110.0,183.3],
+  [375,7.4,19.4,38.8,58.2,97.0,161.7],
+  [400,6.5,17.1,34.1,51.2,85.3,142.2],
+  [425,5.5,14.5,29.0,43.5,72.4,120.7],
+  [450,4.6,12.0,24.0,36.1,60.1,100.2],
+  [475,3.7,9.7,19.4,29.1,48.4,80.7],
+  [500,2.8,7.4,14.8,22.2,37.1,61.8],
+];
+
+function interpP165(tempC, ratingIdx) {
+  const t = parseFloat(tempC);
+  const data = P165_GRP11;
+  if (t <= data[0][0]) return data[0][ratingIdx+1];
+  if (t >= data[data.length-1][0]) return data[data.length-1][ratingIdx+1];
+  for (let i=0; i<data.length-1; i++) {
+    if (t >= data[i][0] && t <= data[i+1][0]) {
+      const f = (t - data[i][0]) / (data[i+1][0] - data[i][0]);
+      return data[i][ratingIdx+1] + f*(data[i+1][ratingIdx+1] - data[i][ratingIdx+1]);
+    }
+  }
+  return null;
+}
+
+function getG(nps, rating, gasket) {
+  const row = G_TABLE[nps];
+  if (!row) return null;
+  const idx = RATING_IDX[parseInt(rating)];
+  const arr = row[gasket];
+  if (!arr) return null;
+  return arr[idx] || null;
+}
+
+function gasketLabel(g) {
+  return {flat:'Flat/Raised Face (ASME B16.21)',sw:'Spiral Wound (ASME B16.20)',rj:'Ring Joint (ASME B16.20)'}[g]||g;
+}
+
+function updateG() {
+  const nps = document.getElementById('nps').value;
+  const rating = document.getElementById('rating').value;
+  const gasket = document.getElementById('gasket').value;
+  const g = getG(nps, rating, gasket);
+  if (g) {
+    document.getElementById('g-val').textContent = g;
+    document.getElementById('g-source').textContent = `${gasketLabel(gasket)} · NPS ${nps}" · Class ${rating}`;
+  } else {
+    document.getElementById('g-val').textContent = 'N/A';
+    document.getElementById('g-source').textContent = 'Not available for this combination — enter manually';
+  }
+  updateP165();
+}
+
+function updateP165() {
+  const rating = parseInt(document.getElementById('rating').value);
+  const temp = parseFloat(document.getElementById('temp').value) || 20;
+  const idx = RATING_IDX[rating];
+  if (idx === undefined) return;
+  const p = interpP165(temp, idx);
+  if (p !== null) document.getElementById('p165').value = Math.round(p*100)/100;
+}
+
+function onUnitsChange() {
+  const si = document.getElementById('units').value === 'si';
+  document.getElementById('m-unit').textContent = si ? 'N·m' : 'lbf·ft';
+  document.getElementById('f-unit').textContent = si ? 'N' : 'lbf';
+}
+
+function toSI(val, isForce) {
+  const si = document.getElementById('units').value === 'si';
+  if (si) return val;
+  // lbf → N, lbf·ft → N·m
+  return isForce ? val * 4.44822 : val * 1.35582;
+}
+
+function calculate() {
+  const nps    = document.getElementById('nps').value;
+  const rating = document.getElementById('rating').value;
+  const gasket = document.getElementById('gasket').value;
+  const temp   = parseFloat(document.getElementById('temp').value) || 20;
+  const pdes   = parseFloat(document.getElementById('pdes').value) || 0;
+  const mb1Raw = parseFloat(document.getElementById('mb1').value) || 0;
+  const mb2Raw = parseFloat(document.getElementById('mb2').value) || 0;
+  const faRaw  = parseFloat(document.getElementById('fa').value) || 0;
+
+  // Convert to SI
+  const mb1 = toSI(mb1Raw, false); // N·m
+  const mb2 = toSI(mb2Raw, false);
+  const fa  = toSI(faRaw, true);   // N
+
+  // Get G
+  const gOverride = parseFloat(document.getElementById('g-override').value);
+  const gAuto = getG(nps, rating, gasket);
+  const G = gOverride > 0 ? gOverride : gAuto;
+  if (!G) { alert('Gasket G not available — please enter manually'); return; }
+
+  // Get P16.5
+  const p165Input = parseFloat(document.getElementById('p165').value);
+  const P165 = p165Input > 0 ? p165Input : interpP165(temp, RATING_IDX[parseInt(rating)]);
+  if (!P165) { alert('P16.5 could not be determined — enter manually'); return; }
+
+  // ── PEQ Calculation (per XLS formulas) ──
+  // Resultant bending moment (N·m → N·mm × 1000)
+  const Mr = Math.sqrt(mb1*mb1 + mb2*mb2); // N·m
+  const Mr_Nmm = Mr * 1000; // N·mm
+  const G_mm = G; // already in mm
+
+  // PEQ-M = (16/π) × Mr / G³  [N/mm²]
+  const PEQ_M = (16 / Math.PI) * Mr_Nmm / Math.pow(G_mm, 3);
+
+  // PEQ-F = (4/π) × Fa / G²  [N/mm²]
+  const PEQ_F = (4 / Math.PI) * fa / Math.pow(G_mm, 2);
+
+  // Convert to barg (1 N/mm² = 10 bar)
+  const PEQ_M_bar = PEQ_M * 10;
+  const PEQ_F_bar = PEQ_F * 10;
+
+  // Total Peq = Pdes + PEQ-M + PEQ-F (all in barg)
+  const Peq = pdes + PEQ_M_bar + PEQ_F_bar;
+
+  // Utilisation %
+  const pct = (Peq / P165) * 100;
+
+  // ── Render ──
+  document.getElementById('r-peqm').textContent = PEQ_M_bar.toFixed(4);
+  document.getElementById('r-peqf').textContent = PEQ_F_bar.toFixed(4);
+  document.getElementById('r-peq').textContent  = Peq.toFixed(3);
+  document.getElementById('r-p165').textContent = P165.toFixed(2);
+  document.getElementById('r-pct').textContent  = pct.toFixed(1) + '%';
+  document.getElementById('r-g').textContent    = G.toFixed(1);
+  document.getElementById('r-mr').textContent   = Mr.toFixed(1);
+
+  // Pbar & metric colouring
+  const barPct = Math.min(pct, 100);
+  const barEl = document.getElementById('pbar');
+  const mPct  = document.getElementById('m-pct');
+  barEl.style.width = barPct + '%';
+  if (pct > 100) {
+    barEl.className = 'pbar-fill bar-fail';
+    mPct.className = 'metric fail-m';
+  } else if (pct > 85) {
+    barEl.className = 'pbar-fill bar-warn';
+    mPct.className = 'metric warn-m';
+  } else {
+    barEl.className = 'pbar-fill bar-pass';
+    mPct.className = 'metric pass-m';
+  }
+
+  // Formula box
+  document.getElementById('formula-box').innerHTML =
+    `PEQ-M = (16/π) × Mr / G³ = (16/π) × ${(Mr_Nmm/1e6).toFixed(4)} kN·m / (${G_mm} mm)³ = <strong>${PEQ_M_bar.toFixed(4)} barg</strong><br>` +
+    `PEQ-F = (4/π) × Fa / G²  = (4/π) × ${(fa/1000).toFixed(3)} kN / (${G_mm} mm)² = <strong>${PEQ_F_bar.toFixed(4)} barg</strong><br>` +
+    `Peq   = Pdes + PEQ-M + PEQ-F = ${pdes} + ${PEQ_M_bar.toFixed(4)} + ${PEQ_F_bar.toFixed(4)} = <strong>${Peq.toFixed(3)} barg</strong><br>` +
+    `Check: Peq (${Peq.toFixed(3)}) ${pct<=100?'≤':'>'} P16.5 (${P165.toFixed(2)}) → <strong>${pct.toFixed(1)}%</strong>`;
+
+  // Notes
+  const notes = [];
+  if (pct > 100) {
+    notes.push({t:`Flange FAILS — Peq (${Peq.toFixed(2)} barg) exceeds B16.5 allowable (${P165.toFixed(2)} barg) by ${(pct-100).toFixed(1)}%. Re-route piping or upgrade flange rating.`, cls:'fail-n'});
+  } else if (pct > 85) {
+    notes.push({t:`Flange passes but utilisation is ${pct.toFixed(1)}% — marginal. Recheck under upset/hydrotest conditions.`, cls:''});
+  } else {
+    notes.push({t:`Flange passes with ${(100-pct).toFixed(1)}% margin remaining against B16.5 allowable.`, cls:'ok-n'});
+  }
+  if (PEQ_M_bar > PEQ_F_bar * 3) {
+    notes.push({t:`Bending moment dominates (PEQ-M = ${PEQ_M_bar.toFixed(3)} barg vs PEQ-F = ${PEQ_F_bar.toFixed(3)} barg). Consider adding an expansion loop or flexible spool to reduce piping moments.`, cls:''});
+  }
+  if (pdes > P165 * 0.9) {
+    notes.push({t:`Design pressure alone is ${((pdes/P165)*100).toFixed(0)}% of B16.5 allowable — very little margin left for loads. Consider upgrading flange class.`, cls:''});
+  }
+  notes.push({t:`Verify gasket G = ${G.toFixed(1)} mm against actual gasket datasheet. For spiral wound gaskets, G is measured at the inner winding diameter seating area.`, cls:''});
+
+  document.getElementById('notes').innerHTML = notes.map(n =>
+    `<div class="note ${n.cls}"><span class="note-arr">▸</span><span>${n.t}</span></div>`
+  ).join('');
+
+  // Verdict
+  const vbox = document.getElementById('verdict');
+  const pass = pct <= 100;
+  const warn = pct > 85 && pct <= 100;
+  vbox.className = 'verdict ' + (pass ? (warn ? 'warn' : 'pass') : 'fail');
+  document.getElementById('vicon').textContent = pass ? (warn ? '⚠️' : '✅') : '❌';
+  document.getElementById('vtitle').textContent = pass
+    ? (warn ? `MARGINAL PASS — ${pct.toFixed(1)}% utilisation` : `PASS — Flange is leak-tight (${pct.toFixed(1)}%)`)
+    : `FAIL — Peq exceeds B16.5 allowable (${pct.toFixed(1)}%)`;
+  document.getElementById('vsub').textContent =
+    `NPS ${nps}" · Class ${rating} · ${gasketLabel(gasket)} · G = ${G.toFixed(1)} mm · Temp = ${temp}°C · P16.5 = ${P165.toFixed(2)} barg`;
+
+  // Show
+  const res = document.getElementById('results');
+  res.classList.remove('show');
+  setTimeout(() => res.classList.add('show'), 30);
+  setTimeout(() => res.scrollIntoView({behavior:'smooth',block:'start'}), 60);
+}
+
+// Init
+window.addEventListener('DOMContentLoaded', () => { updateG(); });
+</script>
+</body>
+</html>

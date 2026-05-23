@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hydro / Pneumo Test Pack Generator — PipingPro Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --ink:#1c1917;--ink2:#57534e;--ink3:#a8a29e;
+  --paper:#f5f4f0;--paper2:#edeae2;--paper3:#e3dfd5;
+  --steel:#2d3748;--steel2:#1a202c;--steel3:#4a5568;
+  --teal:#0d9488;--teal2:#0f766e;--teal-bg:rgba(13,148,136,0.08);--teal-bd:rgba(13,148,136,0.25);
+  --blue:#1d4ed8;--blue-bg:rgba(29,78,216,0.08);--blue-bd:rgba(29,78,216,0.2);
+  --red:#dc2626;--red-bg:rgba(220,38,38,0.08);--red-bd:rgba(220,38,38,0.25);
+  --amber:#d97706;--amber-bg:rgba(217,119,6,0.08);--amber-bd:rgba(217,119,6,0.25);
+  --pass:#065f46;--pass-bg:#d1fae5;--pass-bd:#6ee7b7;
+  --serif:'DM Serif Display',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'DM Mono',monospace;
+}
+
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);min-height:100vh;padding:0 0 4rem;}
+
+/* Top bar */
+.topbar{
+  background:var(--steel2);color:#e2e8f0;
+  padding:.6rem 2rem;font-size:11px;
+  display:flex;align-items:center;justify-content:space-between;
+  letter-spacing:.05em;
+}
+.topbar-left{display:flex;align-items:center;gap:8px;font-family:var(--mono);}
+.topbar-dot{width:7px;height:7px;border-radius:50%;background:#10b981;}
+.topbar-right{font-size:10px;color:#718096;}
+
+/* Hero */
+.hero{
+  background:var(--steel2);
+  color:#e2e8f0;
+  padding:2.5rem 2rem 2rem;
+  border-bottom:3px solid var(--teal);
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 50px),
+             repeating-linear-gradient(0deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 50px);
+}
+.hero-inner{position:relative;max-width:820px;margin:0 auto;}
+.hero-eyebrow{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal2);margin-bottom:.7rem;font-family:var(--mono);}
+.hero h1{font-family:var(--serif);font-size:clamp(1.6rem,4vw,2.4rem);line-height:1.1;margin-bottom:.6rem;color:#f1f5f9;}
+.hero p{font-size:13px;color:#94a3b8;max-width:520px;line-height:1.7;}
+.hero-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:.9rem;}
+.hero-tag{font-size:10.5px;font-family:var(--mono);padding:3px 10px;border-radius:4px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:#94a3b8;}
+
+/* Main layout */
+.main{max-width:820px;margin:0 auto;padding:2rem 1.5rem;}
+
+/* Cards */
+.card{
+  background:#fff;
+  border:1px solid rgba(26,32,44,0.1);
+  border-radius:12px;
+  box-shadow:0 2px 12px rgba(26,32,44,0.06);
+  padding:1.5rem;
+  margin-bottom:1.25rem;
+  animation:fadeUp .4s ease both;
+}
+.card:nth-child(2){animation-delay:.06s;}
+.card:nth-child(3){animation-delay:.12s;}
+.card:nth-child(4){animation-delay:.18s;}
+
+.ctitle{
+  font-family:var(--serif);font-size:1.05rem;color:var(--ink);
+  margin-bottom:1rem;padding-bottom:.65rem;
+  border-bottom:2px solid var(--paper2);
+  display:flex;align-items:center;gap:8px;
+}
+.ctitle-icon{font-size:1rem;}
+
+/* Test type toggle */
+.test-toggle{display:flex;gap:0;border-radius:8px;overflow:hidden;border:1.5px solid var(--paper3);margin-bottom:1.25rem;}
+.tt-btn{
+  flex:1;padding:10px;text-align:center;cursor:pointer;
+  font-size:13px;font-weight:600;font-family:var(--sans);
+  background:#fff;color:var(--ink3);border:none;
+  transition:all .2s;
+}
+.tt-btn.active-hydro{background:var(--teal);color:#fff;}
+.tt-btn.active-pneumo{background:#1d4ed8;color:#fff;}
+.tt-btn:not(.active-hydro):not(.active-pneumo):hover{background:var(--paper2);}
+
+/* Pneumo warning */
+.pneumo-warn{
+  display:none;
+  background:var(--red-bg);border:1.5px solid var(--red-bd);
+  border-radius:8px;padding:12px 14px;margin-bottom:1rem;
+  font-size:12.5px;color:#7f1d1d;line-height:1.6;
+}
+.pneumo-warn.show{display:flex;gap:10px;align-items:flex-start;}
+.pneumo-warn-icon{font-size:1.4rem;flex-shrink:0;}
+
+/* Form */
+.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fg4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;}
+@media(max-width:600px){.fg3,.fg4{grid-template-columns:1fr 1fr;}.fg2{grid-template-columns:1fr;}}
+.field{display:flex;flex-direction:column;}
+.gap{margin-top:12px;}
+label{font-size:10.5px;font-weight:700;color:#7a7068;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;}
+select,input[type=number],input[type=text]{
+  width:100%;padding:9px 12px;border:1.5px solid #d4cfc5;
+  border-radius:7px;background:#fffef9;font-family:var(--sans);
+  font-size:13.5px;color:var(--ink);outline:none;
+  transition:border-color .2s,box-shadow .2s;
+  -webkit-appearance:none;appearance:none;
+}
+select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%230d9488' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;
+  background-color:#fffef9;
+}
+select:focus,input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,148,136,.12);}
+
+/* Calculated pressure display */
+.pres-display{
+  background:linear-gradient(135deg,var(--steel2),var(--steel));
+  border-radius:10px;padding:1.1rem 1.3rem;
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;
+  margin-top:12px;
+}
+.pd-block{text-align:center;}
+.pd-val{font-family:var(--serif);font-size:1.6rem;color:#f1f5f9;line-height:1;}
+.pd-unit{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.07em;margin-top:2px;}
+.pd-label{font-size:10px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-top:4px;}
+.pd-block.highlight .pd-val{color:#5eead4;}
+
+/* Button */
+.btn{
+  display:block;width:100%;padding:13px;margin-top:1.25rem;
+  border:none;border-radius:8px;font-family:var(--sans);
+  font-size:14.5px;font-weight:700;cursor:pointer;
+  letter-spacing:.03em;transition:all .2s;
+}
+.btn-hydro{background:linear-gradient(135deg,var(--teal2),var(--teal));color:#fff;box-shadow:0 4px 14px rgba(13,148,136,.3);}
+.btn-hydro:hover{background:linear-gradient(135deg,#0f766e,#0d9488);transform:translateY(-1px);}
+.btn-pneumo{background:linear-gradient(135deg,#1e3a8a,#1d4ed8);color:#fff;box-shadow:0 4px 14px rgba(29,78,216,.3);}
+.btn-pneumo:hover{background:linear-gradient(135deg,#1e3a8a,#2563eb);transform:translateY(-1px);}
+
+/* ── TEST PACK OUTPUT ── */
+.test-pack{display:none;animation:fadeUp .5s ease both;}
+.test-pack.show{display:block;}
+
+/* Pack header */
+.pack-header{
+  background:var(--steel2);color:#f1f5f9;
+  border-radius:12px;padding:1.5rem;
+  margin-bottom:1.25rem;
+  display:flex;justify-content:space-between;align-items:flex-start;
+  flex-wrap:wrap;gap:1rem;
+}
+.pack-header-left .pack-title{font-family:var(--serif);font-size:1.4rem;color:#f1f5f9;margin-bottom:.3rem;}
+.pack-header-left .pack-ref{font-family:var(--mono);font-size:11px;color:#64748b;}
+.pack-status{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;
+  letter-spacing:.04em;text-transform:uppercase;
+}
+.ps-hydro{background:rgba(13,148,136,.2);color:#5eead4;border:1px solid rgba(13,148,136,.3);}
+.ps-pneumo{background:rgba(29,78,216,.2);color:#93c5fd;border:1px solid rgba(29,78,216,.3);}
+
+/* Pack meta grid */
+.pack-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem;}
+@media(max-width:500px){.pack-meta{grid-template-columns:1fr 1fr;}}
+.meta-block{
+  background:#fff;border:1px solid var(--paper3);
+  border-radius:8px;padding:10px 12px;
+}
+.meta-val{font-family:var(--mono);font-size:1.05rem;color:var(--ink);font-weight:600;}
+.meta-label{font-size:10px;color:var(--ink3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-top:3px;}
+
+/* Checklist */
+.checklist-card{background:#fff;border:1px solid var(--paper3);border-radius:12px;overflow:hidden;margin-bottom:1.25rem;box-shadow:0 2px 12px rgba(26,32,44,.05);}
+.cl-section-header{
+  padding:10px 16px;font-size:10.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.09em;
+  display:flex;align-items:center;gap:7px;
+}
+.cls-pre{background:var(--teal-bg);border-bottom:1px solid var(--teal-bd);color:var(--teal2);}
+.cls-dur{background:var(--blue-bg);border-bottom:1px solid var(--blue-bd);color:#1d4ed8;}
+.cls-post{background:var(--amber-bg);border-bottom:1px solid var(--amber-bd);color:#92400e;}
+.cls-safety{background:var(--red-bg);border-bottom:1px solid var(--red-bd);color:#991b1b;}
+
+.cl-item{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:11px 16px;border-bottom:1px solid var(--paper2);
+  font-size:13px;color:var(--ink2);line-height:1.55;
+}
+.cl-item:last-child{border-bottom:none;}
+.cl-item:hover{background:var(--paper);}
+.cl-check{
+  width:18px;height:18px;min-width:18px;
+  border:2px solid #c4c0b8;border-radius:4px;
+  margin-top:1px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .15s;
+}
+.cl-check:hover{border-color:var(--teal);}
+.cl-check.checked{background:var(--teal);border-color:var(--teal);}
+.cl-check.checked::after{content:'✓';color:#fff;font-size:11px;font-weight:700;}
+.cl-text strong{color:var(--ink);}
+.cl-tag{
+  display:inline-block;font-size:10px;font-family:var(--mono);
+  padding:1px 6px;border-radius:3px;margin-left:5px;
+  background:var(--paper2);color:var(--ink3);
+}
+
+/* Pressure trace table */
+.ptable{width:100%;border-collapse:collapse;font-size:12.5px;}
+.ptable th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);padding:8px 12px;text-align:left;border-bottom:2px solid var(--paper2);}
+.ptable td{padding:9px 12px;border-bottom:1px solid var(--paper2);color:var(--ink2);}
+.ptable tr:last-child td{border-bottom:none;}
+.ptable tr:hover td{background:var(--paper);}
+.ptable td:first-child{font-family:var(--mono);font-weight:600;color:var(--teal2);}
+
+/* Safety advisory */
+.safety-box{
+  background:var(--red-bg);border:1.5px solid var(--red-bd);
+  border-radius:10px;padding:1rem 1.2rem;margin-bottom:1.25rem;
+}
+.safety-title{font-weight:700;color:#991b1b;font-size:13px;margin-bottom:.5rem;display:flex;align-items:center;gap:6px;}
+.safety-list{list-style:none;display:flex;flex-direction:column;gap:4px;}
+.safety-list li{font-size:12.5px;color:#7f1d1d;padding-left:1rem;position:relative;line-height:1.5;}
+.safety-list li::before{content:'→';position:absolute;left:0;color:#dc2626;font-size:11px;}
+
+/* Print button */
+.print-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:12px;border-radius:8px;
+  border:2px solid var(--teal);background:transparent;
+  color:var(--teal2);font-family:var(--sans);font-size:14px;
+  font-weight:600;cursor:pointer;transition:all .2s;margin-bottom:1.25rem;
+}
+.print-btn:hover{background:var(--teal);color:#fff;}
+
+/* PDF section */
+.pdf-section{text-align:center;padding:1.5rem 1rem 2rem;border-top:1px solid var(--paper3);margin-top:1rem;}
+.pdf-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:var(--teal2);color:#fff;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;font-family:var(--sans);}
+.pdf-btn:hover{background:var(--teal);}
+
+footer{background:var(--steel2);color:rgba(245,242,235,.4);text-align:center;padding:2rem;font-size:13px;}
+.fl{font-family:var(--serif);font-size:1.1rem;color:rgba(245,242,235,.7);margin-bottom:.4rem;}
+.fl span{color:var(--teal2);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+@media print{
+  .topbar,.hero,.card:not(.print-keep),.btn,.print-btn,.pdf-section,footer{display:none!important;}
+  .test-pack{display:block!important;}
+  body{padding:0;background:#fff;}
+  .pack-header{background:#1a202c!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left"><span class="topbar-dot"></span>PipingPro Academy · Calculator Suite</div>
+  <div class="topbar-right">ASME B31.3 · B31.4 · B31.8</div>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Pressure Testing · Field Engineering</div>
+    <h1>Hydro / Pneumo<br>Test Pack Generator</h1>
+    <p>Generate a complete pressure test package — test pressures, hold times, gauge ranges, vent/drain requirements, and a field checklist — per ASME B31.3, B31.4, and B31.8.</p>
+    <div class="hero-tags">
+      <span class="hero-tag">ASME B31.3</span>
+      <span class="hero-tag">ASME B31.4</span>
+      <span class="hero-tag">ASME B31.8</span>
+      <span class="hero-tag">Hydrotest</span>
+      <span class="hero-tag">Pneumatic Test</span>
+      <span class="hero-tag">Leak Test</span>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- Test Type -->
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">🧪</span>Test Type Selection</div>
+
+    <div class="test-toggle">
+      <button class="tt-btn active-hydro" id="btn-hydro" onclick="setTestType('hydro')">💧 Hydrostatic Test</button>
+      <button class="tt-btn" id="btn-pneumo" onclick="setTestType('pneumo')">💨 Pneumatic Test</button>
+      <button class="tt-btn" id="btn-leak" onclick="setTestType('leak')">🔍 Initial Service Leak Test</button>
+    </div>
+
+    <div class="pneumo-warn" id="pneumo-warn">
+      <div class="pneumo-warn-icon">⚠️</div>
+      <div><strong>Pneumatic Test — Elevated Risk.</strong> Pneumatic testing stores significantly more energy than hydrostatic testing. Per ASME B31.3 Cl. 345.5, pneumatic testing requires written approval and a safety review. Ensure all personnel are cleared from the test area during pressurisation. Test pressure is limited to 1.1× design pressure (vs 1.5× for hydrotest).</div>
+    </div>
+  </div>
+
+  <!-- Line Details -->
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">🔧</span>Line Details</div>
+    <div class="fg3">
+      <div class="field">
+        <label>Line Number / Tag</label>
+        <input type="text" id="line-no" placeholder="e.g. 6&quot;-PL-1001-A1A">
+      </div>
+      <div class="field">
+        <label>P&amp;ID Reference</label>
+        <input type="text" id="pid-ref" placeholder="e.g. DWG-2001-P001">
+      </div>
+      <div class="field">
+        <label>Pipe Class</label>
+        <input type="text" id="pipe-class" placeholder="e.g. A1A, CS150">
+      </div>
+    </div>
+    <div class="fg3 gap">
+      <div class="field">
+        <label>Design Code</label>
+        <select id="design-code" onchange="updateCalc()">
+          <option value="b313">ASME B31.3 (Process)</option>
+          <option value="b314">ASME B31.4 (Liquid Pipeline)</option>
+          <option value="b318">ASME B31.8 (Gas Pipeline)</option>
+          <option value="b311">ASME B31.1 (Power Piping)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Pipe Size (NPS)</label>
+        <select id="nps">
+          <option>½"</option><option>¾"</option><option>1"</option><option>1½"</option>
+          <option>2"</option><option>3"</option><option>4"</option><option value="6" selected>6"</option>
+          <option>8"</option><option>10"</option><option>12"</option><option>16"</option>
+          <option>18"</option><option>20"</option><option>24"</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Flange Rating</label>
+        <select id="flange-rating">
+          <option>Class 150</option><option>Class 300</option><option>Class 600</option>
+          <option>Class 900</option><option>Class 1500</option><option>Class 2500</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pressure & Temperature -->
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">📊</span>Design Conditions</div>
+    <div class="fg4">
+      <div class="field">
+        <label>Design Pressure (barg)</label>
+        <input type="number" id="design-p" value="35" min="0" max="700" step="0.1" oninput="updateCalc()">
+      </div>
+      <div class="field">
+        <label>Design Temp (°C)</label>
+        <input type="number" id="design-t" value="120" min="-196" max="600" step="1">
+      </div>
+      <div class="field">
+        <label>Test Temp (°C)</label>
+        <input type="number" id="test-t" value="20" min="-10" max="100" step="1">
+      </div>
+      <div class="field">
+        <label>MAWP (barg) <span style="font-weight:400;color:#b8a890;text-transform:none;letter-spacing:0;">if different</span></label>
+        <input type="number" id="mawp" placeholder="= Design P" min="0" max="700" step="0.1" oninput="updateCalc()">
+      </div>
+    </div>
+
+    <!-- Calculated pressures -->
+    <div class="pres-display" id="pres-display">
+      <div class="pd-block highlight">
+        <div class="pd-val" id="pd-test-p">52.5</div>
+        <div class="pd-unit">barg</div>
+        <div class="pd-label">Test Pressure</div>
+      </div>
+      <div class="pd-block">
+        <div class="pd-val" id="pd-min-p">35.0</div>
+        <div class="pd-unit">barg</div>
+        <div class="pd-label">Min Test P</div>
+      </div>
+      <div class="pd-block">
+        <div class="pd-val" id="pd-gauge">0–100</div>
+        <div class="pd-unit">barg range</div>
+        <div class="pd-label">Gauge Range</div>
+      </div>
+    </div>
+
+    <div class="fg2 gap">
+      <div class="field">
+        <label>Test Medium</label>
+        <select id="test-medium">
+          <option value="water">Potable / Treated Water</option>
+          <option value="glycol">Water-Glycol Mix</option>
+          <option value="nitrogen">Nitrogen (N₂)</option>
+          <option value="air">Compressed Air</option>
+          <option value="process">Process Fluid (initial service)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Hold Time Required</label>
+        <select id="hold-time">
+          <option value="10">10 minutes (minimum per B31.3)</option>
+          <option value="30" selected>30 minutes (standard practice)</option>
+          <option value="60">1 hour</option>
+          <option value="120">2 hours</option>
+          <option value="240">4 hours</option>
+          <option value="custom">Custom</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scope -->
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">📋</span>Test Scope & Exclusions</div>
+    <div class="fg2">
+      <div class="field">
+        <label>Isolation Method</label>
+        <select id="isolation">
+          <option>Blind flanges (spades)</option>
+          <option>Spectacle blinds</option>
+          <option>Test caps</option>
+          <option>Valve isolation (body test)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Test Preparation By</label>
+        <input type="text" id="prepared-by" placeholder="Name / Company">
+      </div>
+    </div>
+    <div class="fg2 gap">
+      <div class="field">
+        <label>Witnessed By</label>
+        <input type="text" id="witnessed-by" placeholder="Inspector / Client rep">
+      </div>
+      <div class="field">
+        <label>Test Date</label>
+        <input type="text" id="test-date" placeholder="DD-MMM-YYYY">
+      </div>
+    </div>
+
+    <button class="btn btn-hydro" id="gen-btn" onclick="generatePack()">Generate Test Pack →</button>
+  </div>
+
+  <!-- ── TEST PACK OUTPUT ── -->
+  <div class="test-pack" id="test-pack">
+
+    <button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+
+    <!-- Pack Header -->
+    <div class="pack-header">
+      <div class="pack-header-left">
+        <div class="pack-title" id="tp-title">Hydrostatic Test Pack</div>
+        <div class="pack-ref" id="tp-ref">Line: — · P&amp;ID: —</div>
+        <div class="pack-ref" style="margin-top:3px;" id="tp-date">Generated: —</div>
+      </div>
+      <div>
+        <div class="pack-status" id="tp-status">💧 HYDROSTATIC</div>
+      </div>
+    </div>
+
+    <!-- Meta -->
+    <div class="pack-meta" id="tp-meta"></div>
+
+    <!-- Safety Advisory (pneumo only) -->
+    <div class="safety-box" id="tp-safety" style="display:none;">
+      <div class="safety-title">🚨 Pneumatic Test Safety Requirements</div>
+      <ul class="safety-list" id="tp-safety-list"></ul>
+    </div>
+
+    <!-- Pressure Trace -->
+    <div class="card print-keep">
+      <div class="ctitle"><span class="ctitle-icon">📈</span>Pressurisation Sequence</div>
+      <table class="ptable">
+        <thead><tr><th>Step</th><th>Action</th><th>Target Pressure</th><th>Hold Time</th><th>Action Required</th></tr></thead>
+        <tbody id="tp-ptable"></tbody>
+      </table>
+    </div>
+
+    <!-- Pre-test Checklist -->
+    <div class="checklist-card print-keep">
+      <div class="cl-section-header cls-pre">📋 &nbsp;Pre-Test Preparation Checklist</div>
+      <div id="cl-pre"></div>
+      <div class="cl-section-header cls-dur">🔍 &nbsp;During Test — Inspection Points</div>
+      <div id="cl-dur"></div>
+      <div class="cl-section-header cls-post">✅ &nbsp;Post-Test Actions</div>
+      <div id="cl-post"></div>
+      <div class="cl-section-header cls-safety">⚠️ &nbsp;Safety Requirements</div>
+      <div id="cl-safety"></div>
+    </div>
+
+    <!-- Signature block -->
+    <div class="card print-keep">
+      <div class="ctitle"><span class="ctitle-icon">✍️</span>Test Record &amp; Sign-off</div>
+      <table class="ptable">
+        <thead><tr><th>Role</th><th>Name</th><th>Signature</th><th>Date / Time</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td>Test Engineer</td><td id="sig-prep">—</td><td style="min-width:120px;"></td><td style="min-width:100px;"></td><td>PASS / FAIL</td></tr>
+          <tr><td>Inspector / Witness</td><td id="sig-wit">—</td><td></td><td></td><td>PASS / FAIL</td></tr>
+          <tr><td>Client Representative</td><td>_______________</td><td></td><td></td><td>PASS / FAIL</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:1rem;font-size:11.5px;color:var(--ink3);line-height:1.7;">
+        Test pressure maintained for the required hold period with no visible leaks, pressure drop, or structural distress. All test exclusions confirmed blind/isolated. Gauges calibrated and within range. Test medium disposed of per environmental requirements.
+      </div>
+    </div>
+
+  </div><!-- /test-pack -->
+
+  <!-- PDF -->
+  <div class="pdf-section">
+    <p style="font-size:12px;color:var(--ink3);margin-bottom:.8rem;">Reference documentation for this calculator</p>
+    <a href="pdf/pressure-testing-guide.pdf" target="_blank" class="pdf-btn">
+      📄 Download PDF Guide — Hydrostatic &amp; Pneumatic Testing per ASME B31.3
+    </a>
+    <p style="font-size:11px;color:var(--ink3);margin-top:.6rem;">Covers test pressure calculations, hold times, gauge selection, exclusions, and B31.3 code requirements.</p>
+  </div>
+
+</div><!-- /main -->
+
+<footer>
+  <div class="fl">Piping<span>Pro</span> Academy</div>
+  <p>PipingPro Academy is a trademark of Zephrum Konsultan Limited, registered in England and Wales. Company Registration No. 13537626.</p>
+  <p style="margin-top:.4rem;">© 2026 Zephrum Konsultan Limited. All rights reserved.</p>
+</footer>
+
+<script>
+var testType = 'hydro';
+
+function setTestType(t) {
+  testType = t;
+  ['hydro','pneumo','leak'].forEach(x => {
+    const b = document.getElementById('btn-'+x);
+    b.className = 'tt-btn' + (x===t ? (x==='pneumo'?' active-pneumo':' active-hydro') : '');
+  });
+  document.getElementById('pneumo-warn').classList.toggle('show', t==='pneumo');
+  const gb = document.getElementById('gen-btn');
+  gb.className = 'btn ' + (t==='pneumo' ? 'btn-pneumo' : 'btn-hydro');
+  updateCalc();
+}
+
+function getBasePressure() {
+  const dp = parseFloat(document.getElementById('design-p').value) || 0;
+  const mawp = parseFloat(document.getElementById('mawp').value) || dp;
+  return Math.max(dp, mawp);
+}
+
+function getTestFactor() {
+  const code = document.getElementById('design-code').value;
+  if (testType === 'pneumo') return 1.1;
+  if (testType === 'leak')   return 1.0;
+  // Hydro factors
+  if (code === 'b313') return 1.5;
+  if (code === 'b314') return 1.25;
+  if (code === 'b318') return 1.25;
+  if (code === 'b311') return 1.5;
+  return 1.5;
+}
+
+function getGaugeRange(testP) {
+  const ranges = [10,16,25,40,60,100,160,250,400,600];
+  // Gauge should read test pressure at 60-75% of full scale
+  const ideal = testP / 0.65;
+  for (const r of ranges) if (r >= ideal) return r;
+  return ranges[ranges.length-1];
+}
+
+function updateCalc() {
+  const base = getBasePressure();
+  const factor = getTestFactor();
+  const testP = Math.round(base * factor * 10) / 10;
+  const gaugeRange = getGaugeRange(testP);
+  const gaugeMin  = Math.round(gaugeRange * 0.25);
+
+  document.getElementById('pd-test-p').textContent = testP.toFixed(1);
+  document.getElementById('pd-min-p').textContent  = base.toFixed(1);
+  document.getElementById('pd-gauge').textContent  = `${gaugeMin}–${gaugeRange}`;
+}
+
+function clItem(text, tag) {
+  return `<div class="cl-item">
+    <div class="cl-check" onclick="this.classList.toggle('checked')"></div>
+    <div class="cl-text">${text}${tag?`<span class="cl-tag">${tag}</span>`:''}</div>
+  </div>`;
+}
+
+function generatePack() {
+  const lineNo    = document.getElementById('line-no').value || '—';
+  const pidRef    = document.getElementById('pid-ref').value || '—';
+  const pipeClass = document.getElementById('pipe-class').value || '—';
+  const code      = document.getElementById('design-code').value;
+  const codeLabel = document.getElementById('design-code').options[document.getElementById('design-code').selectedIndex].text;
+  const nps       = document.getElementById('nps').value;
+  const flangeRat = document.getElementById('flange-rating').value;
+  const designP   = parseFloat(document.getElementById('design-p').value) || 0;
+  const designT   = document.getElementById('design-t').value;
+  const testT     = document.getElementById('test-t').value;
+  const mawpRaw   = parseFloat(document.getElementById('mawp').value) || designP;
+  const medium    = document.getElementById('test-medium').options[document.getElementById('test-medium').selectedIndex].text;
+  const medVal    = document.getElementById('test-medium').value;
+  const holdSel   = document.getElementById('hold-time').value;
+  const holdMins  = holdSel === 'custom' ? 30 : parseInt(holdSel);
+  const isolation = document.getElementById('isolation').value;
+  const prepBy    = document.getElementById('prepared-by').value || '_______________';
+  const witBy     = document.getElementById('witnessed-by').value || '_______________';
+  const testDate  = document.getElementById('test-date').value || '_______________';
+
+  const base   = Math.max(designP, mawpRaw);
+  const factor = getTestFactor();
+  const testP  = Math.round(base * factor * 10) / 10;
+  const gaugeRange = getGaugeRange(testP);
+  const gaugeMin   = Math.round(gaugeRange * 0.25);
+  const isPneumo   = testType === 'pneumo';
+  const isLeak     = testType === 'leak';
+
+  const typeLabel = isPneumo ? 'PNEUMATIC' : isLeak ? 'INITIAL SERVICE LEAK' : 'HYDROSTATIC';
+  const typeIcon  = isPneumo ? '💨' : isLeak ? '🔍' : '💧';
+
+  // Pack header
+  document.getElementById('tp-title').textContent = `${isPneumo?'Pneumatic':isLeak?'Initial Service Leak':'Hydrostatic'} Test Pack`;
+  document.getElementById('tp-ref').textContent   = `Line: ${lineNo}  ·  P&ID: ${pidRef}  ·  Pipe Class: ${pipeClass}`;
+  document.getElementById('tp-date').textContent  = `Generated: ${new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}  ·  Prepared by: ${prepBy}`;
+  document.getElementById('tp-status').textContent = `${typeIcon} ${typeLabel}`;
+  document.getElementById('tp-status').className  = `pack-status ${isPneumo?'ps-pneumo':'ps-hydro'}`;
+  document.getElementById('sig-prep').textContent = prepBy;
+  document.getElementById('sig-wit').textContent  = witBy;
+
+  // Meta blocks
+  document.getElementById('tp-meta').innerHTML = [
+    {label:'Test Pressure',  val:`${testP.toFixed(1)} barg`},
+    {label:'Hold Time',      val:`${holdMins} min`},
+    {label:'Test Medium',    val:medium.split('(')[0].trim()},
+    {label:'Design Code',    val:codeLabel.split(' ')[0]+' '+codeLabel.split(' ')[1]},
+    {label:'NPS / Rating',   val:`${nps} / ${flangeRat}`},
+    {label:'Design P / T',   val:`${designP} barg / ${designT}°C`},
+    {label:'Gauge Range',    val:`${gaugeMin}–${gaugeRange} barg`},
+    {label:'Test Date',      val:testDate},
+  ].map(m => `<div class="meta-block"><div class="meta-val">${m.val}</div><div class="meta-label">${m.label}</div></div>`).join('');
+
+  // Safety box (pneumo only)
+  const safetyBox = document.getElementById('tp-safety');
+  if (isPneumo) {
+    safetyBox.style.display = 'block';
+    document.getElementById('tp-safety-list').innerHTML = [
+      'Written risk assessment and safety plan required before commencement (ASME B31.3 Cl. 345.5)',
+      'Exclusion zone established — all non-essential personnel must vacate the area',
+      'Test pressure to be increased in steps: 50% → 75% → 100% of test pressure',
+      'Preliminary check at 50% of test pressure before proceeding to full test pressure',
+      'Pressure relief valve set at 1.05× test pressure to be installed',
+      `Maximum test pressure: ${testP.toFixed(1)} barg (1.1× design pressure per B31.3)`,
+      'Test medium: nitrogen preferred over compressed air — eliminates oxygen risk',
+    ].map(s => `<li>${s}</li>`).join('');
+  } else {
+    safetyBox.style.display = 'none';
+  }
+
+  // Pressurisation table
+  const steps = isPneumo ? [
+    {step:'1', action:'Pressurise to preliminary check',  pTarget:`${(testP*0.5).toFixed(1)} barg (50% Pt)`, hold:'10 min', action2:'Visual inspection — check for leaks. If none found, proceed.'},
+    {step:'2', action:'Pressurise to 75% test pressure',  pTarget:`${(testP*0.75).toFixed(1)} barg (75% Pt)`, hold:'5 min',  action2:'Re-inspect. Stabilise pressure.'},
+    {step:'3', action:'Pressurise to full test pressure',  pTarget:`${testP.toFixed(1)} barg (100% Pt)`, hold:`${holdMins} min`, action2:'Hold and monitor gauge. No visible pressure drop permitted.'},
+    {step:'4', action:'Reduce to design pressure for leak inspection', pTarget:`${designP.toFixed(1)} barg (Pd)`, hold:'As required', action2:'Full visual inspection of all joints, fittings, and welds.'},
+    {step:'5', action:'Depressurise safely', pTarget:'0 barg', hold:'—', action2:'Vent slowly in controlled manner. Dispose of test medium per procedure.'},
+  ] : [
+    {step:'1', action:'Fill with test medium — purge all air', pTarget:'Fill pressure only', hold:'Until vented', action2:'Confirm all high-point vents open. Verify complete filling.'},
+    {step:'2', action:'Pressurise to 50% test pressure', pTarget:`${(testP*0.5).toFixed(1)} barg`, hold:'5 min', action2:'Check all connections. Look for leaks.'},
+    {step:'3', action:'Pressurise to test pressure', pTarget:`${testP.toFixed(1)} barg`, hold:`${holdMins} min`, action2:'Hold period. Monitor gauge — no drop permitted. Full visual inspection.'},
+    {step:'4', action:'Reduce to design pressure', pTarget:`${designP.toFixed(1)} barg`, hold:'As required', action2:'Inspect all joints and welds. Soapy water / leak detection fluid.'},
+    {step:'5', action:'Drain and dry / nitrogen purge', pTarget:'0 barg', hold:'—', action2:'Drain all water. Blow dry. N₂ purge if required for service.'},
+  ];
+
+  document.getElementById('tp-ptable').innerHTML = steps.map(s =>
+    `<tr><td>${s.step}</td><td>${s.action}</td><td><strong>${s.pTarget}</strong></td><td>${s.hold}</td><td>${s.action2}</td></tr>`
+  ).join('');
+
+  // Checklists
+  const prePneumo = isPneumo ? [
+    clItem('<strong>Written safety plan</strong> approved and signed by responsible engineer', 'B31.3 Cl.345.5'),
+    clItem('Pressure relief valve installed and set at <strong>1.05× test pressure</strong>'),
+    clItem('Exclusion zone established and barriers erected'),
+    clItem('Emergency depressurisation procedure in place'),
+  ] : [];
+
+  document.getElementById('cl-pre').innerHTML = [
+    clItem(`<strong>Isolation confirmed</strong> — all test limits blinded/spaded per ${isolation}`),
+    clItem('All instruments, gauges, and in-line equipment <strong>excluded or rated for test pressure</strong>'),
+    clItem(`Calibrated test gauge installed — range <strong>${gaugeMin}–${gaugeRange} barg</strong>`),
+    clItem(`Test medium available: <strong>${medium}</strong>`, medVal==='water'?'Potable / Cl⁻ <50ppm for SS':''),
+    clItem(`High-point vents identified and <strong>open during filling</strong> — ${nps} line`),
+    clItem('Low-point drains identified and <strong>closed before pressurisation</strong>'),
+    clItem('All welding, heat treatment, and NDE <strong>completed and signed off</strong>'),
+    clItem('Test boundary marked up on P&ID / isometric — <strong>agreed with client/inspector</strong>'),
+    ...prePneumo,
+    clItem(`Ambient temperature <strong>between 4°C and 38°C</strong> (test temp entered: ${testT}°C)`),
+  ].join('');
+
+  document.getElementById('cl-dur').innerHTML = [
+    clItem(`Monitor pressure gauge every <strong>5 minutes</strong> during hold period of <strong>${holdMins} minutes</strong>`),
+    clItem('Walk line — visually inspect <strong>all welds, flanges, fittings, and valves</strong> for leaks'),
+    clItem('Apply soapy water / leak detection spray to <strong>all threaded connections and instrument taps</strong>'),
+    clItem('Record <strong>start and end pressures</strong> — any drop requires investigation before acceptance'),
+    clItem(`Temperature correction applied if ambient temp changes >5°C during test`),
+    isPneumo ? clItem('<strong>Do not approach pressurised test boundary</strong> — conduct visual inspection from safe distance') : '',
+  ].filter(Boolean).join('');
+
+  document.getElementById('cl-post').innerHTML = [
+    clItem(`Depressurise <strong>slowly and in a controlled manner</strong> to 0 barg`),
+    clItem(`Drain all test medium — <strong>dispose per environmental procedure</strong>`),
+    !isPneumo ? clItem('Blow dry with instrument air or <strong>nitrogen purge</strong> if required for service') : '',
+    clItem('Remove all temporary blinds/spades — <strong>verify count matches installed count</strong>'),
+    clItem('Re-instate all excluded instruments and equipment'),
+    clItem('<strong>Complete and sign test record</strong> — attach to system completion dossier'),
+    clItem(`Issue <strong>test certificate</strong> referencing line number: ${lineNo}`),
+  ].filter(Boolean).join('');
+
+  document.getElementById('cl-safety').innerHTML = [
+    clItem(`Test pressure <strong>${testP.toFixed(1)} barg</strong> — verify all components rated ≥ this pressure`),
+    clItem('Ensure no personnel standing over or adjacent to flanged joints during pressurisation'),
+    clItem('First aid kit and emergency contacts available on site'),
+    clItem(`${isPneumo?'Nitrogen cylinder':'Water pump'} operator briefed on <strong>emergency shutdown procedure</strong>`),
+    clItem('Hot work and other concurrent activities <strong>suspended</strong> within exclusion zone'),
+    clItem(`Inform plant operations team — area <strong>under pressure test</strong> notification posted`),
+  ].join('');
+
+  // Show
+  const pack = document.getElementById('test-pack');
+  pack.classList.remove('show');
+  setTimeout(() => {
+    pack.classList.add('show');
+    pack.scrollIntoView({behavior:'smooth',block:'start'});
+  }, 60);
+}
+
+// Init
+updateCalc();
+</script>
+</body>
+</html>
