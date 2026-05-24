@@ -128,6 +128,7 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
   <button class="tab" onclick="switchTab('stiffness')">3 · Support Stiffness</button>
   <button class="tab" onclick="switchTab('pulsation')">4 · Pulsation Check</button>
   <button class="tab" onclick="switchTab('surge')">5 · Surge Bottle</button>
+  <button class="tab" onclick="switchTab('spancheck')">6 · Span Checker</button>
 </div>
 
 <div class="main">
@@ -720,7 +721,7 @@ function calcWfluid(id,rhofl){
 
 /* ── TAB SWITCHING ── */
 function switchTab(name){
-  var tabs=['mnfp','span','stiffness','pulsation','surge'];
+  var tabs=['mnfp','span','stiffness','pulsation','surge','spancheck'];
   tabs.forEach(function(t,i){
     document.querySelectorAll('.tab')[i].classList.toggle('active',t===name);
     document.getElementById('panel-'+t).classList.toggle('active',t===name);
@@ -982,6 +983,384 @@ calcStiffness();
 calcElbowStiffness();
 calcPulsation();
 calcSurge();
+calcSpanCheck();
+</script>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 6 — SPAN CHECKER (reverse calc / troubleshooting) -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-spancheck" style="display:none;">
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════ */
+/* TAB 6 — SPAN CHECKER                                  */
+/* ══════════════════════════════════════════════════════ */
+
+/* Build Tab 6 HTML dynamically so it sits cleanly at end */
+(function(){
+  var panel = document.getElementById('panel-spancheck');
+  panel.innerHTML = `
+  <div class="disclaimer">
+    Use this tab during <strong>commissioning, operation, or troubleshooting</strong> — enter an existing or proposed pipe span and instantly check whether its natural frequency meets the MNFP requirement. Useful when a line is vibrating in the field and you need a quick engineering assessment.
+  </div>
+
+  <div class="card">
+    <div class="card-title">Pipe &amp; Span Inputs</div>
+    <div class="formula">
+      <div class="formula-title">Span Natural Frequency Check (Truong Eq. 6a)</div>
+      <code>fₙ = (C / L²) × √(EI / w) &nbsp;&nbsp;[cps]</code><br/>
+      <code>Required: fₙ ≥ MNFP × 1.20 &nbsp;&nbsp;where MNFP = 0.06 × RPM</code><br/>
+      <code>C = 1.700 (straight) | 1.180 (one elbow / L-bend) | 0.666 (two elbows / Z-U-Hovgaard)</code><br/>
+      <code>Clamped-clamped correction factor ×1.6 applied per Truong / API-618</code>
+    </div>
+    <div class="grid3">
+      <div class="field">
+        <label>Pipe Outside Diameter (in)</label>
+        <select id="sc-od" onchange="calcSpanCheck()">
+          <option value="2.375">2" (2.375 OD)</option>
+          <option value="3.5">3" (3.500 OD)</option>
+          <option value="4.5" selected>4" (4.500 OD)</option>
+          <option value="6.625">6" (6.625 OD)</option>
+          <option value="8.625">8" (8.625 OD)</option>
+          <option value="10.75">10" (10.750 OD)</option>
+          <option value="12.75">12" (12.750 OD)</option>
+          <option value="14">14" (14.000 OD)</option>
+          <option value="16">16" (16.000 OD)</option>
+          <option value="18">18" (18.000 OD)</option>
+          <option value="20">20" (20.000 OD)</option>
+          <option value="24">24" (24.000 OD)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Wall Thickness (in)</label>
+        <input type="number" id="sc-thk" value="0.237" step="0.001" oninput="calcSpanCheck()"/>
+      </div>
+      <div class="field">
+        <label>Span Configuration</label>
+        <select id="sc-config" onchange="calcSpanCheck()">
+          <option value="straight" selected>Straight span</option>
+          <option value="one_elbow">One elbow / L-bend</option>
+          <option value="two_elbow">Two elbows / Z-U-Hovgaard</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid3" style="margin-top:.8rem;">
+      <div class="field">
+        <label>Actual Span Length (ft)</label>
+        <input type="number" id="sc-L" value="20" step="0.5" oninput="calcSpanCheck()"/>
+        <span class="hint">Measured support-to-support distance</span>
+      </div>
+      <div class="field">
+        <label>Fluid Density (lb/ft³)</label>
+        <input type="number" id="sc-rhofl" value="15" oninput="calcSpanCheck()"/>
+        <span class="hint">Gas: 1–30 | Liquid: 50–65</span>
+      </div>
+      <div class="field">
+        <label>Insulation Weight (lb/ft)</label>
+        <input type="number" id="sc-wins" value="0" oninput="calcSpanCheck()"/>
+        <span class="hint">0 if bare pipe</span>
+      </div>
+    </div>
+    <div class="grid3" style="margin-top:.8rem;">
+      <div class="field">
+        <label>Compressor Speed (RPM)</label>
+        <input type="number" id="sc-rpm" value="300" oninput="calcSpanCheck()"/>
+      </div>
+      <div class="field">
+        <label>Concentrated Load at Midspan (lb)</label>
+        <input type="number" id="sc-P" value="0" step="10" oninput="calcSpanCheck()"/>
+        <span class="hint">Valve, fitting, or instrument weight. 0 if none.</span>
+      </div>
+      <div class="field">
+        <label>End Condition</label>
+        <select id="sc-end" onchange="calcSpanCheck()">
+          <option value="1.60" selected>Clamped-clamped (×1.60)</option>
+          <option value="1.15">Fixed-clamped (×1.15)</option>
+          <option value="1.00">Simply supported (×1.00)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Pipe Section Properties</div>
+    <div class="results-grid">
+      <div class="res-box">
+        <div class="res-label">Inside Diameter</div>
+        <div class="res-val" id="sc-id">—</div>
+        <div class="res-unit">inches</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Moment of Inertia (I)</div>
+        <div class="res-val" id="sc-I">—</div>
+        <div class="res-unit">in⁴</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Pipe weight (steel only)</div>
+        <div class="res-val" id="sc-wpipe">—</div>
+        <div class="res-unit">lb/ft</div>
+      </div>
+      <div class="res-box hi">
+        <div class="res-label">Total distributed weight (w)</div>
+        <div class="res-val" id="sc-wtotal">—</div>
+        <div class="res-unit">lb/ft</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Frequency Check Results</div>
+    <div class="results-grid">
+      <div class="res-box hi">
+        <div class="res-label">Calculated span fₙ</div>
+        <div class="res-val" id="sc-fn">—</div>
+        <div class="res-unit">cps (Hz)</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">MNFP (0.06 × RPM)</div>
+        <div class="res-val" id="sc-mnfp">—</div>
+        <div class="res-unit">cps (Hz)</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Required fₙ (MNFP + 20%)</div>
+        <div class="res-val" id="sc-req">—</div>
+        <div class="res-unit">cps (Hz)</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Frequency margin</div>
+        <div class="res-val" id="sc-margin">—</div>
+        <div class="res-unit">% above required</div>
+      </div>
+    </div>
+
+    <!-- PASS / FAIL banner -->
+    <div id="sc-verdict-box" style="border-radius:10px;padding:1.2rem 1.4rem;margin-bottom:1rem;display:none;">
+      <div style="display:flex;align-items:center;gap:.8rem;margin-bottom:.6rem;">
+        <div id="sc-verdict-icon" style="font-size:1.6rem;"></div>
+        <div>
+          <div id="sc-verdict-title" style="font-family:'DM Serif Display',serif;font-size:1.1rem;"></div>
+          <div id="sc-verdict-sub" style="font-size:12px;margin-top:.1rem;"></div>
+        </div>
+      </div>
+      <div id="sc-verdict-action" style="font-size:12px;line-height:1.7;border-top:1px solid rgba(0,0,0,.08);padding-top:.7rem;margin-top:.3rem;"></div>
+    </div>
+
+    <!-- Frequency bar -->
+    <div style="margin-bottom:1rem;">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--ink3);margin-bottom:4px;">
+        <span>0 Hz</span>
+        <span id="sc-bar-label">Span fₙ vs required</span>
+        <span id="sc-bar-max">—</span>
+      </div>
+      <div style="height:14px;background:var(--paper3);border-radius:7px;overflow:hidden;position:relative;">
+        <div id="sc-bar-req" style="position:absolute;top:0;bottom:0;width:2px;background:var(--ink2);z-index:2;"></div>
+        <div id="sc-bar-fill" style="height:100%;border-radius:7px;transition:width .4s;"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--ink3);margin-top:3px;">
+        <span></span>
+        <span id="sc-bar-req-label">Required fₙ</span>
+        <span></span>
+      </div>
+    </div>
+
+    <!-- Max allowable span for this pipe at this RPM -->
+    <div class="card-title" style="margin-top:1.2rem;margin-bottom:.8rem;">Maximum Allowable Span — This Pipe &amp; RPM</div>
+    <div class="results-grid">
+      <div class="res-box teal" style="background:var(--teal-light);border:1px solid rgba(26,107,90,.2);">
+        <div class="res-label">Max allowable span (straight)</div>
+        <div class="res-val" id="sc-lmax-straight">—</div>
+        <div class="res-unit">feet</div>
+      </div>
+      <div class="res-box teal" style="background:var(--teal-light);border:1px solid rgba(26,107,90,.2);">
+        <div class="res-label">Max allowable span (one elbow)</div>
+        <div class="res-val" id="sc-lmax-one">—</div>
+        <div class="res-unit">feet</div>
+      </div>
+      <div class="res-box teal" style="background:var(--teal-light);border:1px solid rgba(26,107,90,.2);">
+        <div class="res-label">Max allowable span (two elbows)</div>
+        <div class="res-val" id="sc-lmax-two">—</div>
+        <div class="res-unit">feet</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Span over-length by</div>
+        <div class="res-val" id="sc-overlength">—</div>
+        <div class="res-unit">feet (if failing)</div>
+      </div>
+    </div>
+
+    <div class="note" id="sc-note" style="margin-top:.5rem;"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Concentrated Load Correction — Midspan Valve / Fitting</div>
+    <div class="note" style="margin-bottom:.8rem;">When a valve, instrument, or heavy fitting sits at midspan, the effective natural frequency drops. The correction factor Cₚ = (8P/3W + 1)^−½ for a clamped-clamped span with load at centre (Truong Table 1).</div>
+    <div class="results-grid">
+      <div class="res-box">
+        <div class="res-label">Total span weight W = w × L</div>
+        <div class="res-val" id="sc-W">—</div>
+        <div class="res-unit">lbs</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Concentrated load P</div>
+        <div class="res-val" id="sc-Pval">—</div>
+        <div class="res-unit">lbs</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Correction factor Cₚ</div>
+        <div class="res-val" id="sc-Cp">—</div>
+        <div class="res-unit">—</div>
+      </div>
+      <div class="res-box hi">
+        <div class="res-label">fₙ with concentrated load</div>
+        <div class="res-val" id="sc-fn-load">—</div>
+        <div class="res-unit">cps (Hz)</div>
+      </div>
+    </div>
+  </div>
+`;
+})();
+
+function calcSpanCheck(){
+  var od   = parseFloat(document.getElementById('sc-od').value)||4.5;
+  var thk  = parseFloat(document.getElementById('sc-thk').value)||0.237;
+  var L_ft = parseFloat(document.getElementById('sc-L').value)||20;
+  var rhofl= parseFloat(document.getElementById('sc-rhofl').value)||15;
+  var wins = parseFloat(document.getElementById('sc-wins').value)||0;
+  var rpm  = parseFloat(document.getElementById('sc-rpm').value)||300;
+  var P    = parseFloat(document.getElementById('sc-P').value)||0;
+  var config = document.getElementById('sc-config').value;
+  var endFactor = parseFloat(document.getElementById('sc-end').value)||1.6;
+
+  /* ── pipe properties ── */
+  var id_in = od - 2*thk;
+  var I = Math.PI/64*(Math.pow(od,4) - Math.pow(od-2*thk,4));
+  /* steel weight lb/ft */
+  var Apipe = Math.PI/4*(od*od - id_in*id_in);
+  var wpipe = Apipe*12*0.2833;
+  /* fluid weight lb/ft */
+  var wfluid = Math.PI/4*(id_in*id_in)*12*(rhofl/1728);
+  var wtotal = wpipe + wfluid + wins;
+
+  sv('sc-id',   id_in.toFixed(3));
+  sv('sc-I',    I.toFixed(4));
+  sv('sc-wpipe',wpipe.toFixed(3));
+  sv('sc-wtotal',wtotal.toFixed(3));
+
+  /* ── C coefficient ── */
+  var Cmap = {straight:1.700, one_elbow:1.180, two_elbow:0.666};
+  var C = Cmap[config]||1.700;
+
+  /* ── natural frequency (Truong Eq.6a, L in feet, w in lb/ft, E in psi, I in in⁴) ── */
+  /* Convert w to lb/in for formula: w_in = wtotal/12 */
+  var w_in  = wtotal/12;
+  var E     = 27.9e6;
+  var L_in  = L_ft*12;
+  /* fₙ = C/L²(ft) × sqrt(EI/w) — but L must be in feet with correct unit conversion:
+     Using L in inches: fₙ = C/L_in² × sqrt(E_psi × I_in4 / w_lbperin) */
+  var fn_bare = C / (L_in*L_in) * Math.sqrt(E*I/w_in);
+  /* Apply end condition correction */
+  var fn = fn_bare * endFactor;
+
+  /* ── MNFP ── */
+  var mnfp     = 0.06*rpm;
+  var fnReq    = mnfp*1.20;
+  var margin   = ((fn - fnReq)/fnReq)*100;
+
+  sv('sc-fn',    fn.toFixed(3));
+  sv('sc-mnfp',  mnfp.toFixed(2));
+  sv('sc-req',   fnReq.toFixed(2));
+  sv('sc-margin', margin.toFixed(1));
+
+  /* ── Verdict ── */
+  var box   = document.getElementById('sc-verdict-box');
+  var icon  = document.getElementById('sc-verdict-icon');
+  var title = document.getElementById('sc-verdict-title');
+  var sub   = document.getElementById('sc-verdict-sub');
+  var action= document.getElementById('sc-verdict-action');
+  box.style.display = 'block';
+
+  var pass  = fn >= fnReq;
+  var warn  = pass && margin < 10; /* passes but margin <10% — caution */
+
+  if(pass && !warn){
+    box.style.background = 'var(--pass-bg)';
+    box.style.border = '1px solid rgba(26,107,90,.25)';
+    icon.textContent  = '✅';
+    title.style.color = 'var(--pass)';
+    title.textContent = 'PASS — Span meets MNFP requirement';
+    sub.style.color   = 'var(--pass)';
+    sub.textContent   = 'fₙ = '+fn.toFixed(2)+' Hz ≥ required '+fnReq.toFixed(2)+' Hz (margin: +'+margin.toFixed(1)+'%)';
+    action.style.color= 'var(--teal)';
+    action.textContent= 'This span configuration is acceptable per Truong / API-618 criteria. Confirm support type: clamps or holddowns per pipe size and location (Type I/II for spans, Type III double-clamp at terminal points and for pipe ≥20" OD).';
+  } else if(warn){
+    box.style.background = 'var(--warn-bg)';
+    box.style.border = '1px solid rgba(146,64,14,.25)';
+    icon.textContent  = '⚠️';
+    title.style.color = 'var(--warn)';
+    title.textContent = 'MARGINAL — Passes but with low margin';
+    sub.style.color   = 'var(--warn)';
+    sub.textContent   = 'fₙ = '+fn.toFixed(2)+' Hz ≥ required '+fnReq.toFixed(2)+' Hz (margin: +'+margin.toFixed(1)+'% — caution below 10%)';
+    action.style.color= 'var(--warn)';
+    action.textContent= 'Margin is below 10%. Consider reducing span by 5–10% to provide buffer against field conditions (additional weight, fouling, support degradation). Run acoustic analog study to confirm pulsation frequencies do not coincide with this span fₙ.';
+  } else {
+    box.style.background = 'var(--fail-bg)';
+    box.style.border = '1px solid rgba(155,28,28,.25)';
+    icon.textContent  = '❌';
+    title.style.color = 'var(--fail)';
+    title.textContent = 'FAIL — Span does NOT meet MNFP requirement';
+    sub.style.color   = 'var(--fail)';
+    sub.textContent   = 'fₙ = '+fn.toFixed(2)+' Hz < required '+fnReq.toFixed(2)+' Hz (deficit: '+Math.abs(margin).toFixed(1)+'%)';
+    action.style.color= '#7f1d1d';
+    action.textContent= 'Action required: add an intermediate vibration support to reduce span length. See maximum allowable span values below. If vibrating in the field, install an emergency clamp at midspan as immediate corrective action while permanent support is engineered.';
+  }
+
+  /* ── Frequency bar ── */
+  var barMax = Math.max(fn, fnReq)*1.4;
+  var barFill= document.getElementById('sc-bar-fill');
+  var barReq = document.getElementById('sc-bar-req');
+  var pctFn  = Math.min((fn/barMax)*100, 100);
+  var pctReq = Math.min((fnReq/barMax)*100, 100);
+  barFill.style.width = pctFn+'%';
+  barFill.style.background = pass ? 'var(--teal)' : '#dc2626';
+  barReq.style.left = pctReq+'%';
+  sv('sc-bar-max', barMax.toFixed(1)+' Hz');
+  sv('sc-bar-req-label', 'Required: '+fnReq.toFixed(2)+' Hz');
+
+  /* ── Max allowable spans for this pipe ── */
+  function maxSpan(Cval){
+    var sqrtEIw = Math.sqrt(E*I/w_in);
+    var L2 = Cval * sqrtEIw / fnReq;
+    var Lmax_in = Math.sqrt(L2) * endFactor;
+    return (Lmax_in/12).toFixed(2);
+  }
+  sv('sc-lmax-straight', maxSpan(1.700));
+  sv('sc-lmax-one',      maxSpan(1.180));
+  sv('sc-lmax-two',      maxSpan(0.666));
+
+  var overLen = L_ft - parseFloat(maxSpan(C));
+  sv('sc-overlength', overLen > 0 ? overLen.toFixed(2) : '—');
+
+  /* ── Concentrated load correction ── */
+  var W_total = wtotal * L_ft; /* total span weight lbs */
+  var Cp = P > 0 ? Math.pow((8*P)/(3*W_total) + 1, -0.5) : 1.0;
+  var fn_load = fn * Cp;
+  sv('sc-W',       W_total.toFixed(1));
+  sv('sc-Pval',    P.toFixed(1));
+  sv('sc-Cp',      Cp.toFixed(4));
+  sv('sc-fn-load', fn_load.toFixed(3));
+
+  /* ── Note ── */
+  var noteEl = document.getElementById('sc-note');
+  if(noteEl){
+    if(P > 0){
+      var passLoad = fn_load >= fnReq;
+      noteEl.textContent = 'With '+P.toFixed(0)+' lb concentrated load at midspan: fₙ drops to '+fn_load.toFixed(2)+' Hz — '+(passLoad?'still PASSES ('+((fn_load-fnReq)/fnReq*100).toFixed(1)+'% margin)':'FAILS — span must be shortened or load moved closer to a support point.');
+    } else {
+      noteEl.textContent = 'Enter a midspan concentrated load (valve, instrument) above to see its effect on span frequency. Moving heavy items to within L/4 of a support reduces frequency penalty significantly.';
+    }
+  }
+}
 </script>
 
 </body>
