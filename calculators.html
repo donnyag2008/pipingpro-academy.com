@@ -85,33 +85,30 @@ nav{background:rgba(245,242,235,0.96);backdrop-filter:blur(14px);border-bottom:1
 .btn-pro:hover{background:#c9a020;}
 
 /* ─── MODAL PREVIEW ─── */
-.modal-bg{position:fixed;inset:0;background:rgba(26,26,24,.7);z-index:300;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .2s;}
+.modal-bg{position:fixed;inset:0;background:rgba(26,26,24,.65);z-index:300;display:flex;align-items:center;justify-content:center;padding:1.5rem;opacity:0;pointer-events:none;transition:opacity .2s;}
 .modal-bg.show{opacity:1;pointer-events:all;}
-.modal{background:#fff;border-radius:16px;width:100%;max-width:520px;overflow:hidden;transform:translateY(20px);transition:transform .2s;box-shadow:0 24px 80px rgba(0,0,0,.3);}
+.modal{background:#fff;border-radius:14px;width:100%;max-width:280px;overflow:hidden;position:relative;transform:translateY(16px);transition:transform .2s;box-shadow:0 16px 60px rgba(0,0,0,.28);}
 .modal-bg.show .modal{transform:translateY(0);}
-.modal-header{padding:0;position:relative;}
-.modal-img{height:160px;display:flex;align-items:center;justify-content:center;}
-.modal-img svg{width:100px;height:100px;opacity:.9;}
-.modal-close{position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.2);border:none;cursor:pointer;font-size:16px;color:#fff;display:flex;align-items:center;justify-content:center;line-height:1;}
-.modal-close:hover{background:rgba(255,255,255,.35);}
-.modal-body{padding:1.5rem 1.8rem 1.8rem;}
-.modal-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:20px;margin-bottom:.8rem;}
-.modal-name{font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--ink);margin-bottom:.5rem;line-height:1.2;}
-.modal-desc{font-size:13px;color:var(--ink2);line-height:1.7;margin-bottom:1rem;}
-.modal-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:1.3rem;}
-.modal-what{background:var(--paper);border-radius:8px;padding:.9rem 1rem;margin-bottom:1.3rem;}
-.modal-what-title{font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;}
-.modal-what ul{list-style:none;display:flex;flex-direction:column;gap:4px;}
-.modal-what li{font-size:12px;color:var(--ink2);padding-left:1.1rem;position:relative;}
-.modal-what li::before{content:'→';position:absolute;left:0;color:var(--accent);font-size:11px;}
-.modal-actions{display:flex;gap:.7rem;}
-.modal-btn{flex:1;padding:11px;border-radius:9px;font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:none;text-align:center;display:block;}
+.modal-close{position:absolute;top:10px;right:10px;width:24px;height:24px;border-radius:50%;background:var(--paper2);border:none;cursor:pointer;font-size:13px;color:var(--ink3);display:flex;align-items:center;justify-content:center;line-height:1;}
+.modal-close:hover{background:var(--paper3);}
+.modal-body{padding:1.4rem 1.2rem 1rem;}
+.modal-badge{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:20px;margin-bottom:.5rem;}
+.modal-name{font-family:'DM Serif Display',serif;font-size:1rem;color:var(--ink);margin-bottom:.3rem;line-height:1.2;}
+.modal-desc{font-size:11px;color:var(--ink2);line-height:1.6;margin-bottom:.7rem;}
+.modal-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:.8rem;}
+.modal-what{background:var(--paper);border-radius:6px;padding:.6rem .8rem;margin-bottom:.8rem;}
+.modal-what-title{font-size:9px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem;}
+.modal-what ul{list-style:none;display:flex;flex-direction:column;gap:3px;}
+.modal-what li{font-size:11px;color:var(--ink2);padding-left:1rem;position:relative;}
+.modal-what li::before{content:'→';position:absolute;left:0;color:var(--accent);font-size:10px;}
+.modal-actions{display:flex;gap:.5rem;}
+.modal-btn{flex:1;padding:8px;border-radius:7px;font-size:11px;font-weight:600;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:none;text-align:center;display:block;}
 .modal-btn-open{background:var(--accent);color:#fff;}
 .modal-btn-open:hover{background:#a84d22;}
 .modal-btn-open.teal{background:var(--teal);}
 .modal-btn-open.teal:hover{background:#155a4a;}
 .modal-btn-lock{background:var(--paper2);color:var(--ink3);cursor:default;}
-.modal-unlock-hint{font-size:11px;color:var(--ink3);text-align:center;margin-top:.7rem;}
+.modal-unlock-hint{font-size:10px;color:var(--ink3);text-align:center;margin-top:.5rem;}
 .modal-unlock-hint a{color:var(--accent);text-decoration:none;cursor:pointer;}
 
 /* ─── FOOTER ─── */
@@ -508,25 +505,17 @@ footer a{color:var(--accent2);text-decoration:none;}
   <p style="margin-top:.4rem">© 2026 Zephrum Konsultan Limited. All rights reserved.</p>
 </footer>
 
-<!-- ═══════════════════════════ MODAL ═══════════════════════════ -->
+<!-- ═══════════════════════════ NON-MEMBER MODAL ═══════════════════════════ -->
 <div class="modal-bg" id="modal-bg" onclick="closeModalBg(event)">
   <div class="modal" id="modal">
-    <div class="modal-header">
-      <div class="modal-img" id="modal-img"></div>
-      <button class="modal-close" onclick="closeModal()">✕</button>
-    </div>
+    <button class="modal-close" onclick="closeModal()">✕</button>
     <div class="modal-body">
-      <div class="modal-badge" id="modal-badge"></div>
-      <div class="modal-name" id="modal-name"></div>
-      <div class="modal-desc" id="modal-desc"></div>
-      <div class="modal-tags" id="modal-tags"></div>
-      <div class="modal-what">
-        <div class="modal-what-title">What this calculator computes</div>
-        <ul id="modal-what-list"></ul>
-      </div>
-      <div class="modal-actions" id="modal-actions"></div>
-      <div class="modal-unlock-hint" id="modal-hint" style="display:none">
-        Not a member yet? <a href="index.html#pricing">Start your 7-day free trial →</a>
+      <div style="text-align:center;padding:.4rem 0 .6rem;">
+        <div style="font-size:2rem;margin-bottom:.6rem;">🔒</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:1rem;color:var(--ink);margin-bottom:.3rem;" id="nonmember-name"></div>
+        <div style="font-size:11px;color:var(--ink3);margin-bottom:1rem;line-height:1.6;">This calculator is available to <strong style="color:var(--ink2);">PipingPro Academy members</strong> only.</div>
+        <a href="https://pipingpro-academy.com/membership" class="modal-btn modal-btn-open" style="display:block;margin-bottom:.5rem;">Become a Member →</a>
+        <button onclick="closeModal()" style="width:100%;padding:8px;background:none;border:none;font-size:11px;color:var(--ink3);cursor:pointer;font-family:'DM Sans',sans-serif;">Maybe later</button>
       </div>
     </div>
   </div>
@@ -590,37 +579,15 @@ function isMember(){
 // ─── MODAL ────────────────────────────────────────────────────
 function openModal(id){
   const c=CALCS[id];
-  const member=isMember();
 
-  const img=document.getElementById('modal-img');
-  img.className='modal-img '+c.bg;
-  img.innerHTML=SVGS[c.svgId];
-
-  const badge=document.getElementById('modal-badge');
-  if(member){
-    const isAdmin=localStorage.getItem('ppa_admin')==='1';
-    badge.textContent=isAdmin?'🛡️ Admin Access':'✓ Member Access';
-    badge.style.cssText='background:var(--teal-light);color:var(--teal);';
-  } else {
-    badge.textContent='🔒 Members Only';
-    badge.style.cssText='background:var(--gold-light);color:var(--gold);';
+  // Members go straight to the calculator — no popup
+  if(isMember()){
+    window.location.href=c.file;
+    return;
   }
 
-  document.getElementById('modal-name').textContent=c.name;
-  document.getElementById('modal-desc').textContent=c.desc;
-  document.getElementById('modal-tags').innerHTML=c.tags.map(t=>`<span class="tag">${t}</span>`).join('');
-  document.getElementById('modal-what-list').innerHTML=c.what.map(w=>`<li>${w}</li>`).join('');
-
-  const actions=document.getElementById('modal-actions');
-  if(member){
-    actions.innerHTML=`<a href="${c.file}" class="modal-btn modal-btn-open">Open Calculator →</a>`;
-  } else {
-    actions.innerHTML=`<span class="modal-btn modal-btn-lock">🔒 Members Only</span>`;
-  }
-
-  const hint=document.getElementById('modal-hint');
-  hint.style.display=member?'none':'block';
-
+  // Non-members: show the simple subscribe prompt
+  document.getElementById('nonmember-name').textContent=c.name;
   document.getElementById('modal-bg').classList.add('show');
   document.body.style.overflow='hidden';
 }
