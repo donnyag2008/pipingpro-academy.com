@@ -860,5 +860,16 @@ window.addEventListener('DOMContentLoaded', () => { onEquipChange(); onUnitsChan
 </div>
 </div><!-- /calctab-theory -->
 <!-- ══ END THEORY PANEL ══ -->
+<script>
+/* ── THEORY TAB SWITCHING ── */
+function showCalcTab(name){
+  ['calculator','theory'].forEach(function(t){
+    var btn = document.querySelector('.calc-tab[onclick*="' + t + '"]');
+    var panel = document.getElementById('calctab-' + t);
+    if(btn) btn.classList.toggle('active', t===name);
+    if(panel) panel.classList.toggle('active', t===name);
+  });
+}
+</script>
 </body>
 </html>
