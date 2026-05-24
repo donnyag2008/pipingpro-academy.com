@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Hydro / Pneumo Test Pack Generator — PipingPro Academy</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -262,28 +262,59 @@ footer{background:var(--steel2);color:rgba(245,242,235,.4);text-align:center;pad
   .pack-header{background:#1a202c!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
 }
 </style>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style id="ppa-shared">
+:root{
+  --ink:#1a1a18;--ink2:#4a4a44;--ink3:#8a8a80;
+  --paper:#f5f2eb;--paper2:#ede9de;--paper3:#e3dfd2;
+  --accent:#c45c2a;--accent2:#e8a06a;--accent-light:#f7ede3;
+  --teal:#1a6b5a;--teal-light:#e0f0eb;
+  --rule:rgba(26,26,24,0.12);
+  --gold:#b8922a;--gold-light:#fdf3dc;
+  --font:'DM Sans',sans-serif;
+  --serif:'DM Serif Display',serif;
+  --mono:'DM Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:15px;line-height:1.6;min-height:100vh;}
+/* ── NAV ── */
+.ppa-nav{background:rgba(245,242,235,0.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--rule);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:200;}
+.ppa-nav-logo{font-family:var(--serif);font-size:17px;color:var(--ink);text-decoration:none;}
+.ppa-nav-logo span{color:var(--accent);}
+.ppa-nav-back{font-size:13px;color:var(--ink2);text-decoration:none;display:flex;align-items:center;gap:5px;}
+.ppa-nav-back:hover{color:var(--accent);}
+/* ── HERO ── */
+.ppa-hero{background:var(--ink);color:var(--paper);padding:2.8rem 2rem 2.4rem;text-align:center;border-bottom:3px solid var(--accent);position:relative;overflow:hidden;}
+.ppa-hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 60px),repeating-linear-gradient(0deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 60px);}
+.ppa-hero-eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);margin-bottom:.7rem;font-family:var(--mono);position:relative;}
+.ppa-hero h1{font-family:var(--serif);font-size:clamp(1.7rem,4vw,2.6rem);line-height:1.1;margin-bottom:.7rem;position:relative;}
+.ppa-hero p{font-size:14px;color:rgba(245,242,235,0.6);max-width:540px;margin:0 auto;position:relative;}
+/* ── SHARED CARD ── */
+.ppa-card{background:#fff;border:1px solid var(--rule);border-radius:12px;padding:1.8rem 2rem;margin-bottom:1.4rem;}
+.ppa-card-title{font-family:var(--serif);font-size:1.15rem;color:var(--ink);margin-bottom:.25rem;}
+.ppa-card-sub{font-size:12px;color:var(--ink3);margin-bottom:1.2rem;}
+/* ── FOOTER ── */
+.ppa-footer{background:var(--ink);color:rgba(245,242,235,0.5);text-align:center;padding:2rem;font-size:13px;margin-top:3rem;}
+.ppa-footer a{color:var(--accent2);text-decoration:none;}
+.ppa-footer-logo{font-family:var(--serif);font-size:1.1rem;color:var(--paper);margin-bottom:.4rem;}
+.ppa-footer-logo span{color:var(--accent);}
+</style>
 </head>
 <body>
+<nav class="ppa-nav">
+  <a href="index.html" class="ppa-nav-logo">Piping<span>Pro</span> Academy</a>
+  <a href="calculators.html" class="ppa-nav-back">← Back to Calculators</a>
+</nav>
+<div class="ppa-hero">
+  <div class="ppa-hero-eyebrow">Members · Engineering Calculator Suite</div>
+  <h1>Hydro / Pneumo <em>Test Pack Generator</em></h1>
+  <p>Test pressure calculation, hold times &amp; documentation per ASME B31.3</p>
+</div>
+
 
 <div class="topbar">
   <div class="topbar-left"><span class="topbar-dot"></span>PipingPro Academy · Calculator Suite</div>
   <div class="topbar-right">ASME B31.3 · B31.4 · B31.8</div>
-</div>
-
-<div class="hero">
-  <div class="hero-inner">
-    <div class="hero-eyebrow">Pressure Testing · Field Engineering</div>
-    <h1>Hydro / Pneumo<br>Test Pack Generator</h1>
-    <p>Generate a complete pressure test package — test pressures, hold times, gauge ranges, vent/drain requirements, and a field checklist — per ASME B31.3, B31.4, and B31.8.</p>
-    <div class="hero-tags">
-      <span class="hero-tag">ASME B31.3</span>
-      <span class="hero-tag">ASME B31.4</span>
-      <span class="hero-tag">ASME B31.8</span>
-      <span class="hero-tag">Hydrotest</span>
-      <span class="hero-tag">Pneumatic Test</span>
-      <span class="hero-tag">Leak Test</span>
-    </div>
-  </div>
 </div>
 
 <div class="main">
@@ -524,11 +555,7 @@ footer{background:var(--steel2);color:rgba(245,242,235,.4);text-align:center;pad
 
 </div><!-- /main -->
 
-<footer>
-  <div class="fl">Piping<span>Pro</span> Academy</div>
-  <p>PipingPro Academy is a trademark of Zephrum Konsultan Limited, registered in England and Wales. Company Registration No. 13537626.</p>
-  <p style="margin-top:.4rem;">© 2026 Zephrum Konsultan Limited. All rights reserved.</p>
-</footer>
+
 
 <script>
 var testType = 'hydro';
@@ -740,5 +767,11 @@ function generatePack() {
 // Init
 updateCalc();
 </script>
+<footer class="ppa-footer">
+  <div class="ppa-footer-logo">Piping<span>Pro</span> Academy</div>
+  <p>PipingPro Academy is a trademark of <strong style="color:var(--accent2);">Zephrum Konsultan Limited</strong>, registered in England &amp; Wales. Co. No. 13537626.</p>
+  <p style="margin-top:.3rem">© 2026 Zephrum Konsultan Limited. All rights reserved. &nbsp;·&nbsp; <a href="calculators.html">Calculator Suite</a></p>
+</footer>
+
 </body>
 </html>
