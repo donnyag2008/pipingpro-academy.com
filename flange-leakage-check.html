@@ -122,6 +122,20 @@ select:focus,input[type=number]:focus{border-color:var(--gold2);box-shadow:0 0 0
 .p-warn{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-bd);}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+
+/* ─── THEORY & REFERENCE TAB ─── */
+.ref-section{background:#fff;border:1px solid var(--rule, rgba(26,26,24,0.12));border-radius:12px;padding:1.4rem 1.6rem;margin-bottom:1.1rem;}
+.ref-title{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3,#8a8a80);margin-bottom:.9rem;padding-bottom:.4rem;border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));}
+.ref-formula{background:var(--paper2,#ede9de);border-left:3px solid var(--accent,#c45c2a);border-radius:0 8px 8px 0;padding:1rem 1.2rem;font-size:13px;color:var(--ink2,#4a4a44);line-height:2;margin-bottom:.8rem;font-family:monospace;}
+.ref-formula b{font-family:monospace;color:var(--ink,#1a1a18);}
+.ref-note{background:var(--teal-light,#e0f0eb);border:1px solid rgba(26,107,90,.15);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--teal,#1a6b5a);line-height:1.7;margin-top:.5rem;}
+.ref-table-wrap{overflow-x:auto;margin-top:.5rem;}
+.ref-table{width:100%;border-collapse:collapse;font-size:12px;}
+.ref-table th{background:var(--paper3,#e3dfd2);padding:7px 10px;text-align:left;font-weight:600;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2,#4a4a44);border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));}
+.ref-table td{padding:6px 10px;border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));color:var(--ink,#1a1a18);vertical-align:top;}
+.ref-table td:first-child{font-weight:600;font-family:monospace;font-size:11px;white-space:nowrap;}
+.ref-table tr:last-child td{border-bottom:none;}
+
 </style>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style id="ppa-shared">
@@ -382,15 +396,7 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
 
 </div><!-- /wrapper -->
 
-<!-- PDF Button -->
-<div style="text-align:center;padding:1.5rem 1rem 2rem;border-top:1px solid rgba(180,83,9,0.12);margin-top:1rem;">
-  <p style="font-size:12px;color:#a8a09a;margin-bottom:.8rem;font-family:'DM Sans',sans-serif;">Reference documentation for this calculator</p>
-  <a href="pdf/flange-leakage-check-guide.pdf" target="_blank"
-     style="display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:#b45309;color:#fff;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;font-family:'DM Sans',sans-serif;">
-    📄 Download PDF Guide — Flange Leakage Check (PEQ Method)
-  </a>
-  <p style="font-size:11px;color:#c4b8a8;margin-top:.6rem;font-family:'DM Sans',sans-serif;">Covers PEQ method theory, ASME B16.5 P-T ratings, gasket G dimensions, and worked examples.</p>
-</div>
+
 
 
 
@@ -629,5 +635,39 @@ window.addEventListener('DOMContentLoaded', () => { updateG(); });
   <p style="margin-top:.3rem">© 2026 Zephrum Konsultan Limited. All rights reserved. &nbsp;·&nbsp; <a href="calculators.html">Calculator Suite</a></p>
 </footer>
 
+
+
+<!-- ══ THEORY & REFERENCE PANEL ══ -->
+<div class="panel" id="panel-theory">
+<div style="max-width:920px;margin:0 auto;padding:2rem 1.5rem;">
+  <div style="background:var(--accent-light,#f7ede3);border:1px solid rgba(196,92,42,.2);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--accent,#c45c2a);margin-bottom:1.2rem;line-height:1.7;">
+    📚 Theory, formulae and code references for this calculator. For full course content and worked examples, visit <strong>PipingPro Academy</strong> courses.
+  </div>
+  
+    <div class="ref-section">
+      <div class="ref-title">Pressure Equivalent (PEQ) Method — ASME B16.5</div>
+      <div class="ref-formula">
+        <b>Equivalent pressure:</b> P<sub>eq</sub> = P + (16×M)/(π×G³) + (4×F)/(π×G²) &nbsp;[psi]<br/>
+        P = internal pressure (psig)<br/>
+        M = bending moment at flange (in·lb)<br/>
+        F = axial force (lb) — tension positive<br/>
+        G = mean gasket diameter (in) — from ASME B16.20/B16.21<br/><br/>
+        <b>Adequacy check:</b> P<sub>eq</sub> ≤ P<sub>rating</sub> at operating temperature
+      </div>
+      <div class="ref-note">The PEQ method converts all loads to an equivalent pressure and checks against the ASME B16.5 pressure-temperature rating. It is conservative but widely accepted for most process applications. More rigorous methods (per ASME Section VIII Div.2 App.2) are needed for fatigue-critical or very high-pressure flanges.</div>
+    </div>
+    <div class="ref-section">
+      <div class="ref-title">Reference Standards</div>
+      <div class="ref-table-wrap"><table class="ref-table">
+        <tr><th>Standard</th><th>Application</th></tr>
+        <tr><td>ASME B16.5</td><td>Pipe Flanges and Flanged Fittings — pressure-temperature ratings</td></tr>
+        <tr><td>ASME B16.20</td><td>Metallic Gaskets for Pipe Flanges — spiral wound, ring joint</td></tr>
+        <tr><td>ASME B16.21</td><td>Non-metallic flat gaskets — G dimension tables</td></tr>
+        <tr><td>ASME B31.3</td><td>Process piping — flange joint assembly requirements</td></tr>
+      </table></div>
+    </div>
+</div>
+</div>
+<!-- ══ END THEORY PANEL ══ -->
 </body>
 </html>

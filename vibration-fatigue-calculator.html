@@ -107,6 +107,20 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
 .ppa-footer a{color:var(--accent2);text-decoration:none;}
 .ppa-footer-logo{font-family:var(--serif);font-size:1.1rem;color:var(--paper);margin-bottom:.4rem;}
 .ppa-footer-logo span{color:var(--accent);}
+
+/* ─── THEORY & REFERENCE TAB ─── */
+.ref-section{background:#fff;border:1px solid var(--rule, rgba(26,26,24,0.12));border-radius:12px;padding:1.4rem 1.6rem;margin-bottom:1.1rem;}
+.ref-title{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3,#8a8a80);margin-bottom:.9rem;padding-bottom:.4rem;border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));}
+.ref-formula{background:var(--paper2,#ede9de);border-left:3px solid var(--accent,#c45c2a);border-radius:0 8px 8px 0;padding:1rem 1.2rem;font-size:13px;color:var(--ink2,#4a4a44);line-height:2;margin-bottom:.8rem;font-family:monospace;}
+.ref-formula b{font-family:monospace;color:var(--ink,#1a1a18);}
+.ref-note{background:var(--teal-light,#e0f0eb);border:1px solid rgba(26,107,90,.15);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--teal,#1a6b5a);line-height:1.7;margin-top:.5rem;}
+.ref-table-wrap{overflow-x:auto;margin-top:.5rem;}
+.ref-table{width:100%;border-collapse:collapse;font-size:12px;}
+.ref-table th{background:var(--paper3,#e3dfd2);padding:7px 10px;text-align:left;font-weight:600;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2,#4a4a44);border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));}
+.ref-table td{padding:6px 10px;border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));color:var(--ink,#1a1a18);vertical-align:top;}
+.ref-table td:first-child{font-weight:600;font-family:monospace;font-size:11px;white-space:nowrap;}
+.ref-table tr:last-child td{border-bottom:none;}
+
 </style>
 </head>
 <body>
@@ -129,6 +143,7 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
   <button class="tab" onclick="switchTab('pulsation')">4 · Pulsation Check</button>
   <button class="tab" onclick="switchTab('surge')">5 · Surge Bottle</button>
   <button class="tab" onclick="switchTab('spancheck')">6 · Span Checker</button>
+  <button class="tab" onclick="switchTab('theory')">📚 Theory &amp; Reference</button>
 </div>
 
 <div class="main">
@@ -681,14 +696,7 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
 </div><!-- /main -->
 
 <!-- PDF Reference Button -->
-<div style="text-align:center;padding:1.5rem 1rem 2rem;border-top:1px solid rgba(26,26,24,0.1);margin-top:1rem;">
-  <p style="font-size:12px;color:#8a8a80;margin-bottom:.8rem;font-family:sans-serif;">Reference documentation for this calculator</p>
-  <a href="pdf/vibration-fatigue-guide.pdf" target="_blank"
-     style="display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:#c45c2a;color:#fff;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;font-family:sans-serif;">
-    📄 Download PDF Guide — Vibration Fatigue Calculator
-  </a>
-  <p style="font-size:11px;color:#aaa;margin-top:.6rem;font-family:sans-serif;">PDF coming soon — check back at pipingpro-academy.com</p>
-</div>
+
 
 <footer class="ppa-footer">
   <div class="ppa-footer-logo">Piping<span>Pro</span> Academy</div>
@@ -721,7 +729,7 @@ function calcWfluid(id,rhofl){
 
 /* ── TAB SWITCHING ── */
 function switchTab(name){
-  var tabs=['mnfp','span','stiffness','pulsation','surge','spancheck'];
+  var tabs=['mnfp','span','stiffness','pulsation','surge','spancheck','theory'];
   tabs.forEach(function(t,i){
     document.querySelectorAll('.tab')[i].classList.toggle('active',t===name);
     document.getElementById('panel-'+t).classList.toggle('active',t===name);
@@ -983,13 +991,12 @@ calcStiffness();
 calcElbowStiffness();
 calcPulsation();
 calcSurge();
-calcSpanCheck();
 </script>
 
 <!-- ══════════════════════════════════════════════════════ -->
 <!-- TAB 6 — SPAN CHECKER (reverse calc / troubleshooting) -->
 <!-- ══════════════════════════════════════════════════════ -->
-<div class="panel" id="panel-spancheck" style="display:none;">
+<div class="panel" id="panel-spancheck">
 </div>
 
 <script>
@@ -997,10 +1004,7 @@ calcSpanCheck();
 /* TAB 6 — SPAN CHECKER                                  */
 /* ══════════════════════════════════════════════════════ */
 
-/* Build Tab 6 HTML dynamically so it sits cleanly at end */
-(function(){
-  var panel = document.getElementById('panel-spancheck');
-  panel.innerHTML = `
+document.getElementById('panel-spancheck').innerHTML = `
   <div class="disclaimer">
     Use this tab during <strong>commissioning, operation, or troubleshooting</strong> — enter an existing or proposed pipe span and instantly check whether its natural frequency meets the MNFP requirement. Useful when a line is vibrating in the field and you need a quick engineering assessment.
   </div>
@@ -1219,7 +1223,6 @@ calcSpanCheck();
     </div>
   </div>
 `;
-})();
 
 function calcSpanCheck(){
   var od   = parseFloat(document.getElementById('sc-od').value)||4.5;
@@ -1361,7 +1364,60 @@ function calcSpanCheck(){
     }
   }
 }
+calcSpanCheck();
 </script>
 
+
+
+<!-- ══ THEORY & REFERENCE PANEL ══ -->
+<div class="panel" id="panel-theory">
+<div style="max-width:920px;margin:0 auto;padding:2rem 1.5rem;">
+  <div style="background:var(--accent-light,#f7ede3);border:1px solid rgba(196,92,42,.2);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--accent,#c45c2a);margin-bottom:1.2rem;line-height:1.7;">
+    📚 Theory, formulae and code references for this calculator. For full course content and worked examples, visit <strong>PipingPro Academy</strong> courses.
+  </div>
+  
+    <div class="ref-section">
+      <div class="ref-title">Truong Formulae — Span Natural Frequency (Eq. 6a/6b)</div>
+      <div class="ref-formula">
+        <b>Pipe span natural frequency:</b> f<sub>n</sub> = (C / L²) × √(EI/w) &nbsp;[cps]<br/>
+        C = coefficient from Table 1 (straight=1.70, L-bend=1.18, 2-elbow=0.666)<br/>
+        L = span length (ft) &nbsp;|&nbsp; E = 27.9×10⁶ psi &nbsp;|&nbsp; I = moment of inertia (in⁴)<br/>
+        w = total weight per inch (lb/in) &nbsp;|&nbsp; Clamped-clamped correction: ×1.60<br/><br/>
+        <b>Minimum Mechanical Natural Frequency:</b> MNFP = 0.06 × RPM &nbsp;[cps]<br/>
+        <b>Required span frequency:</b> f<sub>n</sub> ≥ MNFP × 1.20 &nbsp;(20% margin above MNFP)
+      </div>
+    </div>
+    <div class="ref-section">
+      <div class="ref-title">API-618 Allowable Pulsation Level (Eq. 5)</div>
+      <div class="ref-formula">
+        <b>P₁(%) = 300 / √(P<sub>L</sub> × ID × f)</b><br/>
+        P<sub>L</sub> = average absolute line pressure (psia)<br/>
+        ID = pipe inside diameter (in)<br/>
+        f = pulsation frequency (Hz) = RPM × N / 60 &nbsp;(N = harmonic number)<br/>
+        Valid for 50 psia ≤ P<sub>L</sub> ≤ 3000 psia
+      </div>
+    </div>
+    <div class="ref-section">
+      <div class="ref-title">Surge Bottle Volume (Eq. 1 — Truong)</div>
+      <div class="ref-formula">
+        <b>V = (190 × e^(−0.085m) + 3mᵢ) × PD</b><br/>
+        m = molecular weight of gas (use m=24 if m&gt;24)<br/>
+        mᵢ = 0 for m≤4 or m&gt;12; mᵢ = m for 4&lt;m≤12<br/>
+        PD = total net displaced volume per revolution per cylinder (in³)
+      </div>
+    </div>
+    <div class="ref-section">
+      <div class="ref-title">Reference Standards</div>
+      <div class="ref-table-wrap"><table class="ref-table">
+        <tr><th>Standard</th><th>Application</th></tr>
+        <tr><td>API-618 (5th Ed.)</td><td>Reciprocating Compressors for Petroleum, Chemical and Gas Industry Services</td></tr>
+        <tr><td>ASME B31.3</td><td>Process Piping — stress and vibration limits</td></tr>
+        <tr><td>Truong, Q.N. (1985)</td><td>Piping Design to Prevent Vibrational Fatigue Failures — M.W. Kellogg / SWRI paper</td></tr>
+        <tr><td>ASME Sec. VIII Div.2</td><td>Cyclic stress endurance limit — 20,000 psi criterion for carbon steel</td></tr>
+      </table></div>
+    </div>
+</div>
+</div>
+<!-- ══ END THEORY PANEL ══ -->
 </body>
 </html>

@@ -61,6 +61,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 .disclaimer-items li{padding:2px 0 2px 14px;font-size:11px;color:#5f5e5a;position:relative}
 .disclaimer-items li::before{content:"--";position:absolute;left:0;color:#b4b2a9}
 @media(max-width:640px){.two-col{grid-template-columns:1fr}.code-bar{flex-direction:column;align-items:flex-start}.code-badge{margin-left:0}}
+
+/* ─── THEORY & REFERENCE TAB ─── */
+.ref-section{background:#fff;border:1px solid var(--rule, rgba(26,26,24,0.12));border-radius:12px;padding:1.4rem 1.6rem;margin-bottom:1.1rem;}
+.ref-title{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3,#8a8a80);margin-bottom:.9rem;padding-bottom:.4rem;border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));}
+.ref-formula{background:var(--paper2,#ede9de);border-left:3px solid var(--accent,#c45c2a);border-radius:0 8px 8px 0;padding:1rem 1.2rem;font-size:13px;color:var(--ink2,#4a4a44);line-height:2;margin-bottom:.8rem;font-family:monospace;}
+.ref-formula b{font-family:monospace;color:var(--ink,#1a1a18);}
+.ref-note{background:var(--teal-light,#e0f0eb);border:1px solid rgba(26,107,90,.15);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--teal,#1a6b5a);line-height:1.7;margin-top:.5rem;}
+.ref-table-wrap{overflow-x:auto;margin-top:.5rem;}
+.ref-table{width:100%;border-collapse:collapse;font-size:12px;}
+.ref-table th{background:var(--paper3,#e3dfd2);padding:7px 10px;text-align:left;font-weight:600;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2,#4a4a44);border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));}
+.ref-table td{padding:6px 10px;border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));color:var(--ink,#1a1a18);vertical-align:top;}
+.ref-table td:first-child{font-weight:600;font-family:monospace;font-size:11px;white-space:nowrap;}
+.ref-table tr:last-child td{border-bottom:none;}
+
 </style>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style id="ppa-shared">
@@ -128,6 +142,7 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
   <button class="tab" onclick="switchTab('inverted')" role="tab">Inverted goal post</button>
   <button class="tab" onclick="switchTab('cantilever')" role="tab">Cantilever / post</button>
   <button class="tab" onclick="switchTab('tpost')" role="tab">T-post</button>
+  <button class="tab" onclick="switchTab('theory')">📚 Theory &amp; Reference</button>
 </div>
 
 <!-- GOAL POST -->
@@ -394,5 +409,38 @@ populateSel();
   <p style="margin-top:.3rem">© 2026 Zephrum Konsultan Limited. All rights reserved. &nbsp;·&nbsp; <a href="calculators.html">Calculator Suite</a></p>
 </footer>
 
+
+
+<!-- ══ THEORY & REFERENCE PANEL ══ -->
+<div class="panel" id="panel-theory">
+<div style="max-width:920px;margin:0 auto;padding:2rem 1.5rem;">
+  <div style="background:var(--accent-light,#f7ede3);border:1px solid rgba(196,92,42,.2);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--accent,#c45c2a);margin-bottom:1.2rem;line-height:1.7;">
+    📚 Theory, formulae and code references for this calculator. For full course content and worked examples, visit <strong>PipingPro Academy</strong> courses.
+  </div>
+  
+    <div class="ref-section">
+      <div class="ref-title">Structural Design of Special Pipe Supports</div>
+      <div class="ref-formula">
+        <b>Support load (vertical):</b> W = w × L / 2 + concentrated loads &nbsp;[lb]<br/>
+        <b>Member bending stress:</b> σ = M / S ≤ 0.66 × F<sub>y</sub> &nbsp;(AISC ASD)<br/>
+        <b>Weld stress (shear):</b> f<sub>w</sub> = V / (0.707 × a × l<sub>w</sub>)<br/>
+        Allowable fillet weld stress = 0.30 × F<sub>EXX</sub> &nbsp;(E70XX: 21 ksi)<br/>
+        <b>Anchor bolt tension:</b> T = M / (n × d) &nbsp;where n = bolts in tension, d = bolt group depth
+      </div>
+      <div class="ref-note">Special supports include pipe shoes, dummy legs, trunnions, offshore clamped supports, and custom structural supports. They are designed to the project structural steel spec (typically AISC ASD or LRFD for US projects, BS 5950 for UK/Middle East) with weld design per AWS D1.1 and bolting per AISC Table J3.</div>
+    </div>
+    <div class="ref-section">
+      <div class="ref-title">Reference Standards</div>
+      <div class="ref-table-wrap"><table class="ref-table">
+        <tr><th>Standard</th><th>Application</th></tr>
+        <tr><td>AISC ASD / LRFD</td><td>Structural steel member design — beams, columns, connections</td></tr>
+        <tr><td>AWS D1.1</td><td>Structural Welding Code — fillet and groove weld design</td></tr>
+        <tr><td>MSS SP-58</td><td>Pipe Hangers and Supports — selection and application</td></tr>
+        <tr><td>ASME B31.3</td><td>Load combinations and piping interface requirements</td></tr>
+      </table></div>
+    </div>
+</div>
+</div>
+<!-- ══ END THEORY PANEL ══ -->
 </body>
 </html>

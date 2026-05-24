@@ -107,6 +107,20 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
 .ppa-footer a{color:var(--accent2);text-decoration:none;}
 .ppa-footer-logo{font-family:var(--serif);font-size:1.1rem;color:var(--paper);margin-bottom:.4rem;}
 .ppa-footer-logo span{color:var(--accent);}
+
+/* ─── THEORY & REFERENCE TAB ─── */
+.ref-section{background:#fff;border:1px solid var(--rule, rgba(26,26,24,0.12));border-radius:12px;padding:1.4rem 1.6rem;margin-bottom:1.1rem;}
+.ref-title{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3,#8a8a80);margin-bottom:.9rem;padding-bottom:.4rem;border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));}
+.ref-formula{background:var(--paper2,#ede9de);border-left:3px solid var(--accent,#c45c2a);border-radius:0 8px 8px 0;padding:1rem 1.2rem;font-size:13px;color:var(--ink2,#4a4a44);line-height:2;margin-bottom:.8rem;font-family:monospace;}
+.ref-formula b{font-family:monospace;color:var(--ink,#1a1a18);}
+.ref-note{background:var(--teal-light,#e0f0eb);border:1px solid rgba(26,107,90,.15);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--teal,#1a6b5a);line-height:1.7;margin-top:.5rem;}
+.ref-table-wrap{overflow-x:auto;margin-top:.5rem;}
+.ref-table{width:100%;border-collapse:collapse;font-size:12px;}
+.ref-table th{background:var(--paper3,#e3dfd2);padding:7px 10px;text-align:left;font-weight:600;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2,#4a4a44);border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));}
+.ref-table td{padding:6px 10px;border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));color:var(--ink,#1a1a18);vertical-align:top;}
+.ref-table td:first-child{font-weight:600;font-family:monospace;font-size:11px;white-space:nowrap;}
+.ref-table tr:last-child td{border-bottom:none;}
+
 </style>
 </head>
 <body>
@@ -127,6 +141,7 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
   <button class="tab"         onclick="switchTab('insul')">🌡 Hot Insulation</button>
   <button class="tab"         onclick="switchTab('mto')">📋 Combined MTO</button>
   <button class="tab"         onclick="switchTab('guide')">📖 Material Guide</button>
+  <button class="tab" onclick="switchTab('theory')">📚 Theory &amp; Reference</button>
 </div>
 
 <div class="main">
@@ -767,14 +782,7 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
 </div><!-- /main -->
 
 <!-- PDF Button -->
-<div style="text-align:center;padding:1.5rem 1rem 2rem;border-top:1px solid rgba(26,26,24,0.1);margin-top:1rem;">
-  <p style="font-size:12px;color:#8a8a80;margin-bottom:.8rem;font-family:sans-serif;">Reference documentation for this calculator</p>
-  <a href="pdf/pipe-coating-insulation-guide.pdf" target="_blank"
-     style="display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:#c45c2a;color:#fff;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;font-family:sans-serif;">
-    📄 Download PDF Guide — Coating &amp; Insulation Calculator
-  </a>
-  <p style="font-size:11px;color:#aaa;margin-top:.6rem;font-family:sans-serif;">PDF coming soon — check back at pipingpro-academy.com</p>
-</div>
+
 
 <footer class="ppa-footer">
   <div class="ppa-footer-logo">Piping<span>Pro</span> Academy</div>
@@ -1072,5 +1080,48 @@ autoInsulThk();
 calcInsul();
 </script>
 
+
+
+<!-- ══ THEORY & REFERENCE PANEL ══ -->
+<div class="panel" id="panel-theory">
+<div style="max-width:920px;margin:0 auto;padding:2rem 1.5rem;">
+  <div style="background:var(--accent-light,#f7ede3);border:1px solid rgba(196,92,42,.2);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--accent,#c45c2a);margin-bottom:1.2rem;line-height:1.7;">
+    📚 Theory, formulae and code references for this calculator. For full course content and worked examples, visit <strong>PipingPro Academy</strong> courses.
+  </div>
+  
+    <div class="ref-section">
+      <div class="ref-title">Paint Coverage Formula</div>
+      <div class="ref-formula">
+        <b>External surface area:</b> A = π × OD × L &nbsp;[m²]<br/>
+        <b>Theoretical coverage:</b> C<sub>th</sub> = 1000 × V<sub>s</sub> / DFT &nbsp;[m²/L]<br/>
+        V<sub>s</sub> = volume solids fraction (0–1) &nbsp;|&nbsp; DFT = dry film thickness (µm)<br/>
+        <b>Practical coverage:</b> C<sub>pr</sub> = C<sub>th</sub> × application efficiency<br/>
+        <b>Volume per coat:</b> Vol = A / C<sub>pr</sub> &nbsp;[litres]<br/>
+        <b>With wastage:</b> Vol<sub>gross</sub> = Vol × (1 + waste factor)
+      </div>
+    </div>
+    <div class="ref-section">
+      <div class="ref-title">Insulation Volume Formula</div>
+      <div class="ref-formula">
+        <b>Insulation OD:</b> D<sub>ins</sub> = OD + 2×t<sub>ins</sub><br/>
+        <b>Net insulation volume:</b> V = π/4 × (D<sub>ins</sub>² − OD²) × L &nbsp;[m³]<br/>
+        <b>Cladding area:</b> A<sub>clad</sub> = π × D<sub>ins</sub> × L &nbsp;[m²] — outer surface of insulation
+      </div>
+    </div>
+    <div class="ref-section">
+      <div class="ref-title">Reference Standards</div>
+      <div class="ref-table-wrap"><table class="ref-table">
+        <tr><th>Standard</th><th>Application</th></tr>
+        <tr><td>ISO 12944</td><td>Corrosion protection of steel by protective paint systems — C1 to C5-M categories</td></tr>
+        <tr><td>NACE SP0198</td><td>Control of Corrosion Under Insulation (CUI) — coating selection</td></tr>
+        <tr><td>ASTM C547</td><td>Mineral Fiber Pipe Insulation</td></tr>
+        <tr><td>ASTM C533</td><td>Calcium Silicate Thermal Insulation</td></tr>
+        <tr><td>ASTM C1728</td><td>Aerogel Blanket Insulation</td></tr>
+        <tr><td>ASTM C552</td><td>Cellular Glass Thermal Insulation</td></tr>
+      </table></div>
+    </div>
+</div>
+</div>
+<!-- ══ END THEORY PANEL ══ -->
 </body>
 </html>

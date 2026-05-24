@@ -100,6 +100,20 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);f
 footer{background:var(--ink);color:rgba(245,242,235,.5);text-align:center;padding:2rem;font-size:13px;margin-top:3rem;}
 .fl{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--paper);margin-bottom:.4rem;}
 .fl span{color:var(--accent);}
+
+/* ─── THEORY & REFERENCE TAB ─── */
+.ref-section{background:#fff;border:1px solid var(--rule, rgba(26,26,24,0.12));border-radius:12px;padding:1.4rem 1.6rem;margin-bottom:1.1rem;}
+.ref-title{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3,#8a8a80);margin-bottom:.9rem;padding-bottom:.4rem;border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));}
+.ref-formula{background:var(--paper2,#ede9de);border-left:3px solid var(--accent,#c45c2a);border-radius:0 8px 8px 0;padding:1rem 1.2rem;font-size:13px;color:var(--ink2,#4a4a44);line-height:2;margin-bottom:.8rem;font-family:monospace;}
+.ref-formula b{font-family:monospace;color:var(--ink,#1a1a18);}
+.ref-note{background:var(--teal-light,#e0f0eb);border:1px solid rgba(26,107,90,.15);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--teal,#1a6b5a);line-height:1.7;margin-top:.5rem;}
+.ref-table-wrap{overflow-x:auto;margin-top:.5rem;}
+.ref-table{width:100%;border-collapse:collapse;font-size:12px;}
+.ref-table th{background:var(--paper3,#e3dfd2);padding:7px 10px;text-align:left;font-weight:600;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2,#4a4a44);border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));}
+.ref-table td{padding:6px 10px;border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));color:var(--ink,#1a1a18);vertical-align:top;}
+.ref-table td:first-child{font-weight:600;font-family:monospace;font-size:11px;white-space:nowrap;}
+.ref-table tr:last-child td{border-bottom:none;}
+
 </style>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style id="ppa-shared">
@@ -201,6 +215,7 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
 <div class="tabs">
   <button class="tab active" onclick="switchTab('pipe')">Trunnion on Pipe</button>
   <button class="tab" onclick="switchTab('elbow')">Trunnion on Elbow</button>
+  <button class="tab" onclick="switchTab('theory')">📚 Theory &amp; Reference</button>
 </div>
 
 <div class="main">
@@ -451,14 +466,7 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
 </div><!-- /main -->
 
 <!-- PDF Button -->
-<div style="text-align:center;padding:1.5rem 1rem 2rem;border-top:1px solid rgba(26,26,24,0.1);margin-top:1rem;">
-  <p style="font-size:12px;color:#8a8a80;margin-bottom:.8rem;font-family:sans-serif;">Reference documentation for this calculator</p>
-  <a href="pdf/trunnion-support-guide.pdf" target="_blank"
-     style="display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:#c45c2a;color:#fff;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;font-family:sans-serif;">
-    📄 Download PDF Guide — Trunnion Support Calculator
-  </a>
-  <p style="font-size:11px;color:#aaa;margin-top:.6rem;font-family:sans-serif;">PDF coming soon — check back at pipingpro-academy.com</p>
-</div>
+
 
 
 
@@ -606,5 +614,37 @@ calcElbow();
   <p style="margin-top:.3rem">© 2026 Zephrum Konsultan Limited. All rights reserved. &nbsp;·&nbsp; <a href="calculators.html">Calculator Suite</a></p>
 </footer>
 
+
+
+<!-- ══ THEORY & REFERENCE PANEL ══ -->
+<div class="panel" id="panel-theory">
+<div style="max-width:920px;margin:0 auto;padding:2rem 1.5rem;">
+  <div style="background:var(--accent-light,#f7ede3);border:1px solid rgba(196,92,42,.2);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--accent,#c45c2a);margin-bottom:1.2rem;line-height:1.7;">
+    📚 Theory, formulae and code references for this calculator. For full course content and worked examples, visit <strong>PipingPro Academy</strong> courses.
+  </div>
+  
+    <div class="ref-section">
+      <div class="ref-title">Local Stress at Trunnion-to-Pipe Junction</div>
+      <div class="ref-formula">
+        <b>Trunnion shear stress:</b> τ = F<sub>V</sub> / (π × d<sub>t</sub> × t<sub>t</sub>)<br/>
+        <b>Bending stress in trunnion:</b> σ<sub>b</sub> = M / Z<sub>t</sub> &nbsp;where M = F<sub>H</sub> × H<sub>t</sub><br/>
+        <b>Junction weld stress:</b> σ<sub>w</sub> = √(σ<sub>b</sub>² + τ²) ≤ 0.6 × S<sub>y</sub><br/>
+        <b>Local shell stress (WRC 107):</b> σ<sub>local</sub> = K × P × r<sub>o</sub> / t<sub>p</sub> ≤ 1.5 × S<sub>m</sub>
+      </div>
+      <div class="ref-note">Trunnion supports are commonly used on vertical vessels and large-bore piping in O&G plants. The critical checks are the junction weld between trunnion and pipe (in shear and bending) and the local shell stress on the run pipe. For hot piping, the trunnion must allow axial thermal movement — slotted holes or PTFE slide plates are specified.</div>
+    </div>
+    <div class="ref-section">
+      <div class="ref-title">Reference Standards</div>
+      <div class="ref-table-wrap"><table class="ref-table">
+        <tr><th>Standard</th><th>Application</th></tr>
+        <tr><td>ASME B31.3</td><td>Piping stress and allowable stress S<sub>h</sub></td></tr>
+        <tr><td>WRC Bulletin 107</td><td>Local shell stresses at nozzle/trunnion junction</td></tr>
+        <tr><td>ASME Section VIII Div.1 App.L</td><td>Vessel local load analysis guidance</td></tr>
+        <tr><td>MSS SP-58</td><td>Pipe Hangers and Supports — types and materials</td></tr>
+      </table></div>
+    </div>
+</div>
+</div>
+<!-- ══ END THEORY PANEL ══ -->
 </body>
 </html>

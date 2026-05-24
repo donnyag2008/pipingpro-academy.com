@@ -260,6 +260,17 @@ footer a{color:var(--accent2);text-decoration:none;}
         <span class="hint">1.0 = use full S<sub>h</sub></span>
       </div>
     </div>
+
+    <!-- CALCULATE BUTTON -->
+    <div style="margin-top:1.2rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+      <button onclick="calcSpan()" style="padding:11px 36px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;">
+        ▶ Calculate Span
+      </button>
+      <button onclick="resetCalc()" style="padding:11px 22px;background:var(--paper2);color:var(--ink2);border:1px solid var(--rule);border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;">
+        Reset
+      </button>
+      <span style="font-size:12px;color:var(--ink3);">Results update automatically on every input change, or click Calculate to force a refresh.</span>
+    </div>
   </div>
 
   <!-- COMPUTED PIPE PROPERTIES -->
@@ -959,22 +970,22 @@ function switchTab(name){
 
 /* ── SPAN TABLE ── */
 var TABLE_NPS = [
-  {nps:'½"',   od:0.840,  rhoWater:62.4, rhoOil:50, rhoSteam:3},
-  {nps:'¾"',   od:1.050,  rhoWater:62.4, rhoOil:50, rhoSteam:3},
-  {nps:'1"',    od:1.315,  rhoWater:62.4, rhoOil:50, rhoSteam:3},
-  {nps:'1½"',  od:1.900,  rhoWater:62.4, rhoOil:50, rhoSteam:3},
-  {nps:'2"',    od:2.375,  rhoWater:62.4, rhoOil:50, rhoSteam:3},
-  {nps:'3"',    od:3.500,  rhoWater:62.4, rhoOil:50, rhoSteam:3},
-  {nps:'4"',    od:4.500,  rhoWater:62.4, rhoOil:50, rhoSteam:3},
-  {nps:'6"',    od:6.625,  rhoWater:62.4, rhoOil:50, rhoSteam:3},
-  {nps:'8"',    od:8.625,  rhoWater:62.4, rhoOil:50, rhoSteam:3},
-  {nps:'10"',   od:10.750, rhoWater:62.4, rhoOil:50, rhoSteam:3},
-  {nps:'12"',   od:12.750, rhoWater:62.4, rhoOil:50, rhoSteam:3},
-  {nps:'14"',   od:14.000, rhoWater:62.4, rhoOil:50, rhoSteam:3},
-  {nps:'16"',   od:16.000, rhoWater:62.4, rhoOil:50, rhoSteam:3},
-  {nps:'18"',   od:18.000, rhoWater:62.4, rhoOil:50, rhoSteam:3},
-  {nps:'20"',   od:20.000, rhoWater:62.4, rhoOil:50, rhoSteam:3},
-  {nps:'24"',   od:24.000, rhoWater:62.4, rhoOil:50, rhoSteam:3}
+  {nps:'0.5',  label:'½"',   od:0.840},
+  {nps:'0.75', label:'¾"',   od:1.050},
+  {nps:'1',    label:'1"',   od:1.315},
+  {nps:'1.5',  label:'1½"', od:1.900},
+  {nps:'2',    label:'2"',   od:2.375},
+  {nps:'3',    label:'3"',   od:3.500},
+  {nps:'4',    label:'4"',   od:4.500},
+  {nps:'6',    label:'6"',   od:6.625},
+  {nps:'8',    label:'8"',   od:8.625},
+  {nps:'10',   label:'10"',  od:10.750},
+  {nps:'12',   label:'12"',  od:12.750},
+  {nps:'14',   label:'14"',  od:14.000},
+  {nps:'16',   label:'16"',  od:16.000},
+  {nps:'18',   label:'18"',  od:18.000},
+  {nps:'20',   label:'20"',  od:20.000},
+  {nps:'24',   label:'24"',  od:24.000}
 ];
 
 function buildTable(){
@@ -1013,13 +1024,15 @@ function buildTable(){
     tr.dataset.nps = row.nps;
     tr.onclick = function(){
       /* load into calculator */
+      document.getElementById('nps').value = row.nps;
       document.getElementById('od').value = od;
       document.getElementById('thk').value = thkVal;
       switchTab('calc');
       calcSpan();
+      highlightTableRow();
     };
     tr.innerHTML =
-      '<td class="left">'+row.nps+'</td>'+
+      '<td class="left">'+row.label+'</td>'+
       '<td>'+od.toFixed(3)+'</td>'+
       '<td>'+thkVal.toFixed(3)+'</td>'+
       '<td>'+I.toFixed(4)+'</td>'+
@@ -1040,6 +1053,29 @@ function highlightTableRow(){
   rows.forEach(function(tr){
     tr.classList.toggle('highlight', tr.dataset.nps === nps);
   });
+}
+
+/* ── RESET ── */
+function resetCalc(){
+  document.getElementById('nps').value = '4';
+  document.getElementById('sch').value = 'sch40';
+  document.getElementById('mat').value = 'cs';
+  document.getElementById('rhofl').value = '62.4';
+  document.getElementById('wins').value = '0';
+  document.getElementById('delta_allow').value = '0.5';
+  document.getElementById('sfactor').value = '1.0';
+  document.getElementById('L_actual').value = '15';
+  document.getElementById('svc_type').value = 'process';
+  document.getElementById('lf_actual').value = '1.00';
+  layoutFactor = 1.00;
+  layoutName   = 'Straight / Continuous';
+  ['straight','lbend','zbend'].forEach(function(t){
+    document.getElementById('lc-'+t).classList.toggle('selected', t==='straight');
+  });
+  sv('lf-name', layoutName);
+  sv('lf-val',  '1.00');
+  onNPSChange();
+  onMatChange();
 }
 
 /* ── INIT ── */
