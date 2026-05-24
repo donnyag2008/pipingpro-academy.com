@@ -59,6 +59,8 @@ nav{background:rgba(245,242,235,0.96);backdrop-filter:blur(14px);border-bottom:1
 .card-img.bg-mossy{background:linear-gradient(135deg,#2a3a1a 0%,#4a6a2a 100%);}
 .card-img.bg-steelgrey{background:linear-gradient(135deg,#1a2a4a 0%,#2a4a7a 100%);}
 .card-img.bg-plum{background:linear-gradient(135deg,#3a1a2a 0%,#6a2a4a 100%);}
+.card-img.bg-vibration{background:linear-gradient(135deg,#1a3a4a 0%,#2a6a5a 100%);}
+.card-img.bg-coating{background:linear-gradient(135deg,#2a4a3a 0%,#3a7a5a 100%);}
 
 
 .card-img svg{width:90px;height:90px;opacity:.9;}
@@ -85,32 +87,14 @@ nav{background:rgba(245,242,235,0.96);backdrop-filter:blur(14px);border-bottom:1
 .btn-pro{background:var(--gold);color:var(--ink);}
 .btn-pro:hover{background:#c9a020;}
 
-/* ─── MODAL PREVIEW ─── */
-.modal-bg{position:fixed;inset:0;background:rgba(26,26,24,.65);z-index:300;display:flex;align-items:center;justify-content:center;padding:1.5rem;opacity:0;pointer-events:none;transition:opacity .2s;}
+/* ─── NON-MEMBER POPUP — 280px compact, background visible all sides ─── */
+.modal-bg{position:fixed;inset:0;background:rgba(26,26,24,.60);z-index:300;display:flex;align-items:center;justify-content:center;padding:2rem;opacity:0;pointer-events:none;transition:opacity .2s;}
 .modal-bg.show{opacity:1;pointer-events:all;}
-.modal{background:#fff;border-radius:14px;width:100%;max-width:280px;overflow:hidden;position:relative;transform:translateY(16px);transition:transform .2s;box-shadow:0 16px 60px rgba(0,0,0,.28);}
+.modal{background:#fff;border-radius:14px;width:280px;max-width:280px;overflow:hidden;position:relative;transform:translateY(12px);transition:transform .2s;box-shadow:0 16px 60px rgba(0,0,0,.28);}
 .modal-bg.show .modal{transform:translateY(0);}
-.modal-close{position:absolute;top:10px;right:10px;width:24px;height:24px;border-radius:50%;background:var(--paper2);border:none;cursor:pointer;font-size:13px;color:var(--ink3);display:flex;align-items:center;justify-content:center;line-height:1;}
+.modal-close{position:absolute;top:10px;right:10px;width:24px;height:24px;border-radius:50%;background:var(--paper2);border:none;cursor:pointer;font-size:13px;color:var(--ink3);display:flex;align-items:center;justify-content:center;line-height:1;z-index:1;}
 .modal-close:hover{background:var(--paper3);}
-.modal-body{padding:1.4rem 1.2rem 1rem;}
-.modal-badge{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:20px;margin-bottom:.5rem;}
-.modal-name{font-family:'DM Serif Display',serif;font-size:1rem;color:var(--ink);margin-bottom:.3rem;line-height:1.2;}
-.modal-desc{font-size:11px;color:var(--ink2);line-height:1.6;margin-bottom:.7rem;}
-.modal-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:.8rem;}
-.modal-what{background:var(--paper);border-radius:6px;padding:.6rem .8rem;margin-bottom:.8rem;}
-.modal-what-title{font-size:9px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem;}
-.modal-what ul{list-style:none;display:flex;flex-direction:column;gap:3px;}
-.modal-what li{font-size:11px;color:var(--ink2);padding-left:1rem;position:relative;}
-.modal-what li::before{content:'→';position:absolute;left:0;color:var(--accent);font-size:10px;}
-.modal-actions{display:flex;gap:.5rem;}
-.modal-btn{flex:1;padding:8px;border-radius:7px;font-size:11px;font-weight:600;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:none;text-align:center;display:block;}
-.modal-btn-open{background:var(--accent);color:#fff;}
-.modal-btn-open:hover{background:#a84d22;}
-.modal-btn-open.teal{background:var(--teal);}
-.modal-btn-open.teal:hover{background:#155a4a;}
-.modal-btn-lock{background:var(--paper2);color:var(--ink3);cursor:default;}
-.modal-unlock-hint{font-size:10px;color:var(--ink3);text-align:center;margin-top:.5rem;}
-.modal-unlock-hint a{color:var(--accent);text-decoration:none;cursor:pointer;}
+.modal-body{padding:1.4rem 1.2rem 1.2rem;}
 
 /* ─── FOOTER ─── */
 footer{background:var(--ink);color:rgba(245,242,235,0.5);text-align:center;padding:2rem;font-size:13px;margin-top:2rem;}
@@ -483,21 +467,38 @@ footer a{color:var(--accent2);text-decoration:none;}
       </div>
     </div>
 
-    <!-- 15. Pipe Coating & Insulation -->
+    <!-- 15. Vibration Fatigue Calculator -->
+    <div class="calc-card" onclick="openModal('vf')">
+      <div class="card-img" style="background:linear-gradient(135deg,#1a3a4a 0%,#2a6a5a 100%)">
+        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="5" y1="48" x2="85" y2="48" stroke="rgba(255,255,255,0.75)" stroke-width="5" stroke-linecap="round"/>
+          <path d="M10 48 Q20 30 30 48 Q40 66 50 48 Q60 30 70 48 Q78 60 83 48" stroke="rgba(255,255,255,0.95)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+          <rect x="8" y="43" width="6" height="10" rx="1" fill="rgba(255,255,255,0.5)"/>
+          <rect x="76" y="43" width="6" height="10" rx="1" fill="rgba(255,255,255,0.5)"/>
+          <line x1="45" y1="28" x2="45" y2="20" stroke="rgba(255,230,180,0.9)" stroke-width="1.5"/>
+          <polygon points="45,18 42,24 48,24" fill="rgba(255,230,180,0.9)"/>
+          <text x="45" y="15" text-anchor="middle" font-size="8" fill="rgba(255,230,180,0.9)" font-family="monospace">fn</text>
+        </svg>
+        <span class="card-badge badge-member" id="badge-vf">👑 Members</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Vibration Fatigue Calculator</div>
+        <div class="card-desc">Reciprocating compressor piping — MNFP, allowable span, support stiffness, pulsation compliance, and surge bottle sizing per API-618.</div>
+        <div class="card-tags"><span class="tag">API-618</span><span class="tag">ASME B31.3</span><span class="tag">Vibration</span></div>
+        <div class="card-action"><span class="card-btn btn-locked" id="btn-vf">👑 Members Only</span></div>
+      </div>
+    </div>
+
+    <!-- 16. Pipe Coating & Insulation Calculator -->
     <div class="calc-card" onclick="openModal('ci')">
       <div class="card-img" style="background:linear-gradient(135deg,#2a4a3a 0%,#3a7a5a 100%)">
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- pipe core -->
           <line x1="10" y1="45" x2="80" y2="45" stroke="rgba(255,255,255,0.9)" stroke-width="7" stroke-linecap="round"/>
-          <!-- insulation layer -->
           <rect x="10" y="36" width="70" height="18" rx="5" stroke="rgba(255,255,255,0.45)" stroke-width="2" fill="none"/>
-          <!-- outer cladding -->
           <rect x="10" y="30" width="70" height="30" rx="7" stroke="rgba(255,255,255,0.20)" stroke-width="1.5" fill="none"/>
-          <!-- paint brush strokes -->
           <path d="M22 25 Q30 20 38 25" stroke="rgba(255,220,160,0.85)" stroke-width="2" fill="none" stroke-linecap="round"/>
           <path d="M42 22 Q50 17 58 22" stroke="rgba(255,220,160,0.85)" stroke-width="2" fill="none" stroke-linecap="round"/>
           <path d="M62 25 Q70 20 78 25" stroke="rgba(255,220,160,0.85)" stroke-width="2" fill="none" stroke-linecap="round"/>
-          <!-- heat arrows -->
           <line x1="30" y1="67" x2="30" y2="58" stroke="rgba(255,180,100,0.7)" stroke-width="1.5"/>
           <polygon points="30,56 27,62 33,62" fill="rgba(255,180,100,0.7)"/>
           <line x1="55" y1="67" x2="55" y2="58" stroke="rgba(255,180,100,0.7)" stroke-width="1.5"/>
@@ -522,17 +523,20 @@ footer a{color:var(--accent2);text-decoration:none;}
   <p style="margin-top:.4rem">© 2026 Zephrum Konsultan Limited. All rights reserved.</p>
 </footer>
 
-<!-- ═══════════════════════════ NON-MEMBER MODAL ═══════════════════════════ -->
+<!-- ═══════════════════ NON-MEMBER POPUP — 280px compact ═══════════════════ -->
 <div class="modal-bg" id="modal-bg" onclick="closeModalBg(event)">
   <div class="modal" id="modal">
     <button class="modal-close" onclick="closeModal()">✕</button>
     <div class="modal-body">
-      <div style="text-align:center;padding:.4rem 0 .6rem;">
-        <div style="font-size:2rem;margin-bottom:.6rem;">👑</div>
-        <div style="font-family:'DM Serif Display',serif;font-size:1rem;color:var(--ink);margin-bottom:.3rem;" id="nonmember-name"></div>
+      <div style="text-align:center;">
+        <div style="font-size:1.8rem;margin-bottom:.5rem;">🔒</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:.95rem;color:var(--ink);margin-bottom:.4rem;line-height:1.3;" id="nonmember-name"></div>
         <div style="font-size:11px;color:var(--ink3);margin-bottom:1rem;line-height:1.6;">This calculator is available to <strong style="color:var(--ink2);">PipingPro Academy members</strong> only.</div>
-        <a href="https://pipingpro-academy.com/membership" class="modal-btn modal-btn-open" style="display:block;margin-bottom:.5rem;">Become a Member →</a>
-        <button onclick="closeModal()" style="width:100%;padding:8px;background:none;border:none;font-size:11px;color:var(--ink3);cursor:pointer;font-family:'DM Sans',sans-serif;">Maybe later</button>
+        <a href="https://pipingpro-academy.com/membership"
+           style="display:block;width:100%;padding:9px;background:var(--accent);color:#fff;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;text-align:center;font-family:'DM Sans',sans-serif;margin-bottom:.6rem;">
+          Become a Member →
+        </a>
+        <button onclick="closeModal()" style="width:100%;padding:7px;background:none;border:none;font-size:11px;color:var(--ink3);cursor:pointer;font-family:'DM Sans',sans-serif;">Maybe later</button>
       </div>
     </div>
   </div>
@@ -555,7 +559,8 @@ const CALCS = {
   pm:{name:'P&ID MTO Calculator',desc:'Material take-off from P&ID data — instruments, equipment, lines, and nozzle count extraction for project quantification and procurement.',tags:['P&ID','MTO','Instrumentation'],what:['Instrument count by type','Equipment list with nozzle count','Line list extraction','MTO summary table','Export-ready output'],file:'pid-mto-calculator.html',bg:'bg-mossy',svgId:'pm'},
   ss:{name:'Special Pipe Support Calculator',desc:'Structural calculator for special pipe supports — load analysis, member sizing, and connection design for custom support configurations.',tags:['Structural','Pipe Support','Load Analysis'],what:['Support load calculation','Member stress check','Weld and bolt sizing','Deflection check','Support adequacy summary'],file:'special-pipe-support-calculator.html',bg:'bg-steelgrey',svgId:'ss'},
   tr:{name:'Trunnion Support Calculator',desc:'Trunnion pipe support design — local stress at the trunnion-to-pipe junction, weld loads, and adequacy check for vertical and horizontal piping loads.',tags:['Trunnion','Local Stress','Support Design'],what:['Trunnion load decomposition','Local shell stress at junction','Weld adequacy check','Support reaction forces','Design adequacy per code'],file:'trunnion-calculator.html',bg:'bg-plum',svgId:'tr'},
-  ci:{name:'Pipe Coating & Insulation Calculator',desc:'Paint quantity per coat (litres & drums) and hot insulation MTO — mineral wool, calcium silicate, aerogel and more for O&G plant piping.',tags:['ISO 12944','ASTM C547','Hot Insulation'],what:['Paint litres per coat','20L drum count','Insulation volume (m³)','Cladding area (m²)','Multi-size project MTO'],file:'pipe-coating-insulation-calculator.html',bg:'bg-forest',svgId:'ci'}
+  vf:{name:'Vibration Fatigue Calculator',desc:'Reciprocating compressor piping — MNFP, allowable span, support stiffness, pulsation compliance, and surge bottle sizing per API-618 / ASME B31.3.',tags:['API-618','ASME B31.3','Vibration'],what:['Minimum mechanical natural frequency (MNFP)','Maximum allowable pipe span','Vibration support stiffness','API-618 pulsation compliance check','Surge bottle volume sizing'],file:'vibration-fatigue-calculator.html',bg:'bg-vibration',svgId:'vf'},
+  ci:{name:'Pipe Coating & Insulation Calculator',desc:'Paint quantity per coat (litres & drums) and hot insulation MTO — mineral wool, calcium silicate, aerogel and more for O&G plant piping.',tags:['ISO 12944','ASTM C547','Hot Insulation'],what:['Paint litres per coat','20L drum count','Insulation volume (m³)','Cladding area (m²)','Multi-size project MTO'],file:'pipe-coating-insulation-calculator.html',bg:'bg-coating',svgId:'ci'}
 };
 
 // ─── SVG BANK ────────────────────────────────────────────────
@@ -573,7 +578,9 @@ const SVGS = {
   nl:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="30" y="30" width="30" height="35" rx="2" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" fill="none"/><line x1="45" y1="65" x2="45" y2="78" stroke="rgba(255,255,255,0.8)" stroke-width="4" stroke-linecap="round"/><line x1="45" y1="30" x2="45" y2="17" stroke="rgba(255,255,255,0.6)" stroke-width="3" stroke-linecap="round"/><line x1="30" y1="47" x2="15" y2="47" stroke="rgba(255,255,255,0.6)" stroke-width="3" stroke-linecap="round"/><line x1="60" y1="47" x2="75" y2="47" stroke="rgba(255,255,255,0.6)" stroke-width="3" stroke-linecap="round"/><line x1="38" y1="42" x2="52" y2="42" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><line x1="38" y1="50" x2="52" y2="50" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/></svg>`,
   pm:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="20" width="70" height="50" rx="3" stroke="rgba(255,255,255,0.6)" stroke-width="2" fill="none"/><line x1="10" y1="33" x2="80" y2="33" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><line x1="28" y1="20" x2="28" y2="70" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><line x1="52" y1="20" x2="52" y2="70" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><circle cx="19" cy="44" r="4" stroke="rgba(255,255,255,0.8)" stroke-width="1.5" fill="none"/><line x1="19" y1="52" x2="19" y2="62" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round"/><circle cx="40" cy="44" r="4" stroke="rgba(255,255,255,0.8)" stroke-width="1.5" fill="none"/><line x1="40" y1="52" x2="40" y2="62" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round"/></svg>`,
   ss:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="55" x2="80" y2="55" stroke="rgba(255,255,255,0.8)" stroke-width="6" stroke-linecap="round"/><line x1="25" y1="55" x2="25" y2="30" stroke="rgba(255,255,255,0.6)" stroke-width="3" stroke-linecap="round"/><line x1="65" y1="55" x2="65" y2="30" stroke="rgba(255,255,255,0.6)" stroke-width="3" stroke-linecap="round"/><line x1="45" y1="25" x2="45" y2="55" stroke="rgba(255,255,255,0.9)" stroke-width="4" stroke-linecap="round"/><line x1="20" y1="25" x2="70" y2="25" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"/><line x1="10" y1="65" x2="80" y2="65" stroke="rgba(255,255,255,0.3)" stroke-width="2"/></svg>`,
-  tr:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="45" x2="80" y2="45" stroke="rgba(255,255,255,0.8)" stroke-width="8" stroke-linecap="round"/><rect x="38" y="30" width="14" height="30" rx="2" fill="rgba(255,255,255,0.6)"/><line x1="45" y1="60" x2="45" y2="75" stroke="rgba(255,255,255,0.7)" stroke-width="3" stroke-linecap="round"/><line x1="35" y1="75" x2="55" y2="75" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"/><line x1="45" y1="30" x2="45" y2="15" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-dasharray="3 2"/><polygon points="45,13 41,21 49,21" fill="rgba(255,255,255,0.4)"/></svg>`
+  tr:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="45" x2="80" y2="45" stroke="rgba(255,255,255,0.8)" stroke-width="8" stroke-linecap="round"/><rect x="38" y="30" width="14" height="30" rx="2" fill="rgba(255,255,255,0.6)"/><line x1="45" y1="60" x2="45" y2="75" stroke="rgba(255,255,255,0.7)" stroke-width="3" stroke-linecap="round"/><line x1="35" y1="75" x2="55" y2="75" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"/><line x1="45" y1="30" x2="45" y2="15" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-dasharray="3 2"/><polygon points="45,13 41,21 49,21" fill="rgba(255,255,255,0.4)"/></svg>`,
+  vf:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="5" y1="48" x2="85" y2="48" stroke="rgba(255,255,255,0.75)" stroke-width="5" stroke-linecap="round"/><path d="M10 48 Q20 30 30 48 Q40 66 50 48 Q60 30 70 48 Q78 60 83 48" stroke="rgba(255,255,255,0.95)" stroke-width="2.2" fill="none" stroke-linecap="round"/><rect x="8" y="43" width="6" height="10" rx="1" fill="rgba(255,255,255,0.5)"/><rect x="76" y="43" width="6" height="10" rx="1" fill="rgba(255,255,255,0.5)"/><line x1="45" y1="28" x2="45" y2="20" stroke="rgba(255,230,180,0.9)" stroke-width="1.5"/><polygon points="45,18 42,24 48,24" fill="rgba(255,230,180,0.9)"/></svg>`,
+  ci:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="45" x2="80" y2="45" stroke="rgba(255,255,255,0.9)" stroke-width="7" stroke-linecap="round"/><rect x="10" y="36" width="70" height="18" rx="5" stroke="rgba(255,255,255,0.45)" stroke-width="2" fill="none"/><rect x="10" y="30" width="70" height="30" rx="7" stroke="rgba(255,255,255,0.20)" stroke-width="1.5" fill="none"/><path d="M22 25 Q30 20 38 25" stroke="rgba(255,220,160,0.85)" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M42 22 Q50 17 58 22" stroke="rgba(255,220,160,0.85)" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M62 25 Q70 20 78 25" stroke="rgba(255,220,160,0.85)" stroke-width="2" fill="none" stroke-linecap="round"/><line x1="30" y1="67" x2="30" y2="58" stroke="rgba(255,180,100,0.7)" stroke-width="1.5"/><polygon points="30,56 27,62 33,62" fill="rgba(255,180,100,0.7)"/><line x1="55" y1="67" x2="55" y2="58" stroke="rgba(255,180,100,0.7)" stroke-width="1.5"/><polygon points="55,56 52,62 58,62" fill="rgba(255,180,100,0.7)"/></svg>`
 };
 
 // ─── ADMIN BYPASS ─────────────────────────────────────────────
