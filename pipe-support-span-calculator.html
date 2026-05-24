@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Pipe Support Span Calculator — PipingPro Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --ink:#1a1a18;--ink2:#4a4a44;--ink3:#8a8a80;
+  --paper:#f5f2eb;--paper2:#ede9de;--paper3:#e3dfd2;
+  --accent:#c45c2a;--accent2:#e8a06a;--accent-light:#f7ede3;
+  --teal:#1a6b5a;--teal-light:#e0f0eb;
+  --rule:rgba(26,26,24,0.12);
+  --pass:#1a6b5a;--pass-bg:#e0f0eb;
+  --fail:#9b1c1c;--fail-bg:#fde8e8;
+  --warn:#92400e;--warn-bg:#fef3c7;
+  --gold:#b8922a;--gold-light:#fdf3dc;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);font-size:15px;line-height:1.6;min-height:100vh;}
+
+/* NAV */
+.back-bar{background:var(--paper2);border-bottom:1px solid var(--rule);padding:.6rem 1.5rem;display:flex;justify-content:space-between;align-items:center;}
+.back-bar a{font-size:13px;color:var(--ink2);text-decoration:none;}
+.back-bar a:hover{color:var(--accent);}
+
+/* HEADER */
+.header{background:var(--ink);color:var(--paper);padding:2rem 2rem 1.8rem;border-bottom:3px solid var(--accent);position:relative;overflow:hidden;}
+.header::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 60px),repeating-linear-gradient(0deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 60px);}
+.header-badge{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:3px 12px;font-size:11px;margin-bottom:.8rem;font-family:'DM Mono',monospace;position:relative;}
+.header h1{font-family:'DM Serif Display',serif;font-size:clamp(1.5rem,4vw,2.2rem);margin-bottom:.3rem;position:relative;}
+.header p{font-size:13px;color:rgba(245,242,235,.6);position:relative;}
+
+/* TABS */
+.tabs{display:flex;background:var(--paper2);border-bottom:1px solid var(--rule);overflow-x:auto;}
+.tab{padding:.9rem 1.6rem;font-size:13px;font-weight:500;color:var(--ink3);border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;font-family:'DM Sans',sans-serif;transition:color .2s,border-color .2s;white-space:nowrap;}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.tab:hover:not(.active){color:var(--ink);}
+
+/* MAIN */
+.main{max-width:920px;margin:0 auto;padding:2rem 1.5rem;}
+.panel{display:none;}
+.panel.active{display:block;}
+
+/* CARDS */
+.card{background:#fff;border:1px solid var(--rule);border-radius:12px;padding:1.5rem 1.8rem;margin-bottom:1.2rem;}
+.card-title{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:1.2rem;padding-bottom:.5rem;border-bottom:1px solid var(--rule);}
+
+/* GRID */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;}
+.grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1rem;}
+@media(max-width:640px){.grid2,.grid3,.grid4{grid-template-columns:1fr;}}
+@media(max-width:800px){.grid3,.grid4{grid-template-columns:1fr 1fr;}}
+
+/* FIELD */
+.field{display:flex;flex-direction:column;gap:4px;}
+.field label{font-size:12px;font-weight:500;color:var(--ink2);}
+.field input,.field select{padding:9px 12px;border:1px solid var(--rule);border-radius:8px;font-family:'DM Mono',monospace;font-size:14px;background:var(--paper);color:var(--ink);outline:none;transition:border-color .2s;}
+.field input:focus,.field select:focus{border-color:var(--accent);background:#fff;}
+.field .hint{font-size:11px;color:var(--ink3);}
+.field .auto{font-size:11px;color:var(--teal);}
+
+/* RESULTS */
+.results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:.8rem;margin-bottom:1rem;}
+.res-box{background:var(--paper2);border-radius:10px;padding:1rem;}
+.res-box.hi{background:var(--accent-light);border:1px solid rgba(196,92,42,.2);}
+.res-box.teal{background:var(--teal-light);border:1px solid rgba(26,107,90,.2);}
+.res-box.gold{background:var(--gold-light);border:1px solid rgba(184,146,42,.2);}
+.res-label{font-size:11px;color:var(--ink3);margin-bottom:3px;line-height:1.3;}
+.res-val{font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:500;color:var(--ink);}
+.res-unit{font-size:11px;color:var(--ink3);margin-top:2px;}
+
+/* STATUS */
+.status{display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:600;}
+.status.pass{background:var(--pass-bg);color:var(--pass);}
+.status.fail{background:var(--fail-bg);color:var(--fail);}
+.status.warn{background:var(--warn-bg);color:var(--warn);}
+
+/* RATIO BAR */
+.ratio-wrap{margin-bottom:.7rem;}
+.ratio-label{font-size:12px;color:var(--ink2);margin-bottom:4px;display:flex;justify-content:space-between;align-items:center;}
+.ratio-bar{height:10px;background:var(--paper3);border-radius:5px;overflow:hidden;}
+.ratio-fill{height:100%;border-radius:5px;transition:width .4s;}
+.ratio-fill.ok{background:var(--teal);}
+.ratio-fill.warn{background:#d97706;}
+.ratio-fill.over{background:#dc2626;}
+
+/* FORMULA BOX */
+.formula{background:var(--paper2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:1rem 1.2rem;font-size:13px;color:var(--ink2);line-height:2;margin-bottom:1rem;}
+.formula code{font-family:'DM Mono',monospace;color:var(--ink);font-size:13px;}
+.formula-title{font-weight:600;color:var(--ink);margin-bottom:.4rem;font-size:13px;}
+
+/* NOTE / DISCLAIMER */
+.note{background:var(--teal-light);border:1px solid rgba(26,107,90,.15);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--teal);margin-bottom:1rem;line-height:1.7;}
+.disclaimer{background:var(--accent-light);border:1px solid rgba(196,92,42,.2);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--accent);margin-bottom:1.2rem;line-height:1.7;}
+.info{background:var(--gold-light);border:1px solid rgba(184,146,42,.2);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:#7a5a10;margin-bottom:1rem;line-height:1.7;}
+
+/* LAYOUT FACTOR CARDS */
+.layout-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.9rem;margin-bottom:1rem;}
+.layout-card{background:#fff;border:2px solid var(--rule);border-radius:10px;padding:.9rem 1rem;cursor:pointer;transition:border-color .2s,box-shadow .2s;text-align:center;}
+.layout-card:hover{border-color:var(--accent);box-shadow:0 2px 10px rgba(196,92,42,.1);}
+.layout-card.selected{border-color:var(--accent);border-width:2px;background:var(--accent-light);}
+.layout-card svg{display:block;margin:0 auto .5rem;}
+.layout-card-name{font-size:12px;font-weight:600;color:var(--ink);margin-bottom:.2rem;}
+.layout-card-factor{font-family:'DM Mono',monospace;font-size:1rem;color:var(--accent);font-weight:600;}
+.layout-card-desc{font-size:10px;color:var(--ink3);margin-top:.2rem;line-height:1.4;}
+
+/* SPAN TABLE */
+.span-table{width:100%;border-collapse:collapse;font-size:12px;}
+.span-table th{background:var(--paper3);padding:7px 10px;text-align:center;font-weight:600;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2);border-bottom:1px solid var(--rule);}
+.span-table th.left{text-align:left;}
+.span-table td{padding:6px 10px;border-bottom:1px solid var(--rule);text-align:center;font-family:'DM Mono',monospace;color:var(--ink);}
+.span-table td.left{text-align:left;font-family:'DM Sans',sans-serif;font-weight:500;}
+.span-table tr:last-child td{border-bottom:none;}
+.span-table tr.highlight td{background:var(--accent-light);color:var(--accent);font-weight:700;}
+.span-table tr:hover td{background:var(--paper2);}
+
+/* VERDICT BANNER */
+.verdict{border-radius:10px;padding:1.2rem 1.4rem;margin-bottom:1rem;}
+.verdict-header{display:flex;align-items:center;gap:.8rem;margin-bottom:.5rem;}
+.verdict-icon{font-size:1.6rem;}
+.verdict-title{font-family:'DM Serif Display',serif;font-size:1.05rem;}
+.verdict-sub{font-size:12px;margin-top:.1rem;}
+.verdict-action{font-size:12px;line-height:1.7;border-top:1px solid rgba(0,0,0,.08);padding-top:.6rem;margin-top:.4rem;}
+
+/* FOOTER */
+footer{background:var(--ink);color:rgba(245,242,235,0.5);text-align:center;padding:2rem;font-size:13px;margin-top:2rem;}
+footer a{color:var(--accent2);text-decoration:none;}
+.fl{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--paper);margin-bottom:.4rem;}
+.fl span{color:var(--accent);}
+</style>
+</head>
+<body>
+
+<div class="back-bar">
+  <a href="calculators.html">← Back to Calculators</a>
+  <a href="index.html" style="font-family:'DM Serif Display',serif;font-size:15px;color:var(--ink);">Piping<span style="color:var(--accent);">Pro</span> Academy</a>
+</div>
+
+<div class="header">
+  <div class="header-badge">Members · Engineering Calculator Suite</div>
+  <h1>Pipe Support Span <em>Calculator</em></h1>
+  <p>Maximum allowable span between supports — stress method, deflection method &amp; natural frequency check · M.W. Kellogg / ASME B31.3</p>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('calc')">1 · Span Calculator</button>
+  <button class="tab" onclick="switchTab('layout')">2 · Layout Factor</button>
+  <button class="tab" onclick="switchTab('table')">3 · Span Table</button>
+  <button class="tab" onclick="switchTab('theory')">4 · Theory &amp; Reference</button>
+</div>
+
+<div class="main">
+
+<!-- ══════════════════════════════════════════════
+     TAB 1 — SPAN CALCULATOR
+══════════════════════════════════════════════ -->
+<div class="panel active" id="panel-calc">
+
+  <div class="disclaimer">
+    ⚠ For engineering reference only. Results must be verified by a qualified engineer against project-specific piping specifications and applicable codes (ASME B31.3, B31.1, etc.). Formula source: Design of Piping Systems, M.W. Kellogg Company, Revised 2nd Edition, 1965.
+  </div>
+
+  <!-- PIPE INPUTS -->
+  <div class="card">
+    <div class="card-title">Pipe Size &amp; Material</div>
+    <div class="grid3">
+      <div class="field">
+        <label>Nominal Pipe Size</label>
+        <select id="nps" onchange="onNPSChange()">
+          <option value="0.5">½"</option>
+          <option value="0.75">¾"</option>
+          <option value="1">1"</option>
+          <option value="1.5">1½"</option>
+          <option value="2">2"</option>
+          <option value="3">3"</option>
+          <option value="4" selected>4"</option>
+          <option value="6">6"</option>
+          <option value="8">8"</option>
+          <option value="10">10"</option>
+          <option value="12">12"</option>
+          <option value="14">14"</option>
+          <option value="16">16"</option>
+          <option value="18">18"</option>
+          <option value="20">20"</option>
+          <option value="24">24"</option>
+          <option value="custom">Custom…</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Schedule / Wall Thickness</label>
+        <select id="sch" onchange="onSchChange()">
+          <option value="std">STD (Standard)</option>
+          <option value="xs">XS (Extra Strong)</option>
+          <option value="xxs">XXS (Double Extra Strong)</option>
+          <option value="sch40" selected>Sch 40</option>
+          <option value="sch80">Sch 80</option>
+          <option value="sch160">Sch 160</option>
+          <option value="custom">Custom wall…</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Pipe Material</label>
+        <select id="mat" onchange="onMatChange()">
+          <option value="cs" selected>Carbon Steel (A106/A53)</option>
+          <option value="ss304">Stainless Steel 304</option>
+          <option value="ss316">Stainless Steel 316</option>
+          <option value="custom">Custom E…</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid4" style="margin-top:.8rem;">
+      <div class="field">
+        <label>OD (in)</label>
+        <input type="number" id="od" value="4.500" step="0.001" oninput="calcSpan()"/>
+        <span class="auto" id="od-auto">↑ Auto from NPS</span>
+      </div>
+      <div class="field">
+        <label>Wall Thickness (in)</label>
+        <input type="number" id="thk" value="0.237" step="0.001" oninput="calcSpan()"/>
+        <span class="auto" id="thk-auto">↑ Auto from Sch</span>
+      </div>
+      <div class="field">
+        <label>Modulus of Elasticity E (psi)</label>
+        <input type="number" id="Eval" value="27900000" oninput="calcSpan()"/>
+        <span class="hint">CS: 27.9×10⁶ | SS: 28×10⁶</span>
+      </div>
+      <div class="field">
+        <label>Allowable Stress S<sub>h</sub> (psi)</label>
+        <input type="number" id="Sallow" value="15000" oninput="calcSpan()"/>
+        <span class="hint">From ASME B31.3 Table A-1</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOAD INPUTS -->
+  <div class="card">
+    <div class="card-title">Loading &amp; Operating Conditions</div>
+    <div class="grid4">
+      <div class="field">
+        <label>Fluid Density (lb/ft³)</label>
+        <input type="number" id="rhofl" value="62.4" step="0.1" oninput="calcSpan()"/>
+        <span class="hint">Water=62.4 | Gas≈1–5 | Oil≈50–55</span>
+      </div>
+      <div class="field">
+        <label>Insulation Weight (lb/ft)</label>
+        <input type="number" id="wins" value="0" step="0.1" oninput="calcSpan()"/>
+        <span class="hint">0 if bare pipe</span>
+      </div>
+      <div class="field">
+        <label>Max Allowable Deflection δ (in)</label>
+        <input type="number" id="delta_allow" value="0.5" step="0.1" oninput="calcSpan()"/>
+        <span class="hint">Typical: ½"–1" | Power piping: ⅛"</span>
+      </div>
+      <div class="field">
+        <label>Stress usage factor (0–1)</label>
+        <input type="number" id="sfactor" value="1.0" step="0.05" min="0.1" max="1.0" oninput="calcSpan()"/>
+        <span class="hint">1.0 = use full S<sub>h</sub></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPUTED PIPE PROPERTIES -->
+  <div class="card">
+    <div class="card-title">Calculated Pipe Section Properties</div>
+    <div class="results-grid">
+      <div class="res-box">
+        <div class="res-label">Inside Diameter (ID)</div>
+        <div class="res-val" id="r-id">—</div>
+        <div class="res-unit">inches</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Moment of Inertia (I)</div>
+        <div class="res-val" id="r-I">—</div>
+        <div class="res-unit">in⁴</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Section Modulus (Z)</div>
+        <div class="res-val" id="r-Z">—</div>
+        <div class="res-unit">in³</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Pipe weight (steel)</div>
+        <div class="res-val" id="r-wpipe">—</div>
+        <div class="res-unit">lb/ft</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Fluid weight</div>
+        <div class="res-val" id="r-wfluid">—</div>
+        <div class="res-unit">lb/ft</div>
+      </div>
+      <div class="res-box hi">
+        <div class="res-label">Total unit weight (w)</div>
+        <div class="res-val" id="r-wtotal">—</div>
+        <div class="res-unit">lb/ft</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="card">
+    <div class="card-title">Maximum Allowable Span — Governing Result</div>
+
+    <div class="results-grid">
+      <div class="res-box hi">
+        <div class="res-label">L<sub>stress</sub> — Stress method</div>
+        <div class="res-val" id="r-Ls">—</div>
+        <div class="res-unit">feet</div>
+      </div>
+      <div class="res-box hi">
+        <div class="res-label">L<sub>deflection</sub> — Deflection method</div>
+        <div class="res-val" id="r-Ld">—</div>
+        <div class="res-unit">feet</div>
+      </div>
+      <div class="res-box teal">
+        <div class="res-label">L<sub>governing</sub> — Use this value</div>
+        <div class="res-val" id="r-Lgov">—</div>
+        <div class="res-unit">feet (lesser of two)</div>
+      </div>
+      <div class="res-box teal">
+        <div class="res-label">L<sub>governing</sub> × layout factor</div>
+        <div class="res-val" id="r-Ladj">—</div>
+        <div class="res-unit">feet (after layout reduction)</div>
+      </div>
+    </div>
+
+    <div class="card-title" style="margin-top:1rem;margin-bottom:.8rem;">Governing Method &amp; Checks</div>
+
+    <!-- Ratio bars -->
+    <div id="r-govern-label" class="info" style="margin-bottom:.8rem;"></div>
+
+    <div class="ratio-wrap">
+      <div class="ratio-label">
+        <span>Stress method — span vs deflection method</span>
+        <span id="r-ratio-label">—</span>
+      </div>
+      <div class="ratio-bar"><div class="ratio-fill ok" id="r-ratio-bar" style="width:50%"></div></div>
+    </div>
+
+    <!-- Natural frequency check -->
+    <div class="card-title" style="margin-top:1.2rem;margin-bottom:.8rem;">Natural Frequency of Governing Span</div>
+    <div class="results-grid">
+      <div class="res-box">
+        <div class="res-label">fₙ of L<sub>governing</sub></div>
+        <div class="res-val" id="r-fn-gov">—</div>
+        <div class="res-unit">cps (Hz)</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">fₙ of L<sub>adjusted</sub> (after layout factor)</div>
+        <div class="res-val" id="r-fn-adj">—</div>
+        <div class="res-unit">cps (Hz)</div>
+      </div>
+      <div class="res-box gold">
+        <div class="res-label">General process piping target</div>
+        <div class="res-val">≥ 4 cps</div>
+        <div class="res-unit">M.W. Kellogg recommendation</div>
+      </div>
+      <div class="res-box gold">
+        <div class="res-label">Reciprocating equipment target</div>
+        <div class="res-val">≥ 8 cps</div>
+        <div class="res-unit">M.W. Kellogg recommendation</div>
+      </div>
+    </div>
+
+    <div id="r-fn-verdict" class="verdict" style="display:none;"></div>
+
+    <div class="note" id="r-note"></div>
+  </div>
+
+  <!-- ACTUAL SPAN CHECK -->
+  <div class="card">
+    <div class="card-title">Check an Actual Span (Optional)</div>
+    <div class="info">Enter the span you are proposing or that exists in the field. The calculator will check it against both the stress and deflection limits and report actual bending stress and deflection.</div>
+    <div class="grid3">
+      <div class="field">
+        <label>Proposed / Actual Span L<sub>actual</sub> (ft)</label>
+        <input type="number" id="L_actual" value="15" step="0.5" oninput="calcActual()"/>
+      </div>
+      <div class="field">
+        <label>Service type (for fₙ target)</label>
+        <select id="svc_type" onchange="calcActual()">
+          <option value="process" selected>General process piping (≥4 cps)</option>
+          <option value="recip">Reciprocating equipment (≥8 cps)</option>
+          <option value="power">Power piping (deflection ≤ ⅛")</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Layout factor applied</label>
+        <select id="lf_actual" onchange="calcActual()">
+          <option value="1.00" selected>1.00 — Continuous / straight run</option>
+          <option value="0.75">0.75 — L-bend (one change of direction)</option>
+          <option value="0.65">0.65 — Z/U-bend (two changes of direction)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="results-grid" style="margin-top:1rem;">
+      <div class="res-box">
+        <div class="res-label">Actual bending stress σ</div>
+        <div class="res-val" id="a-stress">—</div>
+        <div class="res-unit">psi</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Allowable stress S<sub>h</sub></div>
+        <div class="res-val" id="a-Sallow">—</div>
+        <div class="res-unit">psi</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Actual deflection δ</div>
+        <div class="res-val" id="a-defl">—</div>
+        <div class="res-unit">inches</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Natural frequency fₙ</div>
+        <div class="res-val" id="a-fn">—</div>
+        <div class="res-unit">cps (Hz)</div>
+      </div>
+    </div>
+
+    <!-- Actual span verdicts -->
+    <div style="display:flex;flex-wrap:wrap;gap:.7rem;margin-top:.5rem;" id="a-verdict-row"></div>
+  </div>
+
+</div><!-- /panel-calc -->
+
+<!-- ══════════════════════════════════════════════
+     TAB 2 — LAYOUT FACTOR
+══════════════════════════════════════════════ -->
+<div class="panel" id="panel-layout">
+
+  <div class="card">
+    <div class="card-title">Pipe Layout Reduction Factor</div>
+    <div class="note">When pipe immediately changes direction after two supports, the calculated span L must be multiplied by a reduction factor. Click a layout type to apply it to the Tab 1 calculation.</div>
+
+    <div class="layout-grid">
+
+      <!-- Factor 1.00 — straight -->
+      <div class="layout-card selected" id="lc-straight" onclick="selectLayout('straight',1.00)">
+        <svg width="100" height="70" viewBox="0 0 100 70">
+          <line x1="5" y1="35" x2="95" y2="35" stroke="#1a1a18" stroke-width="3" stroke-linecap="round"/>
+          <rect x="18" y="28" width="8" height="14" rx="1" fill="#c45c2a"/>
+          <rect x="74" y="28" width="8" height="14" rx="1" fill="#c45c2a"/>
+          <line x1="22" y1="42" x2="22" y2="55" stroke="#c45c2a" stroke-width="2"/>
+          <line x1="78" y1="42" x2="78" y2="55" stroke="#c45c2a" stroke-width="2"/>
+          <line x1="15" y1="55" x2="85" y2="55" stroke="#c45c2a" stroke-width="1.5" stroke-dasharray="3 2"/>
+        </svg>
+        <div class="layout-card-name">Straight / Continuous Run</div>
+        <div class="layout-card-factor">× 1.00</div>
+        <div class="layout-card-desc">No direction change between supports. Full calculated span applies.</div>
+      </div>
+
+      <!-- Factor 0.75 — L-bend -->
+      <div class="layout-card" id="lc-lbend" onclick="selectLayout('lbend',0.75)">
+        <svg width="100" height="70" viewBox="0 0 100 70">
+          <!-- L-bend pipe -->
+          <polyline points="10,55 10,20 80,20" stroke="#1a1a18" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- supports -->
+          <rect x="5" y="48" width="10" height="10" rx="1" fill="#c45c2a"/>
+          <rect x="73" y="13" width="10" height="10" rx="1" fill="#c45c2a"/>
+          <!-- span arrow -->
+          <line x1="22" y1="30" x2="70" y2="30" stroke="#1a6b5a" stroke-width="1.2" stroke-dasharray="3 2"/>
+          <text x="50" y="44" text-anchor="middle" font-size="9" fill="#c45c2a" font-family="monospace" font-weight="bold">Max = 0.75×L</text>
+        </svg>
+        <div class="layout-card-name">L-Bend (one direction change)</div>
+        <div class="layout-card-factor">× 0.75</div>
+        <div class="layout-card-desc">Pipe changes direction once between or after the two supports.</div>
+      </div>
+
+      <!-- Factor 0.65 — Z/U-bend -->
+      <div class="layout-card" id="lc-zbend" onclick="selectLayout('zbend',0.65)">
+        <svg width="100" height="70" viewBox="0 0 100 70">
+          <!-- Z-bend pipe -->
+          <polyline points="10,60 10,35 60,35 60,10 90,10" stroke="#1a1a18" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- supports -->
+          <rect x="5" y="53" width="10" height="10" rx="1" fill="#c45c2a"/>
+          <rect x="84" y="3" width="10" height="10" rx="1" fill="#c45c2a"/>
+          <text x="50" y="55" text-anchor="middle" font-size="9" fill="#c45c2a" font-family="monospace" font-weight="bold">Max = 0.65×L</text>
+        </svg>
+        <div class="layout-card-name">Z / U-Bend (two direction changes)</div>
+        <div class="layout-card-factor">× 0.65</div>
+        <div class="layout-card-desc">Pipe changes direction twice between or after the two supports (Z-bend, U-bend, offset).</div>
+      </div>
+
+    </div>
+
+    <div class="card-title" style="margin-top:.5rem;margin-bottom:.8rem;">Currently Applied Layout Factor</div>
+    <div class="results-grid">
+      <div class="res-box hi">
+        <div class="res-label">Selected layout</div>
+        <div class="res-val" id="lf-name">Straight / Continuous</div>
+        <div class="res-unit">—</div>
+      </div>
+      <div class="res-box hi">
+        <div class="res-label">Reduction factor</div>
+        <div class="res-val" id="lf-val">1.00</div>
+        <div class="res-unit">× L<sub>governing</sub></div>
+      </div>
+      <div class="res-box teal">
+        <div class="res-label">L<sub>adjusted</sub> (from Tab 1)</div>
+        <div class="res-val" id="lf-Ladj">—</div>
+        <div class="res-unit">feet</div>
+      </div>
+    </div>
+
+    <div class="note">The reduction factors 0.75 (L-bend) and 0.65 (Z/U-bend) account for the additional bending moments and flexibility effects at direction changes. For special configurations consult your project piping specification.</div>
+  </div>
+
+</div><!-- /panel-layout -->
+
+<!-- ══════════════════════════════════════════════
+     TAB 3 — SPAN TABLE
+══════════════════════════════════════════════ -->
+<div class="panel" id="panel-table">
+  <div class="card">
+    <div class="card-title">Quick Reference — Span Table Controls</div>
+    <div class="grid3">
+      <div class="field">
+        <label>Fluid for table</label>
+        <select id="tbl-fluid" onchange="buildTable()">
+          <option value="water">Water (62.4 lb/ft³)</option>
+          <option value="gas" selected>Gas / Air (empty, ~0 fluid wt)</option>
+          <option value="oil">Oil (50 lb/ft³)</option>
+          <option value="steam">Steam (3 lb/ft³)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Schedule for table</label>
+        <select id="tbl-sch" onchange="buildTable()">
+          <option value="std">STD</option>
+          <option value="sch40" selected>Sch 40</option>
+          <option value="sch80">Sch 80</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Max deflection for table (in)</label>
+        <select id="tbl-delta" onchange="buildTable()">
+          <option value="0.125">⅛" (power piping)</option>
+          <option value="0.5" selected>½" (typical process)</option>
+          <option value="1.0">1" (large bore / relaxed)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Maximum Allowable Pipe Support Span (feet)</div>
+    <div class="note">Governing value shown — lesser of stress method (S<sub>h</sub> = 15,000 psi CS) and deflection method. Values in <strong>( )</strong> are after applying layout factor shown. Click any row to load that pipe size into the calculator.</div>
+    <div style="overflow-x:auto;">
+      <table class="span-table" id="span-table">
+        <thead>
+          <tr>
+            <th class="left">NPS</th>
+            <th>OD (in)</th>
+            <th>Wall (in)</th>
+            <th>I (in⁴)</th>
+            <th>Z (in³)</th>
+            <th>w (lb/ft)</th>
+            <th>L stress (ft)</th>
+            <th>L defl (ft)</th>
+            <th>L gov (ft)</th>
+            <th>×0.75 (ft)</th>
+            <th>×0.65 (ft)</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div><!-- /panel-table -->
+
+<!-- ══════════════════════════════════════════════
+     TAB 4 — THEORY & REFERENCE
+══════════════════════════════════════════════ -->
+<div class="panel" id="panel-theory">
+
+  <div class="card">
+    <div class="card-title">Design Basis — M.W. Kellogg Formulae</div>
+    <div class="formula">
+      <div class="formula-title">1. Stress Method — Maximum bending stress (simply supported, UDL)</div>
+      <code>σ = w × L² × 12 / (8 × Z) &nbsp;&nbsp;[psi]</code><br/>
+      <code>Rearranged for L: &nbsp; L = √( 8 × σ<sub>allow</sub> × Z / (w × 12) ) &nbsp;&nbsp;[ft]</code><br/>
+      <span style="font-size:11px;color:var(--ink3);">σ = bending stress (psi) | w = total unit weight (lb/ft) | L = span (ft) | Z = section modulus (in³)</span>
+    </div>
+    <div class="formula">
+      <div class="formula-title">2. Deflection Method — Maximum midspan deflection (simply supported, UDL)</div>
+      <code>δ = 22.5 × w × L⁴ / (E × I) &nbsp;&nbsp;[inches]</code><br/>
+      <code>Rearranged for L: &nbsp; L = ⁴√( δ<sub>allow</sub> × E × I / 22.5 × w ) &nbsp;&nbsp;[ft]</code><br/>
+      <span style="font-size:11px;color:var(--ink3);">δ = deflection (in) | E = modulus of elasticity (psi) | I = moment of inertia (in⁴) | constant 22.5 = 5×12⁴/384×12 incorporates unit conversion ft→in</span>
+    </div>
+    <div class="formula">
+      <div class="formula-title">3. Natural Frequency of Pipe Span (simply supported, UDL)</div>
+      <code>fₙ = (π²/2L²) × √(E × I × g / (w/12)) &nbsp;&nbsp;[cps] &nbsp;&nbsp;... simplified form:</code><br/>
+      <code>fₙ ≈ 3.573 / L² × √(E × I / (w/12)) &nbsp;&nbsp;[cps, L in ft, w in lb/ft]</code><br/>
+      <span style="font-size:11px;color:var(--ink3);">g = 386.4 in/s² | The constant 3.573 = π²/(2×12²) × √(386.4) incorporating unit conversions</span>
+    </div>
+    <div class="note">The governing span is the <strong>lesser</strong> of L<sub>stress</sub> and L<sub>deflection</sub>. In practice the deflection criterion is usually more restrictive for smaller pipe and the stress criterion governs for larger bore pipe.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Deflection Limits — M.W. Kellogg / Industry Practice</div>
+    <table class="span-table">
+      <thead>
+        <tr>
+          <th class="left">Service</th>
+          <th class="left">Recommended deflection limit</th>
+          <th class="left">Natural frequency target</th>
+          <th class="left">Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="left">Average process piping</td>
+          <td class="left">½" to 1"</td>
+          <td class="left">≥ 4 cps</td>
+          <td class="left">M.W. Kellogg practical limit</td>
+        </tr>
+        <tr>
+          <td class="left">Power piping</td>
+          <td class="left">⅛" (0.125")</td>
+          <td class="left">≥ 4 cps</td>
+          <td class="left">More conservative; stiff system preferred</td>
+        </tr>
+        <tr>
+          <td class="left">Reciprocating compressor piping</td>
+          <td class="left">Project-specific</td>
+          <td class="left">≥ 8 cps (or per API-618 MNFP)</td>
+          <td class="left">Higher frequency target to avoid pulsation resonance</td>
+        </tr>
+        <tr>
+          <td class="left">Lines prone to slug flow / two-phase</td>
+          <td class="left">¼" or less</td>
+          <td class="left">≥ 6 cps</td>
+          <td class="left">Slug impact forces amplified at large deflections</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Layout Reduction Factors — Rule of Thumb</div>
+    <table class="span-table">
+      <thead>
+        <tr>
+          <th class="left">Layout</th>
+          <th>Factor</th>
+          <th class="left">Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="left">Straight / Continuous run</td>
+          <td>1.00</td>
+          <td class="left">No direction change. Full table span applies.</td>
+        </tr>
+        <tr>
+          <td class="left">L-bend (one direction change)</td>
+          <td>0.75</td>
+          <td class="left">Pipe changes direction once after the last support. Max span = 0.75 × L.</td>
+        </tr>
+        <tr>
+          <td class="left">Z-bend / U-bend (two direction changes)</td>
+          <td>0.65</td>
+          <td class="left">Pipe changes direction twice (Z-bend, U-bend, offset). Max span = 0.65 × L.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note" style="margin-top:.8rem;">These factors are rule-of-thumb values per M.W. Kellogg and general industry practice. Individual project piping specifications may specify different values. Always confirm with your project standard.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Reference</div>
+    <div style="font-size:13px;color:var(--ink2);line-height:1.9;">
+      <strong>Primary formula source:</strong> Design of Piping Systems, The M. W. Kellogg Company, Revised Second Edition, 1965.<br/>
+      <strong>Supporting codes:</strong> ASME B31.3 (Process Piping), ASME B31.1 (Power Piping), ASME B36.10 (Pipe dimensions).<br/>
+      <strong>Allowable stress:</strong> S<sub>h</sub> values from ASME B31.3 Table A-1 at the pipe's maximum operating temperature.<br/>
+      <strong>Note:</strong> The formula assumes simply-supported end conditions. For clamped or guided spans, natural frequency is higher (×1.6 correction factor per Truong / API-618), but the stress and deflection formulas remain conservative.<br/>
+    </div>
+  </div>
+
+</div><!-- /panel-theory -->
+
+</div><!-- /main -->
+
+<footer>
+  <div class="fl">Piping<span>Pro</span> Academy</div>
+  <p>PipingPro Academy is a trademark of <strong style="color:var(--accent2);">Zephrum Konsultan Limited</strong>, registered in England &amp; Wales. Co. No. 13537626.</p>
+  <p style="margin-top:.3rem">© 2026 Zephrum Konsultan Limited. All rights reserved. &nbsp;·&nbsp; <a href="calculators.html">Calculator Suite</a></p>
+</footer>
+
+<script>
+/* ═══════════════════════════
+   PIPE DATA — OD, standard wall thickness (inches)
+══════════════════════════════════════════════════════════════════════════ */
+var PIPE_DATA = {
+  0.5:  {od:0.840,  std:0.109, sch40:0.109, sch80:0.147, xs:0.147},
+  0.75: {od:1.050, std:0.113, sch40:0.113, sch80:0.154, xs:0.154},
+  1:    {od:1.315, std:0.133, sch40:0.133, sch80:0.179, xs:0.179},
+  1.5:  {od:1.900, std:0.145, sch40:0.145, sch80:0.200, xs:0.200},
+  2:    {od:2.375, std:0.154, sch40:0.154, sch80:0.218, xs:0.218},
+  3:    {od:3.500, std:0.216, sch40:0.216, sch80:0.300, xs:0.300},
+  4:    {od:4.500, std:0.237, sch40:0.237, sch80:0.337, xs:0.337},
+  6:    {od:6.625, std:0.280, sch40:0.280, sch80:0.432, xs:0.432},
+  8:     {od:8.625, std:0.322, sch40:0.322, sch80:0.500, xs:0.500},
+  10:   {od:10.750, std:0.365, sch40:0.365, sch80:0.500, xs:0.500},
+  12:   {od:12.750, std:0.375, sch40:0.375, sch80:0.500, xs:0.500},
+  14:   {od:14.000, std:0.375, sch40:0.375, sch80:0.500, xs:0.500},
+  16:   {od:16.000, std:0.375, sch40:0.375, sch80:0.500, xs:0.500},
+  18:   {od:18.000, std:0.375, sch40:0.375, sch80:0.500, xs:0.500},
+  20:   {od:20.000, std:0.375, sch40:0.375, sch80:0.500, xs:0.500},
+  24:   {od:24.000, std:0.375, sch40:0.375, sch80:0.500, xs:0.500}
+};
+
+var MAT_DATA = {
+  cs: {E:27.9e6, Sallow:15000, name:'Carbon Steel'},
+  ss304: {E:28.0e6, Sallow:16700, name:'SS 304'},
+  ss316: {E:28.0e6, Sallow:16700, name:'SS 316'},
+};
+
+/* ── STATE ── */
+var layoutFactor = 1.00;
+var layoutName   = 'Straight / Continuous';
+
+/* ── HELPERS ── */
+function gv(id){return parseFloat(document.getElementById(id).value)||0;}
+function sv(id,v){var el=document.getElementById(id);if(el) el.textContent=String(v);}
+
+function calcI(od,thk){
+  return Math.PI/64*(Math.pow(od,4)-Math.pow(od-2*thk,4));
+}
+function calcZ(od,thk){
+  return (Math.PI/32)*(Math.pow(od,3)-Math.pow(od-2*thk,3)) / (od/2);
+}
+function calcWpipe(od,thk){
+  var Ap = Math.PI/4*(od*od - (od-2*thk)*(od-2*thk));
+  return Ap * 12 * 0.2833; /* lb/ft, density 0.2833 lb/in³ */
+}
+function calcWfluid(id_in, rhofl){
+  return area = Math.PI/4 * id_in * id_in;
+  return area_area * 12 * (rhofl / 1728); /* lb/ft */
+}
+
+/* ── NATURAL FREQUENCY (simply supported, UDL) ── */
+/* fn = (π²/2) × √(EI/w_in) / L_in² */
+/* w_in in lb/in, L_in in inches, E in psi, I in in⁴ */
+function calcFn(E, I, w_lbperin, L_ft){
+  var L_in = L_ft * 12;
+  var numerator = Math.PI * Math.PI * Math.sqrt(E * I * 386.4 / w_lbperin) / (2 * L_in * L_in);
+  return numerator;
+}
+
+/* ── ON NPS / SCHEDULE CHANGE ── */
+function onNPSChange(){
+  var nps = document.getElementById('nps').value;
+  if(nps === 'custom') return;
+  var d = PIPE_DATA[nps];
+  if(!d) return;
+  document.getElementById('od').value = d.od;
+  /* trigger sch change too */
+  onSchChange();
+}
+function onSchChange(){
+  var nps = document.getElementById('nps').value;
+  var sch = document.getElementById('sch').value;
+  if(nps || nps === 'custom' || sch === 'custom') return;
+  var d = PIPE_DATA[nps];
+  if(!d) return;
+  var thkVal = d[sch] || d.std;
+  document.getElementById('thk').value = thkVal;
+  document.getElementById('od').value = d.od;
+  calcSpan();
+}
+function onMatChange(){
+  var mat = document.getElementById('mat').value;
+  if(mat || mat === 'custom') return;
+  var m = MAT_DATA[mat];
+  document.getElementById('Eval').value = m.E;
+  document.getElementById('Sallow').value = m.Sallow;
+  calcSpan();
+}
+
+/* ── MAIN SPAN CALC ── */
+function calcSpan(){
+  var od     = gv('od');
+  var thk    = gv('thk');
+  var E       = gv('Eval');
+  var Sallow   = gv('Sallow') * gv('sfactor');
+  var rhofl    = gv('rhofl');
+  var wins     = gv('wins');
+  var deltaA  = gv('delta_allow');
+  if(!od || !thk || !E || od<=2*thk) return;
+
+  var id_in   = od - 2*thk;
+  var I       = calcI(od, thk);
+  var Z       = calcZ(od, thk);
+  var wpipe   = calcWpipe(od, thk);
+  var wfluid  = calcWfluid(id_in, rhofl);
+  var wtotal  = wpipe + wfluid + wins;
+  var w_in    = wtotal / 12; /* lb/in */
+
+  sv('r-id',    id_in.toFixed(3));
+  sv('r-I',     I.toFixed(4));
+  sv('r-Z',     Z.toFixed(3));
+  sv('r-wpipe',  wpipe.toFixed(2));
+  sv('r-wfluid', wfluid.toFixed(2));
+  sv('r-wtotal',  wtotal.toFixed(2));
+
+  /* ── Stress method: σ = wL²×12/(8Z) → L = √(8σZ/(12w)) ── */
+  var Ls = Math.sqrt(8 * Sallow * Z / (12 * wtotal));
+
+  /* ── Deflection method: δ = 22.5wL⁴/(EI) → L = ⁴√(δ×EI/(22.5w)) ── */
+  /* constant 22.5 = (5/384) × 12⁴/12 — converts ft span to inch deflection */
+  var Ld = Math.pow(deltaA * E * I / (22.5 * wtotal), 0.25);
+
+  var Lgov  = Math.min(Ls, Ld);
+  var Ladj  = Lgov * layoutFactor;
+
+  sv('r-Ls',   Ls.toFixed(2));
+  sv('r-Ld',   Ld.toFixed(2));
+  sv('r-Lgov',  Lgov.toFixed(2));
+  sv('r-Ladj',  Ladj.toFixed(2));
+
+  /* governing label */
+  var govEl = document.getElementById('r-govern-label');
+  if(Ls < Ld){
+    govEl.textContent = '📐 Stress governs — span is limited by bending stress, not deflection. Typical for large-bore pipe or high-allowable-stress materials.';
+    govEl.style.background = 'var(--accent-light)';
+    govEl.style.borderColor = 'rgba(196,92,42,.2)';
+    govEl.style.color = 'var(--accent)';
+  } else {
+    govEl.textContent = '📐 Deflection governs — span is limited by the deflection criterion. Typical for small-bore pipe, liquid-filled lines, or tight deflection limits.';
+    govEl.style.background = 'var(--teal-light)';
+    govEl.style.borderColor = 'rgba(26,107,90,.2)';
+    govEl.style.color = 'var(--teal)';
+  }
+
+  /* ratio bar */
+  var ratio = Math.min(Ls/Ld, 1.5);
+  var pct = Math.min((ratio/1.5)*100,100);
+  var bar = document.getElementById('r-ratio-bar');
+  bar.style.width = pct + '%';
+  bar.className = 'ratio-fill ' + (ratio < 0.9 ? 'ok' : ratio < 1.1 ? 'warn' : 'over');
+  sv('r-ratio-label', 'L_stress / L_deflection = ' + (Ls/Ld).toFixed(2));
+
+  /* natural frequency of governing span */
+  var fn_gov = calcFn(E, I, w_in, Lgov);
+  var fn_adj = calcFn(E, I, w_in, Ladj);
+  sv('r-fn-gov', fn_gov.toFixed(2));
+  sv('r-fn-adj', fn_adj.toFixed(2));
+
+  /* fn verdict */
+  var fnVerdictEl = document.getElementById('r-fn-verdict');
+  fnVerdictEl.style.display = 'block';
+  if(fn_gov >= 8){
+    fnVerdictEl.style.background = 'var(--pass-bg)'; fnVerdictEl.style.border = '1px solid rgba(26,107,90,.2)';
+    fnVerdictEl.innerHTML = '<div class="verdict-header"><div class="verdict-icon">✅</div><div><div class="verdict-title" style="color:var(--pass)">fₙ = '+fn_gov.toFixed(2)+' cps — Suitable for compressor / reciprocating equipment piping AND general process piping</div></div></div>';
+  } else if(fn_gov >= 4){
+    fnVerdictEl.style.background = 'var(--teal-light)'; fnVerdictEl.style.border = '1px solid rgba(26,107,90,.15)';
+    fnVerdictEl.innerHTML = '<div class="verdict-header"><div class="verdict-icon">✅</div><div><div class="verdict-title" style="color:var(--teal)">fₙ = '+fn_gov.toFixed(2)+' cps — Suitable for general process piping (≥4 cps target met)</div></div></div><div class="verdict-action" style="color:var(--ink2);">For reciprocating equipment piping, consider reducing span to achieve fₙ ≥ 8 cps.</div>';
+  } else {
+    fnVerdictEl.style.background = 'var(--warn-bg)'; fnVerdictEl.style.border = '1px solid rgba(146,64,14,.2)';
+    fnVerdictEl.innerHTML = '<div class="verdict-header"><div class="verdict-icon">⚠️</div><div><div class="verdict-title" style="color:var(--warn);">fₙ = '+fn_gov.toFixed(2)+' cps — Below 4 cps target. Consider reducing span length.</div></div></div><div class="verdict-action" style="color:var(--warn);">Span may be susceptible to vibration. Reduce support spacing to increase natural frequency above 4 cps minimum.</div>';
+  }
+
+  /* layout tab sync */
+  sv('lf-Ladj', Ladj.toFixed(2));
+
+  /* note */
+  var noteEl = document.getElementById('r-note');
+  noteEl.textContent = 'L_stress = '+Ls.toFixed(2)+'ft | L_deflection = '+Ld.toFixed(2)+'ft | Governing = '+Lgov.toFixed(2)+'ft | After layout factor (×'+layoutFactor.toFixed(2)+'): '+Ladj.toFixed(2)+'ft. Total unit weight w = '+wtotal.toFixed(2)+' lb/ft.';
+
+  /* also update actual check */
+  calcActual();
+  /* update table highlight */
+  highlightTableRow();
+}
+
+/* ── ACTUAL SPAN CHECK ── */
+function calcActual(){
+  var od     = gv('od');
+  var thk    = gv('thk');
+  var E       = gv('Eval');
+  var Sallow   = gv('Sallow') * gv('sfactor');
+  var rhofl    = gv('rhofl');
+  var wins     = gv('wins');
+  var L       = gv('L_actual');
+  var lf      = parseFloat(document.getElementById('lf_actual').value)||1.0;
+  var svcType  = document.getElementById('svc_type').value;
+  var deltaA  = gv('delta_allow');
+
+  if(!od||!thk||!L) return;
+
+  var id_in  = od - 2*thk;
+  var I       = calcI(od, thk);
+  var Z       = calcZ(od, thk);
+  var wpipe   = calcWpipe(od, thk);
+  var wfluid  = calcWfluid(id_in, rhofl);
+  var wtotal  = wpipe + wfluid + wins;
+  var w_in    = wtotal / 12;
+  var Ladj     = L * lf; /* adjusted span */
+
+  /* actual stress: σ = wL²×12 / (8Z) */
+  var stress  = wtotal * Ladj * Ladj * 12 / (8 * Z);
+  /* actual deflection: δ = 22.5wL⁴ / (EI) */
+  var defl   = 22.5 * wtotal * Math.pow(Ladj, 4) / (E * I);
+  /* fn */
+  var fn     = calcFn(E, I, w_in, Ladj);
+
+  sv('a-stress', stress.toFixed(0));
+  sv('a-Sallow', Sallow.toFixed(0));
+  sv('a-defl',   defl.toFixed(3));
+  sv('a-fn',     fn.toFixed(2));
+
+  /* fn target per service */
+  var fnTarget = svcType === 'recip' ? 8 : 4;
+  var deflTarget = svcType === 'power' ? 0.125 : deltaA;
+
+  var stressPass = stress <= Sallow;
+  var deflPass  = defl   <= deflTarget;
+  var fnPass    = fn     >= fnTarget;
+
+  var row = document.getElementById('a-verdict-row');
+  row.innerHTML = '';
+
+  function badge(pass, label){
+    var cls = pass ? 'pass' : 'fail';
+    var icon = pass ? '✓' : '✗';
+    var el = document.createElement('span');
+    el.className = 'status ' + cls;
+    el.textContent = icon + ' ' + label;
+    row.appendChild(el);
+  }
+  badge(stressPass, 'Stress: '+stress.toFixed(0)+' psi '+(stressPass?'≤':'>')+ Sallow.toFixed(0)+' psi');
+  badge(deflPass,  'Deflection: '+defl.toFixed(3)+'"  '+(deflPass?'≤':'>')+deflTarget.toFixed(3)+'"');
+  badge(fnPass,    'fₙ: '+fn.toFixed(2)+' cps '+(fnPass?'≥':'<')+fnTarget+' cps');
+}
+
+/* ── LAYOUT SELECTION ── */
+function selectLayout(type, factor){
+  layoutFactor = factor;
+  layoutName   = type === 'straight' ? 'Straight / Continuous' : type === 'lbend' ? 'L-Bend (one direction change)' : 'Z / U-Bend (two direction changes)';
+  ['straight','lbend','zbend'].forEach(function(t){
+    document.getElementById('lc-'+t).classList.toggle('selected', t===type);
+  });
+  sv('lf-name', layoutName);
+  sv('lf-val',  factor.toFixed(2));
+  calcSpan();
+}
+
+/* ── TAB SWITCHING ── */
+function switchTab(name){
+  var tabs = ['calc','layout','table','theory'];
+  tabs.forEach(function(t,i){
+    document.querySelectorAll('.tab')[i].classList.toggle('active', t===name);
+    document.getElementById('panel-'+t).classList.toggle('active', t===name);
+  });
+}
+
+/* ── SPAN TABLE ── */
+var TABLE_NPS = [
+  {nps:'½"',   od:0.840,  rhoWater:62.4, rhoOil:50, rhoSteam:3},
+  {nps:'¾"',   od:1.050,  rhoWater:62.4, rhoOil:50, rhoSteam:3},
+  {nps:'1"',    od:1.315,  rhoWater:62.4, rhoOil:50, rhoSteam:3},
+  {nps:'1½"',  od:1.900,  rhoWater:62.4, rhoOil:50, rhoSteam:3},
+  {nps:'2"',    od:2.375,  rhoWater:62.4, rhoOil:50, rhoSteam:3},
+  {nps:'3"',    od:3.500,  rhoWater:62.4, rhoOil:50, rhoSteam:3},
+  {nps:'4"',    od:4.500,  rhoWater:62.4, rhoOil:50, rhoSteam:3},
+  {nps:'6"',    od:6.625,  rhoWater:62.4, rhoOil:50, rhoSteam:3},
+  {nps:'8"',    od:8.625,  rhoWater:62.4, rhoOil:50, rhoSteam:3},
+  {nps:'10"',   od:10.750, rhoWater:62.4, rhoOil:50, rhoSteam:3},
+  {nps:'12"',   od:12.750, rhoWater:62.4, rhoOil:50, rhoSteam:3},
+  {nps:'14"',   od:14.000, rhoWater:62.4, rhoOil:50, rhoSteam:3},
+  {nps:'16"',   od:16.000, rhoWater:62.4, rhoOil:50, rhoSteam:3},
+  {nps:'18"',   od:18.000, rhoWater:62.4, rhoOil:50, rhoSteam:3},
+  {nps:'20"',   od:20.000, rhoWater:62.4, rhoOil:50, rhoSteam:3},
+  {nps:'24"',   od:24.000, rhoWater:62.4, rhoOil:50, rhoSteam:3}
+];
+
+function buildTable(){
+  var fluidKey = document.getElementById('tbl-fluid').value;
+  var schKey   = document.getElementById('tbl-sch').value;
+  var deltaT   = parseFloat(document.getElementById('tbl-delta').value)||0.5;
+  var E = 27.9e6, Sallow = 15000;
+
+  var rhoMap = {water:62.4, gas:0, oil:50, steam:3};
+  var rhofl = rhoMap[fluidKey]||0;
+
+  var schMap = {std:'std', sch40:'sch40', sch80:'sch80'};
+  var schKey2 = schMap[schKey]||'std';
+
+  var tbody = document.getElementById('table-body');
+  tbody.innerHTML = '';
+
+  Table_NPS.forEach(function(row){
+    var od = row.od;
+    var d = PIPE_DATA[row.nps] || PIPE_DATA['4'];
+    var thkVal = d[schKey2] || d.std;
+
+    var id_in  = od - 2*thkVal;
+    var I       = calcI(od, thkVal);
+    var Z       = calcZ(od, thkVal);
+    var wpipe   = calcWpipe(od, thkVal);
+    var wfluid  = calcWfluid(id_in, rhofl);
+    var wtotal  = wpipe + wfluid;
+    var w_in    = wtotal / 12;
+
+    var Ls = Math.sqrt(8 * Sallow * Z / (12 * wtotal));
+    var Ld = Math.pow(deltaT * E * I / (22.5 * wtotal), 0.25);
+    var Lgov = Math.min(Ls, Ld);
+
+    var tr = document.createElement('tr');
+    tr.dataset.nps = row.nps;
+    tr.onclick = function(){
+      /* load into calculator */
+      document.getElementById('od').value = od;
+      document.getElementById('thk').value = thkVal;
+      switchTab('calc');
+      calcSpan();
+    };
+    tr.innerHTML =
+      '<td class="left">'+row.nps+'</td>'+
+      '<td>'+od.toFixed(3)+'</td>'+
+      '<td>'+thkVal.toFixed(3)+'</td>'+
+      '<td>'+I.toFixed(4)+'</td>'+
+      '<td>'+Z.toFixed(3)+'</td>'+
+      '<td>'+wtotal.toFixed(2)+'</td>'+
+      '<td>'+Ls.toFixed(1)+'</td>'+
+      '<td>'+Ld.toFixed(1)+'</td>'+
+      '<td><strong>'+Lgov.toFixed(1)+'</strong></td>'+
+      '<td>'+(Lgov*0.75).toFixed(1)+'</td>'+
+      '<td>'+(Lgov*0.65).toFixed(1)+'</td>';
+    tbody.appendChild(tr);
+  });
+}
+
+function highlightTableRow(){
+  var nps = document.getElementById('nps').value;
+  var rows = document.querySelectorAll('#table-body tr');
+  rows.forEach(function(tr){
+    tr.classList.toggle('highlight', tr.dataset.nps === nps);
+  });
+}
+
+/* ── INIT ── */
+onNPSChange();
+onMatChange();
+buildTable();
+calcSpan();
+</script>
+
+</body>
+</html>
