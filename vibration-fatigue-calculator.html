@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Vibration Fatigue Calculator — PipingPro Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --ink:#1a1a18;--ink2:#4a4a44;--ink3:#8a8a80;
+  --paper:#f5f2eb;--paper2:#ede9de;--paper3:#e3dfd2;
+  --accent:#c45c2a;--accent2:#e8a06a;--accent-light:#f7ede3;
+  --teal:#1a6b5a;--teal-light:#e0f0eb;
+  --rule:rgba(26,26,24,0.12);
+  --pass:#1a6b5a;--pass-bg:#e0f0eb;
+  --fail:#9b1c1c;--fail-bg:#fde8e8;
+  --warn:#92400e;--warn-bg:#fef3c7;
+  --font:'DM Sans',sans-serif;
+  --serif:'DM Serif Display',serif;
+  --mono:'DM Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:15px;line-height:1.6;min-height:100vh;}
+
+.ppa-nav{background:rgba(245,242,235,0.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--rule);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:200;}
+.ppa-nav-logo{font-family:var(--serif);font-size:17px;color:var(--ink);text-decoration:none;}
+.ppa-nav-logo span{color:var(--accent);}
+.ppa-nav-back{font-size:13px;color:var(--ink2);text-decoration:none;display:flex;align-items:center;gap:5px;}
+.ppa-nav-back:hover{color:var(--accent);}
+
+.ppa-hero{background:var(--ink);color:var(--paper);padding:2.8rem 2rem 2.4rem;text-align:center;border-bottom:3px solid var(--accent);position:relative;overflow:hidden;}
+.ppa-hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 60px),repeating-linear-gradient(0deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 60px);}
+.ppa-hero-eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);margin-bottom:.7rem;font-family:var(--mono);position:relative;}
+.ppa-hero h1{font-family:var(--serif);font-size:clamp(1.7rem,4vw,2.6rem);line-height:1.1;margin-bottom:.7rem;position:relative;}
+.ppa-hero p{font-size:14px;color:rgba(245,242,235,0.6);max-width:560px;margin:0 auto;position:relative;}
+
+.tabs{display:flex;background:var(--paper2);border-bottom:1px solid var(--rule);overflow-x:auto;}
+.tab{padding:.9rem 1.4rem;font-size:13px;font-weight:500;color:var(--ink3);border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;font-family:var(--font);transition:color .2s,border-color .2s;white-space:nowrap;}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.tab:hover:not(.active){color:var(--ink);}
+
+.main{max-width:920px;margin:0 auto;padding:2rem 1.5rem;}
+.panel{display:none;}
+.panel.active{display:block;}
+
+.card{background:#fff;border:1px solid var(--rule);border-radius:12px;padding:1.5rem 1.8rem;margin-bottom:1.2rem;}
+.card-title{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:1.2rem;padding-bottom:.5rem;border-bottom:1px solid var(--rule);}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;}
+.grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1rem;}
+@media(max-width:640px){.grid2,.grid3,.grid4{grid-template-columns:1fr;}}
+@media(max-width:800px){.grid3{grid-template-columns:1fr 1fr;}.grid4{grid-template-columns:1fr 1fr;}}
+
+.field{display:flex;flex-direction:column;gap:4px;}
+.field label{font-size:12px;font-weight:500;color:var(--ink2);}
+.field input,.field select{padding:9px 12px;border:1px solid var(--rule);border-radius:8px;font-family:var(--mono);font-size:14px;background:var(--paper);color:var(--ink);outline:none;transition:border-color .2s;}
+.field input:focus,.field select:focus{border-color:var(--accent);background:#fff;}
+.field .hint{font-size:11px;color:var(--ink3);}
+
+.ro{padding:9px 12px;border:1px solid var(--rule);border-radius:8px;font-family:var(--mono);font-size:14px;background:var(--paper3);color:var(--ink2);min-height:40px;}
+
+.results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:.8rem;margin-bottom:1rem;}
+.res-box{background:var(--paper2);border-radius:10px;padding:1rem;}
+.res-box.hi{background:var(--accent-light);border:1px solid rgba(196,92,42,.2);}
+.res-label{font-size:11px;color:var(--ink3);margin-bottom:3px;line-height:1.3;}
+.res-val{font-family:var(--mono);font-size:1.05rem;font-weight:500;color:var(--ink);}
+.res-unit{font-size:11px;color:var(--ink3);margin-top:2px;}
+
+.status{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:13px;font-weight:600;}
+.status.pass{background:var(--pass-bg);color:var(--pass);}
+.status.fail{background:var(--fail-bg);color:var(--fail);}
+.status.warn{background:var(--warn-bg);color:var(--warn);}
+
+.ratio-wrap{margin-bottom:.6rem;}
+.ratio-label{font-size:12px;color:var(--ink2);margin-bottom:4px;display:flex;justify-content:space-between;}
+.ratio-bar{height:10px;background:var(--paper3);border-radius:5px;overflow:hidden;}
+.ratio-fill{height:100%;border-radius:5px;transition:width .4s;}
+.ratio-fill.ok{background:var(--teal);}
+.ratio-fill.warn{background:#d97706;}
+.ratio-fill.over{background:#dc2626;}
+
+.formula{background:var(--paper2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:1rem 1.2rem;font-size:13px;color:var(--ink2);line-height:1.9;margin-bottom:1rem;}
+.formula code{font-family:var(--mono);color:var(--ink);font-size:13px;}
+.formula-title{font-weight:600;color:var(--ink);margin-bottom:.4rem;font-size:13px;}
+
+.note{background:var(--teal-light);border:1px solid rgba(26,107,90,.15);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--teal);margin-bottom:1rem;}
+.disclaimer{background:var(--accent-light);border:1px solid rgba(196,92,42,.2);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--accent);margin-bottom:1.5rem;}
+
+.calc-btn{display:inline-block;padding:10px 28px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;margin-top:.5rem;transition:background .2s;}
+.calc-btn:hover{background:#a84d22;}
+
+.span-table{width:100%;border-collapse:collapse;font-size:13px;font-family:var(--mono);}
+.span-table th{background:var(--paper3);padding:8px 10px;text-align:left;font-weight:600;font-family:var(--font);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2);border-bottom:1px solid var(--rule);}
+.span-table td{padding:7px 10px;border-bottom:1px solid var(--rule);color:var(--ink);}
+.span-table tr:last-child td{border-bottom:none;}
+.span-table tr.highlight td{background:var(--accent-light);color:var(--accent);font-weight:600;}
+
+.section-label{font-family:var(--serif);font-size:1.15rem;color:var(--ink);margin-bottom:.2rem;}
+.section-sub{font-size:12px;color:var(--ink3);margin-bottom:1.2rem;}
+
+.big-result{text-align:center;padding:1.5rem;background:var(--paper2);border-radius:12px;margin-bottom:1rem;}
+.big-result .val{font-family:var(--mono);font-size:2.2rem;font-weight:500;color:var(--ink);}
+.big-result .lbl{font-size:12px;color:var(--ink3);margin-top:.3rem;}
+
+.ppa-footer{background:var(--ink);color:rgba(245,242,235,0.5);text-align:center;padding:2rem;font-size:13px;margin-top:3rem;}
+.ppa-footer a{color:var(--accent2);text-decoration:none;}
+.ppa-footer-logo{font-family:var(--serif);font-size:1.1rem;color:var(--paper);margin-bottom:.4rem;}
+.ppa-footer-logo span{color:var(--accent);}
+</style>
+</head>
+<body>
+
+<nav class="ppa-nav">
+  <a href="index.html" class="ppa-nav-logo">Piping<span>Pro</span> Academy</a>
+  <a href="calculators.html" class="ppa-nav-back">← Back to Calculators</a>
+</nav>
+
+<div class="ppa-hero">
+  <div class="ppa-hero-eyebrow">Members · Engineering Calculator Suite</div>
+  <h1>Vibration Fatigue <em>Calculator</em></h1>
+  <p>Reciprocating compressor piping — MNFP, allowable span, support stiffness &amp; pulsation compliance · API-618 / ASME B31.3</p>
+</div>
+
+<!-- LOCK OVERLAY -->
+<style>
+#ppa-lock-overlay{position:fixed;inset:0;background:rgba(26,26,24,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;}
+#ppa-lock-box{background:#f5f2eb;border-radius:14px;padding:2.5rem 2rem;max-width:400px;width:90%;text-align:center;}
+#ppa-lock-box h2{font-size:1.3rem;color:#1a1a18;margin-bottom:.5rem;font-family:'DM Serif Display',serif;}
+#ppa-lock-box p{font-size:13px;color:#4a4a44;margin-bottom:1.2rem;line-height:1.6;}
+#ppa-lock-input{width:100%;padding:10px 14px;border:1px solid rgba(196,92,42,0.4);border-radius:8px;font-size:14px;font-family:monospace;color:#1a1a18;background:#fff;outline:none;margin-bottom:8px;text-align:center;}
+#ppa-lock-input:focus{border-color:#c45c2a;}
+#ppa-lock-btn{width:100%;padding:11px;border-radius:8px;background:#c45c2a;color:#fff;font-size:14px;font-weight:600;border:none;cursor:pointer;margin-bottom:.8rem;}
+#ppa-lock-btn:hover{background:#a84d22;}
+#ppa-lock-err{font-size:12px;color:#b91c1c;display:none;margin-bottom:.6rem;}
+#ppa-lock-back{font-size:12px;color:#8a8a80;text-decoration:none;}
+#ppa-lock-back:hover{color:#c45c2a;}
+</style>
+<div id="ppa-lock-overlay">
+  <div id="ppa-lock-box">
+    <div style="font-size:2rem;margin-bottom:.8rem;">🔒</div>
+    <h2>Pro Calculator</h2>
+    <p>This calculator is part of the <strong>PipingPro Academy Pro Suite</strong>. Enter your access code to unlock.</p>
+    <input id="ppa-lock-input" type="text" placeholder="PPA-PRO-XXXX-XXXX" maxlength="20"/>
+    <div id="ppa-lock-err">Invalid access code. Please try again.</div>
+    <button id="ppa-lock-btn" onclick="checkLock()">Unlock Calculator</button>
+    <br/>
+    <a href="calculators.html" id="ppa-lock-back">← Back to all calculators</a>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('mnfp')">1 · MNFP</button>
+  <button class="tab" onclick="switchTab('span')">2 · Allowable Span</button>
+  <button class="tab" onclick="switchTab('stiffness')">3 · Support Stiffness</button>
+  <button class="tab" onclick="switchTab('pulsation')">4 · Pulsation Check</button>
+  <button class="tab" onclick="switchTab('surge')">5 · Surge Bottle</button>
+</div>
+
+<div class="main">
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 1 — MNFP                                          -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="panel active" id="panel-mnfp">
+
+  <div class="disclaimer">
+    ⚠ For engineering reference only. Results must be verified by a qualified engineer. Reference: Truong, Q.N. — Piping Design to Prevent Vibrational Fatigue Failures; API-618.
+  </div>
+
+  <div class="card">
+    <div class="card-title">Machine Parameters</div>
+    <div class="formula">
+      <div class="formula-title">Minimum Mechanical Natural Frequency of Pipe (MNFP)</div>
+      <code>MNFP = 0.06 × RPM &nbsp;(cycles per second, cps)</code><br/>
+      <code>Required pipe span freq ≥ MNFP × 1.20 &nbsp;(20% margin above MNFP)</code>
+    </div>
+    <div class="grid3">
+      <div class="field">
+        <label>Compressor Speed (RPM)</label>
+        <input type="number" id="m-rpm" value="300" min="100" max="1800" oninput="calcMNFP()"/>
+        <span class="hint">Typical: 200–1800 RPM</span>
+      </div>
+      <div class="field">
+        <label>Number of Cylinders</label>
+        <input type="number" id="m-cyl" value="2" min="1" max="12" oninput="calcMNFP()"/>
+      </div>
+      <div class="field">
+        <label>Stroke Type</label>
+        <select id="m-stroke" onchange="calcMNFP()">
+          <option value="single">Single-acting</option>
+          <option value="double" selected>Double-acting</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Results — Pulsation Frequencies &amp; MNFP</div>
+    <div class="results-grid">
+      <div class="res-box hi">
+        <div class="res-label">MNFP (0.06 × RPM)</div>
+        <div class="res-val" id="r-mnfp">—</div>
+        <div class="res-unit">cps (Hz)</div>
+      </div>
+      <div class="res-box hi">
+        <div class="res-label">Required Pipe Freq (+20% margin)</div>
+        <div class="res-val" id="r-mnfp-req">—</div>
+        <div class="res-unit">cps (Hz)</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">1st Harmonic (fundamental)</div>
+        <div class="res-val" id="r-f1">—</div>
+        <div class="res-unit">Hz</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">2nd Harmonic</div>
+        <div class="res-val" id="r-f2">—</div>
+        <div class="res-unit">Hz</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">3rd Harmonic</div>
+        <div class="res-val" id="r-f3">—</div>
+        <div class="res-unit">Hz</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Design Approach Required</div>
+        <div class="res-val" id="r-approach">—</div>
+        <div class="res-unit">API-618</div>
+      </div>
+    </div>
+
+    <div class="note" id="r-mnfp-note">Enter compressor speed to calculate MNFP and pulsation frequencies.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">API-618 Design Approach Guide</div>
+    <div style="font-size:13px;color:var(--ink2);line-height:1.8;">
+      <p style="margin-bottom:.6rem;"><strong style="color:var(--ink);">Approach 1</strong> — Compressors rated below 150 BHP, final discharge &lt; 150 psia, single-stage with ≤2 cylinders. Acoustical evaluation using standard analytical techniques.</p>
+      <p style="margin-bottom:.6rem;"><strong style="color:var(--ink);">Approach 2</strong> — All compressors not covered by Approach 1 or 3. Full pulsation analysis using acoustical piping analog technique.</p>
+      <p><strong style="color:var(--ink);">Approach 3</strong> — Compressors with driver &gt;500 BHP, or in critical/hazardous service. Full pulsation analysis + dynamic mechanical analysis of complete system.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 2 — ALLOWABLE SPAN                                -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-span">
+
+  <div class="card">
+    <div class="card-title">Pipe Properties &amp; Target Frequency</div>
+    <div class="formula">
+      <div class="formula-title">Natural Frequency of Pipe Span (Truong / API-618)</div>
+      <code>fₙ = (C / L²) × √(EI / w) &nbsp;&nbsp;[cps]</code><br/>
+      <code>C = coefficient from Table 1 (varies by configuration &amp; end conditions)</code><br/>
+      <code>L = span length (ft), E = 27.9 × 10⁶ psi (carbon steel), I = moment of inertia (in⁴), w = weight/ft (lb/ft)</code>
+    </div>
+    <div class="grid3">
+      <div class="field">
+        <label>Pipe Outside Diameter (in)</label>
+        <select id="s-od" onchange="calcSpan()">
+          <option value="2.375">2" (2.375 OD)</option>
+          <option value="3.5">3" (3.500 OD)</option>
+          <option value="4.5" selected>4" (4.500 OD)</option>
+          <option value="6.625">6" (6.625 OD)</option>
+          <option value="8.625">8" (8.625 OD)</option>
+          <option value="10.75">10" (10.750 OD)</option>
+          <option value="12.75">12" (12.750 OD)</option>
+          <option value="14">14" (14.000 OD)</option>
+          <option value="16">16" (16.000 OD)</option>
+          <option value="18">18" (18.000 OD)</option>
+          <option value="20">20" (20.000 OD)</option>
+          <option value="24">24" (24.000 OD)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Wall Thickness (in)</label>
+        <input type="number" id="s-thk" value="0.237" step="0.001" oninput="calcSpan()"/>
+        <span class="hint">Nominal wall thickness</span>
+      </div>
+      <div class="field">
+        <label>Pipe Schedule / Config</label>
+        <select id="s-config" onchange="calcSpan()">
+          <option value="straight">Straight span</option>
+          <option value="one_elbow">Span with one elbow (L-bend)</option>
+          <option value="two_elbow">Span with two elbows (Z/U/Hovgaard)</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid3" style="margin-top:.8rem;">
+      <div class="field">
+        <label>Fluid Density (lb/ft³)</label>
+        <input type="number" id="s-rhofl" value="15" oninput="calcSpan()"/>
+        <span class="hint">Gas: 1–30, liquid: 50–65</span>
+      </div>
+      <div class="field">
+        <label>Insulation Weight (lb/ft)</label>
+        <input type="number" id="s-wins" value="0" oninput="calcSpan()"/>
+        <span class="hint">0 if bare pipe</span>
+      </div>
+      <div class="field">
+        <label>Target Natural Frequency (cps)</label>
+        <select id="s-freq" onchange="calcSpan()">
+          <option value="20">20 cps (Table D1)</option>
+          <option value="25">25 cps (Table D2)</option>
+          <option value="30" selected>30 cps (Table D3)</option>
+          <option value="35">35 cps (Table D4)</option>
+          <option value="40">40 cps (Table D5)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Calculated Pipe Properties</div>
+    <div class="grid4">
+      <div class="res-box">
+        <div class="res-label">Inside Diameter</div>
+        <div class="res-val" id="s-id">—</div>
+        <div class="res-unit">inches</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Moment of Inertia (I)</div>
+        <div class="res-val" id="s-I">—</div>
+        <div class="res-unit">in⁴</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Pipe Weight (empty)</div>
+        <div class="res-val" id="s-wpipe">—</div>
+        <div class="res-unit">lb/ft</div>
+      </div>
+      <div class="res-box hi">
+        <div class="res-label">Total Weight (w)</div>
+        <div class="res-val" id="s-wtotal">—</div>
+        <div class="res-unit">lb/ft</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Maximum Allowable Span Length</div>
+    <div class="results-grid">
+      <div class="res-box hi">
+        <div class="res-label">Max Span — Calculated</div>
+        <div class="res-val" id="s-Lmax">—</div>
+        <div class="res-unit">feet</div>
+      </div>
+      <div class="res-box hi">
+        <div class="res-label">Max Span (Table D reference)</div>
+        <div class="res-val" id="s-Ltable">—</div>
+        <div class="res-unit">feet</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Coefficient C used</div>
+        <div class="res-val" id="s-C">—</div>
+        <div class="res-unit">per Table 1</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Clamped-clamped factor</div>
+        <div class="res-val">×1.60</div>
+        <div class="res-unit">applied</div>
+      </div>
+    </div>
+
+    <div class="note">Adjacent spans should differ by ~10% of max span (min 6 in) to avoid identical natural frequencies and suppress resonance coupling.</div>
+
+    <div style="margin-top:1rem;">
+      <div class="card-title" style="margin-bottom:.8rem;">Suggested Adjacent Span Lengths (stagger pattern)</div>
+      <div class="results-grid" id="s-stagger-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 3 — SUPPORT STIFFNESS                             -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-stiffness">
+
+  <div class="card">
+    <div class="card-title">Support Stiffness — Straight Span (Eq. 3b)</div>
+    <div class="formula">
+      <div class="formula-title">Vibration Support Stiffness — Straight Pipe</div>
+      <code>Kvs = 204 × E × I / L³ &nbsp;&nbsp;(lb/in)</code><br/>
+      <code>Kvs ≈ 2 × pipe flexural stiffness at attachment point</code><br/>
+      <code>E = 27.9 × 10⁶ psi (carbon steel at operating temp)</code>
+    </div>
+    <div class="grid3">
+      <div class="field">
+        <label>Pipe Outside Diameter (in)</label>
+        <select id="k-od" onchange="calcStiffness()">
+          <option value="2.375">2" (2.375 OD)</option>
+          <option value="3.5">3" (3.500 OD)</option>
+          <option value="4.5">4" (4.500 OD)</option>
+          <option value="6.625" selected>6" (6.625 OD)</option>
+          <option value="8.625">8" (8.625 OD)</option>
+          <option value="10.75">10" (10.750 OD)</option>
+          <option value="12.75">12" (12.750 OD)</option>
+          <option value="14">14" (14.000 OD)</option>
+          <option value="16">16" (16.000 OD)</option>
+          <option value="18">18" (18.000 OD)</option>
+          <option value="20">20" (20.000 OD)</option>
+          <option value="24">24" (24.000 OD)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Wall Thickness (in)</label>
+        <input type="number" id="k-thk" value="0.280" step="0.001" oninput="calcStiffness()"/>
+      </div>
+      <div class="field">
+        <label>Span Length L (ft)</label>
+        <input type="number" id="k-L" value="15" step="0.5" oninput="calcStiffness()"/>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Straight Span Results</div>
+    <div class="results-grid">
+      <div class="res-box">
+        <div class="res-label">Moment of Inertia (I)</div>
+        <div class="res-val" id="k-I">—</div>
+        <div class="res-unit">in⁴</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Pipe Flexural Stiffness (Kp)</div>
+        <div class="res-val" id="k-Kp">—</div>
+        <div class="res-unit">lb/in</div>
+      </div>
+      <div class="res-box hi">
+        <div class="res-label">Required Kvs (straight)</div>
+        <div class="res-val" id="k-Kvs">—</div>
+        <div class="res-unit">lb/in</div>
+      </div>
+      <div class="res-box hi">
+        <div class="res-label">Kvs (kip/in)</div>
+        <div class="res-val" id="k-Kvs-kip">—</div>
+        <div class="res-unit">kip/in</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Support Stiffness at Elbow — Dynamic Force Method (Eq. 3d)</div>
+    <div class="formula">
+      <div class="formula-title">Vibration Support Stiffness — At Elbows</div>
+      <code>Kvs = 0.063 × p × A × f &nbsp;&nbsp;(lb/in)</code><br/>
+      <code>p = peak-to-peak pulsation pressure (psi) &nbsp;|&nbsp; A = pipe bore area (in²) &nbsp;|&nbsp; f = pulsation frequency (Hz)</code><br/>
+      <code>Based on max allowable vibration amplitude: a = √(250/f) mils peak-to-peak</code>
+    </div>
+    <div class="grid3">
+      <div class="field">
+        <label>Pipe OD (in) — elbow pipe</label>
+        <select id="ke-od" onchange="calcElbowStiffness()">
+          <option value="2.375">2" (2.375 OD)</option>
+          <option value="3.5">3" (3.500 OD)</option>
+          <option value="4.5">4" (4.500 OD)</option>
+          <option value="6.625" selected>6" (6.625 OD)</option>
+          <option value="8.625">8" (8.625 OD)</option>
+          <option value="10.75">10" (10.750 OD)</option>
+          <option value="12.75">12" (12.750 OD)</option>
+          <option value="14">14" (14.000 OD)</option>
+          <option value="16">16" (16.000 OD)</option>
+          <option value="18">18" (18.000 OD)</option>
+          <option value="20">20" (20.000 OD)</option>
+          <option value="24">24" (24.000 OD)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Wall Thickness (in)</label>
+        <input type="number" id="ke-thk" value="0.280" step="0.001" oninput="calcElbowStiffness()"/>
+      </div>
+      <div class="field">
+        <label>Pulsation Pressure p (psi pk-pk)</label>
+        <input type="number" id="ke-p" value="50" step="1" oninput="calcElbowStiffness()"/>
+        <span class="hint">Peak-to-peak pressure pulsation</span>
+      </div>
+    </div>
+    <div class="grid3" style="margin-top:.8rem;">
+      <div class="field">
+        <label>Pulsation Frequency f (Hz)</label>
+        <input type="number" id="ke-f" value="10" step="0.5" oninput="calcElbowStiffness()"/>
+      </div>
+      <div></div><div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Elbow Support Results</div>
+    <div class="results-grid">
+      <div class="res-box">
+        <div class="res-label">Pipe Bore Area (A)</div>
+        <div class="res-val" id="ke-A">—</div>
+        <div class="res-unit">in²</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Allowable Vibration Amplitude</div>
+        <div class="res-val" id="ke-a">—</div>
+        <div class="res-unit">mils pk-pk</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Dynamic Force F = p × A</div>
+        <div class="res-val" id="ke-F">—</div>
+        <div class="res-unit">lbs</div>
+      </div>
+      <div class="res-box hi">
+        <div class="res-label">Required Kvs (at elbow)</div>
+        <div class="res-val" id="ke-Kvs">—</div>
+        <div class="res-unit">lb/in</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 4 — PULSATION CHECK                               -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-pulsation">
+
+  <div class="card">
+    <div class="card-title">Allowable Pulsation Level — API-618 Eq. 5</div>
+    <div class="formula">
+      <div class="formula-title">API-618 Maximum Allowable Pulsation Level</div>
+      <code>P₁(%) = 300 / √(P_L × ID × f)</code><br/>
+      <code>P₁ = max allowable peak-to-peak pulsation (% of avg absolute line pressure)</code><br/>
+      <code>P_L = average absolute line pressure (psia) &nbsp;|&nbsp; ID = pipe inside diameter (in) &nbsp;|&nbsp; f = frequency (Hz)</code><br/>
+      <code>Valid for 50 psia ≤ P_L ≤ 3000 psia</code>
+    </div>
+    <div class="grid3">
+      <div class="field">
+        <label>Avg Absolute Line Pressure P_L (psia)</label>
+        <input type="number" id="pu-PL" value="500" step="10" oninput="calcPulsation()"/>
+        <span class="hint">50–3000 psia for API-618 Eq.5</span>
+      </div>
+      <div class="field">
+        <label>Pipe Inside Diameter ID (in)</label>
+        <input type="number" id="pu-ID" value="4.026" step="0.001" oninput="calcPulsation()"/>
+        <span class="hint">Nominal bore</span>
+      </div>
+      <div class="field">
+        <label>Compressor Speed (RPM)</label>
+        <input type="number" id="pu-rpm" value="300" oninput="calcPulsation()"/>
+      </div>
+    </div>
+    <div class="grid3" style="margin-top:.8rem;">
+      <div class="field">
+        <label>Actual Peak-to-Peak Pulsation (%)</label>
+        <input type="number" id="pu-actual" value="3.5" step="0.1" oninput="calcPulsation()"/>
+        <span class="hint">From acoustic analog study</span>
+      </div>
+      <div></div><div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Pulsation Compliance Results</div>
+    <div class="results-grid">
+      <div class="res-box">
+        <div class="res-label">1st Harmonic (N=1)</div>
+        <div class="res-val" id="pu-f1">—</div>
+        <div class="res-unit">Hz</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">2nd Harmonic (N=2)</div>
+        <div class="res-val" id="pu-f2">—</div>
+        <div class="res-unit">Hz</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">3rd Harmonic (N=3)</div>
+        <div class="res-val" id="pu-f3">—</div>
+        <div class="res-unit">Hz</div>
+      </div>
+      <div class="res-box hi">
+        <div class="res-label">Allowable P₁ @ 1st harmonic</div>
+        <div class="res-val" id="pu-P1h1">—</div>
+        <div class="res-unit">% of line pressure</div>
+      </div>
+      <div class="res-box hi">
+        <div class="res-label">Allowable P₁ @ 2nd harmonic</div>
+        <div class="res-val" id="pu-P1h2">—</div>
+        <div class="res-unit">% of line pressure</div>
+      </div>
+      <div class="res-box hi">
+        <div class="res-label">Allowable P₁ @ 3rd harmonic</div>
+        <div class="res-val" id="pu-P1h3">—</div>
+        <div class="res-unit">% of line pressure</div>
+      </div>
+    </div>
+
+    <div class="card-title" style="margin-top:1.2rem;margin-bottom:.8rem;">Compliance Check — Entered Actual vs Allowable</div>
+    <div id="pu-compliance-grid" class="results-grid"></div>
+    <div id="pu-status-row" style="display:flex;gap:.8rem;flex-wrap:wrap;margin-top:.8rem;"></div>
+
+    <div class="note" style="margin-top:1rem;" id="pu-range-note"></div>
+
+    <div class="card-title" style="margin-top:1.2rem;margin-bottom:.6rem;">Dynamic Cyclic Stress Range — API-618 Criterion</div>
+    <div style="font-size:13px;color:var(--ink2);line-height:1.8;">
+      For carbon steel pipe below 700°F: peak-to-peak cyclic stress range shall not exceed <strong style="color:var(--ink);">20,000 psi</strong> (considering all stress concentration factors, per ASME Boiler &amp; Pressure Vessel Code Sec. VIII Div. 2 at 1 million cycles).
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- TAB 5 — SURGE BOTTLE SIZING                           -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-surge">
+
+  <div class="card">
+    <div class="card-title">Surge Bottle / Major Vapor Volume Sizing (Eq. 1)</div>
+    <div class="formula">
+      <div class="formula-title">Required Major Vapor Volume at Terminal Point</div>
+      <code>V = (190 × e^(−0.085m) + 3mᵢ) × PD</code><br/>
+      <code>V = required vapor volume (in³ or consistent units)</code><br/>
+      <code>m = molecular weight of gas &nbsp;|&nbsp; mᵢ = 0 for m≤4 or m&gt;12; mᵢ = m for 4&lt;m≤12</code><br/>
+      <code>PD = total net displaced volume per revolution of one cylinder (in³)</code><br/>
+      <code>Note: for m &gt; 24, use m = 24 in equation</code>
+    </div>
+    <div class="grid3">
+      <div class="field">
+        <label>Gas Molecular Weight (m)</label>
+        <input type="number" id="sb-m" value="16.04" step="0.01" oninput="calcSurge()"/>
+        <span class="hint">Methane=16.04, Propane=44.1, Natural gas≈17–19</span>
+      </div>
+      <div class="field">
+        <label>Cylinder Bore Diameter (in)</label>
+        <input type="number" id="sb-bore" value="8" step="0.1" oninput="calcSurge()"/>
+      </div>
+      <div class="field">
+        <label>Piston Stroke (in)</label>
+        <input type="number" id="sb-stroke" value="10" step="0.1" oninput="calcSurge()"/>
+      </div>
+    </div>
+    <div class="grid3" style="margin-top:.8rem;">
+      <div class="field">
+        <label>Stroke Type</label>
+        <select id="sb-type" onchange="calcSurge()">
+          <option value="double" selected>Double-acting (both ends)</option>
+          <option value="single">Single-acting (one end)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Rod Diameter (in) — double-acting</label>
+        <input type="number" id="sb-rod" value="2" step="0.1" oninput="calcSurge()"/>
+        <span class="hint">For head-end displaced volume correction</span>
+      </div>
+      <div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Surge Bottle Sizing Results</div>
+    <div class="grid2" style="margin-bottom:1rem;">
+      <div>
+        <div class="res-box hi" style="margin-bottom:.8rem;">
+          <div class="res-label">mᵢ factor</div>
+          <div class="res-val" id="sb-mi">—</div>
+        </div>
+        <div class="res-box hi">
+          <div class="res-label">m used in equation</div>
+          <div class="res-val" id="sb-mused">—</div>
+          <div class="res-unit">(capped at 24 if m &gt; 24)</div>
+        </div>
+      </div>
+      <div>
+        <div class="res-box" style="margin-bottom:.8rem;">
+          <div class="res-label">PD — displaced volume / rev (crank end)</div>
+          <div class="res-val" id="sb-PD-CE">—</div>
+          <div class="res-unit">in³</div>
+        </div>
+        <div class="res-box">
+          <div class="res-label">PD — displaced volume / rev (head end)</div>
+          <div class="res-val" id="sb-PD-HE">—</div>
+          <div class="res-unit">in³</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+      <div class="big-result">
+        <div class="lbl">Required surge volume — Suction side</div>
+        <div class="val" id="sb-V-suc">—</div>
+        <div style="font-size:12px;color:var(--ink3);margin-top:.3rem;">in³ &nbsp;|&nbsp; <span id="sb-V-suc-ft3">—</span> ft³</div>
+      </div>
+      <div class="big-result">
+        <div class="lbl">Required surge volume — Discharge side</div>
+        <div class="val" id="sb-V-dis">—</div>
+        <div style="font-size:12px;color:var(--ink3);margin-top:.3rem;">in³ &nbsp;|&nbsp; <span id="sb-V-dis-ft3">—</span> ft³</div>
+      </div>
+    </div>
+
+    <div class="note">These volumes represent the required major vapor volume at each terminal point (suction/discharge). Surge bottles must be sized to provide at least this internal gas space at operating conditions. Double-acting: suction volume uses crank-end PD; discharge uses head-end PD. Use the larger value if sizing one bottle for both ends.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Terminal Point Reference — What Qualifies as a Stop Point?</div>
+    <div style="font-size:13px;color:var(--ink2);line-height:1.9;">
+      <p style="margin-bottom:.5rem;"><strong style="color:var(--accent);">✓ Qualifies as terminal point (vibration stop):</strong></p>
+      <p style="margin-bottom:.3rem;">1. Control valves / orifices with pressure drop ≥ 25% of average upstream line pressure — act as acoustic hard ends.</p>
+      <p style="margin-bottom:.3rem;">2. Blinds and all normally-closed valves (relief valves, N₂ purge valves, etc.).</p>
+      <p style="margin-bottom:.8rem;">3. Major process vessels (sufficient vapor volume per Eq. 1 above).</p>
+      <p style="margin-bottom:.5rem;"><strong style="color:var(--ink3);">✗ Does NOT qualify (must be included in pulsation analysis):</strong></p>
+      <p>Filters, knockout pots, intercoolers, aftercoolers, and vessels of similar size — unless verified to meet the volume requirement above.</p>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<!-- PDF Reference Button -->
+<div style="text-align:center;padding:1.5rem 1rem 2rem;border-top:1px solid rgba(26,26,24,0.1);margin-top:1rem;">
+  <p style="font-size:12px;color:#8a8a80;margin-bottom:.8rem;font-family:sans-serif;">Reference documentation for this calculator</p>
+  <a href="pdf/vibration-fatigue-guide.pdf" target="_blank"
+     style="display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:#c45c2a;color:#fff;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;font-family:sans-serif;">
+    📄 Download PDF Guide — Vibration Fatigue Calculator
+  </a>
+  <p style="font-size:11px;color:#aaa;margin-top:.6rem;font-family:sans-serif;">PDF coming soon — check back at pipingpro-academy.com</p>
+</div>
+
+<footer class="ppa-footer">
+  <div class="ppa-footer-logo">Piping<span>Pro</span> Academy</div>
+  <p>PipingPro Academy is a trademark of <strong style="color:var(--accent2);">Zephrum Konsultan Limited</strong>, registered in England &amp; Wales. Co. No. 13537626.</p>
+  <p style="margin-top:.3rem">© 2026 Zephrum Konsultan Limited. All rights reserved. &nbsp;·&nbsp; <a href="calculators.html">Calculator Suite</a></p>
+</footer>
+
+<script>
+/* ── HELPERS ── */
+function gv(id){return parseFloat(document.getElementById(id).value)||0;}
+function sv(id,v){var el=document.getElementById(id);if(el)el.textContent=v;}
+function E_steel(){return 27.9e6;}
+
+function calcI(od,thk){
+  var ri=(od-2*thk)/2, ro=od/2;
+  return Math.PI/64*(Math.pow(od,4)-Math.pow(od-2*thk,4));
+}
+function calcWpipe(od,thk){
+  /* steel density 0.2833 lb/in³ */
+  var ri=(od-2*thk)/2,ro=od/2;
+  var area=Math.PI*(ro*ro-ri*ri);
+  return area*12*0.2833; /* lb/ft */
+}
+function calcWfluid(id,rhofl){
+  var ri=id/2;
+  var area=Math.PI*ri*ri;
+  return area*12*(rhofl/1728); /* lb/ft, rhofl in lb/ft³ */
+}
+
+/* ── LOCK ── */
+function checkLock(){
+  var code=document.getElementById('ppa-lock-input').value.trim().toUpperCase();
+  var valid=['PPA-PRO-2026','PPA-PRO-DEMO','PIPINGPRO'];
+  if(valid.indexOf(code)>=0){
+    document.getElementById('ppa-lock-overlay').style.display='none';
+  } else {
+    document.getElementById('ppa-lock-err').style.display='block';
+  }
+}
+document.getElementById('ppa-lock-input').addEventListener('keydown',function(e){if(e.key==='Enter')checkLock();});
+
+/* ── TAB SWITCHING ── */
+function switchTab(name){
+  var tabs=['mnfp','span','stiffness','pulsation','surge'];
+  tabs.forEach(function(t,i){
+    document.querySelectorAll('.tab')[i].classList.toggle('active',t===name);
+    document.getElementById('panel-'+t).classList.toggle('active',t===name);
+  });
+}
+
+/* ══════════════════════════════════════════════════════ */
+/* TAB 1 — MNFP                                          */
+/* ══════════════════════════════════════════════════════ */
+function calcMNFP(){
+  var rpm=gv('m-rpm'), cyl=gv('m-cyl');
+  var stroke=document.getElementById('m-stroke').value;
+  if(!rpm) return;
+
+  var mnfp=0.06*rpm;
+  var mnfp_req=mnfp*1.20;
+
+  /* pulsation harmonics: f = rpm*N/60 */
+  var f1=rpm/60, f2=2*rpm/60, f3=3*rpm/60;
+
+  sv('r-mnfp', mnfp.toFixed(2));
+  sv('r-mnfp-req', mnfp_req.toFixed(2));
+  sv('r-f1', f1.toFixed(2));
+  sv('r-f2', f2.toFixed(2));
+  sv('r-f3', f3.toFixed(2));
+
+  /* design approach guidance — simplified BHP proxy via RPM range */
+  var approach='Approach 2 (pulsation analog study)';
+  if(rpm<=600 && cyl<=2) approach='Approach 1 (standard analytical)';
+  sv('r-approach', approach);
+
+  var note='MNFP = 0.06 × '+rpm+' = '+mnfp.toFixed(2)+' Hz. All pipe spans must have fn ≥ '+mnfp_req.toFixed(2)+' Hz (MNFP + 20% margin). Pulsation harmonics at '+f1.toFixed(2)+', '+f2.toFixed(2)+', '+f3.toFixed(2)+' Hz — ensure these do not coincide with pipe natural frequencies.';
+  var noteEl=document.getElementById('r-mnfp-note');
+  if(noteEl) noteEl.textContent=note;
+}
+
+/* ══════════════════════════════════════════════════════ */
+/* TAB 2 — ALLOWABLE SPAN                                */
+/* ══════════════════════════════════════════════════════ */
+/* Table D values (ft) — [OD_in, thk, straight, one_elbow, two_elbow] per target freq */
+var tableD={
+  20:[[2.375,0.154,11.59,9.44,10.31],[3.5,0.216,14.08,11.48,12.54],[4.5,0.237,16.04,13.07,14.27],
+      [6.625,0.280,19.55,15.93,17.40],[8.625,0.322,22.37,18.23,19.91],[10.75,0.365,25.03,20.40,22.28],
+      [12.75,0.375,27.30,22.25,24.30],[14,0.375,28.66,23.36,25.51],[16,0.375,30.69,25.01,27.31],
+      [18,0.375,32.60,26.57,29.01],[20,0.375,34.37,28.01,30.59],[24,0.375,37.73,30.75,33.58]],
+  25:[[2.375,0.154,10.36,8.45,9.22],[3.5,0.216,12.60,10.27,11.21],[4.5,0.237,14.34,11.69,12.77],
+      [6.625,0.280,17.49,14.25,15.56],[8.625,0.322,20.01,16.31,17.81],[10.75,0.365,22.39,18.25,19.93],
+      [12.75,0.375,24.42,19.90,21.73],[14,0.375,25.64,20.89,22.82],[16,0.375,27.45,22.37,24.43],
+      [18,0.375,29.16,23.76,25.95],[20,0.375,30.74,25.05,27.36],[24,0.375,33.74,27.50,30.03]],
+  30:[[2.375,0.154,9.46,7.71,8.42],[3.5,0.216,11.50,9.37,10.24],[4.5,0.237,13.09,10.67,11.65],
+      [6.625,0.280,15.96,13.01,14.21],[8.625,0.322,18.26,14.89,16.26],[10.75,0.365,20.44,16.66,18.19],
+      [12.75,0.375,22.29,18.17,19.84],[14,0.375,23.40,19.07,20.83],[16,0.375,25.06,20.42,22.30],
+      [18,0.375,26.62,21.69,23.69],[20,0.375,28.06,22.87,24.97],[24,0.375,30.80,25.10,27.41]],
+  35:[[2.375,0.154,8.76,7.14,7.80],[3.5,0.216,10.65,8.68,9.48],[4.5,0.237,12.12,9.88,10.79],
+      [6.625,0.280,14.78,12.04,13.15],[8.625,0.322,16.91,13.78,15.05],[10.75,0.365,18.92,15.42,16.84],
+      [12.75,0.375,20.64,16.82,18.37],[14,0.375,21.67,17.66,19.28],[16,0.375,23.20,18.91,20.65],
+      [18,0.375,24.64,20.08,21.93],[20,0.375,25.98,21.17,23.12],[24,0.375,28.52,23.24,25.38]],
+  40:[[2.375,0.154,8.19,6.68,7.29],[3.5,0.216,9.96,8.12,8.86],[4.5,0.237,11.34,9.24,10.09],
+      [6.625,0.280,13.82,11.27,12.30],[8.625,0.322,15.82,12.89,14.08],[10.75,0.365,17.70,14.43,15.75],
+      [12.75,0.375,19.31,15.73,17.18],[14,0.375,20.27,16.52,18.04],[16,0.375,21.70,17.68,19.31],
+      [18,0.375,23.05,18.79,20.51],[20,0.375,24.30,19.81,21.63],[24,0.375,26.68,21.74,23.74]]
+};
+
+/* C coefficients from Table 1 */
+var Ccoeff={straight:1.700, one_elbow:1.180, two_elbow:0.666};
+
+function calcSpan(){
+  var od=gv('s-od'), thk=gv('s-thk'), rhofl=gv('s-rhofl'), wins=gv('s-wins');
+  var config=document.getElementById('s-config').value;
+  var freqTarget=parseInt(document.getElementById('s-freq').value);
+
+  var id=od-2*thk;
+  var I=calcI(od,thk);
+  var wpipe=calcWpipe(od,thk);
+  var wfluid=calcWfluid(id,rhofl);
+  var wtotal=wpipe+wfluid+wins;
+
+  sv('s-id', id.toFixed(3));
+  sv('s-I', I.toFixed(4));
+  sv('s-wpipe', wpipe.toFixed(3));
+  sv('s-wtotal', wtotal.toFixed(3));
+
+  var C=Ccoeff[config];
+  sv('s-C', C.toFixed(3));
+
+  /* L from fₙ = C/L² × √(EI/w): L = C × √(EI/(w×fn²)) in ft
+     E in psi, I in in⁴, w in lb/ft → need consistent units
+     Convert w to lb/in: w_in = wtotal/12
+     fn in cps
+     L² = C² × E × I / (w_in × fn²) → L in inches → /12 for feet
+     With clamped-clamped correction ×1.6 on fn effectively: use fn as target
+  */
+  var fn=freqTarget;
+  var w_in=wtotal/12;
+  var E=E_steel();
+  /* fₙ = C/L² × sqrt(E*I/w) — solve for L (in inches):
+     L² = C × sqrt(E*I/w_in) / fn   →   L = sqrt(C × sqrt(EI/w) / fn)
+     But standard form: fn = C/L² × (EI/w)^0.5  → L² = C(EI/w)^0.5 / fn
+     L in ft: divide result by 12  */
+  var EIw=E*I/w_in; /* (psi × in⁴) / (lb/in) = in² × psi/lb... need check */
+  /* E*I has units lb·in²; w has units lb/in; EI/w = in³; sqrt(EI/w) = in^1.5 */
+  /* fₙ (cps) = C/L²(ft) × sqrt(EI/w_in) where L in ft and remaining consistent */
+  /* Using L in feet: need E in lb/ft² and I in ft⁴ and w in lb/ft */
+  /* Easier: use L in inches throughout */
+  /* L_in² = C × sqrt(E_psi × I_in4 / w_lbperin) / fn_cps */
+  var sqrtEIw = Math.sqrt(E*I/w_in); /* units: sqrt(lb/in² × in⁴ / (lb/in)) = sqrt(in³) = in^1.5 */
+  var L_in2 = C * sqrtEIw / fn;
+  var L_in = Math.sqrt(L_in2);
+  /* Apply clamped-clamped correction factor 1.6 */
+  L_in = L_in * 1.6;
+  var L_ft = L_in / 12;
+
+  sv('s-Lmax', L_ft.toFixed(2));
+
+  /* Lookup table D */
+  var dtable=tableD[freqTarget];
+  var colMap={straight:2, one_elbow:3, two_elbow:4};
+  var col=colMap[config];
+  var odKey=parseFloat(document.getElementById('s-od').value);
+  var tableVal='—';
+  for(var i=0;i<dtable.length;i++){
+    if(Math.abs(dtable[i][0]-odKey)<0.01){
+      tableVal=dtable[i][col].toFixed(2);
+      break;
+    }
+  }
+  sv('s-Ltable', tableVal);
+
+  /* Stagger grid */
+  var sg=document.getElementById('s-stagger-grid');
+  sg.innerHTML='';
+  var Lref=L_ft;
+  var steps=[0,-0.08,-0.12,-0.15,-0.08,-0.12];
+  var labels=['Max span','−8%','−12%','−15%','−8% alt','−12% alt'];
+  steps.forEach(function(d,i){
+    var v=(Lref*(1+d));
+    var box=document.createElement('div');
+    box.className='res-box'+(i===0?' hi':'');
+    box.innerHTML='<div class="res-label">'+labels[i]+'</div><div class="res-val">'+v.toFixed(2)+'</div><div class="res-unit">feet</div>';
+    sg.appendChild(box);
+  });
+}
+
+/* ══════════════════════════════════════════════════════ */
+/* TAB 3 — STIFFNESS                                     */
+/* ══════════════════════════════════════════════════════ */
+function calcStiffness(){
+  var od=gv('k-od'), thk=gv('k-thk'), L_ft=gv('k-L');
+  var I=calcI(od,thk);
+  var L_in=L_ft*12;
+  var E=E_steel();
+  var Kp=102*E*I/Math.pow(L_in,3);
+  var Kvs=204*E*I/Math.pow(L_in,3);
+  sv('k-I', I.toFixed(4));
+  sv('k-Kp', Math.round(Kp).toLocaleString());
+  sv('k-Kvs', Math.round(Kvs).toLocaleString());
+  sv('k-Kvs-kip', (Kvs/1000).toFixed(2));
+}
+
+function calcElbowStiffness(){
+  var od=gv('ke-od'), thk=gv('ke-thk');
+  var p=gv('ke-p'), f=gv('ke-f');
+  var id_val=od-2*thk;
+  var A=Math.PI/4*id_val*id_val;
+  var a=Math.pow(250/f,0.5);
+  var F=p*A;
+  var Kvs=0.063*p*A*f;
+  sv('ke-A', A.toFixed(3));
+  sv('ke-a', a.toFixed(2));
+  sv('ke-F', Math.round(F).toLocaleString());
+  sv('ke-Kvs', Math.round(Kvs).toLocaleString());
+}
+
+/* ══════════════════════════════════════════════════════ */
+/* TAB 4 — PULSATION                                     */
+/* ══════════════════════════════════════════════════════ */
+function p1allowable(PL,ID,f){
+  if(PL<=0||ID<=0||f<=0) return 0;
+  return 300/Math.sqrt(PL*ID*f);
+}
+function calcPulsation(){
+  var PL=gv('pu-PL'), ID=gv('pu-ID'), rpm=gv('pu-rpm');
+  var actual=gv('pu-actual');
+  var f1=rpm/60, f2=2*f1, f3=3*f1;
+  sv('pu-f1', f1.toFixed(3));
+  sv('pu-f2', f2.toFixed(3));
+  sv('pu-f3', f3.toFixed(3));
+  var p1=p1allowable(PL,ID,f1);
+  var p2=p1allowable(PL,ID,f2);
+  var p3=p1allowable(PL,ID,f3);
+  sv('pu-P1h1', p1.toFixed(2));
+  sv('pu-P1h2', p2.toFixed(2));
+  sv('pu-P1h3', p3.toFixed(2));
+
+  /* compliance grid */
+  var grid=document.getElementById('pu-compliance-grid');
+  var statusRow=document.getElementById('pu-status-row');
+  grid.innerHTML=''; statusRow.innerHTML='';
+  [[f1,p1,'1st harmonic'],[f2,p2,'2nd harmonic'],[f3,p3,'3rd harmonic']].forEach(function(row){
+    var f=row[0],allow=row[1],label=row[2];
+    var pass=actual<=allow;
+    var box=document.createElement('div');
+    box.className='res-box'+(pass?'':' hi');
+    box.style.border=pass?'1px solid rgba(26,107,90,.2)':'1px solid rgba(155,28,28,.2)';
+    box.innerHTML='<div class="res-label">'+label+' ('+f.toFixed(2)+' Hz)</div>'
+      +'<div class="res-val" style="color:'+(pass?'var(--pass)':'var(--fail)')+'">'+actual.toFixed(2)+'% / '+allow.toFixed(2)+'%</div>'
+      +'<div class="res-unit">'+(pass?'✓ Compliant':'✗ Exceeds limit')+'</div>';
+    grid.appendChild(box);
+    var badge=document.createElement('div');
+    badge.innerHTML='<span style="font-size:13px;color:var(--ink2);">'+label+': </span><span class="status '+(pass?'pass':'fail')+'">'+(pass?'✓ OK':'✗ EXCEEDS API-618')+'</span>';
+    statusRow.appendChild(badge);
+  });
+
+  var noteEl=document.getElementById('pu-range-note');
+  if(noteEl){
+    if(PL<50||PL>3000){
+      noteEl.textContent='⚠ Line pressure '+PL+' psia is outside the 50–3000 psia validity range of API-618 Eq.5. For P_L < 50 psia use peak-to-peak psi values calculated at 50 psia. For P_L > 3000 psia evaluate cyclic stress compliance directly.';
+      noteEl.style.display='block';
+    } else {
+      noteEl.style.display='none';
+    }
+  }
+}
+
+/* ══════════════════════════════════════════════════════ */
+/* TAB 5 — SURGE BOTTLE                                  */
+/* ══════════════════════════════════════════════════════ */
+function calcSurge(){
+  var m=gv('sb-m'), bore=gv('sb-bore'), stroke=gv('sb-stroke'), rod=gv('sb-rod');
+  var type=document.getElementById('sb-type').value;
+  var mEff=Math.min(m,24);
+  var mi=(m<=4||m>12)?0:m;
+  sv('sb-mi', mi.toFixed(2));
+  sv('sb-mused', mEff.toFixed(2));
+
+  /* PD = displaced volume per rev (in³) */
+  var A_bore=Math.PI/4*bore*bore;
+  var A_rod=Math.PI/4*rod*rod;
+  var PD_CE=A_bore*stroke; /* crank end — full bore */
+  var PD_HE=(A_bore-A_rod)*stroke; /* head end — minus rod */
+  sv('sb-PD-CE', PD_CE.toFixed(2));
+  sv('sb-PD-HE', PD_HE.toFixed(2));
+
+  /* V = (190*exp(-0.085*m) + 3*mi) * PD */
+  var factor=190*Math.exp(-0.085*mEff)+3*mi;
+  var V_suc=factor*PD_CE;
+  var V_dis=(type==='double')?factor*PD_HE:factor*PD_CE;
+
+  sv('sb-V-suc', Math.round(V_suc).toLocaleString());
+  sv('sb-V-suc-ft3', (V_suc/1728).toFixed(2));
+  sv('sb-V-dis', Math.round(V_dis).toLocaleString());
+  sv('sb-V-dis-ft3', (V_dis/1728).toFixed(2));
+}
+
+/* init */
+calcMNFP();
+calcSpan();
+calcStiffness();
+calcElbowStiffness();
+calcPulsation();
+calcSurge();
+</script>
+
+</body>
+</html>

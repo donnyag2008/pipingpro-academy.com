@@ -483,6 +483,36 @@ footer a{color:var(--accent2);text-decoration:none;}
       </div>
     </div>
 
+    <!-- 15. Pipe Coating & Insulation -->
+    <div class="calc-card" onclick="openModal('ci')">
+      <div class="card-img" style="background:linear-gradient(135deg,#2a4a3a 0%,#3a7a5a 100%)">
+        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- pipe core -->
+          <line x1="10" y1="45" x2="80" y2="45" stroke="rgba(255,255,255,0.9)" stroke-width="7" stroke-linecap="round"/>
+          <!-- insulation layer -->
+          <rect x="10" y="36" width="70" height="18" rx="5" stroke="rgba(255,255,255,0.45)" stroke-width="2" fill="none"/>
+          <!-- outer cladding -->
+          <rect x="10" y="30" width="70" height="30" rx="7" stroke="rgba(255,255,255,0.20)" stroke-width="1.5" fill="none"/>
+          <!-- paint brush strokes -->
+          <path d="M22 25 Q30 20 38 25" stroke="rgba(255,220,160,0.85)" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M42 22 Q50 17 58 22" stroke="rgba(255,220,160,0.85)" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M62 25 Q70 20 78 25" stroke="rgba(255,220,160,0.85)" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <!-- heat arrows -->
+          <line x1="30" y1="67" x2="30" y2="58" stroke="rgba(255,180,100,0.7)" stroke-width="1.5"/>
+          <polygon points="30,56 27,62 33,62" fill="rgba(255,180,100,0.7)"/>
+          <line x1="55" y1="67" x2="55" y2="58" stroke="rgba(255,180,100,0.7)" stroke-width="1.5"/>
+          <polygon points="55,56 52,62 58,62" fill="rgba(255,180,100,0.7)"/>
+        </svg>
+        <span class="card-badge badge-member" id="badge-ci">👑 Members</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Pipe Coating &amp; Insulation</div>
+        <div class="card-desc">Paint quantity per coat (litres &amp; drums) and hot insulation MTO — mineral wool, calcium silicate, aerogel and more for O&amp;G plant piping.</div>
+        <div class="card-tags"><span class="tag">ISO 12944</span><span class="tag">ASTM C547</span><span class="tag">Hot Insulation</span></div>
+        <div class="card-action"><span class="card-btn btn-locked" id="btn-ci">👑 Members Only</span></div>
+      </div>
+    </div>
+
   </div>
 </div><!-- /main -->
 
@@ -524,7 +554,8 @@ const CALCS = {
   nl:{name:'Nozzle Loads Checker',desc:'Nozzle load verification against allowables per API 610 (pumps), API 617 (compressors), API 661 (air coolers), and WRC 107/297 (vessels).',tags:['API 610','API 617','WRC 107/297'],what:['Forces and moments vs allowables','API 610/617/661 adequacy check','WRC 107/297 shell stress','Combined load ratios','Pass/fail summary by nozzle'],file:'nozzle-loads-checker.html',bg:'bg-bronze',svgId:'nl'},
   pm:{name:'P&ID MTO Calculator',desc:'Material take-off from P&ID data — instruments, equipment, lines, and nozzle count extraction for project quantification and procurement.',tags:['P&ID','MTO','Instrumentation'],what:['Instrument count by type','Equipment list with nozzle count','Line list extraction','MTO summary table','Export-ready output'],file:'pid-mto-calculator.html',bg:'bg-mossy',svgId:'pm'},
   ss:{name:'Special Pipe Support Calculator',desc:'Structural calculator for special pipe supports — load analysis, member sizing, and connection design for custom support configurations.',tags:['Structural','Pipe Support','Load Analysis'],what:['Support load calculation','Member stress check','Weld and bolt sizing','Deflection check','Support adequacy summary'],file:'special-pipe-support-calculator.html',bg:'bg-steelgrey',svgId:'ss'},
-  tr:{name:'Trunnion Support Calculator',desc:'Trunnion pipe support design — local stress at the trunnion-to-pipe junction, weld loads, and adequacy check for vertical and horizontal piping loads.',tags:['Trunnion','Local Stress','Support Design'],what:['Trunnion load decomposition','Local shell stress at junction','Weld adequacy check','Support reaction forces','Design adequacy per code'],file:'trunnion-calculator.html',bg:'bg-plum',svgId:'tr'}
+  tr:{name:'Trunnion Support Calculator',desc:'Trunnion pipe support design — local stress at the trunnion-to-pipe junction, weld loads, and adequacy check for vertical and horizontal piping loads.',tags:['Trunnion','Local Stress','Support Design'],what:['Trunnion load decomposition','Local shell stress at junction','Weld adequacy check','Support reaction forces','Design adequacy per code'],file:'trunnion-calculator.html',bg:'bg-plum',svgId:'tr'},
+  ci:{name:'Pipe Coating & Insulation Calculator',desc:'Paint quantity per coat (litres & drums) and hot insulation MTO — mineral wool, calcium silicate, aerogel and more for O&G plant piping.',tags:['ISO 12944','ASTM C547','Hot Insulation'],what:['Paint litres per coat','20L drum count','Insulation volume (m³)','Cladding area (m²)','Multi-size project MTO'],file:'pipe-coating-insulation-calculator.html',bg:'bg-forest',svgId:'ci'}
 };
 
 // ─── SVG BANK ────────────────────────────────────────────────

@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Pipe Coating & Insulation Calculator — PipingPro Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --ink:#1a1a18;--ink2:#4a4a44;--ink3:#8a8a80;
+  --paper:#f5f2eb;--paper2:#ede9de;--paper3:#e3dfd2;
+  --accent:#c45c2a;--accent2:#e8a06a;--accent-light:#f7ede3;
+  --teal:#1a6b5a;--teal-light:#e0f0eb;
+  --rule:rgba(26,26,24,0.12);
+  --pass:#1a6b5a;--pass-bg:#e0f0eb;
+  --gold:#b8922a;--gold-light:#fdf3dc;
+  --font:'DM Sans',sans-serif;
+  --serif:'DM Serif Display',serif;
+  --mono:'DM Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:15px;line-height:1.6;min-height:100vh;}
+
+.ppa-nav{background:rgba(245,242,235,0.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--rule);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:200;}
+.ppa-nav-logo{font-family:var(--serif);font-size:17px;color:var(--ink);text-decoration:none;}
+.ppa-nav-logo span{color:var(--accent);}
+.ppa-nav-back{font-size:13px;color:var(--ink2);text-decoration:none;display:flex;align-items:center;gap:5px;}
+.ppa-nav-back:hover{color:var(--accent);}
+
+.ppa-hero{background:var(--ink);color:var(--paper);padding:2.8rem 2rem 2.4rem;text-align:center;border-bottom:3px solid var(--accent);position:relative;overflow:hidden;}
+.ppa-hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 60px),repeating-linear-gradient(0deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 60px);}
+.ppa-hero-eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);margin-bottom:.7rem;font-family:var(--mono);position:relative;}
+.ppa-hero h1{font-family:var(--serif);font-size:clamp(1.7rem,4vw,2.6rem);line-height:1.1;margin-bottom:.7rem;position:relative;}
+.ppa-hero p{font-size:14px;color:rgba(245,242,235,0.6);max-width:560px;margin:0 auto;position:relative;}
+
+.tabs{display:flex;background:var(--paper2);border-bottom:1px solid var(--rule);overflow-x:auto;}
+.tab{padding:.9rem 1.6rem;font-size:13px;font-weight:500;color:var(--ink3);border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;font-family:var(--font);transition:color .2s,border-color .2s;white-space:nowrap;}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.tab:hover:not(.active){color:var(--ink);}
+
+.main{max-width:920px;margin:0 auto;padding:2rem 1.5rem;}
+.panel{display:none;}
+.panel.active{display:block;}
+
+.card{background:#fff;border:1px solid var(--rule);border-radius:12px;padding:1.5rem 1.8rem;margin-bottom:1.2rem;}
+.card-title{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:1.2rem;padding-bottom:.5rem;border-bottom:1px solid var(--rule);}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;}
+.grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1rem;}
+@media(max-width:640px){.grid2,.grid3,.grid4{grid-template-columns:1fr;}}
+@media(max-width:800px){.grid3{grid-template-columns:1fr 1fr;}.grid4{grid-template-columns:1fr 1fr;}}
+
+.field{display:flex;flex-direction:column;gap:4px;}
+.field label{font-size:12px;font-weight:500;color:var(--ink2);}
+.field input,.field select{padding:9px 12px;border:1px solid var(--rule);border-radius:8px;font-family:var(--mono);font-size:14px;background:var(--paper);color:var(--ink);outline:none;transition:border-color .2s;}
+.field input:focus,.field select:focus{border-color:var(--accent);background:#fff;}
+.field .hint{font-size:11px;color:var(--ink3);}
+.field .auto{font-size:11px;color:var(--teal);}
+
+.ro{padding:9px 12px;border:1px solid var(--rule);border-radius:8px;font-family:var(--mono);font-size:14px;background:var(--paper3);color:var(--ink2);min-height:40px;}
+
+.results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:.8rem;margin-bottom:1rem;}
+.res-box{background:var(--paper2);border-radius:10px;padding:1rem;}
+.res-box.hi{background:var(--accent-light);border:1px solid rgba(196,92,42,.2);}
+.res-box.teal{background:var(--teal-light);border:1px solid rgba(26,107,90,.2);}
+.res-box.gold{background:var(--gold-light);border:1px solid rgba(184,146,42,.2);}
+.res-label{font-size:11px;color:var(--ink3);margin-bottom:3px;line-height:1.3;}
+.res-val{font-family:var(--mono);font-size:1.05rem;font-weight:500;color:var(--ink);}
+.res-unit{font-size:11px;color:var(--ink3);margin-top:2px;}
+
+.formula{background:var(--paper2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:1rem 1.2rem;font-size:13px;color:var(--ink2);line-height:1.9;margin-bottom:1rem;}
+.formula code{font-family:var(--mono);color:var(--ink);font-size:13px;}
+.formula-title{font-weight:600;color:var(--ink);margin-bottom:.4rem;font-size:13px;}
+
+.note{background:var(--teal-light);border:1px solid rgba(26,107,90,.15);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--teal);margin-bottom:1rem;}
+.disclaimer{background:var(--accent-light);border:1px solid rgba(196,92,42,.2);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--accent);margin-bottom:1.5rem;}
+.info-box{background:var(--gold-light);border:1px solid rgba(184,146,42,.2);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:#7a5a10;margin-bottom:1rem;}
+
+/* Insulation type cards */
+.ins-type-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.9rem;margin-bottom:1.2rem;}
+.ins-card{background:#fff;border:1px solid var(--rule);border-radius:10px;padding:1rem 1.1rem;cursor:pointer;transition:border-color .2s,box-shadow .2s;position:relative;}
+.ins-card:hover{border-color:var(--accent);box-shadow:0 2px 12px rgba(196,92,42,.1);}
+.ins-card.selected{border-color:var(--accent);border-width:2px;background:var(--accent-light);}
+.ins-card-name{font-family:var(--serif);font-size:.95rem;color:var(--ink);margin-bottom:.2rem;}
+.ins-card-temp{font-size:11px;font-family:var(--mono);color:var(--accent);margin-bottom:.4rem;font-weight:500;}
+.ins-card-desc{font-size:11px;color:var(--ink3);line-height:1.5;}
+.ins-card-badge{position:absolute;top:8px;right:8px;font-size:9px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:20px;}
+.badge-common{background:rgba(26,107,90,.12);color:var(--teal);}
+.badge-premium{background:var(--gold-light);color:var(--gold);}
+.badge-high{background:rgba(196,92,42,.1);color:var(--accent);}
+
+.summary-banner{background:var(--ink);color:var(--paper);border-radius:12px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem;}
+.summary-item .s-label{font-size:11px;color:rgba(245,242,235,.5);margin-bottom:.2rem;}
+.summary-item .s-val{font-family:var(--mono);font-size:1.1rem;font-weight:500;color:var(--paper);}
+.summary-item .s-unit{font-size:11px;color:rgba(245,242,235,.4);}
+
+/* Big MTO table */
+.mto-table{width:100%;border-collapse:collapse;font-size:13px;}
+.mto-table th{background:var(--paper3);padding:8px 10px;text-align:left;font-weight:600;font-family:var(--font);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2);border-bottom:1px solid var(--rule);}
+.mto-table td{padding:7px 10px;border-bottom:1px solid var(--rule);color:var(--ink);font-family:var(--mono);font-size:12px;}
+.mto-table tr:last-child td{border-bottom:none;}
+.mto-table tr.total-row td{background:var(--accent-light);font-weight:600;color:var(--accent);font-family:var(--font);font-size:12px;}
+.mto-table tr.subtotal-row td{background:var(--paper2);font-weight:500;}
+
+.ppa-footer{background:var(--ink);color:rgba(245,242,235,0.5);text-align:center;padding:2rem;font-size:13px;margin-top:3rem;}
+.ppa-footer a{color:var(--accent2);text-decoration:none;}
+.ppa-footer-logo{font-family:var(--serif);font-size:1.1rem;color:var(--paper);margin-bottom:.4rem;}
+.ppa-footer-logo span{color:var(--accent);}
+</style>
+</head>
+<body>
+
+<nav class="ppa-nav">
+  <a href="index.html" class="ppa-nav-logo">Piping<span>Pro</span> Academy</a>
+  <a href="calculators.html" class="ppa-nav-back">← Back to Calculators</a>
+</nav>
+
+<div class="ppa-hero">
+  <div class="ppa-hero-eyebrow">Members · Engineering Calculator Suite</div>
+  <h1>Pipe Coating &amp; Insulation <em>Calculator</em></h1>
+  <p>External paint quantity &amp; hot insulation MTO — mineral wool, calcium silicate, aerogel &amp; more for O&amp;G plant piping</p>
+</div>
+
+<!-- LOCK OVERLAY -->
+<style>
+#ppa-lock-overlay{position:fixed;inset:0;background:rgba(26,26,24,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;}
+#ppa-lock-box{background:#f5f2eb;border-radius:14px;padding:2.5rem 2rem;max-width:400px;width:90%;text-align:center;}
+#ppa-lock-box h2{font-size:1.3rem;color:#1a1a18;margin-bottom:.5rem;font-family:'DM Serif Display',serif;}
+#ppa-lock-box p{font-size:13px;color:#4a4a44;margin-bottom:1.2rem;line-height:1.6;}
+#ppa-lock-input{width:100%;padding:10px 14px;border:1px solid rgba(196,92,42,0.4);border-radius:8px;font-size:14px;font-family:monospace;color:#1a1a18;background:#fff;outline:none;margin-bottom:8px;text-align:center;}
+#ppa-lock-input:focus{border-color:#c45c2a;}
+#ppa-lock-btn{width:100%;padding:11px;border-radius:8px;background:#c45c2a;color:#fff;font-size:14px;font-weight:600;border:none;cursor:pointer;margin-bottom:.8rem;}
+#ppa-lock-btn:hover{background:#a84d22;}
+#ppa-lock-err{font-size:12px;color:#b91c1c;display:none;margin-bottom:.6rem;}
+#ppa-lock-back{font-size:12px;color:#8a8a80;text-decoration:none;}
+</style>
+<div id="ppa-lock-overlay">
+  <div id="ppa-lock-box">
+    <div style="font-size:2rem;margin-bottom:.8rem;">🔒</div>
+    <h2>Pro Calculator</h2>
+    <p>This calculator is part of the <strong>PipingPro Academy Pro Suite</strong>. Enter your access code to unlock.</p>
+    <input id="ppa-lock-input" type="text" placeholder="PPA-PRO-XXXX-XXXX" maxlength="20"/>
+    <div id="ppa-lock-err">Invalid access code. Please try again.</div>
+    <button id="ppa-lock-btn" onclick="checkLock()">Unlock Calculator</button>
+    <br/><a href="calculators.html" id="ppa-lock-back">← Back to all calculators</a>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active"  onclick="switchTab('paint')">🖌 Paint &amp; Coating</button>
+  <button class="tab"         onclick="switchTab('insul')">🌡 Hot Insulation</button>
+  <button class="tab"         onclick="switchTab('mto')">📋 Combined MTO</button>
+  <button class="tab"         onclick="switchTab('guide')">📖 Material Guide</button>
+</div>
+
+<div class="main">
+
+<!-- ══════════════════════════════════════════════
+     TAB 1 — PAINT & COATING
+══════════════════════════════════════════════ -->
+<div class="panel active" id="panel-paint">
+
+  <div class="disclaimer">
+    ⚠ For estimation and MTO purposes only. Actual paint quantities depend on surface profile, application method, DFT compliance, and contractor waste factors. Always verify with paint manufacturer's TDS.
+  </div>
+
+  <div class="card">
+    <div class="card-title">Paint System Selection</div>
+    <div class="ins-type-grid" id="paint-type-grid">
+
+      <div class="ins-card selected" id="pt-epoxy" onclick="selectPaintType('epoxy')">
+        <span class="ins-card-badge badge-common">Most common</span>
+        <div class="ins-card-name">Epoxy / Zinc-Epoxy</div>
+        <div class="ins-card-temp">Up to 120°C</div>
+        <div class="ins-card-desc">Zinc-rich primer + epoxy intermediate + polyurethane topcoat. Standard O&G plant piping, structural steel. NACE/ISO 12944 Cat. C4–C5.</div>
+      </div>
+
+      <div class="ins-card" id="pt-heatres" onclick="selectPaintType('heatres')">
+        <span class="ins-card-badge badge-high">High temp</span>
+        <div class="ins-card-name">Heat-Resistant Silicone</div>
+        <div class="ins-card-temp">120°C – 600°C</div>
+        <div class="ins-card-desc">Silicone-aluminium or silicone-graphite coating. Used on hot process lines, furnace piping, steam headers where insulation is not applied.</div>
+      </div>
+
+      <div class="ins-card" id="pt-cui" onclick="selectPaintType('cui')">
+        <span class="ins-card-badge badge-high">CUI protection</span>
+        <div class="ins-card-name">CUI Coating (under insulation)</div>
+        <div class="ins-card-temp">–40°C to 175°C</div>
+        <div class="ins-card-desc">Epoxy phenolic or TSA (Thermal Spray Aluminium) applied directly to pipe before insulation. Prevents Corrosion Under Insulation per ISO 12944 / NACE SP0198.</div>
+      </div>
+
+      <div class="ins-card" id="pt-fusion" onclick="selectPaintType('fusion')">
+        <span class="ins-card-badge badge-common">Pipeline</span>
+        <div class="ins-card-name">FBE / 3LPE (Pipeline)</div>
+        <div class="ins-card-temp">Up to 80°C (3LPE)</div>
+        <div class="ins-card-desc">Fusion Bonded Epoxy or 3-Layer Polyethylene for buried/subsea pipelines. Factory-applied; field joints require liquid epoxy touch-up per ASTM A1062 / ISO 21809.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Pipe Inputs</div>
+    <div class="formula">
+      <div class="formula-title">External surface area of pipe</div>
+      <code>A = π × OD × L</code><br/>
+      <code>Paint volume = A × DFT / (coverage efficiency × 1000)</code><br/>
+      <code>DFT = Dry Film Thickness (µm) &nbsp;|&nbsp; Theoretical coverage ≈ 1600 × (volume solids %) / DFT (m²/L)</code>
+    </div>
+    <div class="grid3">
+      <div class="field">
+        <label>Pipe Outside Diameter (mm)</label>
+        <select id="p-od" onchange="syncPaintOD();calcPaint()">
+          <option value="60.3">2" (60.3 OD)</option>
+          <option value="88.9">3" (88.9 OD)</option>
+          <option value="114.3" selected>4" (114.3 OD)</option>
+          <option value="168.3">6" (168.3 OD)</option>
+          <option value="219.1">8" (219.1 OD)</option>
+          <option value="273.1">10" (273.1 OD)</option>
+          <option value="323.9">12" (323.9 OD)</option>
+          <option value="355.6">14" (355.6 OD)</option>
+          <option value="406.4">16" (406.4 OD)</option>
+          <option value="457.2">18" (457.2 OD)</option>
+          <option value="508">20" (508 OD)</option>
+          <option value="609.6">24" (609.6 OD)</option>
+          <option value="custom">Custom…</option>
+        </select>
+      </div>
+      <div class="field" id="p-od-custom-wrap" style="display:none;">
+        <label>Custom OD (mm)</label>
+        <input type="number" id="p-od-custom" value="114.3" step="0.1" oninput="calcPaint()"/>
+      </div>
+      <div class="field">
+        <label>Total Pipe Length (m)</label>
+        <input type="number" id="p-len" value="100" step="1" oninput="calcPaint()"/>
+        <span class="hint">All spools of this size combined</span>
+      </div>
+      <div class="field">
+        <label>Number of Pipe Sizes / Runs</label>
+        <span class="hint" style="margin-top:4px;">Use MTO tab for multi-size projects</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Paint System Parameters</div>
+    <div class="grid4">
+      <div class="field">
+        <label>Primer — DFT (µm)</label>
+        <input type="number" id="p-dft1" value="75" oninput="calcPaint()"/>
+        <span class="hint">Zinc-rich: 60–75 µm typical</span>
+      </div>
+      <div class="field">
+        <label>Intermediate — DFT (µm)</label>
+        <input type="number" id="p-dft2" value="125" oninput="calcPaint()"/>
+        <span class="hint">Epoxy: 100–150 µm</span>
+      </div>
+      <div class="field">
+        <label>Topcoat — DFT (µm)</label>
+        <input type="number" id="p-dft3" value="50" oninput="calcPaint()"/>
+        <span class="hint">PU: 40–60 µm</span>
+      </div>
+      <div class="field">
+        <label>Volume Solids (%)</label>
+        <input type="number" id="p-solids" value="65" min="30" max="100" oninput="calcPaint()"/>
+        <span class="hint">Epoxy typically 60–70%</span>
+      </div>
+    </div>
+    <div class="grid3" style="margin-top:.8rem;">
+      <div class="field">
+        <label>Application Efficiency (%)</label>
+        <input type="number" id="p-eff" value="70" min="10" max="100" oninput="calcPaint()"/>
+        <span class="hint">Spray ~65–75%, brush ~80–85%</span>
+      </div>
+      <div class="field">
+        <label>Wastage / Overspray Factor (%)</label>
+        <input type="number" id="p-waste" value="15" min="0" max="50" oninput="calcPaint()"/>
+        <span class="hint">10–20% typical; add 5% for fittings</span>
+      </div>
+      <div class="field">
+        <label>Fittings Area Factor</label>
+        <select id="p-fittings" onchange="calcPaint()">
+          <option value="1.05">+5% (straight runs, few fittings)</option>
+          <option value="1.10">+10% (moderate fittings)</option>
+          <option value="1.20" selected>+20% (many elbows/flanges)</option>
+          <option value="1.30">+30% (dense fittings — headers)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Paint Quantity Results</div>
+    <div class="results-grid">
+      <div class="res-box teal">
+        <div class="res-label">External Surface Area</div>
+        <div class="res-val" id="p-area">—</div>
+        <div class="res-unit">m²</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Theoretical coverage (per coat)</div>
+        <div class="res-val" id="p-cov-th">—</div>
+        <div class="res-unit">m²/litre</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Practical coverage (after losses)</div>
+        <div class="res-val" id="p-cov-pr">—</div>
+        <div class="res-unit">m²/litre</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Total DFT (all coats)</div>
+        <div class="res-val" id="p-dft-total">—</div>
+        <div class="res-unit">µm</div>
+      </div>
+    </div>
+
+    <div class="card-title" style="margin-top:1.2rem;margin-bottom:.8rem;">Volume per Coat — Net + With Wastage</div>
+    <table class="mto-table">
+      <thead>
+        <tr>
+          <th>Coat</th>
+          <th>DFT (µm)</th>
+          <th>Net Volume (L)</th>
+          <th>With Wastage (L)</th>
+          <th>20L Drums</th>
+        </tr>
+      </thead>
+      <tbody id="p-coat-tbody"></tbody>
+    </table>
+
+    <div class="note" style="margin-top:1rem;" id="p-note">Adjust inputs to see paint quantities.</div>
+  </div>
+
+</div><!-- /paint panel -->
+
+<!-- ══════════════════════════════════════════════
+     TAB 2 — HOT INSULATION
+══════════════════════════════════════════════ -->
+<div class="panel" id="panel-insul">
+
+  <div class="card">
+    <div class="card-title">Hot Insulation Material — Select Type</div>
+    <div class="ins-type-grid">
+
+      <div class="ins-card selected" id="it-minwool" onclick="selectInsulType('minwool')">
+        <span class="ins-card-badge badge-common">Most common</span>
+        <div class="ins-card-name">Mineral Wool (Rock Wool)</div>
+        <div class="ins-card-temp">Up to 650°C</div>
+        <div class="ins-card-desc">Pre-formed pipe sections or mattresses. k ≈ 0.033–0.046 W/m·K at 50°C. Standard for process piping 120–550°C in O&G plants. ASTM C547 / BS EN 14303. Aluminium cladding jacket.</div>
+      </div>
+
+      <div class="ins-card" id="it-calsil" onclick="selectInsulType('calsil')">
+        <span class="ins-card-badge badge-high">High temp</span>
+        <div class="ins-card-name">Calcium Silicate</div>
+        <div class="ins-card-temp">Up to 650°C (singles) / 760°C dual layer</div>
+        <div class="ins-card-desc">Rigid pre-formed sections. Excellent mechanical strength, resistant to vibration and traffic. k ≈ 0.055–0.085 W/m·K. Preferred for steam headers, high-temp process lines, where personnel may stand. ASTM C533.</div>
+      </div>
+
+      <div class="ins-card" id="it-aerogel" onclick="selectInsulType('aerogel')">
+        <span class="ins-card-badge badge-premium">Premium</span>
+        <div class="ins-card-name">Aerogel Blanket</div>
+        <div class="ins-card-temp">–270°C to +650°C</div>
+        <div class="ins-card-desc">Pyrogel / Spaceloft. k ≈ 0.015–0.020 W/m·K — 2–5× better than mineral wool. Thin profile, hydrophobic. Used where space is constrained (offshore platforms, pipe racks). ASTM C1728. ~3–5× cost premium.</div>
+      </div>
+
+      <div class="ins-card" id="it-perlite" onclick="selectInsulType('perlite')">
+        <span class="ins-card-badge badge-high">High temp</span>
+        <div class="ins-card-name">Expanded Perlite</div>
+        <div class="ins-card-temp">Up to 820°C</div>
+        <div class="ins-card-desc">Rigid pre-formed sections, hydrophobic grades available. k ≈ 0.065–0.10 W/m·K. High mechanical strength. Used on furnace piping, high-temp steam. ASTM C610. Common in refinery applications.</div>
+      </div>
+
+      <div class="ins-card" id="it-cellular" onclick="selectInsulType('cellular')">
+        <span class="ins-card-badge badge-common">Dual-use</span>
+        <div class="ins-card-name">Cellular Glass</div>
+        <div class="ins-card-temp">–268°C to +482°C</div>
+        <div class="ins-card-desc">Closed-cell, impermeable to moisture, non-combustible, excellent compressive strength. k ≈ 0.040–0.055 W/m·K. Used where CUI risk is high or below-grade piping. ASTM C552.</div>
+      </div>
+
+      <div class="ins-card" id="it-glasswool" onclick="selectInsulType('glasswool')">
+        <span class="ins-card-badge badge-common">Light duty</span>
+        <div class="ins-card-name">Glass Wool (Fibreglass)</div>
+        <div class="ins-card-temp">Up to 300°C</div>
+        <div class="ins-card-desc">Lightweight blanket or pre-formed sections. k ≈ 0.030–0.040 W/m·K. Economical for lower-temperature utility lines (hot water, LP steam, condensate). ASTM C547 / ASTM C553.</div>
+      </div>
+
+    </div>
+
+    <div class="note" id="ins-type-note">Mineral Wool selected — standard for O&G process piping 120–550°C with aluminium cladding jacket.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Pipe &amp; Insulation Inputs</div>
+    <div class="grid3">
+      <div class="field">
+        <label>Pipe Outside Diameter (mm)</label>
+        <select id="i-od" onchange="syncInsulOD();calcInsul()">
+          <option value="60.3">2" (60.3 OD)</option>
+          <option value="88.9">3" (88.9 OD)</option>
+          <option value="114.3" selected>4" (114.3 OD)</option>
+          <option value="168.3">6" (168.3 OD)</option>
+          <option value="219.1">8" (219.1 OD)</option>
+          <option value="273.1">10" (273.1 OD)</option>
+          <option value="323.9">12" (323.9 OD)</option>
+          <option value="355.6">14" (355.6 OD)</option>
+          <option value="406.4">16" (406.4 OD)</option>
+          <option value="457.2">18" (457.2 OD)</option>
+          <option value="508">20" (508 OD)</option>
+          <option value="609.6">24" (609.6 OD)</option>
+          <option value="custom">Custom…</option>
+        </select>
+      </div>
+      <div class="field" id="i-od-custom-wrap" style="display:none;">
+        <label>Custom OD (mm)</label>
+        <input type="number" id="i-od-custom" value="114.3" step="0.1" oninput="calcInsul()"/>
+      </div>
+      <div class="field">
+        <label>Operating Temperature (°C)</label>
+        <input type="number" id="i-temp" value="200" step="5" oninput="autoInsulThk();calcInsul()"/>
+        <span class="hint">Used to recommend insulation thickness</span>
+      </div>
+      <div class="field">
+        <label>Total Pipe Length (m)</label>
+        <input type="number" id="i-len" value="100" step="1" oninput="calcInsul()"/>
+      </div>
+    </div>
+    <div class="grid3" style="margin-top:.8rem;">
+      <div class="field">
+        <label>Insulation Thickness (mm)</label>
+        <input type="number" id="i-thk" value="50" step="5" oninput="calcInsul()"/>
+        <span class="auto" id="i-thk-auto">▲ Auto-suggested from temperature table</span>
+      </div>
+      <div class="field">
+        <label>Number of Layers</label>
+        <select id="i-layers" onchange="calcInsul()">
+          <option value="1" selected>Single layer</option>
+          <option value="2">Double layer (staggered joints)</option>
+        </select>
+        <span class="hint">Double layer for temps &gt;300°C or thk &gt;100mm</span>
+      </div>
+      <div class="field">
+        <label>Wastage &amp; Cutting Factor (%)</label>
+        <input type="number" id="i-waste" value="10" min="5" max="25" oninput="calcInsul()"/>
+        <span class="hint">Pipe sections: 10–12%; mattresses: 12–15%</span>
+      </div>
+    </div>
+    <div class="grid3" style="margin-top:.8rem;">
+      <div class="field">
+        <label>Cladding / Jacket Type</label>
+        <select id="i-clad" onchange="calcInsul()">
+          <option value="alum_0.6" selected>Aluminium sheet 0.6mm</option>
+          <option value="alum_0.9">Aluminium sheet 0.9mm</option>
+          <option value="alum_1.2">Aluminium sheet 1.2mm (large bore)</option>
+          <option value="galv">Galvanised steel 0.6mm</option>
+          <option value="ss">Stainless steel 0.5mm (CUI risk areas)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Fittings / Elbows / Flanges Factor</label>
+        <select id="i-fittings" onchange="calcInsul()">
+          <option value="1.10">+10% (few fittings)</option>
+          <option value="1.20" selected>+20% (moderate — typical process)</option>
+          <option value="1.30">+30% (dense fittings / headers)</option>
+          <option value="1.40">+40% (valve-dense — manifolds)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Wire / Fixings Allowance</label>
+        <select id="i-fixings" onchange="calcInsul()">
+          <option value="1.05" selected>+5% (standard wire banding)</option>
+          <option value="1.08">+8% (pins + wire)</option>
+          <option value="1.10">+10% (full accessories)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Insulation Geometry Results</div>
+    <div class="results-grid">
+      <div class="res-box teal">
+        <div class="res-label">Insulation OD (pipe + 2×thk)</div>
+        <div class="res-val" id="i-ins-od">—</div>
+        <div class="res-unit">mm</div>
+      </div>
+      <div class="res-box teal">
+        <div class="res-label">Mean circumference of insulation</div>
+        <div class="res-val" id="i-mean-circ">—</div>
+        <div class="res-unit">mm</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Cladding OD (ins + 2×clad thk)</div>
+        <div class="res-val" id="i-clad-od">—</div>
+        <div class="res-unit">mm</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Insulation cross-section area</div>
+        <div class="res-val" id="i-xsec">—</div>
+        <div class="res-unit">mm²</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Insulation MTO — Quantities Required</div>
+    <div class="results-grid">
+      <div class="res-box hi">
+        <div class="res-label">Insulation volume (net)</div>
+        <div class="res-val" id="i-vol-net">—</div>
+        <div class="res-unit">m³</div>
+      </div>
+      <div class="res-box hi">
+        <div class="res-label">Insulation volume (+ wastage)</div>
+        <div class="res-val" id="i-vol-gross">—</div>
+        <div class="res-unit">m³</div>
+      </div>
+      <div class="res-box gold">
+        <div class="res-label">Cladding area (net)</div>
+        <div class="res-val" id="i-clad-area-net">—</div>
+        <div class="res-unit">m²</div>
+      </div>
+      <div class="res-box gold">
+        <div class="res-label">Cladding area (+ fittings &amp; laps)</div>
+        <div class="res-val" id="i-clad-area-gross">—</div>
+        <div class="res-unit">m²</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Pre-formed pipe sections needed</div>
+        <div class="res-val" id="i-sections">—</div>
+        <div class="res-unit">× 1m sections</div>
+      </div>
+      <div class="res-box">
+        <div class="res-label">Insulation weight (approx)</div>
+        <div class="res-val" id="i-weight">—</div>
+        <div class="res-unit">kg</div>
+      </div>
+    </div>
+
+    <div class="note" id="i-note">Select material type and enter inputs to generate insulation MTO.</div>
+  </div>
+
+</div><!-- /insulation panel -->
+
+<!-- ══════════════════════════════════════════════
+     TAB 3 — COMBINED MTO (multi-size)
+══════════════════════════════════════════════ -->
+<div class="panel" id="panel-mto">
+
+  <div class="card">
+    <div class="card-title">Multi-Size Project MTO Builder</div>
+    <div class="info-box">Add each pipe size run below — the table accumulates totals for your full project bill of materials. Mix painted and insulated lines in the same project.</div>
+
+    <div class="grid4" style="margin-bottom:.8rem;">
+      <div class="field">
+        <label>Pipe OD (mm)</label>
+        <select id="mto-od">
+          <option value="60.3">2" (60.3)</option>
+          <option value="88.9">3" (88.9)</option>
+          <option value="114.3" selected>4" (114.3)</option>
+          <option value="168.3">6" (168.3)</option>
+          <option value="219.1">8" (219.1)</option>
+          <option value="273.1">10" (273.1)</option>
+          <option value="323.9">12" (323.9)</option>
+          <option value="355.6">14" (355.6)</option>
+          <option value="406.4">16" (406.4)</option>
+          <option value="457.2">18" (457.2)</option>
+          <option value="508">20" (508)</option>
+          <option value="609.6">24" (609.6)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Length (m)</label>
+        <input type="number" id="mto-len" value="50" step="1"/>
+      </div>
+      <div class="field">
+        <label>Treatment</label>
+        <select id="mto-treat">
+          <option value="paint">Paint (epoxy system)</option>
+          <option value="insul_minwool">Insulation — Mineral Wool</option>
+          <option value="insul_calsil">Insulation — Calcium Silicate</option>
+          <option value="insul_aerogel">Insulation — Aerogel</option>
+          <option value="insul_perlite">Insulation — Perlite</option>
+          <option value="insul_cellular">Insulation — Cellular Glass</option>
+          <option value="insul_glasswool">Insulation — Glass Wool</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Insul Thickness (mm)</label>
+        <input type="number" id="mto-thk" value="50" step="5"/>
+        <span class="hint">Ignored for paint lines</span>
+      </div>
+    </div>
+    <button onclick="addMTORow()" style="padding:9px 22px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);">+ Add to MTO</button>
+  </div>
+
+  <div class="card" id="mto-results-card" style="display:none;">
+    <div class="card-title">Project MTO — Bill of Materials</div>
+    <table class="mto-table" id="mto-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>OD (mm)</th>
+          <th>Length (m)</th>
+          <th>Treatment</th>
+          <th>Ins Thk (mm)</th>
+          <th>Surface Area (m²)</th>
+          <th>Paint / Ins Volume</th>
+          <th>Cladding (m²)</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="mto-tbody"></tbody>
+    </table>
+
+    <div style="margin-top:1.2rem;">
+      <div class="card-title" style="margin-bottom:.8rem;">Project Totals</div>
+      <div class="summary-banner" id="mto-summary-banner">
+        <div class="summary-item"><div class="s-label">Total surface area</div><div class="s-val" id="mt-area">—</div><div class="s-unit">m²</div></div>
+        <div class="summary-item"><div class="s-label">Total paint volume</div><div class="s-val" id="mt-paint">—</div><div class="s-unit">litres (all coats)</div></div>
+        <div class="summary-item"><div class="s-label">Total insulation</div><div class="s-val" id="mt-insul">—</div><div class="s-unit">m³</div></div>
+        <div class="summary-item"><div class="s-label">Total cladding</div><div class="s-val" id="mt-clad">—</div><div class="s-unit">m²</div></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /mto panel -->
+
+<!-- ══════════════════════════════════════════════
+     TAB 4 — MATERIAL GUIDE
+══════════════════════════════════════════════ -->
+<div class="panel" id="panel-guide">
+
+  <div class="card">
+    <div class="card-title">Hot Insulation Selection Guide — O&amp;G Plant Piping</div>
+    <table class="mto-table">
+      <thead>
+        <tr>
+          <th>Material</th>
+          <th>Temp range</th>
+          <th>k (W/m·K @ 50°C)</th>
+          <th>Density (kg/m³)</th>
+          <th>Standard</th>
+          <th>Typical O&G application</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:600;color:var(--teal);">Mineral Wool (Rock Wool)</td>
+          <td>Up to 650°C</td>
+          <td>0.033 – 0.046</td>
+          <td>80 – 200</td>
+          <td>ASTM C547 / BS EN 14303</td>
+          <td>General process piping, utility steam, hot oil — most widely used in O&G plants</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--accent);">Calcium Silicate</td>
+          <td>Up to 760°C (dual layer)</td>
+          <td>0.055 – 0.085</td>
+          <td>160 – 240</td>
+          <td>ASTM C533</td>
+          <td>Steam headers, high-temp process, areas subject to mechanical abuse or foot traffic</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--gold);">Aerogel Blanket (Pyrogel)</td>
+          <td>–270°C to 650°C</td>
+          <td>0.015 – 0.020</td>
+          <td>100 – 200</td>
+          <td>ASTM C1728</td>
+          <td>Offshore platforms, pipe racks (space-constrained), CUI-prone systems, premium applications</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">Expanded Perlite</td>
+          <td>Up to 820°C</td>
+          <td>0.065 – 0.10</td>
+          <td>200 – 300</td>
+          <td>ASTM C610</td>
+          <td>Furnace piping, very high-temp steam, refinery heater circuits</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">Cellular Glass</td>
+          <td>–268°C to 482°C</td>
+          <td>0.040 – 0.055</td>
+          <td>110 – 165</td>
+          <td>ASTM C552</td>
+          <td>Below-grade piping, CUI-critical, cold-to-hot dual service, impermeable to moisture</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">Glass Wool (Fibreglass)</td>
+          <td>Up to 300°C</td>
+          <td>0.030 – 0.040</td>
+          <td>10 – 80</td>
+          <td>ASTM C553 / BS EN 14303</td>
+          <td>Hot water, LP steam, condensate, HVAC — lower cost, lighter weight, limited to 300°C</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Recommended Insulation Thickness — Mineral Wool (Heat Conservation, 20°C ambient)</div>
+    <table class="mto-table">
+      <thead>
+        <tr>
+          <th>Pipe NB</th>
+          <th>OD (mm)</th>
+          <th>100°C</th>
+          <th>150°C</th>
+          <th>200°C</th>
+          <th>250°C</th>
+          <th>300°C</th>
+          <th>400°C</th>
+          <th>500°C</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>2"</td><td>60.3</td><td>25mm</td><td>38mm</td><td>50mm</td><td>64mm</td><td>75mm</td><td>100mm</td><td>125mm</td></tr>
+        <tr><td>3"</td><td>88.9</td><td>25mm</td><td>38mm</td><td>50mm</td><td>64mm</td><td>75mm</td><td>100mm</td><td>125mm</td></tr>
+        <tr><td>4"</td><td>114.3</td><td>25mm</td><td>38mm</td><td>50mm</td><td>64mm</td><td>75mm</td><td>100mm</td><td>125mm</td></tr>
+        <tr><td>6"</td><td>168.3</td><td>25mm</td><td>38mm</td><td>50mm</td><td>64mm</td><td>75mm</td><td>100mm</td><td>125mm</td></tr>
+        <tr><td>8"</td><td>219.1</td><td>38mm</td><td>50mm</td><td>64mm</td><td>75mm</td><td>100mm</td><td>100mm</td><td>150mm</td></tr>
+        <tr><td>10"</td><td>273.1</td><td>38mm</td><td>50mm</td><td>64mm</td><td>75mm</td><td>100mm</td><td>100mm</td><td>150mm</td></tr>
+        <tr><td>12"</td><td>323.9</td><td>38mm</td><td>50mm</td><td>64mm</td><td>75mm</td><td>100mm</td><td>125mm</td><td>150mm</td></tr>
+        <tr><td>16"</td><td>406.4</td><td>50mm</td><td>50mm</td><td>75mm</td><td>75mm</td><td>100mm</td><td>125mm</td><td>150mm</td></tr>
+        <tr><td>20"</td><td>508.0</td><td>50mm</td><td>50mm</td><td>75mm</td><td>75mm</td><td>100mm</td><td>125mm</td><td>150mm</td></tr>
+        <tr><td>24"</td><td>609.6</td><td>50mm</td><td>64mm</td><td>75mm</td><td>100mm</td><td>100mm</td><td>125mm</td><td>150mm</td></tr>
+      </tbody>
+    </table>
+    <div class="note" style="margin-top:.8rem;">Thicknesses based on heat conservation criteria (surface temp ≤ 65°C for personnel protection) at 20°C ambient. For process temperature maintenance or heat loss limits, use thermal design software (e.g. 3E Plus) or CINI / ASTM C680. Above 550°C — switch to calcium silicate or dual-layer mineral wool + calcium silicate inner.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Paint System Reference — O&amp;G Plant Piping</div>
+    <table class="mto-table">
+      <thead>
+        <tr>
+          <th>System</th>
+          <th>Primer</th>
+          <th>Intermediate</th>
+          <th>Topcoat</th>
+          <th>Total DFT</th>
+          <th>Application</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:600;color:var(--teal);">Standard O&G — exterior (ISO 12944 C4)</td>
+          <td>Zinc-rich epoxy 75µm</td>
+          <td>Epoxy 125µm</td>
+          <td>PU 50µm</td>
+          <td>250µm</td>
+          <td>Aboveground process piping, uninsulated ≤ 120°C</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;color:var(--accent);">High-temp — uninsulated hot piping</td>
+          <td>Heat-resist primer 25µm</td>
+          <td>—</td>
+          <td>Silicone topcoat 25µm</td>
+          <td>50µm</td>
+          <td>Steam, hot oil lines 120–600°C, no insulation</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">CUI protection — under insulation</td>
+          <td>Epoxy phenolic 125µm</td>
+          <td>Epoxy phenolic 125µm</td>
+          <td>—</td>
+          <td>250µm</td>
+          <td>Applied before insulation, CUI-prone temp range –4°C to 175°C</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">Offshore / C5-M (ISO 12944)</td>
+          <td>Zinc-rich epoxy 75µm</td>
+          <td>HB epoxy 200µm</td>
+          <td>PU 75µm</td>
+          <td>350µm</td>
+          <td>Offshore modules, splash zone-adjacent structures</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">Buried pipeline (joint coating)</td>
+          <td>Liquid epoxy 2-pack</td>
+          <td>—</td>
+          <td>—</td>
+          <td>500µm</td>
+          <td>Field joints on FBE/3LPE pipelines, ASTM A1062</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div><!-- /guide panel -->
+
+</div><!-- /main -->
+
+<!-- PDF Button -->
+<div style="text-align:center;padding:1.5rem 1rem 2rem;border-top:1px solid rgba(26,26,24,0.1);margin-top:1rem;">
+  <p style="font-size:12px;color:#8a8a80;margin-bottom:.8rem;font-family:sans-serif;">Reference documentation for this calculator</p>
+  <a href="pdf/pipe-coating-insulation-guide.pdf" target="_blank"
+     style="display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:#c45c2a;color:#fff;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;font-family:sans-serif;">
+    📄 Download PDF Guide — Coating &amp; Insulation Calculator
+  </a>
+  <p style="font-size:11px;color:#aaa;margin-top:.6rem;font-family:sans-serif;">PDF coming soon — check back at pipingpro-academy.com</p>
+</div>
+
+<footer class="ppa-footer">
+  <div class="ppa-footer-logo">Piping<span>Pro</span> Academy</div>
+  <p>PipingPro Academy is a trademark of <strong style="color:var(--accent2);">Zephrum Konsultan Limited</strong>, registered in England &amp; Wales. Co. No. 13537626.</p>
+  <p style="margin-top:.3rem">© 2026 Zephrum Konsultan Limited. All rights reserved. &nbsp;·&nbsp; <a href="calculators.html">Calculator Suite</a></p>
+</footer>
+
+<script>
+/* ── HELPERS ── */
+function gv(id){return parseFloat(document.getElementById(id).value)||0;}
+function sv(id,v){var el=document.getElementById(id);if(el)el.textContent=v;}
+function getOD(selectId,customId){
+  var sel=document.getElementById(selectId).value;
+  if(sel==='custom') return parseFloat(document.getElementById(customId).value)||0;
+  return parseFloat(sel)||0;
+}
+
+/* ── LOCK ── */
+function checkLock(){
+  var code=document.getElementById('ppa-lock-input').value.trim().toUpperCase();
+  if(['PPA-PRO-2026','PPA-PRO-DEMO','PIPINGPRO'].indexOf(code)>=0){
+    document.getElementById('ppa-lock-overlay').style.display='none';
+  } else {
+    document.getElementById('ppa-lock-err').style.display='block';
+  }
+}
+document.getElementById('ppa-lock-input').addEventListener('keydown',function(e){if(e.key==='Enter')checkLock();});
+
+/* ── TABS ── */
+var TABS=['paint','insul','mto','guide'];
+function switchTab(name){
+  TABS.forEach(function(t,i){
+    document.querySelectorAll('.tab')[i].classList.toggle('active',t===name);
+    document.getElementById('panel-'+t).classList.toggle('active',t===name);
+  });
+}
+
+/* ── PAINT TYPE SELECTION ── */
+var selectedPaintType='epoxy';
+function selectPaintType(type){
+  selectedPaintType=type;
+  ['epoxy','heatres','cui','fusion'].forEach(function(t){
+    document.getElementById('pt-'+t).classList.toggle('selected',t===type);
+  });
+  var presets={
+    epoxy:    {dft1:75,  dft2:125, dft3:50,  solids:65},
+    heatres:  {dft1:25,  dft2:0,   dft3:25,  solids:40},
+    cui:      {dft1:125, dft2:125, dft3:0,   solids:75},
+    fusion:   {dft1:500, dft2:0,   dft3:0,   solids:100}
+  };
+  var p=presets[type];
+  document.getElementById('p-dft1').value=p.dft1;
+  document.getElementById('p-dft2').value=p.dft2;
+  document.getElementById('p-dft3').value=p.dft3;
+  document.getElementById('p-solids').value=p.solids;
+  calcPaint();
+}
+
+/* ── PAINT CALC ── */
+function syncPaintOD(){
+  var wrap=document.getElementById('p-od-custom-wrap');
+  wrap.style.display=document.getElementById('p-od').value==='custom'?'flex':'none';
+}
+function calcPaint(){
+  var od=getOD('p-od','p-od-custom')/1000; /* metres */
+  var len=gv('p-len');
+  var dft1=gv('p-dft1'), dft2=gv('p-dft2'), dft3=gv('p-dft3');
+  var solids=gv('p-solids')/100;
+  var eff=gv('p-eff')/100;
+  var waste=1+gv('p-waste')/100;
+  var fittings=parseFloat(document.getElementById('p-fittings').value)||1.2;
+
+  var area=Math.PI*od*len; /* m² bare pipe */
+  var areaFitted=area*fittings;
+
+  /* Theoretical coverage for one coat = 1000 × solids / DFT (m²/L) using avg DFT */
+  var avgDFT=(dft1+dft2+dft3)/3||dft1;
+  var covTh=(1000*solids)/avgDFT;
+  var covPr=covTh*eff;
+
+  sv('p-area', areaFitted.toFixed(1));
+  sv('p-cov-th', covTh.toFixed(2));
+  sv('p-cov-pr', covPr.toFixed(2));
+  sv('p-dft-total', (dft1+dft2+dft3).toFixed(0));
+
+  var coats=[
+    {name:'Primer', dft:dft1},
+    {name:'Intermediate', dft:dft2},
+    {name:'Topcoat', dft:dft3}
+  ];
+  var tbody=document.getElementById('p-coat-tbody');
+  tbody.innerHTML='';
+  var totalNet=0, totalGross=0;
+  coats.forEach(function(c){
+    if(c.dft<=0) return;
+    var cov=(1000*solids)/c.dft;
+    var covP=cov*eff;
+    var net=areaFitted/covP;
+    var gross=net*waste;
+    var drums=Math.ceil(gross/20);
+    totalNet+=net; totalGross+=gross;
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td>'+c.name+'</td><td>'+c.dft+'</td><td>'+net.toFixed(1)+'</td><td>'+gross.toFixed(1)+'</td><td>'+drums+'</td>';
+    tbody.appendChild(tr);
+  });
+  /* totals row */
+  if(totalNet>0){
+    var tr=document.createElement('tr');
+    tr.className='total-row';
+    tr.innerHTML='<td>TOTAL</td><td>—</td><td>'+totalNet.toFixed(1)+'</td><td>'+totalGross.toFixed(1)+'</td><td>'+Math.ceil(totalGross/20)+'</td>';
+    tbody.appendChild(tr);
+  }
+
+  var note=document.getElementById('p-note');
+  if(note) note.textContent='Total pipe surface area (incl. fittings factor): '+areaFitted.toFixed(1)+' m². Total paint required (all coats, incl. wastage): '+totalGross.toFixed(1)+' litres = '+Math.ceil(totalGross/20)+' × 20L drums.';
+}
+
+/* ── INSULATION TYPE SELECTION ── */
+var selectedInsulType='minwool';
+var insulProps={
+  minwool:  {name:'Mineral Wool',       density:100, kFactor:0.040, note:'Mineral Wool selected — standard for O&G process piping 120–550°C with aluminium cladding jacket.'},
+  calsil:   {name:'Calcium Silicate',   density:200, kFactor:0.070, note:'Calcium Silicate selected — ideal for high-temp steam headers and mechanically abused areas up to 650°C.'},
+  aerogel:  {name:'Aerogel',            density:150, kFactor:0.017, note:'Aerogel Blanket selected — premium, thinnest profile, hydrophobic. For space-constrained or CUI-critical installations.'},
+  perlite:  {name:'Expanded Perlite',   density:250, kFactor:0.083, note:'Expanded Perlite selected — for very high-temp applications up to 820°C, furnace piping and refinery heaters.'},
+  cellular: {name:'Cellular Glass',     density:135, kFactor:0.048, note:'Cellular Glass selected — impermeable, excellent for below-grade piping or high CUI-risk hot lines.'},
+  glasswool:{name:'Glass Wool',         density:40,  kFactor:0.035, note:'Glass Wool selected — lightweight, economical for lower-temp utility piping up to 300°C.'}
+};
+
+function selectInsulType(type){
+  selectedInsulType=type;
+  Object.keys(insulProps).forEach(function(t){
+    var el=document.getElementById('it-'+t);
+    if(el) el.classList.toggle('selected',t===type);
+  });
+  var noteEl=document.getElementById('ins-type-note');
+  if(noteEl) noteEl.textContent=insulProps[type].note;
+  autoInsulThk();
+  calcInsul();
+}
+
+/* Thickness lookup table [OD_mm, 100, 150, 200, 250, 300, 400, 500] */
+var insulThkTable=[
+  [60.3,  25,38,50,64,75,100,125],
+  [88.9,  25,38,50,64,75,100,125],
+  [114.3, 25,38,50,64,75,100,125],
+  [168.3, 25,38,50,64,75,100,125],
+  [219.1, 38,50,64,75,100,100,150],
+  [273.1, 38,50,64,75,100,100,150],
+  [323.9, 38,50,64,75,100,125,150],
+  [355.6, 50,50,75,75,100,125,150],
+  [406.4, 50,50,75,75,100,125,150],
+  [457.2, 50,50,75,75,100,125,150],
+  [508.0, 50,50,75,75,100,125,150],
+  [609.6, 50,64,75,100,100,125,150]
+];
+var thkTemps=[100,150,200,250,300,400,500];
+
+function autoInsulThk(){
+  var od=getOD('i-od','i-od-custom');
+  var temp=gv('i-temp');
+  /* find nearest OD row */
+  var row=insulThkTable[0];
+  for(var i=0;i<insulThkTable.length;i++){
+    if(Math.abs(insulThkTable[i][0]-od)<5){row=insulThkTable[i];break;}
+  }
+  /* interpolate/find nearest temp column */
+  var col=1;
+  for(var j=0;j<thkTemps.length;j++){
+    if(temp>=thkTemps[j]) col=j+1;
+  }
+  col=Math.max(1,Math.min(col,7));
+
+  /* Adjust for material: aerogel ~50% thinner, cellular glass ~20% thicker */
+  var factor={minwool:1.0,calsil:1.1,aerogel:0.5,perlite:1.1,cellular:1.1,glasswool:1.0}[selectedInsulType]||1.0;
+  var suggestedThk=Math.round(row[col]*factor/5)*5;
+
+  document.getElementById('i-thk').value=suggestedThk;
+  var autoEl=document.getElementById('i-thk-auto');
+  if(autoEl) autoEl.textContent='▲ Auto: '+suggestedThk+'mm suggested for '+temp+'°C, '+insulProps[selectedInsulType].name;
+}
+
+/* ── INSULATION CALC ── */
+function syncInsulOD(){
+  var wrap=document.getElementById('i-od-custom-wrap');
+  wrap.style.display=document.getElementById('i-od').value==='custom'?'flex':'none';
+}
+function calcInsul(){
+  var od=getOD('i-od','i-od-custom'); /* mm */
+  var thk=gv('i-thk'); /* mm */
+  var len=gv('i-len'); /* m */
+  var layers=parseInt(document.getElementById('i-layers').value)||1;
+  var wastePct=gv('i-waste')/100;
+  var fittings=parseFloat(document.getElementById('i-fittings').value)||1.2;
+  var fixings=parseFloat(document.getElementById('i-fixings').value)||1.05;
+  var cladVal=document.getElementById('i-clad').value;
+  var cladThk={'alum_0.6':0.6,'alum_0.9':0.9,'alum_1.2':1.2,'galv':0.6,'ss':0.5}[cladVal]||0.6;
+
+  var insOD=od+2*thk; /* mm */
+  var meanR=(od/2+thk/2)/1000; /* m — mean radius */
+  var meanCirc=2*Math.PI*meanR*1000; /* mm */
+  var cladOD=insOD+2*cladThk; /* mm */
+
+  /* cross-section area of annulus of insulation */
+  var xsec=Math.PI/4*(insOD*insOD-od*od); /* mm² */
+
+  sv('i-ins-od', insOD.toFixed(1));
+  sv('i-mean-circ', meanCirc.toFixed(1));
+  sv('i-clad-od', cladOD.toFixed(1));
+  sv('i-xsec', xsec.toFixed(0));
+
+  /* volume of insulation (annular cylinder) — in m³ */
+  var len_m=len;
+  var volNet=Math.PI/4*((insOD/1000)*(insOD/1000)-(od/1000)*(od/1000))*len_m*layers;
+  var volGross=volNet*(1+wastePct)*fittings;
+
+  /* cladding area = outer surface of insulation * fittings factor */
+  var cladAreaNet=Math.PI*(insOD/1000)*len_m*layers;
+  var cladAreaGross=cladAreaNet*fittings*1.10; /* +10% laps/overlaps */
+
+  /* sections (1m pre-formed sections) */
+  var sections=Math.ceil(len*layers*fittings*(1+wastePct));
+
+  /* weight */
+  var density=insulProps[selectedInsulType].density;
+  var weight=volGross*density;
+
+  sv('i-vol-net', volNet.toFixed(3));
+  sv('i-vol-gross', volGross.toFixed(3));
+  sv('i-clad-area-net', cladAreaNet.toFixed(1));
+  sv('i-clad-area-gross', cladAreaGross.toFixed(1));
+  sv('i-sections', sections);
+  sv('i-weight', Math.round(weight).toLocaleString());
+
+  var note=document.getElementById('i-note');
+  if(note) note.textContent=insulProps[selectedInsulType].name+' — '+thk+'mm on '+od+'mm OD pipe, '+len+'m run: '+volGross.toFixed(3)+' m³ insulation material, '+cladAreaGross.toFixed(1)+' m² cladding (incl. fittings & lap allowances).';
+}
+
+/* ── MTO BUILDER ── */
+var mtoRows=[];
+function addMTORow(){
+  var od=parseFloat(document.getElementById('mto-od').value)||114.3;
+  var len=parseFloat(document.getElementById('mto-len').value)||0;
+  var treat=document.getElementById('mto-treat').value;
+  var thk=parseFloat(document.getElementById('mto-thk').value)||50;
+  if(len<=0){alert('Please enter a pipe length.');return;}
+
+  var area=Math.PI*(od/1000)*len;
+  var paintVol=0, insulVol=0, cladArea=0, label='';
+
+  if(treat==='paint'){
+    /* simplified: 3-coat epoxy, 65% solids, 250µm total DFT, 70% eff, 15% waste, 20% fittings */
+    var covPr=(1000*0.65)/(250/3)*0.70;
+    paintVol=area*1.20/covPr*1.15*3;
+    label='Paint (3-coat epoxy)';
+  } else {
+    var mat=treat.replace('insul_','');
+    var density=insulProps[mat]?insulProps[mat].density:100;
+    var insOD=od+2*thk;
+    insulVol=Math.PI/4*((insOD/1000)*(insOD/1000)-(od/1000)*(od/1000))*len*1.20;
+    cladArea=Math.PI*(insOD/1000)*len*1.20*1.10;
+    label=(insulProps[mat]?insulProps[mat].name:mat)+' '+thk+'mm';
+  }
+
+  mtoRows.push({od:od,len:len,treat:treat,thk:thk,area:area,paintVol:paintVol,insulVol:insulVol,cladArea:cladArea,label:label});
+  renderMTO();
+}
+
+function removeMTORow(idx){
+  mtoRows.splice(idx,1);
+  renderMTO();
+}
+
+function renderMTO(){
+  var card=document.getElementById('mto-results-card');
+  if(mtoRows.length===0){card.style.display='none';return;}
+  card.style.display='block';
+  var tbody=document.getElementById('mto-tbody');
+  tbody.innerHTML='';
+  var totArea=0,totPaint=0,totInsul=0,totClad=0;
+  mtoRows.forEach(function(r,i){
+    totArea+=r.area; totPaint+=r.paintVol; totInsul+=r.insulVol; totClad+=r.cladArea;
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td>'+(i+1)+'</td>'
+      +'<td>'+r.od+'</td>'
+      +'<td>'+r.len+'</td>'
+      +'<td>'+r.label+'</td>'
+      +'<td>'+(r.treat==='paint'?'—':r.thk+'mm')+'</td>'
+      +'<td>'+r.area.toFixed(1)+'</td>'
+      +'<td>'+(r.treat==='paint'?r.paintVol.toFixed(1)+' L':r.insulVol.toFixed(3)+' m³')+'</td>'
+      +'<td>'+(r.treat==='paint'?'—':r.cladArea.toFixed(1))+'</td>'
+      +'<td><button onclick="removeMTORow('+i+')" style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:13px;">✕</button></td>';
+    tbody.appendChild(tr);
+  });
+  sv('mt-area', totArea.toFixed(1));
+  sv('mt-paint', totPaint.toFixed(1));
+  sv('mt-insul', totInsul.toFixed(3));
+  sv('mt-clad', totClad.toFixed(1));
+}
+
+/* ── INIT ── */
+syncPaintOD();
+syncInsulOD();
+calcPaint();
+autoInsulThk();
+calcInsul();
+</script>
+
+</body>
+</html>
