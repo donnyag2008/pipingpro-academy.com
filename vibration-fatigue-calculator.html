@@ -122,33 +122,6 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
   <p>Reciprocating compressor piping — MNFP, allowable span, support stiffness &amp; pulsation compliance · API-618 / ASME B31.3</p>
 </div>
 
-<!-- LOCK OVERLAY -->
-<style>
-#ppa-lock-overlay{position:fixed;inset:0;background:rgba(26,26,24,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;}
-#ppa-lock-box{background:#f5f2eb;border-radius:14px;padding:2.5rem 2rem;max-width:400px;width:90%;text-align:center;}
-#ppa-lock-box h2{font-size:1.3rem;color:#1a1a18;margin-bottom:.5rem;font-family:'DM Serif Display',serif;}
-#ppa-lock-box p{font-size:13px;color:#4a4a44;margin-bottom:1.2rem;line-height:1.6;}
-#ppa-lock-input{width:100%;padding:10px 14px;border:1px solid rgba(196,92,42,0.4);border-radius:8px;font-size:14px;font-family:monospace;color:#1a1a18;background:#fff;outline:none;margin-bottom:8px;text-align:center;}
-#ppa-lock-input:focus{border-color:#c45c2a;}
-#ppa-lock-btn{width:100%;padding:11px;border-radius:8px;background:#c45c2a;color:#fff;font-size:14px;font-weight:600;border:none;cursor:pointer;margin-bottom:.8rem;}
-#ppa-lock-btn:hover{background:#a84d22;}
-#ppa-lock-err{font-size:12px;color:#b91c1c;display:none;margin-bottom:.6rem;}
-#ppa-lock-back{font-size:12px;color:#8a8a80;text-decoration:none;}
-#ppa-lock-back:hover{color:#c45c2a;}
-</style>
-<div id="ppa-lock-overlay">
-  <div id="ppa-lock-box">
-    <div style="font-size:2rem;margin-bottom:.8rem;">🔒</div>
-    <h2>Pro Calculator</h2>
-    <p>This calculator is part of the <strong>PipingPro Academy Pro Suite</strong>. Enter your access code to unlock.</p>
-    <input id="ppa-lock-input" type="text" placeholder="PPA-PRO-XXXX-XXXX" maxlength="20"/>
-    <div id="ppa-lock-err">Invalid access code. Please try again.</div>
-    <button id="ppa-lock-btn" onclick="checkLock()">Unlock Calculator</button>
-    <br/>
-    <a href="calculators.html" id="ppa-lock-back">← Back to all calculators</a>
-  </div>
-</div>
-
 <div class="tabs">
   <button class="tab active" onclick="switchTab('mnfp')">1 · MNFP</button>
   <button class="tab" onclick="switchTab('span')">2 · Allowable Span</button>
@@ -744,17 +717,6 @@ function calcWfluid(id,rhofl){
   return area*12*(rhofl/1728); /* lb/ft, rhofl in lb/ft³ */
 }
 
-/* ── LOCK ── */
-function checkLock(){
-  var code=document.getElementById('ppa-lock-input').value.trim().toUpperCase();
-  var valid=['PPA-PRO-2026','PPA-PRO-DEMO','PIPINGPRO'];
-  if(valid.indexOf(code)>=0){
-    document.getElementById('ppa-lock-overlay').style.display='none';
-  } else {
-    document.getElementById('ppa-lock-err').style.display='block';
-  }
-}
-document.getElementById('ppa-lock-input').addEventListener('keydown',function(e){if(e.key==='Enter')checkLock();});
 
 /* ── TAB SWITCHING ── */
 function switchTab(name){
