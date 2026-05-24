@@ -148,8 +148,7 @@ footer a{color:var(--accent2);text-decoration:none;}
 <div class="tabs">
   <button class="tab active" onclick="switchTab('calc')">1 · Span Calculator</button>
   <button class="tab" onclick="switchTab('layout')">2 · Layout Factor</button>
-  <button class="tab" onclick="switchTab('table')">3 · Span Table</button>
-  <button class="tab" onclick="switchTab('theory')">4 · Theory &amp; Reference</button>
+  <button class="tab" onclick="switchTab('theory')">3 · Theory &amp; Reference</button>
 </div>
 
 <div class="main">
@@ -523,63 +522,7 @@ footer a{color:var(--accent2);text-decoration:none;}
 <!-- ══════════════════════════════════════════════
      TAB 3 — SPAN TABLE
 ══════════════════════════════════════════════ -->
-<div class="panel" id="panel-table">
-  <div class="card">
-    <div class="card-title">Quick Reference — Span Table Controls</div>
-    <div class="grid3">
-      <div class="field">
-        <label>Fluid for table</label>
-        <select id="tbl-fluid" onchange="buildTable()">
-          <option value="water">Water (62.4 lb/ft³)</option>
-          <option value="gas" selected>Gas / Air (empty, ~0 fluid wt)</option>
-          <option value="oil">Oil (50 lb/ft³)</option>
-          <option value="steam">Steam (3 lb/ft³)</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Schedule for table</label>
-        <select id="tbl-sch" onchange="buildTable()">
-          <option value="std">STD</option>
-          <option value="sch40" selected>Sch 40</option>
-          <option value="sch80">Sch 80</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Max deflection for table (in)</label>
-        <select id="tbl-delta" onchange="buildTable()">
-          <option value="0.125">⅛" (power piping)</option>
-          <option value="0.5" selected>½" (typical process)</option>
-          <option value="1.0">1" (large bore / relaxed)</option>
-        </select>
-      </div>
-    </div>
-  </div>
 
-  <div class="card">
-    <div class="card-title">Maximum Allowable Pipe Support Span (feet)</div>
-    <div class="note">Governing value shown — lesser of stress method (S<sub>h</sub> = 15,000 psi CS) and deflection method. Values in <strong>( )</strong> are after applying layout factor shown. Click any row to load that pipe size into the calculator.</div>
-    <div style="overflow-x:auto;">
-      <table class="span-table" id="span-table">
-        <thead>
-          <tr>
-            <th class="left">NPS</th>
-            <th>OD (in)</th>
-            <th>Wall (in)</th>
-            <th>I (in⁴)</th>
-            <th>Z (in³)</th>
-            <th>w (lb/ft)</th>
-            <th>L stress (ft)</th>
-            <th>L defl (ft)</th>
-            <th>L gov (ft)</th>
-            <th>×0.75 (ft)</th>
-            <th>×0.65 (ft)</th>
-          </tr>
-        </thead>
-        <tbody id="table-body"></tbody>
-      </table>
-    </div>
-  </div>
-</div><!-- /panel-table -->
 
 <!-- ══════════════════════════════════════════════
      TAB 4 — THEORY & REFERENCE
@@ -884,7 +827,6 @@ function calcSpan(){
   /* also update actual check */
   calcActual();
   /* update table highlight */
-  highlightTableRow();
 }
 
 /* ── ACTUAL SPAN CHECK ── */
@@ -961,7 +903,7 @@ function selectLayout(type, factor){
 
 /* ── TAB SWITCHING ── */
 function switchTab(name){
-  var tabs = ['calc','layout','table','theory'];
+  var tabs = ['calc','layout','theory'];
   tabs.forEach(function(t,i){
     document.querySelectorAll('.tab')[i].classList.toggle('active', t===name);
     document.getElementById('panel-'+t).classList.toggle('active', t===name);
@@ -969,43 +911,7 @@ function switchTab(name){
 }
 
 /* ── SPAN TABLE ── */
-var TABLE_NPS = [
-  {nps:'0.5',  label:'½"',   od:0.840},
-  {nps:'0.75', label:'¾"',   od:1.050},
-  {nps:'1',    label:'1"',   od:1.315},
-  {nps:'1.5',  label:'1½"', od:1.900},
-  {nps:'2',    label:'2"',   od:2.375},
-  {nps:'3',    label:'3"',   od:3.500},
-  {nps:'4',    label:'4"',   od:4.500},
-  {nps:'6',    label:'6"',   od:6.625},
-  {nps:'8',    label:'8"',   od:8.625},
-  {nps:'10',   label:'10"',  od:10.750},
-  {nps:'12',   label:'12"',  od:12.750},
-  {nps:'14',   label:'14"',  od:14.000},
-  {nps:'16',   label:'16"',  od:16.000},
-  {nps:'18',   label:'18"',  od:18.000},
-  {nps:'20',   label:'20"',  od:20.000},
-  {nps:'24',   label:'24"',  od:24.000}
-];
 
-function buildTable(){
-  var fluidKey = document.getElementById('tbl-fluid').value;
-  var schKey   = document.getElementById('tbl-sch').value;
-  var deltaT   = parseFloat(document.getElementById('tbl-delta').value)||0.5;
-  var E = 27.9e6, Sallow = 15000;
-
-  var rhoMap = {water:62.4, gas:0, oil:50, steam:3};
-  var rhofl = rhoMap[fluidKey]||0;
-
-  var schMap = {std:'std', sch40:'sch40', sch80:'sch80'};
-  var schKey2 = schMap[schKey]||'std';
-
-  var tbody = document.getElementById('table-body');
-  tbody.innerHTML = '';
-
-  Table_NPS.forEach(function(row){
-    var od = row.od;
-    var d = PIPE_DATA[row.nps] || PIPE_DATA['4'];
     var thkVal = d[schKey2] || d.std;
 
     var id_in  = od - 2*thkVal;
@@ -1029,8 +935,7 @@ function buildTable(){
       document.getElementById('thk').value = thkVal;
       switchTab('calc');
       calcSpan();
-      highlightTableRow();
-    };
+        };
     tr.innerHTML =
       '<td class="left">'+row.label+'</td>'+
       '<td>'+od.toFixed(3)+'</td>'+
@@ -1081,7 +986,6 @@ function resetCalc(){
 /* ── INIT ── */
 onNPSChange();
 onMatChange();
-buildTable();
 calcSpan();
 </script>
 

@@ -171,6 +171,15 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .ref-table td:first-child{font-weight:600;font-family:monospace;font-size:11px;white-space:nowrap;}
 .ref-table tr:last-child td{border-bottom:none;}
 
+
+/* ─── THEORY TAB NAV ─── */
+.calc-tabs{display:flex;background:var(--paper2,#ede9de);border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));overflow-x:auto;margin-bottom:0;}
+.calc-tab{padding:.85rem 1.5rem;font-size:13px;font-weight:500;color:var(--ink3,#8a8a80);border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;font-family:'DM Sans',sans-serif;transition:color .2s,border-color .2s;white-space:nowrap;}
+.calc-tab.active{color:var(--accent,#c45c2a);border-bottom-color:var(--accent,#c45c2a);}
+.calc-tab:hover:not(.active){color:var(--ink,#1a1a18);}
+.calc-panel{display:none;}
+.calc-panel.active{display:block;}
+
 </style>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style id="ppa-shared">
@@ -269,6 +278,13 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
   <div class="header-badge">PipingPro Academy</div>
 </div>
 
+
+<div class="calc-tabs">
+  <button class="calc-tab active" onclick="showCalcTab('calculator')">⚙ Calculator</button>
+  <button class="calc-tab" onclick="showCalcTab('theory')">📚 Theory &amp; Reference</button>
+</div>
+
+<div class="calc-panel active" id="calctab-calculator">
 <div class="container">
 
   <!-- MAIN TABS -->
@@ -1237,11 +1253,10 @@ onRGradeChange();
   <p>PipingPro Academy is a trademark of <strong style="color:var(--accent2);">Zephrum Konsultan Limited</strong>, registered in England &amp; Wales. Co. No. 13537626.</p>
   <p style="margin-top:.3rem">© 2026 Zephrum Konsultan Limited. All rights reserved. &nbsp;·&nbsp; <a href="calculators.html">Calculator Suite</a></p>
 </footer>
-
-
+</div><!-- /calctab-calculator -->
 
 <!-- ══ THEORY & REFERENCE PANEL ══ -->
-<div class="panel" id="panel-theory">
+<div class="calc-panel" id="calctab-theory">
 <div style="max-width:920px;margin:0 auto;padding:2rem 1.5rem;">
   <div style="background:var(--accent-light,#f7ede3);border:1px solid rgba(196,92,42,.2);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--accent,#c45c2a);margin-bottom:1.2rem;line-height:1.7;">
     📚 Theory, formulae and code references for this calculator. For full course content and worked examples, visit <strong>PipingPro Academy</strong> courses.
@@ -1272,6 +1287,7 @@ onRGradeChange();
     </div>
 </div>
 </div>
+</div><!-- /calctab-theory -->
 <!-- ══ END THEORY PANEL ══ -->
 </body>
 </html>
