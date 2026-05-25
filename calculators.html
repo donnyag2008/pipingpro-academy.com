@@ -906,6 +906,8 @@ function openModal(id){
 
   // Members go straight to the calculator — no popup
   if(isMember()){
+    // Remember which suite we're in so Back returns here
+    sessionStorage.setItem('ppa_last_suite', window._activeSuite || '');
     window.location.href=c.file;
     return;
   }
@@ -964,10 +966,19 @@ function initCards(){
     }
   });
 }
-document.addEventListener('DOMContentLoaded', initCards);
+document.addEventListener('DOMContentLoaded', ()=>{
+  initCards();
+  // Restore suite if user navigated back from a calculator
+  const lastSuite = sessionStorage.getItem('ppa_last_suite');
+  if(lastSuite){
+    openSuite(lastSuite);
+  }
+});
 
 // ─── SUITE NAVIGATION ─────────────────────────────────────────
 function openSuite(name){
+  window._activeSuite = name;
+  sessionStorage.setItem('ppa_last_suite', name);
   document.getElementById('landing-view').classList.add('hidden');
   document.querySelectorAll('.suite-view').forEach(v=>v.classList.remove('active'));
   const view = document.getElementById('suite-'+name);
@@ -978,6 +989,8 @@ function openSuite(name){
 }
 
 function closeSuite(){
+  window._activeSuite = '';
+  sessionStorage.removeItem('ppa_last_suite');
   document.getElementById('landing-view').classList.remove('hidden');
   document.querySelectorAll('.suite-view').forEach(v=>v.classList.remove('active'));
   window.scrollTo({top:0,behavior:'smooth'});
