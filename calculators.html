@@ -129,6 +129,46 @@ footer a{color:var(--accent2);text-decoration:none;}
 .lmodal-submit:hover{background:#c9a020;}
 .lmodal-logout{width:100%;padding:10px;background:var(--paper2);color:var(--ink2);font-weight:600;font-size:12px;border:none;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:.7rem;}
 .lmodal-logout:hover{background:var(--paper3);}
+
+/* ─── SUITE LANDING ─── */
+.suite-landing{max-width:960px;margin:0 auto;padding:2.8rem 1.5rem 1rem;}
+.suite-intro{text-align:center;margin-bottom:2rem;}
+.suite-intro h2{font-family:'DM Serif Display',serif;font-size:1.6rem;color:var(--ink);margin-bottom:.5rem;}
+.suite-intro p{font-size:13px;color:var(--ink2);max-width:520px;margin:0 auto;}
+.suite-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1.2rem;}
+
+.suite-card{border-radius:16px;overflow:hidden;cursor:pointer;transition:box-shadow .22s,transform .22s;position:relative;border:1px solid var(--rule);}
+.suite-card:hover{box-shadow:0 8px 36px rgba(26,26,24,0.14);transform:translateY(-4px);}
+
+.suite-banner{height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6rem;position:relative;overflow:hidden;}
+.suite-banner::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,.03) 0,rgba(255,255,255,.03) 1px,transparent 1px,transparent 12px);}
+.suite-banner.piping{background:linear-gradient(140deg,#1a5a6b 0%,#0d3d4a 100%);}
+.suite-banner.pipeline{background:linear-gradient(140deg,#6b3d1a 0%,#4a2508 100%);}
+.suite-banner.integrity{background:linear-gradient(140deg,#1a3a6b 0%,#0d2040 100%);}
+
+.suite-icon{width:64px;height:64px;opacity:.9;position:relative;}
+.suite-count{font-size:10px;font-family:'DM Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.55);position:relative;}
+
+.suite-body{background:#fff;padding:1.3rem 1.4rem 1.5rem;}
+.suite-name{font-family:'DM Serif Display',serif;font-size:1.15rem;color:var(--ink);margin-bottom:.3rem;}
+.suite-sub{font-size:11px;font-family:'DM Mono',monospace;color:var(--accent);letter-spacing:.07em;margin-bottom:.6rem;}
+.suite-desc{font-size:12px;color:var(--ink2);line-height:1.65;margin-bottom:1rem;}
+.suite-btn{display:block;text-align:center;padding:10px;border-radius:9px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:background .18s;border:none;width:100%;}
+.suite-btn.open{background:var(--accent);color:#fff;}
+.suite-btn.open:hover{background:#b04e22;}
+.suite-btn.soon{background:var(--paper2);color:var(--ink3);cursor:default;}
+
+/* ─── SUITE VIEW (calculator list inside a suite) ─── */
+.suite-view{display:none;}
+.suite-view.active{display:block;}
+.suite-back-bar{max-width:960px;margin:0 auto;padding:1.2rem 1.5rem .4rem;display:flex;align-items:center;gap:.6rem;}
+.suite-back-btn{background:none;border:1px solid var(--rule);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;color:var(--ink2);cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:.4rem;transition:background .18s;}
+.suite-back-btn:hover{background:var(--paper2);}
+.suite-back-label{font-size:13px;color:var(--ink3);font-family:'DM Mono',monospace;letter-spacing:.05em;}
+
+/* hide/show states */
+.landing-view{display:block;}
+.landing-view.hidden{display:none;}
 </style>
 </head>
 <body>
@@ -175,11 +215,94 @@ footer a{color:var(--accent2);text-decoration:none;}
 <div class="hero">
   <div class="hero-eyebrow">Engineering Calculator Suite · PipingPro Academy</div>
   <h1>Piping &amp; Pipeline <em>Calculators</em></h1>
-  <p>Professional-grade tools based on ASME, API, DNV and industry-standard codes — by Donny A. Bachtiar, CEO & Founder of Zephrum Konsultan Limited.</p>
+  <p>Professional-grade tools based on ASME, API, DNV and industry-standard codes — by Donny A. Bachtiar, CEO &amp; Founder of Zephrum Konsultan Limited.</p>
 </div>
 
-<div class="main">
-  <div class="grid">
+<!-- ═══════════════ SUITE LANDING ═══════════════ -->
+<div class="landing-view" id="landing-view">
+  <div class="suite-landing">
+    <div class="suite-intro">
+      <h2>Select a Calculator Suite</h2>
+      <p>Three specialist suites covering process piping, onshore/offshore pipelines, and pipeline integrity — each built on the governing codes for that discipline.</p>
+    </div>
+    <div class="suite-grid">
+
+      <!-- Suite 1: Piping -->
+      <div class="suite-card" onclick="openSuite('piping')">
+        <div class="suite-banner piping">
+          <svg class="suite-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="32" cy="32" r="22" stroke="rgba(255,255,255,0.75)" stroke-width="3" fill="none"/>
+            <circle cx="32" cy="32" r="14" stroke="rgba(255,255,255,0.35)" stroke-width="2" fill="none"/>
+            <line x1="32" y1="10" x2="32" y2="54" stroke="rgba(255,255,255,0.9)" stroke-width="2.5"/>
+            <line x1="10" y1="32" x2="54" y2="32" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <path d="M20 20 Q32 14 44 20" stroke="rgba(255,200,150,0.7)" stroke-width="1.5" fill="none"/>
+          </svg>
+          <span class="suite-count">14 calculators</span>
+        </div>
+        <div class="suite-body">
+          <div class="suite-name">Piping Calculators</div>
+          <div class="suite-sub">ASME B31.3 — Process Piping</div>
+          <div class="suite-desc">Wall thickness, expansion loops, flange leakage, nozzle loads, pipe supports, vibration, hydro/pneumo testing, P&amp;ID MTO, and more.</div>
+          <button class="suite-btn open">Open Suite →</button>
+        </div>
+      </div>
+
+      <!-- Suite 2: Pipeline -->
+      <div class="suite-card" onclick="openSuite('pipeline')">
+        <div class="suite-banner pipeline">
+          <svg class="suite-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="4" y1="32" x2="60" y2="32" stroke="rgba(255,255,255,0.85)" stroke-width="8" stroke-linecap="round"/>
+            <rect x="4" y="24" width="56" height="16" rx="8" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" fill="none"/>
+            <path d="M16 44 Q32 52 48 44" stroke="rgba(255,200,120,0.8)" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="4 2"/>
+            <line x1="32" y1="20" x2="32" y2="10" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-dasharray="3 2"/>
+            <polygon points="32,8 28,14 36,14" fill="rgba(255,255,255,0.5)"/>
+          </svg>
+          <span class="suite-count">5 calculators</span>
+        </div>
+        <div class="suite-body">
+          <div class="suite-name">Pipeline Calculators</div>
+          <div class="suite-sub">ASME B31.4 · ASME B31.8 · ISO 13623:2017</div>
+          <div class="suite-desc">Onshore liquid &amp; gas pipelines, road/rail crossings, upheaval buckling, ductile fracture propagation, and subsea pipeline design per DNV-ST-F101.</div>
+          <button class="suite-btn open">Open Suite →</button>
+        </div>
+      </div>
+
+      <!-- Suite 3: Pipeline Integrity -->
+      <div class="suite-card">
+        <div class="suite-banner integrity">
+          <svg class="suite-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="4" y1="32" x2="60" y2="32" stroke="rgba(255,255,255,0.7)" stroke-width="7" stroke-linecap="round"/>
+            <rect x="4" y="25" width="56" height="14" rx="7" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" fill="none"/>
+            <!-- corrosion pits -->
+            <circle cx="22" cy="29" r="3.5" fill="rgba(255,100,80,0.75)"/>
+            <circle cx="38" cy="35" r="2.5" fill="rgba(255,140,80,0.7)"/>
+            <circle cx="50" cy="28" r="3" fill="rgba(255,100,80,0.6)"/>
+            <!-- inspection arrow -->
+            <line x1="32" y1="48" x2="32" y2="40" stroke="rgba(100,220,180,0.9)" stroke-width="2" stroke-linecap="round"/>
+            <polygon points="32,38 28,44 36,44" fill="rgba(100,220,180,0.9)"/>
+          </svg>
+          <span class="suite-count">Coming Soon</span>
+        </div>
+        <div class="suite-body">
+          <div class="suite-name">Pipeline Integrity</div>
+          <div class="suite-sub">ASME B31G · API 579 · DNV-RP-F101</div>
+          <div class="suite-desc">Remaining wall thickness, burst pressure, corrosion fitness-for-service, inspection interval, and live corrosion monitoring via CorrosionSense.</div>
+          <button class="suite-btn soon">Coming Soon</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div><!-- /landing-view -->
+
+<!-- ═══════════════ SUITE VIEW: PIPING ═══════════════ -->
+<div class="suite-view" id="suite-piping">
+  <div class="suite-back-bar">
+    <button class="suite-back-btn" onclick="closeSuite()">← All Suites</button>
+    <span class="suite-back-label">Piping / ASME B31.3</span>
+  </div>
+  <div class="main">
+  <div class="grid" id="grid-piping">
 
     <div class="calc-card" onclick="openModal('pw')">
       <div class="card-img bg-teal">
@@ -566,8 +689,86 @@ footer a{color:var(--accent2);text-decoration:none;}
       </div>
     </div>
 
+  </div><!-- /grid-piping -->
+  </div><!-- /main -->
+</div><!-- /suite-piping -->
+
+<!-- ═══════════════ SUITE VIEW: PIPELINE ═══════════════ -->
+<div class="suite-view" id="suite-pipeline">
+  <div class="suite-back-bar">
+    <button class="suite-back-btn" onclick="closeSuite()">← All Suites</button>
+    <span class="suite-back-label">Pipeline / ASME B31.4 · B31.8 · ISO 13623</span>
   </div>
-</div><!-- /main -->
+  <div class="main">
+  <div class="grid" id="grid-pipeline">
+    <!-- Pipeline: Pipe Wall Thickness (shared) -->
+    <div class="calc-card" onclick="openModal('wt')">
+      <div class="card-img bg-accent">
+        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="45" cy="45" r="28" stroke="rgba(255,255,255,0.8)" stroke-width="7" fill="none"/><line x1="45" y1="17" x2="45" y2="10" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/><line x1="45" y1="73" x2="45" y2="80" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/><line x1="40" y1="10" x2="50" y2="10" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/><line x1="40" y1="80" x2="50" y2="80" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/><line x1="75" y1="45" x2="62" y2="45" stroke="rgba(255,255,255,0.7)" stroke-width="2"/><polygon points="63,45 70,41 70,49" fill="rgba(255,255,255,0.7)"/></svg>
+        <span class="card-badge badge-member" id="badge-wt-pl">👑 Members</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Pipe Wall Thickness</div>
+        <div class="card-desc">Minimum wall thickness per ASME B31.3, B31.4, B31.8 with mill tolerance, corrosion allowance, and schedule selection.</div>
+        <div class="card-tags"><span class="tag">ASME B31.3</span><span class="tag">B31.4</span><span class="tag">B31.8</span></div>
+        <div class="card-action"><span class="card-btn btn-locked" id="btn-wt-pl">👑 Members Only</span></div>
+      </div>
+    </div>
+    <!-- Pipeline Crossing -->
+    <div class="calc-card" onclick="openModal('pc')">
+      <div class="card-img bg-slate">
+        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="52" width="80" height="8" rx="1" fill="rgba(255,255,255,0.25)"/><ellipse cx="45" cy="68" rx="14" ry="10" stroke="rgba(255,255,255,0.8)" stroke-width="3.5" fill="none"/><path d="M31 58 Q45 52 59 58" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" fill="none" stroke-dasharray="3 2"/><line x1="30" y1="35" x2="30" y2="50" stroke="rgba(255,255,255,0.7)" stroke-width="2"/><polygon points="30,52 26,44 34,44" fill="rgba(255,255,255,0.7)"/><line x1="45" y1="30" x2="45" y2="50" stroke="rgba(255,255,255,0.85)" stroke-width="2.5"/><polygon points="45,52 41,44 49,44" fill="rgba(255,255,255,0.85)"/><line x1="60" y1="35" x2="60" y2="50" stroke="rgba(255,255,255,0.7)" stroke-width="2"/><polygon points="60,52 56,44 64,44" fill="rgba(255,255,255,0.7)"/></svg>
+        <span class="card-badge badge-member" id="badge-pc">👑 Members</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Pipeline Crossing Calculator</div>
+        <div class="card-desc">Road and railway crossing stress analysis per API RP 1102 — soil load, traffic load, combined stress, and casing pipe adequacy.</div>
+        <div class="card-tags"><span class="tag">API RP 1102</span><span class="tag">Road</span><span class="tag">Rail</span></div>
+        <div class="card-action"><span class="card-btn btn-locked" id="btn-pc">👑 Members Only</span></div>
+      </div>
+    </div>
+    <!-- Upheaval Buckling -->
+    <div class="calc-card" onclick="openModal('ub')">
+      <div class="card-img bg-olive">
+        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="5" y1="50" x2="85" y2="50" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-dasharray="5 3"/><path d="M5 65 Q22 65 35 50 Q45 38 55 50 Q68 65 85 65" stroke="rgba(255,255,255,0.9)" stroke-width="4" fill="none" stroke-linecap="round"/><line x1="45" y1="55" x2="45" y2="30" stroke="rgba(255,255,255,0.75)" stroke-width="2"/><polygon points="45,28 41,36 49,36" fill="rgba(255,255,255,0.75)"/><line x1="25" y1="25" x2="25" y2="48" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="65" y1="25" x2="65" y2="48" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-dasharray="3 2"/></svg>
+        <span class="card-badge badge-member" id="badge-ub">👑 Members</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Upheaval Buckling Calculator</div>
+        <div class="card-desc">Buried pipeline stability — driving force, soil resistance, and required cover depth per DNV-RP-F110.</div>
+        <div class="card-tags"><span class="tag">DNV-RP-F110</span><span class="tag">Buried Pipeline</span></div>
+        <div class="card-action"><span class="card-btn btn-locked" id="btn-ub">👑 Members Only</span></div>
+      </div>
+    </div>
+    <!-- Ductile Fracture -->
+    <div class="calc-card" onclick="openModal('df')">
+      <div class="card-img bg-maroon">
+        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="45" x2="80" y2="45" stroke="rgba(255,255,255,0.6)" stroke-width="8" stroke-linecap="round"/><polyline points="45,30 48,38 42,45 48,52 45,60" stroke="rgba(255,120,100,0.95)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="45" y1="28" x2="25" y2="28" stroke="rgba(255,200,180,0.7)" stroke-width="1.5"/><polygon points="23,28 30,25 30,31" fill="rgba(255,200,180,0.7)"/><line x1="45" y1="28" x2="65" y2="28" stroke="rgba(255,200,180,0.7)" stroke-width="1.5"/><polygon points="67,28 60,25 60,31" fill="rgba(255,200,180,0.7)"/></svg>
+        <span class="card-badge badge-member" id="badge-df">👑 Members</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Ductile Fracture Propagation</div>
+        <div class="card-desc">Battelle Two-Curve Method for gas pipeline arrest toughness per SAES-L-131, API 5L Annex G, and ASME B31.8.</div>
+        <div class="card-tags"><span class="tag">BTCM</span><span class="tag">SAES-L-131</span><span class="tag">API 5L</span></div>
+        <div class="card-action"><span class="card-btn btn-locked" id="btn-df">👑 Members Only</span></div>
+      </div>
+    </div>
+    <!-- Subsea Pipeline -->
+    <div class="calc-card" onclick="openModal('sp')">
+      <div class="card-img bg-teal2">
+        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 35 Q20 28 35 35 Q50 42 65 35 Q80 28 88 35" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/><path d="M5 42 Q20 35 35 42 Q50 49 65 42 Q80 35 88 42" stroke="rgba(255,255,255,0.25)" stroke-width="1" fill="none"/><line x1="5" y1="78" x2="85" y2="78" stroke="rgba(255,255,255,0.3)" stroke-width="2"/><line x1="10" y1="72" x2="80" y2="72" stroke="rgba(255,255,255,0.85)" stroke-width="6" stroke-linecap="round"/><line x1="80" y1="38" x2="80" y2="72" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/><polygon points="80,74 77,67 83,67" fill="rgba(255,255,255,0.6)"/><polygon points="80,36 77,43 83,43" fill="rgba(255,255,255,0.6)"/></svg>
+        <span class="card-badge badge-member" id="badge-sp">👑 Members</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Subsea Pipeline Calculator</div>
+        <div class="card-desc">Offshore pipeline design — wall thickness, collapse, propagating buckling, on-bottom stability, and free-span per DNV-ST-F101.</div>
+        <div class="card-tags"><span class="tag">DNV-ST-F101</span><span class="tag">Subsea</span><span class="tag">Offshore</span></div>
+        <div class="card-action"><span class="card-btn btn-locked" id="btn-sp">👑 Members Only</span></div>
+      </div>
+    </div>
+  </div><!-- /grid-pipeline -->
+  </div><!-- /main -->
+</div><!-- /suite-pipeline -->
 
 <footer>
   <div class="fl">Piping<span>Pro</span> Academy</div>
@@ -709,6 +910,52 @@ function initCards(){
   });
 }
 document.addEventListener('DOMContentLoaded', initCards);
+
+// ─── SUITE NAVIGATION ─────────────────────────────────────────
+function openSuite(name){
+  document.getElementById('landing-view').classList.add('hidden');
+  document.querySelectorAll('.suite-view').forEach(v=>v.classList.remove('active'));
+  const view = document.getElementById('suite-'+name);
+  if(view) view.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  // update pipeline suite badges dynamically
+  if(name==='pipeline') initPipelineBadges();
+}
+
+function closeSuite(){
+  document.getElementById('landing-view').classList.remove('hidden');
+  document.querySelectorAll('.suite-view').forEach(v=>v.classList.remove('active'));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function initPipelineBadges(){
+  const member = isMember();
+  // Pipeline suite has its own badge/btn IDs suffixed with -pl for wt; others are shared
+  const plIds = ['wt-pl','pc','ub','df','sp'];
+  plIds.forEach(id => {
+    const badge = document.getElementById('badge-'+id);
+    const btn   = document.getElementById('btn-'+id);
+    if(!badge || !btn) return;
+    if(member){
+      badge.textContent = '✓ Member';
+      badge.style.background = 'rgba(26,107,90,.85)';
+      badge.style.color = '#fff';
+      btn.textContent = 'Open Calculator →';
+      btn.className = 'card-btn btn-open';
+      btn.style.cssText = 'background:var(--accent);color:#fff;display:block;text-align:center;padding:9px;border-radius:8px;font-size:12px;font-weight:600;border:none;cursor:pointer;width:100%;font-family:var(--font,"DM Sans",sans-serif);text-decoration:none;';
+      // fix onclick for wt-pl which maps to 'wt'
+      if(id==='wt-pl'){
+        btn.onclick = ()=>openModal('wt');
+      }
+    } else {
+      badge.textContent = '👑 Members';
+      badge.style.background = 'rgba(184,134,11,.82)';
+      badge.style.color = '#fff';
+      btn.textContent = '👑 Members Only';
+      btn.className = 'card-btn btn-locked';
+    }
+  });
+}
 
 </script>
 
