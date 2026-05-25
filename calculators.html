@@ -182,6 +182,17 @@ footer a{color:var(--accent2);text-decoration:none;}
 /* hide/show states */
 .landing-view{display:block;}
 .landing-view.hidden{display:none;}
+
+/* ─── SUITE HEADER BANNER ─── */
+.suite-header{background:var(--ink);border-bottom:3px solid var(--accent);padding:1.6rem 2rem 1.4rem;position:relative;overflow:hidden;}
+.suite-header::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.012) 0,rgba(255,255,255,.012) 1px,transparent 1px,transparent 60px),repeating-linear-gradient(0deg,rgba(255,255,255,.012) 0,rgba(255,255,255,.012) 1px,transparent 1px,transparent 60px);}
+.suite-header-inner{max-width:960px;margin:0 auto;position:relative;display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap;}
+.suite-header-back{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;color:rgba(255,255,255,.8);cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .18s;white-space:nowrap;}
+.suite-header-back:hover{background:rgba(255,255,255,.2);}
+.suite-header-text{}
+.suite-header-eyebrow{font-size:10px;font-family:'DM Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);margin-bottom:.25rem;}
+.suite-header-title{font-family:'DM Serif Display',serif;font-size:1.5rem;color:#fff;line-height:1.15;margin-bottom:.2rem;}
+.suite-header-codes{font-size:11px;font-family:'DM Mono',monospace;color:rgba(255,255,255,.45);letter-spacing:.06em;}
 </style>
 </head>
 <body>
@@ -310,9 +321,15 @@ footer a{color:var(--accent2);text-decoration:none;}
 
 <!-- ═══════════════ SUITE VIEW: PIPING ═══════════════ -->
 <div class="suite-view" id="suite-piping">
-  <div class="suite-back-bar">
-    <button class="suite-back-btn" onclick="closeSuite()">← All Suites</button>
-    <span class="suite-back-label">Piping / ASME B31.3</span>
+  <div class="suite-header">
+    <div class="suite-header-inner">
+      <button class="suite-header-back" onclick="closeSuite()">← All Suites</button>
+      <div class="suite-header-text">
+        <div class="suite-header-eyebrow">Calculator Suite · PipingPro Academy</div>
+        <div class="suite-header-title">Piping Calculators</div>
+        <div class="suite-header-codes">ASME B31.3 — Process Piping · ASME B36.10 · API 610 / 617 / 618</div>
+      </div>
+    </div>
   </div>
   <div class="main">
   <div class="grid" id="grid-piping">
@@ -708,9 +725,15 @@ footer a{color:var(--accent2);text-decoration:none;}
 
 <!-- ═══════════════ SUITE VIEW: PIPELINE ═══════════════ -->
 <div class="suite-view" id="suite-pipeline">
-  <div class="suite-back-bar">
-    <button class="suite-back-btn" onclick="closeSuite()">← All Suites</button>
-    <span class="suite-back-label">Pipeline / ASME B31.4 · B31.8 · ISO 13623</span>
+  <div class="suite-header">
+    <div class="suite-header-inner">
+      <button class="suite-header-back" onclick="closeSuite()">← All Suites</button>
+      <div class="suite-header-text">
+        <div class="suite-header-eyebrow">Calculator Suite · PipingPro Academy</div>
+        <div class="suite-header-title">Pipeline Calculators</div>
+        <div class="suite-header-codes">ASME B31.4 · ASME B31.8 · ISO 13623:2017 · DNV-ST-F101 · API RP 1102</div>
+      </div>
+    </div>
   </div>
   <div class="main">
   <div class="grid" id="grid-pipeline">
@@ -906,8 +929,9 @@ function openModal(id){
 
   // Members go straight to the calculator — no popup
   if(isMember()){
-    // Remember which suite we're in so Back returns here
+    // Remember which suite we're in — set both suite name AND a one-shot return flag
     sessionStorage.setItem('ppa_last_suite', window._activeSuite || '');
+    sessionStorage.setItem('ppa_returning', '1');
     window.location.href=c.file;
     return;
   }
@@ -968,10 +992,16 @@ function initCards(){
 }
 document.addEventListener('DOMContentLoaded', ()=>{
   initCards();
-  // Restore suite if user navigated back from a calculator
+  // Restore suite only if user navigated BACK from a calculator (one-shot flag)
   const lastSuite = sessionStorage.getItem('ppa_last_suite');
-  if(lastSuite){
+  const isReturn  = sessionStorage.getItem('ppa_returning');
+  if(lastSuite && isReturn === '1'){
+    sessionStorage.removeItem('ppa_returning'); // consume the flag — next fresh load won't restore
     openSuite(lastSuite);
+  } else {
+    // Fresh visit — clear any stale suite memory
+    sessionStorage.removeItem('ppa_last_suite');
+    sessionStorage.removeItem('ppa_returning');
   }
 });
 
