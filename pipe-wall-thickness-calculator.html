@@ -883,6 +883,7 @@ function calculate(){
   const uP  = isUS ? 'psig' : 'barg';
   const uS  = isUS ? 'psi'  : 'MPa';
   const uT  = isUS ? 'in'   : 'mm';
+  const uD  = uT;
   const dP  = f(P_raw, 1);
   const dD  = isUS ? f(D_raw, 3) : f(D, 2);
   const dCA = isUS ? f(CA_raw, 4) : f(CA, 1);
