@@ -920,12 +920,12 @@ function calculate(){
     } else {
       steps += ST(1,'Convert Pressure to MPa',`P (MPa) = P (barg) × 0.1`,`= ${dP} × 0.1`,`${dP_mpa} MPa`);
     }
-    const n = isUS ? 3 : 2;
-    steps += ST(n,  'Denominator','2(S·E·W + P·Y)',`= 2×(${f(S,1)}×${f(E,2)}×${f(W,2)} + ${f(P_si,3)}×${f(Y,1)})`,`${f(denominator,4)} MPa`);
-    steps += ST(n+1,'Required thickness t (Eq. 3a)','t = P·D / [2·(S·E·W + P·Y)]',`= ${dP_mpa} × ${f(D,2)} / ${f(denominator,4)}`,`${dt} ${uT}`);
-    steps += ST(n+2,'Add corrosion allowance','t_CA = t + CA',`= ${dt} + ${dCA}`,`${dtca} ${uT}`);
-    if(c2>0) steps += ST(n+3,'Add mechanical allowance c₂','t_c2 = t_CA + c₂',`= ${dtca} + ${dC2}`,`${dtwca} ${uT}`);
-    steps += ST(n+(c2>0?4:3),'Account for mill tolerance','t_spec = (t+CA+c₂) / (1−MT/100)',`= ${dtwca} / (1−${MT}/100)`,`${dtspec} ${uT}`);
+    const nb313 = isUS ? 3 : 2;
+    steps += ST(nb313,  'Denominator','2(S·E·W + P·Y)',`= 2×(${f(S,1)}×${f(E,2)}×${f(W,2)} + ${f(P_si,3)}×${f(Y,1)})`,`${f(denominator,4)} MPa`);
+    steps += ST(nb313+1,'Required thickness t (Eq. 3a)','t = P·D / [2·(S·E·W + P·Y)]',`= ${dP_mpa} × ${f(D,2)} / ${f(denominator,4)}`,`${dt} ${uT}`);
+    steps += ST(nb313+2,'Add corrosion allowance','t_CA = t + CA',`= ${dt} + ${dCA}`,`${dtca} ${uT}`);
+    if(c2>0) steps += ST(nb313+3,'Add mechanical allowance c₂','t_c2 = t_CA + c₂',`= ${dtca} + ${dC2}`,`${dtwca} ${uT}`);
+    steps += ST(nb313+(c2>0?4:3),'Account for mill tolerance','t_spec = (t+CA+c₂) / (1−MT/100)',`= ${dtwca} / (1−${MT}/100)`,`${dtspec} ${uT}`);
     buildResults(D, P_si, t_calc, t_calc+CA+c2, t_spec, S_eff, nps, steps, code_label, MT, CA, denominator);
 
   } else if(currentCode === 'b314'){
@@ -952,11 +952,11 @@ function calculate(){
     } else {
       steps += ST(1,'Convert Pressure to MPa',`P (MPa) = P (barg) × 0.1`,`= ${dP} × 0.1`,`${dP_mpa} MPa`);
     }
-    const n = isUS ? 3 : 2;
-    steps += ST(n,  'Denominator','2·S·F·E·T',`= 2×${f(S,0)}×${f(F,2)}×${f(E,2)}×${f(Tv,3)}`,`${f(denominator,3)} MPa`);
-    steps += ST(n+1,'Required thickness (Eq. 403.2.1)','t = P·D / (2·S·F·E·T)',`= ${dP_mpa} × ${f(D,2)} / ${f(denominator,3)}`,`${dt} ${uT}`);
-    steps += ST(n+2,'Add corrosion allowance','t_CA = t + CA',`= ${dt} + ${dCA}`,`${dtca} ${uT}`);
-    steps += ST(n+3,'Account for mill tolerance','t_spec = (t+CA) / (1−MT/100)',`= ${dtca} / (1−${MT}/100)`,`${dtspec} ${uT}`);
+    const nb314 = isUS ? 3 : 2;
+    steps += ST(nb314,  'Denominator','2·S·F·E·T',`= 2×${f(S,0)}×${f(F,2)}×${f(E,2)}×${f(Tv,3)}`,`${f(denominator,3)} MPa`);
+    steps += ST(nb314+1,'Required thickness (Eq. 403.2.1)','t = P·D / (2·S·F·E·T)',`= ${dP_mpa} × ${f(D,2)} / ${f(denominator,3)}`,`${dt} ${uT}`);
+    steps += ST(nb314+2,'Add corrosion allowance','t_CA = t + CA',`= ${dt} + ${dCA}`,`${dtca} ${uT}`);
+    steps += ST(nb314+3,'Account for mill tolerance','t_spec = (t+CA) / (1−MT/100)',`= ${dtca} / (1−${MT}/100)`,`${dtspec} ${uT}`);
     buildResults(D, P_si, t_calc, t_calc+CA, t_spec, S*F*E*Tv, nps, steps, code_label, MT, CA, denominator);
 
   } else {
@@ -984,11 +984,11 @@ function calculate(){
     } else {
       steps += ST(1,'Convert Pressure to MPa',`P (MPa) = P (barg) × 0.1`,`= ${dP} × 0.1`,`${dP_mpa} MPa`);
     }
-    const n = isUS ? 3 : 2;
-    steps += ST(n,  'Denominator','2·S·F·E·T·L',`= 2×${f(S,0)}×${f(F,2)}×${f(E,2)}×${f(Tv,3)}×${f(L,2)}`,`${f(denominator,3)} MPa`);
-    steps += ST(n+1,'Required thickness (Eq. 841.1.1)','t = P·D / (2·S·F·E·T·L)',`= ${dP_mpa} × ${f(D,2)} / ${f(denominator,3)}`,`${dt} ${uT}`);
-    steps += ST(n+2,'Add corrosion allowance','t_CA = t + CA',`= ${dt} + ${dCA}`,`${dtca} ${uT}`);
-    steps += ST(n+3,'Account for mill tolerance','t_spec = (t+CA) / (1−MT/100)',`= ${dtca} / (1−${MT}/100)`,`${dtspec} ${uT}`);
+    const nb318 = isUS ? 3 : 2;
+    steps += ST(nb318,  'Denominator','2·S·F·E·T·L',`= 2×${f(S,0)}×${f(F,2)}×${f(E,2)}×${f(Tv,3)}×${f(L,2)}`,`${f(denominator,3)} MPa`);
+    steps += ST(nb318+1,'Required thickness (Eq. 841.1.1)','t = P·D / (2·S·F·E·T·L)',`= ${dP_mpa} × ${f(D,2)} / ${f(denominator,3)}`,`${dt} ${uT}`);
+    steps += ST(nb318+2,'Add corrosion allowance','t_CA = t + CA',`= ${dt} + ${dCA}`,`${dtca} ${uT}`);
+    steps += ST(nb318+3,'Account for mill tolerance','t_spec = (t+CA) / (1−MT/100)',`= ${dtca} / (1−${MT}/100)`,`${dtspec} ${uT}`);
     buildResults(D, P_si, t_calc, t_calc+CA, t_spec, S*F*E*Tv*L, nps, steps, code_label, MT, CA, denominator);
   }
 
