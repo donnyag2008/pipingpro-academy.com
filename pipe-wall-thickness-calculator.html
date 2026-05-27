@@ -40,11 +40,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 16px}
 .grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 16px}
-.grid-b313{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px 20px}
 @media(max-width:700px){.grid2,.grid3,.grid4{grid-template-columns:1fr 1fr}}
-@media(max-width:480px){.grid2,.grid3,.grid4,.grid-b313{grid-template-columns:1fr}}
+@media(max-width:480px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
 .field{display:flex;flex-direction:column;gap:4px}
-.field label{font-size:11px;font-weight:500;color:var(--text-2);word-break:break-word;overflow-wrap:break-word;line-height:1.4}
+.field label{font-size:11px;font-weight:500;color:var(--text-2)}
 .field input,.field select{font-size:13px;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius);background:#FAFAF8;color:var(--text);outline:none;transition:border-color 0.15s;font-family:var(--mono)}
 .field input:focus,.field select:focus{border-color:var(--accent);background:#fff}
 .field .hint{font-size:10px;color:var(--text-3)}
@@ -355,7 +354,7 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
   <div class="panel active" id="panel-b313">
     <div class="card">
       <div class="card-title">3 — ASME B31.3 Material &amp; Code Factors</div>
-      <div class="grid-b313">
+      <div class="grid3">
         <div class="field">
           <label>Material</label>
           <select id="b313-mat" onchange="onB313MatChange()">
@@ -583,7 +582,7 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
       <div class="hero-main">
         <div class="hero-label">Calculated Min. Thickness t<sub>min</sub></div>
         <div class="hero-val" id="hero-tmin">—</div>
-        <div class="hero-unit">mm (before mill tolerance)</div>
+        <div class="hero-unit">mm &nbsp;·&nbsp; ( ) = inches equivalent</div>
       </div>
       <div class="hero-divider"></div>
       <div class="hero-sub">
@@ -841,71 +840,75 @@ function ST(n,name,formula,sub,result){
 }
 
 // ============================================================
-// CALCULATE — SI units throughout (mm, MPa, barg)
+// CALCULATE
 // ============================================================
 function calculate(){
-  const nps    = sv('nps');
-  const D      = v('od');        // mm
-  const CA     = v('ca');        // mm
-  const MT     = v('mt');        // %
+  const nps   = sv('nps');
+  const D     = v('od');       // mm
+  const CA    = v('ca');       // mm
+  const MT    = v('mt');       // %
   const P_barg = v('pres');
-  const P      = P_barg / 10;   // MPa
+  const P     = P_barg / 10;  // MPa (1 bar = 0.1 MPa)
+  const T_deg = v('temp');
 
   let t_calc, denominator, steps='', S_eff, code_label;
 
   if(currentCode === 'b313'){
     code_label = 'ASME B31.3';
-    const S  = v('b313-S');
+    const S  = v('b313-S');     // MPa
     const E  = parseFloat(sv('b313-E'));
     const W  = parseFloat(sv('b313-W'));
     const Y  = parseFloat(sv('b313-Y'));
     const c2 = v('b313-c2');
     denominator = 2*(S*E*W + P*Y);
     t_calc = (P*D) / denominator;
-    S_eff  = S;
-    const t_with_ca = t_calc + CA + c2;
-    const t_spec    = t_with_ca / (1 - MT/100);
-    steps += ST(1,'Convert Pressure','P (MPa) = P (barg) × 0.1',`= ${f(P_barg,1)} × 0.1`,`${f(P,3)} MPa`);
+    S_eff = S;
+
+    steps += ST(1,'Convert Pressure to MPa','P (MPa) = P (barg) × 0.1',`= ${f(P_barg,1)} × 0.1`,`${f(P,3)} MPa`);
     steps += ST(2,'Denominator','2(S·E·W + P·Y)',`= 2×(${f(S,1)}×${f(E,2)}×${f(W,2)} + ${f(P,3)}×${f(Y,1)})`,`${f(denominator,4)} MPa`);
     steps += ST(3,'Required thickness t (Eq. 3a)','t = P·D / [2·(S·E·W + P·Y)]',`= ${f(P,3)} × ${f(D,2)} / ${f(denominator,4)}`,`${f(t_calc,3)} mm`);
     steps += ST(4,'Add corrosion allowance','t_CA = t + CA',`= ${f(t_calc,3)} + ${f(CA,1)}`,`${f(t_calc+CA,3)} mm`);
-    if(c2>0) steps += ST(5,'Add mechanical allowance c₂','t_c2 = t_CA + c₂',`= ${f(t_calc+CA,3)} + ${f(c2,1)}`,`${f(t_with_ca,3)} mm`);
-    steps += ST(c2>0?6:5,'Mill tolerance','t_spec = (t+CA+c₂) / (1−MT/100)',`= ${f(t_with_ca,3)} / (1−${MT}/100)`,`${f(t_spec,3)} mm`);
-    buildResults(D, P, t_calc, t_with_ca, t_spec, S_eff, nps, steps, code_label, MT, CA, denominator);
+    if(c2>0) steps += ST(5,'Add mechanical allowance c₂','t_c2 = t_CA + c₂',`= ${f(t_calc+CA,3)} + ${f(c2,1)}`,`${f(t_calc+CA+c2,3)} mm`);
+    const t_with_ca = t_calc + CA + c2;
+    const t_spec = t_with_ca / (1 - MT/100);
+    steps += ST(6,'Account for mill tolerance','t_spec = (t + CA + c₂) / (1 − MT/100)',`= ${f(t_with_ca,3)} / (1 − ${MT}/100)`,`${f(t_spec,3)} mm`);
+    buildResults(D, P, t_calc, t_calc+CA+c2, t_spec, S_eff, nps, steps, code_label, MT, CA, denominator);
 
   } else if(currentCode === 'b314'){
     code_label = 'ASME B31.4';
-    const S  = v('b314-smys');
-    const F  = v('b314-Fval');
-    const E  = parseFloat(sv('b314-E'));
+    const S = v('b314-smys'); // MPa
+    const F = v('b314-Fval');
+    const E = parseFloat(sv('b314-E'));
     const Tv = parseFloat(sv('b314-T'));
     denominator = 2*S*F*E*Tv;
     t_calc = (P*D) / denominator;
-    S_eff  = S*F*E*Tv;
-    const t_spec = (t_calc+CA)/(1-MT/100);
-    steps += ST(1,'Convert Pressure','P (MPa) = P (barg) × 0.1',`= ${f(P_barg,1)} × 0.1`,`${f(P,3)} MPa`);
+    S_eff = S*F*E*Tv; // effective allowable hoop
+
+    steps += ST(1,'Convert Pressure to MPa','P (MPa) = P (barg) × 0.1',`= ${f(P_barg,1)} × 0.1`,`${f(P,3)} MPa`);
     steps += ST(2,'Denominator','2·S·F·E·T',`= 2×${f(S,0)}×${f(F,2)}×${f(E,2)}×${f(Tv,3)}`,`${f(denominator,3)} MPa`);
     steps += ST(3,'Required thickness (Eq. 403.2.1)','t = P·D / (2·S·F·E·T)',`= ${f(P,3)} × ${f(D,2)} / ${f(denominator,3)}`,`${f(t_calc,3)} mm`);
     steps += ST(4,'Add corrosion allowance','t_CA = t + CA',`= ${f(t_calc,3)} + ${f(CA,1)}`,`${f(t_calc+CA,3)} mm`);
-    steps += ST(5,'Mill tolerance','t_spec = (t+CA) / (1−MT/100)',`= ${f(t_calc+CA,3)} / (1−${MT}/100)`,`${f(t_spec,3)} mm`);
+    const t_spec = (t_calc+CA)/(1-MT/100);
+    steps += ST(5,'Account for mill tolerance','t_spec = (t+CA) / (1−MT/100)',`= ${f(t_calc+CA,3)} / (1−${MT}/100)`,`${f(t_spec,3)} mm`);
     buildResults(D, P, t_calc, t_calc+CA, t_spec, S*F*E*Tv, nps, steps, code_label, MT, CA, denominator);
 
   } else {
     code_label = 'ASME B31.8';
-    const S  = v('b318-smys');
-    const F  = v('b318-Fval');
-    const E  = parseFloat(sv('b318-E'));
+    const S = v('b318-smys');
+    const F = v('b318-Fval');
+    const E = parseFloat(sv('b318-E'));
     const Tv = parseFloat(sv('b318-T'));
-    const L  = parseFloat(sv('b318-L'));
+    const L = parseFloat(sv('b318-L'));
     denominator = 2*S*F*E*Tv*L;
     t_calc = (P*D) / denominator;
-    S_eff  = S*F*E*Tv*L;
-    const t_spec = (t_calc+CA)/(1-MT/100);
-    steps += ST(1,'Convert Pressure','P (MPa) = P (barg) × 0.1',`= ${f(P_barg,1)} × 0.1`,`${f(P,3)} MPa`);
+    S_eff = S*F*E*Tv*L;
+
+    steps += ST(1,'Convert Pressure to MPa','P (MPa) = P (barg) × 0.1',`= ${f(P_barg,1)} × 0.1`,`${f(P,3)} MPa`);
     steps += ST(2,'Denominator','2·S·F·E·T·L',`= 2×${f(S,0)}×${f(F,2)}×${f(E,2)}×${f(Tv,3)}×${f(L,2)}`,`${f(denominator,3)} MPa`);
     steps += ST(3,'Required thickness (Eq. 841.1.1)','t = P·D / (2·S·F·E·T·L)',`= ${f(P,3)} × ${f(D,2)} / ${f(denominator,3)}`,`${f(t_calc,3)} mm`);
     steps += ST(4,'Add corrosion allowance','t_CA = t + CA',`= ${f(t_calc,3)} + ${f(CA,1)}`,`${f(t_calc+CA,3)} mm`);
-    steps += ST(5,'Mill tolerance','t_spec = (t+CA) / (1−MT/100)',`= ${f(t_calc+CA,3)} / (1−${MT}/100)`,`${f(t_spec,3)} mm`);
+    const t_spec = (t_calc+CA)/(1-MT/100);
+    steps += ST(5,'Account for mill tolerance','t_spec = (t+CA) / (1−MT/100)',`= ${f(t_calc+CA,3)} / (1−${MT}/100)`,`${f(t_spec,3)} mm`);
     buildResults(D, P, t_calc, t_calc+CA, t_spec, S*F*E*Tv*L, nps, steps, code_label, MT, CA, denominator);
   }
 
@@ -915,23 +918,19 @@ function calculate(){
   document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-
-
 function buildResults(D, P_MPa, t_calc, t_with_ca, t_spec, S_allow, nps, steps, code_label, MT, CA, denom){
+  document.getElementById('hero-tmin').textContent  = f(t_calc,3) + ' mm  (' + (t_calc/25.4).toFixed(4) + '")';
+  document.getElementById('hero-tspec').textContent = f(t_spec,3) + ' mm  (' + (t_spec/25.4).toFixed(4) + '")';
 
-  // Hero — SI primary, US in brackets
-  const t_calc_in  = t_calc / 25.4;
-  const t_spec_in  = t_spec / 25.4;
-  document.getElementById('hero-tmin').textContent  = `${f(t_calc,3)} mm  (${t_calc_in.toFixed(4)}")`;
-  document.getElementById('hero-tspec').textContent = `${f(t_spec,3)} mm  (${t_spec_in.toFixed(4)}")`;
-
-  // Auto-select pipe table
+  // Auto-select pipe table: B36.19 for SS/Duplex, B36.10 for CS/alloy
   const useB3619 = isSSMaterial();
   const pipeTable = useB3619 ? PIPE_SS : PIPE;
   const pipeData  = pipeTable[nps];
   const stdLabel  = useB3619
     ? 'ASME B36.19M — Stainless Steel (5S / 10S / 40S / 80S)'
     : 'ASME B36.10M — Carbon & Alloy Steel';
+
+  // Update schedule table header label
   document.getElementById('sched-std-label').textContent = stdLabel + ' · ★ = recommended minimum';
 
   let schedRows = '';
@@ -939,13 +938,17 @@ function buildResults(D, P_MPa, t_calc, t_with_ca, t_spec, S_allow, nps, steps, 
   let firstPass = true;
 
   if(pipeData){
-    const entries = Object.entries(pipeData.s).sort((a,b)=>a[1]-b[1]);
+    const scheds = pipeData.s;
+    const entries = Object.entries(scheds).sort((a,b)=>a[1]-b[1]);
     for(const [sched, tw] of entries){
-      const hoop     = (P_MPa * D) / (2 * tw);
-      const pctS     = (hoop / S_allow * 100);
+      const hoop = (P_MPa * D) / (2 * tw); // MPa
+      const pctS = (hoop / S_allow * 100);
       const adequate = tw >= t_spec;
-      const isRec    = adequate && firstPass;
-      if(isRec){ firstPass=false; recommended={sched,tw}; }
+      const isRec = adequate && firstPass;
+      if(isRec){
+        firstPass = false;
+        recommended = {sched, tw};
+      }
       const tag = adequate
         ? `<span class="pass-tag">✓ ADEQUATE</span>`
         : `<span class="fail-tag">✗ THIN</span>`;
@@ -959,37 +962,39 @@ function buildResults(D, P_MPa, t_calc, t_with_ca, t_spec, S_allow, nps, steps, 
       </tr>`;
     }
   } else if(useB3619 && !pipeData){
+    // B36.19 only goes to 12" — show note for larger SS
     schedRows = `<tr><td colspan="6" style="color:var(--text-3);font-family:var(--font);text-align:center;padding:1rem">
-      ℹ️ ASME B36.19M covers NPS ⅛"–12" only. For NPS ${nps}" SS pipe, use ASME B36.10M schedules. Required t<sub>spec</sub> = ${f(t_spec,3)} mm (${t_spec_in.toFixed(4)}").
+      ℹ️ ASME B36.19M covers NPS ⅛" – 12" only. For NPS ${nps}" stainless steel pipe, use ASME B36.10M schedules (10S/40S/80S designation may still apply — verify with pipe supplier). Required t<sub>spec</sub> = ${f(t_spec,3)} mm.
     </td></tr>`;
   } else {
-    schedRows = `<tr><td colspan="6" style="color:var(--text-3);text-align:center;padding:1rem">Schedule lookup not available for custom OD. Required t<sub>spec</sub> = ${f(t_spec,3)} mm (${t_spec_in.toFixed(4)}")</td></tr>`;
+    // Custom OD — just show result
+    schedRows = `<tr><td colspan="6" style="color:var(--text-3);text-align:center;padding:1rem">Schedule lookup not available for custom OD. Required t<sub>spec</sub> = ${f(t_spec,3)} mm</td></tr>`;
   }
   document.getElementById('sched-tbody').innerHTML = schedRows;
 
   if(recommended){
     document.getElementById('hero-sched').textContent = recommended.sched;
-    document.getElementById('hero-tnom').textContent  = `${f(recommended.tw,2)} mm  (${(recommended.tw/25.4).toFixed(4)}")`;
+    document.getElementById('hero-tnom').textContent = f(recommended.tw,2) + ' mm  (' + (recommended.tw/25.4).toFixed(4) + '")';
     document.getElementById('sched-warn').style.display='none';
   } else {
     document.getElementById('hero-sched').textContent = 'See table ↓';
-    document.getElementById('hero-tnom').textContent  = '—';
+    document.getElementById('hero-tnom').textContent = '—';
     if(pipeData){
       document.getElementById('sched-warn').style.display='block';
       document.getElementById('sched-warn').textContent =
-        `⚠️ No standard schedule for NPS ${nps}" meets the required t_spec = ${f(t_spec,3)} mm (${t_spec_in.toFixed(4)}"). Consider: increasing pipe OD, reducing pressure, using a higher grade material, or specifying a custom wall thickness.`;
+        `⚠️ No standard schedule for NPS ${nps}" meets the required t_spec = ${f(t_spec,3)} mm. Consider: increasing pipe OD, reducing pressure, using a higher grade material, or specifying a custom wall thickness.`;
     }
   }
 
-  // Metrics — all SI
+  // Metrics
   const hoopCalc = (P_MPa*D)/(2*t_calc);
   document.getElementById('metrics-grid').innerHTML = `
     <div class="metric"><div class="m-label">P (MPa)</div><div class="m-val">${f(P_MPa,3)}</div><div class="m-unit">${f(v('pres'),1)} barg</div></div>
     <div class="metric"><div class="m-label">Allowable Stress</div><div class="m-val">${f(S_allow,1)}</div><div class="m-unit">MPa</div></div>
     <div class="metric"><div class="m-label">Denominator</div><div class="m-val">${f(denom,2)}</div><div class="m-unit">MPa</div></div>
-    <div class="metric"><div class="m-label">t calculated</div><div class="m-val">${f(t_calc,3)}</div><div class="m-unit">mm  (${t_calc_in.toFixed(4)}")</div></div>
-    <div class="metric"><div class="m-label">t + CA</div><div class="m-val">${f(t_with_ca,3)}</div><div class="m-unit">mm  (${(t_with_ca/25.4).toFixed(4)}")</div></div>
-    <div class="metric"><div class="m-label">t specified</div><div class="m-val">${f(t_spec,3)}</div><div class="m-unit">mm  (${t_spec_in.toFixed(4)}") inc. ${MT}% tol.</div></div>
+    <div class="metric"><div class="m-label">t calculated</div><div class="m-val">${f(t_calc,3)}</div><div class="m-unit">mm (${(t_calc/25.4).toFixed(4)}")</div></div>
+    <div class="metric"><div class="m-label">t + CA</div><div class="m-val">${f(t_with_ca,3)}</div><div class="m-unit">mm (${(t_with_ca/25.4).toFixed(4)}")</div></div>
+    <div class="metric"><div class="m-label">t specified</div><div class="m-val">${f(t_spec,3)}</div><div class="m-unit">mm (${(t_spec/25.4).toFixed(4)}") inc. ${MT}% tol.</div></div>
     <div class="metric"><div class="m-label">Hoop Stress</div><div class="m-val">${f(hoopCalc,1)}</div><div class="m-unit">MPa at t_calc</div></div>
     <div class="metric"><div class="m-label">D/t ratio</div><div class="m-val">${f(D/t_calc,1)}</div><div class="m-unit">at t_calc</div></div>
   `;
@@ -1019,53 +1024,38 @@ onB313MatChange();
       <div class="ref-title">Design Formula — ASME B31.3 Clause 304.1.2</div>
       <div class="ref-formula">
         <b>t<sub>min</sub> = P × D / [ 2 × (S × E × W + P × Y) ]</b><br/><br/>
-        P = Internal design pressure (MPa or psig)<br/>
-        D = Outside diameter (mm or in)<br/>
-        S = Allowable stress at design temperature (MPa or psi) — from Table A-1<br/>
+        P = Internal design pressure (barg → converted to MPa)<br/>
+        D = Outside diameter (mm)<br/>
+        S = Allowable stress at design temperature (MPa) — from Table A-1<br/>
         E = Longitudinal joint quality factor (Table A-1A / A-1B) — 1.0 for seamless<br/>
-        W = Weld joint strength reduction factor (Paragraph 302.3.5) — see below<br/>
-        Y = Temperature coefficient (Table 304.1.1) — 0.4 for ferrous &lt;482°C (900°F)<br/><br/>
+        W = Weld joint strength reduction factor (Para. 302.3.5) — see below<br/>
+        Y = Temperature coefficient (Table 304.1.1) — 0.4 for ferrous &lt;482°C<br/><br/>
         <b>Mill tolerance:</b> t<sub>ordered</sub> = (t<sub>min</sub> + CA + c₂) / (1 − mill_tol/100)<br/>
         <b>B31.4 / B31.8:</b> t = P × D / (2 × S × F × E × T) — hoop stress formula
       </div>
-      <div class="ref-note">For B31.3 process piping, add corrosion allowance (CA) and mechanical allowance (c₂) before applying mill tolerance. Minimum ordered wall = t<sub>min</sub> + CA + c₂, then divide by (1 − mill_tol).</div>
+      <div class="ref-note">For B31.3 process piping, add corrosion allowance (CA) and mechanical allowance (c₂) before applying mill tolerance. Results shown in mm (SI) with inches equivalent in brackets.</div>
     </div>
-
     <div class="ref-section">
       <div class="ref-title">Weld Joint Strength Reduction Factor W — ASME B31.3 Para. 302.3.5</div>
       <div class="ref-formula">
-        W = weld joint strength reduction factor applicable to longitudinal welds at elevated temperatures.<br/><br/>
-        W is used in conjunction with E (joint quality factor) to account for the reduction in long-term creep strength of a weld joint relative to the parent material at high temperatures.<br/><br/>
-        <b>W = 1.00</b> — T ≤ 510°C (950°F) — standard condition, no reduction<br/>
+        W applies to longitudinal welds at elevated temperature to account for creep strength reduction.<br/><br/>
+        <b>W = 1.00</b> — T ≤ 510°C (950°F) — standard, no reduction<br/>
         <b>W = 0.95</b> — T = 510–566°C (950–1050°F)<br/>
         <b>W = 0.91</b> — T = 566–593°C (1050–1100°F)<br/>
         <b>W = 0.87</b> — T = 593–621°C (1100–1150°F)
       </div>
-      <div class="ref-note">W applies to longitudinal welds in fabricated pipe and fittings at elevated temperature service. For seamless pipe (E = 1.0) operating below 510°C, W = 1.0 and has no effect on the calculation. Always refer to ASME B31.3 Table 302.3.5 for the full W factor table and applicability criteria.</div>
+      <div class="ref-note">W = 1.0 for seamless pipe below 510°C — no effect on result. Refer to ASME B31.3 Table 302.3.5 for full applicability criteria.</div>
     </div>
-
-    <div class="ref-section">
-      <div class="ref-title">Unit Systems</div>
-      <div class="ref-formula">
-        <b>SI (Metric):</b> P in MPa · D in mm · S in MPa → t in mm<br/>
-        &nbsp;&nbsp;1 barg = 0.1 MPa &nbsp;|&nbsp; 1 bar = 14.504 psi<br/><br/>
-        <b>US Customary:</b> P in psig · D in inches · S in psi → t in inches<br/>
-        &nbsp;&nbsp;1 MPa = 145.038 psi &nbsp;|&nbsp; 1 inch = 25.4 mm<br/><br/>
-        The calculator accepts both unit systems via the unit toggle. All internal calculations are performed in SI; US Customary inputs are converted before calculation and results converted back for display.
-      </div>
-      <div class="ref-note">ASME B31.3 is published with both SI and US Customary versions. The formula structure is identical in both — only the units of the input and output values differ. Ensure consistency: do not mix unit systems within a single calculation.</div>
-    </div>
-
     <div class="ref-section">
       <div class="ref-title">Reference Standards</div>
       <div class="ref-table-wrap"><table class="ref-table">
         <tr><th>Standard</th><th>Clause</th><th>Application</th></tr>
-        <tr><td>ASME B31.3</td><td>304.1.2</td><td>Process piping — pressure design wall thickness formula</td></tr>
-        <tr><td>ASME B31.3</td><td>302.3.5</td><td>Weld joint strength reduction factor W at elevated temperature</td></tr>
+        <tr><td>ASME B31.3</td><td>304.1.2</td><td>Process piping — pressure design wall thickness</td></tr>
+        <tr><td>ASME B31.3</td><td>302.3.5</td><td>Weld joint strength reduction factor W</td></tr>
         <tr><td>ASME B31.4</td><td>403.2.1</td><td>Liquid pipeline — hoop stress formula</td></tr>
         <tr><td>ASME B31.8</td><td>841.1.1</td><td>Gas transmission — hoop stress formula with design factor F</td></tr>
         <tr><td>ASME B36.10M</td><td>—</td><td>Standard pipe schedules and OD table — carbon &amp; alloy steel</td></tr>
-        <tr><td>ASME B36.19M</td><td>—</td><td>Stainless steel pipe schedules 5S / 10S / 40S / 80S</td></tr>
+        <tr><td>ASME B36.19M</td><td>—</td><td>Stainless steel pipe — schedules 5S / 10S / 40S / 80S</td></tr>
       </table></div>
     </div>
 </div>
