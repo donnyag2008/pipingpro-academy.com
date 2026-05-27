@@ -240,8 +240,22 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
     <div class="header-title">Pipe Wall Thickness Calculator</div>
     <div class="header-sub">ASME B31.3 · ASME B31.4 · ASME B31.8 — with Schedule Selection per ASME B36.10</div>
   </div>
-  <div class="header-badge">PipingPro Academy</div>
+  <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+    <div class="unit-toggle-wrap">
+      <span class="unit-label">Units:</span>
+      <button class="unit-btn active" id="btn-si" onclick="setUnits('si')">SI (MPa · mm)</button>
+      <button class="unit-btn" id="btn-us" onclick="setUnits('us')">US (psi · in)</button>
+    </div>
+    <div class="header-badge">PipingPro Academy</div>
+  </div>
 </div>
+<style>
+.unit-toggle-wrap{display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:20px;padding:3px 6px;}
+.unit-label{font-size:11px;color:rgba(255,255,255,0.7);margin-right:2px;}
+.unit-btn{font-size:11px;font-weight:600;padding:3px 10px;border-radius:14px;border:none;cursor:pointer;font-family:var(--font);transition:all 0.15s;background:transparent;color:rgba(255,255,255,0.6);}
+.unit-btn.active{background:#fff;color:var(--accent);}
+.unit-btn:hover:not(.active){color:#fff;}
+</style>
 
 
 <div class="calc-tabs">
@@ -303,12 +317,12 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
         </select>
       </div>
       <div class="field">
-        <label>Pipe OD D (mm)</label>
+        <label>Pipe OD D <span id="lbl-od">(mm)</span></label>
         <input type="number" id="od" value="323.85" step="0.01">
         <span class="hint">ASME B36.10 — auto-filled from NPS</span>
       </div>
       <div class="field">
-        <label>Corrosion Allowance CA (mm)</label>
+        <label>Corrosion Allowance CA <span id="lbl-ca">(mm)</span></label>
         <input type="number" id="ca" value="3.0" step="0.5" min="0">
         <span class="hint">Typically 1.5–6 mm for carbon steel</span>
       </div>
@@ -327,7 +341,7 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
     <div class="card-title">2 — Design Conditions</div>
     <div class="grid3">
       <div class="field">
-        <label>Design Pressure P (barg)</label>
+        <label>Design Pressure P <span id="lbl-pres">(barg)</span></label>
         <input type="number" id="pres" value="50.0" step="0.1" min="0">
       </div>
       <div class="field">
@@ -385,7 +399,7 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
           </select>
         </div>
         <div class="field">
-          <label>Allowable Stress S at Design Temp (MPa)</label>
+          <label>Allowable Stress S at Design Temp <span id="lbl-S313">(MPa)</span></label>
           <input type="number" id="b313-S" value="137.9" step="0.1">
           <span class="hint">ASME B31.3 Table A-1 — auto-filled, editable</span>
         </div>
@@ -1000,6 +1014,76 @@ function buildResults(D, P_MPa, t_calc, t_with_ca, t_spec, S_allow, nps, steps, 
   `;
 }
 
+// ============================================================
+// UNIT SYSTEM TOGGLE (SI ↔ US Customary)
+// ============================================================
+var currentUnits = 'si'; // 'si' or 'us'
+
+function setUnits(u){
+  if(u === currentUnits) return;
+
+  // Read current SI values before switching
+  var od_mm   = parseFloat(document.getElementById('od').value) || 0;
+  var ca_mm   = parseFloat(document.getElementById('ca').value) || 0;
+  var pres_v  = parseFloat(document.getElementById('pres').value) || 0;
+  var s313_v  = parseFloat(document.getElementById('b313-S').value) || 0;
+
+  if(u === 'us'){
+    // SI → US: mm→in, barg→psig, MPa→psi
+    document.getElementById('od').value   = (od_mm / 25.4).toFixed(3);
+    document.getElementById('ca').value   = (ca_mm / 25.4).toFixed(4);
+    document.getElementById('pres').value = (pres_v * 14.504).toFixed(1);  // barg→psig
+    document.getElementById('b313-S').value = (s313_v * 145.038).toFixed(0); // MPa→psi
+    // Labels
+    document.getElementById('lbl-od').textContent  = '(in)';
+    document.getElementById('lbl-ca').textContent  = '(in)';
+    document.getElementById('lbl-pres').textContent= '(psig)';
+    document.getElementById('lbl-S313').textContent= '(psi)';
+    // Buttons
+    document.getElementById('btn-si').classList.remove('active');
+    document.getElementById('btn-us').classList.add('active');
+  } else {
+    // US → SI: in→mm, psig→barg, psi→MPa
+    document.getElementById('od').value   = (od_mm * 25.4).toFixed(2);
+    document.getElementById('ca').value   = (ca_mm * 25.4).toFixed(2);
+    document.getElementById('pres').value = (pres_v / 14.504).toFixed(2); // psig→barg
+    document.getElementById('b313-S').value = (s313_v / 145.038).toFixed(1); // psi→MPa
+    // Labels
+    document.getElementById('lbl-od').textContent  = '(mm)';
+    document.getElementById('lbl-ca').textContent  = '(mm)';
+    document.getElementById('lbl-pres').textContent= '(barg)';
+    document.getElementById('lbl-S313').textContent= '(MPa)';
+    // Buttons
+    document.getElementById('btn-us').classList.remove('active');
+    document.getElementById('btn-si').classList.add('active');
+  }
+  currentUnits = u;
+  // Hide results on unit switch to avoid stale display
+  document.getElementById('results').style.display='none';
+}
+
+// Patch calculate() to convert US inputs to SI before calculation
+var _origCalculate = calculate;
+calculate = function(){
+  if(currentUnits === 'us'){
+    // Temporarily convert displayed US values to SI for the engine
+    var od_el   = document.getElementById('od');
+    var ca_el   = document.getElementById('ca');
+    var pres_el = document.getElementById('pres');
+    var s313_el = document.getElementById('b313-S');
+    var od_orig=od_el.value, ca_orig=ca_el.value, pres_orig=pres_el.value, s313_orig=s313_el.value;
+    od_el.value   = (parseFloat(od_orig)   * 25.4).toFixed(2);
+    ca_el.value   = (parseFloat(ca_orig)   * 25.4).toFixed(3);
+    pres_el.value = (parseFloat(pres_orig) / 14.504).toFixed(3);
+    s313_el.value = (parseFloat(s313_orig) / 145.038).toFixed(2);
+    _origCalculate();
+    // Restore US values
+    od_el.value=od_orig; ca_el.value=ca_orig; pres_el.value=pres_orig; s313_el.value=s313_orig;
+  } else {
+    _origCalculate();
+  }
+};
+
 // Init
 onNpsChange();
 onB313MatChange();
@@ -1023,25 +1107,54 @@ onB313MatChange();
     <div class="ref-section">
       <div class="ref-title">Design Formula — ASME B31.3 Clause 304.1.2</div>
       <div class="ref-formula">
-        <b>t<sub>min</sub> = P × D / (2 × (SE + PY))</b><br/><br/>
-        P = Internal design pressure (psig)<br/>
-        D = Outside diameter (in)<br/>
-        S = Allowable stress at design temp (psi) — from Table A-1<br/>
-        E = Quality factor (Table A-1A / A-1B) — 1.0 for seamless<br/>
-        Y = Coefficient (Table 304.1.1) — 0.4 for ferrous &lt;900°F<br/><br/>
-        <b>Mill tolerance:</b> t<sub>ordered</sub> = t<sub>min</sub> / (1 − mill_tol/100)<br/>
+        <b>t<sub>min</sub> = P × D / [ 2 × (S × E × W + P × Y) ]</b><br/><br/>
+        P = Internal design pressure (MPa or psig)<br/>
+        D = Outside diameter (mm or in)<br/>
+        S = Allowable stress at design temperature (MPa or psi) — from Table A-1<br/>
+        E = Longitudinal joint quality factor (Table A-1A / A-1B) — 1.0 for seamless<br/>
+        W = Weld joint strength reduction factor (Paragraph 302.3.5) — see below<br/>
+        Y = Temperature coefficient (Table 304.1.1) — 0.4 for ferrous &lt;482°C (900°F)<br/><br/>
+        <b>Mill tolerance:</b> t<sub>ordered</sub> = (t<sub>min</sub> + CA + c₂) / (1 − mill_tol/100)<br/>
         <b>B31.4 / B31.8:</b> t = P × D / (2 × S × F × E × T) — hoop stress formula
       </div>
-      <div class="ref-note">For B31.3 process piping add corrosion allowance (CA) and mechanical allowance before applying mill tolerance. Minimum ordered wall = t<sub>min</sub> + CA + mech, then divide by (1 − mill_tol).</div>
+      <div class="ref-note">For B31.3 process piping, add corrosion allowance (CA) and mechanical allowance (c₂) before applying mill tolerance. Minimum ordered wall = t<sub>min</sub> + CA + c₂, then divide by (1 − mill_tol).</div>
     </div>
+
+    <div class="ref-section">
+      <div class="ref-title">Weld Joint Strength Reduction Factor W — ASME B31.3 Para. 302.3.5</div>
+      <div class="ref-formula">
+        W = weld joint strength reduction factor applicable to longitudinal welds at elevated temperatures.<br/><br/>
+        W is used in conjunction with E (joint quality factor) to account for the reduction in long-term creep strength of a weld joint relative to the parent material at high temperatures.<br/><br/>
+        <b>W = 1.00</b> — T ≤ 510°C (950°F) — standard condition, no reduction<br/>
+        <b>W = 0.95</b> — T = 510–566°C (950–1050°F)<br/>
+        <b>W = 0.91</b> — T = 566–593°C (1050–1100°F)<br/>
+        <b>W = 0.87</b> — T = 593–621°C (1100–1150°F)
+      </div>
+      <div class="ref-note">W applies to longitudinal welds in fabricated pipe and fittings at elevated temperature service. For seamless pipe (E = 1.0) operating below 510°C, W = 1.0 and has no effect on the calculation. Always refer to ASME B31.3 Table 302.3.5 for the full W factor table and applicability criteria.</div>
+    </div>
+
+    <div class="ref-section">
+      <div class="ref-title">Unit Systems</div>
+      <div class="ref-formula">
+        <b>SI (Metric):</b> P in MPa · D in mm · S in MPa → t in mm<br/>
+        &nbsp;&nbsp;1 barg = 0.1 MPa &nbsp;|&nbsp; 1 bar = 14.504 psi<br/><br/>
+        <b>US Customary:</b> P in psig · D in inches · S in psi → t in inches<br/>
+        &nbsp;&nbsp;1 MPa = 145.038 psi &nbsp;|&nbsp; 1 inch = 25.4 mm<br/><br/>
+        The calculator accepts both unit systems via the unit toggle. All internal calculations are performed in SI; US Customary inputs are converted before calculation and results converted back for display.
+      </div>
+      <div class="ref-note">ASME B31.3 is published with both SI and US Customary versions. The formula structure is identical in both — only the units of the input and output values differ. Ensure consistency: do not mix unit systems within a single calculation.</div>
+    </div>
+
     <div class="ref-section">
       <div class="ref-title">Reference Standards</div>
       <div class="ref-table-wrap"><table class="ref-table">
         <tr><th>Standard</th><th>Clause</th><th>Application</th></tr>
-        <tr><td>ASME B31.3</td><td>304.1.2</td><td>Process piping — pressure design wall thickness</td></tr>
+        <tr><td>ASME B31.3</td><td>304.1.2</td><td>Process piping — pressure design wall thickness formula</td></tr>
+        <tr><td>ASME B31.3</td><td>302.3.5</td><td>Weld joint strength reduction factor W at elevated temperature</td></tr>
         <tr><td>ASME B31.4</td><td>403.2.1</td><td>Liquid pipeline — hoop stress formula</td></tr>
         <tr><td>ASME B31.8</td><td>841.1.1</td><td>Gas transmission — hoop stress formula with design factor F</td></tr>
-        <tr><td>ASME B36.10M</td><td>—</td><td>Standard pipe schedules and OD table</td></tr>
+        <tr><td>ASME B36.10M</td><td>—</td><td>Standard pipe schedules and OD table — carbon &amp; alloy steel</td></tr>
+        <tr><td>ASME B36.19M</td><td>—</td><td>Stainless steel pipe schedules 5S / 10S / 40S / 80S</td></tr>
       </table></div>
     </div>
 </div>
