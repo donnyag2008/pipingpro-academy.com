@@ -274,7 +274,7 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
   <div class="formula-box" id="formula-box">
     <div class="eq" id="formula-eq">t = P · D / [ 2 · (S · E · W + P · Y) ]</div>
     <div class="vars" id="formula-vars">
-      t = required minimum wall thickness (mm) &nbsp;|&nbsp; P = design pressure (barg) &nbsp;|&nbsp; D = outside diameter (mm)<br>
+      t = required minimum wall thickness (mm) &nbsp;|&nbsp; P = design pressure (MPa) &nbsp;|&nbsp; D = outside diameter (mm)<br>
       S = allowable stress at design temp (MPa) &nbsp;|&nbsp; E = longitudinal joint factor &nbsp;|&nbsp; W = weld strength reduction factor &nbsp;|&nbsp; Y = temp coefficient
     </div>
   </div>
@@ -327,8 +327,8 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
     <div class="card-title">2 — Design Conditions</div>
     <div class="grid3">
       <div class="field">
-        <label>Design Pressure P (barg)</label>
-        <input type="number" id="pres" value="50.0" step="0.1" min="0">
+        <label>Design Pressure P (MPa)</label>
+        <input type="number" id="pres" value="5.0" step="0.1" min="0">
       </div>
       <div class="field">
         <label>Design Temperature T (°C)</label>
@@ -478,20 +478,18 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
             <option value="0.60">0.60 — Furnace butt weld</option>
           </select>
         </div>
+      </div>
+      <!-- B31.4 specific pressure input: P in bar per Eq. 403.2.1 SI -->
+      <div class="grid3" style="margin-top:0.75rem">
         <div class="field">
-          <label>Temperature Derating Factor T</label>
-          <select id="b314-T">
-            <option value="1.00" selected>1.00 — T ≤ 120°C</option>
-            <option value="0.967">0.967 — T = 149°C</option>
-            <option value="0.933">0.933 — T = 177°C</option>
-            <option value="0.900">0.900 — T = 204°C</option>
-            <option value="0.867">0.867 — T = 232°C</option>
-          </select>
+          <label>Design Pressure P (bar) <span style="color:var(--accent);font-weight:600">— B31.4</span></label>
+          <input type="number" id="b314-pres-bar" value="50.0" step="0.1" min="0">
+          <span class="hint">Enter in bar — B31.4 Eq. 403.2.1 SI native unit</span>
         </div>
       </div>
       <div class="info-box">
-        ℹ️ <strong>B31.4 Eq. 403.2.1:</strong> t = P·D / (2·S·F·E·T) + CA<br>
-        S = SMYS of pipe material. Final thickness includes mill tolerance per API 5L / ASME B36.10.
+        ℹ️ <strong>B31.4 Eq. 403.2.1 (SI):</strong> t = P<sub>i</sub>·D / (20·S) where S = F × E × Sy<br>
+        P in <strong>bar</strong> · D in mm · S (= F·E·Sy) in MPa → t in mm. The factor 20 arises because 1 bar = 0.1 MPa. No temperature derating factor in B31.4.
       </div>
     </div>
   </div>
@@ -548,24 +546,35 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
         <div class="field">
           <label>Temperature Derating Factor T</label>
           <select id="b318-T">
-            <option value="1.00" selected>1.00 — T ≤ 120°C</option>
-            <option value="0.967">0.967 — T = 149°C</option>
-            <option value="0.933">0.933 — T = 177°C</option>
-            <option value="0.900">0.900 — T = 204°C</option>
-            <option value="0.867">0.867 — T = 232°C</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Seismic / Location Factor L</label>
-          <select id="b318-L">
-            <option value="1.0" selected>1.00 — Standard (non-seismic)</option>
-            <option value="0.9">0.90 — Seismic zone consideration</option>
+            <option value="1.000" selected>1.000 — 250°F or less (≤121°C)</option>
+            <option value="0.967">0.967 — 300°F (149°C)</option>
+            <option value="0.933">0.933 — 350°F (177°C)</option>
+            <option value="0.900">0.900 — 400°F (204°C)</option>
+            <option value="0.867">0.867 — 450°F (232°C)</option>
           </select>
         </div>
       </div>
+      <!-- B31.8 specific inputs: P in psig, OD in inches, SMYS in psi -->
+      <div class="grid3" style="margin-top:0.75rem">
+        <div class="field">
+          <label>Design Pressure P (psig) <span style="color:var(--accent);font-weight:600">— B31.8</span></label>
+          <input type="number" id="b318-pres-psig" value="725" step="1" min="0">
+          <span class="hint">Enter in psig — used only for B31.8 calculation</span>
+        </div>
+        <div class="field">
+          <label>Pipe OD D (inches) <span style="color:var(--accent);font-weight:600">— B31.8</span></label>
+          <input type="number" id="b318-od-inch" value="12.75" step="0.001" min="0">
+          <span class="hint">Auto-filled from NPS — verify against B36.10</span>
+        </div>
+        <div class="field">
+          <label>SMYS (psi) <span style="color:var(--accent);font-weight:600">— B31.8</span></label>
+          <input type="number" id="b318-smys-psi" value="65000" step="100">
+          <span class="hint">Auto-converted from MPa — editable</span>
+        </div>
+      </div>
       <div class="info-box">
-        ℹ️ <strong>B31.8 Eq. 841.1.1:</strong> t = P·D / (2·S·F·E·T·L) + CA<br>
-        S = SMYS. Hoop stress limited to F·E·T·S. Note: B31.8 uses SMYS (not allowable stress from tables).
+        ℹ️ <strong>B31.8 Eq. 841.11:</strong> t = P·D / (2·S·F·E·T)<br>
+        P in psig · D in inches · S (SMYS) in psi → t in inches. No seismic/location factor in the standard formula. Add corrosion allowance (CA converted to inches) and apply mill tolerance.
       </div>
     </div>
   </div>
@@ -650,7 +659,7 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
     <div class="refs-title">References</div>
     <div class="ref-item">ASME B31.3-2022, Process Piping — Table 304.1.1, Eq. 3a, Table A-1</div>
     <div class="ref-item">ASME B31.4-2019, Pipeline Transportation Systems for Liquids and Slurries — Eq. 403.2.1</div>
-    <div class="ref-item">ASME B31.8-2020, Gas Transmission and Distribution Piping Systems — Eq. 841.1.1</div>
+    <div class="ref-item">ASME B31.8-2003, Gas Transmission and Distribution Piping Systems — Eq. 841.11 (para. 841.11)</div>
     <div class="ref-item">ASME B36.10M-2018, Welded and Seamless Wrought Steel Pipe — schedules STD, XS, XXS, 10–160 for CS/alloy steel</div>
     <div class="ref-item">ASME B36.19M-2018, Stainless Steel Pipe — schedules 5S, 10S, 40S, 80S for SS and duplex (NPS ⅛"–12")</div>
     <div class="ref-item">API Spec 5L, Specification for Line Pipe — mill tolerance 12.5% under</div>
@@ -765,18 +774,22 @@ function setCode(code){
     fEq.textContent = 't = P · D / [ 2 · (S · E · W + P · Y) ] + CA + c₂';
     fVars.innerHTML = 't = required minimum wall thickness (mm) &nbsp;|&nbsp; P = design pressure (MPa) &nbsp;|&nbsp; D = outside diameter (mm)<br>S = allowable stress at design temp (MPa, Table A-1) &nbsp;|&nbsp; E = joint factor &nbsp;|&nbsp; W = weld strength reduction factor &nbsp;|&nbsp; Y = temp coefficient';
   } else if(code==='b314'){
-    fEq.textContent = 't = P · D / ( 2 · S · F · E · T ) + CA';
-    fVars.innerHTML = 't = required minimum wall thickness (mm) &nbsp;|&nbsp; P = design pressure (MPa) &nbsp;|&nbsp; D = outside diameter (mm)<br>S = SMYS (MPa) &nbsp;|&nbsp; F = design factor (0.72–0.40) &nbsp;|&nbsp; E = longitudinal joint factor &nbsp;|&nbsp; T = temperature derating factor';
+    fEq.textContent = 't = Pᵢ · D / (20 · S)   where S = F · E · Sy';
+    fVars.innerHTML = 't = required minimum wall thickness (mm) &nbsp;|&nbsp; P<sub>i</sub> = internal design pressure (<strong>bar</strong>) &nbsp;|&nbsp; D = outside diameter (mm)<br>S<sub>y</sub> = SMYS (MPa) &nbsp;|&nbsp; F = design factor (≤0.72) &nbsp;|&nbsp; E = longitudinal joint factor &nbsp;|&nbsp; Factor 20 = 2 × 10 (1 bar = 0.1 MPa) &nbsp;|&nbsp; No temperature derating factor in B31.4';
   } else {
-    fEq.textContent = 't = P · D / ( 2 · S · F · E · T · L ) + CA';
-    fVars.innerHTML = 't = required minimum wall thickness (mm) &nbsp;|&nbsp; P = design pressure (MPa) &nbsp;|&nbsp; D = outside diameter (mm)<br>S = SMYS (MPa) &nbsp;|&nbsp; F = design factor (class-based) &nbsp;|&nbsp; E = joint factor &nbsp;|&nbsp; T = temp derating &nbsp;|&nbsp; L = seismic/location factor';
+    fEq.textContent = 't = P · D / ( 2 · S · F · E · T )';
+    fVars.innerHTML = 't = required minimum wall thickness (inches) &nbsp;|&nbsp; P = design pressure (psig) &nbsp;|&nbsp; D = outside diameter (inches)<br>S = SMYS (psi) &nbsp;|&nbsp; F = design factor (class-based) &nbsp;|&nbsp; E = joint factor &nbsp;|&nbsp; T = temperature derating factor';
   }
   document.getElementById('results').style.display='none';
 }
 
 function onNpsChange(){
   const nps = sv('nps');
-  if(nps!=='custom' && PIPE[nps]) document.getElementById('od').value = PIPE[nps].od;
+  if(nps!=='custom' && PIPE[nps]){
+    document.getElementById('od').value = PIPE[nps].od;
+    // Auto-fill B31.8 inches OD
+    document.getElementById('b318-od-inch').value = (PIPE[nps].od / 25.4).toFixed(3);
+  }
 }
 
 function onTempChange(){/* placeholder for future auto T factor */}
@@ -811,7 +824,10 @@ function onB314MatChange(){
 }
 function onB318MatChange(){
   const mat = sv('b318-mat');
-  if(mat!=='custom' && SMYS_MAP[mat]) document.getElementById('b318-smys').value = SMYS_MAP[mat];
+  if(mat!=='custom' && SMYS_MAP[mat]){
+    document.getElementById('b318-smys').value = SMYS_MAP[mat];
+    document.getElementById('b318-smys-psi').value = Math.round(SMYS_MAP[mat] * 145.038);
+  }
 }
 function onB314FChange(){
   const fv = sv('b314-F');
@@ -847,8 +863,8 @@ function calculate(){
   const D     = v('od');       // mm
   const CA    = v('ca');       // mm
   const MT    = v('mt');       // %
-  const P_barg = v('pres');
-  const P     = P_barg / 10;  // MPa (1 bar = 0.1 MPa)
+  const P_MPa  = v('pres');    // MPa (direct input)
+  const P      = P_MPa;        // already in MPa
   const T_deg = v('temp');
 
   let t_calc, denominator, steps='', S_eff, code_label;
@@ -864,7 +880,7 @@ function calculate(){
     t_calc = (P*D) / denominator;
     S_eff = S;
 
-    steps += ST(1,'Convert Pressure to MPa','P (MPa) = P (barg) × 0.1',`= ${f(P_barg,1)} × 0.1`,`${f(P,3)} MPa`);
+    steps += ST(1,'Design Pressure (Input)','P = design pressure entered directly in MPa',`P = ${f(P,3)} MPa`,`${f(P,3)} MPa`);
     steps += ST(2,'Denominator','2(S·E·W + P·Y)',`= 2×(${f(S,1)}×${f(E,2)}×${f(W,2)} + ${f(P,3)}×${f(Y,1)})`,`${f(denominator,4)} MPa`);
     steps += ST(3,'Required thickness t (Eq. 3a)','t = P·D / [2·(S·E·W + P·Y)]',`= ${f(P,3)} × ${f(D,2)} / ${f(denominator,4)}`,`${f(t_calc,3)} mm`);
     steps += ST(4,'Add corrosion allowance','t_CA = t + CA',`= ${f(t_calc,3)} + ${f(CA,1)}`,`${f(t_calc+CA,3)} mm`);
@@ -876,40 +892,50 @@ function calculate(){
 
   } else if(currentCode === 'b314'){
     code_label = 'ASME B31.4';
-    const S = v('b314-smys'); // MPa
-    const F = v('b314-Fval');
-    const E = parseFloat(sv('b314-E'));
-    const Tv = parseFloat(sv('b314-T'));
-    denominator = 2*S*F*E*Tv;
-    t_calc = (P*D) / denominator;
-    S_eff = S*F*E*Tv; // effective allowable hoop
+    const P_bar  = v('b314-pres-bar');  // bar — B31.4 SI native unit
+    const Sy = v('b314-smys');           // MPa
+    const F  = v('b314-Fval');
+    const E  = parseFloat(sv('b314-E'));
+    const S  = Sy * F * E;              // effective S = F·E·Sy (MPa)
+    // B31.4 SI formula: t = Pi·D / (20·S)  [P in bar, D in mm, S in MPa → t in mm]
+    // The /20 is because 1 bar = 0.1 MPa → t = (P×0.1×D)/(2×S) = P·D/(20·S)
+    denominator = 20 * S;
+    t_calc = (P_bar * D) / denominator;
+    S_eff = S;
 
-    steps += ST(1,'Convert Pressure to MPa','P (MPa) = P (barg) × 0.1',`= ${f(P_barg,1)} × 0.1`,`${f(P,3)} MPa`);
-    steps += ST(2,'Denominator','2·S·F·E·T',`= 2×${f(S,0)}×${f(F,2)}×${f(E,2)}×${f(Tv,3)}`,`${f(denominator,3)} MPa`);
-    steps += ST(3,'Required thickness (Eq. 403.2.1)','t = P·D / (2·S·F·E·T)',`= ${f(P,3)} × ${f(D,2)} / ${f(denominator,3)}`,`${f(t_calc,3)} mm`);
-    steps += ST(4,'Add corrosion allowance','t_CA = t + CA',`= ${f(t_calc,3)} + ${f(CA,1)}`,`${f(t_calc+CA,3)} mm`);
-    const t_spec = (t_calc+CA)/(1-MT/100);
-    steps += ST(5,'Account for mill tolerance','t_spec = (t+CA) / (1−MT/100)',`= ${f(t_calc+CA,3)} / (1−${MT}/100)`,`${f(t_spec,3)} mm`);
-    buildResults(D, P, t_calc, t_calc+CA, t_spec, S*F*E*Tv, nps, steps, code_label, MT, CA, denominator);
+    steps += ST(1,'Design Pressure (bar)','P entered in bar — B31.4 Eq. 403.2.1 SI native unit',`P = ${f(P_bar,2)} bar`,`${f(P_bar,2)} bar`);
+    steps += ST(2,'Effective allowable stress S = F·E·Sy','S = F × E × Sy (MPa)',`= ${f(F,2)} × ${f(E,2)} × ${f(Sy,1)}`,`${f(S,3)} MPa`);
+    steps += ST(3,'Denominator (20·S) — factor 20 = 2 × 10, since 1 bar = 0.1 MPa','20·S',`= 20 × ${f(S,3)}`,`${f(denominator,3)}`);
+    steps += ST(4,'Required thickness (Eq. 403.2.1 SI)','t = Pi·D / (20·S)',`= ${f(P_bar,2)} × ${f(D,2)} / ${f(denominator,3)}`,`${f(t_calc,3)} mm`);
+    steps += ST(5,'Add corrosion allowance','t_CA = t + CA',`= ${f(t_calc,3)} + ${f(CA,1)}`,`${f(t_calc+CA,3)} mm`);
+    const t_spec_314 = (t_calc+CA)/(1-MT/100);
+    steps += ST(6,'Account for mill tolerance','t_spec = (t+CA) / (1−MT/100)',`= ${f(t_calc+CA,3)} / (1−${MT}/100)`,`${f(t_spec_314,3)} mm`);
+    buildResults(D, P_bar*0.1, t_calc, t_calc+CA, t_spec_314, S, nps, steps, code_label, MT, CA, denominator);
 
   } else {
     code_label = 'ASME B31.8';
-    const S = v('b318-smys');
-    const F = v('b318-Fval');
-    const E = parseFloat(sv('b318-E'));
+    const P_psig = v('b318-pres-psig');           // psig  — code native unit
+    const D_inch = v('b318-od-inch');              // inches — code native unit
+    const S_psi  = v('b318-smys-psi');             // psi
+    const CA_inch = CA / 25.4;                     // mm → inches
+    const F  = v('b318-Fval');
+    const E  = parseFloat(sv('b318-E'));
     const Tv = parseFloat(sv('b318-T'));
-    const L = parseFloat(sv('b318-L'));
-    denominator = 2*S*F*E*Tv*L;
-    t_calc = (P*D) / denominator;
-    S_eff = S*F*E*Tv*L;
+    denominator = 2 * S_psi * F * E * Tv;
+    t_calc = (P_psig * D_inch) / denominator;      // result in inches
+    S_eff  = S_psi * F * E * Tv;
 
-    steps += ST(1,'Convert Pressure to MPa','P (MPa) = P (barg) × 0.1',`= ${f(P_barg,1)} × 0.1`,`${f(P,3)} MPa`);
-    steps += ST(2,'Denominator','2·S·F·E·T·L',`= 2×${f(S,0)}×${f(F,2)}×${f(E,2)}×${f(Tv,3)}×${f(L,2)}`,`${f(denominator,3)} MPa`);
-    steps += ST(3,'Required thickness (Eq. 841.1.1)','t = P·D / (2·S·F·E·T·L)',`= ${f(P,3)} × ${f(D,2)} / ${f(denominator,3)}`,`${f(t_calc,3)} mm`);
-    steps += ST(4,'Add corrosion allowance','t_CA = t + CA',`= ${f(t_calc,3)} + ${f(CA,1)}`,`${f(t_calc+CA,3)} mm`);
-    const t_spec = (t_calc+CA)/(1-MT/100);
-    steps += ST(5,'Account for mill tolerance','t_spec = (t+CA) / (1−MT/100)',`= ${f(t_calc+CA,3)} / (1−${MT}/100)`,`${f(t_spec,3)} mm`);
-    buildResults(D, P, t_calc, t_calc+CA, t_spec, S*F*E*Tv*L, nps, steps, code_label, MT, CA, denominator);
+    steps += ST(1,'Design Pressure (psig)','P entered in psig — B31.8 native unit',`P = ${f(P_psig,1)} psig`,`${f(P_psig,1)} psig`);
+    steps += ST(2,'Pipe OD (inches)','D entered in inches — B31.8 native unit',`D = ${f(D_inch,3)} inches`,`${f(D_inch,3)} inches`);
+    steps += ST(3,'SMYS (psi)','S = SMYS in psi — B31.8 native unit',`S = ${f(S_psi,0)} psi`,`${f(S_psi,0)} psi`);
+    steps += ST(4,'Denominator (Eq. 841.11)','2·S·F·E·T',`= 2×${f(S_psi,0)}×${f(F,2)}×${f(E,2)}×${f(Tv,3)}`,`${f(denominator,1)} psi`);
+    steps += ST(5,'Required thickness (Eq. 841.11)','t = P·D / (2·S·F·E·T)',`= ${f(P_psig,1)} × ${f(D_inch,3)} / ${f(denominator,1)}`,`${f(t_calc,4)} inches`);
+    steps += ST(6,'Add corrosion allowance (inches)','t_CA = t + CA',`= ${f(t_calc,4)} + ${f(CA_inch,4)}`,`${f(t_calc+CA_inch,4)} inches`);
+    const t_spec_318 = (t_calc+CA_inch)/(1-MT/100);
+    steps += ST(7,'Account for mill tolerance','t_spec = (t+CA) / (1−MT/100)',`= ${f(t_calc+CA_inch,4)} / (1−${MT}/100)`,`${f(t_spec_318,4)} inches`);
+    // Pass to buildResults using inch-native values; pass D_inch*25.4 for schedule lookup (mm)
+    buildResults318(D_inch, D*1, P_psig, t_calc, t_calc+CA_inch, t_spec_318, S_eff, nps, steps, code_label, MT, CA_inch, denominator);
+    return;
   }
 
   document.getElementById('code-ref-label').textContent = code_label;
@@ -989,7 +1015,7 @@ function buildResults(D, P_MPa, t_calc, t_with_ca, t_spec, S_allow, nps, steps, 
   // Metrics
   const hoopCalc = (P_MPa*D)/(2*t_calc);
   document.getElementById('metrics-grid').innerHTML = `
-    <div class="metric"><div class="m-label">P (MPa)</div><div class="m-val">${f(P_MPa,3)}</div><div class="m-unit">${f(v('pres'),1)} barg</div></div>
+    <div class="metric"><div class="m-label">P (MPa)</div><div class="m-val">${f(P_MPa,3)}</div><div class="m-unit">Design Pressure</div></div>
     <div class="metric"><div class="m-label">Allowable Stress</div><div class="m-val">${f(S_allow,1)}</div><div class="m-unit">MPa</div></div>
     <div class="metric"><div class="m-label">Denominator</div><div class="m-val">${f(denom,2)}</div><div class="m-unit">MPa</div></div>
     <div class="metric"><div class="m-label">t calculated</div><div class="m-val">${f(t_calc,3)}</div><div class="m-unit">mm (${(t_calc/25.4).toFixed(4)}")</div></div>
@@ -1000,9 +1026,86 @@ function buildResults(D, P_MPa, t_calc, t_with_ca, t_spec, S_allow, nps, steps, 
   `;
 }
 
+// ============================================================
+// BUILD RESULTS — B31.8 (inches/psig/psi native)
+// ============================================================
+function buildResults318(D_inch, D_mm, P_psig, t_calc, t_with_ca, t_spec, S_allow_psi, nps, steps, code_label, MT, CA_inch, denom){
+  const t_calc_mm   = t_calc * 25.4;
+  const t_spec_mm   = t_spec * 25.4;
+  const t_with_mm   = t_with_ca * 25.4;
+
+  document.getElementById('hero-tmin').textContent  = f(t_calc,4) + '"  (' + f(t_calc_mm,3) + ' mm)';
+  document.getElementById('hero-tspec').textContent = f(t_spec,4) + '"  (' + f(t_spec_mm,3) + ' mm)';
+
+  const pipeData = PIPE[nps];
+  let schedRows = '';
+  let recommended = null;
+  let firstPass = true;
+
+  if(pipeData){
+    const P_MPa = P_psig / 145.038;
+    const entries = Object.entries(pipeData.s).sort((a,b)=>a[1]-b[1]);
+    for(const [sched, tw_mm] of entries){
+      const tw_inch = tw_mm / 25.4;
+      const hoop_psi = (P_psig * D_inch) / (2 * tw_inch);
+      const hoop_pct = (hoop_psi / S_allow_psi * 100);
+      const adequate = tw_inch >= t_spec;
+      const isRec = adequate && firstPass;
+      if(isRec){ firstPass = false; recommended = {sched, tw_mm, tw_inch}; }
+      const tag = adequate
+        ? `<span class="pass-tag">✓ ADEQUATE</span>`
+        : `<span class="fail-tag">✗ THIN</span>`;
+      schedRows += `<tr class="${isRec?'selected-row':''}">
+        <td class="label-col">${sched}${isRec?' ★':''}</td>
+        <td>${f(tw_mm,2)}</td>
+        <td>${tw_inch.toFixed(4)}"</td>
+        <td>${f(hoop_psi/145.038,1)} MPa (${f(hoop_psi,0)} psi)</td>
+        <td>${f(hoop_pct,1)}%</td>
+        <td>${tag}</td>
+      </tr>`;
+    }
+  } else {
+    schedRows = `<tr><td colspan="6" style="color:var(--text-3);text-align:center;padding:1rem">Schedule lookup not available for custom OD. Required t<sub>spec</sub> = ${f(t_spec,4)}" (${f(t_spec_mm,3)} mm)</td></tr>`;
+  }
+  document.getElementById('sched-std-label').textContent = 'ASME B36.10M — Carbon & Alloy Steel · ★ = recommended minimum';
+  document.getElementById('sched-tbody').innerHTML = schedRows;
+
+  if(recommended){
+    document.getElementById('hero-sched').textContent = recommended.sched;
+    document.getElementById('hero-tnom').textContent = recommended.tw_inch.toFixed(4) + '"  (' + f(recommended.tw_mm,2) + ' mm)';
+    document.getElementById('sched-warn').style.display='none';
+  } else {
+    document.getElementById('hero-sched').textContent = 'See table ↓';
+    document.getElementById('hero-tnom').textContent = '—';
+    if(pipeData){
+      document.getElementById('sched-warn').style.display='block';
+      document.getElementById('sched-warn').textContent =
+        `⚠️ No standard schedule meets t_spec = ${f(t_spec,4)}" (${f(t_spec_mm,3)} mm). Consider higher grade material or custom wall.`;
+    }
+  }
+
+  const hoopCalc_psi = (P_psig * D_inch) / (2 * t_calc);
+  document.getElementById('metrics-grid').innerHTML = `
+    <div class="metric"><div class="m-label">P (psig)</div><div class="m-val">${f(P_psig,1)}</div><div class="m-unit">${f(P_psig/145.038,3)} MPa</div></div>
+    <div class="metric"><div class="m-label">D (inches)</div><div class="m-val">${f(D_inch,3)}</div><div class="m-unit">${f(D_mm,2)} mm</div></div>
+    <div class="metric"><div class="m-label">S·F·E·T (psi)</div><div class="m-val">${f(S_allow_psi,0)}</div><div class="m-unit">Effective limit</div></div>
+    <div class="metric"><div class="m-label">Denominator</div><div class="m-val">${f(denom,0)}</div><div class="m-unit">psi</div></div>
+    <div class="metric"><div class="m-label">t calculated</div><div class="m-val">${f(t_calc,4)}"</div><div class="m-unit">${f(t_calc_mm,3)} mm</div></div>
+    <div class="metric"><div class="m-label">t + CA</div><div class="m-val">${f(t_with_ca,4)}"</div><div class="m-unit">${f(t_with_mm,3)} mm</div></div>
+    <div class="metric"><div class="m-label">t specified</div><div class="m-val">${f(t_spec,4)}"</div><div class="m-unit">${f(t_spec_mm,3)} mm · inc. ${MT}% tol.</div></div>
+    <div class="metric"><div class="m-label">Hoop Stress</div><div class="m-val">${f(hoopCalc_psi/145.038,1)} MPa</div><div class="m-unit">${f(hoopCalc_psi,0)} psi at t_calc</div></div>
+  `;
+
+  document.getElementById('code-ref-label').textContent = code_label;
+  document.getElementById('wb-steps').innerHTML = steps;
+  document.getElementById('results').style.display='block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
 // Init
 onNpsChange();
 onB313MatChange();
+onB318MatChange();
 </script>
 
 
@@ -1017,47 +1120,183 @@ onB313MatChange();
 <div class="calc-panel" id="calctab-theory">
 <div style="max-width:920px;margin:0 auto;padding:2rem 1.5rem;">
   <div style="background:var(--accent-light,#f7ede3);border:1px solid rgba(196,92,42,.2);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--accent,#c45c2a);margin-bottom:1.2rem;line-height:1.7;">
-    📚 Theory, formulae and code references for this calculator. For full course content and worked examples, visit <strong>PipingPro Academy</strong> courses.
+    📚 Theory, formulae and code references for this calculator — sourced directly from ASME B31.3-2020, B31.4-2019, and B31.8-2003. For full course content and worked examples, visit <strong>PipingPro Academy</strong> courses.
   </div>
-  
-    <div class="ref-section">
-      <div class="ref-title">Design Formula — ASME B31.3 Clause 304.1.2</div>
-      <div class="ref-formula">
-        <b>t<sub>min</sub> = P × D / [ 2 × (S × E × W + P × Y) ]</b><br/><br/>
-        P = Internal design pressure (barg → converted to MPa)<br/>
-        D = Outside diameter (mm)<br/>
-        S = Allowable stress at design temperature (MPa) — from Table A-1<br/>
-        E = Longitudinal joint quality factor (Table A-1A / A-1B) — 1.0 for seamless<br/>
-        W = Weld joint strength reduction factor (Para. 302.3.5) — see below<br/>
-        Y = Temperature coefficient (Table 304.1.1) — 0.4 for ferrous &lt;482°C<br/><br/>
-        <b>Mill tolerance:</b> t<sub>ordered</sub> = (t<sub>min</sub> + CA + c₂) / (1 − mill_tol/100)<br/>
-        <b>B31.4 / B31.8:</b> t = P × D / (2 × S × F × E × T) — hoop stress formula
-      </div>
-      <div class="ref-note">For B31.3 process piping, add corrosion allowance (CA) and mechanical allowance (c₂) before applying mill tolerance. Results shown in mm (SI) with inches equivalent in brackets.</div>
+
+  <!-- ─── B31.3 ─── -->
+  <div class="ref-section">
+    <div class="ref-title">ASME B31.3-2020 · Process Piping — Clause 304.1.2 Straight Pipe Under Internal Pressure</div>
+    <div class="ref-formula">
+      <b>t<sub>m</sub> = t + c &nbsp;&nbsp;&nbsp; [Eq. (2)]</b><br/>
+      <b>t = P·D / [ 2·(S·E·W + P·Y) ] &nbsp;&nbsp;&nbsp; [Eq. (3a)]</b><br/><br/>
+      <b>c</b> = sum of mechanical allowances (thread/groove depth) plus corrosion and erosion allowances (mm)<br/>
+      <b>D</b> = outside diameter of pipe, mm (as listed in standards or as measured)<br/>
+      <b>E</b> = quality factor from Table A-1A or A-1B — 1.00 for seamless<br/>
+      <b>P</b> = internal design gage pressure, MPa<br/>
+      <b>S</b> = stress value for material from Table A-1 or A-1M at design temperature, MPa<br/>
+      <b>t</b> = pressure design thickness (calculated), mm<br/>
+      <b>t<sub>m</sub></b> = minimum required thickness including mechanical, corrosion and erosion allowances, mm<br/>
+      <b>T</b> = pipe wall thickness (measured or minimum per purchase specification), mm — must be ≥ t<sub>m</sub><br/>
+      <b>W</b> = weld joint strength reduction factor per para. 302.3.5(e) — see table below<br/>
+      <b>Y</b> = coefficient from Table 304.1.1, valid for t &lt; D/6 — see table below<br/><br/>
+      <b>Mill tolerance:</b> t<sub>ordered</sub> = (t + c) / (1 − mill_tol/100) &nbsp; — round up to next commercial schedule
     </div>
-    <div class="ref-section">
-      <div class="ref-title">Weld Joint Strength Reduction Factor W — ASME B31.3 Para. 302.3.5</div>
-      <div class="ref-formula">
-        W applies to longitudinal welds at elevated temperature to account for creep strength reduction.<br/><br/>
-        <b>W = 1.00</b> — T ≤ 510°C (950°F) — standard, no reduction<br/>
-        <b>W = 0.95</b> — T = 510–566°C (950–1050°F)<br/>
-        <b>W = 0.91</b> — T = 566–593°C (1050–1100°F)<br/>
-        <b>W = 0.87</b> — T = 593–621°C (1100–1150°F)
-      </div>
-      <div class="ref-note">W = 1.0 for seamless pipe below 510°C — no effect on result. Refer to ASME B31.3 Table 302.3.5 for full applicability criteria.</div>
+    <div class="ref-note">For t ≥ D/6 or P/SE &gt; 0.385, special consideration of factors such as theory of failure, fatigue, and thermal stress is required per para. 304.1.2(b). This calculator covers only the t &lt; D/6 case.</div>
+  </div>
+
+  <!-- B31.3 Table 304.1.1 Y coefficient -->
+  <div class="ref-section">
+    <div class="ref-title">ASME B31.3-2020 · Table 304.1.1 — Values of Coefficient Y for t &lt; D/6</div>
+    <div class="ref-table-wrap"><table class="ref-table">
+      <tr><th>Material</th><th>≤482°C (900°F)</th><th>510°C (950°F)</th><th>538°C (1000°F)</th><th>566°C (1050°F)</th><th>593°C (1100°F)</th><th>≥621°C (1150°F)</th></tr>
+      <tr><td>Ferritic steels</td><td>0.4</td><td>0.5</td><td>0.7</td><td>0.7</td><td>0.7</td><td>0.7</td></tr>
+      <tr><td>Austenitic steels</td><td>0.4</td><td>0.4</td><td>0.4</td><td>0.4</td><td>0.5</td><td>0.7</td></tr>
+      <tr><td>Nickel alloys (N06617, N08800, N08810, N08825)</td><td>0.4</td><td>0.4</td><td>0.4</td><td>0.4</td><td>0.4</td><td>0.4–0.7</td></tr>
+      <tr><td>Gray iron</td><td>0.0</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+      <tr><td>Other ductile metals</td><td>0.4</td><td>0.4</td><td>0.4</td><td>0.4</td><td>0.4</td><td>0.4</td></tr>
+    </table></div>
+    <div class="ref-note">For t ≥ D/6, Y = (d + 2c) / (D + d + 2c) where d = inside diameter. The value of Y may be interpolated for intermediate temperatures.</div>
+  </div>
+
+  <!-- B31.3 W factor -->
+  <div class="ref-section">
+    <div class="ref-title">ASME B31.3-2020 · Table 302.3.5 — Weld Joint Strength Reduction Factor W</div>
+    <div class="ref-formula">
+      W applies to longitudinal welds at elevated temperature to account for creep strength reduction of the weld joint relative to the base metal.<br/><br/>
+      <b>Carbon Steel:</b> W = 1.0 for all temperatures up to 760°C (1,400°F)<br/>
+      <b>CrMo steels</b> (½Cr–½Mo through 9Cr–1Mo):<br/>
+      &nbsp;&nbsp; W = 1.00 at ≤427°C (800°F) &nbsp;·&nbsp; 0.95 at 454°C &nbsp;·&nbsp; 0.91 at 482°C &nbsp;·&nbsp; 0.86 at 510°C &nbsp;·&nbsp; 0.82 at 538°C &nbsp;·&nbsp; 0.77 at 566°C &nbsp;·&nbsp; 0.73 at 593°C<br/>
+      <b>CSEF steels (N+T)</b> — grades 91, 92, 911, 122, 23:<br/>
+      &nbsp;&nbsp; W = 1.00 at ≤510°C &nbsp;·&nbsp; 0.95 at 538°C &nbsp;·&nbsp; 0.91 at 566°C &nbsp;·&nbsp; 0.86 at 593°C &nbsp;·&nbsp; 0.82 at 621°C<br/>
+      <b>Austenitic SS grade 3xx and N088xx nickel alloys:</b><br/>
+      &nbsp;&nbsp; W = 1.00 at ≤510°C &nbsp;·&nbsp; 0.95 at 538°C &nbsp;·&nbsp; 0.91 at 566°C &nbsp;·&nbsp; 0.86 at 593°C &nbsp;·&nbsp; 0.82 at 621°C &nbsp;·&nbsp; 0.77 at 649°C
     </div>
-    <div class="ref-section">
-      <div class="ref-title">Reference Standards</div>
-      <div class="ref-table-wrap"><table class="ref-table">
-        <tr><th>Standard</th><th>Clause</th><th>Application</th></tr>
-        <tr><td>ASME B31.3</td><td>304.1.2</td><td>Process piping — pressure design wall thickness</td></tr>
-        <tr><td>ASME B31.3</td><td>302.3.5</td><td>Weld joint strength reduction factor W</td></tr>
-        <tr><td>ASME B31.4</td><td>403.2.1</td><td>Liquid pipeline — hoop stress formula</td></tr>
-        <tr><td>ASME B31.8</td><td>841.1.1</td><td>Gas transmission — hoop stress formula with design factor F</td></tr>
-        <tr><td>ASME B36.10M</td><td>—</td><td>Standard pipe schedules and OD table — carbon &amp; alloy steel</td></tr>
-        <tr><td>ASME B36.19M</td><td>—</td><td>Stainless steel pipe — schedules 5S / 10S / 40S / 80S</td></tr>
-      </table></div>
+    <div class="ref-note">W = 1.0 for seamless pipe at all temperatures (no longitudinal weld). Linear interpolation is permitted for intermediate temperatures. See full Table 302.3.5 for CSEF subcritical PWHT and autogenous weld cases.</div>
+  </div>
+
+  <!-- ─── B31.4 ─── -->
+  <div class="ref-section">
+    <div class="ref-title">ASME B31.4-2019 · Liquid Pipelines — Clause 403.2.1 Criteria</div>
+    <div class="ref-formula">
+      <b>t<sub>n</sub> ≥ t + A</b><br/><br/>
+      <b>US Customary: &nbsp; t = P<sub>i</sub>·D / (2·S)</b><br/>
+      <b>SI Units: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t = P<sub>i</sub>·D / (20·S)</b><br/><br/>
+      <b>A</b> = sum of allowances for threading, grooving, corrosion and erosion (para. 403.2.2–403.2.4), mm (in.)<br/>
+      <b>D</b> = outside diameter of pipe, in. (mm)<br/>
+      <b>P<sub>i</sub></b> = internal design gage pressure, psi <b>(bar)</b><br/>
+      <b>S</b> = applicable allowable stress value, psi (MPa), determined by: <b>S = F × E × S<sub>y</sub></b><br/>
+      &nbsp;&nbsp; <b>E</b> = weld joint factor per Table 403.2.1-1 — 1.00 for seamless and SAW<br/>
+      &nbsp;&nbsp; <b>F</b> = design factor — shall not be greater than 0.72 per this Code<br/>
+      &nbsp;&nbsp; <b>S<sub>y</sub></b> = specified minimum yield strength, psi (MPa)<br/>
+      <b>t</b> = pressure design wall thickness, in. (mm)<br/>
+      <b>t<sub>n</sub></b> = nominal wall thickness satisfying requirements for pressure and allowances, in. (mm)<br/><br/>
+      ⚠️ <b>No temperature derating factor</b> in B31.4 Eq. 403.2.1. The SI factor of 20 (vs. 2 in US Customary) accounts for the unit conversion: 1 bar = 0.1 MPa, hence 2S × 10 = 20S.<br/><br/>
+      Note: B31.4 para. 403.2.3 states corrosion allowance is not required if pipe is protected per Chapter VIII. Where required, it is included in A.
     </div>
+    <div class="ref-note">B31.4 design factors reflect the underthickness tolerances and maximum allowable imperfection depths in the applicable pipe specifications — no additional mill tolerance deduction is required beyond selecting a nominal schedule wall ≥ t<sub>n</sub>.</div>
+  </div>
+
+  <!-- B31.4 E table excerpt -->
+  <div class="ref-section">
+    <div class="ref-title">ASME B31.4-2019 · Table 403.2.1-1 — Weld Joint Factors E (selected values)</div>
+    <div class="ref-table-wrap"><table class="ref-table">
+      <tr><th>Specification</th><th>Pipe Type</th><th>Weld Joint Factor E</th></tr>
+      <tr><td>API 5L / ASTM A53 / A106 / A333</td><td>Seamless</td><td>1.00</td></tr>
+      <tr><td>API 5L / ASTM A53 / A135 / A333</td><td>Electric Resistance Welded (ERW)</td><td>1.00</td></tr>
+      <tr><td>API 5L / ASTM A381</td><td>Submerged Arc Welded (SAW)</td><td>1.00</td></tr>
+      <tr><td>ASTM A671 / A672 (Class X2, post-PWHT RT)</td><td>Electric Fusion Welded</td><td>1.00</td></tr>
+      <tr><td>ASTM A671 / A672 (Class X3 or pre-PWHT RT)</td><td>Electric Fusion Welded</td><td>0.70 / 0.80</td></tr>
+      <tr><td>ASTM A53 Type F / API 5L A25</td><td>Furnace Butt Welded (continuous)</td><td>0.60</td></tr>
+    </table></div>
+  </div>
+
+  <!-- ─── B31.8 ─── -->
+  <div class="ref-section">
+    <div class="ref-title">ASME B31.8-2003 · Gas Transmission — Para. 841.11 Steel Pipe Design Formula</div>
+    <div class="ref-formula">
+      <b>P = 2·S·t·F·E·T / D &nbsp;&nbsp;&nbsp; (design pressure form)</b><br/>
+      <b>t = P·D / (2·S·F·E·T) &nbsp;&nbsp;&nbsp; (wall thickness form)</b><br/><br/>
+      <b>D</b> = nominal outside diameter of pipe, <b>in.</b><br/>
+      <b>E</b> = longitudinal joint factor from Table 841.115A<br/>
+      <b>F</b> = design factor from Table 841.114A (see table below)<br/>
+      <b>P</b> = design pressure, <b>psig</b> — see also para. 841.111 for limitations<br/>
+      <b>S</b> = specified minimum yield strength (SMYS), <b>psi</b> — per pipe purchase specification or paras. 817.13(h) and 841.112<br/>
+      <b>T</b> = temperature derating factor from Table 841.116A (see table below)<br/>
+      <b>t</b> = nominal wall thickness, <b>in.</b><br/><br/>
+      Add corrosion allowance separately after t is calculated. Apply mill tolerance (12.5% under per API 5L) to arrive at specified nominal wall.
+    </div>
+    <div class="ref-note">B31.8 uses the hoop stress design formula in US Customary units natively. S is SMYS — not a temperature-derated allowable stress. The design factor F already incorporates underthickness tolerance allowances from the approved pipe specifications.</div>
+  </div>
+
+  <!-- B31.8 Table 841.114A F factor -->
+  <div class="ref-section">
+    <div class="ref-title">ASME B31.8-2003 · Table 841.114A — Basic Design Factor F</div>
+    <div class="ref-table-wrap"><table class="ref-table">
+      <tr><th>Location Class</th><th>Design Factor F</th></tr>
+      <tr><td>Location Class 1, Division 1 (offshore / remote)</td><td>0.80</td></tr>
+      <tr><td>Location Class 1, Division 2 (open country)</td><td>0.72</td></tr>
+      <tr><td>Location Class 2 (semi-rural)</td><td>0.60</td></tr>
+      <tr><td>Location Class 3 (suburban / residential)</td><td>0.50</td></tr>
+      <tr><td>Location Class 4 (urban / dense)</td><td>0.40</td></tr>
+    </table></div>
+    <div class="ref-note">Aerial crossings in Location Class 1 require F = 0.60 per para. 841.122. See Table 841.114B for facility-specific design factors (fabricated assemblies, bridge crossings, compressor station piping etc.).</div>
+  </div>
+
+  <!-- B31.8 Table 841.115A E factor (key values) -->
+  <div class="ref-section">
+    <div class="ref-title">ASME B31.8-2003 · Table 841.115A — Longitudinal Joint Factor E (selected values)</div>
+    <div class="ref-table-wrap"><table class="ref-table">
+      <tr><th>Specification</th><th>Pipe Class</th><th>E Factor</th></tr>
+      <tr><td>API 5L</td><td>Seamless</td><td>1.00</td></tr>
+      <tr><td>API 5L</td><td>Electric Resistance Welded / Electric Flash Welded</td><td>1.00</td></tr>
+      <tr><td>API 5L</td><td>Submerged Arc Welded (SAW / DSAW)</td><td>1.00</td></tr>
+      <tr><td>API 5L</td><td>Furnace Butt Welded</td><td>0.60</td></tr>
+      <tr><td>ASTM A 53</td><td>Seamless / ERW</td><td>1.00</td></tr>
+      <tr><td>ASTM A 53</td><td>Furnace Butt Welded (Continuous Weld)</td><td>0.60</td></tr>
+      <tr><td>ASTM A 106</td><td>Seamless</td><td>1.00</td></tr>
+      <tr><td>ASTM A 134 / A 139</td><td>Electric Fusion Arc / Fusion Welded</td><td>0.80</td></tr>
+      <tr><td>ASTM A 135</td><td>Electric Resistance Welded</td><td>1.00</td></tr>
+      <tr><td>ASTM A 381</td><td>Double Submerged Arc Welded</td><td>1.00</td></tr>
+      <tr><td>ASTM A 671 / A 672 (Classes 12, 22, 32, 42, 52)</td><td>Electric Fusion Welded</td><td>1.00</td></tr>
+      <tr><td>ASTM A 671 / A 672 (Classes 13, 23, 33, 43, 53)</td><td>Electric Fusion Welded</td><td>0.80</td></tr>
+    </table></div>
+  </div>
+
+  <!-- B31.8 Table 841.116A T factor -->
+  <div class="ref-section">
+    <div class="ref-title">ASME B31.8-2003 · Table 841.116A — Temperature Derating Factor T for Steel Pipe</div>
+    <div class="ref-table-wrap"><table class="ref-table">
+      <tr><th>Temperature, °F</th><th>Temperature, °C (approx.)</th><th>Derating Factor T</th></tr>
+      <tr><td>250 or less</td><td>121 or less</td><td>1.000</td></tr>
+      <tr><td>300</td><td>149</td><td>0.967</td></tr>
+      <tr><td>350</td><td>177</td><td>0.933</td></tr>
+      <tr><td>400</td><td>204</td><td>0.900</td></tr>
+      <tr><td>450</td><td>232</td><td>0.867</td></tr>
+    </table></div>
+    <div class="ref-note">For intermediate temperatures, interpolate the derating factor (para. 841.116). B31.8 is a gas transmission code; temperatures above 250°F are uncommon in normal gas pipeline service but may apply in specific process gas or geothermal applications.</div>
+  </div>
+
+  <!-- Reference Standards table -->
+  <div class="ref-section">
+    <div class="ref-title">Reference Standards</div>
+    <div class="ref-table-wrap"><table class="ref-table">
+      <tr><th>Standard</th><th>Edition</th><th>Clause</th><th>Application</th></tr>
+      <tr><td>ASME B31.3</td><td>2020</td><td>304.1.1, 304.1.2</td><td>Process piping — pressure design wall thickness (Eq. 3a)</td></tr>
+      <tr><td>ASME B31.3</td><td>2020</td><td>302.3.5, Table 302.3.5</td><td>Weld joint strength reduction factor W</td></tr>
+      <tr><td>ASME B31.3</td><td>2020</td><td>Table 304.1.1</td><td>Temperature coefficient Y for ferritic, austenitic, and other materials</td></tr>
+      <tr><td>ASME B31.4</td><td>2019</td><td>403.2.1</td><td>Liquid pipeline — t = P<sub>i</sub>D/(20S) SI, S = F·E·S<sub>y</sub> — P in bar, D in mm. No T factor.</td></tr>
+      <tr><td>ASME B31.4</td><td>2019</td><td>Table 403.2.1-1</td><td>Weld joint factors E for liquid pipeline materials</td></tr>
+      <tr><td>ASME B31.8</td><td>2003</td><td>841.11</td><td>Gas transmission — t = PD/(2SFET) — P psig, D &amp; t inches, S psi</td></tr>
+      <tr><td>ASME B31.8</td><td>2003</td><td>Table 841.114A</td><td>Basic design factor F by location class (0.40–0.80)</td></tr>
+      <tr><td>ASME B31.8</td><td>2003</td><td>Table 841.115A</td><td>Longitudinal joint factor E by pipe specification and class</td></tr>
+      <tr><td>ASME B31.8</td><td>2003</td><td>Table 841.116A</td><td>Temperature derating factor T — 250°F to 450°F</td></tr>
+      <tr><td>ASME B36.10M</td><td>2018</td><td>—</td><td>Standard pipe schedules and OD — carbon &amp; alloy steel</td></tr>
+      <tr><td>ASME B36.19M</td><td>2018</td><td>—</td><td>Stainless steel pipe schedules 5S / 10S / 40S / 80S (NPS ⅛"–12")</td></tr>
+      <tr><td>API Spec 5L</td><td>—</td><td>—</td><td>Line pipe specification — mill tolerance 12.5% under nominal wall</td></tr>
+    </table></div>
+    <div class="ref-note">Allowable stress values (S) for B31.3 materials in this calculator are approximate representations of ASME B31.3 Table A-1. Always verify against the current code edition for final design. SMYS values for B31.4/B31.8 materials are per API 5L.</div>
+  </div>
+
 </div>
 </div>
 </div><!-- /calctab-theory -->
