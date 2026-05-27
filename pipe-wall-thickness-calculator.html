@@ -401,7 +401,7 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
         <div class="field">
           <label>Allowable Stress S at Design Temp <span id="lbl-S313">(MPa)</span></label>
           <input type="number" id="b313-S" value="137.9" step="0.1">
-          <span class="hint">ASME B31.3 Table A-1 — auto-filled, editable</span>
+          <span class="hint">ASME B31.3 Table A-1 — auto-filled, editable · <span id="lbl-S313-hint">values in MPa</span></span>
         </div>
         <div class="field">
           <label>Longitudinal Joint Factor E</label>
@@ -432,7 +432,7 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
           </select>
         </div>
         <div class="field">
-          <label>Additional Mechanical Allowance c₂ (mm)</label>
+          <label>Additional Mechanical Allowance c₂ <span id="lbl-c2">(mm)</span></label>
           <input type="number" id="b313-c2" value="0" step="0.5" min="0">
           <span class="hint">Threading, grooving — 0 for welded pipe</span>
         </div>
@@ -467,7 +467,7 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
           </select>
         </div>
         <div class="field">
-          <label>SMYS (MPa)</label>
+          <label>SMYS <span id="lbl-smys314">(MPa)</span></label>
           <input type="number" id="b314-smys" value="448" step="1">
         </div>
         <div class="field">
@@ -533,7 +533,7 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
           </select>
         </div>
         <div class="field">
-          <label>SMYS (MPa)</label>
+          <label>SMYS <span id="lbl-smys318">(MPa)</span></label>
           <input type="number" id="b318-smys" value="448" step="1">
         </div>
         <div class="field">
@@ -1021,44 +1021,53 @@ var currentUnits = 'si'; // 'si' or 'us'
 
 function setUnits(u){
   if(u === currentUnits) return;
-
-  // Read current SI values before switching
-  var od_mm   = parseFloat(document.getElementById('od').value) || 0;
-  var ca_mm   = parseFloat(document.getElementById('ca').value) || 0;
+  var od_v    = parseFloat(document.getElementById('od').value) || 0;
+  var ca_v    = parseFloat(document.getElementById('ca').value) || 0;
   var pres_v  = parseFloat(document.getElementById('pres').value) || 0;
   var s313_v  = parseFloat(document.getElementById('b313-S').value) || 0;
-
+  var c2_v    = parseFloat(document.getElementById('b313-c2').value) || 0;
+  var smys314 = parseFloat(document.getElementById('b314-smys').value) || 0;
+  var smys318 = parseFloat(document.getElementById('b318-smys').value) || 0;
   if(u === 'us'){
-    // SI → US: mm→in, barg→psig, MPa→psi
-    document.getElementById('od').value   = (od_mm / 25.4).toFixed(3);
-    document.getElementById('ca').value   = (ca_mm / 25.4).toFixed(4);
-    document.getElementById('pres').value = (pres_v * 14.504).toFixed(1);  // barg→psig
-    document.getElementById('b313-S').value = (s313_v * 145.038).toFixed(0); // MPa→psi
-    // Labels
-    document.getElementById('lbl-od').textContent  = '(in)';
-    document.getElementById('lbl-ca').textContent  = '(in)';
-    document.getElementById('lbl-pres').textContent= '(psig)';
-    document.getElementById('lbl-S313').textContent= '(psi)';
-    // Buttons
+    // SI → US Customary
+    document.getElementById('od').value        = (od_v / 25.4).toFixed(3);
+    document.getElementById('ca').value        = (ca_v / 25.4).toFixed(4);
+    document.getElementById('pres').value      = (pres_v * 14.504).toFixed(1);
+    document.getElementById('b313-S').value    = (s313_v * 145.038).toFixed(0);
+    document.getElementById('b313-c2').value   = (c2_v / 25.4).toFixed(4);
+    document.getElementById('b314-smys').value = (smys314 * 145.038).toFixed(0);
+    document.getElementById('b318-smys').value = (smys318 * 145.038).toFixed(0);
+    document.getElementById('lbl-od').textContent        = '(in)';
+    document.getElementById('lbl-ca').textContent        = '(in)';
+    document.getElementById('lbl-pres').textContent      = '(psig)';
+    document.getElementById('lbl-S313').textContent      = '(psi)';
+    document.getElementById('lbl-c2').textContent        = '(in)';
+    document.getElementById('lbl-S313-hint').textContent = 'values in psi';
+    document.getElementById('lbl-smys314').textContent   = '(psi)';
+    document.getElementById('lbl-smys318').textContent   = '(psi)';
     document.getElementById('btn-si').classList.remove('active');
     document.getElementById('btn-us').classList.add('active');
   } else {
-    // US → SI: in→mm, psig→barg, psi→MPa
-    document.getElementById('od').value   = (od_mm * 25.4).toFixed(2);
-    document.getElementById('ca').value   = (ca_mm * 25.4).toFixed(2);
-    document.getElementById('pres').value = (pres_v / 14.504).toFixed(2); // psig→barg
-    document.getElementById('b313-S').value = (s313_v / 145.038).toFixed(1); // psi→MPa
-    // Labels
-    document.getElementById('lbl-od').textContent  = '(mm)';
-    document.getElementById('lbl-ca').textContent  = '(mm)';
-    document.getElementById('lbl-pres').textContent= '(barg)';
-    document.getElementById('lbl-S313').textContent= '(MPa)';
-    // Buttons
+    // US Customary → SI
+    document.getElementById('od').value        = (od_v * 25.4).toFixed(2);
+    document.getElementById('ca').value        = (ca_v * 25.4).toFixed(2);
+    document.getElementById('pres').value      = (pres_v / 14.504).toFixed(2);
+    document.getElementById('b313-S').value    = (s313_v / 145.038).toFixed(1);
+    document.getElementById('b313-c2').value   = (c2_v * 25.4).toFixed(3);
+    document.getElementById('b314-smys').value = (smys314 / 145.038).toFixed(1);
+    document.getElementById('b318-smys').value = (smys318 / 145.038).toFixed(1);
+    document.getElementById('lbl-od').textContent        = '(mm)';
+    document.getElementById('lbl-ca').textContent        = '(mm)';
+    document.getElementById('lbl-pres').textContent      = '(barg)';
+    document.getElementById('lbl-S313').textContent      = '(MPa)';
+    document.getElementById('lbl-c2').textContent        = '(mm)';
+    document.getElementById('lbl-S313-hint').textContent = 'values in MPa';
+    document.getElementById('lbl-smys314').textContent   = '(MPa)';
+    document.getElementById('lbl-smys318').textContent   = '(MPa)';
     document.getElementById('btn-us').classList.remove('active');
     document.getElementById('btn-si').classList.add('active');
   }
   currentUnits = u;
-  // Hide results on unit switch to avoid stale display
   document.getElementById('results').style.display='none';
 }
 
@@ -1066,19 +1075,30 @@ function setUnits(u){
 var _origCalculate = calculate;
 calculate = function(){
   if(currentUnits === 'us'){
-    // Temporarily convert displayed US values to SI for the engine
-    var od_el   = document.getElementById('od');
-    var ca_el   = document.getElementById('ca');
-    var pres_el = document.getElementById('pres');
-    var s313_el = document.getElementById('b313-S');
-    var od_orig=od_el.value, ca_orig=ca_el.value, pres_orig=pres_el.value, s313_orig=s313_el.value;
-    od_el.value   = (parseFloat(od_orig)   * 25.4).toFixed(2);
-    ca_el.value   = (parseFloat(ca_orig)   * 25.4).toFixed(3);
-    pres_el.value = (parseFloat(pres_orig) / 14.504).toFixed(3);
-    s313_el.value = (parseFloat(s313_orig) / 145.038).toFixed(2);
+    var od_el    = document.getElementById('od');
+    var ca_el    = document.getElementById('ca');
+    var pres_el  = document.getElementById('pres');
+    var s313_el  = document.getElementById('b313-S');
+    var c2_el    = document.getElementById('b313-c2');
+    var smys314_el = document.getElementById('b314-smys');
+    var smys318_el = document.getElementById('b318-smys');
+    // Save originals
+    var od_o=od_el.value, ca_o=ca_el.value, pres_o=pres_el.value;
+    var s313_o=s313_el.value, c2_o=c2_el.value;
+    var smys314_o=smys314_el.value, smys318_o=smys318_el.value;
+    // Convert to SI
+    od_el.value    = (parseFloat(od_o)    * 25.4).toFixed(2);
+    ca_el.value    = (parseFloat(ca_o)    * 25.4).toFixed(3);
+    pres_el.value  = (parseFloat(pres_o)  / 14.504).toFixed(3);
+    s313_el.value  = (parseFloat(s313_o)  / 145.038).toFixed(2);
+    c2_el.value    = (parseFloat(c2_o)    * 25.4).toFixed(3);
+    smys314_el.value = (parseFloat(smys314_o) / 145.038).toFixed(1);
+    smys318_el.value = (parseFloat(smys318_o) / 145.038).toFixed(1);
     _origCalculate();
     // Restore US values
-    od_el.value=od_orig; ca_el.value=ca_orig; pres_el.value=pres_orig; s313_el.value=s313_orig;
+    od_el.value=od_o; ca_el.value=ca_o; pres_el.value=pres_o;
+    s313_el.value=s313_o; c2_el.value=c2_o;
+    smys314_el.value=smys314_o; smys318_el.value=smys318_o;
   } else {
     _origCalculate();
   }
