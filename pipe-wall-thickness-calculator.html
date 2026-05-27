@@ -867,72 +867,115 @@ function ST(n,name,formula,sub,result){
 // CALCULATE
 // ============================================================
 function calculate(){
-  const nps   = sv('nps');
-  const D     = v('od');       // mm
-  const CA    = v('ca');       // mm
-  const MT    = v('mt');       // %
+  const nps    = sv('nps');
+  const D      = v('od');       // mm (always SI internally)
+  const CA     = v('ca');       // mm
+  const MT     = v('mt');       // %
   const P_barg = v('pres');
-  const P     = P_barg / 10;  // MPa (1 bar = 0.1 MPa)
-  const T_deg = v('temp');
+  const P      = P_barg / 10;  // MPa
+  const T_deg  = v('temp');
+
+  // Unit display helpers
+  const isUS   = currentUnits === 'us';
+  const uP     = isUS ? 'psig' : 'barg';
+  const uS     = isUS ? 'psi'  : 'MPa';
+  const uD     = isUS ? 'in'   : 'mm';
+  const uT     = isUS ? 'in'   : 'mm';
+  // Display values (original user-facing, before SI conversion)
+  const dP     = isUS ? f(P_barg * 14.504, 1) : f(P_barg, 1);   // pressure in display unit
+  const dD     = isUS ? f(D / 25.4, 3)         : f(D, 2);        // OD in display unit
+  const dCA    = isUS ? f(CA / 25.4, 4)        : f(CA, 1);       // CA in display unit
+  // Pressure in MPa for formula display
+  const dP_mpa = f(P, 3);
 
   let t_calc, denominator, steps='', S_eff, code_label;
 
   if(currentCode === 'b313'){
     code_label = 'ASME B31.3';
-    const S  = v('b313-S');     // MPa
+    const S  = v('b313-S');
     const E  = parseFloat(sv('b313-E'));
     const W  = parseFloat(sv('b313-W'));
     const Y  = parseFloat(sv('b313-Y'));
     const c2 = v('b313-c2');
     denominator = 2*(S*E*W + P*Y);
     t_calc = (P*D) / denominator;
-    S_eff = S;
-
-    steps += ST(1,'Convert Pressure to MPa','P (MPa) = P (barg) × 0.1',`= ${f(P_barg,1)} × 0.1`,`${f(P,3)} MPa`);
-    steps += ST(2,'Denominator','2(S·E·W + P·Y)',`= 2×(${f(S,1)}×${f(E,2)}×${f(W,2)} + ${f(P,3)}×${f(Y,1)})`,`${f(denominator,4)} MPa`);
-    steps += ST(3,'Required thickness t (Eq. 3a)','t = P·D / [2·(S·E·W + P·Y)]',`= ${f(P,3)} × ${f(D,2)} / ${f(denominator,4)}`,`${f(t_calc,3)} mm`);
-    steps += ST(4,'Add corrosion allowance','t_CA = t + CA',`= ${f(t_calc,3)} + ${f(CA,1)}`,`${f(t_calc+CA,3)} mm`);
-    if(c2>0) steps += ST(5,'Add mechanical allowance c₂','t_c2 = t_CA + c₂',`= ${f(t_calc+CA,3)} + ${f(c2,1)}`,`${f(t_calc+CA+c2,3)} mm`);
+    S_eff  = S;
+    const dS  = isUS ? f(S * 145.038, 0) : f(S, 1);
+    const dC2 = isUS ? f(c2 / 25.4, 4)   : f(c2, 1);
     const t_with_ca = t_calc + CA + c2;
-    const t_spec = t_with_ca / (1 - MT/100);
-    steps += ST(6,'Account for mill tolerance','t_spec = (t + CA + c₂) / (1 − MT/100)',`= ${f(t_with_ca,3)} / (1 − ${MT}/100)`,`${f(t_spec,3)} mm`);
+    const t_spec    = t_with_ca / (1 - MT/100);
+    const dt        = isUS ? f(t_calc / 25.4, 4)       : f(t_calc, 3);
+    const dtca      = isUS ? f((t_calc+CA) / 25.4, 4)  : f(t_calc+CA, 3);
+    const dtwca     = isUS ? f(t_with_ca / 25.4, 4)    : f(t_with_ca, 3);
+    const dtspec    = isUS ? f(t_spec / 25.4, 4)        : f(t_spec, 3);
+    const dDenom    = isUS ? f(denominator / 145.038, 4) + ` ${uS}` : f(denominator, 4) + ' MPa';
+
+    if(isUS){
+      steps += ST(1,'Input Pressure',`P = ${dP} ${uP} → convert to MPa`,`${dP} ÷ 14.504`,`${dP_mpa} MPa`);
+      steps += ST(2,'Input Dimensions',`OD = ${dD} ${uD} · CA = ${dCA} ${uT} · S = ${dS} ${uS}`,`Converted to SI for calculation`,`OD = ${f(D,2)} mm · S = ${f(S,1)} MPa`);
+    } else {
+      steps += ST(1,'Convert Pressure to MPa',`P (MPa) = P (barg) × 0.1`,`= ${dP} × 0.1`,`${dP_mpa} MPa`);
+    }
+    steps += ST(isUS?3:2,'Denominator','2(S·E·W + P·Y)',`= 2×(${f(S,1)}×${f(E,2)}×${f(W,2)} + ${f(P,3)}×${f(Y,1)})`,`${f(denominator,4)} MPa`);
+    steps += ST(isUS?4:3,'Required thickness t (Eq. 3a)','t = P·D / [2·(S·E·W + P·Y)]',`= ${dP_mpa} MPa × ${f(D,2)} mm / ${f(denominator,4)}`,`${dt} ${uT}`);
+    steps += ST(isUS?5:4,'Add corrosion allowance','t_CA = t + CA',`= ${dt} + ${dCA}`,`${dtca} ${uT}`);
+    if(c2>0) steps += ST(isUS?6:5,'Add mechanical allowance c₂','t_c2 = t_CA + c₂',`= ${dtca} + ${dC2}`,`${dtwca} ${uT}`);
+    steps += ST(isUS?7:6,'Account for mill tolerance','t_spec = (t + CA + c₂) / (1 − MT/100)',`= ${dtwca} / (1 − ${MT}/100)`,`${dtspec} ${uT}`);
     buildResults(D, P, t_calc, t_calc+CA+c2, t_spec, S_eff, nps, steps, code_label, MT, CA, denominator);
 
   } else if(currentCode === 'b314'){
     code_label = 'ASME B31.4';
-    const S = v('b314-smys'); // MPa
-    const F = v('b314-Fval');
-    const E = parseFloat(sv('b314-E'));
+    const S  = v('b314-smys');
+    const F  = v('b314-Fval');
+    const E  = parseFloat(sv('b314-E'));
     const Tv = parseFloat(sv('b314-T'));
     denominator = 2*S*F*E*Tv;
     t_calc = (P*D) / denominator;
-    S_eff = S*F*E*Tv; // effective allowable hoop
+    S_eff  = S*F*E*Tv;
+    const dS     = isUS ? f(S * 145.038, 0) : f(S, 0);
+    const dt     = isUS ? f(t_calc / 25.4, 4)      : f(t_calc, 3);
+    const dtca   = isUS ? f((t_calc+CA) / 25.4, 4) : f(t_calc+CA, 3);
+    const dtspec = isUS ? f(((t_calc+CA)/(1-MT/100)) / 25.4, 4) : f((t_calc+CA)/(1-MT/100), 3);
 
-    steps += ST(1,'Convert Pressure to MPa','P (MPa) = P (barg) × 0.1',`= ${f(P_barg,1)} × 0.1`,`${f(P,3)} MPa`);
-    steps += ST(2,'Denominator','2·S·F·E·T',`= 2×${f(S,0)}×${f(F,2)}×${f(E,2)}×${f(Tv,3)}`,`${f(denominator,3)} MPa`);
-    steps += ST(3,'Required thickness (Eq. 403.2.1)','t = P·D / (2·S·F·E·T)',`= ${f(P,3)} × ${f(D,2)} / ${f(denominator,3)}`,`${f(t_calc,3)} mm`);
-    steps += ST(4,'Add corrosion allowance','t_CA = t + CA',`= ${f(t_calc,3)} + ${f(CA,1)}`,`${f(t_calc+CA,3)} mm`);
+    if(isUS){
+      steps += ST(1,'Input Pressure',`P = ${dP} ${uP} → convert to MPa`,`${dP} ÷ 14.504`,`${dP_mpa} MPa`);
+      steps += ST(2,'Input Dimensions',`OD = ${dD} ${uD} · SMYS = ${dS} ${uS}`,`Converted to SI for calculation`,`OD = ${f(D,2)} mm · SMYS = ${f(S,0)} MPa`);
+    } else {
+      steps += ST(1,'Convert Pressure to MPa',`P (MPa) = P (barg) × 0.1`,`= ${dP} × 0.1`,`${dP_mpa} MPa`);
+    }
+    steps += ST(isUS?3:2,'Denominator','2·S·F·E·T',`= 2×${f(S,0)}×${f(F,2)}×${f(E,2)}×${f(Tv,3)}`,`${f(denominator,3)} MPa`);
+    steps += ST(isUS?4:3,'Required thickness (Eq. 403.2.1)','t = P·D / (2·S·F·E·T)',`= ${dP_mpa} × ${f(D,2)} / ${f(denominator,3)}`,`${dt} ${uT}`);
+    steps += ST(isUS?5:4,'Add corrosion allowance','t_CA = t + CA',`= ${dt} + ${dCA}`,`${dtca} ${uT}`);
     const t_spec = (t_calc+CA)/(1-MT/100);
-    steps += ST(5,'Account for mill tolerance','t_spec = (t+CA) / (1−MT/100)',`= ${f(t_calc+CA,3)} / (1−${MT}/100)`,`${f(t_spec,3)} mm`);
+    steps += ST(isUS?6:5,'Account for mill tolerance','t_spec = (t+CA) / (1−MT/100)',`= ${dtca} / (1−${MT}/100)`,`${dtspec} ${uT}`);
     buildResults(D, P, t_calc, t_calc+CA, t_spec, S*F*E*Tv, nps, steps, code_label, MT, CA, denominator);
 
   } else {
     code_label = 'ASME B31.8';
-    const S = v('b318-smys');
-    const F = v('b318-Fval');
-    const E = parseFloat(sv('b318-E'));
+    const S  = v('b318-smys');
+    const F  = v('b318-Fval');
+    const E  = parseFloat(sv('b318-E'));
     const Tv = parseFloat(sv('b318-T'));
-    const L = parseFloat(sv('b318-L'));
+    const L  = parseFloat(sv('b318-L'));
     denominator = 2*S*F*E*Tv*L;
     t_calc = (P*D) / denominator;
-    S_eff = S*F*E*Tv*L;
+    S_eff  = S*F*E*Tv*L;
+    const dS     = isUS ? f(S * 145.038, 0) : f(S, 0);
+    const dt     = isUS ? f(t_calc / 25.4, 4)      : f(t_calc, 3);
+    const dtca   = isUS ? f((t_calc+CA) / 25.4, 4) : f(t_calc+CA, 3);
+    const dtspec = isUS ? f(((t_calc+CA)/(1-MT/100)) / 25.4, 4) : f((t_calc+CA)/(1-MT/100), 3);
 
-    steps += ST(1,'Convert Pressure to MPa','P (MPa) = P (barg) × 0.1',`= ${f(P_barg,1)} × 0.1`,`${f(P,3)} MPa`);
-    steps += ST(2,'Denominator','2·S·F·E·T·L',`= 2×${f(S,0)}×${f(F,2)}×${f(E,2)}×${f(Tv,3)}×${f(L,2)}`,`${f(denominator,3)} MPa`);
-    steps += ST(3,'Required thickness (Eq. 841.1.1)','t = P·D / (2·S·F·E·T·L)',`= ${f(P,3)} × ${f(D,2)} / ${f(denominator,3)}`,`${f(t_calc,3)} mm`);
-    steps += ST(4,'Add corrosion allowance','t_CA = t + CA',`= ${f(t_calc,3)} + ${f(CA,1)}`,`${f(t_calc+CA,3)} mm`);
+    if(isUS){
+      steps += ST(1,'Input Pressure',`P = ${dP} ${uP} → convert to MPa`,`${dP} ÷ 14.504`,`${dP_mpa} MPa`);
+      steps += ST(2,'Input Dimensions',`OD = ${dD} ${uD} · SMYS = ${dS} ${uS}`,`Converted to SI for calculation`,`OD = ${f(D,2)} mm · SMYS = ${f(S,0)} MPa`);
+    } else {
+      steps += ST(1,'Convert Pressure to MPa',`P (MPa) = P (barg) × 0.1`,`= ${dP} × 0.1`,`${dP_mpa} MPa`);
+    }
+    steps += ST(isUS?3:2,'Denominator','2·S·F·E·T·L',`= 2×${f(S,0)}×${f(F,2)}×${f(E,2)}×${f(Tv,3)}×${f(L,2)}`,`${f(denominator,3)} MPa`);
+    steps += ST(isUS?4:3,'Required thickness (Eq. 841.1.1)','t = P·D / (2·S·F·E·T·L)',`= ${dP_mpa} × ${f(D,2)} / ${f(denominator,3)}`,`${dt} ${uT}`);
+    steps += ST(isUS?5:4,'Add corrosion allowance','t_CA = t + CA',`= ${dt} + ${dCA}`,`${dtca} ${uT}`);
     const t_spec = (t_calc+CA)/(1-MT/100);
-    steps += ST(5,'Account for mill tolerance','t_spec = (t+CA) / (1−MT/100)',`= ${f(t_calc+CA,3)} / (1−${MT}/100)`,`${f(t_spec,3)} mm`);
+    steps += ST(isUS?6:5,'Account for mill tolerance','t_spec = (t+CA) / (1−MT/100)',`= ${dtca} / (1−${MT}/100)`,`${dtspec} ${uT}`);
     buildResults(D, P, t_calc, t_calc+CA, t_spec, S*F*E*Tv*L, nps, steps, code_label, MT, CA, denominator);
   }
 
