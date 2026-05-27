@@ -597,7 +597,7 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
       <div class="hero-main">
         <div class="hero-label">Calculated Min. Thickness t<sub>min</sub></div>
         <div class="hero-val" id="hero-tmin">—</div>
-        <div class="hero-unit">mm (before mill tolerance)</div>
+        <div class="hero-unit" id="hero-unit-label">mm (before mill tolerance)</div>
       </div>
       <div class="hero-divider"></div>
       <div class="hero-sub">
@@ -998,18 +998,29 @@ function calculate(){
 }
 
 function buildResults(D, P_MPa, t_calc, t_with_ca, t_spec, S_allow, nps, steps, code_label, MT, CA, denom){
-  document.getElementById('hero-tmin').textContent = f(t_calc,3) + ' mm';
-  document.getElementById('hero-tspec').textContent = f(t_spec,3) + ' mm';
+  const isUS = currentUnits === 'us';
+  const uT   = isUS ? 'in' : 'mm';
+  const uS   = isUS ? 'psi' : 'MPa';
+  const uP   = isUS ? 'psig' : 'barg';
 
-  // Auto-select pipe table: B36.19 for SS/Duplex, B36.10 for CS/alloy
+  // Thickness display helpers
+  const disp_t     = v => isUS ? f(v/25.4, 4) : f(v, 3);
+  const disp_S     = v => isUS ? f(v*145.038, 0) : f(v, 1);
+  const disp_P     = isUS ? f(P_MPa*145.038*10, 1) : f(P_MPa*10, 3); // MPa→psig or barg
+  const disp_hoop  = v => isUS ? f(v*145.038, 1) : f(v, 1);
+
+  // Hero
+  document.getElementById('hero-unit-label').textContent = (isUS ? 'in' : 'mm') + ' (before mill tolerance)';
+  document.getElementById('hero-tmin').textContent  = disp_t(t_calc) + ' ' + uT;
+  document.getElementById('hero-tspec').textContent = disp_t(t_spec) + ' ' + uT;
+
+  // Auto-select pipe table
   const useB3619 = isSSMaterial();
   const pipeTable = useB3619 ? PIPE_SS : PIPE;
   const pipeData  = pipeTable[nps];
   const stdLabel  = useB3619
     ? 'ASME B36.19M — Stainless Steel (5S / 10S / 40S / 80S)'
     : 'ASME B36.10M — Carbon & Alloy Steel';
-
-  // Update schedule table header label
   document.getElementById('sched-std-label').textContent = stdLabel + ' · ★ = recommended minimum';
 
   let schedRows = '';
@@ -1017,64 +1028,64 @@ function buildResults(D, P_MPa, t_calc, t_with_ca, t_spec, S_allow, nps, steps, 
   let firstPass = true;
 
   if(pipeData){
-    const scheds = pipeData.s;
+    const scheds  = pipeData.s;
     const entries = Object.entries(scheds).sort((a,b)=>a[1]-b[1]);
     for(const [sched, tw] of entries){
-      const hoop = (P_MPa * D) / (2 * tw); // MPa
-      const pctS = (hoop / S_allow * 100);
+      const hoop     = (P_MPa * D) / (2 * tw); // MPa
+      const pctS     = (hoop / S_allow * 100);
       const adequate = tw >= t_spec;
-      const isRec = adequate && firstPass;
-      if(isRec){
-        firstPass = false;
-        recommended = {sched, tw};
-      }
+      const isRec    = adequate && firstPass;
+      if(isRec){ firstPass=false; recommended={sched,tw}; }
       const tag = adequate
         ? `<span class="pass-tag">✓ ADEQUATE</span>`
         : `<span class="fail-tag">✗ THIN</span>`;
+      const tw_disp   = isUS ? (tw/25.4).toFixed(4) : f(tw,2);
+      const tw_alt    = isUS ? f(tw,2)+' mm'         : (tw/25.4).toFixed(3)+'"';
+      const hoop_disp = isUS ? f(hoop*145.038,1)     : f(hoop,1);
+      const hoop_unit = isUS ? 'psi'                  : 'MPa';
       schedRows += `<tr class="${isRec?'selected-row':''}">
         <td class="label-col">${sched}${isRec?' ★':''}</td>
-        <td>${f(tw,2)}</td>
-        <td>${(tw/25.4).toFixed(3)}"</td>
-        <td>${f(hoop,1)}</td>
+        <td>${tw_disp} ${uT}</td>
+        <td>${tw_alt}</td>
+        <td>${hoop_disp} ${hoop_unit}</td>
         <td>${f(pctS,1)}%</td>
         <td>${tag}</td>
       </tr>`;
     }
   } else if(useB3619 && !pipeData){
-    // B36.19 only goes to 12" — show note for larger SS
     schedRows = `<tr><td colspan="6" style="color:var(--text-3);font-family:var(--font);text-align:center;padding:1rem">
-      ℹ️ ASME B36.19M covers NPS ⅛" – 12" only. For NPS ${nps}" stainless steel pipe, use ASME B36.10M schedules (10S/40S/80S designation may still apply — verify with pipe supplier). Required t<sub>spec</sub> = ${f(t_spec,3)} mm.
+      ℹ️ ASME B36.19M covers NPS ⅛"–12" only. For NPS ${nps}" SS pipe, use ASME B36.10M schedules. Required t<sub>spec</sub> = ${disp_t(t_spec)} ${uT}.
     </td></tr>`;
   } else {
-    // Custom OD — just show result
-    schedRows = `<tr><td colspan="6" style="color:var(--text-3);text-align:center;padding:1rem">Schedule lookup not available for custom OD. Required t<sub>spec</sub> = ${f(t_spec,3)} mm</td></tr>`;
+    schedRows = `<tr><td colspan="6" style="color:var(--text-3);text-align:center;padding:1rem">Schedule lookup not available for custom OD. Required t<sub>spec</sub> = ${disp_t(t_spec)} ${uT}</td></tr>`;
   }
   document.getElementById('sched-tbody').innerHTML = schedRows;
 
   if(recommended){
     document.getElementById('hero-sched').textContent = recommended.sched;
-    document.getElementById('hero-tnom').textContent = f(recommended.tw,2) + ' mm';
+    document.getElementById('hero-tnom').textContent  = (isUS ? (recommended.tw/25.4).toFixed(4) : f(recommended.tw,2)) + ' ' + uT;
     document.getElementById('sched-warn').style.display='none';
   } else {
     document.getElementById('hero-sched').textContent = 'See table ↓';
-    document.getElementById('hero-tnom').textContent = '—';
+    document.getElementById('hero-tnom').textContent  = '—';
     if(pipeData){
       document.getElementById('sched-warn').style.display='block';
       document.getElementById('sched-warn').textContent =
-        `⚠️ No standard schedule for NPS ${nps}" meets the required t_spec = ${f(t_spec,3)} mm. Consider: increasing pipe OD, reducing pressure, using a higher grade material, or specifying a custom wall thickness.`;
+        `⚠️ No standard schedule for NPS ${nps}" meets the required t_spec = ${disp_t(t_spec)} ${uT}. Consider: increasing pipe OD, reducing pressure, using a higher grade material, or specifying a custom wall thickness.`;
     }
   }
 
   // Metrics
   const hoopCalc = (P_MPa*D)/(2*t_calc);
+  const pres_display = isUS ? f(v('pres'),1)+' psig' : f(v('pres'),1)+' barg';
   document.getElementById('metrics-grid').innerHTML = `
-    <div class="metric"><div class="m-label">P (MPa)</div><div class="m-val">${f(P_MPa,3)}</div><div class="m-unit">${f(v('pres'),1)} barg</div></div>
-    <div class="metric"><div class="m-label">Allowable Stress</div><div class="m-val">${f(S_allow,1)}</div><div class="m-unit">MPa</div></div>
+    <div class="metric"><div class="m-label">P (MPa)</div><div class="m-val">${f(P_MPa,3)}</div><div class="m-unit">${pres_display}</div></div>
+    <div class="metric"><div class="m-label">Allowable Stress</div><div class="m-val">${disp_S(S_allow)}</div><div class="m-unit">${uS}</div></div>
     <div class="metric"><div class="m-label">Denominator</div><div class="m-val">${f(denom,2)}</div><div class="m-unit">MPa</div></div>
-    <div class="metric"><div class="m-label">t calculated</div><div class="m-val">${f(t_calc,3)}</div><div class="m-unit">mm (code min)</div></div>
-    <div class="metric"><div class="m-label">t + CA</div><div class="m-val">${f(t_with_ca,3)}</div><div class="m-unit">mm</div></div>
-    <div class="metric"><div class="m-label">t specified</div><div class="m-val">${f(t_spec,3)}</div><div class="m-unit">mm (inc. ${MT}% tolerance)</div></div>
-    <div class="metric"><div class="m-label">Hoop Stress</div><div class="m-val">${f(hoopCalc,1)}</div><div class="m-unit">MPa at t_calc</div></div>
+    <div class="metric"><div class="m-label">t calculated</div><div class="m-val">${disp_t(t_calc)}</div><div class="m-unit">${uT} (code min)</div></div>
+    <div class="metric"><div class="m-label">t + CA</div><div class="m-val">${disp_t(t_with_ca)}</div><div class="m-unit">${uT}</div></div>
+    <div class="metric"><div class="m-label">t specified</div><div class="m-val">${disp_t(t_spec)}</div><div class="m-unit">${uT} (inc. ${MT}% tol.)</div></div>
+    <div class="metric"><div class="m-label">Hoop Stress</div><div class="m-val">${isUS?f(hoopCalc*145.038,1):f(hoopCalc,1)}</div><div class="m-unit">${uS} at t_calc</div></div>
     <div class="metric"><div class="m-label">D/t ratio</div><div class="m-val">${f(D/t_calc,1)}</div><div class="m-unit">at t_calc</div></div>
   `;
 }
