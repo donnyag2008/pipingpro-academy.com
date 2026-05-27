@@ -868,115 +868,127 @@ function ST(n,name,formula,sub,result){
 // ============================================================
 function calculate(){
   const nps    = sv('nps');
-  const D      = v('od');       // mm (always SI internally)
-  const CA     = v('ca');       // mm
-  const MT     = v('mt');       // %
-  const P_barg = v('pres');
-  const P      = P_barg / 10;  // MPa
-  const T_deg  = v('temp');
-
-  // Unit display helpers
   const isUS   = currentUnits === 'us';
-  const uP     = isUS ? 'psig' : 'barg';
-  const uS     = isUS ? 'psi'  : 'MPa';
-  const uD     = isUS ? 'in'   : 'mm';
-  const uT     = isUS ? 'in'   : 'mm';
-  // Display values (original user-facing, before SI conversion)
-  const dP     = isUS ? f(P_barg * 14.504, 1) : f(P_barg, 1);   // pressure in display unit
-  const dD     = isUS ? f(D / 25.4, 3)         : f(D, 2);        // OD in display unit
-  const dCA    = isUS ? f(CA / 25.4, 4)        : f(CA, 1);       // CA in display unit
-  // Pressure in MPa for formula display
-  const dP_mpa = f(P, 3);
+
+  // Read raw field values and convert to SI for calculation
+  const D_raw      = v('od');
+  const CA_raw     = v('ca');
+  const P_raw      = v('pres');
+  const D          = isUS ? D_raw * 25.4        : D_raw;       // mm
+  const CA         = isUS ? CA_raw * 25.4       : CA_raw;      // mm
+  const P_si       = isUS ? P_raw / 14.504      : P_raw / 10; // MPa (barg→MPa or psig→MPa)
+  const MT         = v('mt');
+
+  // Unit display strings
+  const uP  = isUS ? 'psig' : 'barg';
+  const uS  = isUS ? 'psi'  : 'MPa';
+  const uT  = isUS ? 'in'   : 'mm';
+  const dP  = f(P_raw, 1);
+  const dD  = isUS ? f(D_raw, 3) : f(D, 2);
+  const dCA = isUS ? f(CA_raw, 4) : f(CA, 1);
+  const dP_mpa = f(P_si, 3);
 
   let t_calc, denominator, steps='', S_eff, code_label;
 
   if(currentCode === 'b313'){
     code_label = 'ASME B31.3';
-    const S  = v('b313-S');
-    const E  = parseFloat(sv('b313-E'));
-    const W  = parseFloat(sv('b313-W'));
-    const Y  = parseFloat(sv('b313-Y'));
-    const c2 = v('b313-c2');
-    denominator = 2*(S*E*W + P*Y);
-    t_calc = (P*D) / denominator;
+    const S_raw = v('b313-S');
+    const S   = isUS ? S_raw / 145.038 : S_raw;  // MPa
+    const E   = parseFloat(sv('b313-E'));
+    const W   = parseFloat(sv('b313-W'));
+    const Y   = parseFloat(sv('b313-Y'));
+    const c2_raw = v('b313-c2');
+    const c2  = isUS ? c2_raw * 25.4 : c2_raw;   // mm
+    const dS  = isUS ? f(S_raw, 0) : f(S, 1);
+    const dC2 = isUS ? f(c2_raw, 4) : f(c2, 1);
+
+    denominator = 2*(S*E*W + P_si*Y);
+    t_calc = (P_si*D) / denominator;
     S_eff  = S;
-    const dS  = isUS ? f(S * 145.038, 0) : f(S, 1);
-    const dC2 = isUS ? f(c2 / 25.4, 4)   : f(c2, 1);
+
     const t_with_ca = t_calc + CA + c2;
     const t_spec    = t_with_ca / (1 - MT/100);
-    const dt        = isUS ? f(t_calc / 25.4, 4)       : f(t_calc, 3);
-    const dtca      = isUS ? f((t_calc+CA) / 25.4, 4)  : f(t_calc+CA, 3);
-    const dtwca     = isUS ? f(t_with_ca / 25.4, 4)    : f(t_with_ca, 3);
-    const dtspec    = isUS ? f(t_spec / 25.4, 4)        : f(t_spec, 3);
-    const dDenom    = isUS ? f(denominator / 145.038, 4) + ` ${uS}` : f(denominator, 4) + ' MPa';
+    const dt        = isUS ? f(t_calc/25.4, 4)    : f(t_calc, 3);
+    const dtca      = isUS ? f((t_calc+CA)/25.4, 4) : f(t_calc+CA, 3);
+    const dtwca     = isUS ? f(t_with_ca/25.4, 4) : f(t_with_ca, 3);
+    const dtspec    = isUS ? f(t_spec/25.4, 4)    : f(t_spec, 3);
 
     if(isUS){
-      steps += ST(1,'Input Pressure',`P = ${dP} ${uP} → convert to MPa`,`${dP} ÷ 14.504`,`${dP_mpa} MPa`);
-      steps += ST(2,'Input Dimensions',`OD = ${dD} ${uD} · CA = ${dCA} ${uT} · S = ${dS} ${uS}`,`Converted to SI for calculation`,`OD = ${f(D,2)} mm · S = ${f(S,1)} MPa`);
+      steps += ST(1,'Input Pressure',`P = ${dP} ${uP} → MPa`,`${dP} ÷ 14.504`,`${dP_mpa} MPa`);
+      steps += ST(2,'Input Dimensions',`OD = ${dD} ${uD} · S = ${dS} ${uS} · CA = ${dCA} ${uT}`,`Converted to SI internally`,`OD=${f(D,2)} mm · S=${f(S,1)} MPa · CA=${f(CA,1)} mm`);
     } else {
       steps += ST(1,'Convert Pressure to MPa',`P (MPa) = P (barg) × 0.1`,`= ${dP} × 0.1`,`${dP_mpa} MPa`);
     }
-    steps += ST(isUS?3:2,'Denominator','2(S·E·W + P·Y)',`= 2×(${f(S,1)}×${f(E,2)}×${f(W,2)} + ${f(P,3)}×${f(Y,1)})`,`${f(denominator,4)} MPa`);
-    steps += ST(isUS?4:3,'Required thickness t (Eq. 3a)','t = P·D / [2·(S·E·W + P·Y)]',`= ${dP_mpa} MPa × ${f(D,2)} mm / ${f(denominator,4)}`,`${dt} ${uT}`);
-    steps += ST(isUS?5:4,'Add corrosion allowance','t_CA = t + CA',`= ${dt} + ${dCA}`,`${dtca} ${uT}`);
-    if(c2>0) steps += ST(isUS?6:5,'Add mechanical allowance c₂','t_c2 = t_CA + c₂',`= ${dtca} + ${dC2}`,`${dtwca} ${uT}`);
-    steps += ST(isUS?7:6,'Account for mill tolerance','t_spec = (t + CA + c₂) / (1 − MT/100)',`= ${dtwca} / (1 − ${MT}/100)`,`${dtspec} ${uT}`);
-    buildResults(D, P, t_calc, t_calc+CA+c2, t_spec, S_eff, nps, steps, code_label, MT, CA, denominator);
+    const n = isUS ? 3 : 2;
+    steps += ST(n,  'Denominator','2(S·E·W + P·Y)',`= 2×(${f(S,1)}×${f(E,2)}×${f(W,2)} + ${f(P_si,3)}×${f(Y,1)})`,`${f(denominator,4)} MPa`);
+    steps += ST(n+1,'Required thickness t (Eq. 3a)','t = P·D / [2·(S·E·W + P·Y)]',`= ${dP_mpa} × ${f(D,2)} / ${f(denominator,4)}`,`${dt} ${uT}`);
+    steps += ST(n+2,'Add corrosion allowance','t_CA = t + CA',`= ${dt} + ${dCA}`,`${dtca} ${uT}`);
+    if(c2>0) steps += ST(n+3,'Add mechanical allowance c₂','t_c2 = t_CA + c₂',`= ${dtca} + ${dC2}`,`${dtwca} ${uT}`);
+    steps += ST(n+(c2>0?4:3),'Account for mill tolerance','t_spec = (t+CA+c₂) / (1−MT/100)',`= ${dtwca} / (1−${MT}/100)`,`${dtspec} ${uT}`);
+    buildResults(D, P_si, t_calc, t_calc+CA+c2, t_spec, S_eff, nps, steps, code_label, MT, CA, denominator);
 
   } else if(currentCode === 'b314'){
     code_label = 'ASME B31.4';
-    const S  = v('b314-smys');
-    const F  = v('b314-Fval');
-    const E  = parseFloat(sv('b314-E'));
-    const Tv = parseFloat(sv('b314-T'));
+    const S_raw = v('b314-smys');
+    const S   = isUS ? S_raw / 145.038 : S_raw;
+    const F   = v('b314-Fval');
+    const E   = parseFloat(sv('b314-E'));
+    const Tv  = parseFloat(sv('b314-T'));
+    const dS  = isUS ? f(S_raw, 0) : f(S, 0);
+
     denominator = 2*S*F*E*Tv;
-    t_calc = (P*D) / denominator;
+    t_calc = (P_si*D) / denominator;
     S_eff  = S*F*E*Tv;
-    const dS     = isUS ? f(S * 145.038, 0) : f(S, 0);
-    const dt     = isUS ? f(t_calc / 25.4, 4)      : f(t_calc, 3);
-    const dtca   = isUS ? f((t_calc+CA) / 25.4, 4) : f(t_calc+CA, 3);
-    const dtspec = isUS ? f(((t_calc+CA)/(1-MT/100)) / 25.4, 4) : f((t_calc+CA)/(1-MT/100), 3);
+
+    const t_spec = (t_calc+CA)/(1-MT/100);
+    const dt     = isUS ? f(t_calc/25.4, 4)      : f(t_calc, 3);
+    const dtca   = isUS ? f((t_calc+CA)/25.4, 4) : f(t_calc+CA, 3);
+    const dtspec = isUS ? f(t_spec/25.4, 4)       : f(t_spec, 3);
 
     if(isUS){
-      steps += ST(1,'Input Pressure',`P = ${dP} ${uP} → convert to MPa`,`${dP} ÷ 14.504`,`${dP_mpa} MPa`);
-      steps += ST(2,'Input Dimensions',`OD = ${dD} ${uD} · SMYS = ${dS} ${uS}`,`Converted to SI for calculation`,`OD = ${f(D,2)} mm · SMYS = ${f(S,0)} MPa`);
+      steps += ST(1,'Input Pressure',`P = ${dP} ${uP} → MPa`,`${dP} ÷ 14.504`,`${dP_mpa} MPa`);
+      steps += ST(2,'Input Dimensions',`OD = ${dD} ${uD} · SMYS = ${dS} ${uS}`,`Converted to SI`,`OD=${f(D,2)} mm · SMYS=${f(S,0)} MPa`);
     } else {
       steps += ST(1,'Convert Pressure to MPa',`P (MPa) = P (barg) × 0.1`,`= ${dP} × 0.1`,`${dP_mpa} MPa`);
     }
-    steps += ST(isUS?3:2,'Denominator','2·S·F·E·T',`= 2×${f(S,0)}×${f(F,2)}×${f(E,2)}×${f(Tv,3)}`,`${f(denominator,3)} MPa`);
-    steps += ST(isUS?4:3,'Required thickness (Eq. 403.2.1)','t = P·D / (2·S·F·E·T)',`= ${dP_mpa} × ${f(D,2)} / ${f(denominator,3)}`,`${dt} ${uT}`);
-    steps += ST(isUS?5:4,'Add corrosion allowance','t_CA = t + CA',`= ${dt} + ${dCA}`,`${dtca} ${uT}`);
-    const t_spec = (t_calc+CA)/(1-MT/100);
-    steps += ST(isUS?6:5,'Account for mill tolerance','t_spec = (t+CA) / (1−MT/100)',`= ${dtca} / (1−${MT}/100)`,`${dtspec} ${uT}`);
-    buildResults(D, P, t_calc, t_calc+CA, t_spec, S*F*E*Tv, nps, steps, code_label, MT, CA, denominator);
+    const n = isUS ? 3 : 2;
+    steps += ST(n,  'Denominator','2·S·F·E·T',`= 2×${f(S,0)}×${f(F,2)}×${f(E,2)}×${f(Tv,3)}`,`${f(denominator,3)} MPa`);
+    steps += ST(n+1,'Required thickness (Eq. 403.2.1)','t = P·D / (2·S·F·E·T)',`= ${dP_mpa} × ${f(D,2)} / ${f(denominator,3)}`,`${dt} ${uT}`);
+    steps += ST(n+2,'Add corrosion allowance','t_CA = t + CA',`= ${dt} + ${dCA}`,`${dtca} ${uT}`);
+    steps += ST(n+3,'Account for mill tolerance','t_spec = (t+CA) / (1−MT/100)',`= ${dtca} / (1−${MT}/100)`,`${dtspec} ${uT}`);
+    buildResults(D, P_si, t_calc, t_calc+CA, t_spec, S*F*E*Tv, nps, steps, code_label, MT, CA, denominator);
 
   } else {
     code_label = 'ASME B31.8';
-    const S  = v('b318-smys');
-    const F  = v('b318-Fval');
-    const E  = parseFloat(sv('b318-E'));
-    const Tv = parseFloat(sv('b318-T'));
-    const L  = parseFloat(sv('b318-L'));
+    const S_raw = v('b318-smys');
+    const S   = isUS ? S_raw / 145.038 : S_raw;
+    const F   = v('b318-Fval');
+    const E   = parseFloat(sv('b318-E'));
+    const Tv  = parseFloat(sv('b318-T'));
+    const L   = parseFloat(sv('b318-L'));
+    const dS  = isUS ? f(S_raw, 0) : f(S, 0);
+
     denominator = 2*S*F*E*Tv*L;
-    t_calc = (P*D) / denominator;
+    t_calc = (P_si*D) / denominator;
     S_eff  = S*F*E*Tv*L;
-    const dS     = isUS ? f(S * 145.038, 0) : f(S, 0);
-    const dt     = isUS ? f(t_calc / 25.4, 4)      : f(t_calc, 3);
-    const dtca   = isUS ? f((t_calc+CA) / 25.4, 4) : f(t_calc+CA, 3);
-    const dtspec = isUS ? f(((t_calc+CA)/(1-MT/100)) / 25.4, 4) : f((t_calc+CA)/(1-MT/100), 3);
+
+    const t_spec = (t_calc+CA)/(1-MT/100);
+    const dt     = isUS ? f(t_calc/25.4, 4)      : f(t_calc, 3);
+    const dtca   = isUS ? f((t_calc+CA)/25.4, 4) : f(t_calc+CA, 3);
+    const dtspec = isUS ? f(t_spec/25.4, 4)       : f(t_spec, 3);
 
     if(isUS){
-      steps += ST(1,'Input Pressure',`P = ${dP} ${uP} → convert to MPa`,`${dP} ÷ 14.504`,`${dP_mpa} MPa`);
-      steps += ST(2,'Input Dimensions',`OD = ${dD} ${uD} · SMYS = ${dS} ${uS}`,`Converted to SI for calculation`,`OD = ${f(D,2)} mm · SMYS = ${f(S,0)} MPa`);
+      steps += ST(1,'Input Pressure',`P = ${dP} ${uP} → MPa`,`${dP} ÷ 14.504`,`${dP_mpa} MPa`);
+      steps += ST(2,'Input Dimensions',`OD = ${dD} ${uD} · SMYS = ${dS} ${uS}`,`Converted to SI`,`OD=${f(D,2)} mm · SMYS=${f(S,0)} MPa`);
     } else {
       steps += ST(1,'Convert Pressure to MPa',`P (MPa) = P (barg) × 0.1`,`= ${dP} × 0.1`,`${dP_mpa} MPa`);
     }
-    steps += ST(isUS?3:2,'Denominator','2·S·F·E·T·L',`= 2×${f(S,0)}×${f(F,2)}×${f(E,2)}×${f(Tv,3)}×${f(L,2)}`,`${f(denominator,3)} MPa`);
-    steps += ST(isUS?4:3,'Required thickness (Eq. 841.1.1)','t = P·D / (2·S·F·E·T·L)',`= ${dP_mpa} × ${f(D,2)} / ${f(denominator,3)}`,`${dt} ${uT}`);
-    steps += ST(isUS?5:4,'Add corrosion allowance','t_CA = t + CA',`= ${dt} + ${dCA}`,`${dtca} ${uT}`);
-    const t_spec = (t_calc+CA)/(1-MT/100);
-    steps += ST(isUS?6:5,'Account for mill tolerance','t_spec = (t+CA) / (1−MT/100)',`= ${dtca} / (1−${MT}/100)`,`${dtspec} ${uT}`);
-    buildResults(D, P, t_calc, t_calc+CA, t_spec, S*F*E*Tv*L, nps, steps, code_label, MT, CA, denominator);
+    const n = isUS ? 3 : 2;
+    steps += ST(n,  'Denominator','2·S·F·E·T·L',`= 2×${f(S,0)}×${f(F,2)}×${f(E,2)}×${f(Tv,3)}×${f(L,2)}`,`${f(denominator,3)} MPa`);
+    steps += ST(n+1,'Required thickness (Eq. 841.1.1)','t = P·D / (2·S·F·E·T·L)',`= ${dP_mpa} × ${f(D,2)} / ${f(denominator,3)}`,`${dt} ${uT}`);
+    steps += ST(n+2,'Add corrosion allowance','t_CA = t + CA',`= ${dt} + ${dCA}`,`${dtca} ${uT}`);
+    steps += ST(n+3,'Account for mill tolerance','t_spec = (t+CA) / (1−MT/100)',`= ${dtca} / (1−${MT}/100)`,`${dtspec} ${uT}`);
+    buildResults(D, P_si, t_calc, t_calc+CA, t_spec, S*F*E*Tv*L, nps, steps, code_label, MT, CA, denominator);
   }
 
   document.getElementById('code-ref-label').textContent = code_label;
@@ -1070,7 +1082,7 @@ function buildResults(D, P_MPa, t_calc, t_with_ca, t_spec, S_allow, nps, steps, 
 // ============================================================
 // UNIT SYSTEM TOGGLE (SI ↔ US Customary)
 // ============================================================
-var currentUnits = 'si'; // 'si' or 'us'
+var currentUnits = 'si';
 
 function setUnits(u){
   if(u === currentUnits) return;
@@ -1123,39 +1135,6 @@ function setUnits(u){
   currentUnits = u;
   document.getElementById('results').style.display='none';
 }
-
-// Patch calculate() to convert US inputs to SI before calculation
-var _origCalculate = calculate;
-calculate = function(){
-  if(currentUnits === 'us'){
-    var od_el    = document.getElementById('od');
-    var ca_el    = document.getElementById('ca');
-    var pres_el  = document.getElementById('pres');
-    var s313_el  = document.getElementById('b313-S');
-    var c2_el    = document.getElementById('b313-c2');
-    var smys314_el = document.getElementById('b314-smys');
-    var smys318_el = document.getElementById('b318-smys');
-    // Save originals
-    var od_o=od_el.value, ca_o=ca_el.value, pres_o=pres_el.value;
-    var s313_o=s313_el.value, c2_o=c2_el.value;
-    var smys314_o=smys314_el.value, smys318_o=smys318_el.value;
-    // Convert to SI
-    od_el.value    = (parseFloat(od_o)    * 25.4).toFixed(2);
-    ca_el.value    = (parseFloat(ca_o)    * 25.4).toFixed(3);
-    pres_el.value  = (parseFloat(pres_o)  / 14.504).toFixed(3);
-    s313_el.value  = (parseFloat(s313_o)  / 145.038).toFixed(2);
-    c2_el.value    = (parseFloat(c2_o)    * 25.4).toFixed(3);
-    smys314_el.value = (parseFloat(smys314_o) / 145.038).toFixed(1);
-    smys318_el.value = (parseFloat(smys318_o) / 145.038).toFixed(1);
-    _origCalculate();
-    // Restore US values
-    od_el.value=od_o; ca_el.value=ca_o; pres_el.value=pres_o;
-    s313_el.value=s313_o; c2_el.value=c2_o;
-    smys314_el.value=smys314_o; smys318_el.value=smys318_o;
-  } else {
-    _origCalculate();
-  }
-};
 
 // Init
 onNpsChange();
