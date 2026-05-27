@@ -40,10 +40,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 16px}
 .grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 16px}
+.grid-b313{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px 20px}
 @media(max-width:700px){.grid2,.grid3,.grid4{grid-template-columns:1fr 1fr}}
-@media(max-width:480px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+@media(max-width:480px){.grid2,.grid3,.grid4,.grid-b313{grid-template-columns:1fr}}
 .field{display:flex;flex-direction:column;gap:4px}
-.field label{font-size:11px;font-weight:500;color:var(--text-2)}
+.field label{font-size:11px;font-weight:500;color:var(--text-2);word-break:break-word;overflow-wrap:break-word;line-height:1.4}
 .field input,.field select{font-size:13px;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius);background:#FAFAF8;color:var(--text);outline:none;transition:border-color 0.15s;font-family:var(--mono)}
 .field input:focus,.field select:focus{border-color:var(--accent);background:#fff}
 .field .hint{font-size:10px;color:var(--text-3)}
@@ -368,7 +369,7 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
   <div class="panel active" id="panel-b313">
     <div class="card">
       <div class="card-title">3 — ASME B31.3 Material &amp; Code Factors</div>
-      <div class="grid2">
+      <div class="grid-b313">
         <div class="field">
           <label>Material</label>
           <select id="b313-mat" onchange="onB313MatChange()">
