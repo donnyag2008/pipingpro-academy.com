@@ -124,7 +124,7 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
 <div class="ppa-hero">
   <div class="ppa-hero-eyebrow">Free Engineering Tool · PipingPro Academy</div>
   <h1>Pipe Weight &amp; <em>Section Properties</em></h1>
-  <p>Pipe weight, fluid weight, moment of inertia, section modulus &amp; radius of gyration per ASME B36.10 / Nayyar 7th Ed.</p>
+  <p>Pipe weight, fluid weight, moment of inertia, section modulus &amp; radius of gyration per ASME B36.10 (carbon steel) &amp; B36.19 (stainless steel) / Nayyar 7th Ed.</p>
 </div>
 
 
@@ -373,7 +373,7 @@ function calcPW(){
         <div class="rc"><div class="rl2">Fluid total</div><div class="rv" id="ss-r-wft">—</div><div class="ru">lb</div></div>
         <div class="rc hi"><div class="rl2">Grand total</div><div class="rv" id="ss-r-wtt">—</div><div class="ru">lb</div></div>
       </div>
-      <div class="fb"><div class="fbt">Stainless Steel density = 0.2900 lb/in³ (490 kg/m³ ≈ 7,900 kg/m³)</div>
+      <div class="fb"><div class="fbt">Stainless Steel density = 0.2900 lb/in³ (≈ 7,900 kg/m³)</div>
         <code>ID=OD−2t · Am=0.7854(OD²−ID²) · I=0.0491(OD⁴−ID⁴)</code><br>
         <code>Z=0.0982(OD⁴−ID⁴)/OD · Pipe wt/ft=Am×12×0.2900</code><br>
         <code>Fluid wt/ft=0.3405×ID²×SG</code>
@@ -384,7 +384,7 @@ function calcPW(){
 </div>
 
 <script>
-/* ── ASME B36.19 DATA (OD in inches, wall thickness in inches) ── */
+/* ── ASME B36.19 DATA ── */
 var SS={
   "0.125":{od:0.405,s:{"5S":0.049,"10S":0.068,"40S":0.068,"80S":0.095}},
   "0.25": {od:0.540,s:{"5S":0.065,"10S":0.088,"40S":0.088,"80S":0.119}},
@@ -405,46 +405,34 @@ var SS={
   "10":   {od:10.750,s:{"5S":0.134,"10S":0.165,"20S":0.250,"40S":0.365,"80S":0.500}},
   "12":   {od:12.750,s:{"5S":0.156,"10S":0.180,"20S":0.250,"40S":0.375,"80S":0.500}}
 };
-
-var _ssNps="",_ssOD=0,_ssT=0;
-var SS_DENSITY=0.2900; // lb/in³ for stainless steel
-
+var _ssNps="",_ssOD=0,_ssT=0,SS_DENSITY=0.2900;
 function ssTxt(id,v){document.getElementById(id).textContent=v;}
 function ssGv(id){return parseFloat(document.getElementById(id).value)||0;}
-
 function fillSSSch(nps){
-  var el=document.getElementById('ss-sch');
-  el.innerHTML='';
+  var el=document.getElementById('ss-sch');el.innerHTML='';
   if(!nps||!SS[nps]){el.innerHTML='<option>— select NPS first —</option>';return;}
   Object.keys(SS[nps].s).forEach(function(k,i){
     var o=document.createElement('option');
     o.value=k;o.textContent='Sch '+k+' (t='+SS[nps].s[k]+'")';
-    if(i===0)o.selected=true;
-    el.appendChild(o);
+    if(i===0)o.selected=true;el.appendChild(o);
   });
 }
-
 function ssNps(nps){
   _ssNps=nps;
   if(!nps||!SS[nps]){ssTxt('d-ss-od','—');ssTxt('d-ss-t','—');_ssOD=0;_ssT=0;ssTxt('ss-pipe-info','Select NPS and schedule above');return;}
-  _ssOD=SS[nps].od;
-  ssTxt('d-ss-od',SS[nps].od+'"');
+  _ssOD=SS[nps].od;ssTxt('d-ss-od',SS[nps].od+'"');
   fillSSSch(nps);
   var firstSch=Object.keys(SS[nps].s)[0];
-  _ssT=SS[nps].s[firstSch];
-  ssTxt('d-ss-t',_ssT+'"');
+  _ssT=SS[nps].s[firstSch];ssTxt('d-ss-t',_ssT+'"');
   ssTxt('ss-pipe-info','NPS '+nps+' Sch '+firstSch+' · OD='+SS[nps].od+'" · t='+_ssT+'" · Source: ASME B36.19');
   calcSS();
 }
-
 function ssSch(sch){
   if(!_ssNps||!sch||!SS[_ssNps])return;
-  _ssT=SS[_ssNps].s[sch];
-  ssTxt('d-ss-t',_ssT+'"');
+  _ssT=SS[_ssNps].s[sch];ssTxt('d-ss-t',_ssT+'"');
   ssTxt('ss-pipe-info','NPS '+_ssNps+' Sch '+sch+' · OD='+SS[_ssNps].od+'" · t='+_ssT+'" · Source: ASME B36.19');
   calcSS();
 }
-
 function calcSS(){
   if(!_ssOD||!_ssT)return;
   var len=ssGv('ss-len'),sg=ssGv('ss-sg')||1;
@@ -455,8 +443,7 @@ function calcSS(){
   var Z=0.0982*(Math.pow(_ssOD,4)-Math.pow(ID,4))/_ssOD;
   var r=0.25*Math.sqrt(_ssOD*_ssOD+ID*ID);
   var wpf=Am*12*SS_DENSITY;
-  var wff=0.3405*ID*ID*sg;
-  var wtf=wpf+wff;
+  var wff=0.3405*ID*ID*sg;var wtf=wpf+wff;
   ssTxt('ss-r-id',ID.toFixed(3));ssTxt('ss-r-am',Am.toFixed(4));ssTxt('ss-r-ai',Ai.toFixed(4));
   ssTxt('ss-r-i',I.toFixed(4));ssTxt('ss-r-z',Z.toFixed(4));ssTxt('ss-r-r',r.toFixed(4));
   ssTxt('ss-r-wpf',wpf.toFixed(2));ssTxt('ss-r-wff',wff.toFixed(2));ssTxt('ss-r-wtf',wtf.toFixed(2));
@@ -482,7 +469,7 @@ function calcSS(){
         <b>Section Modulus:</b> Z = I / (OD/2) = π/32 × (OD⁴ − ID⁴) / OD &nbsp;[in³]<br/>
         <b>Radius of Gyration:</b> r = √(I/A) &nbsp;[in]
       </div>
-      <div class="ref-note">Wall thickness and OD values per ASME B36.10M (carbon steel) and B36.19M (stainless steel). Carbon/low-alloy steel density = 0.2833 lb/in³ (490 lb/ft³). Stainless steel density = 0.2900 lb/in³ (use B36.19 tab for SS schedules 5S, 10S, 40S, 80S).</div>
+      <div class="ref-note">Wall thickness and OD values per ASME B36.10M (carbon steel) and B36.19M (stainless steel). Carbon/low-alloy steel density = 0.2833 lb/in³ (490 lb/ft³). Stainless steel density = 0.2900 lb/in³ — use the B36.19 tab for SS schedules 5S, 10S, 40S, 80S.</div>
     </div>
     <div class="ref-section">
       <div class="ref-title">Reference Standards</div>
