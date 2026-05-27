@@ -790,7 +790,10 @@ function setCode(code){
 
 function onNpsChange(){
   const nps = sv('nps');
-  if(nps!=='custom' && PIPE[nps]) document.getElementById('od').value = PIPE[nps].od;
+  if(nps!=='custom' && PIPE[nps]){
+    const od_mm = PIPE[nps].od;
+    document.getElementById('od').value = currentUnits==='us' ? (od_mm/25.4).toFixed(3) : od_mm;
+  }
 }
 
 function onTempChange(){/* placeholder for future auto T factor */}
@@ -799,8 +802,8 @@ function onB313MatChange(){
   const mat = sv('b313-mat');
   if(mat==='custom') return;
   const T = v('temp');
-  const S = interpS(mat, T);
-  document.getElementById('b313-S').value = S.toFixed(1);
+  const S_mpa = interpS(mat, T);
+  document.getElementById('b313-S').value = currentUnits==='us' ? (S_mpa*145.038).toFixed(0) : S_mpa.toFixed(1);
 }
 
 function interpS(mat, T){
@@ -821,11 +824,17 @@ function interpS(mat, T){
 
 function onB314MatChange(){
   const mat = sv('b314-mat');
-  if(mat!=='custom' && SMYS_MAP[mat]) document.getElementById('b314-smys').value = SMYS_MAP[mat];
+  if(mat!=='custom' && SMYS_MAP[mat]){
+    const smys = SMYS_MAP[mat];
+    document.getElementById('b314-smys').value = currentUnits==='us' ? (smys*145.038).toFixed(0) : smys;
+  }
 }
 function onB318MatChange(){
   const mat = sv('b318-mat');
-  if(mat!=='custom' && SMYS_MAP[mat]) document.getElementById('b318-smys').value = SMYS_MAP[mat];
+  if(mat!=='custom' && SMYS_MAP[mat]){
+    const smys = SMYS_MAP[mat];
+    document.getElementById('b318-smys').value = currentUnits==='us' ? (smys*145.038).toFixed(0) : smys;
+  }
 }
 function onB314FChange(){
   const fv = sv('b314-F');
