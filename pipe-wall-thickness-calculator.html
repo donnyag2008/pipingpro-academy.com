@@ -80,8 +80,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .sched-table td{padding:6px 8px;border-bottom:1px solid var(--border);font-family:var(--mono)}
 .sched-table tr:last-child td{border-bottom:none}
 .sched-table .label-col{font-family:var(--font);color:var(--text-2)}
-.sched-table .selected-row td{background:var(--accent-light);font-weight:600}
-.sched-table .selected-row .label-col{color:var(--accent)}
+.sched-table tbody tr.clickable-row{cursor:pointer;transition:background 0.1s}
+.sched-table tbody tr.clickable-row:hover td{background:var(--accent-light)}
+.sched-table tbody tr.selected-row td{background:var(--accent-light);font-weight:600}
+.sched-table tbody tr.selected-row .label-col{color:var(--accent)}
+.sched-table tbody tr.thin-row td{opacity:0.55}
+.min-req-marker td{background:#FFF8E1;font-size:10px;color:#7A5C00;font-family:var(--font);padding:3px 8px;border-bottom:2px dashed #E0C040;letter-spacing:0.03em}
 .pass-tag{display:inline-block;background:var(--success-light);color:var(--success);font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px;margin-left:6px}
 .fail-tag{display:inline-block;background:var(--danger-light);color:var(--danger);font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px;margin-left:6px}
 
@@ -597,12 +601,12 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
       <div class="hero-divider"></div>
       <div class="hero-sub">
         <div class="hero-item">
-          <div class="hero-item-label">With CA + Tolerance</div>
+          <div class="hero-item-label">Required t<sub>spec</sub> (inc. CA + tolerance)</div>
           <div class="hero-item-val" id="hero-tspec">—</div>
         </div>
         <div class="hero-item">
-          <div class="hero-item-label">Recommended Schedule</div>
-          <div class="hero-item-val" id="hero-sched">—</div>
+          <div class="hero-item-label">Selected Schedule</div>
+          <div class="hero-item-val" id="hero-sched" style="color:#a8e6c0">— click row to select —</div>
         </div>
         <div class="hero-item">
           <div class="hero-item-label">Selected t<sub>nom</sub></div>
@@ -620,8 +624,8 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
     <!-- SCHEDULE SELECTION TABLE -->
     <div class="rs">
       <div class="rs-head">
-        <div class="rs-title">Schedule Selection</div>
-        <span id="sched-std-label" style="font-size:11px;color:var(--text-3)">ASME B36.10M — Carbon &amp; Alloy Steel · ★ = recommended minimum</span>
+        <div class="rs-title">Available Schedules — Click a Row to Select</div>
+        <span id="sched-std-label" style="font-size:11px;color:var(--text-3)">ASME B36.10M — Carbon &amp; Alloy Steel</span>
       </div>
       <div style="overflow-x:auto">
         <table class="sched-table">
@@ -689,12 +693,12 @@ const PIPE = {
   "6":   {od:168.28,s:{"SCH40":7.11,"SCH80":10.97,"SCH120":14.27,"SCH160":18.26,"XXS":21.95}},
   "8":   {od:219.08,s:{"SCH20":6.35,"SCH30":7.04,"SCH40":8.18,"SCH60":10.31,"SCH80":12.70,"SCH100":15.09,"SCH120":17.48,"SCH140":19.05,"SCH160":23.01}},
   "10":  {od:273.05,s:{"SCH20":6.35,"SCH30":7.80,"SCH40":9.27,"SCH60":12.70,"SCH80":15.09,"SCH100":18.26,"SCH120":21.44,"SCH140":25.40,"SCH160":28.58}},
-  "12":  {od:323.85,s:{"SCH20":6.35,"SCH30":8.38,"SCH40":10.31,"SCH60":14.27,"SCH80":17.48,"SCH100":21.44,"SCH120":25.40,"SCH140":28.58,"SCH160":33.32}},
-  "14":  {od:355.60,s:{"SCH10":6.35,"SCH20":7.92,"SCH30":9.53,"SCH40":11.13,"SCH60":15.09,"SCH80":19.05,"SCH100":23.83,"SCH120":27.79,"SCH140":31.75,"SCH160":35.71}},
-  "16":  {od:406.40,s:{"SCH10":6.35,"SCH20":7.92,"SCH30":9.53,"SCH40":12.70,"SCH60":16.66,"SCH80":21.44,"SCH100":26.19,"SCH120":30.96,"SCH140":36.53,"SCH160":40.49}},
-  "18":  {od:457.20,s:{"SCH10":6.35,"SCH20":7.92,"SCH30":11.13,"SCH40":14.27,"SCH60":19.05,"SCH80":23.83,"SCH100":29.36,"SCH120":34.93,"SCH140":39.67,"SCH160":45.24}},
-  "20":  {od:508.00,s:{"SCH10":6.35,"SCH20":9.53,"SCH30":12.70,"SCH40":15.09,"SCH60":20.62,"SCH80":26.19,"SCH100":32.54,"SCH120":38.10,"SCH140":44.45,"SCH160":50.01}},
-  "24":  {od:609.60,s:{"SCH10":6.35,"SCH20":9.53,"SCH30":14.27,"SCH40":17.48,"SCH60":24.61,"SCH80":30.96,"SCH100":38.89,"SCH120":46.02,"SCH140":52.37,"SCH160":59.54}},
+  "12":  {od:323.85,s:{"SCH20":6.35,"SCH30":8.38,"STD":9.53,"SCH40":10.31,"XS":12.70,"SCH60":14.27,"SCH80":17.48,"SCH100":21.44,"SCH120":25.40,"SCH140":28.58,"SCH160":33.32}},
+  "14":  {od:355.60,s:{"SCH10":6.35,"SCH20":7.92,"SCH30/STD":9.53,"SCH40":11.13,"SCH60":15.09,"XS":15.88,"SCH80":19.05,"SCH100":23.83,"SCH120":27.79,"SCH140":31.75,"SCH160":35.71}},
+  "16":  {od:406.40,s:{"SCH10":6.35,"SCH20":7.92,"SCH30/STD":9.53,"SCH40/XS":12.70,"SCH60":16.66,"SCH80":21.44,"SCH100":26.19,"SCH120":30.96,"SCH140":36.53,"SCH160":40.49}},
+  "18":  {od:457.20,s:{"SCH10":6.35,"SCH20":7.92,"STD":9.53,"SCH30":11.13,"XS":12.70,"SCH40":14.27,"SCH60":19.05,"SCH80":23.83,"SCH100":29.36,"SCH120":34.93,"SCH140":39.67,"SCH160":45.24}},
+  "20":  {od:508.00,s:{"SCH10":6.35,"SCH20/STD":9.53,"SCH30/XS":12.70,"SCH40":15.09,"SCH60":20.62,"SCH80":26.19,"SCH100":32.54,"SCH120":38.10,"SCH140":44.45,"SCH160":50.01}},
+  "24":  {od:609.60,s:{"SCH10":6.35,"SCH20/STD":9.53,"XS":12.70,"SCH30":14.27,"SCH40":17.48,"SCH60":24.61,"SCH80":30.96,"SCH100":38.89,"SCH120":46.02,"SCH140":52.37,"SCH160":59.54}},
   "30":  {od:762.00,s:{"SCH10":7.92,"SCH20":12.70,"SCH30":15.88,"STD":9.53,"XS":12.70}},
   "36":  {od:914.40,s:{"SCH10":9.53,"SCH20":12.70,"SCH30":15.88,"STD":9.53,"XS":12.70}},
   "42":  {od:1066.80,s:{"SCH10":9.53,"SCH20":12.70,"STD":9.53,"XS":12.70}},
@@ -948,69 +952,66 @@ function calculate(){
 function buildResults(D, P_MPa, t_calc, t_with_ca, t_spec, S_allow, nps, steps, code_label, MT, CA, denom){
   document.getElementById('hero-tmin').textContent  = f(t_calc,3) + ' mm  (' + (t_calc/25.4).toFixed(4) + '")';
   document.getElementById('hero-tspec').textContent = f(t_spec,3) + ' mm  (' + (t_spec/25.4).toFixed(4) + '")';
+  document.getElementById('hero-sched').textContent = '— click row to select —';
+  document.getElementById('hero-sched').style.color = '#a8e6c0';
+  document.getElementById('hero-tnom').textContent = '—';
 
-  // Auto-select pipe table: B36.19 for SS/Duplex, B36.10 for CS/alloy
   const useB3619 = isSSMaterial();
   const pipeTable = useB3619 ? PIPE_SS : PIPE;
   const pipeData  = pipeTable[nps];
   const stdLabel  = useB3619
     ? 'ASME B36.19M — Stainless Steel (5S / 10S / 40S / 80S)'
     : 'ASME B36.10M — Carbon & Alloy Steel';
-
-  // Update schedule table header label
-  document.getElementById('sched-std-label').textContent = stdLabel + ' · ★ = recommended minimum';
+  document.getElementById('sched-std-label').textContent = stdLabel + ' — click a row to select';
 
   let schedRows = '';
-  let recommended = null;
-  let firstPass = true;
+  let markerInserted = false;
 
   if(pipeData){
-    const scheds = pipeData.s;
-    const entries = Object.entries(scheds).sort((a,b)=>a[1]-b[1]);
+    const entries = Object.entries(pipeData.s).sort((a,b)=>a[1]-b[1]);
     for(const [sched, tw] of entries){
-      const hoop = (P_MPa * D) / (2 * tw); // MPa
+      const hoop = (P_MPa * D) / (2 * tw);
       const pctS = (hoop / S_allow * 100);
       const adequate = tw >= t_spec;
-      const isRec = adequate && firstPass;
-      if(isRec){
-        firstPass = false;
-        recommended = {sched, tw};
+
+      // Insert "minimum required" marker just before first adequate row
+      if(adequate && !markerInserted){
+        markerInserted = true;
+        schedRows += `<tr class="min-req-marker">
+          <td colspan="6">▲ Below this line: t &lt; t<sub>spec</sub> (${f(t_spec,3)} mm) — THIN &nbsp;|&nbsp; ▼ Above: t ≥ t<sub>spec</sub> — Select your wall thickness</td>
+        </tr>`;
       }
+
       const tag = adequate
         ? `<span class="pass-tag">✓ ADEQUATE</span>`
         : `<span class="fail-tag">✗ THIN</span>`;
-      schedRows += `<tr class="${isRec?'selected-row':''}">
-        <td class="label-col">${sched}${isRec?' ★':''}</td>
+      const tnom_inch = (tw/25.4).toFixed(3);
+      schedRows += `<tr class="clickable-row ${adequate?'':'thin-row'}"
+          onclick="selectSchedule('${sched}','${f(tw,2)}','${tnom_inch}',this)">
+        <td class="label-col">${sched}</td>
         <td>${f(tw,2)}</td>
-        <td>${(tw/25.4).toFixed(3)}"</td>
+        <td>${tnom_inch}"</td>
         <td>${f(hoop,1)}</td>
         <td>${f(pctS,1)}%</td>
         <td>${tag}</td>
       </tr>`;
     }
   } else if(useB3619 && !pipeData){
-    // B36.19 only goes to 12" — show note for larger SS
     schedRows = `<tr><td colspan="6" style="color:var(--text-3);font-family:var(--font);text-align:center;padding:1rem">
-      ℹ️ ASME B36.19M covers NPS ⅛" – 12" only. For NPS ${nps}" stainless steel pipe, use ASME B36.10M schedules (10S/40S/80S designation may still apply — verify with pipe supplier). Required t<sub>spec</sub> = ${f(t_spec,3)} mm.
+      ℹ️ ASME B36.19M covers NPS ⅛"–12" only. For NPS ${nps}" stainless steel pipe, use ASME B36.10M schedules. Required t<sub>spec</sub> = ${f(t_spec,3)} mm.
     </td></tr>`;
   } else {
-    // Custom OD — just show result
     schedRows = `<tr><td colspan="6" style="color:var(--text-3);text-align:center;padding:1rem">Schedule lookup not available for custom OD. Required t<sub>spec</sub> = ${f(t_spec,3)} mm</td></tr>`;
   }
   document.getElementById('sched-tbody').innerHTML = schedRows;
 
-  if(recommended){
-    document.getElementById('hero-sched').textContent = recommended.sched;
-    document.getElementById('hero-tnom').textContent = f(recommended.tw,2) + ' mm  (' + (recommended.tw/25.4).toFixed(4) + '")';
-    document.getElementById('sched-warn').style.display='none';
+  if(pipeData && !markerInserted){
+    // All rows are thin — no adequate schedule exists
+    document.getElementById('sched-warn').style.display='block';
+    document.getElementById('sched-warn').textContent =
+      `⚠️ No standard schedule for NPS ${nps}" meets t_spec = ${f(t_spec,3)} mm. Consider increasing OD, reducing pressure, or using a higher grade material.`;
   } else {
-    document.getElementById('hero-sched').textContent = 'See table ↓';
-    document.getElementById('hero-tnom').textContent = '—';
-    if(pipeData){
-      document.getElementById('sched-warn').style.display='block';
-      document.getElementById('sched-warn').textContent =
-        `⚠️ No standard schedule for NPS ${nps}" meets the required t_spec = ${f(t_spec,3)} mm. Consider: increasing pipe OD, reducing pressure, using a higher grade material, or specifying a custom wall thickness.`;
-    }
+    document.getElementById('sched-warn').style.display='none';
   }
 
   // Metrics
@@ -1031,35 +1032,44 @@ function buildResults(D, P_MPa, t_calc, t_with_ca, t_spec, S_allow, nps, steps, 
 // BUILD RESULTS — B31.8 (inches/psig/psi native)
 // ============================================================
 function buildResults318(D_inch, D_mm, P_psig, t_calc, t_with_ca, t_spec, S_allow_psi, nps, steps, code_label, MT, CA_inch, denom){
-  const t_calc_mm   = t_calc * 25.4;
-  const t_spec_mm   = t_spec * 25.4;
-  const t_with_mm   = t_with_ca * 25.4;
+  const t_calc_mm = t_calc * 25.4;
+  const t_spec_mm = t_spec * 25.4;
+  const t_with_mm = t_with_ca * 25.4;
 
   document.getElementById('hero-tmin').textContent  = f(t_calc,4) + '"  (' + f(t_calc_mm,3) + ' mm)';
   document.getElementById('hero-tspec').textContent = f(t_spec,4) + '"  (' + f(t_spec_mm,3) + ' mm)';
+  document.getElementById('hero-sched').textContent = '\u2014 click row to select \u2014';
+  document.getElementById('hero-sched').style.color = '#a8e6c0';
+  document.getElementById('hero-tnom').textContent = '\u2014';
+
+  document.getElementById('sched-std-label').textContent = 'ASME B36.10M \u2014 Carbon & Alloy Steel \u2014 click a row to select';
 
   const pipeData = PIPE[nps];
   let schedRows = '';
-  let recommended = null;
-  let firstPass = true;
+  let markerInserted = false;
 
   if(pipeData){
-    const P_MPa = P_psig / 145.038;
     const entries = Object.entries(pipeData.s).sort((a,b)=>a[1]-b[1]);
     for(const [sched, tw_mm] of entries){
       const tw_inch = tw_mm / 25.4;
       const hoop_psi = (P_psig * D_inch) / (2 * tw_inch);
       const hoop_pct = (hoop_psi / S_allow_psi * 100);
       const adequate = tw_inch >= t_spec;
-      const isRec = adequate && firstPass;
-      if(isRec){ firstPass = false; recommended = {sched, tw_mm, tw_inch}; }
+
+      if(adequate && !markerInserted){
+        markerInserted = true;
+        schedRows += `<tr class="min-req-marker"><td colspan="6">\u25b2 Below: t &lt; t<sub>spec</sub> (${f(t_spec,4)}" / ${f(t_spec_mm,3)} mm) \u2014 THIN &nbsp;|&nbsp; \u25bc Above: t \u2265 t<sub>spec</sub> \u2014 Select your wall</td></tr>`;
+      }
+
       const tag = adequate
-        ? `<span class="pass-tag">✓ ADEQUATE</span>`
-        : `<span class="fail-tag">✗ THIN</span>`;
-      schedRows += `<tr class="${isRec?'selected-row':''}">
-        <td class="label-col">${sched}${isRec?' ★':''}</td>
-        <td>${f(tw_mm,2)}</td>
-        <td>${tw_inch.toFixed(4)}"</td>
+        ? `<span class="pass-tag">\u2713 ADEQUATE</span>`
+        : `<span class="fail-tag">\u2717 THIN</span>`;
+      const tw_disp_mm = f(tw_mm,2);
+      const tw_disp_in = tw_inch.toFixed(4);
+      schedRows += `<tr class="clickable-row ${adequate?'':'thin-row'}" onclick="selectSchedule('${sched}','${tw_disp_mm}','${tw_disp_in}',this)">
+        <td class="label-col">${sched}</td>
+        <td>${tw_disp_mm}</td>
+        <td>${tw_disp_in}"</td>
         <td>${f(hoop_psi/145.038,1)} MPa (${f(hoop_psi,0)} psi)</td>
         <td>${f(hoop_pct,1)}%</td>
         <td>${tag}</td>
@@ -1068,32 +1078,24 @@ function buildResults318(D_inch, D_mm, P_psig, t_calc, t_with_ca, t_spec, S_allo
   } else {
     schedRows = `<tr><td colspan="6" style="color:var(--text-3);text-align:center;padding:1rem">Schedule lookup not available for custom OD. Required t<sub>spec</sub> = ${f(t_spec,4)}" (${f(t_spec_mm,3)} mm)</td></tr>`;
   }
-  document.getElementById('sched-std-label').textContent = 'ASME B36.10M — Carbon & Alloy Steel · ★ = recommended minimum';
   document.getElementById('sched-tbody').innerHTML = schedRows;
 
-  if(recommended){
-    document.getElementById('hero-sched').textContent = recommended.sched;
-    document.getElementById('hero-tnom').textContent = recommended.tw_inch.toFixed(4) + '"  (' + f(recommended.tw_mm,2) + ' mm)';
-    document.getElementById('sched-warn').style.display='none';
+  if(pipeData && !markerInserted){
+    document.getElementById('sched-warn').style.display='block';
+    document.getElementById('sched-warn').textContent = `\u26a0\ufe0f No standard schedule for NPS ${nps}" meets t_spec = ${f(t_spec,4)}" (${f(t_spec_mm,3)} mm). Consider higher grade material or custom wall.`;
   } else {
-    document.getElementById('hero-sched').textContent = 'See table ↓';
-    document.getElementById('hero-tnom').textContent = '—';
-    if(pipeData){
-      document.getElementById('sched-warn').style.display='block';
-      document.getElementById('sched-warn').textContent =
-        `⚠️ No standard schedule meets t_spec = ${f(t_spec,4)}" (${f(t_spec_mm,3)} mm). Consider higher grade material or custom wall.`;
-    }
+    document.getElementById('sched-warn').style.display='none';
   }
 
   const hoopCalc_psi = (P_psig * D_inch) / (2 * t_calc);
   document.getElementById('metrics-grid').innerHTML = `
     <div class="metric"><div class="m-label">P (psig)</div><div class="m-val">${f(P_psig,1)}</div><div class="m-unit">${f(P_psig/145.038,3)} MPa</div></div>
     <div class="metric"><div class="m-label">D (inches)</div><div class="m-val">${f(D_inch,3)}</div><div class="m-unit">${f(D_mm,2)} mm</div></div>
-    <div class="metric"><div class="m-label">S·F·E·T (psi)</div><div class="m-val">${f(S_allow_psi,0)}</div><div class="m-unit">Effective limit</div></div>
+    <div class="metric"><div class="m-label">S\u00b7F\u00b7E\u00b7T (psi)</div><div class="m-val">${f(S_allow_psi,0)}</div><div class="m-unit">Effective limit</div></div>
     <div class="metric"><div class="m-label">Denominator</div><div class="m-val">${f(denom,0)}</div><div class="m-unit">psi</div></div>
     <div class="metric"><div class="m-label">t calculated</div><div class="m-val">${f(t_calc,4)}"</div><div class="m-unit">${f(t_calc_mm,3)} mm</div></div>
     <div class="metric"><div class="m-label">t + CA</div><div class="m-val">${f(t_with_ca,4)}"</div><div class="m-unit">${f(t_with_mm,3)} mm</div></div>
-    <div class="metric"><div class="m-label">t specified</div><div class="m-val">${f(t_spec,4)}"</div><div class="m-unit">${f(t_spec_mm,3)} mm · inc. ${MT}% tol.</div></div>
+    <div class="metric"><div class="m-label">t specified</div><div class="m-val">${f(t_spec,4)}"</div><div class="m-unit">${f(t_spec_mm,3)} mm \u00b7 inc. ${MT}% tol.</div></div>
     <div class="metric"><div class="m-label">Hoop Stress</div><div class="m-val">${f(hoopCalc_psi/145.038,1)} MPa</div><div class="m-unit">${f(hoopCalc_psi,0)} psi at t_calc</div></div>
   `;
 
@@ -1101,6 +1103,16 @@ function buildResults318(D_inch, D_mm, P_psig, t_calc, t_with_ca, t_spec, S_allo
   document.getElementById('wb-steps').innerHTML = steps;
   document.getElementById('results').style.display='block';
   document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ── USER SELECTS A SCHEDULE ROW ──────────────────────────────
+function selectSchedule(sched, tw_mm, tw_inch, rowEl){
+  document.querySelectorAll('#sched-tbody tr.clickable-row').forEach(r => r.classList.remove('selected-row'));
+  rowEl.classList.add('selected-row');
+  const heroSched = document.getElementById('hero-sched');
+  heroSched.textContent = sched;
+  heroSched.style.color = '#fff';
+  document.getElementById('hero-tnom').textContent = tw_mm + ' mm  (' + tw_inch + '")';
 }
 
 // Init
