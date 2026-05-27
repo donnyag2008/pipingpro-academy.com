@@ -116,7 +116,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14
 .ref-item{font-size:12px;color:var(--text-2);margin-bottom:0.4rem;padding-left:1rem;position:relative;line-height:1.5}
 .ref-item::before{content:'—';position:absolute;left:0;color:var(--text-3)}
 .footer{text-align:center;padding:2rem 1rem;font-size:11px;color:var(--text-3)}
-.info-box{font-size:12px;color:var(--info);background:var(--info-light);border:1px solid var(--info-border);border-radius:var(--radius);padding:0.6rem 0.75rem;margin-top:0.75rem;line-height:1.7}
+.info-box{font-size:12px;color:var(--info);background:var(--info-light);border:1px solid var(--info-border);border-radius:var(--radius);padding:0.6rem 0.75rem;margin-top:0.75rem;line-height:1.7;word-break:break-word;overflow-wrap:break-word}
 .warn-box{font-size:12px;color:var(--warn);background:var(--warn-light);border:1px solid var(--warn-border);border-radius:var(--radius);padding:0.6rem 0.75rem;margin-top:0.5rem;line-height:1.6}
 
 /* code-specific panels */
@@ -424,8 +424,8 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
         </div>
       </div>
       <div class="info-box">
-        ℹ️ <strong>B31.3 Eq. 304.1.2(a):</strong> t = P·D / [2·(S·E·W + P·Y)] &nbsp;+&nbsp; CA + c₂<br>
-        Final specified thickness = t<sub>calc</sub> / (1 − MT/100) rounded up to next commercial schedule.
+        ℹ️ <strong>B31.3 Eq. 304.1.2(a):</strong> t = P·D / [2·(S·E·W + P·Y)]<br>
+        t<sub>m</sub> = t + CA + c₂ &nbsp;·&nbsp; t<sub>spec</sub> = t<sub>m</sub> / (1 − MT/100) — rounded up to next commercial schedule
       </div>
     </div>
   </div>
