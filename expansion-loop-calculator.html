@@ -140,11 +140,11 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
     <div class="card-title">Pipe Geometry (ASME B36.10)</div>
     <label>Nominal Pipe Size (NPS)</label>
     <select id="pipeSize" onchange="updateSchedules()">
-      <option>1"</option><option>1.5"</option><option>2"</option><option>3"</option>
-      <option>4"</option><option selected>6"</option><option>8"</option><option>10"</option>
-      <option>12"</option><option>14"</option><option>16"</option><option>18"</option>
-      <option>20"</option><option>24"</option><option>30"</option><option>36"</option>
-      <option>42"</option><option>48"</option>
+      <option value='1"'>1"</option><option value='1.5"'>1.5"</option><option value='2"'>2"</option><option value='3"'>3"</option>
+      <option value='4"'>4"</option><option value='6"' selected>6"</option><option value='8"'>8"</option><option value='10"'>10"</option>
+      <option value='12"'>12"</option><option value='14"'>14"</option><option value='16"'>16"</option><option value='18"'>18"</option>
+      <option value='20"'>20"</option><option value='24"'>24"</option><option value='30"'>30"</option><option value='36"'>36"</option>
+      <option value='42"'>42"</option><option value='48"'>48"</option>
     </select>
     <label>Schedule</label>
     <select id="schedule" onchange="updateHint()"></select>
@@ -290,7 +290,9 @@ function updateSchedules() {
   const ps = document.getElementById('pipeSize').value;
   const sel = document.getElementById('schedule');
   sel.innerHTML = '';
-  Object.keys(PIPE_DATA[ps].sch).forEach(s => {
+  const pipe = PIPE_DATA[ps];
+  if(!pipe){ console.error('No PIPE_DATA for NPS:', ps); return; }
+  Object.keys(pipe.sch).forEach(s => {
     const o = document.createElement('option'); o.value=s; o.text=s; sel.appendChild(o);
   });
   updateHint();
@@ -299,6 +301,7 @@ function updateHint() {
   const ps=document.getElementById('pipeSize').value;
   const sc=document.getElementById('schedule').value;
   const p=PIPE_DATA[ps];
+  if(!p || !p.sch[sc]) return;
   document.getElementById('pipeHint').textContent=`OD = ${p.od} mm  ·  t = ${p.sch[sc]} mm`;
 }
 function updateDT() {
