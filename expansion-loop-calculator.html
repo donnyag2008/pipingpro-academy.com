@@ -899,11 +899,21 @@ Chartered Piping/Stress Engineer before inclusion in final design documentation.
 The calculator author and PipingPro Academy accept no liability for engineering decisions made solely on the basis of these results.</div>
 </div>
 
-<footer class="ppa-footer">
-  <div class="ppa-footer-logo">Piping<span>Pro</span> Academy</div>
-  <p>PipingPro Academy is a trademark of <strong style="color:var(--accent2);">Zephrum Konsultan Limited</strong>, registered in England &amp; Wales. Co. No. 13537626.</p>
-  <p style="margin-top:.3rem">© 2026 Zephrum Konsultan Limited. All rights reserved. &nbsp;·&nbsp; <a href="calculators.html">Calculator Suite</a></p>
-</footer>
+/* ── THEORY TAB SWITCHING ── */
+function showCalcTab(name){
+  ['calculator','theory'].forEach(function(t){
+    var btn = document.querySelector('.calc-tab[onclick*="' + t + '"]');
+    var panel = document.getElementById('calctab-' + t);
+    if(btn) btn.classList.toggle('active', t===name);
+    if(panel) panel.classList.toggle('active', t===name);
+  });
+}
+<\/script>
+</body></html>`;
+  const w=window.open('','_blank');
+  w.document.write(html);
+  w.document.close();
+}
 
 /* ── THEORY TAB SWITCHING ── */
 function showCalcTab(name){
