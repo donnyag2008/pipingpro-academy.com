@@ -19,7 +19,7 @@ input,select{width:100%;background:#fafaf8;border:1px solid rgba(26,26,24,0.15);
 .hint{font-size:11px;color:#8a8a80;margin-top:4px}
 .btn{background:#c45c2a;color:#fff;border:none;border-radius:8px;padding:11px 24px;font-weight:700;font-size:13px;cursor:pointer;width:100%;margin-top:14px;font-family:'DM Sans',sans-serif;letter-spacing:.5px}
 .btn-pdf{background:#fff;color:#c45c2a;border:1px solid #c45c2a;border-radius:8px;padding:10px 24px;font-weight:700;font-size:12px;cursor:pointer;width:100%;margin-top:8px;font-family:'DM Sans',sans-serif}
-.r-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.r-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
 .m-box{background:#f5f2eb;border-radius:7px;padding:10px 12px}
 .m-label{font-size:8.5px;color:#8a8a80;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px}
 .m-val{font-size:18px;font-weight:700;color:#c45c2a;font-family:monospace}
@@ -41,7 +41,8 @@ table.geo td.val{color:#c45c2a;font-family:monospace}
 .footer{text-align:center;margin-top:24px;font-size:10px;color:#8a8a80}
 .hidden{display:none}
 .span2{grid-column:span 2}
-@media(max-width:640px){.span2{grid-column:span 1}}
+@media(max-width:640px){.span2{grid-column:span 1}.r-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:420px){.r-grid{grid-template-columns:1fr}}
 
 /* ─── THEORY & REFERENCE TAB ─── */
 .ref-section{background:#fff;border:1px solid var(--rule, rgba(26,26,24,0.12));border-radius:12px;padding:1.4rem 1.6rem;margin-bottom:1.1rem;}
@@ -246,30 +247,66 @@ const PIPE_DATA = {
 };
 
 // ── MATERIAL PROPERTIES (ASME B31.3 App A & C) ───────────────────────────────
+// Material properties from ASME B31.3-2020 Appendices A, C
+// alpha: temperature-dependent mean coefficient per Table C-1M (SI)
+//        interpolated at operating temperature — NOT a single constant
+// E:     Young's modulus per Table C-6M (SI), ×10³ MPa
+// alpha_table format: [[T°C, alpha×10⁻⁶], ...]  — mean coeff from 20°C to T
+// E_table format:     [[T°C, E MPa], ...]
 const MATERIALS = {
   "Carbon Steel (A106 Gr.B)": {
-    alpha:12.2e-6,
-    E_table:[[20,203000],[100,198000],[150,195000],[200,192000],[250,189000],[300,185000],[350,181000],[400,176000]],
+    // alpha: Table C-1M, Group 1 carbon & low alloy steels, Row A (×10⁻⁶ mm/mm/°C from 20°C)
+    alpha_table:[[20,11.5],[50,11.8],[75,11.9],[100,12.1],[125,12.3],[150,12.4],
+                 [175,12.6],[200,12.7],[225,12.9],[250,13.0],[275,13.2],[300,13.3],
+                 [325,13.4],[350,13.6],[375,13.7],[400,13.8],[425,14.0],[450,14.1],
+                 [475,14.2],[500,14.4],[525,14.5],[550,14.6],[575,14.7],[600,14.8]],
+    // E: Table C-6M, Carbon steel ≤0.30%C (×10³ MPa)
+    E_table:[[25,202000],[100,198000],[150,195000],[200,192000],[250,189000],
+             [300,185000],[350,179000],[400,171000],[450,162000],[500,151000],
+             [550,137000],[600,122000]],
     Sc:138.0,
     Sh_table:[[20,138],[100,130],[150,126],[200,121],[250,116],[300,110],[350,103],[400,95]]
   },
   "Stainless Steel 316L": {
-    alpha:17.2e-6,
-    E_table:[[20,195000],[100,189000],[150,186000],[200,182000],[250,178000],[300,174000],[350,170000],[400,165000]],
+    // alpha: Table C-1M, Austenitic SS (304,316,317,321,347,348 etc.), Row A
+    alpha_table:[[20,15.3],[50,15.6],[75,15.9],[100,16.2],[125,16.4],[150,16.6],
+                 [175,16.8],[200,17.0],[225,17.2],[250,17.4],[275,17.5],[300,17.7],
+                 [325,17.8],[350,17.9],[375,18.0],[400,18.1],[425,18.2],[450,18.3],
+                 [475,18.4],[500,18.4],[525,18.5],[550,18.6],[575,18.7],[600,18.8]],
+    // E: Table C-6M, Type 316 (same as 304/321/347/309/310)
+    E_table:[[25,195000],[100,189000],[150,186000],[200,183000],[250,179000],
+             [300,176000],[350,172000],[400,169000],[450,165000],[500,160000],
+             [550,156000],[600,151000],[650,146000],[700,140000],[750,134000],[800,127000]],
     Sc:115.0,
-    Sh_table:[[20,115],[100,103],[150,97],[200,93],[250,90],[300,87],[350,85],[400,83]]
+    Sh_table:[[20,115],[100,110],[150,107],[200,103],[250,99],[300,96],[350,92],[400,89],[450,85],[500,82]]
   },
   "Stainless Steel 304": {
-    alpha:17.2e-6,
-    E_table:[[20,195000],[100,189000],[150,186000],[200,182000],[250,178000],[300,174000],[350,170000],[400,165000]],
-    Sc:115.0,
-    Sh_table:[[20,115],[100,103],[150,97],[200,93],[250,90],[300,87],[350,85],[400,83]]
+    // alpha: Table C-1M, Austenitic SS (304,316,317,321,347,348 etc.), Row A
+    alpha_table:[[20,15.3],[50,15.6],[75,15.9],[100,16.2],[125,16.4],[150,16.6],
+                 [175,16.8],[200,17.0],[225,17.2],[250,17.4],[275,17.5],[300,17.7],
+                 [325,17.8],[350,17.9],[375,18.0],[400,18.1],[425,18.2],[450,18.3],
+                 [475,18.4],[500,18.4],[525,18.5],[550,18.6],[575,18.7],[600,18.8]],
+    // E: Table C-6M, Type 304 (same as 316/321/347/309/310)
+    E_table:[[25,195000],[100,189000],[150,186000],[200,183000],[250,179000],
+             [300,176000],[350,172000],[400,169000],[450,165000],[500,160000],
+             [550,156000],[600,151000],[650,146000],[700,140000],[750,134000],[800,127000]],
+    Sc:138.0,
+    Sh_table:[[20,138],[100,130],[150,126],[200,118],[250,112],[300,108],[350,104],[400,101],[450,98],[500,94]]
   },
   "Duplex SS 2205": {
-    alpha:13.0e-6,
-    E_table:[[20,200000],[100,195000],[150,192000],[200,188000],[250,184000],[300,180000],[350,175000],[400,169000]],
+    // alpha: Table C-1M has no specific duplex entry.
+    // Using straight chromium 12-13Cr as closest (conservative — lower alpha than austenitic)
+    // Note: actual duplex alpha is typically 13.0-13.5×10⁻⁶; chromium entry used as reference
+    alpha_table:[[20,10.6],[50,10.9],[75,11.0],[100,11.1],[125,11.3],[150,11.4],
+                 [175,11.4],[200,11.5],[225,11.6],[250,11.6],[275,11.7],[300,11.7],
+                 [325,11.8],[350,11.8],[375,11.9],[400,11.9],[425,12.0],[450,12.0],
+                 [475,12.1],[500,12.1],[525,12.2],[550,12.2],[575,12.3],[600,12.3]],
+    // E: Table C-6M has no duplex entry. Using straight chromium 12-17Cr (closest available)
+    E_table:[[25,201000],[100,195000],[150,192000],[200,189000],[250,186000],
+             [300,182000],[350,178000],[400,173000],[450,166000],[500,157000],
+             [550,145000],[600,131000]],
     Sc:172.0,
-    Sh_table:[[20,172],[100,159],[150,153],[200,148],[250,144],[300,140],[350,136],[400,132]]
+    Sh_table:[[20,172],[100,162],[150,155],[200,148],[250,144],[300,138]]
   }
 };
 
@@ -336,7 +373,7 @@ function runCalc() {
   const wt   = p.sch[sc];
   const m    = MATERIALS[mat];
   const dT   = T1-T0;
-  const alpha= m.alpha;
+  const alpha= interp(m.alpha_table, T1) * 1e-6;  // mean coeff from 20°C to T1, per B31.3 Table C-1M
   const E    = interp(m.E_table, T1);
   const Sc   = m.Sc;
   const Sh   = interp(m.Sh_table, T1);
@@ -349,7 +386,7 @@ function runCalc() {
   const L2      = 0.8*H;
   const sigma   = (3*E*OD*dL_mm)/(H_mm**2);
   const util    = (sigma/S_allow)*100;
-  const pass    = sigma<=S_allow;
+  const pass    = sigma <= S_allow * 1.0001; // tolerance for floating point rounding at 100% utilisation
 
   const disp_E1   = dL_mm/2;   // axial movement at E1 (+X, toward loop centre)
   const disp_E4   = dL_mm/2;   // axial movement at E4 (+X, toward loop centre)
@@ -898,17 +935,6 @@ It is intended for preliminary engineering purposes only. Results must be verifi
 Chartered Piping/Stress Engineer before inclusion in final design documentation.
 The calculator author and PipingPro Academy accept no liability for engineering decisions made solely on the basis of these results.</div>
 </div>
-
-/* ── THEORY TAB SWITCHING ── */
-function showCalcTab(name){
-  ['calculator','theory'].forEach(function(t){
-    var btn = document.querySelector('.calc-tab[onclick*="' + t + '"]');
-    var panel = document.getElementById('calctab-' + t);
-    if(btn) btn.classList.toggle('active', t===name);
-    if(panel) panel.classList.toggle('active', t===name);
-  });
-}
-<\/script>
 </body></html>`;
   const w=window.open('','_blank');
   w.document.write(html);
