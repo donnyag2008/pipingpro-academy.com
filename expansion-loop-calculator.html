@@ -222,6 +222,7 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
 
 </div><div class="footer">PipingPro Academy Calculator Suite · ASME B31.3 Expansion Loop · Preliminary Engineering Use Only</div>
 
+
 <script>
 // ── PIPE DATA (ASME B36.10) ──────────────────────────────────────────────────
 // ASME B36.10M — key schedules for expansion loop sizing
@@ -943,7 +944,7 @@ The calculator author and PipingPro Academy accept no liability for engineering 
 </div>
 </div><!-- /calctab-theory -->
 <!-- ══ END THEORY PANEL ══ -->
-<script>
+
 /* ── THEORY TAB SWITCHING ── */
 function showCalcTab(name){
   ['calculator','theory'].forEach(function(t){
@@ -954,11 +955,6 @@ function showCalcTab(name){
   });
 }
 </script>
-</body></html>`;
-  const w=window.open('','_blank');
-  w.document.write(html);
-  w.document.close();
-}
-</script>
+
 </body>
 </html>
