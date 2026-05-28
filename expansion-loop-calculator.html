@@ -36,10 +36,10 @@ input,select{width:100%;background:#fafaf8;border:1px solid rgba(26,26,24,0.15);
 .red{color:#b91c1c;font-weight:700}
 #breakdownCard .card-title{background:#6b1f2a;color:#fff;margin:-18px -20px 16px;padding:10px 20px;border-radius:11px 11px 0 0;font-size:11px;border-bottom:none}
 #geoCard .card-title{background:#6b1f2a;color:#fff;margin:-18px -20px 16px;padding:10px 20px;border-radius:11px 11px 0 0;font-size:11px;border-bottom:none}
-table.geo{width:100%;border-collapse:collapse;font-size:14px}
-table.geo th{background:#6b1f2a;color:#fff;padding:11px 12px;text-align:left;font-size:14px;white-space:nowrap;font-weight:700;letter-spacing:.03em}
-table.geo td{padding:10px 12px;border-bottom:1px solid rgba(26,26,24,0.08);color:#1a1a18;font-size:14px}
-table.geo td.val{color:#c45c2a;font-family:monospace;font-size:14px}
+table.geo{width:100%;border-collapse:collapse;font-size:15px}
+table.geo th{background:#6b1f2a;color:#fff;padding:12px 14px;text-align:left;font-size:15px;white-space:nowrap;font-weight:700;letter-spacing:.02em}
+table.geo td{padding:11px 14px;border-bottom:1px solid rgba(26,26,24,0.08);color:#1a1a18;font-size:15px}
+table.geo td.val{color:#c45c2a;font-family:monospace;font-size:15px}
 table.geo tr:hover td{background:#faf8f4}
 .footer{text-align:center;margin-top:24px;font-size:10px;color:#8a8a80}
 .hidden{display:none}
@@ -517,7 +517,7 @@ function renderResults() {
     <td>${t}</td>
     <td class="val">${x}</td>
     <td class="val">${y}</td>
-    <td style="color:#f59e0b;font-family:monospace;font-size:10.5px">${d}</td>
+    <td style="color:#f59e0b;font-family:monospace">${d}</td>
   </tr>`).join('');
 
   // Isometric SVG
