@@ -1,0 +1,186 @@
+/* ============================================================================
+   PipingPro Academy — Design System  v1.0
+   Single source of truth for all calculator pages.
+   Codified from the homepage brand (index.html).
+
+   USAGE in each calculator:
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+     <link rel="stylesheet" href="pp-design-system.css">
+   Then DELETE the calculator's own :root{} token block and let this drive it.
+   ========================================================================== */
+
+/* ---- 1. TOKENS ------------------------------------------------------------ */
+:root {
+  /* Brand palette (verbatim from homepage) */
+  --cream:        #faf6ef;   /* page background            */
+  --paper:        #f3ede2;   /* card / surface background  */
+  --paper-dark:   #e8dfd0;   /* borders, inset surfaces    */
+  --ink:          #1a1510;   /* primary text, nav, headers */
+  --ink-light:    #4a3f30;   /* secondary text             */
+  --gold:         #b8860b;   /* primary accent / CTA       */
+  --gold-bright:  #d4a017;   /* hover / highlight          */
+  --gold-pale:    #f5e9c8;   /* subtle fills, tints        */
+  --rust:         #8b3a1a;   /* secondary accent / FAIL    */
+  --rule:         #c8b89a;   /* dividers, hairlines        */
+
+  /* Functional states (derived from brand, not invented) */
+  --pass:         #1a6b5a;   /* PASS / safe (homepage badge green) */
+  --pass-bright:  #2d9679;
+  --pass-bg:      #e7f1ee;
+  --fail:         #8b3a1a;   /* FAIL / unsafe (= rust)             */
+  --fail-bg:      #f6e6df;
+  --warn:         #b8860b;   /* CAUTION (= gold)                   */
+  --warn-bg:      #f5e9c8;
+
+  /* Type */
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body:    'DM Sans', system-ui, sans-serif;
+  --font-mono:    'IBM Plex Mono', ui-monospace, monospace;
+
+  /* Geometry (small radii, per homepage) */
+  --r-sm: 2px;
+  --r-md: 4px;
+  --r-lg: 6px;
+  --shadow: 0 1px 3px rgba(26,21,16,.08), 0 4px 16px rgba(26,21,16,.05);
+}
+
+/* ---- 2. BASE -------------------------------------------------------------- */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background: var(--cream);
+  color: var(--ink);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4 { font-family: var(--font-display); color: var(--ink); line-height: 1.2; margin: 0 0 .4em; font-weight: 400; }
+h1 { font-size: 1.9rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.1rem; }
+a { color: var(--rust); text-decoration: none; }
+a:hover { color: var(--gold-bright); }
+hr { border: none; border-top: 1px solid var(--rule); margin: 1.5rem 0; }
+small, .muted { color: var(--ink-light); }
+
+/* ---- 3. NAV --------------------------------------------------------------- */
+.pp-nav {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 60px; padding: 0 5%;
+  background: var(--ink);
+  border-bottom: 2px solid var(--gold);
+}
+.pp-nav .logo {
+  font-family: var(--font-display); font-size: 1.15rem;
+  color: var(--gold-bright); letter-spacing: .02em; text-decoration: none;
+}
+.pp-nav .back {
+  color: #ccc; font-size: .82rem; font-weight: 500;
+  text-transform: uppercase; letter-spacing: .05em;
+}
+.pp-nav .back:hover { color: var(--gold-bright); }
+
+/* ---- 4. PAGE SHELL -------------------------------------------------------- */
+.pp-wrap { max-width: 1040px; margin: 0 auto; padding: 2.2rem 5% 4rem; }
+.pp-header { margin-bottom: 1.6rem; }
+.pp-eyebrow {
+  font-family: var(--font-mono); font-size: .72rem; font-weight: 500;
+  text-transform: uppercase; letter-spacing: .12em; color: var(--gold);
+  margin-bottom: .4rem;
+}
+.pp-lede { color: var(--ink-light); max-width: 62ch; }
+
+/* Two-column calc layout: inputs | results */
+.pp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; align-items: start; }
+@media (max-width: 800px) { .pp-grid { grid-template-columns: 1fr; } }
+
+/* ---- 5. CARDS / PANELS ---------------------------------------------------- */
+.pp-card {
+  background: var(--paper); border: 1px solid var(--paper-dark);
+  border-radius: var(--r-lg); padding: 1.3rem 1.4rem;
+}
+.pp-card + .pp-card { margin-top: 1.2rem; }
+.pp-card-title {
+  font-family: var(--font-display); font-size: 1.05rem; color: var(--ink);
+  margin: 0 0 1rem; padding-bottom: .55rem; border-bottom: 1px solid var(--rule);
+}
+
+/* ---- 6. FORM CONTROLS ----------------------------------------------------- */
+.pp-field { margin-bottom: .9rem; }
+.pp-field label, label.pp-label {
+  display: block; font-size: .8rem; font-weight: 600; color: var(--ink-light);
+  margin-bottom: .3rem; letter-spacing: .01em;
+}
+.pp-input, input[type="text"], input[type="number"], select, textarea {
+  width: 100%; padding: .55rem .7rem;
+  font-family: var(--font-body); font-size: .9rem; color: var(--ink);
+  background: var(--cream); border: 1px solid var(--rule);
+  border-radius: var(--r-md); outline: none;
+  transition: border-color .18s, box-shadow .18s;
+}
+.pp-input:focus, input:focus, select:focus, textarea:focus {
+  border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-pale);
+}
+.pp-input-row { display: flex; gap: .5rem; }
+.pp-unit { display: flex; align-items: center; padding: 0 .6rem; font-family: var(--font-mono); font-size: .8rem; color: var(--ink-light); background: var(--paper-dark); border-radius: var(--r-md); white-space: nowrap; }
+
+/* ---- 7. BUTTONS ----------------------------------------------------------- */
+.pp-btn, button.pp-btn {
+  display: inline-block; padding: .7rem 1.6rem;
+  font-family: var(--font-body); font-size: .9rem; font-weight: 700;
+  letter-spacing: .03em; border: none; border-radius: var(--r-sm);
+  cursor: pointer; text-decoration: none; transition: background .2s, transform .15s, border-color .2s, color .2s;
+}
+.pp-btn--primary { background: var(--gold); color: var(--ink); }
+.pp-btn--primary:hover { background: var(--gold-bright); transform: translateY(-1px); }
+.pp-btn--secondary { background: transparent; color: var(--ink); border: 1px solid var(--rule); }
+.pp-btn--secondary:hover { border-color: var(--gold); color: var(--rust); }
+.pp-btn--ghost { background: transparent; color: var(--ink-light); border: 1px solid var(--paper-dark); font-weight: 600; }
+.pp-btn--block { width: 100%; text-align: center; }
+
+/* ---- 8. RESULT / OUTPUT --------------------------------------------------- */
+.pp-result {
+  background: var(--cream); border: 1px solid var(--paper-dark);
+  border-left: 4px solid var(--gold); border-radius: var(--r-md);
+  padding: .8rem 1rem; margin-bottom: .7rem;
+}
+.pp-result .k { font-size: .78rem; color: var(--ink-light); text-transform: uppercase; letter-spacing: .05em; }
+.pp-result .v { font-family: var(--font-mono); font-size: 1.35rem; font-weight: 500; color: var(--ink); }
+.pp-result .v small { font-family: var(--font-mono); font-size: .85rem; color: var(--ink-light); }
+
+/* PASS / FAIL / CAUTION verdict bar */
+.pp-verdict {
+  display: flex; align-items: center; gap: .6rem;
+  padding: .8rem 1rem; border-radius: var(--r-md); font-weight: 700;
+  border: 1px solid transparent;
+}
+.pp-verdict .tag { font-family: var(--font-mono); font-size: .75rem; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: .07em; color: #fff; }
+.pp-verdict--pass { background: var(--pass-bg); color: var(--pass); border-color: var(--pass); }
+.pp-verdict--pass .tag { background: var(--pass); }
+.pp-verdict--fail { background: var(--fail-bg); color: var(--fail); border-color: var(--fail); }
+.pp-verdict--fail .tag { background: var(--fail); }
+.pp-verdict--warn { background: var(--warn-bg); color: #6b4e00; border-color: var(--warn); }
+.pp-verdict--warn .tag { background: var(--warn); color: var(--ink); }
+
+/* ---- 9. TABLES ------------------------------------------------------------ */
+.pp-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+.pp-table th, .pp-table td { text-align: left; padding: .5rem .7rem; border-bottom: 1px solid var(--paper-dark); }
+.pp-table th { font-family: var(--font-body); font-weight: 700; color: var(--ink-light); text-transform: uppercase; font-size: .72rem; letter-spacing: .05em; background: var(--paper); }
+.pp-table td.num, .pp-table th.num { text-align: right; font-family: var(--font-mono); }
+.pp-table tr:hover td { background: var(--gold-pale); }
+
+/* ---- 10. TAGS / BADGES ---------------------------------------------------- */
+.pp-tag { display: inline-block; font-family: var(--font-mono); font-size: .68rem; background: var(--paper); color: var(--ink-light); padding: 1px 7px; border-radius: var(--r-md); border: 1px solid var(--paper-dark); }
+.pp-badge { font-size: .65rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; padding: 2px 8px; border-radius: 20px; color: #fff; }
+.pp-badge--free { background: var(--pass); }
+.pp-badge--pro  { background: var(--gold); color: var(--ink); }
+
+/* ---- 11. CODE REFERENCE CHIP (standards) ---------------------------------- */
+.pp-std { font-family: var(--font-mono); font-size: .76rem; color: var(--rust); background: var(--gold-pale); padding: 1px 6px; border-radius: var(--r-sm); }
+
+/* ---- 12. FOOTER ----------------------------------------------------------- */
+.pp-footer { margin-top: 2.5rem; padding-top: 1.2rem; border-top: 1px solid var(--rule); font-size: .78rem; color: var(--ink-light); display: flex; justify-content: space-between; flex-wrap: wrap; gap: .5rem; }
+.pp-footer .disclaimer { max-width: 70ch; }

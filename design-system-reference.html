@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design System Reference — PipingPro Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="pp-design-system.css">
+<style>
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px,1fr)); gap: .6rem; }
+  .sw { border-radius: var(--r-md); border: 1px solid var(--paper-dark); overflow: hidden; font-size: .7rem; }
+  .sw .chip { height: 54px; }
+  .sw .lab { padding: .3rem .5rem; font-family: var(--font-mono); }
+  .sw .lab b { display: block; color: var(--ink); }
+  .demo-row { display: flex; gap: .8rem; flex-wrap: wrap; align-items: center; margin-bottom: .8rem; }
+  section.block { margin-bottom: 2.4rem; }
+</style>
+</head>
+<body>
+
+<nav class="pp-nav">
+  <a href="#" class="logo">PipingPro Academy</a>
+  <a href="#" class="back">&larr; Calculators</a>
+</nav>
+
+<div class="pp-wrap">
+
+  <div class="pp-header">
+    <div class="pp-eyebrow">Internal · Design System v1.0</div>
+    <h1>Calculator Design System</h1>
+    <p class="pp-lede">Every calculator in the suite is built from these tokens and components. One palette, one type system, one set of controls — so all eighteen tools read as a single product.</p>
+  </div>
+
+  <!-- COLOUR -->
+  <section class="block">
+    <h2>Colour</h2>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:#faf6ef"></div><div class="lab"><b>cream</b>#faf6ef</div></div>
+      <div class="sw"><div class="chip" style="background:#f3ede2"></div><div class="lab"><b>paper</b>#f3ede2</div></div>
+      <div class="sw"><div class="chip" style="background:#e8dfd0"></div><div class="lab"><b>paper-dark</b>#e8dfd0</div></div>
+      <div class="sw"><div class="chip" style="background:#1a1510"></div><div class="lab"><b>ink</b>#1a1510</div></div>
+      <div class="sw"><div class="chip" style="background:#4a3f30"></div><div class="lab"><b>ink-light</b>#4a3f30</div></div>
+      <div class="sw"><div class="chip" style="background:#b8860b"></div><div class="lab"><b>gold</b>#b8860b</div></div>
+      <div class="sw"><div class="chip" style="background:#d4a017"></div><div class="lab"><b>gold-bright</b>#d4a017</div></div>
+      <div class="sw"><div class="chip" style="background:#8b3a1a"></div><div class="lab"><b>rust</b>#8b3a1a</div></div>
+      <div class="sw"><div class="chip" style="background:#1a6b5a"></div><div class="lab"><b>pass</b>#1a6b5a</div></div>
+      <div class="sw"><div class="chip" style="background:#c8b89a"></div><div class="lab"><b>rule</b>#c8b89a</div></div>
+    </div>
+  </section>
+
+  <!-- TYPE -->
+  <section class="block">
+    <h2>Typography</h2>
+    <div class="pp-card">
+      <h1>DM Serif Display — H1 / Page title</h1>
+      <h2>DM Serif Display — H2 / Section</h2>
+      <h3>DM Serif Display — H3 / Sub-section</h3>
+      <p>DM Sans body text. The body face carries all running copy, labels, and UI. Line height 1.7 for comfortable reading. <a href="#">Links use rust.</a></p>
+      <p style="font-family:var(--font-mono);font-size:.85rem;color:var(--ink-light)">IBM Plex Mono — used for numeric outputs, units, tags and standard references like <span class="pp-std">ASME B31.3</span></p>
+    </div>
+  </section>
+
+  <!-- BUTTONS + BADGES -->
+  <section class="block">
+    <h2>Buttons &amp; badges</h2>
+    <div class="pp-card">
+      <div class="demo-row">
+        <button class="pp-btn pp-btn--primary">Calculate</button>
+        <button class="pp-btn pp-btn--secondary">Reset</button>
+        <button class="pp-btn pp-btn--ghost">Export PDF</button>
+      </div>
+      <div class="demo-row">
+        <span class="pp-badge pp-badge--free">Free</span>
+        <span class="pp-badge pp-badge--pro">Pro</span>
+        <span class="pp-tag">DN 200</span>
+        <span class="pp-tag">Sch 40</span>
+        <span class="pp-std">ASME B31.3</span>
+        <span class="pp-std">NACE MR0175</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- VERDICTS -->
+  <section class="block">
+    <h2>Result verdicts</h2>
+    <div class="pp-card">
+      <div class="pp-verdict pp-verdict--pass" style="margin-bottom:.7rem"><span class="tag">Pass</span> Code stress within allowable — SL/Sh = 0.62</div>
+      <div class="pp-verdict pp-verdict--warn" style="margin-bottom:.7rem"><span class="tag">Caution</span> Within 10% of allowable — review support spacing</div>
+      <div class="pp-verdict pp-verdict--fail"><span class="tag">Fail</span> Sustained stress exceeds allowable — redesign required</div>
+    </div>
+  </section>
+
+  <!-- REALISTIC CALCULATOR EXAMPLE -->
+  <section class="block">
+    <h2>Calculator example — how a tool will look</h2>
+    <p class="pp-lede" style="margin-bottom:1.2rem">A mock-up of the Pipe Wall Thickness calculator rebuilt on the system. This is the target appearance for all eighteen.</p>
+
+    <div class="pp-grid">
+      <!-- INPUTS -->
+      <div class="pp-card">
+        <div class="pp-card-title">Inputs</div>
+        <div class="pp-field">
+          <label>Design code</label>
+          <select><option>ASME B31.3 — Process Piping</option><option>ASME B31.4 — Liquid Pipeline</option><option>ASME B31.8 — Gas Pipeline</option></select>
+        </div>
+        <div class="pp-field">
+          <label>Outside diameter</label>
+          <div class="pp-input-row"><input class="pp-input" type="number" value="219.1"><span class="pp-unit">mm</span></div>
+        </div>
+        <div class="pp-field">
+          <label>Design pressure</label>
+          <div class="pp-input-row"><input class="pp-input" type="number" value="98.5"><span class="pp-unit">barg</span></div>
+        </div>
+        <div class="pp-field">
+          <label>Material / allowable stress (S)</label>
+          <div class="pp-input-row"><input class="pp-input" type="number" value="137.9"><span class="pp-unit">MPa</span></div>
+        </div>
+        <div class="pp-field">
+          <label>Corrosion allowance</label>
+          <div class="pp-input-row"><input class="pp-input" type="number" value="3.0"><span class="pp-unit">mm</span></div>
+        </div>
+        <button class="pp-btn pp-btn--primary pp-btn--block" style="margin-top:.4rem">Calculate</button>
+      </div>
+
+      <!-- RESULTS -->
+      <div class="pp-card">
+        <div class="pp-card-title">Results</div>
+        <div class="pp-result">
+          <div class="k">Pressure design thickness, t</div>
+          <div class="v">7.84 <small>mm</small></div>
+        </div>
+        <div class="pp-result">
+          <div class="k">Minimum required (t + c)</div>
+          <div class="v">10.84 <small>mm</small></div>
+        </div>
+        <div class="pp-result">
+          <div class="k">Selected — Sch 40 (8.18 mm wall)</div>
+          <div class="v" style="color:var(--fail)">8.18 <small>mm</small></div>
+        </div>
+        <div class="pp-verdict pp-verdict--fail" style="margin-top:.6rem"><span class="tag">Fail</span> Below required — select Sch 80</div>
+
+        <table class="pp-table" style="margin-top:1rem">
+          <thead><tr><th>Schedule</th><th class="num">Wall (mm)</th><th class="num">Margin</th></tr></thead>
+          <tbody>
+            <tr><td>Sch 40</td><td class="num">8.18</td><td class="num" style="color:var(--fail)">−2.66</td></tr>
+            <tr><td>Sch 80</td><td class="num">12.70</td><td class="num" style="color:var(--pass)">+1.86</td></tr>
+            <tr><td>Sch 160</td><td class="num">23.01</td><td class="num" style="color:var(--pass)">+12.17</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <div class="pp-footer">
+    <span>PipingPro Academy — Design System v1.0</span>
+    <span class="disclaimer">Reference only. Results illustrative. Engineering judgement and the governing code edition always apply.</span>
+  </div>
+
+</div>
+</body>
+</html>

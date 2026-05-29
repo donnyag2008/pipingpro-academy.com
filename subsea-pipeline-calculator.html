@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offshore Pipeline Mechanical Design Calculation</title>
+
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--border:#30363d;--border2:#444c56;--text:#e6edf3;--text2:#8b949e;--text3:#6e7681;--accent:#8b3a1a;--accent2:#1f6feb;--green:#3fb950;--green-bg:#0d2e1a;--green-border:#1f6e3a;--red:#f85149;--red-bg:#2d1419;--red-border:#8b1a1a;--amber:#d29922;--amber-bg:#2d2007;--amber-border:#6a4b10;--mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+.header{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;gap:1rem;height:56px;position:sticky;top:0;z-index:100}
+.logo-icon{width:28px;height:28px;background:var(--accent2);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.header-title{font-size:14px;font-weight:600;color:var(--text);letter-spacing:.01em}
+.header-badges{margin-left:auto;display:flex;gap:8px}
+.badge{font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:12px;border:1px solid var(--border);color:var(--text2)}
+.layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 56px)}
+.sidebar{background:var(--bg2);border-right:1px solid var(--border);padding:1.5rem 0}
+.sidebar-section{padding:0 1rem 1rem;margin-bottom:.5rem}
+.sidebar-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;padding:0 .5rem;margin-bottom:6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:7px 12px;border-radius:6px;cursor:pointer;font-size:13px;color:var(--text2);transition:all .15s;border:none;background:none;width:100%;text-align:left;margin-bottom:2px;font-family:var(--sans)}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:rgba(47,129,247,.15);color:var(--accent)}
+.nav-num{font-family:var(--mono);font-size:11px;width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;background:var(--bg3);color:var(--text3);flex-shrink:0}
+.nav-item.active .nav-num{background:rgba(47,129,247,.2);color:var(--accent)}
+.sidebar-divider{height:1px;background:var(--border);margin:.75rem 1rem}
+.main{padding:2rem;overflow-y:auto}
+.panel{display:none}.panel.active{display:block}
+.panel-title{font-size:20px;font-weight:600;color:var(--text);margin-bottom:4px}
+.panel-sub{font-size:13px;color:var(--text2);font-family:var(--mono);margin-bottom:1.25rem}
+.std-tags{display:flex;gap:6px;margin-bottom:1.25rem;flex-wrap:wrap}
+.std-tag{font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:4px;border:1px solid var(--border);color:var(--text3)}
+.formula-card{background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--accent2);border-radius:6px;padding:12px 16px;margin-bottom:1.5rem;font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.9}
+.formula-title{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:6px}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:12px;font-weight:500;color:var(--text2)}
+.field input,.field select{height:36px;padding:0 10px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px;font-family:var(--mono);outline:none;transition:border .15s}
+.field input:focus,.field select:focus{border-color:var(--accent)}
+.field small{font-size:11px;color:var(--text3);font-family:var(--mono)}
+.calc-btn{display:inline-flex;align-items:center;gap:8px;padding:9px 20px;background:var(--accent2);color:white;border:none;border-radius:6px;font-size:13px;font-weight:600;font-family:var(--sans);cursor:pointer;transition:background .15s}
+.calc-btn:hover{background:var(--accent)}
+.results-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin:1.5rem 0 .6rem}
+.result-table{border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.result-row{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border);font-size:13px}
+.result-row:last-child{border-bottom:none}
+.result-row:hover{background:var(--bg3)}
+.r-label{color:var(--text2)}
+.r-val{font-family:var(--mono);font-size:12px;color:var(--text);white-space:nowrap}
+.status-badge{font-family:var(--mono);font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;white-space:nowrap}
+.s-pass{background:var(--green-bg);border:1px solid var(--green-border);color:var(--green)}
+.s-fail{background:var(--red-bg);border:1px solid var(--red-border);color:var(--red)}
+.s-warn{background:var(--amber-bg);border:1px solid var(--amber-border);color:var(--amber)}
+.s-info{background:rgba(47,129,247,.1);border:1px solid rgba(47,129,247,.3);color:var(--accent)}
+.util-wrap{display:flex;align-items:center;gap:10px;margin-top:1rem;padding:12px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:8px}
+.util-label{font-size:12px;color:var(--text2);white-space:nowrap}
+.util-bar{flex:1;height:8px;background:var(--bg);border-radius:4px;overflow:hidden}
+.util-fill{height:100%;border-radius:4px;transition:width .4s ease}
+.util-pct{font-family:var(--mono);font-size:13px;font-weight:600;min-width:50px;text-align:right}
+
+/* ─── THEORY & REFERENCE TAB ─── */
+.ref-section{background:#fff;border:1px solid var(--rule, rgba(26,26,24,0.12));border-radius:12px;padding:1.4rem 1.6rem;margin-bottom:1.1rem;}
+.ref-title{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3,#8a8a80);margin-bottom:.9rem;padding-bottom:.4rem;border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));}
+.ref-formula{background:var(--paper2,#ede9de);border-left:3px solid var(--accent,#8b3a1a);border-radius:0 8px 8px 0;padding:1rem 1.2rem;font-size:13px;color:var(--ink2,#4a4a44);line-height:2;margin-bottom:.8rem;font-family:monospace;}
+.ref-formula b{font-family:monospace;color:var(--ink,#1a1510);}
+.ref-note{background:var(--teal-light,#e7f1ee);border:1px solid rgba(26,107,90,.15);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--teal,#1a6b5a);line-height:1.7;margin-top:.5rem;}
+.ref-table-wrap{overflow-x:auto;margin-top:.5rem;}
+.ref-table{width:100%;border-collapse:collapse;font-size:12px;}
+.ref-table th{background:var(--paper3,#e3dfd2);padding:7px 10px;text-align:left;font-weight:600;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2,#4a4a44);border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));}
+.ref-table td{padding:6px 10px;border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));color:var(--ink,#1a1510);vertical-align:top;}
+.ref-table td:first-child{font-weight:600;font-family:monospace;font-size:11px;white-space:nowrap;}
+.ref-table tr:last-child td{border-bottom:none;}
+
+
+/* ─── THEORY TAB NAV ─── */
+.calc-tabs{display:flex;background:var(--paper2,#ede9de);border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));overflow-x:auto;margin-bottom:0;}
+.calc-tab{padding:.85rem 1.5rem;font-size:13px;font-weight:500;color:var(--ink3,#8a8a80);border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;font-family:'DM Sans',sans-serif;transition:color .2s,border-color .2s;white-space:nowrap;}
+.calc-tab.active{color:var(--accent,#8b3a1a);border-bottom-color:var(--accent,#8b3a1a);}
+.calc-tab:hover:not(.active){color:var(--ink,#1a1510);}
+.calc-panel{display:none;}
+.calc-panel.active{display:block;}
+
+</style>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style id="ppa-shared">
+:root{
+  --ink:#1a1510;--ink2:#4a4a44;--ink3:#8a8a80;
+  --paper:#f5f2eb;--paper2:#ede9de;--paper3:#e3dfd2;
+  --accent:#8b3a1a;--accent2:#d4a017;--accent-light:#f7ede3;
+  --teal:#1a6b5a;--teal-light:#e7f1ee;
+  --rule:rgba(26,26,24,0.12);
+  --gold:#b8860b;--gold-light:#f5e9c8;
+  --font:'DM Sans',sans-serif;
+  --serif:'DM Serif Display',serif;
+  --mono:'DM Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:15px;line-height:1.6;min-height:100vh;}
+/* ── NAV ── */
+.ppa-nav{background:rgba(245,242,235,0.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--rule);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:200;}
+.ppa-nav-logo{font-family:var(--serif);font-size:17px;color:var(--ink);text-decoration:none;}
+.ppa-nav-logo span{color:var(--accent);}
+.ppa-nav-back{font-size:13px;color:var(--ink2);text-decoration:none;display:flex;align-items:center;gap:5px;}
+.ppa-nav-back:hover{color:var(--accent);}
+/* ── HERO ── */
+.ppa-hero{background:var(--ink);color:var(--paper);padding:2.8rem 2rem 2.4rem;text-align:center;border-bottom:3px solid var(--accent);position:relative;overflow:hidden;}
+.ppa-hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 60px),repeating-linear-gradient(0deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 60px);}
+.ppa-hero-eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);margin-bottom:.7rem;font-family:var(--mono);position:relative;}
+.ppa-hero h1{font-family:var(--serif);font-size:clamp(1.7rem,4vw,2.6rem);line-height:1.1;margin-bottom:.7rem;position:relative;}
+.ppa-hero p{font-size:14px;color:rgba(245,242,235,0.6);max-width:540px;margin:0 auto;position:relative;}
+/* ── SHARED CARD ── */
+.ppa-card{background:#fff;border:1px solid var(--rule);border-radius:12px;padding:1.8rem 2rem;margin-bottom:1.4rem;}
+.ppa-card-title{font-family:var(--serif);font-size:1.15rem;color:var(--ink);margin-bottom:.25rem;}
+.ppa-card-sub{font-size:12px;color:var(--ink3);margin-bottom:1.2rem;}
+/* ── FOOTER ── */
+.ppa-footer{background:var(--ink);color:rgba(245,242,235,0.5);text-align:center;padding:2rem;font-size:13px;margin-top:3rem;}
+.ppa-footer a{color:var(--accent2);text-decoration:none;}
+.ppa-footer-logo{font-family:var(--serif);font-size:1.1rem;color:var(--paper);margin-bottom:.4rem;}
+.ppa-footer-logo span{color:var(--accent);}
+</style>
+<!-- ===== PipingPro Brand Bridge v1.0 — injected before </head> ===== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style id="pp-brand-bridge">
+/* Redefines every token name used across the suite to the PipingPro brand.
+   Placed last in <head> so it overrides each file's own :root. No markup/JS touched. */
+:root{
+  /* surfaces */
+  --bg:#faf6ef; --cream:#faf6ef;
+  --paper:#f3ede2; --surface:#f3ede2; --paper2:#f3ede2; --bg2:#f3ede2;
+  --paper3:#e8dfd0; --bg3:#e8dfd0;
+  /* text */
+  --ink:#1a1510; --text:#1a1510;
+  --ink2:#4a3f30; --text-2:#4a3f30; --muted:#4a3f30;
+  --ink3:#6b5d49; --text-3:#6b5d49; --muted2:#6b5d49;
+  /* primary accent = rust (legible on light & as button bg) */
+  --accent:#8b3a1a; --accent2:#b8860b;
+  --accent-light:#f6e6df; --accent-border:#c8b89a;
+  --teal:#8b3a1a; --teal2:#8b3a1a; --teal-light:#f6e6df;
+  --blue:#8b3a1a; --purple:#8b3a1a;
+  /* gilt accents */
+  --gold:#b8860b; --gold2:#b8860b; --gold-light:#f5e9c8; --orange:#b8860b; --yellow:#b8860b;
+  /* rules / borders */
+  --rule:#c8b89a; --border:#c8b89a; --border2:#c8b89a; --border-strong:#b8a87f;
+  /* fonts */
+  --serif:'DM Serif Display',Georgia,serif;
+  --font:'DM Sans',system-ui,sans-serif; --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  /* geometry */
+  --radius:4px; --radius-lg:6px;
+  /* states */
+  --pass:#1a6b5a; --success:#1a6b5a; --green:#1a6b5a;
+  --pass-bg:#e7f1ee; --success-light:#e7f1ee; --pass-bd:#1a6b5a;
+  --fail:#8b3a1a; --danger:#8b3a1a; --red:#8b3a1a;
+  --fail-bg:#f6e6df; --danger-light:#f6e6df; --red-bg:#f6e6df;
+  --danger-border:#8b3a1a; --fail-bd:#8b3a1a;
+  --warn:#b8860b; --warn-light:#f5e9c8; --warn-bg:#f5e9c8;
+  --warn-border:#b8860b; --warn-bd:#b8860b;
+  --info:#1a6b5a; --info-light:#e7f1ee; --info-border:#1a6b5a;
+}
+/* Enforce brand fonts even where files hardcoded font-family (not via token) */
+body, p, div, span, td, th, li, label, input, select, textarea, button{
+  font-family:'DM Sans',system-ui,sans-serif;
+}
+h1,h2,h3,h4,h5,.calc-card-name,.card-title{ font-family:'DM Serif Display',Georgia,serif; }
+code,pre,.mono,[class*="mono"]{ font-family:'IBM Plex Mono',ui-monospace,monospace; }
+body{ background:#faf6ef; color:#1a1510; }
+</style>
+<!-- ===== end PipingPro Brand Bridge ===== -->
+
+</head>
+<body>
+<nav class="ppa-nav">
+  <a href="index.html" class="ppa-nav-logo">Piping<span>Pro</span> Academy</a>
+  <a href="calculators.html" class="ppa-nav-back">← Back to Calculators</a>
+</nav>
+<div class="ppa-hero">
+  <div class="ppa-hero-eyebrow">Members · Engineering Calculator Suite</div>
+  <h1>Subsea Pipeline <em>Calculator</em></h1>
+  <p>Pressure containment, collapse, propagating buckling, on-bottom stability &amp; free-span per DNV-ST-F101</p>
+</div>
+
+<style>
+#ppa-lock-overlay{position:fixed;inset:0;background:rgba(26,26,24,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;font-family:sans-serif;}
+#ppa-lock-box{background:#f5f2eb;border-radius:14px;padding:2.5rem 2rem;max-width:400px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.4);}
+#ppa-lock-box h2{font-size:1.3rem;color:#1a1510;margin-bottom:.5rem;}
+#ppa-lock-box p{font-size:13px;color:#4a4a44;margin-bottom:1.2rem;line-height:1.6;}
+#ppa-lock-input{width:100%;padding:10px 14px;border:1px solid rgba(196,92,42,0.4);border-radius:8px;font-size:14px;font-family:monospace;color:#1a1510;background:#fff;outline:none;margin-bottom:8px;text-align:center;}
+#ppa-lock-input:focus{border-color:#8b3a1a;}
+#ppa-lock-btn{width:100%;padding:11px;border-radius:8px;background:#8b3a1a;color:#fff;font-size:14px;font-weight:600;border:none;cursor:pointer;margin-bottom:.8rem;}
+#ppa-lock-btn:hover{background:#6e2e14;}
+#ppa-lock-err{font-size:12px;color:#6e2e14;display:none;margin-bottom:.6rem;}
+#ppa-lock-back{font-size:12px;color:#8a8a80;text-decoration:none;}
+#ppa-lock-back:hover{color:#8b3a1a;}
+</style>
+<div id="ppa-lock-overlay">
+  <div id="ppa-lock-box">
+    <div style="font-size:2rem;margin-bottom:.8rem;">🔒</div>
+    <h2>Pro Calculator</h2>
+    <p>This calculator is part of the <strong>PipingPro Academy Pro Suite</strong>. Enter your access code to unlock.</p>
+    <input id="ppa-lock-input" type="text" placeholder="PPA-PRO-XXXX-XXXX" maxlength="20"/>
+    <div id="ppa-lock-err">Invalid code. Please check and try again.</div>
+    <button id="ppa-lock-btn" onclick="ppaUnlock()">Unlock</button>
+    <br><a href="calculators.html" id="ppa-lock-back">← Back to calculators</a>
+  </div>
+</div>
+<script>
+(function(){
+  var HASH="273b796a015b32c0907ab1c38ce843343d4b2acf632302968dbd4e146e32fe28";
+  async function sha256(m){var b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(m));return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,"0");}).join("");}
+  if(localStorage.getItem("ppa_pro")==="1"||localStorage.getItem("ppa_admin")==="1"){document.getElementById("ppa-lock-overlay").style.display="none";return;}
+  window.ppaUnlock=async function(){
+    var code=document.getElementById("ppa-lock-input").value.trim().toUpperCase();
+    var h=await sha256(code);
+    if(h===HASH){localStorage.setItem("ppa_pro","1");document.getElementById("ppa-lock-overlay").style.display="none";}
+    else{document.getElementById("ppa-lock-err").style.display="block";}
+  };
+  document.getElementById("ppa-lock-input").addEventListener("keydown",function(e){if(e.key==="Enter")ppaUnlock();});
+})();
+</script>
+
+
+
+
+<div class="layout">
+  
+
+  <main class="main">
+
+    <!-- TAB 1: Wall Thickness -->
+    <div id="tab-wt" class="panel active">
+      <div class="panel-title">Wall Thickness Design</div>
+      <div class="panel-sub">Pressure containment per ISO 13623:2017 Cl. 6.4.1.1</div>
+      <div class="std-tags"><span class="std-tag">ISO 13623:2017</span><span class="std-tag">DNV-ST-F101</span></div>
+      <div class="formula-card">
+        <div class="formula-title">Design equations</div>
+        t = Do · (Pid − Pod) / [2·σhp + (Pid − Pod)]<br>
+        σhp = SMYS · fh · ft<br>
+        tnom ≥ t + A &nbsp;&nbsp;(A = corrosion + mill tolerance)
+      </div>
+      <div class="form-grid">
+        <div class="field"><label>Outside Diameter Do (mm)</label><input id="wt_do" type="number" value="323.85"><small>12" = 323.85 mm</small></div>
+        <div class="field"><label>SMYS (MPa)</label><input id="wt_smys" type="number" value="415"><small>API 5L X60 = 415 MPa</small></div>
+        <div class="field"><label>Internal Design Pressure Pid (MPa)</label><input id="wt_pid" type="number" value="10.0"></div>
+        <div class="field"><label>External Hydrostatic Pressure Pod (MPa)</label><input id="wt_pod" type="number" value="0.603"></div>
+        <div class="field"><label>Hoop Design Factor fh</label><input id="wt_fh" type="number" value="0.77" step="0.01"><small>0.77 general route (ISO 13623)</small></div>
+        <div class="field"><label>Temp Derating Factor ft</label><input id="wt_ft" type="number" value="1.0" step="0.01"></div>
+        <div class="field"><label>Corrosion Allowance (mm)</label><input id="wt_ca" type="number" value="3.0"></div>
+        <div class="field"><label>Mill Tolerance (mm)</label><input id="wt_tol" type="number" value="0.5"></div>
+      </div>
+      <button class="calc-btn" onclick="calcWT()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg>
+        Calculate
+      </button>
+      <div id="wt_result"></div>
+    </div>
+
+    <!-- TAB 2: On-Bottom Stability -->
+    <div id="tab-obs" class="panel">
+      <div class="panel-title">On-Bottom Stability</div>
+      <div class="panel-sub">Vertical stability check per DNV-RP-F109:2021</div>
+      <div class="std-tags"><span class="std-tag">DNV-RP-F109:2021</span></div>
+      <div class="formula-card">
+        <div class="formula-title">Design equations</div>
+        γw · b / ws ≤ 1.0 &nbsp;&nbsp;(γw = 1.1)<br>
+        b = ρw · g · π · D² / 4 &nbsp;&nbsp;(buoyancy per unit length)<br>
+        ws = pipe submerged weight per unit length
+      </div>
+      <div class="form-grid">
+        <div class="field"><label>Pipe OD bare (mm)</label><input id="obs_od" type="number" value="323.85"></div>
+        <div class="field"><label>Steel Wall Thickness (mm)</label><input id="obs_wt" type="number" value="8.38"></div>
+        <div class="field"><label>FBE Coating Thickness (mm)</label><input id="obs_tfbe" type="number" value="0.5"></div>
+        <div class="field"><label>Concrete Coating Thickness (mm)</label><input id="obs_tcc" type="number" value="25.4"></div>
+        <div class="field"><label>Concrete Coating Density (kg/m³)</label><input id="obs_rcc" type="number" value="3040"></div>
+        <div class="field"><label>Content Density (kg/m³)</label><input id="obs_rc" type="number" value="850"><small>Crude oil ≈ 850</small></div>
+        <div class="field"><label>Water Density ρw (kg/m³)</label><input id="obs_rw" type="number" value="1025"></div>
+        <div class="field"><label>Safety Factor γw</label><input id="obs_gw" type="number" value="1.1" step="0.05"></div>
+      </div>
+      <button class="calc-btn" onclick="calcOBS()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg>
+        Check Stability
+      </button>
+      <div id="obs_result"></div>
+    </div>
+
+    <!-- TAB 3: Local Buckling -->
+    <div id="tab-lb" class="panel">
+      <div class="panel-title">Local Buckling / Collapse Check</div>
+      <div class="panel-sub">External pressure collapse per DNV-ST-F101:2021 Sec. 5</div>
+      <div class="std-tags"><span class="std-tag">DNV-ST-F101:2021</span></div>
+      <div class="formula-card">
+        <div class="formula-title">Design equations</div>
+        Pe − Pmin ≤ Pc(t1) / (γm · γsc)<br>
+        [Pc − Pel][Pc² − Pp²] = Pc · Pel · Pp · f0 · D/t &nbsp;&nbsp;(cubic for Pc)<br>
+        Pel = 2E·(t/D)³/(1−ν²) &nbsp;&nbsp;|&nbsp;&nbsp; Pp = fy·αfab·2t/D
+      </div>
+      <div class="form-grid">
+        <div class="field"><label>Outside Diameter D (mm)</label><input id="lb_d" type="number" value="323.85"></div>
+        <div class="field"><label>Wall Thickness t (mm)</label><input id="lb_t" type="number" value="8.38"></div>
+        <div class="field"><label>Water Depth h (m)</label><input id="lb_h" type="number" value="60"></div>
+        <div class="field"><label>SMYS (MPa)</label><input id="lb_fy" type="number" value="415"></div>
+        <div class="field"><label>Young's Modulus E (MPa)</label><input id="lb_e" type="number" value="200000"></div>
+        <div class="field"><label>Poisson's Ratio ν</label><input id="lb_v" type="number" value="0.3" step="0.01"></div>
+        <div class="field"><label>Fabrication Factor αfab</label>
+          <select id="lb_fab">
+            <option value="1.0">1.0 — Seamless (SMLS)</option>
+            <option value="0.85">0.85 — UOE / SAW</option>
+          </select>
+        </div>
+        <div class="field"><label>Material Strength Factor αu</label><input id="lb_au" type="number" value="0.96" step="0.01"></div>
+        <div class="field"><label>Fab Thickness Tolerance tfab (mm)</label><input id="lb_tfab" type="number" value="1.0"><small>SMLS = 1.0 mm, ERW = 0.93 mm</small></div>
+        <div class="field"><label>Ovality f0</label><input id="lb_f0" type="number" value="0.015" step="0.001"></div>
+        <div class="field"><label>Material Resistance Factor γm</label><input id="lb_gm" type="number" value="1.15" step="0.01"></div>
+        <div class="field"><label>Safety Class Factor γsc</label><input id="lb_gsc" type="number" value="1.138" step="0.001"><small>Medium safety class</small></div>
+      </div>
+      <button class="calc-btn" onclick="calcLB()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg>
+        Check Local Buckling
+      </button>
+      <div id="lb_result"></div>
+    </div>
+
+    <!-- TAB 4: Buckle Propagation -->
+    <div id="tab-bp" class="panel">
+      <div class="panel-title">Buckle Propagation Check</div>
+      <div class="panel-sub">Propagating buckle criterion per DNV-ST-F101:2021</div>
+      <div class="std-tags"><span class="std-tag">DNV-ST-F101:2021</span></div>
+      <div class="formula-card">
+        <div class="formula-title">Design equations</div>
+        Ppr = 35 · fy · αfab · (t/D)^2.5 &nbsp;&nbsp;[valid for D/t &lt; 45]<br>
+        Check: Pe &lt; Ppr / (γm · γsc)<br>
+        Pe = ρw · g · h
+      </div>
+      <div class="form-grid">
+        <div class="field"><label>Outside Diameter D (mm)</label><input id="bp_d" type="number" value="323.85"></div>
+        <div class="field"><label>Wall Thickness t (mm)</label><input id="bp_t" type="number" value="8.38"></div>
+        <div class="field"><label>Water Depth h (m)</label><input id="bp_h" type="number" value="60"></div>
+        <div class="field"><label>Char. Yield Stress fy (MPa)</label><input id="bp_fy" type="number" value="398.4"><small>SMYS × αu</small></div>
+        <div class="field"><label>Fabrication Factor αfab</label>
+          <select id="bp_fab">
+            <option value="1.0">1.0 — Seamless</option>
+            <option value="0.85">0.85 — UOE / SAW</option>
+          </select>
+        </div>
+        <div class="field"><label>Material Resistance Factor γm</label><input id="bp_gm" type="number" value="1.15" step="0.01"></div>
+        <div class="field"><label>Safety Class Factor γsc</label><input id="bp_gsc" type="number" value="1.138" step="0.001"></div>
+        <div class="field"><label>Water Density ρw (kg/m³)</label><input id="bp_rw" type="number" value="1025"></div>
+      </div>
+      <button class="calc-btn" onclick="calcBP()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg>
+        Check Propagation
+      </button>
+      <div id="bp_result"></div>
+    </div>
+
+    <!-- TAB 5: Combined Stress -->
+    <div id="tab-cs" class="panel">
+      <div class="panel-title">Combined Stress — Von Mises</div>
+      <div class="panel-sub">Biaxial stress check per ISO 13623:2017 Sec. 6</div>
+      <div class="std-tags"><span class="std-tag">ISO 13623:2017</span></div>
+      <div class="formula-card">
+        <div class="formula-title">Design equations</div>
+        σhp = (Pid − Pod) · (Do − t) / (2t)<br>
+        σL = ν·σhp − E·α·ΔT &nbsp;&nbsp;(fully restrained pipeline)<br>
+        σeq = √(σhp² − σhp·σL + σL²) ≤ feq·ft·SMYS
+      </div>
+      <div class="form-grid">
+        <div class="field"><label>Outside Diameter Do (mm)</label><input id="cs_do" type="number" value="323.85"></div>
+        <div class="field"><label>Wall Thickness t (mm)</label><input id="cs_t" type="number" value="8.38"></div>
+        <div class="field"><label>Internal Pressure Pid (MPa)</label><input id="cs_pid" type="number" value="10.0"></div>
+        <div class="field"><label>External Pressure Pod (MPa)</label><input id="cs_pod" type="number" value="0.603"></div>
+        <div class="field"><label>SMYS (MPa)</label><input id="cs_smys" type="number" value="415"></div>
+        <div class="field"><label>Equivalent Stress Factor feq</label>
+          <select id="cs_feq">
+            <option value="0.90">0.90 — Functional + Environmental</option>
+            <option value="1.00">1.00 — Construction / Accidental</option>
+          </select>
+        </div>
+        <div class="field"><label>Poisson's Ratio ν</label><input id="cs_v" type="number" value="0.3" step="0.01"></div>
+        <div class="field"><label>Young's Modulus E (MPa)</label><input id="cs_e" type="number" value="200000"></div>
+        <div class="field"><label>Thermal Exp. Coeff α (1/°C)</label><input id="cs_a" type="number" value="0.0000117" step="0.0000001"></div>
+        <div class="field"><label>ΔT — Installation to Operating (°C)</label><input id="cs_dt" type="number" value="40"><small>Toper − Tinstall</small></div>
+        <div class="field"><label>Temp Derating Factor ft</label><input id="cs_ft" type="number" value="1.0" step="0.01"></div>
+      </div>
+      <button class="calc-btn" onclick="calcCS()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg>
+        Check Combined Stress
+      </button>
+      <div id="cs_result"></div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+function switchTab(id) {
+  var tabs = ['wt','obs','lb','bp','cs','theory'];
+  tabs.forEach(function(t) {
+    document.getElementById('tab-' + t).classList.remove('active');
+  });
+  document.getElementById('tab-' + id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(function(btn) {
+    btn.classList.remove('active');
+    if (btn.getAttribute('onclick') === "switchTab('" + id + "')") {
+      btn.classList.add('active');
+    }
+  });
+}
+
+function loadPreset(opt) {
+  if (opt === 'fso') {
+    // 12" FSO - 60m water depth
+    setVal('wt_do',323.85); setVal('wt_smys',415); setVal('wt_pid',10.0); setVal('wt_pod',0.603);
+    setVal('wt_fh',0.77); setVal('wt_ft',1.0); setVal('wt_ca',3.0); setVal('wt_tol',0.5);
+    setVal('obs_od',323.85); setVal('obs_wt',8.38); setVal('obs_tfbe',0.5); setVal('obs_tcc',25.4);
+    setVal('obs_rcc',3040); setVal('obs_rc',850); setVal('obs_rw',1025); setVal('obs_gw',1.1);
+    setVal('lb_d',323.85); setVal('lb_t',8.38); setVal('lb_h',60); setVal('lb_fy',415);
+    setVal('lb_e',200000); setVal('lb_v',0.3); setVal('lb_au',0.96); setVal('lb_tfab',1.0);
+    setVal('lb_f0',0.015); setVal('lb_gm',1.15); setVal('lb_gsc',1.138);
+    document.getElementById('lb_fab').value = '1.0';
+    setVal('bp_d',323.85); setVal('bp_t',8.38); setVal('bp_h',60); setVal('bp_fy',398.4);
+    setVal('bp_gm',1.15); setVal('bp_gsc',1.138); setVal('bp_rw',1025);
+    document.getElementById('bp_fab').value = '1.0';
+    setVal('cs_do',323.85); setVal('cs_t',8.38); setVal('cs_pid',10.0); setVal('cs_pod',0.603);
+    setVal('cs_smys',415); setVal('cs_v',0.3); setVal('cs_e',200000);
+    setVal('cs_a',0.0000117); setVal('cs_dt',40); setVal('cs_ft',1.0);
+  } else {
+    // 24" SPM - 35m water depth
+    setVal('wt_do',609.6); setVal('wt_smys',415); setVal('wt_pid',8.0); setVal('wt_pod',0.352);
+    setVal('wt_fh',0.77); setVal('wt_ft',1.0); setVal('wt_ca',3.0); setVal('wt_tol',0.5);
+    setVal('obs_od',609.6); setVal('obs_wt',9.52); setVal('obs_tfbe',0.5); setVal('obs_tcc',25.4);
+    setVal('obs_rcc',3040); setVal('obs_rc',850); setVal('obs_rw',1025); setVal('obs_gw',1.1);
+    setVal('lb_d',609.6); setVal('lb_t',9.52); setVal('lb_h',35); setVal('lb_fy',415);
+    setVal('lb_e',200000); setVal('lb_v',0.3); setVal('lb_au',0.96); setVal('lb_tfab',0.93);
+    setVal('lb_f0',0.015); setVal('lb_gm',1.15); setVal('lb_gsc',1.138);
+    document.getElementById('lb_fab').value = '0.85';
+    setVal('bp_d',609.6); setVal('bp_t',9.52); setVal('bp_h',35); setVal('bp_fy',398.4);
+    setVal('bp_gm',1.15); setVal('bp_gsc',1.138); setVal('bp_rw',1025);
+    document.getElementById('bp_fab').value = '0.85';
+    setVal('cs_do',609.6); setVal('cs_t',9.52); setVal('cs_pid',8.0); setVal('cs_pod',0.352);
+    setVal('cs_smys',415); setVal('cs_v',0.3); setVal('cs_e',200000);
+    setVal('cs_a',0.0000117); setVal('cs_dt',35); setVal('cs_ft',1.0);
+  }
+}
+
+function setVal(id, val) {
+  var el = document.getElementById(id);
+  if (el) el.value = val;
+}
+
+function v(id) { return parseFloat(document.getElementById(id).value) || 0; }
+
+function makeTable(rows) {
+  var html = '<div class="results-title">Results</div><div class="result-table">';
+  rows.forEach(function(r) {
+    var badge = r.badge ? '<span class="status-badge ' + r.badge.cls + '">' + r.badge.txt + '</span>' : '';
+    html += '<div class="result-row"><span class="r-label">' + r.label + '</span><span class="r-val">' + r.val + '</span>' + badge + '</div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function makeBar(ratio, label) {
+  var pct = Math.min(ratio * 100, 100).toFixed(1);
+  var col = ratio < 0.75 ? '#3fb950' : ratio < 0.9 ? '#d29922' : '#f85149';
+  return '<div class="util-wrap"><span class="util-label">' + label + '</span>' +
+    '<div class="util-bar"><div class="util-fill" style="width:' + pct + '%;background:' + col + '"></div></div>' +
+    '<span class="util-pct" style="color:' + col + '">' + (ratio * 100).toFixed(1) + '%</span></div>';
+}
+
+function calcWT() {
+  var Do = v('wt_do'), smys = v('wt_smys'), Pid = v('wt_pid'), Pod = v('wt_pod');
+  var fh = v('wt_fh'), ft = v('wt_ft'), ca = v('wt_ca'), tol = v('wt_tol');
+  var shp = smys * fh * ft;
+  var tCalc = Do * (Pid - Pod) / (2 * shp + (Pid - Pod));
+  var tnom = tCalc + ca + tol;
+  document.getElementById('wt_result').innerHTML = makeTable([
+    { label: 'Max allowable hoop stress σhp', val: shp.toFixed(2) + ' MPa' },
+    { label: 'Pressure design thickness t', val: tCalc.toFixed(2) + ' mm' },
+    { label: 'Total allowance A (corrosion + mill)', val: (ca + tol).toFixed(2) + ' mm' },
+    { label: 'Required nominal wall thickness tnom', val: tnom.toFixed(2) + ' mm', badge: { cls: 's-info', txt: 'Minimum Required' } }
+  ]);
+}
+
+function calcOBS() {
+  var od = v('obs_od') / 1000, wt = v('obs_wt') / 1000, tfbe = v('obs_tfbe') / 1000;
+  var tcc = v('obs_tcc') / 1000, rcc = v('obs_rcc'), rc = v('obs_rc');
+  var rw = v('obs_rw'), gw = v('obs_gw');
+  var g = 9.807, rSteel = 7850, rFBE = 1200;
+  var D_total = od + 2 * tfbe + 2 * tcc;
+  var A_steel = Math.PI / 4 * (od * od - (od - 2 * wt) * (od - 2 * wt));
+  var A_fbe = Math.PI / 4 * ((od + 2 * tfbe) * (od + 2 * tfbe) - od * od);
+  var A_cc = Math.PI / 4 * ((od + 2 * tfbe + 2 * tcc) * (od + 2 * tfbe + 2 * tcc) - (od + 2 * tfbe) * (od + 2 * tfbe));
+  var A_int = Math.PI / 4 * (od - 2 * wt) * (od - 2 * wt);
+  var b = rw * g * Math.PI * D_total * D_total / 4;
+  var w_steel = rSteel * g * A_steel;
+  var w_fbe = rFBE * g * A_fbe;
+  var w_cc = rcc * g * A_cc;
+  var w_cont = rc * g * A_int;
+  var ws = w_steel + w_fbe + w_cc + w_cont - b;
+  var ratio = gw * b / ws;
+  var ok = ratio <= 1.0;
+  document.getElementById('obs_result').innerHTML = makeTable([
+    { label: 'Buoyancy per unit length b', val: b.toFixed(1) + ' N/m' },
+    { label: 'Steel pipe weight (in air)', val: w_steel.toFixed(1) + ' N/m' },
+    { label: 'Concrete coating weight', val: w_cc.toFixed(1) + ' N/m' },
+    { label: 'Content weight', val: w_cont.toFixed(1) + ' N/m' },
+    { label: 'Net submerged weight ws', val: ws.toFixed(1) + ' N/m' },
+    { label: 'Stability ratio γw·b / ws', val: ratio.toFixed(4), badge: { cls: ok ? 's-pass' : 's-fail', txt: ok ? 'PASS' : 'FAIL' } }
+  ]) + makeBar(ratio, 'Utilisation (limit = 1.0)');
+}
+
+function solveCubicPc(Pel, Pp, f0, D, t1) {
+  var b = -Pel;
+  var c1 = -(Pp * Pp) + Pp * Pel * f0 * (D / t1);
+  var d = Pel * Pp * Pp;
+  var u = (1 / 3) * (-(b * b) / 3 + c1);
+  var vv = (1 / 2) * ((2 / 27) * b * b * b - (1 / 3) * b * c1 + d);
+  var disc = u * u * u + vv * vv;
+  var y;
+  if (disc >= 0) {
+    var sq = Math.sqrt(disc);
+    y = Math.cbrt(-vv + sq) + Math.cbrt(-vv - sq);
+  } else {
+    var phi1 = Math.acos(-vv / Math.sqrt(-u * u * u));
+    y = -2 * Math.sqrt(-u) * Math.cos(Math.PI / 3 + phi1 / 3);
+  }
+  return y - b / 3;
+}
+
+function calcLB() {
+  var D = v('lb_d') / 1000, t = v('lb_t') / 1000, h = v('lb_h');
+  var fy_nom = v('lb_fy'), E = v('lb_e') * 1e6, nu = v('lb_v');
+  var afab = parseFloat(document.getElementById('lb_fab').value);
+  var au = v('lb_au'), tfab = v('lb_tfab') / 1000, f0 = v('lb_f0');
+  var gm = v('lb_gm'), gsc = v('lb_gsc');
+  var rw = 1025, g = 9.807;
+  var fy = fy_nom * au * 1e6;
+  var t1 = t - tfab;
+  var Pe = rw * g * h;
+  var Pel = 2 * E * Math.pow(t1 / D, 3) / (1 - nu * nu);
+  var Pp = fy * afab * (2 * t1 / D);
+  var Pc = solveCubicPc(Pel, Pp, f0, D, t1);
+  var allowable = Pc / (gm * gsc);
+  var demand = Pe;
+  var ratio = demand / allowable;
+  var ok = ratio <= 1.0;
+  document.getElementById('lb_result').innerHTML = makeTable([
+    { label: 'Characteristic yield stress fy', val: (fy / 1e6).toFixed(2) + ' MPa' },
+    { label: 'Characteristic wall thickness t1', val: (t1 * 1000).toFixed(3) + ' mm' },
+    { label: 'External pressure Pe', val: (Pe / 1e6).toFixed(4) + ' MPa' },
+    { label: 'Elastic collapse pressure Pel', val: (Pel / 1e6).toFixed(4) + ' MPa' },
+    { label: 'Plastic collapse pressure Pp', val: (Pp / 1e6).toFixed(3) + ' MPa' },
+    { label: 'Characteristic collapse pressure Pc', val: (Pc / 1e6).toFixed(3) + ' MPa' },
+    { label: 'Allowable Pc / (γm·γsc)', val: (allowable / 1e6).toFixed(3) + ' MPa' },
+    { label: 'Utilisation Pe / Allowable', val: ratio.toFixed(4), badge: { cls: ok ? 's-pass' : 's-fail', txt: ok ? 'PASS' : 'FAIL' } }
+  ]) + makeBar(ratio, 'Utilisation (limit = 1.0)');
+}
+
+function calcBP() {
+  var D = v('bp_d') / 1000, t = v('bp_t') / 1000, h = v('bp_h');
+  var fy = v('bp_fy') * 1e6, afab = parseFloat(document.getElementById('bp_fab').value);
+  var gm = v('bp_gm'), gsc = v('bp_gsc'), rw = v('bp_rw');
+  var g = 9.807;
+  var Dt = D / t;
+  var Pe = rw * g * h;
+  var Ppr = 35 * fy * afab * Math.pow(t / D, 2.5);
+  var allowable = Ppr / (gm * gsc);
+  var ratio = Pe / allowable;
+  var ok = ratio <= 1.0 && Dt < 45;
+  document.getElementById('bp_result').innerHTML = makeTable([
+    { label: 'D/t ratio', val: Dt.toFixed(2), badge: { cls: Dt < 45 ? 's-pass' : 's-warn', txt: Dt < 45 ? '< 45 — OK' : '≥ 45 — formula limit!' } },
+    { label: 'External pressure Pe', val: (Pe / 1e6).toFixed(4) + ' MPa' },
+    { label: 'Propagating buckle pressure Ppr', val: (Ppr / 1e6).toFixed(3) + ' MPa' },
+    { label: 'Allowable Ppr / (γm·γsc)', val: (allowable / 1e6).toFixed(3) + ' MPa' },
+    { label: 'Utilisation Pe / Allowable', val: ratio.toFixed(4), badge: { cls: ok ? 's-pass' : 's-fail', txt: ok ? 'PASS' : 'FAIL — install buckle arrestors' } }
+  ]) + makeBar(ratio, 'Utilisation (limit = 1.0)');
+}
+
+function calcCS() {
+  var Do = v('cs_do'), t = v('cs_t'), Pid = v('cs_pid'), Pod = v('cs_pod');
+  var smys = v('cs_smys'), feq = parseFloat(document.getElementById('cs_feq').value);
+  var nu = v('cs_v'), E = v('cs_e'), alpha = v('cs_a'), dT = v('cs_dt'), ft = v('cs_ft');
+  var shp = (Pid - Pod) * (Do - t) / (2 * t);
+  var sEA = E * alpha * dT;
+  var sL = nu * shp - sEA;
+  var seq = Math.sqrt(shp * shp - shp * sL + sL * sL);
+  var allow = feq * ft * smys;
+  var ratio = seq / allow;
+  var ok = ratio <= 1.0;
+  document.getElementById('cs_result').innerHTML = makeTable([
+    { label: 'Hoop stress σhp', val: shp.toFixed(2) + ' MPa' },
+    { label: 'Thermal stress component E·α·ΔT', val: sEA.toFixed(2) + ' MPa' },
+    { label: 'Longitudinal stress σL', val: sL.toFixed(2) + ' MPa' + (sL < 0 ? ' (compressive)' : ' (tensile)') },
+    { label: 'Von Mises equivalent stress σeq', val: seq.toFixed(2) + ' MPa' },
+    { label: 'Allowable stress feq·ft·SMYS', val: allow.toFixed(2) + ' MPa' },
+    { label: 'Stress ratio σeq / allowable', val: ratio.toFixed(4) + ' (' + (ratio * 100).toFixed(1) + '%)', badge: { cls: ok ? 's-pass' : 's-fail', txt: ok ? 'PASS' : 'FAIL' } }
+  ]) + makeBar(ratio, 'Stress utilisation');
+}
+</script>
+
+
+<footer class="ppa-footer">
+  <div class="ppa-footer-logo">Piping<span>Pro</span> Academy</div>
+  <p>PipingPro Academy is a trademark of <strong style="color:var(--accent2);">Zephrum Konsultan Limited</strong>, registered in England &amp; Wales. Co. No. 13537626.</p>
+  <p style="margin-top:.3rem">© 2026 Zephrum Konsultan Limited. All rights reserved. &nbsp;·&nbsp; <a href="calculators.html">Calculator Suite</a></p>
+</footer>
+
+
+
+<!-- ══ THEORY & REFERENCE PANEL ══ -->
+<div class="panel" id="panel-theory">
+
+<div class="calc-tabs">
+  <button class="calc-tab active" onclick="showCalcTab('calculator')">⚙ Calculator</button>
+  <button class="calc-tab" onclick="showCalcTab('theory')">📚 Theory &amp; Reference</button>
+</div>
+
+<div class="calc-panel active" id="calctab-calculator">
+
+</div><!-- /calctab-calculator -->
+
+<!-- ══ THEORY & REFERENCE PANEL ══ -->
+<div class="calc-panel" id="calctab-theory">
+<div style="max-width:920px;margin:0 auto;padding:2rem 1.5rem;">
+  <div style="background:var(--accent-light,#f7ede3);border:1px solid rgba(196,92,42,.2);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--accent,#8b3a1a);margin-bottom:1.2rem;line-height:1.7;">
+    📚 Theory, formulae and code references for this calculator. For full course content and worked examples, visit <strong>PipingPro Academy</strong> courses.
+  </div>
+  
+    <div class="ref-section">
+      <div class="ref-title">Design Criteria — DNV-ST-F101</div>
+      <div class="ref-formula">
+        <b>Pressure containment:</b> t<sub>1</sub> = p<sub>d</sub> × D / (2 × f<sub>y</sub> × α<sub>U</sub> × γ<sub>m</sub> × γ<sub>SC</sub> + p<sub>d</sub>)<br/>
+        <b>External collapse:</b> (p<sub>e</sub> − p<sub>i</sub>) ≤ p<sub>c</sub>(t) / (γ<sub>m</sub> × γ<sub>SC</sub>)<br/>
+        <b>Propagating buckle pressure:</b> p<sub>pr</sub> = 35 × f<sub>y</sub> × (t/D)^2.5<br/>
+        <b>On-bottom stability:</b> F<sub>D</sub> + F<sub>I</sub> ≤ μ × (W<sub>s</sub> − F<sub>L</sub>)<br/>
+        <b>Free span natural frequency:</b> f<sub>n</sub> = (π/2L²) × √(EI/m<sub>e</sub>)
+      </div>
+    </div>
+    <div class="ref-section">
+      <div class="ref-title">Reference Standards</div>
+      <div class="ref-table-wrap"><table class="ref-table">
+        <tr><th>Standard</th><th>Application</th></tr>
+        <tr><td>DNV-ST-F101</td><td>Submarine Pipeline Systems — primary design standard</td></tr>
+        <tr><td>DNV-RP-F105</td><td>Free Spanning Pipelines — VIV and fatigue</td></tr>
+        <tr><td>DNV-RP-F109</td><td>On-Bottom Stability Design of Submarine Pipelines</td></tr>
+        <tr><td>ASME B31.8</td><td>Gas transmission — material and code compliance</td></tr>
+      </table></div>
+    </div>
+</div>
+</div>
+</div><!-- /calctab-theory -->
+<!-- ══ END THEORY PANEL ══ -->
+<script>
+/* ── THEORY TAB SWITCHING ── */
+function showCalcTab(name){
+  ['calculator','theory'].forEach(function(t){
+    var btn = document.querySelector('.calc-tab[onclick*="' + t + '"]');
+    var panel = document.getElementById('calctab-' + t);
+    if(btn) btn.classList.toggle('active', t===name);
+    if(panel) panel.classList.toggle('active', t===name);
+  });
+}
+</script>
+</body>
+</html>

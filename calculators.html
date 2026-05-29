@@ -8,12 +8,12 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 :root{
-  --ink:#1a1a18;--ink2:#4a4a44;--ink3:#8a8a80;
+  --ink:#1a1510;--ink2:#4a4a44;--ink3:#8a8a80;
   --paper:#f5f2eb;--paper2:#ede9de;--paper3:#e3dfd2;
-  --accent:#c45c2a;--accent2:#e8a06a;--accent-light:#f7ede3;
-  --teal:#1a6b5a;--teal-light:#e0f0eb;
+  --accent:#8b3a1a;--accent2:#d4a017;--accent-light:#f7ede3;
+  --teal:#1a6b5a;--teal-light:#e7f1ee;
   --rule:rgba(26,26,24,0.12);
-  --gold:#b8922a;--gold-light:#fdf3dc;
+  --gold:#b8860b;--gold-light:#f5e9c8;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);font-size:15px;line-height:1.6;min-height:100vh;}
@@ -46,7 +46,7 @@ nav{background:rgba(245,242,235,0.96);backdrop-filter:blur(14px);border-bottom:1
 /* Card illustration area */
 .card-img{height:140px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
 .card-img.bg-teal{background:linear-gradient(135deg,#1a6b5a 0%,#2d9679 100%);}
-.card-img.bg-accent{background:linear-gradient(135deg,#7a3518 0%,#c45c2a 100%);}
+.card-img.bg-accent{background:linear-gradient(135deg,#7a3518 0%,#8b3a1a 100%);}
 .card-img.bg-navy{background:linear-gradient(135deg,#1a2a5a 0%,#2d4a8a 100%);}
 .card-img.bg-slate{background:linear-gradient(135deg,#2a3a4a 0%,#4a6a7a 100%);}
 .card-img.bg-olive{background:linear-gradient(135deg,#3a4a1a 0%,#6a8a2a 100%);}
@@ -124,7 +124,7 @@ footer a{color:var(--accent2);text-decoration:none;}
 .lmodal-label{display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:.4rem;}
 .lmodal-input{width:100%;padding:10px 12px;border:1px solid var(--rule);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);outline:none;transition:border-color .18s;}
 .lmodal-input:focus{border-color:var(--gold);}
-.lmodal-err{font-size:11px;color:#b91c1c;margin-top:.5rem;display:none;}
+.lmodal-err{font-size:11px;color:#6e2e14;margin-top:.5rem;display:none;}
 .lmodal-submit{width:100%;padding:11px;background:var(--gold);color:var(--ink);font-weight:700;font-size:13px;letter-spacing:.05em;text-transform:uppercase;border:none;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .18s;margin-top:.4rem;}
 .lmodal-submit:hover{background:#c9a020;}
 .lmodal-logout{width:100%;padding:10px;background:var(--paper2);color:var(--ink2);font-weight:600;font-size:12px;border:none;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:.7rem;}
@@ -194,6 +194,57 @@ footer a{color:var(--accent2);text-decoration:none;}
 .suite-header-title{font-family:'DM Serif Display',serif;font-size:1.5rem;color:#fff;line-height:1.15;margin-bottom:.2rem;}
 .suite-header-codes{font-size:11px;font-family:'DM Mono',monospace;color:rgba(255,255,255,.45);letter-spacing:.06em;}
 </style>
+<!-- ===== PipingPro Brand Bridge v1.0 — injected before </head> ===== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style id="pp-brand-bridge">
+/* Redefines every token name used across the suite to the PipingPro brand.
+   Placed last in <head> so it overrides each file's own :root. No markup/JS touched. */
+:root{
+  /* surfaces */
+  --bg:#faf6ef; --cream:#faf6ef;
+  --paper:#f3ede2; --surface:#f3ede2; --paper2:#f3ede2; --bg2:#f3ede2;
+  --paper3:#e8dfd0; --bg3:#e8dfd0;
+  /* text */
+  --ink:#1a1510; --text:#1a1510;
+  --ink2:#4a3f30; --text-2:#4a3f30; --muted:#4a3f30;
+  --ink3:#6b5d49; --text-3:#6b5d49; --muted2:#6b5d49;
+  /* primary accent = rust (legible on light & as button bg) */
+  --accent:#8b3a1a; --accent2:#b8860b;
+  --accent-light:#f6e6df; --accent-border:#c8b89a;
+  --teal:#8b3a1a; --teal2:#8b3a1a; --teal-light:#f6e6df;
+  --blue:#8b3a1a; --purple:#8b3a1a;
+  /* gilt accents */
+  --gold:#b8860b; --gold2:#b8860b; --gold-light:#f5e9c8; --orange:#b8860b; --yellow:#b8860b;
+  /* rules / borders */
+  --rule:#c8b89a; --border:#c8b89a; --border2:#c8b89a; --border-strong:#b8a87f;
+  /* fonts */
+  --serif:'DM Serif Display',Georgia,serif;
+  --font:'DM Sans',system-ui,sans-serif; --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  /* geometry */
+  --radius:4px; --radius-lg:6px;
+  /* states */
+  --pass:#1a6b5a; --success:#1a6b5a; --green:#1a6b5a;
+  --pass-bg:#e7f1ee; --success-light:#e7f1ee; --pass-bd:#1a6b5a;
+  --fail:#8b3a1a; --danger:#8b3a1a; --red:#8b3a1a;
+  --fail-bg:#f6e6df; --danger-light:#f6e6df; --red-bg:#f6e6df;
+  --danger-border:#8b3a1a; --fail-bd:#8b3a1a;
+  --warn:#b8860b; --warn-light:#f5e9c8; --warn-bg:#f5e9c8;
+  --warn-border:#b8860b; --warn-bd:#b8860b;
+  --info:#1a6b5a; --info-light:#e7f1ee; --info-border:#1a6b5a;
+}
+/* Enforce brand fonts even where files hardcoded font-family (not via token) */
+body, p, div, span, td, th, li, label, input, select, textarea, button{
+  font-family:'DM Sans',system-ui,sans-serif;
+}
+h1,h2,h3,h4,h5,.calc-card-name,.card-title{ font-family:'DM Serif Display',Georgia,serif; }
+code,pre,.mono,[class*="mono"]{ font-family:'IBM Plex Mono',ui-monospace,monospace; }
+body{ background:#faf6ef; color:#1a1510; }
+</style>
+<!-- ===== end PipingPro Brand Bridge ===== -->
+
 </head>
 <body>
 
@@ -485,7 +536,7 @@ footer a{color:var(--accent2);text-decoration:none;}
           <line x1="25" y1="45" x2="55" y2="45" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
           <line x1="25" y1="55" x2="50" y2="55" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
           <circle cx="68" cy="62" r="10" fill="rgba(255,200,100,0.85)"/>
-          <text x="68" y="67" text-anchor="middle" font-size="12" fill="#1a1a18" font-weight="bold">AI</text>
+          <text x="68" y="67" text-anchor="middle" font-size="12" fill="#1a1510" font-weight="bold">AI</text>
         </svg>
         <span class="card-badge badge-member" id="badge-cs">👑 Members</span>
       </div>
@@ -590,8 +641,8 @@ footer a{color:var(--accent2);text-decoration:none;}
           <line x1="34" y1="49" x2="52" y2="49" stroke="rgba(255,255,255,0.4)" stroke-width="1.2"/>
           <line x1="34" y1="55" x2="48" y2="55" stroke="rgba(255,255,255,0.3)" stroke-width="1.2"/>
           <circle cx="68" cy="68" r="10" fill="rgba(100,220,150,0.85)"/>
-          <line x1="64" y1="68" x2="72" y2="68" stroke="#1a1a18" stroke-width="2" stroke-linecap="round"/>
-          <line x1="68" y1="64" x2="68" y2="72" stroke="#1a1a18" stroke-width="2" stroke-linecap="round"/>
+          <line x1="64" y1="68" x2="72" y2="68" stroke="#1a1510" stroke-width="2" stroke-linecap="round"/>
+          <line x1="68" y1="64" x2="68" y2="72" stroke="#1a1510" stroke-width="2" stroke-linecap="round"/>
         </svg>
         <span class="card-badge badge-member" id="badge-mm">&#128081; Members</span>
       </div>
@@ -892,12 +943,12 @@ const SVGS = {
   ub:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="5" y1="50" x2="85" y2="50" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-dasharray="5 3"/><path d="M5 65 Q22 65 35 50 Q45 38 55 50 Q68 65 85 65" stroke="rgba(255,255,255,0.9)" stroke-width="4" fill="none" stroke-linecap="round"/><line x1="45" y1="55" x2="45" y2="30" stroke="rgba(255,255,255,0.75)" stroke-width="2"/><polygon points="45,28 41,36 49,36" fill="rgba(255,255,255,0.75)"/><line x1="25" y1="25" x2="25" y2="48" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="65" y1="25" x2="65" y2="48" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-dasharray="3 2"/></svg>`,
   df:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="45" x2="80" y2="45" stroke="rgba(255,255,255,0.6)" stroke-width="8" stroke-linecap="round"/><polyline points="45,30 48,38 42,45 48,52 45,60" stroke="rgba(255,120,100,0.95)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="45" y1="28" x2="25" y2="28" stroke="rgba(255,200,180,0.7)" stroke-width="1.5"/><polygon points="23,28 30,25 30,31" fill="rgba(255,200,180,0.7)"/><line x1="45" y1="28" x2="65" y2="28" stroke="rgba(255,200,180,0.7)" stroke-width="1.5"/><polygon points="67,28 60,25 60,31" fill="rgba(255,200,180,0.7)"/></svg>`,
   sp:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 35 Q20 28 35 35 Q50 42 65 35 Q80 28 88 35" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/><path d="M5 42 Q20 35 35 42 Q50 49 65 42 Q80 35 88 42" stroke="rgba(255,255,255,0.25)" stroke-width="1" fill="none"/><line x1="5" y1="78" x2="85" y2="78" stroke="rgba(255,255,255,0.3)" stroke-width="2"/><line x1="10" y1="72" x2="80" y2="72" stroke="rgba(255,255,255,0.85)" stroke-width="6" stroke-linecap="round"/><line x1="80" y1="38" x2="80" y2="72" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/><polygon points="80,74 77,67 83,67" fill="rgba(255,255,255,0.6)"/><polygon points="80,36 77,43 83,43" fill="rgba(255,255,255,0.6)"/></svg>`,
-  cs:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="15" y="20" width="60" height="50" rx="4" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" fill="none"/><line x1="25" y1="35" x2="65" y2="35" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/><line x1="25" y1="45" x2="55" y2="45" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/><line x1="25" y1="55" x2="50" y2="55" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/><circle cx="68" cy="62" r="10" fill="rgba(255,200,100,0.85)"/><text x="68" y="67" text-anchor="middle" font-size="12" fill="#1a1a18" font-weight="bold">AI</text></svg>`,
+  cs:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="15" y="20" width="60" height="50" rx="4" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" fill="none"/><line x1="25" y1="35" x2="65" y2="35" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/><line x1="25" y1="45" x2="55" y2="45" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/><line x1="25" y1="55" x2="50" y2="55" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/><circle cx="68" cy="62" r="10" fill="rgba(255,200,100,0.85)"/><text x="68" y="67" text-anchor="middle" font-size="12" fill="#1a1510" font-weight="bold">AI</text></svg>`,
   fl:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="45" cy="45" rx="28" ry="12" stroke="rgba(255,255,255,0.8)" stroke-width="3" fill="none"/><ellipse cx="45" cy="45" rx="18" ry="7" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/><line x1="17" y1="45" x2="5" y2="45" stroke="rgba(255,255,255,0.7)" stroke-width="4" stroke-linecap="round"/><line x1="73" y1="45" x2="85" y2="45" stroke="rgba(255,255,255,0.7)" stroke-width="4" stroke-linecap="round"/><line x1="20" y1="36" x2="20" y2="54" stroke="rgba(255,255,255,0.5)" stroke-width="6" stroke-linecap="round"/><line x1="70" y1="36" x2="70" y2="54" stroke="rgba(255,255,255,0.5)" stroke-width="6" stroke-linecap="round"/></svg>`,
   hp:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="25" width="50" height="40" rx="3" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" fill="none"/><line x1="20" y1="38" x2="70" y2="38" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><line x1="30" y1="48" x2="60" y2="48" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/><line x1="30" y1="55" x2="55" y2="55" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/><line x1="45" y1="65" x2="45" y2="75" stroke="rgba(255,255,255,0.6)" stroke-width="2"/><line x1="35" y1="75" x2="55" y2="75" stroke="rgba(255,255,255,0.6)" stroke-width="2"/></svg>`,
   nl:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="30" y="30" width="30" height="35" rx="2" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" fill="none"/><line x1="45" y1="65" x2="45" y2="78" stroke="rgba(255,255,255,0.8)" stroke-width="4" stroke-linecap="round"/><line x1="45" y1="30" x2="45" y2="17" stroke="rgba(255,255,255,0.6)" stroke-width="3" stroke-linecap="round"/><line x1="30" y1="47" x2="15" y2="47" stroke="rgba(255,255,255,0.6)" stroke-width="3" stroke-linecap="round"/><line x1="60" y1="47" x2="75" y2="47" stroke="rgba(255,255,255,0.6)" stroke-width="3" stroke-linecap="round"/><line x1="38" y1="42" x2="52" y2="42" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><line x1="38" y1="50" x2="52" y2="50" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/></svg>`,
   pm:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="20" width="70" height="50" rx="3" stroke="rgba(255,255,255,0.6)" stroke-width="2" fill="none"/><line x1="10" y1="33" x2="80" y2="33" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><line x1="28" y1="20" x2="28" y2="70" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><line x1="52" y1="20" x2="52" y2="70" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><circle cx="19" cy="44" r="4" stroke="rgba(255,255,255,0.8)" stroke-width="1.5" fill="none"/><line x1="19" y1="52" x2="19" y2="62" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round"/><circle cx="40" cy="44" r="4" stroke="rgba(255,255,255,0.8)" stroke-width="1.5" fill="none"/><line x1="40" y1="52" x2="40" y2="62" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round"/></svg>`,
-  mm:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="18" width="36" height="26" rx="2" stroke="rgba(255,255,255,0.75)" stroke-width="2" fill="none"/><rect x="18" y="26" width="36" height="26" rx="2" stroke="rgba(255,255,255,0.55)" stroke-width="2" fill="rgba(255,255,255,0.05)"/><rect x="28" y="34" width="36" height="26" rx="2" stroke="rgba(255,255,255,0.9)" stroke-width="2.2" fill="rgba(255,255,255,0.07)"/><line x1="34" y1="43" x2="56" y2="43" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/><line x1="34" y1="49" x2="52" y2="49" stroke="rgba(255,255,255,0.4)" stroke-width="1.2"/><line x1="34" y1="55" x2="48" y2="55" stroke="rgba(255,255,255,0.3)" stroke-width="1.2"/><circle cx="68" cy="68" r="10" fill="rgba(100,220,150,0.85)"/><line x1="64" y1="68" x2="72" y2="68" stroke="#1a1a18" stroke-width="2" stroke-linecap="round"/><line x1="68" y1="64" x2="68" y2="72" stroke="#1a1a18" stroke-width="2" stroke-linecap="round"/></svg>`,
+  mm:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="18" width="36" height="26" rx="2" stroke="rgba(255,255,255,0.75)" stroke-width="2" fill="none"/><rect x="18" y="26" width="36" height="26" rx="2" stroke="rgba(255,255,255,0.55)" stroke-width="2" fill="rgba(255,255,255,0.05)"/><rect x="28" y="34" width="36" height="26" rx="2" stroke="rgba(255,255,255,0.9)" stroke-width="2.2" fill="rgba(255,255,255,0.07)"/><line x1="34" y1="43" x2="56" y2="43" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/><line x1="34" y1="49" x2="52" y2="49" stroke="rgba(255,255,255,0.4)" stroke-width="1.2"/><line x1="34" y1="55" x2="48" y2="55" stroke="rgba(255,255,255,0.3)" stroke-width="1.2"/><circle cx="68" cy="68" r="10" fill="rgba(100,220,150,0.85)"/><line x1="64" y1="68" x2="72" y2="68" stroke="#1a1510" stroke-width="2" stroke-linecap="round"/><line x1="68" y1="64" x2="68" y2="72" stroke="#1a1510" stroke-width="2" stroke-linecap="round"/></svg>`,
   ss:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="55" x2="80" y2="55" stroke="rgba(255,255,255,0.8)" stroke-width="6" stroke-linecap="round"/><line x1="25" y1="55" x2="25" y2="30" stroke="rgba(255,255,255,0.6)" stroke-width="3" stroke-linecap="round"/><line x1="65" y1="55" x2="65" y2="30" stroke="rgba(255,255,255,0.6)" stroke-width="3" stroke-linecap="round"/><line x1="45" y1="25" x2="45" y2="55" stroke="rgba(255,255,255,0.9)" stroke-width="4" stroke-linecap="round"/><line x1="20" y1="25" x2="70" y2="25" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"/><line x1="10" y1="65" x2="80" y2="65" stroke="rgba(255,255,255,0.3)" stroke-width="2"/></svg>`,
   tr:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="45" x2="80" y2="45" stroke="rgba(255,255,255,0.8)" stroke-width="8" stroke-linecap="round"/><rect x="38" y="30" width="14" height="30" rx="2" fill="rgba(255,255,255,0.6)"/><line x1="45" y1="60" x2="45" y2="75" stroke="rgba(255,255,255,0.7)" stroke-width="3" stroke-linecap="round"/><line x1="35" y1="75" x2="55" y2="75" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"/><line x1="45" y1="30" x2="45" y2="15" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-dasharray="3 2"/><polygon points="45,13 41,21 49,21" fill="rgba(255,255,255,0.4)"/></svg>`,
   vf:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="5" y1="48" x2="85" y2="48" stroke="rgba(255,255,255,0.75)" stroke-width="5" stroke-linecap="round"/><path d="M10 48 Q20 30 30 48 Q40 66 50 48 Q60 30 70 48 Q78 60 83 48" stroke="rgba(255,255,255,0.95)" stroke-width="2.2" fill="none" stroke-linecap="round"/><rect x="8" y="43" width="6" height="10" rx="1" fill="rgba(255,255,255,0.5)"/><rect x="76" y="43" width="6" height="10" rx="1" fill="rgba(255,255,255,0.5)"/><line x1="45" y1="28" x2="45" y2="20" stroke="rgba(255,230,180,0.9)" stroke-width="1.5"/><polygon points="45,18 42,24 48,24" fill="rgba(255,230,180,0.9)"/></svg>`,

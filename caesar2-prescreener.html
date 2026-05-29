@@ -11,12 +11,12 @@
 :root{
   --bg:#0f1117;--bg2:#161b27;--bg3:#1e2535;
   --ink:#e8e4dc;--ink2:#a8a49c;--ink3:#6a6660;
-  --gold:#d97706;--gold2:#f59e0b;--gold3:#fbbf24;
+  --gold:#b8860b;--gold2:#d4a017;--gold3:#d4a017;
   --gold-bd:rgba(217,119,6,0.25);
   --teal:#0d9488;--teal2:#14b8a6;
-  --red:#ef4444;--red-bg:rgba(239,68,68,0.12);
+  --red:#8b3a1a;--red-bg:rgba(239,68,68,0.12);
   --green:#10b981;--green-bg:rgba(16,185,129,0.12);
-  --warn:#f59e0b;--warn-bg:rgba(245,158,11,0.12);
+  --warn:#d4a017;--warn-bg:rgba(245,158,11,0.12);
   --serif:'DM Serif Display',Georgia,serif;
   --sans:'DM Sans',system-ui,sans-serif;
   --mono:'DM Mono',monospace;
@@ -145,7 +145,7 @@ select option{background:var(--bg3);}
 .btn-analyse{
   display:flex;align-items:center;justify-content:center;gap:10px;
   width:100%;padding:15px;margin-top:1.25rem;
-  background:linear-gradient(135deg,#b45309,#d97706);
+  background:linear-gradient(135deg,#8b6508,#b8860b);
   color:#fff;border:none;border-radius:10px;
   font-family:var(--sans);font-size:15px;font-weight:700;
   letter-spacing:.03em;cursor:pointer;
@@ -153,7 +153,7 @@ select option{background:var(--bg3);}
   transition:all .2s;
 }
 .btn-analyse:hover:not(:disabled){
-  background:linear-gradient(135deg,#92400e,#b45309);
+  background:linear-gradient(135deg,#6e2e14,#8b6508);
   transform:translateY(-1px);
   box-shadow:0 6px 24px rgba(217,119,6,.45);
 }
@@ -206,18 +206,18 @@ select option{background:var(--bg3);}
 .flag-item.fi-warn{background:var(--warn-bg);border:1px solid rgba(245,158,11,0.2);color:#fcd34d;}
 .flag-item.fi-green{background:var(--green-bg);border:1px solid rgba(16,185,129,0.2);color:#6ee7b7;}
 .flag-item.fi-blue{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);color:#93c5fd;}
-.flag-item.fi-gold{background:rgba(217,119,6,0.08);border:1px solid rgba(217,119,6,0.2);color:#fbbf24;}
+.flag-item.fi-gold{background:rgba(217,119,6,0.08);border:1px solid rgba(217,119,6,0.2);color:#d4a017;}
 .flag-badge{
   flex-shrink:0;font-size:10px;font-weight:700;
   letter-spacing:.06em;padding:2px 7px;
   border-radius:4px;margin-top:1px;text-transform:uppercase;
   white-space:nowrap;
 }
-.fb-red{background:rgba(239,68,68,0.2);color:#f87171;}
-.fb-warn{background:rgba(245,158,11,0.2);color:#fbbf24;}
-.fb-green{background:rgba(16,185,129,0.2);color:#34d399;}
-.fb-blue{background:rgba(59,130,246,0.2);color:#60a5fa;}
-.fb-gold{background:rgba(217,119,6,0.2);color:#fbbf24;}
+.fb-red{background:rgba(239,68,68,0.2);color:#b35a3a;}
+.fb-warn{background:rgba(245,158,11,0.2);color:#d4a017;}
+.fb-green{background:rgba(16,185,129,0.2);color:#2d9679;}
+.fb-blue{background:rgba(59,130,246,0.2);color:#2d9679;}
+.fb-gold{background:rgba(217,119,6,0.2);color:#d4a017;}
 
 /* Prose content */
 .prose-block{
@@ -254,8 +254,8 @@ select option{background:var(--bg3);}
 
 /* PDF section */
 .pdf-section{text-align:center;padding:1.5rem 1rem 2rem;border-top:1px solid rgba(217,119,6,0.12);margin-top:1rem;}
-.pdf-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:#b45309;color:#fff;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;font-family:var(--sans);}
-.pdf-btn:hover{background:#92400e;}
+.pdf-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:#8b6508;color:#fff;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;font-family:var(--sans);}
+.pdf-btn:hover{background:#6e2e14;}
 
 footer{background:rgba(0,0,0,.3);border-top:1px solid rgba(255,255,255,.05);color:rgba(245,242,235,.4);text-align:center;padding:2rem;font-size:13px;margin-top:2rem;}
 .fl{font-family:var(--serif);font-size:1.1rem;color:rgba(245,242,235,.7);margin-bottom:.4rem;}
@@ -266,13 +266,13 @@ footer{background:rgba(0,0,0,.3);border-top:1px solid rgba(255,255,255,.05);colo
 /* ─── THEORY & REFERENCE TAB ─── */
 .ref-section{background:#fff;border:1px solid var(--rule, rgba(26,26,24,0.12));border-radius:12px;padding:1.4rem 1.6rem;margin-bottom:1.1rem;}
 .ref-title{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3,#8a8a80);margin-bottom:.9rem;padding-bottom:.4rem;border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));}
-.ref-formula{background:var(--paper2,#ede9de);border-left:3px solid var(--accent,#c45c2a);border-radius:0 8px 8px 0;padding:1rem 1.2rem;font-size:13px;color:var(--ink2,#4a4a44);line-height:2;margin-bottom:.8rem;font-family:monospace;}
-.ref-formula b{font-family:monospace;color:var(--ink,#1a1a18);}
-.ref-note{background:var(--teal-light,#e0f0eb);border:1px solid rgba(26,107,90,.15);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--teal,#1a6b5a);line-height:1.7;margin-top:.5rem;}
+.ref-formula{background:var(--paper2,#ede9de);border-left:3px solid var(--accent,#8b3a1a);border-radius:0 8px 8px 0;padding:1rem 1.2rem;font-size:13px;color:var(--ink2,#4a4a44);line-height:2;margin-bottom:.8rem;font-family:monospace;}
+.ref-formula b{font-family:monospace;color:var(--ink,#1a1510);}
+.ref-note{background:var(--teal-light,#e7f1ee);border:1px solid rgba(26,107,90,.15);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--teal,#1a6b5a);line-height:1.7;margin-top:.5rem;}
 .ref-table-wrap{overflow-x:auto;margin-top:.5rem;}
 .ref-table{width:100%;border-collapse:collapse;font-size:12px;}
 .ref-table th{background:var(--paper3,#e3dfd2);padding:7px 10px;text-align:left;font-weight:600;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2,#4a4a44);border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));}
-.ref-table td{padding:6px 10px;border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));color:var(--ink,#1a1a18);vertical-align:top;}
+.ref-table td{padding:6px 10px;border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));color:var(--ink,#1a1510);vertical-align:top;}
 .ref-table td:first-child{font-weight:600;font-family:monospace;font-size:11px;white-space:nowrap;}
 .ref-table tr:last-child td{border-bottom:none;}
 
@@ -280,8 +280,8 @@ footer{background:rgba(0,0,0,.3);border-top:1px solid rgba(255,255,255,.05);colo
 /* ─── THEORY TAB NAV ─── */
 .calc-tabs{display:flex;background:var(--paper2,#ede9de);border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));overflow-x:auto;margin-bottom:0;}
 .calc-tab{padding:.85rem 1.5rem;font-size:13px;font-weight:500;color:var(--ink3,#8a8a80);border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;font-family:'DM Sans',sans-serif;transition:color .2s,border-color .2s;white-space:nowrap;}
-.calc-tab.active{color:var(--accent,#c45c2a);border-bottom-color:var(--accent,#c45c2a);}
-.calc-tab:hover:not(.active){color:var(--ink,#1a1a18);}
+.calc-tab.active{color:var(--accent,#8b3a1a);border-bottom-color:var(--accent,#8b3a1a);}
+.calc-tab:hover:not(.active){color:var(--ink,#1a1510);}
 .calc-panel{display:none;}
 .calc-panel.active{display:block;}
 
@@ -289,12 +289,12 @@ footer{background:rgba(0,0,0,.3);border-top:1px solid rgba(255,255,255,.05);colo
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style id="ppa-shared">
 :root{
-  --ink:#1a1a18;--ink2:#4a4a44;--ink3:#8a8a80;
+  --ink:#1a1510;--ink2:#4a4a44;--ink3:#8a8a80;
   --paper:#f5f2eb;--paper2:#ede9de;--paper3:#e3dfd2;
-  --accent:#c45c2a;--accent2:#e8a06a;--accent-light:#f7ede3;
-  --teal:#1a6b5a;--teal-light:#e0f0eb;
+  --accent:#8b3a1a;--accent2:#d4a017;--accent-light:#f7ede3;
+  --teal:#1a6b5a;--teal-light:#e7f1ee;
   --rule:rgba(26,26,24,0.12);
-  --gold:#b8922a;--gold-light:#fdf3dc;
+  --gold:#b8860b;--gold-light:#f5e9c8;
   --font:'DM Sans',sans-serif;
   --serif:'DM Serif Display',serif;
   --mono:'DM Mono',monospace;
@@ -323,6 +323,57 @@ body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:
 .ppa-footer-logo{font-family:var(--serif);font-size:1.1rem;color:var(--paper);margin-bottom:.4rem;}
 .ppa-footer-logo span{color:var(--accent);}
 </style>
+<!-- ===== PipingPro Brand Bridge v1.0 — injected before </head> ===== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style id="pp-brand-bridge">
+/* Redefines every token name used across the suite to the PipingPro brand.
+   Placed last in <head> so it overrides each file's own :root. No markup/JS touched. */
+:root{
+  /* surfaces */
+  --bg:#faf6ef; --cream:#faf6ef;
+  --paper:#f3ede2; --surface:#f3ede2; --paper2:#f3ede2; --bg2:#f3ede2;
+  --paper3:#e8dfd0; --bg3:#e8dfd0;
+  /* text */
+  --ink:#1a1510; --text:#1a1510;
+  --ink2:#4a3f30; --text-2:#4a3f30; --muted:#4a3f30;
+  --ink3:#6b5d49; --text-3:#6b5d49; --muted2:#6b5d49;
+  /* primary accent = rust (legible on light & as button bg) */
+  --accent:#8b3a1a; --accent2:#b8860b;
+  --accent-light:#f6e6df; --accent-border:#c8b89a;
+  --teal:#8b3a1a; --teal2:#8b3a1a; --teal-light:#f6e6df;
+  --blue:#8b3a1a; --purple:#8b3a1a;
+  /* gilt accents */
+  --gold:#b8860b; --gold2:#b8860b; --gold-light:#f5e9c8; --orange:#b8860b; --yellow:#b8860b;
+  /* rules / borders */
+  --rule:#c8b89a; --border:#c8b89a; --border2:#c8b89a; --border-strong:#b8a87f;
+  /* fonts */
+  --serif:'DM Serif Display',Georgia,serif;
+  --font:'DM Sans',system-ui,sans-serif; --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  /* geometry */
+  --radius:4px; --radius-lg:6px;
+  /* states */
+  --pass:#1a6b5a; --success:#1a6b5a; --green:#1a6b5a;
+  --pass-bg:#e7f1ee; --success-light:#e7f1ee; --pass-bd:#1a6b5a;
+  --fail:#8b3a1a; --danger:#8b3a1a; --red:#8b3a1a;
+  --fail-bg:#f6e6df; --danger-light:#f6e6df; --red-bg:#f6e6df;
+  --danger-border:#8b3a1a; --fail-bd:#8b3a1a;
+  --warn:#b8860b; --warn-light:#f5e9c8; --warn-bg:#f5e9c8;
+  --warn-border:#b8860b; --warn-bd:#b8860b;
+  --info:#1a6b5a; --info-light:#e7f1ee; --info-border:#1a6b5a;
+}
+/* Enforce brand fonts even where files hardcoded font-family (not via token) */
+body, p, div, span, td, th, li, label, input, select, textarea, button{
+  font-family:'DM Sans',system-ui,sans-serif;
+}
+h1,h2,h3,h4,h5,.calc-card-name,.card-title{ font-family:'DM Serif Display',Georgia,serif; }
+code,pre,.mono,[class*="mono"]{ font-family:'IBM Plex Mono',ui-monospace,monospace; }
+body{ background:#faf6ef; color:#1a1510; }
+</style>
+<!-- ===== end PipingPro Brand Bridge ===== -->
+
 </head>
 <body>
 <nav class="ppa-nav">
@@ -543,7 +594,7 @@ async function analyse() {
 
   if (!description) {
     document.getElementById('description').focus();
-    document.getElementById('description').style.borderColor = '#ef4444';
+    document.getElementById('description').style.borderColor = '#8b3a1a';
     setTimeout(() => document.getElementById('description').style.borderColor = '', 2000);
     return;
   }
@@ -625,7 +676,7 @@ Provide a thorough Caesar II pre-screening analysis.`;
     console.error(err);
     document.getElementById('status-text').textContent = 'Analysis failed — please try again.';
     document.getElementById('results').classList.add('show');
-    document.getElementById('r-strategy').innerHTML = '<p style="color:#f87171;">Error connecting to analysis engine. Please check your connection and try again.</p>';
+    document.getElementById('r-strategy').innerHTML = '<p style="color:#b35a3a;">Error connecting to analysis engine. Please check your connection and try again.</p>';
   } finally {
     btn.disabled = false;
     btn.classList.remove('loading');
@@ -703,7 +754,7 @@ function renderResults(r) {
 <!-- ══ THEORY & REFERENCE PANEL ══ -->
 <div class="calc-panel" id="calctab-theory">
 <div style="max-width:920px;margin:0 auto;padding:2rem 1.5rem;">
-  <div style="background:var(--accent-light,#f7ede3);border:1px solid rgba(196,92,42,.2);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--accent,#c45c2a);margin-bottom:1.2rem;line-height:1.7;">
+  <div style="background:var(--accent-light,#f7ede3);border:1px solid rgba(196,92,42,.2);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--accent,#8b3a1a);margin-bottom:1.2rem;line-height:1.7;">
     📚 Theory, formulae and code references for this calculator. For full course content and worked examples, visit <strong>PipingPro Academy</strong> courses.
   </div>
   

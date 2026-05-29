@@ -7,15 +7,15 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 :root{
-  --ink:#1a1a18;--ink2:#4a4a44;--ink3:#8a8a80;
+  --ink:#1a1510;--ink2:#4a4a44;--ink3:#8a8a80;
   --paper:#f5f2eb;--paper2:#ede9de;--paper3:#e3dfd2;
-  --accent:#c45c2a;--accent2:#e8a06a;--accent-light:#f7ede3;
-  --teal:#1a6b5a;--teal-light:#e0f0eb;
+  --accent:#8b3a1a;--accent2:#d4a017;--accent-light:#f7ede3;
+  --teal:#1a6b5a;--teal-light:#e7f1ee;
   --rule:rgba(26,26,24,0.12);
-  --pass:#1a6b5a;--pass-bg:#e0f0eb;
-  --fail:#9b1c1c;--fail-bg:#fde8e8;
-  --warn:#92400e;--warn-bg:#fef3c7;
-  --gold:#b8922a;--gold-light:#fdf3dc;
+  --pass:#1a6b5a;--pass-bg:#e7f1ee;
+  --fail:#9b1c1c;--fail-bg:#f6e6df;
+  --warn:#6e2e14;--warn-bg:#fef3c7;
+  --gold:#b8860b;--gold-light:#f5e9c8;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);font-size:15px;line-height:1.6;min-height:100vh;}
@@ -84,8 +84,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);f
 .ratio-bar{height:10px;background:var(--paper3);border-radius:5px;overflow:hidden;}
 .ratio-fill{height:100%;border-radius:5px;transition:width .4s;}
 .ratio-fill.ok{background:var(--teal);}
-.ratio-fill.warn{background:#d97706;}
-.ratio-fill.over{background:#dc2626;}
+.ratio-fill.warn{background:#b8860b;}
+.ratio-fill.over{background:#8b3a1a;}
 
 /* FORMULA BOX */
 .formula{background:var(--paper2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:1rem 1.2rem;font-size:13px;color:var(--ink2);line-height:2;margin-bottom:1rem;}
@@ -131,6 +131,57 @@ footer a{color:var(--accent2);text-decoration:none;}
 .fl{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--paper);margin-bottom:.4rem;}
 .fl span{color:var(--accent);}
 </style>
+<!-- ===== PipingPro Brand Bridge v1.0 — injected before </head> ===== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style id="pp-brand-bridge">
+/* Redefines every token name used across the suite to the PipingPro brand.
+   Placed last in <head> so it overrides each file's own :root. No markup/JS touched. */
+:root{
+  /* surfaces */
+  --bg:#faf6ef; --cream:#faf6ef;
+  --paper:#f3ede2; --surface:#f3ede2; --paper2:#f3ede2; --bg2:#f3ede2;
+  --paper3:#e8dfd0; --bg3:#e8dfd0;
+  /* text */
+  --ink:#1a1510; --text:#1a1510;
+  --ink2:#4a3f30; --text-2:#4a3f30; --muted:#4a3f30;
+  --ink3:#6b5d49; --text-3:#6b5d49; --muted2:#6b5d49;
+  /* primary accent = rust (legible on light & as button bg) */
+  --accent:#8b3a1a; --accent2:#b8860b;
+  --accent-light:#f6e6df; --accent-border:#c8b89a;
+  --teal:#8b3a1a; --teal2:#8b3a1a; --teal-light:#f6e6df;
+  --blue:#8b3a1a; --purple:#8b3a1a;
+  /* gilt accents */
+  --gold:#b8860b; --gold2:#b8860b; --gold-light:#f5e9c8; --orange:#b8860b; --yellow:#b8860b;
+  /* rules / borders */
+  --rule:#c8b89a; --border:#c8b89a; --border2:#c8b89a; --border-strong:#b8a87f;
+  /* fonts */
+  --serif:'DM Serif Display',Georgia,serif;
+  --font:'DM Sans',system-ui,sans-serif; --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  /* geometry */
+  --radius:4px; --radius-lg:6px;
+  /* states */
+  --pass:#1a6b5a; --success:#1a6b5a; --green:#1a6b5a;
+  --pass-bg:#e7f1ee; --success-light:#e7f1ee; --pass-bd:#1a6b5a;
+  --fail:#8b3a1a; --danger:#8b3a1a; --red:#8b3a1a;
+  --fail-bg:#f6e6df; --danger-light:#f6e6df; --red-bg:#f6e6df;
+  --danger-border:#8b3a1a; --fail-bd:#8b3a1a;
+  --warn:#b8860b; --warn-light:#f5e9c8; --warn-bg:#f5e9c8;
+  --warn-border:#b8860b; --warn-bd:#b8860b;
+  --info:#1a6b5a; --info-light:#e7f1ee; --info-border:#1a6b5a;
+}
+/* Enforce brand fonts even where files hardcoded font-family (not via token) */
+body, p, div, span, td, th, li, label, input, select, textarea, button{
+  font-family:'DM Sans',system-ui,sans-serif;
+}
+h1,h2,h3,h4,h5,.calc-card-name,.card-title{ font-family:'DM Serif Display',Georgia,serif; }
+code,pre,.mono,[class*="mono"]{ font-family:'IBM Plex Mono',ui-monospace,monospace; }
+body{ background:#faf6ef; color:#1a1510; }
+</style>
+<!-- ===== end PipingPro Brand Bridge ===== -->
+
 </head>
 <body>
 
@@ -449,12 +500,12 @@ footer a{color:var(--accent2);text-decoration:none;}
       <!-- Factor 1.00 — straight -->
       <div class="layout-card selected" id="lc-straight" onclick="selectLayout('straight',1.00)">
         <svg width="100" height="70" viewBox="0 0 100 70">
-          <line x1="5" y1="35" x2="95" y2="35" stroke="#1a1a18" stroke-width="3" stroke-linecap="round"/>
-          <rect x="18" y="28" width="8" height="14" rx="1" fill="#c45c2a"/>
-          <rect x="74" y="28" width="8" height="14" rx="1" fill="#c45c2a"/>
-          <line x1="22" y1="42" x2="22" y2="55" stroke="#c45c2a" stroke-width="2"/>
-          <line x1="78" y1="42" x2="78" y2="55" stroke="#c45c2a" stroke-width="2"/>
-          <line x1="15" y1="55" x2="85" y2="55" stroke="#c45c2a" stroke-width="1.5" stroke-dasharray="3 2"/>
+          <line x1="5" y1="35" x2="95" y2="35" stroke="#1a1510" stroke-width="3" stroke-linecap="round"/>
+          <rect x="18" y="28" width="8" height="14" rx="1" fill="#8b3a1a"/>
+          <rect x="74" y="28" width="8" height="14" rx="1" fill="#8b3a1a"/>
+          <line x1="22" y1="42" x2="22" y2="55" stroke="#8b3a1a" stroke-width="2"/>
+          <line x1="78" y1="42" x2="78" y2="55" stroke="#8b3a1a" stroke-width="2"/>
+          <line x1="15" y1="55" x2="85" y2="55" stroke="#8b3a1a" stroke-width="1.5" stroke-dasharray="3 2"/>
         </svg>
         <div class="layout-card-name">Straight / Continuous Run</div>
         <div class="layout-card-factor">× 1.00</div>
@@ -465,13 +516,13 @@ footer a{color:var(--accent2);text-decoration:none;}
       <div class="layout-card" id="lc-lbend" onclick="selectLayout('lbend',0.75)">
         <svg width="100" height="70" viewBox="0 0 100 70">
           <!-- L-bend pipe -->
-          <polyline points="10,55 10,20 80,20" stroke="#1a1a18" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <polyline points="10,55 10,20 80,20" stroke="#1a1510" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
           <!-- supports -->
-          <rect x="5" y="48" width="10" height="10" rx="1" fill="#c45c2a"/>
-          <rect x="73" y="13" width="10" height="10" rx="1" fill="#c45c2a"/>
+          <rect x="5" y="48" width="10" height="10" rx="1" fill="#8b3a1a"/>
+          <rect x="73" y="13" width="10" height="10" rx="1" fill="#8b3a1a"/>
           <!-- span arrow -->
           <line x1="22" y1="30" x2="70" y2="30" stroke="#1a6b5a" stroke-width="1.2" stroke-dasharray="3 2"/>
-          <text x="50" y="44" text-anchor="middle" font-size="9" fill="#c45c2a" font-family="monospace" font-weight="bold">Max = 0.75×L</text>
+          <text x="50" y="44" text-anchor="middle" font-size="9" fill="#8b3a1a" font-family="monospace" font-weight="bold">Max = 0.75×L</text>
         </svg>
         <div class="layout-card-name">L-Bend (one direction change)</div>
         <div class="layout-card-factor">× 0.75</div>
@@ -482,11 +533,11 @@ footer a{color:var(--accent2);text-decoration:none;}
       <div class="layout-card" id="lc-zbend" onclick="selectLayout('zbend',0.65)">
         <svg width="100" height="70" viewBox="0 0 100 70">
           <!-- Z-bend pipe -->
-          <polyline points="10,60 10,35 60,35 60,10 90,10" stroke="#1a1a18" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <polyline points="10,60 10,35 60,35 60,10 90,10" stroke="#1a1510" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
           <!-- supports -->
-          <rect x="5" y="53" width="10" height="10" rx="1" fill="#c45c2a"/>
-          <rect x="84" y="3" width="10" height="10" rx="1" fill="#c45c2a"/>
-          <text x="50" y="55" text-anchor="middle" font-size="9" fill="#c45c2a" font-family="monospace" font-weight="bold">Max = 0.65×L</text>
+          <rect x="5" y="53" width="10" height="10" rx="1" fill="#8b3a1a"/>
+          <rect x="84" y="3" width="10" height="10" rx="1" fill="#8b3a1a"/>
+          <text x="50" y="55" text-anchor="middle" font-size="9" fill="#8b3a1a" font-family="monospace" font-weight="bold">Max = 0.65×L</text>
         </svg>
         <div class="layout-card-name">Z / U-Bend (two direction changes)</div>
         <div class="layout-card-factor">× 0.65</div>
