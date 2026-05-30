@@ -1287,6 +1287,13 @@ function selectSchedule(sched, tw_mm, tw_inch, rowEl){
 // ============================================================
 function openReportModal(){
   if(!window.WT_RESULT){ alert('Please run a calculation first.'); return; }
+  // pre-fill durable fields from last time (per-browser)
+  try {
+    const saved = JSON.parse(localStorage.getItem('ppa_report_meta')||'{}');
+    [['rpt-company','company'],['rpt-client','client'],['rpt-project','project'],
+     ['rpt-projectno','projectNo'],['rpt-engineer','engineer'],['rpt-checker','checker']]
+      .forEach(([id,key])=>{ const el=document.getElementById(id); if(el && !el.value && saved[key]) el.value=saved[key]; });
+  } catch(e){}
   document.getElementById('rpt-modal').style.display='flex';
 }
 function closeReportModal(){ document.getElementById('rpt-modal').style.display='none'; }
@@ -1301,6 +1308,14 @@ function generateReport(){
     line: g('rpt-line'), engineer: g('rpt-engineer'),
     checker: g('rpt-checker'), rev: g('rpt-rev') || '0'
   };
+  // remember the durable fields for next time (per-browser)
+  try {
+    localStorage.setItem('ppa_report_meta', JSON.stringify({
+      company: meta.company, client: meta.client,
+      project: meta.project, projectNo: meta.projectNo,
+      engineer: meta.engineer, checker: meta.checker
+    }));
+  } catch(e){}
   const now = new Date().toLocaleDateString('en-GB');
   const inRows = R.rows.map(r=>`<tr><td>${r[0]}</td><td class="num">${r[1]}</td><td>${r[2]}</td></tr>`).join('');
   const outRows = R.results.map(r=>`<tr><td>${r[0]}</td><td class="num">${r[1]}</td><td>${r[2]||''}</td></tr>`).join('');
@@ -1317,9 +1332,9 @@ function generateReport(){
 body{font-family:'Helvetica Neue',Arial,sans-serif;font-size:10.5pt;color:#1a1510;margin:0;line-height:1.5}
 .sheet{max-width:780px;margin:0 auto}
 .head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #b8860b;padding-bottom:12px;margin-bottom:4px}
-.logo{font-family:Georgia,serif;font-size:19pt;color:#1a1510;font-weight:bold}
-.logo span{color:#b8860b}
-.logo .sub{display:block;font-family:Arial;font-size:7.5pt;color:#8b3a1a;letter-spacing:.12em;text-transform:uppercase;font-weight:normal;margin-top:2px}
+.logo{font-family:Georgia,serif;font-size:19pt;color:#1a1510;font-weight:bold;line-height:1.15}
+.logo span.sub{display:block;font-family:Arial;font-size:8pt;color:#6b5d49;letter-spacing:.08em;font-weight:normal;margin-top:3px}
+.logo span.sub b{font-weight:bold}
 .doctype{text-align:right;font-size:8.5pt;color:#4a3f30}
 .doctype b{display:block;font-size:11pt;color:#1a1510;font-family:Georgia,serif}
 .meta{width:100%;border-collapse:collapse;font-size:8.5pt;margin:14px 0 6px}
@@ -1349,7 +1364,7 @@ table.d tr:nth-child(even) td{background:#faf6ef}
 <div class="noprint"><button onclick="window.print()">⬇ Print / Save as PDF</button></div>
 <div class="sheet">
   <div class="head">
-    <div class="logo">Piping<span>Pro</span> Academy<span class="sub">${meta.company||'Engineering Calculator Suite'}</span></div>
+    <div class="logo">${meta.company||'Engineering Calculation'}<span class="sub">Powered by Piping<b style="color:#b8860b">Pro</b> Academy · Calculator Suite</span></div>
     <div class="doctype"><b>PIPE WALL THICKNESS</b>Calculation Report<br/>Doc Rev. ${meta.rev} &nbsp;·&nbsp; ${now}</div>
   </div>
   <table class="meta">
