@@ -729,6 +729,10 @@ body{ background:#faf6ef; color:#1a1510; }
       <div class="wb" id="wb-steps"></div>
     </div>
 
+    <div style="text-align:center;margin:1.4rem 0 .4rem">
+      <button onclick="openReportModal()" style="background:#8b3a1a;color:#fff;border:none;padding:.8rem 1.8rem;font-size:.95rem;font-weight:700;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.02em">⬇ Download PDF Report</button>
+    </div>
+
   </div><!-- /results -->
 
   <div class="refs">
@@ -1134,6 +1138,26 @@ function buildResults(D, P_MPa, t_calc, t_with_ca, t_spec, S_allow, nps, steps, 
 
   // Metrics
   const hoopCalc = (P_MPa*D)/(2*t_calc);
+  // ---- capture for PDF report ----
+  window.WT_RESULT = {
+    code_label, nps, units:'SI',
+    rows:[
+      ['Pipe Size (NPS)', nps, '—'],
+      ['Outside Diameter (D)', f(D,2), 'mm'],
+      ['Design Pressure (P)', f(P_MPa,3), 'MPa'],
+      ['Allowable Stress (S)', f(S_allow,1), 'MPa'],
+      ['Corrosion Allowance (CA)', f(CA,2), 'mm'],
+      ['Mill Tolerance', MT, '%']
+    ],
+    results:[
+      ['Calculated thickness t', f(t_calc,3), 'mm'],
+      ['t + allowances', f(t_with_ca,3), 'mm'],
+      ['Specified min. thickness t_spec', f(t_spec,3), 'mm'],
+      ['Hoop stress at t_calc', f(hoopCalc,1), 'MPa'],
+      ['D/t ratio', f(D/t_calc,1), '—']
+    ],
+    t_spec_val: t_spec, steps, schedule:'(none selected)', schedule_ok:null
+  };
   document.getElementById('metrics-grid').innerHTML = `
     <div class="metric"><div class="m-label">P (MPa)</div><div class="m-val">${f(P_MPa,3)}</div><div class="m-unit">Design Pressure</div></div>
     <div class="metric"><div class="m-label">Allowable Stress</div><div class="m-val">${f(S_allow,1)}</div><div class="m-unit">MPa</div></div>
@@ -1206,6 +1230,24 @@ function buildResults318(D_inch, D_mm, P_psig, t_calc, t_with_ca, t_spec, S_allo
   }
 
   const hoopCalc_psi = (P_psig * D_inch) / (2 * t_calc);
+  // ---- capture for PDF report (B31.8 inch-native) ----
+  window.WT_RESULT = {
+    code_label, nps, units:'US',
+    rows:[
+      ['Pipe Size (NPS)', nps, '—'],
+      ['Outside Diameter (D)', f(D_inch,3), 'in'],
+      ['Design Pressure (P)', f(P_psig,1), 'psig'],
+      ['SMYS·F·E·T (effective)', f(S_allow_psi,0), 'psi'],
+      ['Mill Tolerance', MT, '%']
+    ],
+    results:[
+      ['Calculated thickness t', f(t_calc,4), 'in'],
+      ['t + allowances', f(t_with_ca,4), 'in'],
+      ['Specified min. thickness t_spec', f(t_spec,4)+' in ('+f(t_spec_mm,3)+' mm)', ''],
+      ['Hoop stress at t_calc', f(hoopCalc_psi/145.038,1), 'MPa']
+    ],
+    t_spec_val: t_spec, steps, schedule:'(none selected)', schedule_ok:null
+  };
   document.getElementById('metrics-grid').innerHTML = `
     <div class="metric"><div class="m-label">P (psig)</div><div class="m-val">${f(P_psig,1)}</div><div class="m-unit">${f(P_psig/145.038,3)} MPa</div></div>
     <div class="metric"><div class="m-label">D (inches)</div><div class="m-val">${f(D_inch,3)}</div><div class="m-unit">${f(D_mm,2)} mm</div></div>
@@ -1231,6 +1273,120 @@ function selectSchedule(sched, tw_mm, tw_inch, rowEl){
   heroSched.textContent = sched;
   heroSched.style.color = '#fff';
   document.getElementById('hero-tnom').textContent = tw_mm + ' mm  (' + tw_inch + '")';
+  // ---- capture selected schedule for report ----
+  if(window.WT_RESULT){
+    const tnomVal = window.WT_RESULT.units==='US' ? parseFloat(tw_inch) : parseFloat(tw_mm);
+    const ok = tnomVal >= window.WT_RESULT.t_spec_val;
+    window.WT_RESULT.schedule = sched + ' (t_nom = ' + tw_mm + ' mm / ' + tw_inch + '")';
+    window.WT_RESULT.schedule_ok = ok;
+  }
+}
+
+// ============================================================
+// PDF REPORT
+// ============================================================
+function openReportModal(){
+  if(!window.WT_RESULT){ alert('Please run a calculation first.'); return; }
+  document.getElementById('rpt-modal').style.display='flex';
+}
+function closeReportModal(){ document.getElementById('rpt-modal').style.display='none'; }
+
+function generateReport(){
+  const R = window.WT_RESULT;
+  if(!R){ alert('Please run a calculation first.'); return; }
+  const g = id => (document.getElementById(id)?.value || '').trim();
+  const meta = {
+    company: g('rpt-company'), client: g('rpt-client'),
+    project: g('rpt-project'), projectNo: g('rpt-projectno'),
+    line: g('rpt-line'), engineer: g('rpt-engineer'),
+    checker: g('rpt-checker'), rev: g('rpt-rev') || '0'
+  };
+  const now = new Date().toLocaleDateString('en-GB');
+  const inRows = R.rows.map(r=>`<tr><td>${r[0]}</td><td class="num">${r[1]}</td><td>${r[2]}</td></tr>`).join('');
+  const outRows = R.results.map(r=>`<tr><td>${r[0]}</td><td class="num">${r[1]}</td><td>${r[2]||''}</td></tr>`).join('');
+  let verdict='', vclass='';
+  if(R.schedule_ok===true){ verdict='ADEQUATE — Selected schedule meets required minimum thickness'; vclass='pass'; }
+  else if(R.schedule_ok===false){ verdict='NOT ADEQUATE — Selected schedule is below required minimum'; vclass='fail'; }
+  else { verdict='Required minimum thickness calculated. Select a schedule to confirm adequacy.'; vclass='warn'; }
+
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"/>
+<title>Wall Thickness Report — ${meta.project||'PipingPro'}</title>
+<style>
+@page{margin:18mm 16mm}
+*{box-sizing:border-box}
+body{font-family:'Helvetica Neue',Arial,sans-serif;font-size:10.5pt;color:#1a1510;margin:0;line-height:1.5}
+.sheet{max-width:780px;margin:0 auto}
+.head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #b8860b;padding-bottom:12px;margin-bottom:4px}
+.logo{font-family:Georgia,serif;font-size:19pt;color:#1a1510;font-weight:bold}
+.logo span{color:#b8860b}
+.logo .sub{display:block;font-family:Arial;font-size:7.5pt;color:#8b3a1a;letter-spacing:.12em;text-transform:uppercase;font-weight:normal;margin-top:2px}
+.doctype{text-align:right;font-size:8.5pt;color:#4a3f30}
+.doctype b{display:block;font-size:11pt;color:#1a1510;font-family:Georgia,serif}
+.meta{width:100%;border-collapse:collapse;font-size:8.5pt;margin:14px 0 6px}
+.meta td{border:1px solid #c8b89a;padding:4px 8px}
+.meta td.l{background:#f5e9c8;color:#4a3f30;font-weight:bold;width:18%;text-transform:uppercase;font-size:7.5pt;letter-spacing:.04em}
+h3{font-family:Georgia,serif;font-size:12pt;color:#1a1510;border-bottom:1.5px solid #b8860b;padding-bottom:4px;margin:22px 0 8px}
+.code-badge{display:inline-block;background:#1a1510;color:#d4a017;font-family:monospace;font-size:9pt;padding:3px 10px;border-radius:3px;margin-bottom:4px}
+table.d{width:100%;border-collapse:collapse;font-size:9.5pt}
+table.d th{background:#1a1510;color:#d4a017;padding:6px 9px;text-align:left;font-size:8.5pt;text-transform:uppercase;letter-spacing:.03em}
+table.d td{padding:5px 9px;border-bottom:1px solid #e8dfd0}
+table.d td.num{text-align:right;font-family:'IBM Plex Mono',monospace}
+table.d tr:nth-child(even) td{background:#faf6ef}
+.verdict{padding:12px 16px;border-radius:5px;font-weight:bold;font-size:11pt;margin:16px 0;border:1px solid}
+.verdict.pass{background:#e7f1ee;color:#1a6b5a;border-color:#1a6b5a}
+.verdict.fail{background:#f6e6df;color:#8b3a1a;border-color:#8b3a1a}
+.verdict.warn{background:#f5e9c8;color:#6b4e00;border-color:#b8860b}
+.steps{font-family:'IBM Plex Mono',monospace;font-size:8.5pt;background:#faf6ef;border:1px solid #e8dfd0;border-left:3px solid #b8860b;padding:10px 14px;line-height:1.9;white-space:normal}
+.steps .wb-step{margin-bottom:6px}
+.disc{background:#f3ede2;border:1px solid #e8dfd0;padding:11px 14px;border-radius:5px;font-size:8pt;color:#4a3f30;margin-top:24px;line-height:1.6}
+.sig{display:flex;gap:30px;margin-top:26px}
+.sig div{flex:1;border-top:1px solid #1a1510;padding-top:5px;font-size:8pt;color:#4a3f30}
+.foot{margin-top:18px;padding-top:8px;border-top:1px solid #c8b89a;font-size:7.5pt;color:#6b5d49;text-align:center}
+@media print{.noprint{display:none}}
+.noprint{text-align:center;margin:16px 0}
+.noprint button{background:#b8860b;color:#1a1510;border:none;padding:10px 22px;font-size:11pt;font-weight:bold;border-radius:3px;cursor:pointer;font-family:Arial}
+</style></head><body>
+<div class="noprint"><button onclick="window.print()">⬇ Print / Save as PDF</button></div>
+<div class="sheet">
+  <div class="head">
+    <div class="logo">Piping<span>Pro</span> Academy<span class="sub">${meta.company||'Engineering Calculator Suite'}</span></div>
+    <div class="doctype"><b>PIPE WALL THICKNESS</b>Calculation Report<br/>Doc Rev. ${meta.rev} &nbsp;·&nbsp; ${now}</div>
+  </div>
+  <table class="meta">
+    <tr><td class="l">Client</td><td>${meta.client||'—'}</td><td class="l">Project</td><td>${meta.project||'—'}</td></tr>
+    <tr><td class="l">Project No.</td><td>${meta.projectNo||'—'}</td><td class="l">Line / Tag</td><td>${meta.line||'—'}</td></tr>
+    <tr><td class="l">Prepared by</td><td>${meta.engineer||'—'}</td><td class="l">Checked by</td><td>${meta.checker||'—'}</td></tr>
+  </table>
+
+  <h3>1. Design Basis</h3>
+  <div class="code-badge">${R.code_label}</div>
+  <table class="d"><tr><th>Parameter</th><th>Value</th><th>Unit</th></tr>${inRows}</table>
+
+  <h3>2. Calculation Steps</h3>
+  <div class="steps">${R.steps}</div>
+
+  <h3>3. Results</h3>
+  <table class="d"><tr><th>Result</th><th>Value</th><th>Unit</th></tr>${outRows}</table>
+  <table class="d" style="margin-top:8px"><tr><th>Selected Schedule</th><th>Status</th></tr>
+    <tr><td>${R.schedule}</td><td>${R.schedule_ok===true?'✓ Adequate':R.schedule_ok===false?'✗ Below minimum':'— not selected —'}</td></tr></table>
+
+  <div class="verdict ${vclass}">${verdict}</div>
+
+  <div class="sig">
+    <div>Prepared: ${meta.engineer||'________________'}<br/>Date: ${now}</div>
+    <div>Checked: ${meta.checker||'________________'}<br/>Date: ________________</div>
+  </div>
+
+  <div class="disc"><b>Engineering Disclaimer.</b> This report is generated by the PipingPro Academy Calculator Suite for preliminary engineering use. All results must be independently verified by a competent engineer against the governing code edition (${R.code_label}) and project specifications before use in any design, procurement, or construction package. PipingPro Academy and Zephrum Konsultan Limited accept no liability for engineering decisions made on the basis of this report.</div>
+
+  <div class="foot">PipingPro Academy — a trademark of Zephrum Konsultan Limited · Co. No. 13537626 · © 2026 · Generated ${now}</div>
+</div>
+</body></html>`;
+
+  const w = window.open('', '_blank');
+  w.document.write(html);
+  w.document.close();
+  closeReportModal();
 }
 
 // Init
@@ -1443,5 +1599,28 @@ function showCalcTab(name){
   });
 }
 </script>
+
+<!-- ══ REPORT METADATA MODAL ══ -->
+<div id="rpt-modal" style="display:none;position:fixed;inset:0;background:rgba(26,21,16,.55);z-index:1000;align-items:center;justify-content:center;padding:1rem">
+  <div style="background:#faf6ef;border-radius:8px;max-width:560px;width:100%;padding:1.6rem 1.8rem;box-shadow:0 10px 40px rgba(26,21,16,.3);font-family:'DM Sans',sans-serif">
+    <h3 style="font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:1.3rem;color:#1a1510;margin:0 0 .3rem">Report Details</h3>
+    <p style="font-size:.82rem;color:#4a3f30;margin:0 0 1.1rem">Fill in the project information for the report header. All fields optional — leave blank for a dash.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.7rem .9rem">
+      <div><label style="display:block;font-size:.72rem;font-weight:600;color:#4a3f30;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.25rem">Your Company</label><input id="rpt-company" type="text" placeholder="e.g. Zephrum Konsultan" style="width:100%;padding:.5rem;border:1px solid #c8b89a;border-radius:4px;background:#fff;font-size:.85rem"></div>
+      <div><label style="display:block;font-size:.72rem;font-weight:600;color:#4a3f30;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.25rem">Client</label><input id="rpt-client" type="text" placeholder="e.g. Saudi Aramco" style="width:100%;padding:.5rem;border:1px solid #c8b89a;border-radius:4px;background:#fff;font-size:.85rem"></div>
+      <div><label style="display:block;font-size:.72rem;font-weight:600;color:#4a3f30;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.25rem">Project</label><input id="rpt-project" type="text" placeholder="e.g. Al Hada Gas Plant" style="width:100%;padding:.5rem;border:1px solid #c8b89a;border-radius:4px;background:#fff;font-size:.85rem"></div>
+      <div><label style="display:block;font-size:.72rem;font-weight:600;color:#4a3f30;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.25rem">Project No.</label><input id="rpt-projectno" type="text" style="width:100%;padding:.5rem;border:1px solid #c8b89a;border-radius:4px;background:#fff;font-size:.85rem"></div>
+      <div><label style="display:block;font-size:.72rem;font-weight:600;color:#4a3f30;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.25rem">Line / Tag</label><input id="rpt-line" type="text" placeholder='e.g. 6"-PL-1001' style="width:100%;padding:.5rem;border:1px solid #c8b89a;border-radius:4px;background:#fff;font-size:.85rem"></div>
+      <div><label style="display:block;font-size:.72rem;font-weight:600;color:#4a3f30;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.25rem">Revision</label><input id="rpt-rev" type="text" placeholder="0" style="width:100%;padding:.5rem;border:1px solid #c8b89a;border-radius:4px;background:#fff;font-size:.85rem"></div>
+      <div><label style="display:block;font-size:.72rem;font-weight:600;color:#4a3f30;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.25rem">Prepared by</label><input id="rpt-engineer" type="text" style="width:100%;padding:.5rem;border:1px solid #c8b89a;border-radius:4px;background:#fff;font-size:.85rem"></div>
+      <div><label style="display:block;font-size:.72rem;font-weight:600;color:#4a3f30;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.25rem">Checked by</label><input id="rpt-checker" type="text" style="width:100%;padding:.5rem;border:1px solid #c8b89a;border-radius:4px;background:#fff;font-size:.85rem"></div>
+    </div>
+    <div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1.3rem">
+      <button onclick="closeReportModal()" style="background:transparent;color:#4a3f30;border:1px solid #c8b89a;padding:.6rem 1.2rem;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600">Cancel</button>
+      <button onclick="generateReport()" style="background:#b8860b;color:#1a1510;border:none;padding:.6rem 1.5rem;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:700">Generate Report →</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
