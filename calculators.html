@@ -345,7 +345,7 @@ body{ background:#faf6ef; color:#1a1510; }
         <div class="suite-body">
           <div class="suite-name">Piping &amp; Pipeline</div>
           <div class="suite-sub">ASME B31.3 · B31.4 · B31.8 · API · DNV</div>
-          <div class="suite-desc">Wall thickness, expansion loops, supports, trunnions and flange leakage — plus pipeline crossings, upheaval buckling and subsea design. 9 calculators live now, with more added every month.</div>
+          <div class="suite-desc">Wall thickness, expansion loops, supports, trunnions and flange leakage — plus pipeline crossings and upheaval buckling. 9 calculators live now, with more added every month.</div>
           <button class="suite-btn open">Open Suite →</button>
         </div>
       </div>
@@ -515,7 +515,7 @@ body{ background:#faf6ef; color:#1a1510; }
       </div>
     </div>
 
-    <div class="calc-card" onclick="openModal('sp')">
+    <div class="calc-card soon" onclick="openSoonModal('sp')">
       <div class="card-img bg-teal2">
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M5 35 Q20 28 35 35 Q50 42 65 35 Q80 28 88 35" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/>
@@ -526,13 +526,13 @@ body{ background:#faf6ef; color:#1a1510; }
           <polygon points="80,74 77,67 83,67" fill="rgba(255,255,255,0.6)"/>
           <polygon points="80,36 77,43 83,43" fill="rgba(255,255,255,0.6)"/>
         </svg>
-        <span class="card-badge badge-member" id="badge-sp">👑 Members</span>
+        <span class="card-badge badge-soon" id="badge-sp">Coming Soon</span>
       </div>
       <div class="card-body">
         <div class="card-name">Subsea Pipeline Calculator</div>
         <div class="card-desc">Offshore pipeline design — wall thickness, collapse, propagating buckling, on-bottom stability, and free-span per DNV-ST-F101.</div>
         <div class="card-tags"><span class="tag">DNV-ST-F101</span><span class="tag">Subsea</span><span class="tag">Offshore</span></div>
-        <div class="card-action"><span class="card-btn btn-locked" id="btn-sp">👑 Members Only</span></div>
+        <div class="card-action"><span class="card-btn btn-soon" id="btn-sp">Coming Soon →</span></div>
       </div>
     </div>
 
@@ -556,7 +556,7 @@ body{ background:#faf6ef; color:#1a1510; }
       </div>
     </div>
 
-    <div class="calc-card soon" onclick="openSoonModal('fl')">
+    <div class="calc-card" onclick="openModal('fl')">
       <div class="card-img" style="background:linear-gradient(135deg,#1a3a5a 0%,#2a6a8a 100%)">
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
           <ellipse cx="45" cy="45" rx="28" ry="12" stroke="rgba(255,255,255,0.8)" stroke-width="3" fill="none"/>
@@ -566,13 +566,13 @@ body{ background:#faf6ef; color:#1a1510; }
           <line x1="20" y1="36" x2="20" y2="54" stroke="rgba(255,255,255,0.5)" stroke-width="6" stroke-linecap="round"/>
           <line x1="70" y1="36" x2="70" y2="54" stroke="rgba(255,255,255,0.5)" stroke-width="6" stroke-linecap="round"/>
         </svg>
-        <span class="card-badge badge-soon" id="badge-fl">Coming Soon</span>
+        <span class="card-badge badge-member" id="badge-fl">👑 Members</span>
       </div>
       <div class="card-body">
         <div class="card-name">Flange Leakage Check</div>
         <div class="card-desc">Pressure Equivalent (PEQ) method — flange leakage under combined pressure, bending moment, and axial force per ASME B16.5.</div>
         <div class="card-tags"><span class="tag">ASME B16.5</span><span class="tag">B16.20</span><span class="tag">PEQ Method</span></div>
-        <div class="card-action"><span class="card-btn btn-soon" id="btn-fl">Coming Soon →</span></div>
+        <div class="card-action"><span class="card-btn btn-locked" id="btn-fl">👑 Members Only</span></div>
       </div>
     </div>
 
@@ -857,7 +857,7 @@ const CALCS = {
 };
 
 // ─── COMING SOON (rolling monthly release) ───────────────────
-const COMING_SOON = new Set(['df','cs','hp','nl','pm','vf','ci','fl']);
+const COMING_SOON = new Set(['df','cs','hp','nl','pm','vf','ci','sp']);
 
 // ─── SVG BANK ────────────────────────────────────────────────
 const SVGS = {
