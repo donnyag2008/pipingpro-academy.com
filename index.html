@@ -870,9 +870,9 @@
     .calc-cta:hover .calc-cta-link{gap:.85rem;}
 
     @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
-    @keyframes cardIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes cardIn{from{opacity:0;}to{opacity:1;}}
     @keyframes pulse{0%{transform:scale(.6);opacity:.9;}100%{transform:scale(1.9);opacity:0;}}
-    @media(max-width:768px){.content-card:hover,.calc-cta:hover{transform:scale(1.06);}}
+    @media(max-width:768px){.content-card:hover,.calc-cta:hover{transform:scale(1.06)!important;}}
     @media(prefers-reduced-motion:reduce){.content-section *{animation:none!important;}.content-card,.calc-cta{opacity:1!important;}}
   
     /* ── LIVELY HOVER — tab content cards ── */
