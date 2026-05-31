@@ -248,8 +248,12 @@ body{ background:#faf6ef; color:#1a1510; }
 
       <div class="rl">Your inputs</div>
       <div class="fg">
-        <div class="f"><label>Pipe length (ft)</label><input type="number" id="pw-len" value="20" min="0" step="1" oninput="calcPW()"/></div>
-        <div class="f"><label>Fluid specific gravity</label><input type="number" id="pw-sg" value="1.0" min="0" step="0.05" oninput="calcPW()"/><span class="h">Water=1.0 · Crude oil≈0.85</span></div>
+        <div class="f"><label>Pipe length (ft)</label><input type="number" id="pw-len" value="20" min="0" step="1"/></div>
+        <div class="f"><label>Fluid specific gravity</label><input type="number" id="pw-sg" value="1.0" min="0" step="0.05"/><span class="h">Water=1.0 · Crude oil≈0.85</span></div>
+      </div>
+
+      <div style="margin:1.4rem 0 .2rem;text-align:center">
+        <button type="button" onclick="calcPW()" style="background:#8b3a1a;color:#fff;border:none;padding:.95rem 2.8rem;font-size:1rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 2px 6px rgba(139,58,26,.25)">↻ Calculate</button>
       </div>
 
       <div class="rl">Section properties</div>
@@ -335,7 +339,6 @@ function pwNps(nps){
   _pwT=P[nps].s[firstSch];
   txt('d-pw-t',_pwT+'"');
   txt('pw-pipe-info','NPS '+nps+' Sch '+firstSch+' · OD='+P[nps].od+'" · t='+_pwT+'" · Source: ASME B36.10');
-  calcPW();
 }
 
 function pwSch(sch){
@@ -343,7 +346,6 @@ function pwSch(sch){
   _pwT=P[_pwNps].s[sch];
   txt('d-pw-t',_pwT+'"');
   txt('pw-pipe-info','NPS '+_pwNps+' Sch '+sch+' · OD='+P[_pwNps].od+'" · t='+_pwT+'" · Source: ASME B36.10');
-  calcPW();
 }
 
 function calcPW(){
@@ -443,8 +445,12 @@ function calcPW(){
 
       <div class="rl">Your inputs</div>
       <div class="fg">
-        <div class="f"><label>Pipe length (ft)</label><input type="number" id="ss-len" value="20" min="0" step="1" oninput="calcSS()"/></div>
-        <div class="f"><label>Fluid specific gravity</label><input type="number" id="ss-sg" value="1.0" min="0" step="0.05" oninput="calcSS()"/><span class="h">Water=1.0 · Crude oil≈0.85</span></div>
+        <div class="f"><label>Pipe length (ft)</label><input type="number" id="ss-len" value="20" min="0" step="1"/></div>
+        <div class="f"><label>Fluid specific gravity</label><input type="number" id="ss-sg" value="1.0" min="0" step="0.05"/><span class="h">Water=1.0 · Crude oil≈0.85</span></div>
+      </div>
+
+      <div style="margin:1.4rem 0 .2rem;text-align:center">
+        <button type="button" onclick="calcSS()" style="background:#8b3a1a;color:#fff;border:none;padding:.95rem 2.8rem;font-size:1rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 2px 6px rgba(139,58,26,.25)">↻ Calculate</button>
       </div>
 
       <div class="rl">Section properties</div>
@@ -518,13 +524,11 @@ function ssNps(nps){
   var firstSch=Object.keys(SS[nps].s)[0];
   _ssT=SS[nps].s[firstSch];ssTxt('d-ss-t',_ssT+'"');
   ssTxt('ss-pipe-info','NPS '+nps+' Sch '+firstSch+' · OD='+SS[nps].od+'" · t='+_ssT+'" · Source: ASME B36.19');
-  calcSS();
 }
 function ssSch(sch){
   if(!_ssNps||!sch||!SS[_ssNps])return;
   _ssT=SS[_ssNps].s[sch];ssTxt('d-ss-t',_ssT+'"');
   ssTxt('ss-pipe-info','NPS '+_ssNps+' Sch '+sch+' · OD='+SS[_ssNps].od+'" · t='+_ssT+'" · Source: ASME B36.19');
-  calcSS();
 }
 function calcSS(){
   if(!_ssOD||!_ssT)return;
