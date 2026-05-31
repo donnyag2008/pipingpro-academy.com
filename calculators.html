@@ -193,6 +193,12 @@ footer a{color:var(--accent2);text-decoration:none;}
 .suite-header-eyebrow{font-size:10px;font-family:'DM Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);margin-bottom:.25rem;}
 .suite-header-title{font-family:'DM Serif Display',serif;font-size:1.5rem;color:#fff;line-height:1.15;margin-bottom:.2rem;}
 .suite-header-codes{font-size:11px;font-family:'DM Mono',monospace;color:rgba(255,255,255,.45);letter-spacing:.06em;}
+.card-badge.badge-soon{background:rgba(26,107,90,.88);color:#fff;}
+.calc-card.soon{cursor:pointer;}
+.calc-card.soon .card-img{filter:grayscale(.35) brightness(.92);}
+.calc-card.soon .card-img::after{content:'';position:absolute;inset:0;background:rgba(26,21,16,.16);pointer-events:none;}
+.card-btn.btn-soon{background:var(--paper2);color:var(--ink2);cursor:pointer;}
+.card-btn.btn-soon:hover{background:var(--paper3);}
 </style>
 <!-- ===== PipingPro Brand Bridge v1.0 — injected before </head> ===== -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -318,51 +324,32 @@ body{ background:#faf6ef; color:#1a1510; }
   <div class="suite-landing">
     <div class="suite-intro">
       <h2>Select a Calculator Suite</h2>
-      <p>Three specialist suites covering process piping, onshore/offshore pipelines, and pipeline integrity — each built on the governing codes for that discipline.</p>
+      <p>Two specialist suites — process piping &amp; pipelines, and pipeline integrity — each built on the governing codes for that discipline. 9 calculators are live now, with new tools added every month.</p>
     </div>
     <div class="suite-grid">
 
-      <!-- Suite 1: Piping -->
+            <!-- Suite 1: Piping & Pipeline -->
       <div class="suite-card" onclick="openSuite('piping')">
         <div class="suite-banner piping">
           <svg class="suite-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="32" cy="32" r="22" stroke="rgba(255,255,255,0.75)" stroke-width="3" fill="none"/>
-            <circle cx="32" cy="32" r="14" stroke="rgba(255,255,255,0.35)" stroke-width="2" fill="none"/>
-            <line x1="32" y1="10" x2="32" y2="54" stroke="rgba(255,255,255,0.9)" stroke-width="2.5"/>
-            <line x1="10" y1="32" x2="54" y2="32" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-dasharray="4 3"/>
-            <path d="M20 20 Q32 14 44 20" stroke="rgba(255,200,150,0.7)" stroke-width="1.5" fill="none"/>
+            <line x1="4" y1="42" x2="60" y2="42" stroke="rgba(255,255,255,0.85)" stroke-width="7" stroke-linecap="round"/>
+            <rect x="4" y="35" width="56" height="14" rx="7" stroke="rgba(255,255,255,0.28)" stroke-width="1.5" fill="none"/>
+            <circle cx="44" cy="20" r="11" stroke="rgba(255,255,255,0.8)" stroke-width="2.5" fill="none"/>
+            <line x1="44" y1="20" x2="44" y2="11" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round"/>
+            <line x1="44" y1="20" x2="51" y2="24" stroke="rgba(255,200,120,0.95)" stroke-width="2" stroke-linecap="round"/>
+            <line x1="16" y1="42" x2="16" y2="56" stroke="rgba(255,255,255,0.45)" stroke-width="2" stroke-linecap="round"/>
           </svg>
-          <span class="suite-count">14 calculators</span>
+          <span class="suite-count">9 live now</span>
         </div>
         <div class="suite-body">
-          <div class="suite-name">Piping Calculators</div>
-          <div class="suite-sub">ASME B31.3 — Process Piping</div>
-          <div class="suite-desc">Wall thickness, expansion loops, flange leakage, nozzle loads, pipe supports, vibration, hydro/pneumo testing, P&amp;ID MTO, and more.</div>
+          <div class="suite-name">Piping &amp; Pipeline</div>
+          <div class="suite-sub">ASME B31.3 · B31.4 · B31.8 · API · DNV</div>
+          <div class="suite-desc">Wall thickness, expansion loops, supports, trunnions and flange leakage — plus pipeline crossings, upheaval buckling and subsea design. 9 calculators live now, with more added every month.</div>
           <button class="suite-btn open">Open Suite →</button>
         </div>
       </div>
 
-      <!-- Suite 2: Pipeline -->
-      <div class="suite-card" onclick="openSuite('pipeline')">
-        <div class="suite-banner pipeline">
-          <svg class="suite-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <line x1="4" y1="32" x2="60" y2="32" stroke="rgba(255,255,255,0.85)" stroke-width="8" stroke-linecap="round"/>
-            <rect x="4" y="24" width="56" height="16" rx="8" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" fill="none"/>
-            <path d="M16 44 Q32 52 48 44" stroke="rgba(255,200,120,0.8)" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="4 2"/>
-            <line x1="32" y1="20" x2="32" y2="10" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-dasharray="3 2"/>
-            <polygon points="32,8 28,14 36,14" fill="rgba(255,255,255,0.5)"/>
-          </svg>
-          <span class="suite-count">5 calculators</span>
-        </div>
-        <div class="suite-body">
-          <div class="suite-name">Pipeline Calculators</div>
-          <div class="suite-sub">ASME B31.4 · ASME B31.8<br>ISO 13623:2017</div>
-          <div class="suite-desc">Onshore liquid &amp; gas pipelines, road/rail crossings, upheaval buckling, ductile fracture propagation, and subsea pipeline design per DNV-ST-F101.</div>
-          <button class="suite-btn open">Open Suite →</button>
-        </div>
-      </div>
-
-      <!-- Suite 3: Pipeline Integrity -->
+      <!-- Suite 2: Pipeline Integrity -->
       <div class="suite-card no-action" onclick="openWipModal()">
         <div class="suite-banner integrity">
           <svg class="suite-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -397,8 +384,8 @@ body{ background:#faf6ef; color:#1a1510; }
       <button class="suite-header-back" onclick="closeSuite()">← All Suites</button>
       <div class="suite-header-text">
         <div class="suite-header-eyebrow">Calculator Suite · PipingPro Academy</div>
-        <div class="suite-header-title">Piping Calculators</div>
-        <div class="suite-header-codes">ASME B31.3 — Process Piping · ASME B36.10 · API 610 / 617 / 618</div>
+        <div class="suite-header-title">Piping &amp; Pipeline Calculators</div>
+        <div class="suite-header-codes">ASME B31.3 · B31.4 · B31.8 · B36.10 · API 610/617/618 · DNV-ST-F101</div>
       </div>
     </div>
   </div>
@@ -507,7 +494,7 @@ body{ background:#faf6ef; color:#1a1510; }
       </div>
     </div>
 
-    <div class="calc-card" onclick="openModal('df')">
+    <div class="calc-card soon" onclick="openSoonModal('df')">
       <div class="card-img bg-maroon">
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
           <line x1="10" y1="45" x2="80" y2="45" stroke="rgba(255,255,255,0.6)" stroke-width="8" stroke-linecap="round"/>
@@ -517,13 +504,13 @@ body{ background:#faf6ef; color:#1a1510; }
           <line x1="45" y1="28" x2="65" y2="28" stroke="rgba(255,200,180,0.7)" stroke-width="1.5"/>
           <polygon points="67,28 60,25 60,31" fill="rgba(255,200,180,0.7)"/>
         </svg>
-        <span class="card-badge badge-member" id="badge-df">👑 Members</span>
+        <span class="card-badge badge-soon" id="badge-df">Coming Soon</span>
       </div>
       <div class="card-body">
         <div class="card-name">Ductile Fracture Propagation</div>
         <div class="card-desc">Battelle Two-Curve Method for gas pipeline arrest toughness per SAES-L-131, API 5L Annex G, and ASME B31.8.</div>
         <div class="card-tags"><span class="tag">BTCM</span><span class="tag">SAES-L-131</span><span class="tag">API 5L</span></div>
-        <div class="card-action"><span class="card-btn btn-locked" id="btn-df">👑 Members Only</span></div>
+        <div class="card-action"><span class="card-btn btn-soon" id="btn-df">Coming Soon →</span></div>
       </div>
     </div>
 
@@ -548,7 +535,7 @@ body{ background:#faf6ef; color:#1a1510; }
       </div>
     </div>
 
-    <div class="calc-card" onclick="openModal('cs')">
+    <div class="calc-card soon" onclick="openSoonModal('cs')">
       <div class="card-img" style="background:linear-gradient(135deg,#2a1a5a 0%,#4a2a9a 100%)">
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect x="15" y="20" width="60" height="50" rx="4" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" fill="none"/>
@@ -558,17 +545,17 @@ body{ background:#faf6ef; color:#1a1510; }
           <circle cx="68" cy="62" r="10" fill="rgba(255,200,100,0.85)"/>
           <text x="68" y="67" text-anchor="middle" font-size="12" fill="#1a1510" font-weight="bold">AI</text>
         </svg>
-        <span class="card-badge badge-member" id="badge-cs">👑 Members</span>
+        <span class="card-badge badge-soon" id="badge-cs">Coming Soon</span>
       </div>
       <div class="card-body">
         <div class="card-name">Caesar II Pre-Screener</div>
         <div class="card-desc">AI-powered stress modelling strategy — describe your system, get Caesar II guidance, flexibility concerns, and support recommendations.</div>
         <div class="card-tags"><span class="tag">Caesar II</span><span class="tag">AI-Assisted</span><span class="tag">Stress</span></div>
-        <div class="card-action"><span class="card-btn btn-locked" id="btn-cs">👑 Members Only</span></div>
+        <div class="card-action"><span class="card-btn btn-soon" id="btn-cs">Coming Soon →</span></div>
       </div>
     </div>
 
-    <div class="calc-card" onclick="openModal('fl')">
+    <div class="calc-card soon" onclick="openSoonModal('fl')">
       <div class="card-img" style="background:linear-gradient(135deg,#1a3a5a 0%,#2a6a8a 100%)">
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
           <ellipse cx="45" cy="45" rx="28" ry="12" stroke="rgba(255,255,255,0.8)" stroke-width="3" fill="none"/>
@@ -578,17 +565,17 @@ body{ background:#faf6ef; color:#1a1510; }
           <line x1="20" y1="36" x2="20" y2="54" stroke="rgba(255,255,255,0.5)" stroke-width="6" stroke-linecap="round"/>
           <line x1="70" y1="36" x2="70" y2="54" stroke="rgba(255,255,255,0.5)" stroke-width="6" stroke-linecap="round"/>
         </svg>
-        <span class="card-badge badge-member" id="badge-fl">👑 Members</span>
+        <span class="card-badge badge-soon" id="badge-fl">Coming Soon</span>
       </div>
       <div class="card-body">
         <div class="card-name">Flange Leakage Check</div>
         <div class="card-desc">Pressure Equivalent (PEQ) method — flange leakage under combined pressure, bending moment, and axial force per ASME B16.5.</div>
         <div class="card-tags"><span class="tag">ASME B16.5</span><span class="tag">B16.20</span><span class="tag">PEQ Method</span></div>
-        <div class="card-action"><span class="card-btn btn-locked" id="btn-fl">👑 Members Only</span></div>
+        <div class="card-action"><span class="card-btn btn-soon" id="btn-fl">Coming Soon →</span></div>
       </div>
     </div>
 
-    <div class="calc-card" onclick="openModal('hp')">
+    <div class="calc-card soon" onclick="openSoonModal('hp')">
       <div class="card-img" style="background:linear-gradient(135deg,#1a4a3a 0%,#2a8a6a 100%)">
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect x="20" y="25" width="50" height="40" rx="3" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" fill="none"/>
@@ -598,17 +585,17 @@ body{ background:#faf6ef; color:#1a1510; }
           <line x1="45" y1="65" x2="45" y2="75" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
           <line x1="35" y1="75" x2="55" y2="75" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
         </svg>
-        <span class="card-badge badge-member" id="badge-hp">👑 Members</span>
+        <span class="card-badge badge-soon" id="badge-hp">Coming Soon</span>
       </div>
       <div class="card-body">
         <div class="card-name">Hydro / Pneumo Test Pack</div>
         <div class="card-desc">Test pack generator for hydrostatic and pneumatic pressure testing — test pressures, hold times, and documentation per ASME B31.3.</div>
         <div class="card-tags"><span class="tag">ASME B31.3</span><span class="tag">Hydro Test</span><span class="tag">Pneumo Test</span></div>
-        <div class="card-action"><span class="card-btn btn-locked" id="btn-hp">👑 Members Only</span></div>
+        <div class="card-action"><span class="card-btn btn-soon" id="btn-hp">Coming Soon →</span></div>
       </div>
     </div>
 
-    <div class="calc-card" onclick="openModal('nl')">
+    <div class="calc-card soon" onclick="openSoonModal('nl')">
       <div class="card-img" style="background:linear-gradient(135deg,#3a2a1a 0%,#7a5a2a 100%)">
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect x="30" y="30" width="30" height="35" rx="2" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" fill="none"/>
@@ -619,17 +606,17 @@ body{ background:#faf6ef; color:#1a1510; }
           <line x1="38" y1="42" x2="52" y2="42" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
           <line x1="38" y1="50" x2="52" y2="50" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
         </svg>
-        <span class="card-badge badge-member" id="badge-nl">👑 Members</span>
+        <span class="card-badge badge-soon" id="badge-nl">Coming Soon</span>
       </div>
       <div class="card-body">
         <div class="card-name">Nozzle Loads Checker</div>
         <div class="card-desc">Nozzle load verification against allowables per API 610 (pumps), API 617 (compressors), API 661 (air coolers), and WRC 107/297.</div>
         <div class="card-tags"><span class="tag">API 610</span><span class="tag">API 617</span><span class="tag">WRC 107/297</span></div>
-        <div class="card-action"><span class="card-btn btn-locked" id="btn-nl">👑 Members Only</span></div>
+        <div class="card-action"><span class="card-btn btn-soon" id="btn-nl">Coming Soon →</span></div>
       </div>
     </div>
 
-    <div class="calc-card" onclick="openModal('pm')">
+    <div class="calc-card soon" onclick="openSoonModal('pm')">
       <div class="card-img" style="background:linear-gradient(135deg,#2a3a1a 0%,#4a6a2a 100%)">
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect x="10" y="20" width="70" height="50" rx="3" stroke="rgba(255,255,255,0.6)" stroke-width="2" fill="none"/>
@@ -641,13 +628,13 @@ body{ background:#faf6ef; color:#1a1510; }
           <circle cx="40" cy="44" r="4" stroke="rgba(255,255,255,0.8)" stroke-width="1.5" fill="none"/>
           <line x1="40" y1="52" x2="40" y2="62" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round"/>
         </svg>
-        <span class="card-badge badge-member" id="badge-pm">👑 Members</span>
+        <span class="card-badge badge-soon" id="badge-pm">Coming Soon</span>
       </div>
       <div class="card-body">
         <div class="card-name">P&amp;ID MTO Calculator</div>
         <div class="card-desc">Material take-off from P&amp;ID data — instruments, equipment, lines, and nozzle count extraction for project quantification.</div>
         <div class="card-tags"><span class="tag">P&amp;ID</span><span class="tag">MTO</span><span class="tag">Instrumentation</span></div>
-        <div class="card-action"><span class="card-btn btn-locked" id="btn-pm">👑 Members Only</span></div>
+        <div class="card-action"><span class="card-btn btn-soon" id="btn-pm">Coming Soon →</span></div>
       </div>
     </div>
 
@@ -692,7 +679,7 @@ body{ background:#faf6ef; color:#1a1510; }
     </div>
 
     <!-- 15. Vibration Fatigue Calculator -->
-    <div class="calc-card" onclick="openModal('vf')">
+    <div class="calc-card soon" onclick="openSoonModal('vf')">
       <div class="card-img" style="background:linear-gradient(135deg,#1a3a4a 0%,#2a6a5a 100%)">
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
           <line x1="5" y1="48" x2="85" y2="48" stroke="rgba(255,255,255,0.75)" stroke-width="5" stroke-linecap="round"/>
@@ -703,18 +690,18 @@ body{ background:#faf6ef; color:#1a1510; }
           <polygon points="45,18 42,24 48,24" fill="rgba(255,230,180,0.9)"/>
           <text x="45" y="15" text-anchor="middle" font-size="8" fill="rgba(255,230,180,0.9)" font-family="monospace">fn</text>
         </svg>
-        <span class="card-badge badge-member" id="badge-vf">👑 Members</span>
+        <span class="card-badge badge-soon" id="badge-vf">Coming Soon</span>
       </div>
       <div class="card-body">
         <div class="card-name">Vibration Fatigue Calculator</div>
         <div class="card-desc">Reciprocating compressor piping — MNFP, allowable span, support stiffness, pulsation compliance, and surge bottle sizing per API-618.</div>
         <div class="card-tags"><span class="tag">API-618</span><span class="tag">ASME B31.3</span><span class="tag">Vibration</span></div>
-        <div class="card-action"><span class="card-btn btn-locked" id="btn-vf">👑 Members Only</span></div>
+        <div class="card-action"><span class="card-btn btn-soon" id="btn-vf">Coming Soon →</span></div>
       </div>
     </div>
 
     <!-- 16. Pipe Coating & Insulation Calculator -->
-    <div class="calc-card" onclick="openModal('ci')">
+    <div class="calc-card soon" onclick="openSoonModal('ci')">
       <div class="card-img" style="background:linear-gradient(135deg,#2a4a3a 0%,#3a7a5a 100%)">
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
           <line x1="10" y1="45" x2="80" y2="45" stroke="rgba(255,255,255,0.9)" stroke-width="7" stroke-linecap="round"/>
@@ -728,13 +715,13 @@ body{ background:#faf6ef; color:#1a1510; }
           <line x1="55" y1="67" x2="55" y2="58" stroke="rgba(255,180,100,0.7)" stroke-width="1.5"/>
           <polygon points="55,56 52,62 58,62" fill="rgba(255,180,100,0.7)"/>
         </svg>
-        <span class="card-badge badge-member" id="badge-ci">👑 Members</span>
+        <span class="card-badge badge-soon" id="badge-ci">Coming Soon</span>
       </div>
       <div class="card-body">
         <div class="card-name">Pipe Coating &amp; Insulation</div>
         <div class="card-desc">Paint quantity per coat (litres &amp; drums) and hot insulation MTO — mineral wool, calcium silicate, aerogel and more for O&amp;G plant piping.</div>
         <div class="card-tags"><span class="tag">ISO 12944</span><span class="tag">ASTM C547</span><span class="tag">Hot Insulation</span></div>
-        <div class="card-action"><span class="card-btn btn-locked" id="btn-ci">👑 Members Only</span></div>
+        <div class="card-action"><span class="card-btn btn-soon" id="btn-ci">Coming Soon →</span></div>
       </div>
     </div>
 
@@ -771,88 +758,6 @@ body{ background:#faf6ef; color:#1a1510; }
   </div><!-- /main -->
 </div><!-- /suite-piping -->
 
-<!-- ═══════════════ SUITE VIEW: PIPELINE ═══════════════ -->
-<div class="suite-view" id="suite-pipeline">
-  <div class="suite-header">
-    <div class="suite-header-inner">
-      <button class="suite-header-back" onclick="closeSuite()">← All Suites</button>
-      <div class="suite-header-text">
-        <div class="suite-header-eyebrow">Calculator Suite · PipingPro Academy</div>
-        <div class="suite-header-title">Pipeline Calculators</div>
-        <div class="suite-header-codes">ASME B31.4 · ASME B31.8 · ISO 13623:2017 · DNV-ST-F101 · API RP 1102</div>
-      </div>
-    </div>
-  </div>
-  <div class="main">
-  <div class="grid" id="grid-pipeline">
-    <!-- Pipeline: Pipe Wall Thickness (shared) -->
-    <div class="calc-card" onclick="openModal('wt')">
-      <div class="card-img bg-accent">
-        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="45" cy="45" r="28" stroke="rgba(255,255,255,0.8)" stroke-width="7" fill="none"/><line x1="45" y1="17" x2="45" y2="10" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/><line x1="45" y1="73" x2="45" y2="80" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/><line x1="40" y1="10" x2="50" y2="10" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/><line x1="40" y1="80" x2="50" y2="80" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/><line x1="75" y1="45" x2="62" y2="45" stroke="rgba(255,255,255,0.7)" stroke-width="2"/><polygon points="63,45 70,41 70,49" fill="rgba(255,255,255,0.7)"/></svg>
-        <span class="card-badge badge-member" id="badge-wt-pl">👑 Members</span>
-      </div>
-      <div class="card-body">
-        <div class="card-name">Pipe Wall Thickness</div>
-        <div class="card-desc">Minimum wall thickness per ASME B31.3, B31.4, B31.8 with mill tolerance, corrosion allowance, and schedule selection.</div>
-        <div class="card-tags"><span class="tag">ASME B31.3</span><span class="tag">B31.4</span><span class="tag">B31.8</span></div>
-        <div class="card-action"><span class="card-btn btn-locked" id="btn-wt-pl">👑 Members Only</span></div>
-      </div>
-    </div>
-    <!-- Pipeline Crossing -->
-    <div class="calc-card" onclick="openModal('pc')">
-      <div class="card-img bg-slate">
-        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="52" width="80" height="8" rx="1" fill="rgba(255,255,255,0.25)"/><ellipse cx="45" cy="68" rx="14" ry="10" stroke="rgba(255,255,255,0.8)" stroke-width="3.5" fill="none"/><path d="M31 58 Q45 52 59 58" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" fill="none" stroke-dasharray="3 2"/><line x1="30" y1="35" x2="30" y2="50" stroke="rgba(255,255,255,0.7)" stroke-width="2"/><polygon points="30,52 26,44 34,44" fill="rgba(255,255,255,0.7)"/><line x1="45" y1="30" x2="45" y2="50" stroke="rgba(255,255,255,0.85)" stroke-width="2.5"/><polygon points="45,52 41,44 49,44" fill="rgba(255,255,255,0.85)"/><line x1="60" y1="35" x2="60" y2="50" stroke="rgba(255,255,255,0.7)" stroke-width="2"/><polygon points="60,52 56,44 64,44" fill="rgba(255,255,255,0.7)"/></svg>
-        <span class="card-badge badge-member" id="badge-pc">👑 Members</span>
-      </div>
-      <div class="card-body">
-        <div class="card-name">Pipeline Crossing Calculator</div>
-        <div class="card-desc">Road and railway crossing stress analysis per API RP 1102 — soil load, traffic load, combined stress, and casing pipe adequacy.</div>
-        <div class="card-tags"><span class="tag">API RP 1102</span><span class="tag">Road</span><span class="tag">Rail</span></div>
-        <div class="card-action"><span class="card-btn btn-locked" id="btn-pc">👑 Members Only</span></div>
-      </div>
-    </div>
-    <!-- Upheaval Buckling -->
-    <div class="calc-card" onclick="openModal('ub')">
-      <div class="card-img bg-olive">
-        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="5" y1="50" x2="85" y2="50" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-dasharray="5 3"/><path d="M5 65 Q22 65 35 50 Q45 38 55 50 Q68 65 85 65" stroke="rgba(255,255,255,0.9)" stroke-width="4" fill="none" stroke-linecap="round"/><line x1="45" y1="55" x2="45" y2="30" stroke="rgba(255,255,255,0.75)" stroke-width="2"/><polygon points="45,28 41,36 49,36" fill="rgba(255,255,255,0.75)"/><line x1="25" y1="25" x2="25" y2="48" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="65" y1="25" x2="65" y2="48" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-dasharray="3 2"/></svg>
-        <span class="card-badge badge-member" id="badge-ub">👑 Members</span>
-      </div>
-      <div class="card-body">
-        <div class="card-name">Upheaval Buckling Calculator</div>
-        <div class="card-desc">Buried pipeline stability — driving force, soil resistance, and required cover depth per DNV-RP-F110.</div>
-        <div class="card-tags"><span class="tag">DNV-RP-F110</span><span class="tag">Buried Pipeline</span></div>
-        <div class="card-action"><span class="card-btn btn-locked" id="btn-ub">👑 Members Only</span></div>
-      </div>
-    </div>
-    <!-- Ductile Fracture -->
-    <div class="calc-card" onclick="openModal('df')">
-      <div class="card-img bg-maroon">
-        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="45" x2="80" y2="45" stroke="rgba(255,255,255,0.6)" stroke-width="8" stroke-linecap="round"/><polyline points="45,30 48,38 42,45 48,52 45,60" stroke="rgba(255,120,100,0.95)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="45" y1="28" x2="25" y2="28" stroke="rgba(255,200,180,0.7)" stroke-width="1.5"/><polygon points="23,28 30,25 30,31" fill="rgba(255,200,180,0.7)"/><line x1="45" y1="28" x2="65" y2="28" stroke="rgba(255,200,180,0.7)" stroke-width="1.5"/><polygon points="67,28 60,25 60,31" fill="rgba(255,200,180,0.7)"/></svg>
-        <span class="card-badge badge-member" id="badge-df">👑 Members</span>
-      </div>
-      <div class="card-body">
-        <div class="card-name">Ductile Fracture Propagation</div>
-        <div class="card-desc">Battelle Two-Curve Method for gas pipeline arrest toughness per SAES-L-131, API 5L Annex G, and ASME B31.8.</div>
-        <div class="card-tags"><span class="tag">BTCM</span><span class="tag">SAES-L-131</span><span class="tag">API 5L</span></div>
-        <div class="card-action"><span class="card-btn btn-locked" id="btn-df">👑 Members Only</span></div>
-      </div>
-    </div>
-    <!-- Subsea Pipeline -->
-    <div class="calc-card" onclick="openModal('sp')">
-      <div class="card-img bg-teal2">
-        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 35 Q20 28 35 35 Q50 42 65 35 Q80 28 88 35" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/><path d="M5 42 Q20 35 35 42 Q50 49 65 42 Q80 35 88 42" stroke="rgba(255,255,255,0.25)" stroke-width="1" fill="none"/><line x1="5" y1="78" x2="85" y2="78" stroke="rgba(255,255,255,0.3)" stroke-width="2"/><line x1="10" y1="72" x2="80" y2="72" stroke="rgba(255,255,255,0.85)" stroke-width="6" stroke-linecap="round"/><line x1="80" y1="38" x2="80" y2="72" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/><polygon points="80,74 77,67 83,67" fill="rgba(255,255,255,0.6)"/><polygon points="80,36 77,43 83,43" fill="rgba(255,255,255,0.6)"/></svg>
-        <span class="card-badge badge-member" id="badge-sp">👑 Members</span>
-      </div>
-      <div class="card-body">
-        <div class="card-name">Subsea Pipeline Calculator</div>
-        <div class="card-desc">Offshore pipeline design — wall thickness, collapse, propagating buckling, on-bottom stability, and free-span per DNV-ST-F101.</div>
-        <div class="card-tags"><span class="tag">DNV-ST-F101</span><span class="tag">Subsea</span><span class="tag">Offshore</span></div>
-        <div class="card-action"><span class="card-btn btn-locked" id="btn-sp">👑 Members Only</span></div>
-      </div>
-    </div>
-  </div><!-- /grid-pipeline -->
-  </div><!-- /main -->
-</div><!-- /suite-pipeline -->
 
 <!-- ═══════════════════ UNDER CONSTRUCTION POPUP ═══════════════════ -->
 <div class="wip-modal-bg" id="wip-modal-bg" onclick="closeWipModalBg(event)">
@@ -879,6 +784,26 @@ body{ background:#faf6ef; color:#1a1510; }
         </div>
       </div>
       <button onclick="closeWipModal()" style="width:100%;padding:9px;background:var(--accent);color:#fff;border-radius:8px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;">Got it</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ PER-CALCULATOR COMING SOON ═══════════════════ -->
+<div class="wip-modal-bg" id="soon-modal-bg" onclick="closeSoonModalBg(event)">
+  <div class="wip-modal">
+    <button class="wip-modal-close" onclick="closeSoonModal()">✕</button>
+    <div class="wip-top">
+      <div style="font-size:2rem;margin-bottom:.4rem;">🗓️</div>
+      <div style="font-family:'DM Serif Display',serif;font-size:1rem;color:#fff;line-height:1.3;margin-bottom:.2rem;" id="soon-calc-name">This Calculator</div>
+      <div style="font-size:10px;font-family:'DM Mono',monospace;color:rgba(255,255,255,.5);letter-spacing:.1em;text-transform:uppercase;">Coming Soon</div>
+    </div>
+    <div class="wip-modal-body">
+      <p style="font-size:12px;color:var(--ink2);line-height:1.7;margin-bottom:.9rem;text-align:center;">
+        This calculator is on the way. We're rolling out the full suite over the coming months — <strong style="color:var(--ink);">9 calculators are live now, with new tools added every month.</strong><br><br>
+        Members get instant access to each one the moment it goes live.
+      </p>
+      <a href="https://pipingpro-academy.com/membership" style="display:block;width:100%;padding:9px;background:var(--accent);color:#fff;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;text-align:center;font-family:'DM Sans',sans-serif;margin-bottom:.6rem;">Become a Member →</a>
+      <button onclick="closeSoonModal()" style="width:100%;padding:7px;background:none;border:none;font-size:11px;color:var(--ink3);cursor:pointer;font-family:'DM Sans',sans-serif;">Got it</button>
     </div>
   </div>
 </div>
@@ -929,6 +854,9 @@ const CALCS = {
   ci:{name:'Pipe Coating & Insulation Calculator',desc:'Paint quantity per coat (litres & drums) and hot insulation MTO — mineral wool, calcium silicate, aerogel and more for O&G plant piping.',tags:['ISO 12944','ASTM C547','Hot Insulation'],what:['Paint litres per coat','20L drum count','Insulation volume (m³)','Cladding area (m²)','Multi-size project MTO'],file:'pipe-coating-insulation-calculator.html',bg:'bg-coating',svgId:'ci'},
   ps:{name:'Pipe Support Span Calculator',desc:'Maximum allowable span between supports — stress method, deflection method & natural frequency check per M.W. Kellogg / ASME B31.3. Includes layout reduction factors for L-bend and Z-bend configurations.',tags:['M.W. Kellogg','ASME B31.3','Span / Deflection'],what:['Max span — stress method','Max span — deflection method','Governing span (lesser of two)','Layout factor for L/Z-bend','Natural frequency check (4 & 8 cps targets)'],file:'pipe-support-span-calculator.html',bg:'bg-navy',svgId:'ps'}
 };
+
+// ─── COMING SOON (rolling monthly release) ───────────────────
+const COMING_SOON = new Set(['df','cs','hp','nl','pm','vf','ci','fl']);
 
 // ─── SVG BANK ────────────────────────────────────────────────
 const SVGS = {
@@ -998,7 +926,7 @@ function closeModalBg(e){
   if(e.target===document.getElementById('modal-bg')) closeModal();
 }
 
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeWipModal();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeWipModal();closeSoonModal();}});
 
 // ─── WIP MODAL ────────────────────────────────────────────────
 function openWipModal(){
@@ -1013,6 +941,21 @@ function closeWipModalBg(e){
   if(e.target===document.getElementById('wip-modal-bg')) closeWipModal();
 }
 
+// ─── SOON MODAL (per-calculator) ──────────────────────────────
+function openSoonModal(id){
+  const c = CALCS[id];
+  document.getElementById('soon-calc-name').textContent = c ? c.name : 'This calculator';
+  document.getElementById('soon-modal-bg').classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function closeSoonModal(){
+  const m=document.getElementById('soon-modal-bg'); if(m) m.classList.remove('show');
+  document.body.style.overflow='';
+}
+function closeSoonModalBg(e){
+  if(e.target===document.getElementById('soon-modal-bg')) closeSoonModal();
+}
+
 // ─── INIT CARDS based on member status ──────────────────────────────
 function initCards(){
   const member = isMember();
@@ -1021,6 +964,7 @@ function initCards(){
     const badge = document.getElementById('badge-'+id);
     const btn   = document.getElementById('btn-'+id);
     if(!badge || !btn) return;
+    if(COMING_SOON.has(id)) return;   // hold-back calculators stay 'Coming Soon'
     if(member){
       badge.textContent = '✓ Member';
       badge.style.background = 'rgba(26,107,90,.85)';

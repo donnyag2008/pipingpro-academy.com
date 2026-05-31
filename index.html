@@ -3,16 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
- <meta name="google-site-verification" content="jfTYMJfebRlCbj9gRvjBTKVePFx-sNKONvUfc5aoSqg" />
-
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-991BP9X6W0"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-991BP9X6W0');
-  </script>
   <title>PipingPro Academy — Professional Piping Engineering Knowledge</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
@@ -803,6 +793,85 @@
       nav { padding: 0 4%; }
       .nav-links { gap: 1.2rem; }
     }
+  
+    /* ── LIVELY MEMBERSHIP SECTION ── */
+    .content-section{position:relative;overflow:hidden;
+      background:
+        radial-gradient(820px 340px at 8% -10%, rgba(212,160,23,.10), transparent 60%),
+        radial-gradient(640px 300px at 100% 0%, rgba(26,107,90,.05), transparent 55%),
+        repeating-linear-gradient(90deg, rgba(26,21,16,.022) 0 1px, transparent 1px 64px),
+        repeating-linear-gradient(0deg, rgba(26,21,16,.022) 0 1px, transparent 1px 64px),
+        var(--paper);}
+    .content-section.in .section-label{animation:fadeUp .6s .03s both;}
+    .content-section.in h2{animation:fadeUp .65s .10s both;}
+    .content-section.in .section-intro{animation:fadeUp .65s .18s both;}
+    .content-section.in .live-pill{animation:fadeUp .6s .22s both;}
+    .content-section.in .tabs-row{animation:fadeUp .6s .28s both;}
+
+    .live-pill{display:inline-flex;align-items:center;gap:.5rem;background:#e7f1ee;
+      border:1px solid rgba(26,107,90,.22);color:#1a6b5a;font-size:.8rem;font-weight:700;
+      padding:.42rem .85rem;border-radius:30px;margin:-1.9rem 0 2.3rem;}
+    .live-dot{width:8px;height:8px;border-radius:50%;background:#1a6b5a;position:relative;}
+    .live-dot::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid #1a6b5a;
+      animation:pulse 1.9s ease-out infinite;}
+
+    .tabs-row{position:relative;}
+    .tabs-row .tab-btn{display:inline-flex;align-items:center;gap:.5rem;}
+    .tab-btn svg{width:17px;height:17px;flex-shrink:0;}
+    .tab-btn.active,.tab-btn.featured.active{border-bottom-color:transparent!important;}
+    .tab-underline{position:absolute;bottom:-2px;left:0;width:0;height:3px;border-radius:3px;
+      background:linear-gradient(90deg,var(--gold),var(--gold-bright));
+      transition:left .35s cubic-bezier(.65,.05,.36,1),width .35s cubic-bezier(.65,.05,.36,1);}
+
+    .content-card{position:relative;background:#fff;border:1px solid var(--paper-dark);border-left:none;
+      border-radius:13px;padding:1.55rem 1.5rem 1.4rem;overflow:hidden;
+      transition:transform .25s cubic-bezier(.2,.7,.3,1),box-shadow .25s;}
+    .content-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+      background:linear-gradient(180deg,var(--gold),var(--gold-bright));transition:width .25s;}
+    .content-card:hover{transform:translateY(-5px);box-shadow:0 14px 38px rgba(26,21,16,.13);}
+    .content-card:hover::before{width:5px;}
+    a.content-card{text-decoration:none;color:inherit;display:block;cursor:pointer;}
+
+    .card-ic{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+      margin-bottom:1.05rem;transition:transform .25s;}
+    .content-card:hover .card-ic{transform:scale(1.08) rotate(-3deg);}
+    .card-ic svg{width:24px;height:24px;}
+    .t-rust{background:linear-gradient(135deg,#7a3518,#a8512a);}
+    .t-teal{background:linear-gradient(135deg,#15604f,#258a6f);}
+    .t-navy{background:linear-gradient(135deg,#1a2a5a,#33508f);}
+    .t-bronze{background:linear-gradient(135deg,#3a2a1a,#8a6a2a);}
+    .t-olive{background:linear-gradient(135deg,#3a4a1a,#6a8a2a);}
+    .t-gold{background:linear-gradient(135deg,#7a5e10,#c79c1e);}
+    .t-slate{background:linear-gradient(135deg,#27384a,#4a6a7e);}
+
+    .card-tag.free{background:#e7f1ee;color:#1a6b5a;}
+    .card-go{display:inline-flex;align-items:center;gap:.4rem;margin-top:.9rem;font-size:.74rem;font-weight:800;
+      letter-spacing:.08em;text-transform:uppercase;color:var(--gold);transition:gap .2s;}
+    .content-card:hover .card-go{gap:.7rem;}
+
+    .tab-panel.reveal .content-card,.tab-panel.reveal .calc-cta{opacity:0;animation:cardIn .55s both;}
+
+    /* Calculator tab -> link-out CTA */
+    .calc-cta{display:flex;align-items:center;justify-content:space-between;gap:1.6rem;flex-wrap:wrap;
+      background:linear-gradient(135deg,#221a14,#2e231b);color:#fff;border-radius:16px;padding:1.9rem 2rem;
+      border:1px solid rgba(212,160,23,.28);position:relative;overflow:hidden;text-decoration:none;
+      transition:transform .25s,box-shadow .25s;}
+    .calc-cta::before{content:'';position:absolute;inset:0;pointer-events:none;
+      background:repeating-linear-gradient(90deg, rgba(255,255,255,.03) 0 1px, transparent 1px 50px),
+                 repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0 1px, transparent 1px 50px);}
+    .calc-cta:hover{transform:translateY(-4px);box-shadow:0 18px 46px rgba(26,21,16,.22);}
+    .calc-cta-text{position:relative;}
+    .calc-cta-text h3{font-family:'DM Serif Display',serif;font-size:1.45rem;margin-bottom:.45rem;color:#fff;}
+    .calc-cta-text p{font-size:.9rem;color:rgba(255,255,255,.66);max-width:540px;line-height:1.6;}
+    .calc-cta-link{position:relative;display:inline-flex;align-items:center;gap:.55rem;background:var(--gold);
+      color:var(--ink);font-weight:800;font-size:.85rem;letter-spacing:.04em;text-transform:uppercase;
+      padding:.85rem 1.5rem;border-radius:9px;white-space:nowrap;transition:gap .2s;}
+    .calc-cta:hover .calc-cta-link{gap:.85rem;}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes cardIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes pulse{0%{transform:scale(.6);opacity:.9;}100%{transform:scale(1.9);opacity:0;}}
+    @media(prefers-reduced-motion:reduce){.content-section *{animation:none!important;}.content-card,.calc-cta{opacity:1!important;}}
   </style>
 </head>
 <body>
@@ -876,64 +945,73 @@
   <h2>Everything in One Subscription</h2>
   <p class="section-intro">One flat subscription unlocks all courses, all calculators, and all technical guides — plus every new piece of content as it is published.</p>
 
+  <div class="live-pill"><span class="live-dot"></span> New courses, calculators &amp; guides added every month</div>
+
   <div class="tabs-row">
-    <button class="tab-btn featured active" data-tab="courses">📘 Courses</button>
-    <a class="tab-btn featured" href="calculators.html">🔢 Calculator Suite</a>
-    <button class="tab-btn" data-tab="guides">📄 Technical Guides</button>
+    <button class="tab-btn featured active" data-tab="courses"><svg viewBox="0 0 24 24" fill="none"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v15H5.5A1.5 1.5 0 0 0 4 20.5z" stroke="currentColor" stroke-width="1.7"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13v15h5.5a1.5 1.5 0 0 1 1.5 1.5z" stroke="currentColor" stroke-width="1.7"/></svg> Courses</button>
+    <button class="tab-btn featured" data-tab="calcs"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="3" width="16" height="18" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M7 7h10M7 11h3M12 11h3M7 15h3M12 15h3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg> Calculator Suite</button>
+    <button class="tab-btn" data-tab="guides"><svg viewBox="0 0 24 24" fill="none"><path d="M6 3h9l4 4v14H6z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M15 3v4h4M9 12h6M9 16h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg> Technical Guides</button>
+    <span class="tab-underline" id="tab-underline"></span>
   </div>
 
+  <!-- COURSES — learning journey: three entry points -->
   <div class="tab-panel active" id="tab-courses">
     <div class="content-grid">
-      <div class="content-card">
-        <div class="card-icon">⚙️</div>
-        <div class="card-title">Introduction to Piping Engineering</div>
-        <div class="card-desc">Foundations of piping systems, components, codes, and design principles. Entry point for the Academy.</div>
-        <span class="card-tag">Free Preview</span>
-      </div>
-      <div class="content-card">
-        <div class="card-icon">📐</div>
-        <div class="card-title">Pipe Stress Analysis Fundamentals</div>
-        <div class="card-desc">Thermal expansion, flexibility analysis, sustained and occasional loads — aligned to ASME B31.3.</div>
-        <span class="card-tag">Members</span>
-      </div>
-      <div class="content-card">
-        <div class="card-icon">💻</div>
-        <div class="card-title">Caesar II Modelling Methodology</div>
-        <div class="card-desc">Practical Caesar II workflows: model setup, boundary conditions, load cases, and result interpretation.</div>
-        <span class="card-tag">Members</span>
-      </div>
-      <div class="content-card">
-        <div class="card-icon">🔩</div>
-        <div class="card-title">Nozzle Load Assessment</div>
-        <div class="card-desc">Equipment nozzle evaluation using API 610, API 617, WRC 107, and WRC 297 — with worked examples.</div>
-        <span class="card-tag">Members</span>
-      </div>
+      <a class="content-card" href="courses.html">
+        <div class="card-ic t-rust"><svg viewBox="0 0 24 24" fill="none"><path d="M2 9l10-4 10 4-10 4z" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/><path d="M6 11v4c0 1.5 2.7 3 6 3s6-1.5 6-3v-4" stroke="#fff" stroke-width="1.6"/><path d="M22 9v5" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+        <div class="card-title">Courses</div>
+        <div class="card-desc">Structured video courses — piping fundamentals, stress analysis, Caesar II methodology and pipeline design. All included in membership.</div>
+        <span class="card-go">Browse courses →</span>
+      </a>
+      <a class="content-card" href="final-quiz.html">
+        <div class="card-ic t-navy"><svg viewBox="0 0 24 24" fill="none"><rect x="5" y="4" width="14" height="17" rx="2" stroke="#fff" stroke-width="1.7"/><path d="M9 4V3h6v1" stroke="#fff" stroke-width="1.7"/><path d="M8.5 12l2.2 2.2L15.5 9.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="card-title">Final Quiz</div>
+        <div class="card-desc">Check your understanding with a graded assessment at the end of each course before moving on.</div>
+        <span class="card-go">Take the quiz →</span>
+      </a>
+      <a class="content-card" href="certificate.html">
+        <div class="card-ic t-gold"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="9" r="5" stroke="#fff" stroke-width="1.7"/><path d="M9 13l-1.5 7L12 18l4.5 2-1.5-7" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/></svg></div>
+        <div class="card-title">Certificate Generation</div>
+        <div class="card-desc">Pass the quiz and generate your completion certificate — ready to share on LinkedIn and add to your CV.</div>
+        <span class="card-go">Get certificate →</span>
+      </a>
     </div>
   </div>
 
+  <!-- CALCULATOR SUITE — tab opens, content links to the suite page -->
+  <div class="tab-panel" id="tab-calcs">
+    <a class="calc-cta" href="calculators.html">
+      <div class="calc-cta-text">
+        <h3>Piping &amp; Pipeline Calculator Suite</h3>
+        <p>9 calculators live now — wall thickness, expansion loops, supports, trunnions, flange leakage, pipeline crossings, upheaval buckling and subsea design — with Pipeline Integrity coming soon. New tools added every month.</p>
+      </div>
+      <span class="calc-cta-link">Open the Suite →</span>
+    </a>
+  </div>
 
+  <!-- TECHNICAL GUIDES -->
   <div class="tab-panel" id="tab-guides">
     <div class="content-grid">
       <div class="content-card">
-        <div class="card-icon">📋</div>
+        <div class="card-ic t-rust"><svg viewBox="0 0 24 24" fill="none"><path d="M6 3h9l4 4v14H6z" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/><path d="M15 3v4h4M9 12h6M9 16h6" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></svg></div>
         <div class="card-title">ASME B31.3 Process Piping Guide</div>
         <div class="card-desc">Design, fabrication, examination, and testing requirements — summarised and annotated for practical project use.</div>
         <span class="card-tag">Members</span>
       </div>
       <div class="content-card">
-        <div class="card-icon">🛢️</div>
+        <div class="card-ic t-slate"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="8" width="18" height="8" rx="4" stroke="#fff" stroke-width="1.7"/><path d="M8 8v8M16 8v8" stroke="#fff" stroke-width="1.2" opacity=".6"/></svg></div>
         <div class="card-title">ASME B31.4 / B31.8 Pipeline Guide</div>
         <div class="card-desc">Liquid and gas pipeline design requirements, stress checks, and hydrostatic testing criteria.</div>
         <span class="card-tag">Members</span>
       </div>
       <div class="content-card">
-        <div class="card-icon">🏭</div>
+        <div class="card-ic t-bronze"><svg viewBox="0 0 24 24" fill="none"><path d="M3 21V10l6 3V10l6 3V6h6v15z" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/><path d="M19 9h-2M19 13h-2M19 17h-2" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/></svg></div>
         <div class="card-title">Aramco SAES Reference Summary</div>
         <div class="card-desc">Key SAES standards for piping design, plot planning, and inspection — distilled from operator documentation.</div>
         <span class="card-tag">Members</span>
       </div>
       <div class="content-card">
-        <div class="card-icon">🧪</div>
+        <div class="card-ic t-teal"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="13" r="7" stroke="#fff" stroke-width="1.7"/><path d="M12 13l3-2M12 4v3" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></svg></div>
         <div class="card-title">Hydrostatic vs Pneumatic Testing</div>
         <div class="card-desc">Code requirements, safety considerations, and project schedule impact — ASME B31.3 compliant guidance.</div>
         <span class="card-tag">Members</span>
@@ -1068,15 +1146,49 @@
 </div>
 
 <script>
-  // Tab switching
-  document.querySelectorAll('.tab-btn').forEach(btn => {
+  // Tab switching + sliding underline + staggered reveal
+  const _tabBtns = document.querySelectorAll('.tab-btn');
+  const _underline = document.getElementById('tab-underline');
+  function _moveUnderline(btn){
+    if(!_underline || !btn) return;
+    _underline.style.left  = btn.offsetLeft + 'px';
+    _underline.style.width = btn.offsetWidth + 'px';
+  }
+  function _revealCards(panel){
+    if(!panel) return;
+    panel.classList.add('reveal');
+    panel.querySelectorAll('.content-card, .calc-cta').forEach((c,i) => {
+      c.style.animation = 'none'; c.offsetHeight;            // reflow to restart
+      c.style.animationDelay = (i*70) + 'ms'; c.style.animation = '';
+    });
+  }
+  _tabBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      _tabBtns.forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
       btn.classList.add('active');
-      document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+      const panel = document.getElementById('tab-' + btn.dataset.tab);
+      panel.classList.add('active');
+      _moveUnderline(btn);
+      _revealCards(panel);
     });
   });
+  // Reveal the whole section when it scrolls into view
+  const _contentSec = document.getElementById('content');
+  if(_contentSec){
+    const _activate = () => {
+      _contentSec.classList.add('in');
+      _moveUnderline(document.querySelector('.tab-btn.active'));
+      _revealCards(document.querySelector('.tab-panel.active'));
+    };
+    if('IntersectionObserver' in window){
+      const _io = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if(e.isIntersecting){ _activate(); _io.disconnect(); } });
+      }, {threshold:0.18});
+      _io.observe(_contentSec);
+    } else { _activate(); }
+    window.addEventListener('resize', () => _moveUnderline(document.querySelector('.tab-btn.active')));
+  }
 
   // ── CALCULATOR DATA ──────────────────────────────────────────
   const CALCS = {

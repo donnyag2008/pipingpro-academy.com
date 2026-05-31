@@ -218,8 +218,9 @@ body{ background:#faf6ef; color:#1a1510; }
 
 <div class="tabs">
   <button class="tab active" onclick="switchTab('calc')">1 · Span Calculator</button>
-  <button class="tab" onclick="switchTab('layout')">2 · Layout Factor</button>
-  <button class="tab" onclick="switchTab('theory')">3 · Theory &amp; Reference</button>
+  <button class="tab" onclick="switchTab('table')">2 · Span Table</button>
+  <button class="tab" onclick="switchTab('layout')">3 · Layout Factor</button>
+  <button class="tab" onclick="switchTab('theory')">4 · Theory &amp; Reference</button>
 </div>
 
 <div class="main">
@@ -511,6 +512,79 @@ body{ background:#faf6ef; color:#1a1510; }
 </div><!-- /panel-calc -->
 
 <!-- ══════════════════════════════════════════════
+     TAB 2 — SPAN TABLE (multi-size)
+══════════════════════════════════════════════ -->
+<div class="panel" id="panel-table">
+
+  <div class="disclaimer">
+    ⚠ Reference span table generated across all pipe sizes using the <b>current</b> schedule, material, fluid and insulation inputs from the Span Calculator tab. The governing span is min(stress-limited, deflection-limited). Reduced spans apply generic reduction factors for practical layout. Verify against project piping support specifications.
+  </div>
+
+  <div class="card" style="margin-bottom:1rem">
+    <div class="card-title">Span Definition</div>
+    <svg viewBox="0 0 520 150" style="width:100%;max-width:480px;display:block;margin:0 auto 6px" xmlns="http://www.w3.org/2000/svg">
+      <defs><marker id="ar2" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--ink,#1a1510)"/></marker></defs>
+      <g stroke="var(--accent,#8b3a1a)" stroke-width="1.5">
+        <line x1="70" y1="34" x2="70" y2="52" marker-end="url(#ar2)"/><line x1="120" y1="34" x2="120" y2="52" marker-end="url(#ar2)"/>
+        <line x1="170" y1="34" x2="170" y2="52" marker-end="url(#ar2)"/><line x1="220" y1="34" x2="220" y2="52" marker-end="url(#ar2)"/>
+        <line x1="270" y1="34" x2="270" y2="52" marker-end="url(#ar2)"/><line x1="320" y1="34" x2="320" y2="52" marker-end="url(#ar2)"/>
+        <line x1="370" y1="34" x2="370" y2="52" marker-end="url(#ar2)"/><line x1="420" y1="34" x2="420" y2="52" marker-end="url(#ar2)"/>
+      </g>
+      <text x="245" y="26" text-anchor="middle" font-size="11" fill="var(--accent,#8b3a1a)">w = uniform load (pipe + fluid + insulation)</text>
+      <rect x="55" y="58" width="385" height="12" fill="#d8c9a8" stroke="var(--ink,#1a1510)" stroke-width="1.5"/>
+      <path d="M55,70 L45,92 L65,92 z" fill="#6b5d49"/><path d="M440,70 L430,92 L450,92 z" fill="#6b5d49"/>
+      <line x1="38" y1="92" x2="72" y2="92" stroke="var(--ink,#1a1510)" stroke-width="2"/>
+      <line x1="423" y1="92" x2="457" y2="92" stroke="var(--ink,#1a1510)" stroke-width="2"/>
+      <path d="M55,64 Q247,104 440,64" fill="none" stroke="var(--pass,#1a6b5a)" stroke-width="1.2" stroke-dasharray="4,3"/>
+      <text x="247" y="118" text-anchor="middle" font-size="9" fill="var(--pass,#1a6b5a)">deflection δ</text>
+      <line x1="55" y1="132" x2="440" y2="132" stroke="var(--ink,#1a1510)" stroke-width="1" marker-start="url(#ar2)" marker-end="url(#ar2)"/>
+      <text x="247" y="146" text-anchor="middle" font-size="12" fill="var(--ink,#1a1510)" font-weight="bold">Span L (governing)</text>
+    </svg>
+    <div style="font-size:12px;color:var(--ink2);line-height:1.55">
+      The <b>governing span</b> is the theoretical maximum — the smaller of the stress-limited and deflection-limited spans for a simply-supported pipe under uniform self-weight, contents and insulation. The <b>reduction factors</b> bring this down to a practical recommended spacing, providing margin for valves, flanges, concentrated loads and changes of direction. Set the factor per your project piping-support specification.
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1rem">
+    <div class="card-title">Table Basis</div>
+    <div class="grid2">
+      <div class="field"><label>Schedule</label>
+        <select id="tbl-sch">
+          <option value="std">STD</option>
+          <option value="sch40">SCH 40</option>
+          <option value="sch80">SCH 80</option>
+          <option value="xs">XS</option>
+        </select>
+      </div>
+      <div class="field"><label>Reduction factor A (%)</label><input type="number" id="tbl-fa" value="75" step="5"></div>
+      <div class="field"><label>Reduction factor B (%)</label><input type="number" id="tbl-fb" value="65" step="5"></div>
+    </div>
+    <div style="font-size:12px;color:var(--ink2);margin-top:.4rem">Fluid density, insulation weight, material E &amp; allowable stress, and the deflection limit are taken from the Span Calculator tab. Adjust them there, then regenerate.</div>
+    <div style="text-align:center;margin-top:1rem">
+      <button class="calcbtn" onclick="buildSpanTable()">▶ Generate Span Table</button>
+    </div>
+  </div>
+
+  <div id="tbl-meta" style="font-size:12px;color:var(--ink2);margin-bottom:.5rem;display:none"></div>
+  <div style="overflow-x:auto">
+    <table class="span-table" id="span-table" style="display:none;width:100%;border-collapse:collapse;font-size:13px">
+      <thead>
+        <tr>
+          <th style="text-align:left">NPS</th><th>OD (in)</th><th>Wall (in)</th>
+          <th>Total wt (lb/ft)</th><th>Governing (ft)</th>
+          <th id="th-fa">75% (ft)</th><th id="th-fb">65% (ft)</th><th>Governed by</th>
+        </tr>
+      </thead>
+      <tbody id="span-table-body"></tbody>
+    </table>
+  </div>
+  <div style="text-align:center;margin:1rem 0;display:none" id="tbl-report-wrap">
+    <button onclick="ppaReportSpanTable()" style="background:#8b3a1a;color:#fff;border:none;padding:.8rem 1.8rem;font-size:.95rem;font-weight:700;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif">⬇ Download Span Table PDF</button>
+  </div>
+
+</div><!-- /panel-table -->
+
+<!-- ══════════════════════════════════════════════
      TAB 2 — LAYOUT FACTOR
 ══════════════════════════════════════════════ -->
 <div class="panel" id="panel-layout">
@@ -766,8 +840,8 @@ function calcWpipe(od,thk){
   return Ap * 12 * 0.2833; /* lb/ft, density 0.2833 lb/in³ */
 }
 function calcWfluid(id_in, rhofl){
-  return area = Math.PI/4 * id_in * id_in;
-  return area_area * 12 * (rhofl / 1728); /* lb/ft */
+  var area = Math.PI/4 * id_in * id_in; /* in² */
+  return area * 12 * (rhofl / 1728); /* lb/ft — rhofl in lb/ft³, /1728 → lb/in³, ×12 → lb/ft */
 }
 
 /* ── NATURAL FREQUENCY (simply supported, UDL) ── */
@@ -928,6 +1002,121 @@ function calcSpan(){
   };
 }
 
+/* ── SPAN TABLE (multi-size sweep, 2" through largest in PIPE_DATA) ── */
+function buildSpanTable(){
+  /* shared inputs from the calculator form (NOT the single NPS) */
+  var E       = gv('Eval');
+  var Sallow  = gv('Sallow') * gv('sfactor');
+  var rhofl   = gv('rhofl');
+  var wins    = gv('wins');
+  var deltaA  = gv('delta_allow');
+  var sch     = document.getElementById('tbl-sch').value;
+  var fa      = (parseFloat(document.getElementById('tbl-fa').value)||75)/100;
+  var fb      = (parseFloat(document.getElementById('tbl-fb').value)||65)/100;
+
+  if(!E || !Sallow){ alert('Set material E and allowable stress on the Span Calculator tab first.'); return; }
+
+  /* column headers reflect the chosen factors */
+  document.getElementById('th-fa').textContent = Math.round(fa*100)+'% (ft)';
+  document.getElementById('th-fb').textContent = Math.round(fb*100)+'% (ft)';
+
+  /* sweep 2" and above, ascending */
+  var sizes = Object.keys(PIPE_DATA).map(Number).filter(function(n){return n>=2;}).sort(function(a,b){return a-b;});
+
+  var rows='', tblRows=[];
+  sizes.forEach(function(nps){
+    var d = PIPE_DATA[nps];
+    var od = d.od;
+    var thk = d[sch] || d.std;
+    if(!thk || od<=2*thk) return;
+    var id_in  = od - 2*thk;
+    var I      = calcI(od, thk);
+    var Z      = calcZ(od, thk);
+    var wpipe  = calcWpipe(od, thk);
+    var wfluid = calcWfluid(id_in, rhofl);
+    var wtotal = wpipe + wfluid + wins;
+
+    var Ls = Math.sqrt(8 * Sallow * Z / (12 * wtotal));        /* stress-limited */
+    var Ld = Math.pow(deltaA * E * I / (22.5 * wtotal), 0.25);  /* deflection-limited */
+    var Lgov = Math.min(Ls, Ld);
+    var gov  = (Ls < Ld) ? 'Stress' : 'Deflection';
+
+    var npsLabel = (nps % 1 === 0) ? nps.toString() : nps.toString();
+    rows += '<tr>'
+      + '<td style="text-align:left;font-weight:600">'+npsLabel+'"</td>'
+      + '<td>'+od.toFixed(3)+'</td>'
+      + '<td>'+thk.toFixed(3)+'</td>'
+      + '<td>'+wtotal.toFixed(1)+'</td>'
+      + '<td style="font-weight:700">'+Lgov.toFixed(1)+'</td>'
+      + '<td>'+(Lgov*fa).toFixed(1)+'</td>'
+      + '<td>'+(Lgov*fb).toFixed(1)+'</td>'
+      + '<td style="font-size:11px;color:var(--ink2)">'+gov+'</td>'
+      + '</tr>';
+    tblRows.push([npsLabel+'"', od.toFixed(3), thk.toFixed(3), wtotal.toFixed(1), Lgov.toFixed(1), (Lgov*fa).toFixed(1), (Lgov*fb).toFixed(1), gov]);
+  });
+
+  document.getElementById('span-table-body').innerHTML = rows;
+  document.getElementById('span-table').style.display = 'table';
+  document.getElementById('tbl-report-wrap').style.display = 'block';
+
+  var schName = {std:'STD', sch40:'SCH 40', sch80:'SCH 80', xs:'XS'}[sch] || sch;
+  var matName = (document.getElementById('mat') && document.getElementById('mat').selectedOptions.length) ? document.getElementById('mat').selectedOptions[0].text : '';
+  var meta = 'Schedule: '+schName+'  ·  Material E = '+E.toLocaleString()+' psi  ·  Allowable stress (factored) = '+Math.round(Sallow).toLocaleString()+' psi  ·  Fluid density = '+rhofl+' lb/ft³  ·  Insulation = '+wins+' lb/ft  ·  Deflection limit = '+deltaA+' in';
+  var metaEl = document.getElementById('tbl-meta');
+  metaEl.textContent = meta; metaEl.style.display='block';
+
+  /* stash for the PDF report */
+  window.SPANTABLE_R = {
+    docType:'Pipe Support Span Table', codeNote:'M.W. Kellogg / ASME B31.3',
+    sections:[
+      {title:'Table Basis', type:'table', head:['Parameter','Value','Unit'], rows:[
+        ['Schedule', schName, ''],
+        ['Material modulus E', E.toLocaleString(), 'psi'],
+        ['Allowable stress (factored)', Math.round(Sallow).toLocaleString(), 'psi'],
+        ['Fluid density', rhofl, 'lb/ft³'],
+        ['Insulation weight', wins, 'lb/ft'],
+        ['Deflection limit', deltaA, 'in'],
+        ['Reduction factor A', Math.round(fa*100), '%'],
+        ['Reduction factor B', Math.round(fb*100), '%']
+      ]},
+      {title:'Span Definition & Reduction Factors', type:'text', html:
+        '<svg viewBox="0 0 520 150" style="width:100%;max-width:480px;display:block;margin:0 auto 10px" xmlns="http://www.w3.org/2000/svg">'
+        + '<defs><marker id="ar" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#1a1510"/></marker></defs>'
+        /* distributed load arrows */
+        + '<g stroke="#8b3a1a" stroke-width="1.5">'
+        + [70,120,170,220,270,320,370,420].map(function(x){return '<line x1="'+x+'" y1="34" x2="'+x+'" y2="52" marker-end="url(#ar)"/>';}).join('')
+        + '</g>'
+        + '<text x="245" y="26" text-anchor="middle" font-size="11" fill="#8b3a1a">w = uniform load (pipe + fluid + insulation)</text>'
+        /* the pipe */
+        + '<rect x="55" y="58" width="385" height="12" fill="#d8c9a8" stroke="#1a1510" stroke-width="1.5"/>'
+        /* supports (triangles) */
+        + '<path d="M55,70 L45,92 L65,92 z" fill="#6b5d49"/>'
+        + '<path d="M440,70 L430,92 L450,92 z" fill="#6b5d49"/>'
+        + '<line x1="38" y1="92" x2="72" y2="92" stroke="#1a1510" stroke-width="2"/>'
+        + '<line x1="423" y1="92" x2="457" y2="92" stroke="#1a1510" stroke-width="2"/>'
+        /* deflection curve (dashed) */
+        + '<path d="M55,64 Q247,104 440,64" fill="none" stroke="#1a6b5a" stroke-width="1.2" stroke-dasharray="4,3"/>'
+        + '<text x="247" y="118" text-anchor="middle" font-size="9" fill="#1a6b5a">deflection δ</text>'
+        /* span dimension line */
+        + '<line x1="55" y1="132" x2="440" y2="132" stroke="#1a1510" stroke-width="1" marker-start="url(#ar)" marker-end="url(#ar)"/>'
+        + '<text x="247" y="146" text-anchor="middle" font-size="12" fill="#1a1510" font-weight="bold">Span L (governing)</text>'
+        + '</svg>'
+        + '<p style="margin:8px 0 4px"><b>Governing span</b> is the theoretical maximum: the smaller of the stress-limited span (bending stress = allowable) and the deflection-limited span (mid-span sag = the deflection limit), for a simply-supported pipe under its own uniform weight plus contents and insulation.</p>'
+        + '<p style="margin:4px 0"><b>Reduction factors</b> bring the theoretical span down to a practical recommended spacing. The governing span assumes an ideal straight run carrying only its distributed self-weight; real runs carry valves, flanges and other concentrated loads, and changes of direction reduce stiffness. Applying a factor (here <b>'+Math.round(fa*100)+'%</b> and <b>'+Math.round(fb*100)+'%</b>) provides margin for these effects. Select the factor per your project piping-support specification.</p>'
+      },
+      {title:'Recommended Maximum Support Spans', type:'table',
+       head:['NPS','OD (in)','Wall (in)','Total wt (lb/ft)','Governing (ft)',Math.round(fa*100)+'% (ft)',Math.round(fb*100)+'% (ft)','Governed by'],
+       rows: tblRows}
+    ]
+  };
+}
+
+function ppaReportSpanTable(){
+  if(!window.SPANTABLE_R){ alert('Generate the span table first.'); return; }
+  window.PPA_REPORT = window.SPANTABLE_R;
+  ppaOpenReport();
+}
+
 /* ── ACTUAL SPAN CHECK ── */
 function calcActual(){
   var od     = gv('od');
@@ -1002,10 +1191,12 @@ function selectLayout(type, factor){
 
 /* ── TAB SWITCHING ── */
 function switchTab(name){
-  var tabs = ['calc','layout','theory'];
+  var tabs = ['calc','table','layout','theory'];
+  var btns = document.querySelectorAll('.tab');
   tabs.forEach(function(t,i){
-    document.querySelectorAll('.tab')[i].classList.toggle('active', t===name);
-    document.getElementById('panel-'+t).classList.toggle('active', t===name);
+    if(btns[i]) btns[i].classList.toggle('active', t===name);
+    var panel = document.getElementById('panel-'+t);
+    if(panel) panel.classList.toggle('active', t===name);
   });
 }
 
