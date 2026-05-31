@@ -131,18 +131,19 @@ footer a{color:var(--accent2);text-decoration:none;}
 .lmodal-logout:hover{background:var(--paper3);}
 
 /* ─── SUITE LANDING ─── */
-.suite-landing{max-width:960px;margin:0 auto;padding:2.8rem 1.5rem 1rem;}
+.suite-landing{max-width:1000px;margin:0 auto;padding:2.8rem 1.5rem 3rem;}
 .suite-intro{text-align:center;margin-bottom:2rem;}
 .suite-intro h2{font-family:'DM Serif Display',serif;font-size:1.6rem;color:var(--ink);margin-bottom:.5rem;}
 .suite-intro p{font-size:13px;color:var(--ink2);max-width:520px;margin:0 auto;}
-.suite-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1.2rem;align-items:stretch;}
+.suite-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,400px));gap:2rem;justify-content:center;align-items:stretch;}
 
-.suite-card{border-radius:16px;overflow:hidden;cursor:pointer;transition:box-shadow .22s,transform .22s;position:relative;border:1px solid var(--rule);display:flex;flex-direction:column;}
-.suite-card:hover{box-shadow:0 8px 36px rgba(26,26,24,0.14);transform:translateY(-4px);}
+.suite-card{border-radius:16px;overflow:hidden;cursor:pointer;transition:transform .3s cubic-bezier(.2,.8,.3,1);position:relative;border:1px solid var(--rule);display:flex;flex-direction:column;transform-origin:center;}
+.suite-card:hover{transform:scale(1.2);z-index:10;}
 .suite-card.no-action{cursor:default;}
-.suite-card.no-action:hover{box-shadow:none;transform:none;}
+.suite-card.no-action:hover{transform:scale(1.2);z-index:10;}
 
-.suite-banner{height:160px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6rem;position:relative;overflow:hidden;}
+
+.suite-banner{height:180px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6rem;position:relative;overflow:hidden;}
 .suite-banner::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,.03) 0,rgba(255,255,255,.03) 1px,transparent 1px,transparent 12px);}
 .suite-banner.piping{background:linear-gradient(140deg,#1a5a6b 0%,#0d3d4a 100%);}
 .suite-banner.pipeline{background:linear-gradient(140deg,#6b3d1a 0%,#4a2508 100%);}
