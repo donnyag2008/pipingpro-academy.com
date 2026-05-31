@@ -872,6 +872,33 @@
     @keyframes cardIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
     @keyframes pulse{0%{transform:scale(.6);opacity:.9;}100%{transform:scale(1.9);opacity:0;}}
     @media(prefers-reduced-motion:reduce){.content-section *{animation:none!important;}.content-card,.calc-cta{opacity:1!important;}}
+  
+    /* ── LIVELY HOVER — tab content cards ── */
+    .content-card{transition:transform .32s cubic-bezier(.2,.85,.25,1),box-shadow .32s,border-color .3s;}
+    .content-card::after{content:'';position:absolute;top:0;left:-70%;width:55%;height:100%;
+      background:linear-gradient(100deg,transparent 0%,rgba(212,160,23,.18) 50%,transparent 100%);
+      transform:skewX(-18deg);transition:left .65s ease;pointer-events:none;z-index:2;}
+    .content-card:hover::after{left:140%;}
+    .content-card:hover{transform:translateY(-8px) scale(1.018);box-shadow:0 22px 50px rgba(26,21,16,.18);border-color:var(--gold);}
+    .card-title{transition:color .25s;}
+    .content-card:hover .card-title{color:var(--rust);}
+    .card-ic{transition:transform .38s cubic-bezier(.2,1.5,.4,1),box-shadow .3s;}
+    .content-card:hover .card-ic{transform:translateY(-2px) scale(1.14) rotate(-6deg);box-shadow:0 11px 24px rgba(26,21,16,.30);}
+    .content-card:hover .card-go{color:var(--gold-bright);}
+
+    /* ── LIVELY HOVER — calculator CTA ── */
+    .calc-cta::after{content:'';position:absolute;top:0;left:-65%;width:45%;height:100%;
+      background:linear-gradient(100deg,transparent,rgba(255,255,255,.16),transparent);
+      transform:skewX(-18deg);transition:left .7s ease;pointer-events:none;z-index:1;}
+    .calc-cta:hover::after{left:145%;}
+    .calc-cta-text,.calc-cta-link{z-index:2;}
+    .calc-cta:hover .calc-cta-link{background:var(--gold-bright);}
+
+    /* ── LIVELY HOVER — tab buttons ── */
+    .tab-btn{transition:color .2s,transform .22s;}
+    .tab-btn:not(.active):hover{transform:translateY(-2px);}
+    .tab-btn svg{transition:transform .28s cubic-bezier(.2,1.5,.4,1);}
+    .tab-btn:hover svg{transform:scale(1.18) rotate(-6deg);}
   </style>
 </head>
 <body>
@@ -983,7 +1010,7 @@
     <a class="calc-cta" href="calculators.html">
       <div class="calc-cta-text">
         <h3>Piping &amp; Pipeline Calculator Suite</h3>
-        <p>9 calculators live now — wall thickness, expansion loops, supports, trunnions, flange leakage, pipeline crossings, upheaval buckling and subsea design — with Pipeline Integrity coming soon. New tools added every month.</p>
+        <p>9 calculators live now — wall thickness, expansion loops, supports, trunnions, pipeline crossings, upheaval buckling and subsea design — with Pipeline Integrity coming soon. New tools added every month.</p>
       </div>
       <span class="calc-cta-link">Open the Suite →</span>
     </a>
@@ -1100,7 +1127,7 @@
     <div>
       <div class="author-name">Donny Bachtiar</div>
       <div class="author-title">CEO & Founder, Zephrum Konsultan Limited · 30+ Years Oil & Gas</div>
-      <p class="author-bio">Senior piping and pipeline specialist with project experience across Indonesia, Singapore, UAE, Saudi Arabia, and the United Kingdom. Currently engaged as Owner's Engineer on an Aramco gas plant project. Formerly with major EPC contractors on Aramco, TotalEnergies, and ADNOC projects.</p>
+      <p class="author-bio">Senior piping and pipeline specialist with over 30 years of project experience across Indonesia, Singapore, UAE, Saudi Arabia, and the United Kingdom — working with world-class EPC contractors and international oil companies as a piping and pipeline engineering consultant.</p>
       <p class="author-bio">All course material, calculators, and guides on this platform are drawn from direct field experience and verified against current ASME and operator standards — not academic theory.</p>
       <a class="author-book" href="https://www.amazon.com" target="_blank" rel="noopener">
         📖 Piping and Pipeline Engineering: Fundamental & Practical Guides — available on Amazon →
