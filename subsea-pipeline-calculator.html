@@ -239,6 +239,7 @@ body{ background:#faf6ef; color:#1a1510; }
         Calculate
       </button>
       <div id="wt_result"></div>
+      <div style="text-align:center;margin:1.1rem 0"><button onclick="ppaReportSubsea()" style="background:#8b3a1a;color:#fff;border:none;padding:.8rem 1.8rem;font-size:.95rem;font-weight:700;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif">⬇ Download PDF Report</button></div>
     </div>
 
     <!-- TAB 2: On-Bottom Stability -->
@@ -466,6 +467,24 @@ function calcWT() {
     { label: 'Total allowance A (corrosion + mill)', val: (ca + tol).toFixed(2) + ' mm' },
     { label: 'Required nominal wall thickness tnom', val: tnom.toFixed(2) + ' mm', badge: { cls: 's-info', txt: 'Minimum Required' } }
   ]);
+  window.PPA_REPORT={
+    docType:'Subsea Pipeline — Wall Thickness', codeNote:'DNV-ST-F101 / ISO 13623',
+    sections:[
+      {title:'Pressure Containment Basis', badge:'DNV-ST-F101', type:'table', head:['Parameter','Value','Unit'], rows:[
+        ['Outside diameter Do',Do.toFixed(1),'mm'],['SMYS',smys.toFixed(0),'MPa'],
+        ['Internal design pressure Pid',Pid.toFixed(2),'MPa'],['External pressure Pod',Pod.toFixed(2),'MPa'],
+        ['Hoop usage factor fh',fh.toFixed(3),'—'],['Temperature derating ft',ft.toFixed(3),'—'],
+        ['Corrosion allowance',ca.toFixed(2),'mm'],['Mill tolerance',tol.toFixed(2),'mm']
+      ]},
+      {title:'Results', type:'table', head:['Result','Value','Unit'], rows:[
+        ['Max allowable hoop stress σhp',shp.toFixed(2),'MPa'],
+        ['Pressure design thickness t',tCalc.toFixed(2),'mm'],
+        ['Total allowance A',(ca+tol).toFixed(2),'mm'],
+        ['Required nominal wall tnom',tnom.toFixed(2),'mm']
+      ]}
+    ],
+    verdict:{status:'pass',text:'Minimum required nominal wall thickness tnom = '+tnom.toFixed(2)+' mm — select next standard schedule ≥ this value'}
+  };
 }
 
 function calcOBS() {
@@ -648,5 +667,135 @@ function showCalcTab(name){
   });
 }
 </script>
+
+<script>
+function ppaReportSubsea(){ if(!window.PPA_REPORT){alert("Run the Wall Thickness calculation first");return;} ppaOpenReport(); }
+</script>
+<!-- ════════ PipingPro Shared Report Engine v1.0 ════════
+     Inject before </body>. Each calculator sets window.PPA_REPORT = {...} on
+     calculate(), then a button calls ppaOpenReport(). One template, all calcs. -->
+<div id="ppa-rpt-modal" style="display:none;position:fixed;inset:0;background:rgba(26,21,16,.55);z-index:10000;align-items:center;justify-content:center;padding:1rem">
+  <div style="background:#faf6ef;border-radius:8px;max-width:560px;width:100%;padding:1.6rem 1.8rem;box-shadow:0 10px 40px rgba(26,21,16,.3);font-family:'DM Sans',sans-serif">
+    <h3 style="font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:1.3rem;color:#1a1510;margin:0 0 .3rem">Report Details</h3>
+    <p style="font-size:.82rem;color:#4a3f30;margin:0 0 1.1rem">Project information for the report header. All fields optional.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.7rem .9rem">
+      <div><label class="ppa-rl">Your Company</label><input id="ppa-rpt-company" type="text" placeholder="e.g. Zephrum Konsultan" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Client</label><input id="ppa-rpt-client" type="text" placeholder="e.g. Saudi Aramco" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Project</label><input id="ppa-rpt-project" type="text" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Project No.</label><input id="ppa-rpt-projectno" type="text" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Line / Tag</label><input id="ppa-rpt-line" type="text" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Revision</label><input id="ppa-rpt-rev" type="text" placeholder="0" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Prepared by</label><input id="ppa-rpt-engineer" type="text" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Checked by</label><input id="ppa-rpt-checker" type="text" class="ppa-ri"></div>
+    </div>
+    <div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1.3rem">
+      <button onclick="ppaCloseReport()" style="background:transparent;color:#4a3f30;border:1px solid #c8b89a;padding:.6rem 1.2rem;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600">Cancel</button>
+      <button onclick="ppaGenerateReport()" style="background:#b8860b;color:#1a1510;border:none;padding:.6rem 1.5rem;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:700">Generate Report →</button>
+    </div>
+  </div>
+</div>
+<style>
+.ppa-rl{display:block;font-size:.72rem;font-weight:600;color:#4a3f30;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.25rem}
+.ppa-ri{width:100%;padding:.5rem;border:1px solid #c8b89a;border-radius:4px;background:#fff;font-size:.85rem;font-family:'DM Sans',sans-serif}
+</style>
+<script>
+function ppaOpenReport(){
+  if(!window.PPA_REPORT){ alert('Please run a calculation first.'); return; }
+  try{ const s=JSON.parse(localStorage.getItem('ppa_report_meta')||'{}');
+    [['ppa-rpt-company','company'],['ppa-rpt-client','client'],['ppa-rpt-project','project'],
+     ['ppa-rpt-projectno','projectNo'],['ppa-rpt-engineer','engineer'],['ppa-rpt-checker','checker']]
+     .forEach(([id,k])=>{const el=document.getElementById(id); if(el&&!el.value&&s[k]) el.value=s[k];});
+  }catch(e){}
+  document.getElementById('ppa-rpt-modal').style.display='flex';
+}
+function ppaCloseReport(){ document.getElementById('ppa-rpt-modal').style.display='none'; }
+function ppaGenerateReport(){
+  const R=window.PPA_REPORT; if(!R){ alert('Please run a calculation first.'); return; }
+  const g=id=>(document.getElementById(id)?.value||'').trim();
+  const m={company:g('ppa-rpt-company'),client:g('ppa-rpt-client'),project:g('ppa-rpt-project'),
+    projectNo:g('ppa-rpt-projectno'),line:g('ppa-rpt-line'),engineer:g('ppa-rpt-engineer'),
+    checker:g('ppa-rpt-checker'),rev:g('ppa-rpt-rev')||'0'};
+  try{ localStorage.setItem('ppa_report_meta',JSON.stringify({company:m.company,client:m.client,
+    project:m.project,projectNo:m.projectNo,engineer:m.engineer,checker:m.checker})); }catch(e){}
+  const now=new Date().toLocaleDateString('en-GB');
+
+  // Build sections from R.sections: [{title, type:'table'|'steps'|'text', ...}]
+  let bodyHtml='';
+  (R.sections||[]).forEach((s,i)=>{
+    bodyHtml+=`<h3>${i+1}. ${s.title}</h3>`;
+    if(s.badge) bodyHtml+=`<div class="code-badge">${s.badge}</div>`;
+    if(s.type==='table'){
+      const head=s.head||['Parameter','Value','Unit'];
+      bodyHtml+=`<table class="d"><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr>`+
+        s.rows.map(r=>`<tr>${r.map((c,ci)=>`<td class="${ci>0&&ci<r.length-1||head[ci]==='Value'?'num':''}">${c}</td>`).join('')}</tr>`).join('')+`</table>`;
+    } else if(s.type==='steps'){
+      bodyHtml+=`<div class="steps">${s.html}</div>`;
+    } else if(s.type==='text'){
+      bodyHtml+=`<div class="ptext">${s.html}</div>`;
+    }
+  });
+  let v=''; if(R.verdict){ const c=R.verdict.status; v=`<div class="verdict ${c}">${R.verdict.text}</div>`; }
+
+  const html=`<!DOCTYPE html><html><head><meta charset="utf-8"/>
+<title>${R.docType||'Calculation'} Report — ${m.project||'PipingPro'}</title>
+<style>
+@page{margin:18mm 16mm}*{box-sizing:border-box}
+body{font-family:'Helvetica Neue',Arial,sans-serif;font-size:10.5pt;color:#1a1510;margin:0;line-height:1.5}
+.sheet{max-width:780px;margin:0 auto}
+.head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #b8860b;padding-bottom:12px}
+.logo{font-family:Georgia,serif;font-size:19pt;color:#1a1510;font-weight:bold;line-height:1.15}
+.logo span.sub{display:block;font-family:Arial;font-size:8pt;color:#6b5d49;letter-spacing:.08em;font-weight:normal;margin-top:3px}
+.logo span.sub b{font-weight:bold;color:#b8860b}
+.doctype{text-align:right;font-size:8.5pt;color:#4a3f30}
+.doctype b{display:block;font-size:11pt;color:#1a1510;font-family:Georgia,serif}
+.meta{width:100%;border-collapse:collapse;font-size:8.5pt;margin:14px 0 6px}
+.meta td{border:1px solid #c8b89a;padding:4px 8px}
+.meta td.l{background:#f5e9c8;color:#4a3f30;font-weight:bold;width:18%;text-transform:uppercase;font-size:7.5pt;letter-spacing:.04em}
+h3{font-family:Georgia,serif;font-size:12pt;color:#1a1510;border-bottom:1.5px solid #b8860b;padding-bottom:4px;margin:22px 0 8px}
+.code-badge{display:inline-block;background:#1a1510;color:#d4a017;font-family:monospace;font-size:9pt;padding:3px 10px;border-radius:3px;margin-bottom:4px}
+table.d{width:100%;border-collapse:collapse;font-size:9.5pt}
+table.d th{background:#1a1510;color:#d4a017;padding:6px 9px;text-align:left;font-size:8.5pt;text-transform:uppercase;letter-spacing:.03em}
+table.d td{padding:5px 9px;border-bottom:1px solid #e8dfd0}
+table.d td.num{text-align:right;font-family:'IBM Plex Mono',monospace}
+table.d tr:nth-child(even) td{background:#faf6ef}
+.verdict{padding:12px 16px;border-radius:5px;font-weight:bold;font-size:11pt;margin:16px 0;border:1px solid}
+.verdict.pass{background:#e7f1ee;color:#1a6b5a;border-color:#1a6b5a}
+.verdict.fail{background:#f6e6df;color:#8b3a1a;border-color:#8b3a1a}
+.verdict.warn{background:#f5e9c8;color:#6b4e00;border-color:#b8860b}
+.steps{font-family:'IBM Plex Mono',monospace;font-size:8.5pt;background:#faf6ef;border:1px solid #e8dfd0;border-left:3px solid #b8860b;padding:10px 14px;line-height:1.85}
+.ptext{font-size:9.5pt;line-height:1.65;color:#1a1510;white-space:pre-wrap}
+.sig{display:flex;gap:30px;margin-top:26px}
+.sig div{flex:1;border-top:1px solid #1a1510;padding-top:5px;font-size:8pt;color:#4a3f30}
+.disc{font-size:7.5pt;color:#6b5d49;margin-top:22px;line-height:1.55;border-top:1px solid #e8dfd0;padding-top:10px}
+.foot{margin-top:14px;font-size:7.5pt;color:#6b5d49;text-align:center}
+@media print{.noprint{display:none}}
+.noprint{text-align:center;margin:16px 0}
+.noprint button{background:#b8860b;color:#1a1510;border:none;padding:10px 22px;font-size:11pt;font-weight:bold;border-radius:3px;cursor:pointer;font-family:Arial}
+</style></head><body>
+<div class="noprint"><button onclick="window.print()">⬇ Print / Save as PDF</button></div>
+<div class="sheet">
+  <div class="head">
+    <div class="logo">${m.company||'Engineering Calculation'}<span class="sub">Powered by Piping<b>Pro</b> Academy · Calculator Suite</span></div>
+    <div class="doctype"><b>${(R.docType||'CALCULATION').toUpperCase()}</b>Calculation Report<br/>Doc Rev. ${m.rev} &nbsp;·&nbsp; ${now}</div>
+  </div>
+  <table class="meta">
+    <tr><td class="l">Client</td><td>${m.client||'—'}</td><td class="l">Project</td><td>${m.project||'—'}</td></tr>
+    <tr><td class="l">Project No.</td><td>${m.projectNo||'—'}</td><td class="l">Line / Tag</td><td>${m.line||'—'}</td></tr>
+    <tr><td class="l">Prepared by</td><td>${m.engineer||'—'}</td><td class="l">Checked by</td><td>${m.checker||'—'}</td></tr>
+  </table>
+  ${bodyHtml}
+  ${v}
+  <div class="sig">
+    <div>Prepared: ${m.engineer||'________________'}<br/>Date: ${now}</div>
+    <div>Checked: ${m.checker||'________________'}<br/>Date: ________________</div>
+  </div>
+  <div class="disc"><b>Preliminary engineering output</b> — results must be independently verified by a competent engineer against the governing code edition${R.codeNote?(' ('+R.codeNote+')'):''} and project specifications before use in any design, procurement, or construction package. Issued subject to the PipingPro Academy Terms of Use. © 2026 Zephrum Konsultan Limited.</div>
+  <div class="foot">${m.company||'PipingPro Academy'} · Generated with PipingPro Academy Calculator Suite · ${now}</div>
+</div></body></html>`;
+  const w=window.open('','_blank'); w.document.write(html); w.document.close(); ppaCloseReport();
+}
+</script>
+<!-- ════════ end Shared Report Engine ════════ -->
+
 </body>
 </html>
