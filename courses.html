@@ -400,7 +400,7 @@ const COURSES = {
     desc: 'A complete grounding in piping engineering for graduates and engineers crossing into the discipline. Each module builds on the last, ending with a graded quiz and a shareable certificate.',
     meta: ['5 modules', '1 quiz', 'Self-paced', 'Certificate'],
     modules: [
-      { t: 'Introduction to Piping Engineering — role, scope & project phases', free: true },
+      { t: 'Introduction to Piping Engineering — role, scope & project phases',},
       { t: 'Codes, Standards & Specifications (ASME B31.3, B16.5, B16.34)' },
       { t: 'Pipe Materials, Sizing & Wall Thickness' },
       { t: 'Components: Fittings, Flanges, Valves & Gaskets' },
@@ -417,7 +417,7 @@ const COURSES = {
     desc: 'Theory first, software second. Understand the loads and code rules that drive a stress analysis, then follow a guided, step-by-step CAESAR II model build from blank sheet to code-compliant report.',
     meta: ['6 modules', '1 quiz', 'CAESAR II', 'ASME B31.3'],
     modules: [
-      { t: 'Why Pipe Stress Analysis? — failures, loads & objectives', free: true },
+      { t: 'Why Pipe Stress Analysis? — failures, loads & objectives',},
       { t: 'Loads & Stress Categories — sustained, expansion, occasional' },
       { t: 'Flexibility, SIFs & Thermal Expansion' },
       { t: 'CAESAR II — Model Build: nodes, elements, materials, restraints' },
@@ -492,8 +492,7 @@ function openCourse(id){
     const num = m.quiz ? '★' : (i+1);
     const numCls = m.quiz ? 'module-num quiz' : 'module-num';
     let tag = '';
-    if(m.free) tag = '<span class="module-tag tag-free">Free preview</span>';
-    else if(!member && !m.quiz) tag = '<span class="module-tag tag-lock">Members</span>';
+    if(!member && !m.quiz) tag = '<span class="module-tag tag-lock">Members</span>';
     return '<li class="module-item"><span class="' + numCls + '">' + num + '</span>' +
            '<span class="module-text"><span class="module-title">' + m.t + tag + '</span></span></li>';
   }).join('');
@@ -506,7 +505,7 @@ function openCourse(id){
     hint.style.display = 'none';
   } else {
     actions.innerHTML = '<a href="index.html#pricing" class="modal-btn modal-btn-sub">👑 Subscribe to Unlock</a>';
-    hint.textContent = 'Module 1 is free to preview · full course included with membership';
+    hint.textContent = 'Full course included with membership · subscribe to unlock';
     hint.style.display = 'block';
   }
 

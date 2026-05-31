@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Fundamental of Piping Engineering — PipingPro Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --cream:#faf6ef; --paper:#f3ede2; --paper2:#f3ede2; --paper3:#e8dfd0;
+  --ink:#1a1510; --ink2:#4a3f30; --ink3:#6b5d49;
+  --accent:#8b3a1a; --gold:#b8860b; --gold-bright:#d4a017; --gold-light:#f5e9c8;
+  --teal:#1a6b5a; --rule:#c8b89a;
+  --serif:'DM Serif Display',Georgia,serif; --sans:'DM Sans',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--sans);background:var(--cream);color:var(--ink);font-size:15px;line-height:1.6;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;height:60px;padding:0 5%;background:var(--ink);border-bottom:2px solid var(--gold);}
+.nav-logo{font-family:var(--serif);font-size:1.15rem;color:var(--gold-bright);text-decoration:none;}
+.nav-logo span{color:var(--gold);}
+.nav-right{display:flex;align-items:center;gap:1rem;}
+.nav-back{color:#ccc;font-size:.82rem;font-weight:500;letter-spacing:.05em;text-transform:uppercase;text-decoration:none;transition:color .2s;}
+.nav-back:hover{color:var(--gold-bright);}
+.nav-badge{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:5px 12px;border-radius:20px;background:var(--teal);color:#fff;}
+
+/* GATE (non-members) */
+.gate{max-width:480px;margin:5rem auto;background:#fff;border:1px solid var(--rule);border-radius:16px;overflow:hidden;text-align:center;}
+.gate-top{background:linear-gradient(140deg,#7a3518,#8b3a1a);padding:2.2rem;color:#fff;}
+.gate-top .emoji{font-size:2.4rem;}
+.gate-top h2{font-family:var(--serif);font-size:1.5rem;margin-top:.6rem;}
+.gate-body{padding:1.8rem 2rem 2rem;}
+.gate-body p{font-size:13.5px;color:var(--ink2);margin-bottom:1.4rem;}
+.gate-btn{display:inline-block;padding:12px 26px;border-radius:9px;background:var(--gold);color:var(--ink);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.05em;text-decoration:none;}
+.gate-btn:hover{background:var(--gold-bright);}
+
+/* COURSE LAYOUT */
+.course-wrap{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:300px 1fr;gap:0;min-height:calc(100vh - 60px);}
+@media(max-width:900px){.course-wrap{grid-template-columns:1fr;}}
+
+/* SIDEBAR */
+.sidebar{background:var(--paper);border-right:1px solid var(--rule);padding:1.6rem 1.2rem;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;}
+@media(max-width:900px){.sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid var(--rule);}}
+.side-eyebrow{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:.4rem;}
+.side-title{font-family:var(--serif);font-size:1.2rem;line-height:1.18;margin-bottom:1rem;}
+.progress-wrap{margin-bottom:1.4rem;}
+.progress-bar{height:7px;background:var(--paper3);border-radius:4px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-bright));width:0;transition:width .4s;}
+.progress-text{font-size:10.5px;font-family:var(--mono);color:var(--ink3);margin-top:.4rem;letter-spacing:.04em;}
+
+.mod-nav{list-style:none;display:flex;flex-direction:column;gap:.3rem;}
+.mod-link{display:flex;align-items:center;gap:.7rem;padding:.7rem .8rem;border-radius:9px;cursor:pointer;transition:background .16s;border:1px solid transparent;}
+.mod-link:hover{background:var(--paper3);}
+.mod-link.active{background:#fff;border-color:var(--rule);}
+.mod-dot{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--paper3);color:var(--ink3);font-size:11px;font-weight:700;font-family:var(--mono);display:flex;align-items:center;justify-content:center;transition:background .2s,color .2s;}
+.mod-link.done .mod-dot{background:var(--teal);color:#fff;}
+.mod-link.quiz .mod-dot{background:var(--gold-light);color:var(--accent);}
+.mod-link.quiz.passed .mod-dot{background:var(--accent);color:#fff;}
+.mod-link.cert .mod-dot{background:var(--gold-light);color:var(--accent);}
+.mod-link.cert.unlocked .mod-dot{background:var(--gold);color:#fff;}
+.mod-info{flex:1;min-width:0;}
+.mod-name{font-size:12.5px;font-weight:600;color:var(--ink);line-height:1.3;}
+.mod-meta{font-size:10px;color:var(--ink3);font-family:var(--mono);letter-spacing:.03em;margin-top:1px;}
+.mod-link.locked{opacity:.5;cursor:not-allowed;}
+.mod-link.locked:hover{background:transparent;}
+.lock-ic{width:13px;height:13px;flex-shrink:0;color:var(--ink3);}
+
+/* CONTENT */
+.content{padding:2.4rem 3rem 4rem;max-width:760px;}
+@media(max-width:600px){.content{padding:1.8rem 1.3rem 3rem;}}
+.crumb{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:.6rem;}
+.lesson{display:none;animation:fade .4s;}
+.lesson.active{display:block;}
+@keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.lesson h1{font-family:var(--serif);font-size:2rem;line-height:1.15;margin-bottom:.4rem;}
+.lesson h2{font-family:var(--serif);font-size:1.35rem;margin:1.8rem 0 .7rem;color:var(--ink);}
+.lesson h3{font-size:1.05rem;font-weight:700;margin:1.3rem 0 .5rem;color:var(--ink);}
+.lesson p{font-size:14.5px;color:var(--ink2);margin-bottom:1rem;line-height:1.72;}
+.lesson ul,.lesson ol{margin:0 0 1rem 1.3rem;color:var(--ink2);font-size:14.5px;}
+.lesson li{margin-bottom:.4rem;line-height:1.65;}
+.lesson strong{color:var(--ink);}
+
+/* slide / media placeholder — swap for video embed later */
+.media-slot{background:linear-gradient(140deg,#241c14,#3a2d1e);border-radius:14px;aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.7rem;color:rgba(255,255,255,.5);margin-bottom:1.6rem;position:relative;overflow:hidden;border:1px solid var(--rule);}
+.media-slot::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,.03) 0,rgba(255,255,255,.03) 1px,transparent 1px,transparent 12px);}
+.media-slot svg{width:52px;height:52px;opacity:.6;}
+.media-slot .ms-label{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;}
+.media-slot .ms-sub{font-size:11px;color:rgba(255,255,255,.32);}
+
+.callout{background:var(--gold-light);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:.9rem 1.1rem;margin:1.2rem 0;font-size:13.5px;color:var(--ink2);}
+.callout strong{color:var(--accent);}
+
+.lesson-foot{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-top:2.4rem;padding-top:1.6rem;border-top:1px solid var(--paper3);}
+.btn{padding:11px 22px;border-radius:9px;font-size:13px;font-weight:700;letter-spacing:.03em;font-family:var(--sans);cursor:pointer;border:none;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem;transition:background .18s,opacity .18s;}
+.btn-ghost{background:var(--paper2);color:var(--ink2);}
+.btn-ghost:hover{background:var(--paper3);}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{background:#a64822;}
+.btn-done{background:var(--teal);color:#fff;}
+.btn-done:hover{background:#15584a;}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* QUIZ */
+.quiz-intro{background:#fff;border:1px solid var(--rule);border-radius:14px;padding:1.6rem 1.8rem;margin-bottom:1.4rem;}
+.quiz-intro h2{margin-top:0;}
+.q-block{background:#fff;border:1px solid var(--rule);border-radius:12px;padding:1.3rem 1.5rem;margin-bottom:1rem;}
+.q-num{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:.5rem;}
+.q-text{font-size:14.5px;font-weight:600;color:var(--ink);margin-bottom:.9rem;line-height:1.5;}
+.q-opt{display:flex;align-items:flex-start;gap:.7rem;padding:.7rem .9rem;border:1px solid var(--rule);border-radius:9px;margin-bottom:.5rem;cursor:pointer;font-size:13.5px;color:var(--ink2);transition:background .15s,border-color .15s;}
+.q-opt:hover{background:var(--paper);}
+.q-opt input{margin-top:3px;accent-color:var(--accent);}
+.q-opt.correct{background:#e0f0eb;border-color:var(--teal);color:var(--ink);}
+.q-opt.wrong{background:#f6e3da;border-color:var(--accent);}
+.quiz-result{text-align:center;padding:1.6rem;border-radius:14px;margin-bottom:1.2rem;display:none;}
+.quiz-result.show{display:block;}
+.quiz-result.pass{background:#e0f0eb;border:1px solid var(--teal);}
+.quiz-result.fail{background:#f6e3da;border:1px solid var(--accent);}
+.quiz-result .score{font-family:var(--serif);font-size:2.2rem;color:var(--ink);}
+.quiz-result .msg{font-size:13.5px;color:var(--ink2);margin-top:.3rem;}
+
+/* CERTIFICATE */
+.cert-card{background:#fff;border:1px solid var(--rule);border-radius:14px;padding:1.8rem;text-align:center;}
+.cert-card h2{margin-top:0;}
+.cert-locked{color:var(--ink3);font-size:13.5px;}
+.cert-name-field{margin:1.2rem auto;max-width:340px;text-align:left;}
+.cert-name-field label{display:block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin-bottom:.4rem;}
+.cert-name-field input{width:100%;padding:11px 13px;border:1px solid var(--rule);border-radius:8px;font-family:var(--sans);font-size:14px;outline:none;}
+.cert-name-field input:focus{border-color:var(--gold);}
+#certCanvas{max-width:100%;height:auto;border:1px solid var(--rule);border-radius:10px;margin:1rem auto 0;display:none;}
+
+/* LOGIN MODAL */
+.lmodal-bg{position:fixed;inset:0;background:rgba(26,21,16,.75);z-index:500;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .2s;}
+.lmodal-bg.show{opacity:1;pointer-events:all;}
+.lmodal{background:#fff;border-radius:14px;width:100%;max-width:400px;overflow:hidden;transform:translateY(20px);transition:transform .2s;}
+.lmodal-bg.show .lmodal{transform:translateY(0);}
+.lmodal-header{background:var(--ink);padding:1.6rem 1.8rem 1.4rem;position:relative;}
+.lmodal-title{font-family:var(--serif);font-size:1.3rem;color:#fff;}
+.lmodal-sub{font-size:11px;color:rgba(255,255,255,.5);letter-spacing:.06em;text-transform:uppercase;}
+.lmodal-close{position:absolute;top:12px;right:12px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.15);border:none;cursor:pointer;font-size:15px;color:#fff;}
+.lmodal-body{padding:1.6rem 1.8rem;}
+.lmodal-field{margin-bottom:1rem;}
+.lmodal-label{display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:.4rem;}
+.lmodal-input{width:100%;padding:10px 12px;border:1px solid var(--rule);border-radius:7px;font-family:var(--sans);font-size:13px;outline:none;}
+.lmodal-input:focus{border-color:var(--gold);}
+.lmodal-err{font-size:11px;color:#6e2e14;margin-top:.5rem;display:none;}
+.lmodal-submit{width:100%;padding:11px;background:var(--gold);color:var(--ink);font-weight:700;font-size:13px;letter-spacing:.05em;text-transform:uppercase;border:none;border-radius:8px;cursor:pointer;margin-top:.4rem;}
+.lmodal-submit:hover{background:var(--gold-bright);}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Piping<span>Pro</span> Academy</a>
+  <div class="nav-right">
+    <a href="courses.html" class="nav-back">← All Courses</a>
+    <span class="nav-badge" id="nav-badge" style="display:none;">Member</span>
+  </div>
+</nav>
+
+<!-- ===== NON-MEMBER GATE ===== -->
+<div id="gate" class="gate" style="display:none;">
+  <div class="gate-top">
+    <div class="emoji">👑</div>
+    <h2>Members Only</h2>
+  </div>
+  <div class="gate-body">
+    <p>This course is included with PipingPro Academy membership. Sign in to start, or subscribe to unlock all courses, calculators and guides.</p>
+    <a href="index.html#pricing" class="gate-btn">View Membership →</a>
+    <div style="margin-top:1rem;"><a href="#" onclick="openLoginModal();return false;" style="font-size:12px;color:var(--ink3);">Already a member? Sign in</a></div>
+  </div>
+</div>
+
+<!-- ===== COURSE (members) ===== -->
+<div id="course" class="course-wrap" style="display:none;">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="side-eyebrow">Course 01 · Foundation</div>
+    <div class="side-title">Fundamental of Piping Engineering</div>
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="progress-text" id="progress-text">0 of 5 modules complete</div>
+    </div>
+    <ul class="mod-nav" id="mod-nav"></ul>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="content" id="content">
+    <!-- lessons injected here -->
+  </main>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="lmodal-bg" id="lmodal-bg" onclick="if(event.target===this)closeLoginModal()">
+  <div class="lmodal">
+    <div class="lmodal-header">
+      <div class="lmodal-title">Member Login</div>
+      <div class="lmodal-sub">PipingPro Academy</div>
+      <button class="lmodal-close" onclick="closeLoginModal()">✕</button>
+    </div>
+    <div class="lmodal-body">
+      <div class="lmodal-field">
+        <label class="lmodal-label">Email</label>
+        <input class="lmodal-input" id="lmodal-email" type="email" placeholder="your@email.com"/>
+      </div>
+      <div class="lmodal-field">
+        <label class="lmodal-label">Password</label>
+        <input class="lmodal-input" id="lmodal-password" type="password" placeholder="••••••••"/>
+      </div>
+      <div class="lmodal-err" id="lmodal-err">Incorrect email or password.</div>
+      <button class="lmodal-submit" onclick="doLogin()">Sign In →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ====================================================================
+   COURSE CONFIG  —  edit content here; logic below stays untouched.
+   Each module: { id, name, minutes, html }
+   Paste your real text/slides into the `html` template strings.
+   To add a video later, drop an <iframe> in place of <div class="media-slot">.
+==================================================================== */
+const COURSE_ID = 'piping-fund';          // unique key for saved progress
+const PASS_MARK = 70;                      // % needed to pass the quiz
+
+const MODULES = [
+  {
+    id:'m1', name:'Introduction to Piping Engineering', minutes:12,
+    html:`
+      <h1>Introduction to Piping Engineering</h1>
+      <p>The role of the piping engineer, project phases, and where piping sits within an EPC project.</p>
+      <div class="media-slot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="9 7 18 12 9 17 9 7"/></svg><span class="ms-label">Slides / video coming</span><span class="ms-sub">Replace this block with your embed</span></div>
+      <h2>What a piping engineer does</h2>
+      <p>Replace this with your content. You can use headings, paragraphs, lists and callouts.</p>
+      <ul><li>Layout &amp; routing</li><li>Material selection</li><li>Stress &amp; supports</li><li>Interfaces with other disciplines</li></ul>
+      <div class="callout"><strong>Tip:</strong> This is a callout box — use it for code references or key takeaways.</div>
+    `
+  },
+  {
+    id:'m2', name:'Codes, Standards & Specifications', minutes:18,
+    html:`
+      <h1>Codes, Standards &amp; Specifications</h1>
+      <p>ASME B31.3, B16.5, B16.34 and how project specifications layer on top of code.</p>
+      <div class="media-slot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="9 7 18 12 9 17 9 7"/></svg><span class="ms-label">Slides / video coming</span><span class="ms-sub">Replace this block with your embed</span></div>
+      <h2>Code hierarchy</h2>
+      <p>Replace with your content.</p>
+    `
+  },
+  {
+    id:'m3', name:'Pipe Materials, Sizing & Wall Thickness', minutes:20,
+    html:`
+      <h1>Pipe Materials, Sizing &amp; Wall Thickness</h1>
+      <p>Material grades, NPS &amp; schedules, and minimum wall thickness per code.</p>
+      <div class="media-slot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="9 7 18 12 9 17 9 7"/></svg><span class="ms-label">Slides / video coming</span><span class="ms-sub">Replace this block with your embed</span></div>
+      <h2>Wall thickness basics</h2>
+      <p>Replace with your content.</p>
+    `
+  },
+  {
+    id:'m4', name:'Components: Fittings, Flanges, Valves & Gaskets', minutes:16,
+    html:`
+      <h1>Components: Fittings, Flanges, Valves &amp; Gaskets</h1>
+      <p>The building blocks of a piping system and how they are specified.</p>
+      <div class="media-slot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="9 7 18 12 9 17 9 7"/></svg><span class="ms-label">Slides / video coming</span><span class="ms-sub">Replace this block with your embed</span></div>
+      <h2>Flange ratings</h2>
+      <p>Replace with your content.</p>
+    `
+  },
+  {
+    id:'m5', name:'Piping Layout, Routing & Pipe Supports', minutes:22,
+    html:`
+      <h1>Piping Layout, Routing &amp; Pipe Supports</h1>
+      <p>Plot planning, rack routing, and the fundamentals of pipe support selection.</p>
+      <div class="media-slot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="9 7 18 12 9 17 9 7"/></svg><span class="ms-label">Slides / video coming</span><span class="ms-sub">Replace this block with your embed</span></div>
+      <h2>Support types</h2>
+      <p>Replace with your content.</p>
+    `
+  }
+];
+
+/* ---- QUIZ: edit questions here. `a` = index of correct option ---- */
+const QUIZ = [
+  { q:'Which ASME code governs process piping design?', opts:['ASME B31.1','ASME B31.3','ASME B31.4','ASME B31.8'], a:1 },
+  { q:'NPS refers to:', opts:['Nominal Pipe Size','Net Pressure Spec','Nominal Pressure Schedule','New Pipe Standard'], a:0 },
+  { q:'A flange rating class (e.g. 150#, 300#) primarily defines its:', opts:['Diameter','Pressure–temperature capability','Material grade','Face finish'], a:1 },
+  { q:'The main purpose of a pipe support is to:', opts:['Increase flow','Carry weight & control movement','Reduce cost','Add insulation'], a:1 },
+  { q:'Corrosion allowance is:', opts:['Extra wall thickness for metal loss over life','A type of coating','A test pressure','A flange gasket'], a:0 }
+];
+
+/* ====================================================================
+   LOGIC  —  no need to edit below this line.
+==================================================================== */
+const ADMIN_KEY='PPA-ADMIN-2026', ADMIN_EMAIL='admin@pipingpro-academy.com';
+(function(){const p=new URLSearchParams(location.search);if(p.get('admin')===ADMIN_KEY){localStorage.setItem('ppa_admin','1');history.replaceState({},'',location.pathname);}})();
+function isMember(){return localStorage.getItem('ppa_admin')==='1'||sessionStorage.getItem('ppa_admin')==='1'||localStorage.getItem('ppa_member')==='1'||sessionStorage.getItem('ppa_member')==='1';}
+
+const PKEY='ppa_progress_'+COURSE_ID;
+function loadProgress(){try{return JSON.parse(localStorage.getItem(PKEY))||{done:[],quizPassed:false,quizScore:0,name:''};}catch(e){return{done:[],quizPassed:false,quizScore:0,name:''};}}
+function saveProgress(p){localStorage.setItem(PKEY,JSON.stringify(p));}
+let P=loadProgress();
+
+const VIEWS=[]; // ordered nav entries: modules, quiz, cert
+MODULES.forEach((m,i)=>VIEWS.push({type:'module',idx:i,id:m.id,name:m.name,minutes:m.minutes}));
+VIEWS.push({type:'quiz',id:'quiz',name:'Final Quiz',minutes:null});
+VIEWS.push({type:'cert',id:'cert',name:'Certificate',minutes:null});
+
+let current=0;
+
+function allModulesDone(){return MODULES.every(m=>P.done.includes(m.id));}
+
+/* ---- SIDEBAR ---- */
+function renderNav(){
+  const nav=document.getElementById('mod-nav');
+  nav.innerHTML=VIEWS.map((v,i)=>{
+    let cls='mod-link', dot='', meta='', locked=false;
+    if(v.type==='module'){
+      const done=P.done.includes(v.id);
+      if(done) cls+=' done';
+      dot=done?'✓':(v.idx+1);
+      meta=v.minutes+' min';
+    } else if(v.type==='quiz'){
+      cls+=' quiz';
+      if(P.quizPassed) cls+=' passed';
+      if(!allModulesDone()){cls+=' locked';locked=true;}
+      dot=P.quizPassed?'✓':'★';
+      meta=P.quizPassed?('Passed · '+P.quizScore+'%'):'Complete all modules';
+    } else { // cert
+      cls+=' cert';
+      if(P.quizPassed) cls+=' unlocked';
+      if(!P.quizPassed){cls+=' locked';locked=true;}
+      dot='🎓';
+      meta=P.quizPassed?'Ready':'Pass the quiz first';
+    }
+    if(i===current) cls+=' active';
+    const lockIc=locked?'<svg class="lock-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="1"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>':'';
+    return '<li class="'+cls+'" '+(locked?'':'onclick="go('+i+')"')+'>'+
+      '<span class="mod-dot">'+dot+'</span>'+
+      '<span class="mod-info"><span class="mod-name">'+v.name+'</span><span class="mod-meta">'+meta+'</span></span>'+lockIc+'</li>';
+  }).join('');
+  const doneCount=P.done.length;
+  document.getElementById('progress-fill').style.width=(doneCount/MODULES.length*100)+'%';
+  document.getElementById('progress-text').textContent=doneCount+' of '+MODULES.length+' modules complete';
+}
+
+/* ---- ROUTER ---- */
+function go(i){
+  const v=VIEWS[i];
+  if(v.type==='quiz'&&!allModulesDone())return;
+  if(v.type==='cert'&&!P.quizPassed)return;
+  current=i;
+  renderNav();
+  const c=document.getElementById('content');
+  if(v.type==='module')      c.innerHTML=moduleHTML(v.idx);
+  else if(v.type==='quiz')   c.innerHTML=quizHTML();
+  else                       c.innerHTML=certHTML();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function moduleHTML(idx){
+  const m=MODULES[idx], done=P.done.includes(m.id);
+  const prev=idx>0?'<button class="btn btn-ghost" onclick="go('+(idx-1)+')">← Previous</button>':'<span></span>';
+  const doneBtn=done
+    ? '<button class="btn btn-done" disabled>✓ Completed</button>'
+    : '<button class="btn btn-primary" onclick="markDone(\''+m.id+'\','+idx+')">Mark Complete →</button>';
+  const nextLabel=idx<MODULES.length-1?'Next module':'Go to Quiz';
+  const nextBtn=done?'<button class="btn btn-primary" onclick="go('+(idx+1)+')">'+nextLabel+' →</button>':'';
+  return '<div class="crumb">Module '+(idx+1)+' of '+MODULES.length+'</div>'+
+    '<div class="lesson active">'+m.html+
+    '<div class="lesson-foot">'+prev+'<div style="display:flex;gap:.6rem;">'+doneBtn+nextBtn+'</div></div></div>';
+}
+function markDone(id,idx){
+  if(!P.done.includes(id)) P.done.push(id);
+  saveProgress(P);
+  go(current); // re-render same view with completed state
+}
+
+/* ---- QUIZ ---- */
+function quizHTML(){
+  let h='<div class="crumb">Final Assessment</div>'+
+    '<div class="quiz-intro"><h2>Final Quiz</h2><p>Answer all '+QUIZ.length+' questions. You need <strong>'+PASS_MARK+'%</strong> to pass and unlock your certificate. You can retake it as many times as you like.</p></div>';
+  if(P.quizPassed) h+='<div class="quiz-result pass show"><div class="score">'+P.quizScore+'%</div><div class="msg">You passed this quiz. Retake it below if you want, or head to your certificate.</div></div>';
+  h+='<div id="quiz-result-live" class="quiz-result"></div>';
+  h+='<div id="quiz-questions">';
+  QUIZ.forEach((item,qi)=>{
+    h+='<div class="q-block" data-q="'+qi+'"><div class="q-num">Question '+(qi+1)+'</div><div class="q-text">'+item.q+'</div>';
+    item.opts.forEach((opt,oi)=>{
+      h+='<label class="q-opt" data-opt="'+oi+'"><input type="radio" name="q'+qi+'" value="'+oi+'"> <span>'+opt+'</span></label>';
+    });
+    h+='</div>';
+  });
+  h+='</div><div class="lesson-foot"><span></span><button class="btn btn-primary" onclick="gradeQuiz()">Submit Answers →</button></div>';
+  return h;
+}
+function gradeQuiz(){
+  let correct=0, answered=0;
+  QUIZ.forEach((item,qi)=>{
+    const sel=document.querySelector('input[name="q'+qi+'"]:checked');
+    const block=document.querySelector('.q-block[data-q="'+qi+'"]');
+    block.querySelectorAll('.q-opt').forEach(o=>o.classList.remove('correct','wrong'));
+    if(sel){
+      answered++;
+      const val=parseInt(sel.value);
+      if(val===item.a){correct++;block.querySelector('.q-opt[data-opt="'+val+'"]').classList.add('correct');}
+      else{block.querySelector('.q-opt[data-opt="'+val+'"]').classList.add('wrong');block.querySelector('.q-opt[data-opt="'+item.a+'"]').classList.add('correct');}
+    } else {
+      block.querySelector('.q-opt[data-opt="'+item.a+'"]').classList.add('correct');
+    }
+  });
+  if(answered<QUIZ.length){ /* still grade, unanswered = wrong */ }
+  const score=Math.round(correct/QUIZ.length*100);
+  const passed=score>=PASS_MARK;
+  const live=document.getElementById('quiz-result-live');
+  live.className='quiz-result show '+(passed?'pass':'fail');
+  live.innerHTML='<div class="score">'+score+'%</div><div class="msg">'+
+    (passed?'You passed! Your certificate is now unlocked in the sidebar.':'Not quite — you need '+PASS_MARK+'%. Review the highlighted answers and try again.')+'</div>';
+  if(passed && (!P.quizPassed || score>P.quizScore)){P.quizPassed=true;P.quizScore=score;saveProgress(P);}
+  else if(passed){P.quizPassed=true;if(score>P.quizScore)P.quizScore=score;saveProgress(P);}
+  renderNav();
+  live.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+/* ---- CERTIFICATE ---- */
+function certHTML(){
+  if(!P.quizPassed){
+    return '<div class="crumb">Certificate</div><div class="cert-card"><h2>Certificate of Completion</h2><p class="cert-locked">Pass the final quiz to unlock your certificate.</p></div>';
+  }
+  return '<div class="crumb">Certificate</div><div class="cert-card">'+
+    '<h2>🎓 Certificate of Completion</h2>'+
+    '<p style="font-size:13.5px;color:var(--ink2);">Enter your full name as it should appear, then generate and download your certificate.</p>'+
+    '<div class="cert-name-field"><label>Full name</label><input id="cert-name" type="text" placeholder="e.g. Donny Ardiansyah" value="'+(P.name||'')+'"></div>'+
+    '<button class="btn btn-primary" onclick="makeCert()">Generate Certificate</button>'+
+    '<canvas id="certCanvas" width="1200" height="850"></canvas>'+
+    '<div id="cert-dl" style="margin-top:1rem;display:none;"><button class="btn btn-done" onclick="downloadCert()">⤓ Download PNG</button></div>'+
+    '</div>';
+}
+function makeCert(){
+  const name=(document.getElementById('cert-name').value||'').trim();
+  if(!name){document.getElementById('cert-name').focus();return;}
+  P.name=name;saveProgress(P);
+  const cv=document.getElementById('certCanvas'),x=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  // bg
+  x.fillStyle='#faf6ef';x.fillRect(0,0,W,H);
+  // border
+  x.strokeStyle='#b8860b';x.lineWidth=8;x.strokeRect(34,34,W-68,H-68);
+  x.strokeStyle='#8b3a1a';x.lineWidth=2;x.strokeRect(52,52,W-104,H-104);
+  // header
+  x.textAlign='center';
+  x.fillStyle='#b8860b';x.font='600 26px "DM Sans",sans-serif';
+  x.fillText('PIPINGPRO ACADEMY',W/2,150);
+  x.fillStyle='#8b3a1a';x.font='italic 22px Georgia,serif';
+  x.fillText('Certificate of Completion',W/2,205);
+  x.strokeStyle='#c8b89a';x.lineWidth=1;x.beginPath();x.moveTo(W/2-120,230);x.lineTo(W/2+120,230);x.stroke();
+  // recipient
+  x.fillStyle='#6b5d49';x.font='15px "DM Sans",sans-serif';
+  x.fillText('This certifies that',W/2,310);
+  x.fillStyle='#1a1510';x.font='italic 56px Georgia,serif';
+  x.fillText(name,W/2,385);
+  // body
+  x.fillStyle='#4a3f30';x.font='17px "DM Sans",sans-serif';
+  x.fillText('has successfully completed the course',W/2,445);
+  x.fillStyle='#8b3a1a';x.font='600 30px "DM Sans",sans-serif';
+  x.fillText('Fundamental of Piping Engineering',W/2,495);
+  x.fillStyle='#6b5d49';x.font='15px "DM Sans",sans-serif';
+  x.fillText('5 modules · ASME B31.3 foundation · graded assessment passed',W/2,535);
+  // date + score
+  const d=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  x.fillStyle='#1a1510';x.font='600 16px "DM Sans",sans-serif';
+  x.fillText('Date',W/2-220,690);
+  x.fillText('Result',W/2+220,690);
+  x.font='15px "DM Sans",sans-serif';x.fillStyle='#4a3f30';
+  x.fillText(d,W/2-220,720);
+  x.fillText('Passed · '+P.quizScore+'%',W/2+220,720);
+  x.strokeStyle='#c8b89a';x.beginPath();x.moveTo(W/2-300,705);x.lineTo(W/2-140,705);x.moveTo(W/2+140,705);x.lineTo(W/2+300,705);x.stroke();
+  // seal
+  x.beginPath();x.arc(W/2,700,46,0,Math.PI*2);x.fillStyle='#b8860b';x.fill();
+  x.fillStyle='#faf6ef';x.font='600 13px "DM Sans",sans-serif';x.fillText('PPA',W/2,696);x.font='10px "DM Sans",sans-serif';x.fillText('VERIFIED',W/2,712);
+  // footer
+  x.fillStyle='#6b5d49';x.font='12px "DM Sans",sans-serif';
+  x.fillText('pipingpro-academy.com',W/2,800);
+  cv.style.display='block';
+  document.getElementById('cert-dl').style.display='block';
+  cv.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function downloadCert(){
+  const cv=document.getElementById('certCanvas');
+  const a=document.createElement('a');
+  a.download='PipingPro-Certificate-Piping-Fundamentals.png';
+  a.href=cv.toDataURL('image/png');a.click();
+}
+
+/* ---- LOGIN MODAL ---- */
+function openLoginModal(){document.getElementById('lmodal-bg').classList.add('show');document.getElementById('lmodal-err').style.display='none';setTimeout(()=>document.getElementById('lmodal-email').focus(),150);}
+function closeLoginModal(){document.getElementById('lmodal-bg').classList.remove('show');}
+function doLogin(){
+  const e=document.getElementById('lmodal-email').value.trim();
+  const p=document.getElementById('lmodal-password').value.trim();
+  if(e===ADMIN_EMAIL&&p===ADMIN_KEY){localStorage.setItem('ppa_admin','1');location.reload();return;}
+  // Memberstack hook (uncomment when ready)
+  // window.$memberstackDom.loginMemberEmailPassword({email:e,password:p}).then(()=>{localStorage.setItem('ppa_member','1');location.reload();}).catch(()=>{document.getElementById('lmodal-err').style.display='block';});
+  document.getElementById('lmodal-err').style.display='block';
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLoginModal();if(e.key==='Enter'&&document.getElementById('lmodal-bg').classList.contains('show'))doLogin();});
+
+/* ---- BOOT ---- */
+function boot(){
+  if(isMember()){
+    document.getElementById('gate').style.display='none';
+    document.getElementById('course').style.display='grid';
+    document.getElementById('nav-badge').style.display=localStorage.getItem('ppa_admin')==='1'?'inline-block':'inline-block';
+    document.getElementById('nav-badge').textContent=localStorage.getItem('ppa_admin')==='1'?'Admin':'Member';
+    renderNav();
+    go(0);
+  } else {
+    document.getElementById('gate').style.display='block';
+    document.getElementById('course').style.display='none';
+  }
+}
+boot();
+</script>
+
+</body>
+</html>
