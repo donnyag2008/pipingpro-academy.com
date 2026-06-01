@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -177,6 +176,11 @@
   .figure svg { width: 36px; height: 36px; opacity: 0.4; margin-bottom: 10px; }
   .figure .fig-cap { font-size: 0.85rem; font-weight: 600; color: var(--ink2); }
   .figure .fig-note { font-size: 0.74rem; margin-top: 4px; }
+
+  /* real figure image */
+  .fig-img { margin: 28px 0; text-align: center; }
+  .fig-img img { max-width: 100%; height: auto; border: 1px solid var(--rule); border-radius: 13px; background: #fff; box-shadow: var(--shadow-sm); }
+  .fig-img figcaption { font-size: 0.82rem; color: var(--ink3); margin-top: 10px; font-style: italic; }
 
   /* ============ FORMULA ============ */
   .formula { background: var(--ink); color: var(--paper); border-radius: 12px; padding: 22px 26px; margin: 22px 0; text-align: center; box-shadow: var(--shadow-sm); }
@@ -357,11 +361,10 @@
           <p>When I started my career in 1990, joining an engineering firm in Jakarta on a Middle East oil refinery project, I was thrown in at the deep end with very limited knowledge of piping materials. There was no book like this to help me. Carbon steel was the dominant material, but knowing <em>when</em> to use stainless, alloy, or non-metallic pipe is a skill that took years to develop. This module gives you that foundation from day one.</p>
         </div>
 
-        <div class="figure">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-          <div class="fig-cap">Picture 1 — Piping Material Diagram</div>
-          <div class="fig-note">[ Insert classification tree image here ]</div>
-        </div>
+        <figure class="fig-img">
+          <img src="images/piping-material-diagram.png" alt="Piping material classification diagram — metallic and non-metallic pipe materials" loading="lazy"/>
+          <figcaption>Picture 1 — Piping Material Classification</figcaption>
+        </figure>
 
         <h3>1.1.2&nbsp;&nbsp;Ferrous Metallic Pipe — Cast Iron</h3>
         <p>Cast iron is an alloy of iron and carbon with carbon content above 2&nbsp;wt%, often combined with silicon, nickel, or chromium to improve corrosion resistance. It is strong in compression but low in ductility and malleability, and very brittle — unsuitable for pressure piping. The most common types are white and grey cast iron; magnesium and cerium are added to increase ductility.</p>
