@@ -1,0 +1,1544 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Course 2: Piping Stress Engineering — PipingPro Academy</title>
+<meta name="description" content="Piping Stress Engineering — a 5-module course covering stress analysis fundamentals, pressure design and wall thickness, dynamic and occasional loads, initial nozzle movement, and step-by-step CAESAR II workflow. By Donny A. Bachtiar."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNiIgZmlsbD0iI0M0NUMyQSIvPjxjaXJjbGUgY3g9IjE2IiBjeT0iMTYiIHI9IjEwIiBmaWxsPSJub25lIiBzdHJva2U9IiNmNWYyZWIiIHN0cm9rZS13aWR0aD0iMy41Ii8+PGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZjVmMmViIiBzdHJva2Utd2lkdGg9IjIiLz48dGV4dCB4PSIxNiIgeT0iMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjkiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjZjVmMmViIj5QUDwvdGV4dD48L3N2Zz4="/>
+<style>
+  :root {
+    --ink: #1a1a18; --ink2: #4a4a44; --ink3: #8a8a80;
+    --paper: #f5f2eb; --paper2: #ede9de; --paper3: #e3dfd2;
+    --accent: #c45c2a; --accent2: #e8a06a; --accent-light: #f7ede3;
+    --teal: #1a6b5a; --teal-light: #e0f0eb;
+    --amber: #b5781a; --amber-light: #faf0dd;
+    --rule: rgba(26,26,24,0.12);
+    --rule2: rgba(26,26,24,0.07);
+    --shadow-sm: 0 2px 8px rgba(26,26,24,0.06);
+    --shadow-md: 0 8px 32px rgba(26,26,24,0.10);
+    --sidebar-w: 312px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', -apple-system, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.68;
+    font-size: 16.5px;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* subtle paper texture */
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background-image: radial-gradient(rgba(26,26,24,0.018) 1px, transparent 1px);
+    background-size: 4px 4px;
+  }
+
+  /* ============ TOP BAR ============ */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; gap: 16px;
+    padding: 14px 26px;
+    background: rgba(245,242,235,0.86);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--rule);
+  }
+  .brand { display: flex; align-items: center; gap: 11px; text-decoration: none; color: var(--ink); }
+  .brand-mark {
+    width: 34px; height: 34px; border-radius: 8px; background: var(--accent);
+    display: grid; place-items: center; flex-shrink: 0; box-shadow: var(--shadow-sm);
+  }
+  .brand-mark svg { width: 22px; height: 22px; }
+  .brand-name { font-family: 'DM Serif Display', serif; font-size: 1.18rem; letter-spacing: -0.01em; line-height: 1; }
+  .brand-sub { font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink3); margin-top: 3px; }
+  .topbar-spacer { flex: 1; }
+  .progress-wrap { display: flex; align-items: center; gap: 11px; min-width: 0; }
+  .progress-label { font-size: 0.72rem; letter-spacing: 0.04em; color: var(--ink3); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .progress-track { width: 120px; height: 5px; border-radius: 3px; background: var(--paper3); overflow: hidden; }
+  .progress-fill { height: 100%; width: 20%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 3px; transition: width .4s ease; }
+  .menu-toggle { display: none; background: none; border: 1px solid var(--rule); border-radius: 8px; padding: 8px 10px; cursor: pointer; color: var(--ink); }
+
+  /* ============ LAYOUT ============ */
+  .layout { display: flex; align-items: flex-start; }
+  .sidebar {
+    position: sticky; top: 63px; align-self: flex-start;
+    width: var(--sidebar-w); flex-shrink: 0;
+    height: calc(100vh - 63px); overflow-y: auto;
+    padding: 26px 18px 60px 26px;
+    border-right: 1px solid var(--rule);
+    background: linear-gradient(180deg, var(--paper2), var(--paper));
+  }
+  .sidebar::-webkit-scrollbar { width: 8px; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--paper3); border-radius: 4px; }
+  .course-eyebrow { font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  .course-title-sb { font-family: 'DM Serif Display', serif; font-size: 1.42rem; line-height: 1.12; margin: 8px 0 4px; letter-spacing: -0.015em; }
+  .course-byline { font-size: 0.78rem; color: var(--ink3); margin-bottom: 22px; }
+  .nav-mod { margin-bottom: 4px; }
+  .nav-mod-btn {
+    display: flex; align-items: center; gap: 11px; width: 100%;
+    background: none; border: none; cursor: pointer; text-align: left;
+    padding: 11px 12px; border-radius: 9px; color: var(--ink2);
+    font-family: 'DM Sans', sans-serif; font-size: 0.93rem; font-weight: 500;
+    transition: background .18s, color .18s;
+  }
+  .nav-mod-btn:hover { background: var(--paper3); color: var(--ink); }
+  .nav-mod-btn.active { background: var(--ink); color: var(--paper); box-shadow: var(--shadow-sm); }
+  .nav-mod-btn.active .nav-num { background: var(--accent); color: #fff; }
+  .nav-mod-btn.active .nav-mod-sub { color: rgba(245,242,235,0.6); }
+  .nav-num {
+    width: 26px; height: 26px; border-radius: 7px; background: var(--paper3); color: var(--ink2);
+    display: grid; place-items: center; font-size: 0.82rem; font-weight: 700; flex-shrink: 0;
+    font-variant-numeric: tabular-nums; transition: background .18s, color .18s;
+  }
+  .nav-mod-label { display: flex; flex-direction: column; min-width: 0; }
+  .nav-mod-title { line-height: 1.2; }
+  .nav-mod-sub { font-size: 0.68rem; color: var(--ink3); letter-spacing: 0.02em; }
+  .nav-lessons { list-style: none; margin: 2px 0 8px 0; padding-left: 49px; display: none; }
+  .nav-mod.open .nav-lessons { display: block; }
+  .nav-lessons a {
+    display: block; padding: 5px 8px; font-size: 0.8rem; color: var(--ink3);
+    text-decoration: none; border-radius: 6px; border-left: 2px solid var(--rule2);
+    transition: color .15s, border-color .15s, background .15s;
+  }
+  .nav-lessons a:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-light); }
+
+  /* ============ CONTENT ============ */
+  main { flex: 1; min-width: 0; padding: 0 0 80px; }
+  .module { display: none; animation: fade .45s ease; }
+  .module.active { display: block; }
+  @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .content { max-width: 820px; margin: 0 auto; padding: 0 40px; }
+
+  /* module hero */
+  .mod-hero { padding: 56px 0 30px; border-bottom: 1px solid var(--rule); margin-bottom: 38px; position: relative; }
+  .mod-hero-eyebrow { display: inline-flex; align-items: center; gap: 9px; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 16px; }
+  .mod-hero-eyebrow::before { content: ""; width: 28px; height: 2px; background: var(--accent); }
+  .mod-hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2rem, 4.4vw, 3rem); line-height: 1.04; letter-spacing: -0.02em; }
+  .mod-hero .lead { font-size: 1.08rem; color: var(--ink2); margin-top: 18px; max-width: 70ch; }
+  .mod-hero-meta { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 24px; font-size: 0.8rem; color: var(--ink3); }
+  .mod-hero-meta span { display: inline-flex; align-items: center; gap: 7px; }
+  .mod-hero-meta b { color: var(--ink2); font-weight: 600; }
+
+  h2.lesson { font-family: 'DM Serif Display', serif; font-size: 1.74rem; letter-spacing: -0.015em; margin: 52px 0 6px; scroll-margin-top: 80px; line-height: 1.12; }
+  h2.lesson .l-tag { display: block; font-family: 'DM Mono', monospace; font-size: 0.74rem; letter-spacing: 0.1em; color: var(--accent); text-transform: uppercase; margin-bottom: 7px; font-weight: 500; }
+  h3 { font-size: 1.14rem; font-weight: 700; margin: 34px 0 10px; letter-spacing: -0.01em; }
+  h4 { font-size: 1rem; font-weight: 700; margin: 24px 0 6px; color: var(--ink); }
+  p { margin: 13px 0; }
+  ul, ol { margin: 13px 0 13px 4px; padding-left: 24px; }
+  li { margin: 7px 0; }
+  ul.clean { list-style: none; padding-left: 0; }
+  ul.clean > li { position: relative; padding-left: 26px; }
+  ul.clean > li::before { content: ""; position: absolute; left: 4px; top: 12px; width: 7px; height: 7px; border-radius: 2px; background: var(--accent); transform: rotate(45deg); }
+  strong { font-weight: 700; }
+  em { font-style: italic; }
+
+  /* learning objectives box */
+  .objectives { background: var(--paper2); border: 1px solid var(--rule); border-radius: 14px; padding: 26px 30px; margin: 30px 0; }
+  .objectives h4 { margin: 0 0 14px; font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+  .objectives ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  .objectives li { position: relative; padding-left: 30px; margin: 0; font-size: 0.95rem; color: var(--ink2); }
+  .objectives li::before {
+    content: ""; position: absolute; left: 0; top: 4px; width: 17px; height: 17px;
+    background: var(--accent); border-radius: 5px;
+    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='white' d='M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/></svg>") center/14px no-repeat;
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='white' d='M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/></svg>") center/14px no-repeat;
+  }
+
+  /* ============ CALLOUTS ============ */
+  .callout { border-radius: 13px; padding: 19px 22px 19px 22px; margin: 24px 0; font-size: 0.95rem; position: relative; }
+  .callout p:first-child { margin-top: 0; } .callout p:last-child { margin-bottom: 0; }
+  .callout .c-label { font-size: 0.7rem; letter-spacing: 0.13em; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 6px; }
+
+  /* author / field note */
+  .author { background: linear-gradient(135deg, var(--paper2), var(--paper3)); border: 1px solid var(--rule); padding-left: 70px; }
+  .author::before {
+    content: "DB"; position: absolute; left: 20px; top: 19px;
+    width: 38px; height: 38px; border-radius: 50%; background: var(--ink); color: var(--paper);
+    display: grid; place-items: center; font-family: 'DM Serif Display', serif; font-size: 0.92rem;
+  }
+  .author .c-label { color: var(--ink3); }
+
+  .note { background: var(--teal-light); border-left: 4px solid var(--teal); }
+  .note .c-label { color: var(--teal); }
+  .important { background: var(--amber-light); border-left: 4px solid var(--amber); }
+  .important .c-label { color: var(--amber); }
+  .takeaway { background: var(--accent-light); border-left: 4px solid var(--accent); }
+  .takeaway .c-label { color: var(--accent); }
+
+  /* figure placeholder */
+  .figure { border: 1.5px dashed var(--rule); border-radius: 13px; padding: 36px 20px; text-align: center; margin: 26px 0; background: var(--paper2); color: var(--ink3); }
+  .figure svg { width: 36px; height: 36px; opacity: 0.4; margin-bottom: 10px; }
+  .figure .fig-cap { font-size: 0.85rem; font-weight: 600; color: var(--ink2); }
+  .figure .fig-note { font-size: 0.74rem; margin-top: 4px; }
+
+  /* ============ FORMULA ============ */
+  .formula { background: var(--ink); color: var(--paper); border-radius: 12px; padding: 22px 26px; margin: 22px 0; text-align: center; box-shadow: var(--shadow-sm); }
+  .formula .eq { font-family: 'DM Mono', monospace; font-size: 1.18rem; letter-spacing: 0.01em; }
+  .formula .eq small { color: var(--accent2); }
+  .formula .where { font-family: 'DM Sans', sans-serif; font-size: 0.78rem; color: rgba(245,242,235,0.6); margin-top: 10px; }
+  .formula-name { font-size: 0.72rem; letter-spacing: 0.13em; text-transform: uppercase; color: var(--accent2); margin-bottom: 10px; font-weight: 600; }
+  code.inl { font-family: 'DM Mono', monospace; font-size: 0.88em; background: var(--paper3); padding: 1px 6px; border-radius: 5px; }
+
+  /* worked example */
+  .worked { border: 1px solid var(--rule); border-radius: 14px; margin: 26px 0; overflow: hidden; background: #fff7; }
+  .worked-head { background: var(--ink); color: var(--paper); padding: 13px 22px; font-size: 0.78rem; letter-spacing: 0.13em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 9px; }
+  .worked-head .wx { background: var(--accent); width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center; color: #fff; font-size: 0.8rem; }
+  .worked-body { padding: 20px 24px; }
+  .worked-body .step { font-weight: 700; color: var(--accent); font-size: 0.82rem; letter-spacing: 0.04em; text-transform: uppercase; margin-top: 16px; }
+  .worked-body .calc { font-family: 'DM Mono', monospace; font-size: 0.9rem; background: var(--paper2); border-radius: 8px; padding: 10px 14px; margin: 8px 0; overflow-x: auto; }
+  .worked-body .result { font-family: 'DM Mono', monospace; font-weight: 500; color: var(--teal); }
+
+  /* ============ TABLES ============ */
+  .tbl-wrap { overflow-x: auto; margin: 22px 0; border-radius: 12px; border: 1px solid var(--rule); -webkit-overflow-scrolling: touch; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.86rem; min-width: 420px; background: #fffdfa; }
+  caption { caption-side: top; text-align: left; font-size: 0.76rem; color: var(--ink3); padding: 0 0 9px 2px; font-style: italic; }
+  thead th { background: var(--ink); color: var(--paper); font-weight: 600; text-align: left; padding: 11px 14px; font-size: 0.78rem; letter-spacing: 0.02em; vertical-align: bottom; }
+  tbody td { padding: 10px 14px; border-bottom: 1px solid var(--rule2); vertical-align: top; }
+  tbody tr:nth-child(even) { background: var(--paper2); }
+  tbody tr:last-child td { border-bottom: none; }
+  td strong, th strong { font-weight: 700; }
+  .mono { font-family: 'DM Mono', monospace; font-size: 0.92em; }
+
+  /* ============ SUMMARY / KEY TAKEAWAYS ============ */
+  .summary-block { background: var(--paper2); border: 1px solid var(--rule); border-radius: 16px; padding: 34px 36px; margin: 50px 0 24px; }
+  .summary-block h2 { font-family: 'DM Serif Display', serif; font-size: 1.5rem; margin: 0 0 6px; letter-spacing: -0.015em; }
+  .summary-block .sum-intro { color: var(--ink2); font-size: 0.95rem; margin-bottom: 18px; }
+  ul.keytakeaways { list-style: none; padding: 0; margin: 0; display: grid; gap: 11px; }
+  ul.keytakeaways li { position: relative; padding-left: 32px; font-size: 0.93rem; margin: 0; }
+  ul.keytakeaways li::before {
+    content: ""; position: absolute; left: 0; top: 3px; width: 19px; height: 19px; border-radius: 6px; background: var(--accent);
+    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='white' d='M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/></svg>") center/15px no-repeat;
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='white' d='M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/></svg>") center/15px no-repeat;
+  }
+
+  /* self assessment */
+  .self-assess { border: 1px solid var(--rule); border-radius: 14px; padding: 28px 32px; margin: 28px 0; }
+  .self-assess h3 { margin: 0 0 16px; display: flex; align-items: center; gap: 10px; }
+  .self-assess h3::before { content: "?"; width: 28px; height: 28px; border-radius: 8px; background: var(--teal); color: #fff; display: grid; place-items: center; font-family: 'DM Serif Display', serif; }
+  ol.questions { counter-reset: q; list-style: none; padding: 0; margin: 0; }
+  ol.questions li { counter-increment: q; position: relative; padding: 12px 0 12px 44px; border-bottom: 1px solid var(--rule2); font-size: 0.92rem; }
+  ol.questions li:last-child { border-bottom: none; }
+  ol.questions li::before { content: counter(q); position: absolute; left: 0; top: 11px; width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--accent); color: var(--accent); display: grid; place-items: center; font-weight: 700; font-size: 0.82rem; }
+
+  /* prev / next */
+  .mod-foot { max-width: 820px; margin: 56px auto 0; padding: 0 40px; }
+  .mod-nav-row { display: flex; gap: 14px; justify-content: space-between; border-top: 1px solid var(--rule); padding-top: 26px; }
+  .mod-nav-btn {
+    flex: 1; max-width: 340px; text-align: left; background: var(--paper2); border: 1px solid var(--rule);
+    border-radius: 12px; padding: 14px 18px; cursor: pointer; transition: transform .18s, box-shadow .18s, background .18s;
+    font-family: 'DM Sans', sans-serif; color: var(--ink);
+  }
+  .mod-nav-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); background: #fff; }
+  .mod-nav-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
+  .mod-nav-btn .dir { font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink3); }
+  .mod-nav-btn .nm { font-weight: 600; font-size: 0.95rem; margin-top: 3px; }
+  .mod-nav-btn.next { text-align: right; }
+
+  .course-complete { text-align: center; background: var(--ink); color: var(--paper); border-radius: 16px; padding: 36px; margin: 40px auto 0; max-width: 820px; }
+  .course-complete h3 { font-family: 'DM Serif Display', serif; color: var(--accent2); font-size: 1.5rem; margin: 0 0 6px; }
+  .course-complete p { color: rgba(245,242,235,0.7); margin: 6px 0 0; font-size: 0.92rem; }
+
+  /* footer */
+  footer.site { text-align: center; padding: 40px 20px 50px; border-top: 1px solid var(--rule); margin-top: 40px; color: var(--ink3); font-size: 0.82rem; }
+  footer.site .f-logo { font-family: 'DM Serif Display', serif; color: var(--ink); font-size: 1.05rem; }
+  footer.site a { color: var(--accent); text-decoration: none; }
+  footer.site .f-zk { font-size: 0.74rem; margin-top: 8px; opacity: 0.8; }
+
+  .scrim { display: none; }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 940px) {
+    :root { --sidebar-w: 280px; }
+    .sidebar {
+      position: fixed; top: 0; left: 0; height: 100vh; z-index: 200;
+      transform: translateX(-104%); transition: transform .3s ease; box-shadow: var(--shadow-md);
+      width: 300px; padding-top: 22px;
+    }
+    .sidebar.open { transform: none; }
+    .menu-toggle { display: inline-flex; }
+    .scrim.show { display: block; position: fixed; inset: 0; background: rgba(26,26,24,0.4); z-index: 150; }
+    .content, .mod-foot { padding-left: 22px; padding-right: 22px; }
+    .progress-track { width: 80px; }
+  }
+  @media (max-width: 600px) {
+    body { font-size: 16px; }
+    .content, .mod-foot { padding-left: 18px; padding-right: 18px; }
+    .mod-hero { padding-top: 36px; }
+    .brand-sub { display: none; }
+    .mod-nav-row { flex-direction: column; }
+    .mod-nav-btn { max-width: none; }
+    .author { padding-left: 22px; }
+    .author::before { display: none; }
+    .summary-block, .self-assess { padding: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ TOP BAR ============ -->
+<header class="topbar">
+  <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <a class="brand" href="https://pipingpro-academy.com">
+    <span class="brand-mark">
+      <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="10" fill="none" stroke="#f5f2eb" stroke-width="3.2"/><circle cx="16" cy="16" r="4.6" fill="none" stroke="#f5f2eb" stroke-width="2"/></svg>
+    </span>
+    <span>
+      <span class="brand-name">PipingPro Academy</span>
+      <span class="brand-sub">Engineering Education</span>
+    </span>
+  </a>
+  <div class="topbar-spacer"></div>
+  <div class="progress-wrap">
+    <span class="progress-label" id="progLabel">Module 1 of 5</span>
+    <div class="progress-track"><div class="progress-fill" id="progFill"></div></div>
+  </div>
+</header>
+
+<div class="scrim" id="scrim"></div>
+
+<div class="layout">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="course-eyebrow">Course 2</div>
+    <div class="course-title-sb">Piping Stress Engineering</div>
+    <div class="course-byline">By Donny A. Bachtiar · 5 Modules</div>
+    <nav id="modnav"></nav>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main id="main">
+    <section class="module" data-mod="1">
+      <div class="content">
+        <div class="mod-hero">
+          <span class="mod-hero-eyebrow">Module 1 · Chapter 5 (Part 1 of 3)</span>
+          <h1>Stress Analysis Fundamentals</h1>
+          <p class="lead">Imagine the early stage of designing a gas plant. The piping designer has routed a line from a heat exchanger nozzle to a pressure vessel elsewhere in the plant, with preliminary supports identified. The stress engineer's job is now to ensure the system has adequate flexibility for thermal expansion while keeping an economical layout — and, most importantly, that the loads imposed will not harm the equipment nozzles.</p>
+          <p class="lead">Most analysis of critical lines is done by computer, but a solid grasp of the underlying theory makes the work far easier — and is essential when evaluating output and solving problems such as overstress or nozzle overload.</p>
+          <div class="mod-hero-meta"><span><b>6</b> lessons</span><span>ASME B31.3-2024 Process Piping</span><span>by <b>Donny A. Bachtiar</b></span></div>
+        </div>
+
+        <div class="objectives">
+          <h4>What You Will Learn</h4>
+          <ul>
+            <li>The purpose and function of piping stress analysis</li>
+            <li>When formal (computer) analysis is required vs. not — per ASME B31.3 para 319.4</li>
+            <li>How the Critical Line List is built and what goes into Categories A, B, and C</li>
+            <li>Pipe loading — Sustained loads vs. Thermal loads</li>
+            <li>Stress categories — Primary, Secondary, and Peak; hoop, longitudinal, radial, and expansion stress</li>
+            <li>Allowable stress — Code Allowable Stress and the Allowable Stress Range, with the cyclic <code class="inl">f</code> factor</li>
+          </ul>
+        </div>
+
+        <!-- 5.1 -->
+        <h2 class="lesson" id="m1l1"><span class="l-tag">Section 5.1</span>Purpose of Analysis</h2>
+        <p>The main purpose of performing piping stress analysis is to ensure the system has sufficient flexibility:</p>
+        <ul class="clean">
+          <li>To accommodate thermal expansion or contraction</li>
+          <li>To prevent excessive movement of the pipe at support locations</li>
+          <li>To prevent excessive movement of the pipe at nozzle connections or fixed (anchor) points</li>
+        </ul>
+        <p>Inadequate flexibility can cause the system to experience:</p>
+        <ul class="clean">
+          <li>Failure from overstress or fatigue of the piping material</li>
+          <li>Excessive stresses in the supporting element at the point of support</li>
+          <li>Leakage at joints</li>
+          <li>Detrimental distortion or overload of connected equipment nozzles due to excessive forces and moments</li>
+          <li>Resonance with imposed vibrations</li>
+        </ul>
+        <div class="callout author">
+          <span class="c-label">From the field</span>
+          <p>Piping stress analysis is closely interrelated with piping design and pipe support engineering. In some firms these three functions report to the same department manager. The layout is iterated until a satisfactory balance between stresses and layout efficiency is achieved — only then are the supports designed for the identified locations, types, and loads.</p>
+        </div>
+
+        <!-- 5.2 -->
+        <h2 class="lesson" id="m1l2"><span class="l-tag">Section 5.2</span>Method of Analysis</h2>
+        <p>ASME B31.3-2024 paragraph 319.4 defines two approaches: <strong>No Formal Analysis Required</strong> and <strong>Formal Analysis Required</strong>.</p>
+        <h3>No Formal Analysis Required</h3>
+        <p>A piping system needs no formal analysis if it:</p>
+        <ol>
+          <li>Duplicates, or replaces without significant change, a system with a successful service record.</li>
+          <li>Can readily be judged adequate by comparison with previously analysed systems.</li>
+          <li>Is of uniform size, has no more than two points of fixation, no intermediate restraints, and falls within the limits of the empirical equation below.</li>
+        </ol>
+        <div class="formula">
+          <div class="formula-name">Empirical Flexibility Check (B31.3)</div>
+          <div class="eq">D y / (L − U)² ≤ K₁</div>
+          <div class="where">K₁ = 208 000 S<sub>A</sub>/E<sub>a</sub> (mm/m)² &nbsp;=&nbsp; 30 S<sub>A</sub>/E<sub>a</sub> (in./ft)² · D = outside diameter · y = resultant total displacement strain to be absorbed · L = developed length between anchors · U = straight-line anchor distance · E<sub>a</sub> = reference modulus at 21°C (70°F) · S<sub>A</sub> = allowable displacement stress range (eq. 1a)</div>
+        </div>
+        <h3>Formal Analysis Required</h3>
+        <p>Any system that does not meet the criteria above must be analysed:</p>
+        <ol>
+          <li>A simplified or approximate method may be applied only within the range of configurations for which its adequacy has been demonstrated.</li>
+          <li>Acceptable comprehensive methods include analytical and chart methods that evaluate the forces, moments, and stresses caused by displacement strains.</li>
+          <li>Comprehensive analysis shall consider stress intensification factors for any component other than straight pipe; credit may be taken for the extra flexibility of such a component.</li>
+        </ol>
+
+        <!-- 5.3 -->
+        <h2 class="lesson" id="m1l3"><span class="l-tag">Section 5.3</span>Critical Line List</h2>
+        <p>In a gas plant there are countless piping systems across many services, pressures, and temperatures. Analysing every one would take enormous manhours. So the Lead Piping Stress Engineer defines which systems need formal analysis and which do not — in a document called the <strong>Critical Line List</strong>, prepared per ASME B31.3 para 319.4.1. Systems are divided into three categories.</p>
+        <div class="callout author">
+          <span class="c-label">From the field</span>
+          <p>The lists below are for reference, based on my experience. They may differ from company to company, but for critical lines connected to critical equipment, and for high-pressure / high-temperature large-bore lines, I believe they will not be much different.</p>
+        </div>
+        <h3>Category A — Formal computer analysis required</h3>
+        <ul class="clean">
+          <li>Pressure exceeding the ANSI B16.5 Class 2500 rating for a given temperature and pressure</li>
+          <li>Pipe ≥ 6 in with temperature ≥ 200°C</li>
+          <li>Pipe ≥ 10 in with temperature &gt; 150°C</li>
+          <li>All pipe &gt; 12 in, regardless of temperature</li>
+          <li>All pipe with design temperature of −274°F / cryogenic</li>
+          <li>All lines listed on the P&amp;ID as requiring an expansion joint</li>
+          <li>Refractory-lined lines</li>
+          <li>Lines with a relief valve in the system</li>
+          <li>Lines connected to rotating equipment — pumps, turbines, centrifugal compressors</li>
+          <li>Lines connected to reciprocating compressors and pumps</li>
+          <li>Lines connected to air-cooled and plate heat exchangers</li>
+          <li>Lines draining gases/vapours that allow dynamic loads to occur</li>
+          <li>Lines connected to a tank and &gt; 12 in</li>
+          <li>Piping for Category M fluid</li>
+          <li>Lines designed for more than 22,000 cycles</li>
+          <li>High-temperature services where the design metal temperature exceeds 1000°F</li>
+          <li>Systems requiring fatigue analysis due to pressure, thermal, or combined cycles</li>
+          <li>Piping requiring response-spectrum analysis (e.g. earthquake loading)</li>
+          <li>Piping subject to thermal bowing</li>
+          <li>Large diameter pipe exceeding 48 in</li>
+        </ul>
+        <h3>Category B — Approximate methods permitted</h3>
+        <p>Does not require formal computer analysis but can be checked using approximate methods, tables, or diagrams.</p>
+        <h3>Category C — Visual check only</h3>
+        <p>Needs no analysis at all — formal, approximate, or graphical. A visual inspection is sufficient.</p>
+        <p>From these criteria the Lead Piping Stress Engineer issues the official <strong>Stress Critical Line List</strong> — usually a Microsoft Excel spreadsheet. At some companies it includes non-critical lines too, making it a useful tool for monitoring progress. It typically contains:</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Field</th><th>Field</th></tr></thead>
+            <tbody>
+              <tr><td>Line number</td><td>From / to connection points</td></tr>
+              <tr><td>Pipe diameter</td><td>P&amp;ID number</td></tr>
+              <tr><td>Piping material specification</td><td>Operating temperature, pressure, density</td></tr>
+              <tr><td>Service (liquid or gas)</td><td>Design pressure &amp; temperature</td></tr>
+              <tr><td>Type of insulation</td><td>Criticality A, B, or C (plus notes)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="figure">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          <div class="fig-cap">Figure 5.1 — Sample of Stress Criticality Chart</div>
+          <div class="fig-note">[ Insert criticality chart image here ]</div>
+        </div>
+
+        <!-- 5.4 -->
+        <h2 class="lesson" id="m1l4"><span class="l-tag">Section 5.4</span>Pipe Loading</h2>
+        <p>In its installed position a piping system is subject to dead weight (pipe, fittings, insulation), snow or ice, line contents, wind on exposed piping, and earthquake or shock in special situations. Dead load effects (except contents) are essentially always present, while wind or earthquake effects vary and reach maximum design values infrequently, if ever. Loads fall into two groups:</p>
+        <h3>Sustained Loads</h3>
+        <p>Dead loads (pipe, flanges, fittings, valves) plus live loads (internal fluid, snow, ice) as well as pressure, wind, earthquake. The basic characteristic of sustained loads is that they can cause <strong>gross collapse</strong> of the system.</p>
+        <h3>Thermal Loads</h3>
+        <p>Thrust, forces, and moments resulting from the resistance to free thermal expansion or contraction by restraints and anchors. Thermal loads are <strong>cyclic</strong> and disappear when the restraints are removed.</p>
+        <div class="callout note">
+          <span class="c-label">In short</span>
+          <p>Sustained load is mainly the weight of the pipe with its content sitting on the support — the support must sustain it, and the contact point must not bulge or dent. Thermal load is caused by expansion of the pipe due to hot content, or contraction if the content is cold or cryogenic.</p>
+        </div>
+
+        <!-- 5.5 -->
+        <h2 class="lesson" id="m1l5"><span class="l-tag">Section 5.5</span>Stress Categories</h2>
+        <p>The two load types produce two corresponding stress types: Primary Stress and Secondary Stress.</p>
+        <h3>5.5.1&nbsp;&nbsp;Primary Stress</h3>
+        <p>Caused by sustained load. Its defining characteristic is that it is <strong>not self-limiting</strong>. This is a hazardous stress — if it exceeds the yield strength through the entire cross-section, the pipe material fails, which can cause an accident. When found in analysis, the solution is usually simple: support the system properly. Primary stress comprises:</p>
+        <h4>Hoop Stress (Circumferential)</h4>
+        <p>When the diameter-to-thickness ratio D/t &gt; 20 the pipe is considered thin-wall (Cooper, BS 8010); the hoop stress is nearly constant through the wall:</p>
+        <div class="formula">
+          <div class="formula-name">Hoop Stress</div>
+          <div class="eq">S<sub>H</sub> = P D / (2 t) &nbsp;&nbsp;<small>(psi)</small></div>
+          <div class="where">P = design pressure (psi) · D = outside diameter (in) · t = wall thickness (in). Compared against the basic allowable stress at operating temperature.</div>
+        </div>
+        <h4>Longitudinal Stress (Axial)</h4>
+        <p>The total longitudinal stress is the sum of axial-force, internal-pressure, and bending components:</p>
+        <div class="formula">
+          <div class="formula-name">Total Longitudinal Stress</div>
+          <div class="eq">S<sub>L</sub> = S<sub>L1</sub> + S<sub>L2</sub> + S<sub>L3</sub></div>
+          <div class="where">S<sub>L1</sub> = F<sub>a</sub>/A<sub>m</sub> (axial force) · S<sub>L2</sub> = P D / (4 t) (internal pressure — half the hoop stress) · S<sub>L3</sub> = M<sub>b</sub>/Z (bending moment). Checked against the basic allowable stress at operating temperature, S<sub>h</sub>.</div>
+        </div>
+        <h4>Radial Stress</h4>
+        <p>Unlike the others, radial stress varies through the wall — from P at the inner surface to zero at the outer surface.</p>
+        <h3>5.5.2&nbsp;&nbsp;Secondary Stress</h3>
+        <p>Caused by thermal load — pipe expansion or contraction. It satisfies an imposed strain pattern rather than being in equilibrium with an external load, and its defining characteristic is that it is <strong>self-limiting</strong>. Secondary stresses are usually of bending nature across the wall thickness. They are not a direct cause of ductile failure from a single load application; only repeated, cyclic application creates a local strain range with the potential for fatigue failure. Secondary stress is also called Expansion Stress or Displacement Stress Range, S<sub>E</sub> (ASME B31.3 para 319.4.4, eq. 17):</p>
+        <div class="formula">
+          <div class="formula-name">Expansion / Displacement Stress Range (max-shear theory)</div>
+          <div class="eq">S<sub>E</sub> = √[ (|S<sub>a</sub>| + |S<sub>b</sub>|)² + (2 S<sub>t</sub>)² ] &nbsp;&nbsp;<small>(psi)</small></div>
+          <div class="where">Checked against S<sub>A</sub>, the Allowable Displacement Stress Range.</div>
+        </div>
+        <div class="formula">
+          <div class="formula-name">Component Stresses</div>
+          <div class="eq">S<sub>b</sub> = √[ (i<sub>i</sub>M<sub>i</sub>)² + (i<sub>o</sub>M<sub>o</sub>)² ] / Z &nbsp;·&nbsp; S<sub>a</sub> = i<sub>a</sub>F<sub>a</sub> / A<sub>p</sub> &nbsp;·&nbsp; S<sub>t</sub> = i<sub>t</sub>M<sub>t</sub> / (2 Z)</div>
+          <div class="where">i<sub>i</sub>, i<sub>o</sub>, i<sub>t</sub> = in-plane / out-of-plane / torsional SIF (ASME B31J) · i<sub>a</sub> = axial SIF (1.0 for elbows/bends/miters; otherwise = i<sub>o</sub>) · M<sub>i</sub>, M<sub>o</sub>, M<sub>t</sub> = in-plane / out-of-plane / torsional moment ranges · Z = section modulus · A<sub>p</sub> = pipe metal area</div>
+        </div>
+        <h3>5.5.3&nbsp;&nbsp;Peak Stress</h3>
+        <p>Described in Nayyar's Piping Handbook: peak stresses are the highest stresses in the region under consideration and are responsible for fatigue failure. Common types are stress concentrations at a discontinuity and thermal gradients through the pipe wall.</p>
+
+        <!-- 5.6 -->
+        <h2 class="lesson" id="m1l6"><span class="l-tag">Section 5.6</span>Allowable Stress</h2>
+        <p>Allowable stress is a function of material properties (yield or tensile strength) and safety factors tied to specific design, fabrication, and inspection requirements. There are two types: <strong>Code Allowable Stress</strong> and <strong>Allowable Stress Range</strong>.</p>
+        <h3>5.6.1&nbsp;&nbsp;Code Allowable Stress (Basic Allowable Stress)</h3>
+        <p>The maximum stress that can be safely applied to a piping material. ASME B31.3-2024 specifies the basic allowable stress for non-bolting materials as the <em>lowest</em> obtained from:</p>
+        <ul class="clean">
+          <li>⅓ of SMTS (specified minimum tensile strength) at room temperature</li>
+          <li>⅓ of tensile strength at temperature</li>
+          <li>⅔ of SMYS (specified minimum yield strength) at room temperature</li>
+          <li>⅔ of yield strength at temperature</li>
+          <li>For austenitic stainless and similar nickel alloys: the lower of ⅔ SMYS and 90% of yield strength at temperature</li>
+          <li>100% of the average stress for a creep rate of 0.01% per 1000 h</li>
+          <li>Up to and including 815°C (1500°F): 67% of the average stress for rupture at 100,000 h</li>
+          <li>Above 815°C (1500°F): (100 × F<sub>avg</sub>)% of the average stress for rupture at 100,000 h (F<sub>avg</sub> ≤ 0.67)</li>
+          <li>80% of the minimum stress for rupture at 100,000 h</li>
+        </ul>
+        <p>The values of S<sub>c</sub> (cold allowable) and S<sub>h</sub> (hot allowable) appear in Appendix A, Table A-1 of B31.3-2024. Occasional effects such as wind and earthquake have little influence on fatigue life or creep, so they may be treated more liberally:</p>
+        <div class="callout important">
+          <span class="c-label">Occasional Loads — B31.3 para 302.3.6</span>
+          <p>The sum of stresses due to sustained loads (S<sub>L</sub>) and occasional loads (wind, earthquake) shall not exceed <strong>1.33 × the basic allowable stress</strong> at the metal temperature for the occasional condition considered. Wind and earthquake are <em>not</em> considered to act concurrently. For elevated-temperature ductile materials, the allowable for short-duration occasional loads may be taken as the lowest of 90% SMYS or 4× the basic allowable; loads exceeding 20 h over the system life use the stress giving a 20% creep usage factor (Appendix V).</p>
+        </div>
+        <div class="figure">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3v18h18"/><path d="M19 7l-5 5-3-3-4 4"/></svg>
+          <div class="fig-cap">Figure 5.2 / 5.3 — Temperature vs Yield Strength &amp; Tensile Strength</div>
+          <div class="fig-note">[ Insert strength-vs-temperature diagrams here ]</div>
+        </div>
+        <p>As temperature rises, yield and tensile strength fall — so the allowable stress falls with them, since it depends on SMTS and SMYS.</p>
+        <h3>5.6.2&nbsp;&nbsp;Allowable Stress Range</h3>
+        <p>First suggested by Rossheim and Markl as a measure of the permissible strain range in a cyclic load application, to guard against fatigue failure after a given number of cycles. It has appeared in the Piping Code since 1942. The load here is internal — thermal loading. A typical cycle runs from installation temperature up to maximum temperature, down at shutdown, then back to maximum: one cycle. The basic allowable range provides a minimum of 7000 cycles without failure:</p>
+        <div class="formula">
+          <div class="formula-name">Basic Allowable Stress Range</div>
+          <div class="eq">1.25 S<sub>c</sub> + 0.25 S<sub>h</sub></div>
+          <div class="where">S<sub>c</sub> = allowable stress at ambient (cold) temperature · S<sub>h</sub> = allowable stress at operating (hot) temperature</div>
+        </div>
+        <p>The Allowable Displacement Stress Range S<sub>A</sub> (B31.3 para 302.3.5(d), eq. 1a) is checked against S<sub>E</sub>; S<sub>E</sub> shall not exceed S<sub>A</sub>:</p>
+        <div class="formula">
+          <div class="formula-name">Allowable Displacement Stress Range</div>
+          <div class="eq">S<sub>A</sub> = f (1.25 S<sub>c</sub> + 0.25 S<sub>h</sub>)</div>
+          <div class="where">When S<sub>h</sub> &gt; S<sub>L</sub>, the difference may be added to the 0.25 S<sub>h</sub> term — the "Liberal" allowable:</div>
+        </div>
+        <div class="formula">
+          <div class="formula-name">Liberal Allowable Stress Range</div>
+          <div class="eq">S<sub>A</sub> = f [ 1.25 (S<sub>c</sub> + S<sub>h</sub>) − S<sub>L</sub> ]</div>
+          <div class="where">Here S<sub>L</sub> is assumed not to exceed S<sub>h</sub>; the unused part of S<sub>h</sub> is added to withstand expansion stress.</div>
+        </div>
+        <div class="formula">
+          <div class="formula-name">Stress-Range Factor (cyclic)</div>
+          <div class="eq">f = 6.0 N<sup>−0.2</sup> ≤ f<sub>m</sub></div>
+          <div class="where">N = equivalent number of full displacement cycles over service life · f<sub>m</sub> = 1.2 for ferrous materials with SMTS ≤ 517 MPa (75 ksi) and temperature ≤ 371°C (700°F), otherwise 1.0 · S<sub>c</sub>, S<sub>h</sub> capped at 138 MPa (20 ksi)</div>
+        </div>
+        <div class="callout author">
+          <span class="c-label">From the field</span>
+          <p>The liberal allowable is powerful, but some EPC companies advise against using it — especially at the beginning of calculations. Whether to use it is entirely the decision of each Lead Piping Stress Engineer.</p>
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="summary-block">
+          <h2>Module 1 — Summary &amp; Key Takeaways</h2>
+          <p class="sum-intro">This is the theoretical core: why we analyse, when formal analysis is required, and how loads become stresses checked against allowables.</p>
+          <ul class="keytakeaways">
+            <li>Stress analysis ensures flexibility for thermal movement while protecting material, supports, joints, and equipment nozzles.</li>
+            <li>ASME B31.3 para 319.4 sets the No-Formal vs Formal analysis criteria; the empirical check is Dy/(L−U)² ≤ K₁.</li>
+            <li>The Critical Line List sorts systems into Category A (computer analysis), B (approximate methods), and C (visual only).</li>
+            <li>Sustained loads cause gross collapse and are not self-limiting; thermal loads are cyclic and self-limiting.</li>
+            <li>Primary stress (from sustained load) is checked against S<sub>h</sub>; Secondary/Expansion stress S<sub>E</sub> is checked against the range S<sub>A</sub>.</li>
+            <li>Basic allowable range 1.25S<sub>c</sub> + 0.25S<sub>h</sub> targets ≥ 7000 cycles; S<sub>A</sub> = f(1.25S<sub>c</sub> + 0.25S<sub>h</sub>), with the liberal form recovering unused S<sub>h</sub>.</li>
+            <li>Occasional loads (wind, earthquake — never concurrent) are checked against 1.33 × basic allowable.</li>
+          </ul>
+        </div>
+
+        <div class="self-assess">
+          <h3>Self-Assessment Questions</h3>
+          <ol class="questions">
+            <li>State the three conditions under which ASME B31.3 permits "no formal analysis," and write the empirical flexibility equation.</li>
+            <li>List four conditions that would place a line into Category A of the Critical Line List.</li>
+            <li>What is the fundamental difference between a sustained load and a thermal load, and which stress category does each produce?</li>
+            <li>Why is secondary (expansion) stress described as "self-limiting," and what failure mode does it ultimately threaten?</li>
+            <li>Write the expression for the basic allowable stress range and explain the meaning of the stress-range factor f.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="mod-foot">
+        <div class="mod-nav-row">
+          <button class="mod-nav-btn prev" disabled><span class="dir">← Previous</span><span class="nm">Start of course</span></button>
+          <button class="mod-nav-btn next" data-nav="2"><span class="dir">Next →</span><span class="nm">Module 2 · Pressure Design &amp; Calculations</span></button>
+        </div>
+      </div>
+    </section>
+    <section class="module" data-mod="2">
+      <div class="content">
+        <div class="mod-hero">
+          <span class="mod-hero-eyebrow">Module 2 · Chapter 5 (Part 2 of 3)</span>
+          <h1>Pressure Design &amp; Calculations</h1>
+          <p class="lead">With the theory established, this module covers the calculations a stress engineer performs by hand: wall thickness to three codes (B31.3, B31.4, B31.8), pipe under external pressure, branch-connection reinforcement, stress intensification factors, cold spring, and the pressure &amp; temperature definitions that drive every analysis.</p>
+          <div class="mod-hero-meta"><span><b>6</b> lessons</span><span>ASME B31.3 / B31.4 / B31.8 · B31J</span></div>
+        </div>
+
+        <div class="objectives">
+          <h4>What You Will Learn</h4>
+          <ul>
+            <li>Wall thickness calculation per ASME B31.3, B31.4, and B31.8 — with full worked examples</li>
+            <li>Behaviour of pipe under external pressure — long, intermediate, and short cylinders</li>
+            <li>Branch-connection reinforcement: required vs available area (A₁ vs A₂+A₃+A₄)</li>
+            <li>Stress Intensification Factors and flexibility factors per ASME B31J</li>
+            <li>Cold spring — purpose, application, and when not to use it</li>
+            <li>The full set of pressure and temperature definitions used in analysis</li>
+          </ul>
+        </div>
+
+        <!-- 5.7 -->
+        <h2 class="lesson" id="m2l1"><span class="l-tag">Section 5.7</span>Wall Thickness Calculation</h2>
+
+        <h3>ASME B31.3</h3>
+        <p>Per B31.3 para 304.1.1, the minimum required thickness includes allowances:</p>
+        <div class="formula">
+          <div class="formula-name">Minimum Wall Thickness</div>
+          <div class="eq">t<sub>m</sub> = t + c</div>
+          <div class="where">For t &lt; D/6, the pressure design thickness t is the lesser-restrictive of the two equations below.</div>
+        </div>
+        <div class="formula">
+          <div class="eq">t = P D / [ 2 (S E W + P Y) ] &nbsp;&nbsp;or&nbsp;&nbsp; t = P D / { 2 [ S E W − P (1 − Y) ] }</div>
+          <div class="where">c = mechanical + corrosion/erosion allowances · D = outside diameter · E = quality factor (Table A-1A/A-1B) · P = internal design gauge pressure · S = stress value (Table A-1/A-1M) · W = weld joint strength reduction factor (para 302.3.5) · Y = coefficient (Table 304.1.1), Y = (d+2c)/(D+d+2c)</div>
+        </div>
+        <div class="callout important">
+          <span class="c-label">Important</span>
+          <p>For t ≥ D/6 or P/SE &gt; 0.385, special consideration of failure theory, fatigue effects, and thermal stress is required (para 304.1.2). B31.3-2024 includes minor clarifications on allowable and mill tolerance.</p>
+        </div>
+        <div class="worked">
+          <div class="worked-head"><span class="wx">B</span>Worked Example — B31.3, NPS 10</div>
+          <div class="worked-body">
+            <p><strong>Given:</strong> Design pressure 500 psig · Design temp 260°C (500°F) · C.A. 1.6 mm (0.063 in) · NPS 10 · A53 Gr. B, EFW · mill tolerance 12.5%.</p>
+            <p style="color:var(--ink3);font-size:0.85rem">Five steps: (1) calculate t, (2) add c → t<sub>m</sub>, (3) check t<sub>m</sub> &lt; D/6, (4) select next commercial schedule T, (5) check T against t<sub>m</sub> after deducting mill tolerance.</p>
+            <div class="step">Inputs</div>
+            <div class="calc">P = 500 psig · D = 10.75 in · S = 19,000 psi (Table A-1, S<sub>h</sub>)
+E = 0.85 (Table A-1B) · Y = 0.4 (Table 304.1.1) · W = 1 (Table 302.3.4)</div>
+            <div class="step">Pressure Design Thickness</div>
+            <div class="calc">t = (500 × 10.75) / [2 (19,000 × 0.85 × 1 + 500 × 0.4)] = <span class="result">0.164 in</span></div>
+            <div class="step">Minimum Wall + Check</div>
+            <div class="calc">t<sub>m</sub> = 0.164 + 0.063 = 0.227 in
+D/6 = 10.75 / 6 = 1.792 in  →  t (0.164) &lt; D/6 ✓  (no special consideration needed)</div>
+            <div class="step">First Attempt — T = 0.250 in</div>
+            <div class="calc">0.250 × (1 − 0.125) = 0.219 in  →  0.219 &lt; 0.227  ✗ rejected (T &lt; t<sub>m</sub>)</div>
+            <div class="step">Second Attempt — T = 0.279 in</div>
+            <div class="calc">0.279 × (1 − 0.125) = 0.244 in  →  0.244 &gt; 0.227  ✓ <span class="result">accepted</span></div>
+          </div>
+        </div>
+
+        <h3>ASME B31.4 — Liquid Pipelines</h3>
+        <p>For pipelines transporting liquid between fields, facilities, tank farms, and terminals. The nominal wall thickness shall be ≥ t + A:</p>
+        <div class="formula">
+          <div class="formula-name">B31.4 Wall Thickness</div>
+          <div class="eq">t<sub>n</sub> ≥ t + A &nbsp;&nbsp;·&nbsp;&nbsp; t = P<sub>i</sub> D / (2 S) &nbsp;&nbsp;where&nbsp; S = F × E × S<sub>y</sub></div>
+          <div class="where">A = allowances for threading, grooving, corrosion, erosion (para 403.2.2–403.2.4) · P<sub>i</sub> = internal design gauge pressure · F = design factor, max 0.72 · E = weld joint factor (Table 403.2.1-1) · S<sub>y</sub> = SMYS</div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <caption>Table 5.1 — Longitudinal Weld Joint Factors E (seamless, partial)</caption>
+            <thead><tr><th>Specification</th><th>Grade</th><th>E</th></tr></thead>
+            <tbody>
+              <tr><td>Seamless (A53, A106)</td><td>—</td><td class="mono">1.0</td></tr>
+              <tr><td>ASTM A53</td><td>All</td><td class="mono">1.0</td></tr>
+              <tr><td>ASTM A106</td><td>All</td><td class="mono">1.0</td></tr>
+              <tr><td>ASTM A333</td><td>6</td><td class="mono">1.0</td></tr>
+              <tr><td>ASTM A524</td><td>All</td><td class="mono">1.0</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="worked">
+          <div class="worked-head"><span class="wx">B</span>Worked Example — B31.4, 8″ Potable Water</div>
+          <div class="worked-body">
+            <p><strong>Given:</strong> 8 in potable water pipeline · 600 psig at 100°F · ASTM A53 Gr. B (SMYS 35,000 psi) · no corrosion allowance.</p>
+            <div class="step">Inputs</div>
+            <div class="calc">P = 600 psig · OD = 8.625 in · F = 0.72 · E = 1.0 · S<sub>y</sub> = 35,000 psi</div>
+            <div class="step">Pressure Design Thickness</div>
+            <div class="calc">t = (600 × 8.625) / (2 × 0.72 × 1.0 × 35,000) = <span class="result">0.103 in</span></div>
+            <p style="margin-top:12px;">Closest commercial wall = <strong>0.109 in</strong> (final selection subject to client approval). Summary for three design factors:</p>
+            <div class="tbl-wrap" style="margin-top:10px;">
+              <table>
+                <thead><tr><th>F (design factor)</th><th>0.5</th><th>0.6</th><th>0.72</th></tr></thead>
+                <tbody>
+                  <tr><td>Calculated t (in)</td><td class="mono">0.148</td><td class="mono">0.123</td><td class="mono">0.103</td></tr>
+                  <tr><td>Selected W.T. (in)</td><td class="mono">0.156</td><td class="mono">0.125</td><td class="mono">0.109</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <h3>ASME B31.8 — Gas Pipelines</h3>
+        <p>Covers design, fabrication, installation, inspection, and testing of gas transportation facilities. Wall thickness per para 841.1.1:</p>
+        <div class="formula">
+          <div class="formula-name">B31.8 Wall Thickness</div>
+          <div class="eq">t = P D / (2 S F E T)</div>
+          <div class="where">D = nominal OD · E = longitudinal weld joint quality factor (Table 841.1.7-1) · F = design factor (Table 841.1.6-1) · P = design pressure · S = SMYS · T = temperature derating factor (Table 841.1.8-1)</div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Location Class</th><th>Design Factor F</th></tr></thead>
+            <tbody>
+              <tr><td>Class 1, Division 1</td><td class="mono">0.72</td></tr>
+              <tr><td>Class 1, Division 2</td><td class="mono">0.72</td></tr>
+              <tr><td>Class 2</td><td class="mono">0.60</td></tr>
+              <tr><td>Class 3</td><td class="mono">0.50</td></tr>
+              <tr><td>Class 4</td><td class="mono">0.40</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Material</th><th>Pipe Class</th><th>E</th></tr></thead>
+            <tbody>
+              <tr><td>ASTM A53, A106</td><td>Seamless</td><td class="mono">1.0</td></tr>
+              <tr><td>ASTM A53</td><td>ERW</td><td class="mono">1.0</td></tr>
+              <tr><td>ASTM A53</td><td>Furnace Butt Welded</td><td class="mono">0.6</td></tr>
+              <tr><td>ASTM A134</td><td>Electric Fusion Arc Welded</td><td class="mono">0.8</td></tr>
+              <tr><td>ASTM A135</td><td>Electric Resistance Welded</td><td class="mono">1.0</td></tr>
+              <tr><td>API 5L</td><td>Seamless</td><td class="mono">1.0</td></tr>
+              <tr><td>API 5L</td><td>SAW or ERW</td><td class="mono">1.0</td></tr>
+              <tr><td>API 5L</td><td>Furnace Butt Welded</td><td class="mono">0.6</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Temperature °F (°C)</th><th>Derating Factor T</th></tr></thead>
+            <tbody>
+              <tr><td>250 (121)</td><td class="mono">1.000</td></tr>
+              <tr><td>300 (149)</td><td class="mono">0.967</td></tr>
+              <tr><td>350 (177)</td><td class="mono">0.933</td></tr>
+              <tr><td>400 (204)</td><td class="mono">0.900</td></tr>
+              <tr><td>450 (232)</td><td class="mono">0.867</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="worked">
+          <div class="worked-head"><span class="wx">B</span>Worked Example — B31.8, 30″ Sales Gas</div>
+          <div class="worked-body">
+            <p><strong>Given:</strong> 30 in sales gas pipeline · 2600 psig at 200°F · API 5L X65 · 70 km from shore tie-in to inlet facility · no corrosion allowance.</p>
+            <div class="step">Inputs</div>
+            <div class="calc">P = 2600 psig · D = 30 in · S = 65,000 psi · E = 1.0 (API 5L ERW) · T = 1.0 (≤ 250°F)
+F = 0.72 / 0.60 / 0.50  (Class 1 Div 2 corridor / Class 2 highway crossing / Class 3 plant entry)</div>
+            <div class="step">F = 0.72</div>
+            <div class="calc">t = (2600 × 30) / (2 × 65,000 × 1 × 1 × 0.72) = <span class="result">0.833 in</span>  →  select 0.875 in</div>
+            <div class="step">F = 0.60</div>
+            <div class="calc">t = (2600 × 30) / (2 × 65,000 × 1 × 1 × 0.60) = <span class="result">1.000 in</span>  →  select 1.000 in</div>
+            <div class="step">F = 0.50</div>
+            <div class="calc">t = (2600 × 30) / (2 × 65,000 × 1 × 1 × 0.50) = <span class="result">1.200 in</span>  →  select 1.250 in</div>
+          </div>
+        </div>
+
+        <!-- 5.8 -->
+        <h2 class="lesson" id="m2l2"><span class="l-tag">Section 5.8</span>Pipe Under External Pressure</h2>
+        <p>The strength of pipe under external pressure depends on material properties at operating temperature and geometry — unsupported length L, thickness t, outside diameter D, and out-of-roundness. Behaviour of a thin-wall cylinder under uniform external pressure varies with length:</p>
+        <div class="formula">
+          <div class="formula-name">Very Long Cylinder</div>
+          <div class="eq">P<sub>c</sub> = 2.2 E (t/D)³ &nbsp;·&nbsp; critical length L<sub>c</sub> = 1.11 D √(D/t)</div>
+          <div class="where">L<sub>c</sub> = minimum unsupported length beyond which P<sub>c</sub> is independent of L.</div>
+        </div>
+        <div class="formula">
+          <div class="formula-name">Intermediate Cylinder (L &lt; L<sub>c</sub>)</div>
+          <div class="eq">P<sub>c</sub> = 2.6 E (t/D)<sup>2.5</sup> / (L/D)</div>
+        </div>
+        <div class="formula">
+          <div class="formula-name">Short Cylinder (plastic yielding)</div>
+          <div class="eq">P<sub>c</sub> = 2 S<sub>y</sub> t / D</div>
+        </div>
+        <p>The tangential stress S<sub>c</sub> at collapse can be written as below; both forms are plotted in the geometric chart Fig. UGO-28.0 of the ASME Boiler &amp; Pressure Vessel Code, Section VIII Div. 1:</p>
+        <div class="formula">
+          <div class="eq">For L &gt; L<sub>c</sub>:&nbsp; S<sub>c</sub>/E = 1.1 (t/D)² &nbsp;&nbsp;·&nbsp;&nbsp; For L ≤ L<sub>c</sub>:&nbsp; S<sub>c</sub>/E = 1.3 (t/D)<sup>1.5</sup> / (L/D)</div>
+        </div>
+
+        <!-- 5.9 -->
+        <h2 class="lesson" id="m2l3"><span class="l-tag">Section 5.9</span>Branch Connection</h2>
+        <p>An opening in the pipe may need added metal to compensate for the weakening effect of the hole. Reinforcement must preserve the general strain pattern and avoid creating an overriding stress concentration. For branch-to-run angles β between 45° and 90° inclusive:</p>
+        <div class="formula">
+          <div class="formula-name">Required Reinforcement Area</div>
+          <div class="eq">A₁ = t<sub>h</sub> d₁ (2 − sin β)</div>
+        </div>
+        <div class="formula">
+          <div class="formula-name">Available Area (without pad) — must satisfy</div>
+          <div class="eq">A₂ + A₃ + A₄ ≥ A₁</div>
+        </div>
+        <ul class="clean">
+          <li><strong>A₂</strong> — excess thickness in the run pipe wall (header): A₂ = (2d₂ − d₁)(T<sub>h</sub> − t<sub>h</sub> − c)</li>
+          <li><strong>A₃</strong> — excess thickness in the branch pipe wall: A₃ = (2L₄ / sin β)(T<sub>b</sub> − t<sub>b</sub> − c − m)</li>
+          <li><strong>A₄</strong> — metal provided by welds and properly attached reinforcement (weld cross-section)</li>
+        </ul>
+        <div class="formula">
+          <div class="formula-name">Key Geometry</div>
+          <div class="eq">d₁ = [D<sub>b</sub> − 2(T<sub>b</sub> − c − m)] / sin β &nbsp;·&nbsp; d₂ = greater of d₁ or (T<sub>h</sub>−c−m)+(T<sub>b</sub>−c−m)+d₁/2</div>
+          <div class="where">L₄ = height of reinforcement zone = lesser of 2.5(T<sub>h</sub>−c) or 2.5(T<sub>b</sub>−c)+t<sub>r</sub> · T<sub>h</sub>, T<sub>b</sub> = nominal header/branch thickness · t<sub>h</sub>, t<sub>b</sub> = pressure design thickness · c = corrosion allowance · m = mill tolerance · β = branch angle</div>
+        </div>
+        <div class="callout takeaway">
+          <span class="c-label">Application</span>
+          <p>If A₂ + A₃ + A₄ ≥ A₁ the opening is adequately reinforced. If A₂ + A₃ + A₄ &lt; A₁ a reinforcing pad is required. Standard pad: thickness = thickness of run pipe; width = half the nominal diameter of the branch pipe.</p>
+        </div>
+
+        <!-- 5.10 -->
+        <h2 class="lesson" id="m2l4"><span class="l-tag">Section 5.10</span>Stress Intensification Factor</h2>
+        <p>ASME B31J (and the ASME B&amp;PV Code Section III) require stress intensification factors (SIFs / i-factors) and flexibility factors (k-factors) when checking components and joints under loads — including cyclic loads that may produce fatigue. Under pressure and temperature, elbows and bends experience bending moments with two characteristics:</p>
+        <ul class="clean">
+          <li>Stress and strain at the material fibres are not proportional to their distance from the neutral axis.</li>
+          <li>The cross-section flattens (ovalises).</li>
+        </ul>
+        <p>This reduces the bend's ability to resist bending — effectively a reduction in moment of inertia I. Bends are more flexible than an equal length of straight pipe, so flexibility and stress intensification factors are crucial for curved segments. Per para 319.3.6, k and i shall not be less than unity; in the absence of more directly applicable data, use the values in ASME B31J. <strong>In-plane</strong> means bending/force in the plane of the pipe bend; <strong>out-of-plane</strong> means perpendicular to that plane.</p>
+        <div class="formula">
+          <div class="formula-name">Elbow / Pipe Bend (sample — see B31J Table 1.1 for others)</div>
+          <div class="eq">Flexibility factor: k<sub>i</sub>, k<sub>o</sub> = 1.65 / h &nbsp;·&nbsp; Torsional SIF: i<sub>t</sub> = 1</div>
+          <div class="where">In-plane (i<sub>i</sub>) and out-of-plane (i<sub>o</sub>) SIFs are computed from the flexibility characteristic h per ASME B31J.</div>
+        </div>
+
+        <!-- 5.11 -->
+        <h2 class="lesson" id="m2l5"><span class="l-tag">Section 5.11</span>Cold Spring</h2>
+        <p>Cold springing is cutting each piping segment short by some specified percentage of its normal thermal growth, with allowance for possible anchor movement — to produce a desired initial displacement and reaction by intentional deformation during assembly (B31.3 para 319.2.4). Its main purpose is to bring stress, forces, and moments to expected levels or below code allowables (B31.3 / B31.1). It can be applied to pipes connected to equipment or elsewhere.</p>
+        <div class="callout important">
+          <span class="c-label">Important</span>
+          <p>Cold spring for pipes connected to rotating equipment (pumps, compressors) is <em>not</em> recommended — the residual stress from cold spring is difficult to predict or anticipate. For static equipment (vessels, heat exchangers) it may still be considered.</p>
+        </div>
+
+        <!-- 5.12 -->
+        <h2 class="lesson" id="m2l6"><span class="l-tag">Section 5.12</span>Pressure and Temperature</h2>
+        <p>A system experiences many conditions over its life — commissioning/start-up, normal operation, shutdown, steam-out, regeneration, decoking. These varying pressures and temperatures must all be considered. Key definitions:</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Term</th><th>Definition</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Design Temperature</strong></td><td>The temperature at which, under coincident pressure, the greatest thickness or highest component rating is required (B31.3 para 301.2). Also the maximum / highest expected temperature in service. Used to check the analysis.</td></tr>
+              <tr><td><strong>Minimum Design Temperature</strong></td><td>The lowest component temperature expected in service. May trigger special design and material qualification requirements.</td></tr>
+              <tr><td><strong>Design Pressure</strong></td><td>For each component, ≥ the pressure at the most severe coincident internal/external pressure and temperature expected in service.</td></tr>
+              <tr><td><strong>MAOP</strong></td><td>Maximum Allowable Operating Pressure — the maximum at which a pipeline may be operated per B31.8 / B31.4, at the most severe coincident condition.</td></tr>
+              <tr><td><strong>MOP</strong></td><td>Maximum Operating Pressure — the highest pressure during a normal operating cycle.</td></tr>
+              <tr><td><strong>Normal Operating Pressure</strong></td><td>Predicted pressure (static head + friction losses + back pressure) under predicted steady-state conditions.</td></tr>
+              <tr><td><strong>Normal Operating Temperature</strong></td><td>Expected temperature during normal operation. Used to calculate initial nozzle displacement and forces/moments on rotating-equipment nozzles.</td></tr>
+              <tr><td><strong>Ambient Temperature</strong></td><td>Room/surrounding temperature. Used to determine the stress range.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout note">
+          <span class="c-label">Installation temperature — rule of thumb</span>
+          <p>If operating temperature &gt; minimum ambient, use installation temperature 21.1°C. If operating temperature &lt; minimum ambient, use 35°C. Ambient temperature differs country to country.</p>
+        </div>
+        <h4>Other conditions to consider</h4>
+        <ul class="clean">
+          <li><strong>Steam Out:</strong> cleaning equipment/piping with steam (stated on the vessel spec). Two scenarios — piping connected during steam-out, or disconnected. If connected and the steam-out temperature exceeds the design temperature, analyse using the steam-out temperature; if nozzle loads exceed allowables, inform the vendor.</li>
+          <li><strong>Steam Tracing:</strong> a small tube of steam wrapped around the pipe to prevent freezing. If its temperature exceeds the design temperature, use the steam-tracing temperature in the analysis.</li>
+          <li><strong>Regeneration:</strong> consider carefully how often and how long it occurs (common in reactors).</li>
+          <li><strong>Pipe Bowing:</strong> occurs when there is a significant temperature difference around the pipe circumference — e.g. a pipe partially filled with hot or cold (LNG) fluid.</li>
+        </ul>
+
+        <!-- SUMMARY -->
+        <div class="summary-block">
+          <h2>Module 2 — Summary &amp; Key Takeaways</h2>
+          <p class="sum-intro">The hand calculations every stress engineer must master before trusting any software output.</p>
+          <ul class="keytakeaways">
+            <li>Wall thickness varies by code: B31.3 uses allowable stress + mill tolerance; B31.4 uses S = F·E·S<sub>y</sub> (F ≤ 0.72); B31.8 uses SMYS with a design factor F by location class.</li>
+            <li>Always select the next commercial schedule and re-check it against t<sub>m</sub> <em>after</em> deducting mill tolerance.</li>
+            <li>External-pressure capacity depends on whether the cylinder is long, intermediate, or short; use the ASME Section VIII geometric chart.</li>
+            <li>Branch reinforcement: a pad is required when A₂ + A₃ + A₄ &lt; A₁.</li>
+            <li>SIFs and flexibility factors (B31J) account for elbow ovalisation; they are never less than unity.</li>
+            <li>Avoid cold spring on rotating-equipment connections — residual stress is unpredictable.</li>
+            <li>Capture all operating scenarios — steam-out, steam tracing, regeneration, bowing — not just the design case.</li>
+          </ul>
+        </div>
+
+        <div class="self-assess">
+          <h3>Self-Assessment Questions</h3>
+          <ol class="questions">
+            <li>For the B31.3 example, why was a 0.250 in wall rejected and a thicker wall selected? Show the mill-tolerance check.</li>
+            <li>How does the B31.8 design factor F change between a Class 1 corridor, a highway crossing, and a plant entry — and how does that affect wall thickness?</li>
+            <li>Write the required and available reinforcement-area criterion for a branch connection. When is a pad needed?</li>
+            <li>Why are stress intensification factors necessary at elbows, and what physical effect do they capture?</li>
+            <li>When should cold spring not be applied, and why?</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="mod-foot">
+        <div class="mod-nav-row">
+          <button class="mod-nav-btn prev" data-nav="1"><span class="dir">← Previous</span><span class="nm">Module 1 · Fundamentals</span></button>
+          <button class="mod-nav-btn next" data-nav="3"><span class="dir">Next →</span><span class="nm">Module 3 · Dynamic &amp; Occasional Loads</span></button>
+        </div>
+      </div>
+    </section>
+    <section class="module" data-mod="3">
+      <div class="content">
+        <div class="mod-hero">
+          <span class="mod-hero-eyebrow">Module 3 · Chapter 5 (Part 3 of 3)</span>
+          <h1>Dynamic &amp; Occasional Loads</h1>
+          <p class="lead">Beyond steady weight and thermal effects, piping must survive bellows pressure thrust, wind, earthquakes, slug flow, and relief-valve reaction. These occasional and dynamic loads are checked against a higher allowable (typically 1.33 × S<sub>h</sub>) — but they demand careful, specification-driven analysis.</p>
+          <div class="mod-hero-meta"><span><b>5</b> lessons</span><span>EJMA · ASCE 7-22 · API 520</span></div>
+        </div>
+
+        <div class="objectives">
+          <h4>What You Will Learn</h4>
+          <ul>
+            <li>Bellows expansion joints — types, design stresses (EJMA), and the danger of pressure thrust</li>
+            <li>Wind load — the CAESAR II method and the ASCE 7-22 directional procedure</li>
+            <li>Seismic load — static coefficient method and the ASCE 7-22 design force F<sub>p</sub></li>
+            <li>Slug flow — two-phase flow regimes and the resultant force at an elbow</li>
+            <li>Pressure relief valve reaction force — open vs closed discharge, and the DAF convention</li>
+          </ul>
+        </div>
+
+        <!-- 5.13 -->
+        <h2 class="lesson" id="m3l1"><span class="l-tag">Section 5.13</span>Bellows Type Expansion Joint</h2>
+        <p>Where space is limited or an expansion loop is too costly, an expansion joint can absorb thermal movement. Reasons to use one include:</p>
+        <ul class="clean">
+          <li>Inadequate space for a conventional flexible arrangement without overstress</li>
+          <li>Process, economic, or operating need for minimum pressure drop and no turbulence</li>
+          <li>Protecting equipment nozzles from excessive forces and moments</li>
+          <li>Isolating mechanical vibration</li>
+          <li>Economics — especially for low-pressure, large-diameter piping</li>
+        </ul>
+        <p>Three commercial types exist: <strong>Axial (Slip)</strong>, <strong>Angular (Swivel)</strong>, and <strong>Universal (Ball)</strong>. The axial (slip) type — a pair of telescoping cylinders sealed by a packing ring — is the most widely used for thermal expansion, mainly for small, infrequent movement in mild service. For greater axial travel, a double-ended joint with two stuffing boxes is preferred.</p>
+        <p>Bellows expansion joints are generally all-metal (hence "metal expansion joints"), fabricated from any weldable material; rubber types exist for restricted low-temperature water service. The accordion-like <strong>convolution</strong> flexes to absorb expansion (or contraction for cryogenic fluid). It must be circumferentially strong enough to withstand internal pressure yet flexible enough to absorb movement without excessive force.</p>
+        <div class="callout important">
+          <span class="c-label">Important — the principal hazard</span>
+          <p>The greatest danger is rupture of the thin-walled bellows, releasing potentially dangerous pipe contents to atmosphere. This is prevented by designing for the maximum possible stress, selecting the right material, controlling material and fabrication quality, and careful installation and inspection. Maintenance needs little beyond keeping joints lubricated and periodically checking for rust and for movement within allowable limits.</p>
+        </div>
+        <div class="figure">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12h3l2-4 2 8 2-8 2 8 2-8 2 4h3"/></svg>
+          <div class="fig-cap">Figure 5.4 — Expansion Joint Types</div>
+          <div class="fig-note">[ Insert expansion joint types image here ]</div>
+        </div>
+        <p>Pressure stress and deflection stress are calculated per the Expansion Joint Manufacturers Association (EJMA) standard. The design must consider:</p>
+        <ul class="clean">
+          <li>S1 — Tangent circumferential membrane stress due to pressure</li>
+          <li>S2 — Circumferential membrane stress due to pressure (hoop)</li>
+          <li>S3 — Meridional membrane stress due to pressure</li>
+          <li>S4 — Meridional bending stress due to pressure</li>
+          <li>S5 — Meridional membrane stress due to deflection</li>
+          <li>S6 — Meridional bending stress due to deflection</li>
+          <li>S<sub>T</sub> — stress range for the design condition</li>
+          <li>Design life cycle, and bellows squirm (analogous to column buckling)</li>
+        </ul>
+
+        <!-- 5.14 -->
+        <h2 class="lesson" id="m3l2"><span class="l-tag">Section 5.14</span>Wind Load</h2>
+        <p>Wind impact is significant and depends on wind speed, location, and other factors. CAESAR II multiplies an equivalent wind pressure by the pipe shape factor and exposed area. Equivalent wind pressure can be entered three ways: <strong>ASCE 7-22</strong> (minimum design loads), a <strong>Pressure vs Elevation</strong> table, or a <strong>Velocity vs Elevation</strong> table.</p>
+        <div class="formula">
+          <div class="formula-name">CAESAR II Wind Force</div>
+          <div class="eq">F = P<sub>eq</sub> S A</div>
+          <div class="where">F = total wind force on the pipe · P<sub>eq</sub> = equivalent wind pressure · S = pipe shape factor · A = exposed pipe section</div>
+        </div>
+        <p>Under ASCE 7-22, piping wind loads follow the Directional Procedure for "Other Structures" (Chapter 29). Basic wind speed V (Section 26.5) is a 3-second gust at 33 ft in exposure C. Exposure categories B/C/D are defined in Section 26.7; the cylindrical shape factor (force coefficient C<sub>f</sub>) comes from Figure 29.4-1 and typically ranges 0.7–1.2 for CAESAR II use.</p>
+        <div class="formula">
+          <div class="formula-name">Velocity Pressure</div>
+          <div class="eq">q<sub>z</sub> = 0.00256 K<sub>z</sub> K<sub>zt</sub> K<sub>d</sub> K<sub>e</sub> V² &nbsp;&nbsp;<small>(lb/ft²)</small></div>
+          <div class="where">K<sub>z</sub> = exposure coefficient (Table 26.10-1) · K<sub>zt</sub> = topographic factor (26.8) · K<sub>d</sub> = directionality, ~0.85 (Table 26.6-1) · K<sub>e</sub> = ground elevation factor, 1.0 ≤ 1000 ft (26.9) · V = basic wind speed</div>
+        </div>
+        <div class="formula">
+          <div class="formula-name">Design Wind Force</div>
+          <div class="eq">F = q<sub>z</sub> G C<sub>f</sub> A<sub>f</sub> &nbsp;&nbsp;<small>(lbs)</small></div>
+          <div class="where">G = gust effect factor (0.85 for rigid piping, f > 1 Hz; compute per 26.11 if flexible) · C<sub>f</sub> = force coefficient (~0.7 circular baseline; higher for insulated/rough) · A<sub>f</sub> = projected area (diameter × length, incl. insulation)</div>
+        </div>
+        <p><strong>Pipe racks:</strong> use an effective projected area of the largest pipe diameter plus 10% of the rack width; total force may be modified by shielding factors based on pipe density.</p>
+        <div class="callout important">
+          <span class="c-label">Important — vortex shedding</span>
+          <p>Winds between 20 and 40 mph can trigger vortex shedding — dangerous for small pipe, which can fail by fatigue. Where vortex shedding is possible, perform a dynamic (harmonic) analysis.</p>
+        </div>
+
+        <!-- 5.15 -->
+        <h2 class="lesson" id="m3l3"><span class="l-tag">Section 5.15</span>Seismic Loads</h2>
+        <p>Earthquake load is very significant in seismically active areas. Like wind, seismic design refers to ASCE 7-22 — here Chapter 13, governing non-structural components (NSCs). In CAESAR II the earthquake acts together with the weight as a uniform load, expressed as a gravitational acceleration constant (static coefficient g). For example, a 0.5 g load in X means half the system weight acts as a uniform load along X.</p>
+        <p>The essential first step is a specification document stating what to consider, which codes apply, and the owner's requirements (e.g. whether the system must keep operating, whether joint leaks are acceptable). The two methods are <strong>static</strong> and <strong>dynamic</strong> earthquake analysis; this chapter covers static analysis, assuming load on X, Y, or a combination of X/Y/Z. Static coefficients come from seismic contour maps — the USGS deprecated the old Zone 0–4 concept in 1969 in favour of probabilistic seismic contour maps.</p>
+        <div class="formula">
+          <div class="formula-name">Seismic Design Force — ASCE 7-22 eq. 13.3-1</div>
+          <div class="eq">F<sub>p</sub> = [ 0.4 a<sub>p</sub> S<sub>DS</sub> W<sub>p</sub> / (R<sub>p</sub>/I<sub>p</sub>) ] (1 + 2 z/h)</div>
+          <div class="where">S<sub>DS</sub> = short-period spectral acceleration · a<sub>p</sub> = amplification factor (1.0 rigid → 2.5 flexible) · W<sub>p</sub> = operating weight · R<sub>p</sub> = response modification (1.0–12) · I<sub>p</sub> = importance factor (1.0–1.5) · z = height on structure · h = average structure height. g = F<sub>p</sub>/W<sub>p</sub>.</div>
+        </div>
+        <div class="callout note">
+          <span class="c-label">Note — limits</span>
+          <p>F<sub>p</sub> is capped at an upper bound of 1.6 S<sub>DS</sub> I<sub>p</sub> W<sub>p</sub> and a lower bound of 0.3 S<sub>DS</sub> I<sub>p</sub> W<sub>p</sub>, and acts independently in at least two horizontal directions (limits may change with newer editions).</p>
+        </div>
+
+        <!-- 5.16 -->
+        <h2 class="lesson" id="m3l4"><span class="l-tag">Section 5.16</span>Slug Flow</h2>
+        <p>Slug flow occurs in two-phase flow where the lower half of the pipe carries liquid and the upper part carries gas. It produces several regimes:</p>
+        <ul class="clean">
+          <li><strong>Bubbly flow:</strong> gas bubbles within the liquid.</li>
+          <li><strong>Plug flow:</strong> gas forms plugs entering the liquid flow.</li>
+          <li><strong>Stratified flow:</strong> gas flows over liquid at higher speed.</li>
+          <li><strong>Slug flow:</strong> fast flow traps gas into gas-filled "sacs" — slugging — producing large forces and vibration.</li>
+        </ul>
+        <p>This must be avoided where possible; <strong>slug catchers</strong> are installed near equipment to protect against slugging force and vibration. The biggest impact is at elbows where flow changes direction — similar to water hammer, but gas velocity is far higher than fluid velocity, so the elbow impact can be very large.</p>
+        <div class="figure">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 14h10v-4M13 10a4 4 0 0 1 4-4h4"/><circle cx="6" cy="12" r="1"/><circle cx="9" cy="12" r="1"/></svg>
+          <div class="fig-cap">Figure 5.5 — Slug Flow at the Elbow</div>
+          <div class="fig-note">[ Insert slug-flow elbow diagram here ]</div>
+        </div>
+        <div class="formula">
+          <div class="formula-name">Resultant Slug Force at 90° Elbow</div>
+          <div class="eq">F<sub>r(slug)</sub> = 2 (ρ A v² / g) sin(θ/2) · DAF</div>
+          <div class="where">F<sub>r</sub> = resultant slug force (kN) · ρ = fluid density (kg/m³) · A = pipe cross-sectional area (mm²) · v = fluid velocity (m/s) · θ = elbow angle (deg) · g = 9.81 m/s² (SI) · DAF = dynamic amplification factor, use 2</div>
+        </div>
+        <div class="callout note">
+          <span class="c-label">Notes</span>
+          <p>The slug force uses the conservation-of-momentum method. The affected pipe length assumes at least one elbow fully filled by the slug, and the slug density is assumed constant along the pipe length and diameter.</p>
+        </div>
+
+        <!-- 5.17 -->
+        <h2 class="lesson" id="m3l5"><span class="l-tag">Section 5.17</span>Pressure Relief Valve Reaction Force</h2>
+        <p>The reaction force generated by a pressure relief valve must be included in the analysis. There are two discharge types:</p>
+        <h3>Open Discharge System</h3>
+        <div class="formula">
+          <div class="formula-name">Reaction Force — English / Metric Units</div>
+          <div class="eq">F = (W/366) √[ k T / ((k+1) M) ] + A P &nbsp;&nbsp;<small>(English)</small></div>
+          <div class="eq" style="margin-top:8px;">F = 129 W √[ k T / ((k+1) M) ] + 0.1 A P &nbsp;&nbsp;<small>(Metric)</small></div>
+          <div class="where">F = reaction force at point of discharge, lbf (N) · W = gas/vapour flow rate, lbm/hr (kg/s) · k = ratio of specific heats C<sub>p</sub>/C<sub>v</sub> at outlet · T = outlet temperature, °R (K) · M = molecular weight · A = discharge outlet cross-section, in² (mm²) · P = static pressure at outlet, psi (barg)</div>
+        </div>
+        <div class="figure">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21V8M12 8l-3 3M12 8l3 3M6 8h12l-2-4H8z"/></svg>
+          <div class="fig-cap">Figure 5.6 — Open Discharge Pressure Relief Valve</div>
+          <div class="fig-note">[ Insert open-discharge PRV diagram here ]</div>
+        </div>
+        <h3>Closed Discharge System</h3>
+        <p>Per API 520 Part II, section 4.4.2, a closed system does not produce a high reaction force — pressure and velocity changes are small, so no reaction force calculation is needed, except where there is a sudden pressure increase in the discharge piping. That case has no simple analysis; a complex time-history dynamic analysis may be required to obtain the reaction force and moment transferred to the piping.</p>
+        <div class="callout takeaway">
+          <span class="c-label">Common practice — the DAF convention</span>
+          <p>API 520 Part II typically calculates the PSV reaction force under steady-state conditions and applies a Dynamic Amplification Factor (DAF) = 2.0 as a conservative estimate for the transient impact when the valve first opens. Rather than a full time-history analysis, engineers multiply the static reaction force by 2.0 to ensure the piping and supports withstand the initial shock.</p>
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="summary-block">
+          <h2>Module 3 — Summary &amp; Key Takeaways</h2>
+          <p class="sum-intro">Occasional and dynamic loads — the events that occur rarely but govern the safety margin when they do.</p>
+          <ul class="keytakeaways">
+            <li>Bellows joints absorb movement where routing cannot, but introduce pressure thrust and rupture risk — design to EJMA, control material and fabrication.</li>
+            <li>Wind force in CAESAR II is F = P<sub>eq</sub>·S·A; ASCE 7-22 builds velocity pressure q<sub>z</sub> then F = q<sub>z</sub>·G·C<sub>f</sub>·A<sub>f</sub>. Watch for vortex shedding at 20–40 mph.</li>
+            <li>Seismic load is applied as a uniform g-load; ASCE 7-22 F<sub>p</sub> includes amplification, response, and importance factors, with upper/lower caps. Wind and earthquake never act concurrently.</li>
+            <li>Slug flow hits elbows hardest; F<sub>r</sub> = 2(ρAv²/g)·sin(θ/2)·DAF with DAF = 2. Use slug catchers near equipment.</li>
+            <li>Open-discharge PRV reaction is calculated directly; closed-discharge is usually negligible unless a sudden pressure rise occurs. Apply DAF = 2.0 as the standard conservative factor.</li>
+            <li>All these are occasional loads, checked against the higher allowable (typically 1.33 × S<sub>h</sub>).</li>
+          </ul>
+        </div>
+
+        <div class="self-assess">
+          <h3>Self-Assessment Questions</h3>
+          <ol class="questions">
+            <li>What is the principal hazard of a bellows expansion joint, and how is it mitigated?</li>
+            <li>Write the CAESAR II wind force expression and the ASCE 7-22 velocity-pressure equation. What triggers vortex shedding?</li>
+            <li>In the seismic design force F<sub>p</sub>, what do a<sub>p</sub>, R<sub>p</sub>, and I<sub>p</sub> represent, and what are the upper and lower caps?</li>
+            <li>Write the resultant slug force at a 90° elbow and state the DAF used.</li>
+            <li>When does a closed-discharge relief system require a reaction-force calculation, and what DAF is conventionally applied to a PSV static reaction?</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="mod-foot">
+        <div class="mod-nav-row">
+          <button class="mod-nav-btn prev" data-nav="2"><span class="dir">← Previous</span><span class="nm">Module 2 · Pressure Design</span></button>
+          <button class="mod-nav-btn next" data-nav="4"><span class="dir">Next →</span><span class="nm">Module 4 · Initial Nozzle Movement</span></button>
+        </div>
+      </div>
+    </section>
+    <section class="module" data-mod="4">
+      <div class="content">
+        <div class="mod-hero">
+          <span class="mod-hero-eyebrow">Module 4 · Chapter 6</span>
+          <h1>Initial Nozzle Movement</h1>
+          <p class="lead">For lines connected to equipment — static or rotating — one of the most critical inputs is the initial nozzle movement due to equipment temperature. This matters especially when piping is analysed at design temperature (often higher than the equipment's operating temperature): ignoring nozzle movement leads to overly conservative or inaccurate results.</p>
+          <div class="mod-hero-meta"><span><b>8</b> equipment types</span><span>Best practice aligned with API 610 / 650 / 653</span></div>
+        </div>
+
+        <p>Two methods are generally used in CAESAR II:</p>
+        <ol>
+          <li><strong>Model the nozzle as an anchor with imposed displacements</strong> (calculated manually), then add the result at the anchor node.</li>
+          <li><strong>Include the equipment and its fixed point in the model</strong> — bringing the equipment into the CAESAR II / AutoPIPE analysis.</li>
+        </ol>
+        <p>The first method is usually easier; modelling the equipment is an interesting choice except for small, simple equipment. <strong>Normal operating temperature</strong> is used to calculate initial nozzle movement.</p>
+
+        <!-- 6.1 -->
+        <h2 class="lesson" id="m4l1"><span class="l-tag">Section 6.1</span>Vertical Pressure Vessel</h2>
+        <p>Begin with a diagram of equipment movement due to operating temperature. With operating temperatures T1–T4 at each nozzle, take the average temperature between two nozzles to find the thermal expansion coefficient of the vessel material at that location.</p>
+        <div class="formula">
+          <div class="formula-name">Nozzle Displacement</div>
+          <div class="eq">Δ = α × L × ΔT</div>
+          <div class="where">α = coefficient of thermal expansion at the average shell temperature between nozzles · L = distance from the fixed point (base support / skirt anchor) · ΔT = temperature rise from ambient to operating</div>
+        </div>
+        <div class="figure">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="8" y="3" width="8" height="18" rx="4"/><path d="M12 3v18M4 21h16"/></svg>
+          <div class="fig-cap">Figure 6.1 — Vertical Vessel Schematic</div>
+          <div class="fig-note">[ base fixed point, multiple nozzles at heights, upward + radial growth, average section temperatures ]</div>
+        </div>
+        <div class="callout takeaway">
+          <span class="c-label">General rule</span>
+          <p>For nozzles at higher elevations (e.g. top), place the nearest support as close as possible to the nozzle. Since the support attaches to the vessel shell, it <em>moves with the vessel</em> — include this displacement in the model (e.g. via CNode in CAESAR II).</p>
+        </div>
+        <div class="formula">
+          <div class="formula-name">Movement at the Support Point</div>
+          <div class="eq">Y<sub>B</sub> = Y<sub>A</sub> − (H × e)</div>
+          <div class="where">Y<sub>A</sub> = movement of the nozzle at point A · H = distance from nozzle to support point B · e = coefficient of thermal expansion at shell operating temperature · Y<sub>B</sub> = initial movement at support point B</div>
+        </div>
+        <p>Y<sub>B</sub> is entered into CAESAR II / AutoPIPE using the Connecting Node (CNode) method at the support location. Where an expansion loop is needed right after the nozzle to absorb thermal movement and protect the nozzle, the support movement is calculated the same way.</p>
+        <div class="figure">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 20V8a4 4 0 0 1 8 0v8M12 16h4a4 4 0 0 0 0-8"/></svg>
+          <div class="fig-cap">Figure 6.2 / 6.3 — Nozzle &amp; Support Point; Expansion Loop &amp; Support Point</div>
+          <div class="fig-note">[ Insert nozzle/support and expansion-loop schematics here ]</div>
+        </div>
+
+        <!-- 6.2 -->
+        <h2 class="lesson" id="m4l2"><span class="l-tag">Section 6.2</span>Horizontal Vessel</h2>
+        <p>Displacement is calculated from the anchor (saddle fixed point) in two directions:</p>
+        <ul class="clean">
+          <li><strong>Longitudinal:</strong> Nozzle A = L1 × α · Nozzles B &amp; D = L2 × α · Nozzle C = L3 × α</li>
+          <li><strong>Circumferential:</strong> Nozzles A &amp; B = H1 × α · Nozzle C = H2 × α · Nozzle D = H3 × α</li>
+        </ul>
+        <div class="figure">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="8" width="18" height="8" rx="4"/><path d="M7 16v3M17 16v3"/></svg>
+          <div class="fig-cap">Figure 6.4 — Horizontal Vessel Initial Movement Schematic</div>
+          <div class="fig-note">[ Insert horizontal vessel nozzle dimension schematic here ]</div>
+        </div>
+
+        <!-- 6.3 -->
+        <h2 class="lesson" id="m4l3"><span class="l-tag">Section 6.3</span>Pumps</h2>
+        <p>Pump nozzle displacement = thermal expansion coefficient at the pump operating temperature × the dimension from the nozzle flange face to the anchor point (fixed support) of the pump.</p>
+        <div class="figure">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="11" r="5"/><path d="M15 11h5M10 16v3M5 19h10"/></svg>
+          <div class="fig-cap">Figure 6.5 — Pump Outline</div>
+          <div class="fig-note">[ baseplate/foundation anchor, suction/discharge nozzles, thermal-growth dimensions ]</div>
+        </div>
+
+        <!-- 6.4 -->
+        <h2 class="lesson" id="m4l4"><span class="l-tag">Section 6.4</span>Heat Exchangers</h2>
+        <p>Heat exchanger nozzle displacement, by direction:</p>
+        <ul class="clean">
+          <li><strong>Longitudinal:</strong> L1 × e<sub>s</sub> → Nozzles C &amp; D · L2 × e<sub>s</sub> → Nozzles A, B, H &amp; I · L3 × e<sub>s</sub> → Nozzles F &amp; G</li>
+          <li><strong>Circumferential:</strong> H1 × e<sub>t</sub> → Nozzle A · H2 × e₃ → Nozzle B · H1 × e<sub>s</sub> → Nozzle C · H2 × e₁ → Nozzle D</li>
+        </ul>
+        <div class="formula">
+          <div class="where" style="color:var(--ink2)">e<sub>t</sub> = unit thermal expansion at the mean tube inlet/outlet temperature · e<sub>s</sub> = unit thermal expansion at the mean shell inlet/outlet temperature · e₁, e₂, e₃, e₄ = unit thermal expansion at the respective inlet/outlet temperatures</div>
+        </div>
+        <div class="figure">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="8" width="20" height="8" rx="2"/><path d="M6 8v8M18 8v8"/></svg>
+          <div class="fig-cap">Figure 6.6 — Shell &amp; Tube Heat Exchanger</div>
+          <div class="fig-note">[ shell/tube sides, inlet/outlet nozzles, fixed + sliding supports, differential expansion arrows ]</div>
+        </div>
+
+        <!-- 6.5 -->
+        <h2 class="lesson" id="m4l5"><span class="l-tag">Section 6.5</span>Reciprocating Compressors</h2>
+        <p>Use the compressor operating temperature as the calculation temperature. Refer to the figure for nomenclature and formula.</p>
+        <div class="figure">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="9" width="14" height="9" rx="1"/><path d="M17 13h4M10 9V5h4"/></svg>
+          <div class="fig-cap">Figure 6.7 — Reciprocating Compressor</div>
+          <div class="fig-note">[ Insert reciprocating compressor initial-movement schematic here ]</div>
+        </div>
+
+        <!-- 6.6 -->
+        <h2 class="lesson" id="m4l6"><span class="l-tag">Section 6.6</span>Reactor</h2>
+        <p>Take the mean of the reactor inlet and outlet operating temperatures as the calculation temperature. The natural point of expansion is the shell supporting level.</p>
+
+        <!-- 6.7 -->
+        <h2 class="lesson" id="m4l7"><span class="l-tag">Section 6.7</span>Air Fin Cooler (AFC)</h2>
+        <p>Take the mean of inlet and outlet operating temperatures as the calculation temperature.</p>
+        <ul class="clean">
+          <li><strong>Note 1:</strong> the bundle design shall be capable of accommodating movement due to piping thermal loads.</li>
+          <li><strong>Note 2:</strong> for specific occasions, a fixed point may be established when required.</li>
+        </ul>
+        <div class="figure">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="6" width="16" height="6" rx="1"/><path d="M7 12v6M17 12v6M4 9h16"/></svg>
+          <div class="fig-cap">Figure 6.8 — Air-Fin Cooler</div>
+          <div class="fig-note">[ Insert air-fin cooler initial-movement schematic here ]</div>
+        </div>
+
+        <!-- 6.8 -->
+        <h2 class="lesson" id="m4l8"><span class="l-tag">Section 6.8</span>Tank</h2>
+        <p>Use the tank operating temperature as the calculation temperature. Two effects require special attention when preparing analysis for tank-connected lines:</p>
+        <h4>Tank Bulging</h4>
+        <p>When the tank is filled with liquid, the nozzle may rotate by a certain angle and bulge by a certain distance. This value must be accounted for in the analysis and shall be provided by the Tank Design Engineer or vendor.</p>
+        <div class="figure">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 20V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v13M5 20h14M3 12h2"/></svg>
+          <div class="fig-cap">Figure 6.9 — Tank Bulging</div>
+          <div class="fig-note">[ nozzle rotation / bulge due to hydrostatic pressure ]</div>
+        </div>
+        <h4>Differential Settlement</h4>
+        <p>A minimum differential settlement of <strong>10 mm</strong> is normally used as an imposed displacement for tank-connected lines, to account for tank settlement after hydrotesting. If settlement is expected to exceed 10 mm, obtain the actual value from the Civil group.</p>
+        <div class="figure">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 8h16v6H4zM4 14l-1 4M20 14l1 4"/></svg>
+          <div class="fig-cap">Figure 6.10 — Tank Settlement</div>
+          <div class="fig-note">[ differential vertical displacement at foundation ]</div>
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="summary-block">
+          <h2>Module 4 — Summary &amp; Key Takeaways</h2>
+          <p class="sum-intro">Nozzle movement calculations are engineering best practice (not directly in B31.3-2024) but align with API 610 (pumps), API 650/653 (tanks), and vendor data. B31.3-2024 emphasises accurate boundary conditions for equipment protection (para 319 flexibility, Appendix D SIFs via B31J).</p>
+          <ul class="keytakeaways">
+            <li>Equipment nozzle movements must be applied as displacement boundary conditions — not simply as rigid fixed points.</li>
+            <li>Vertical-vessel growth is calculated from the base support upward (Δ = α·L·ΔT); support points on the shell move with the vessel (use CNode).</li>
+            <li>Pump nozzle movement depends on baseplate material, temperature, and foundation configuration.</li>
+            <li>Heat exchanger movement combines thermal growth with differential expansion between shell and tube bundle.</li>
+            <li>Air-fin cooler nozzles can move significantly because of the elevated supporting structure.</li>
+            <li>Tank nozzles require both differential settlement (≥ 10 mm) and bulging/rotation from hydrostatic load.</li>
+            <li>Always verify against project-specific equipment datasheets and use B31.3-2024 for overall analysis requirements.</li>
+          </ul>
+        </div>
+
+        <div class="self-assess">
+          <h3>Self-Assessment Questions</h3>
+          <ol class="questions">
+            <li>Write the nozzle displacement formula and explain how the thermal expansion coefficient is selected for a vertical vessel with several nozzles.</li>
+            <li>Why must a support attached to a vessel shell carry an imposed displacement, and how is Y<sub>B</sub> calculated?</li>
+            <li>For a heat exchanger, why are shell and tube unit expansions (e<sub>s</sub>, e<sub>t</sub>) treated separately?</li>
+            <li>What two tank-specific effects must be applied as inputs for tank-connected lines, and what minimum settlement is typically used?</li>
+            <li>Which temperature — design or normal operating — is used to calculate initial nozzle movement, and why?</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="mod-foot">
+        <div class="mod-nav-row">
+          <button class="mod-nav-btn prev" data-nav="3"><span class="dir">← Previous</span><span class="nm">Module 3 · Dynamic Loads</span></button>
+          <button class="mod-nav-btn next" data-nav="5"><span class="dir">Next →</span><span class="nm">Module 5 · CAESAR II Step-by-Step</span></button>
+        </div>
+      </div>
+    </section>
+    <section class="module" data-mod="5">
+      <div class="content">
+        <div class="mod-hero">
+          <span class="mod-hero-eyebrow">Module 5 · Chapter 7</span>
+          <h1>CAESAR II Step-by-Step</h1>
+          <p class="lead">The practical workflow — from data gathering to final report. Most piping stress analysis in Oil &amp; Gas follows seven essential steps.</p>
+          <div class="mod-hero-meta"><span><b>7</b> steps</span><span>CAESAR II (current v15) workflow</span></div>
+        </div>
+
+        <div class="callout author">
+          <span class="c-label">From the field</span>
+          <p>From my 35 years as a piping stress engineer, I can confirm that most stress analysis in Oil &amp; Gas follows these seven steps: (1) collecting supporting data, (2) preparing stress sketches, (3) data input, (4) load case selection, (5) run static analysis, (6) checking output, (7) final report.</p>
+        </div>
+
+        <!-- 7.1 -->
+        <h2 class="lesson" id="m5l1"><span class="l-tag">Step 7.1</span>Collecting Supporting Data</h2>
+        <p>Data collection is the most critical step — it determines how smoothly the analysis proceeds. Gathering everything upfront avoids frustrating interruptions during CAESAR II input. Required data includes:</p>
+        <ul class="clean">
+          <li><strong>Codes &amp; Standards:</strong> ASME B31.3 (process), B31.1 (power), or B31.4/B31.8 (pipelines), plus B16.5, B36.10, and any client standards. Always use project-mandated editions (B31.3-2024, B31.4-2025, B31.8-2025).</li>
+          <li><strong>Project Specifications:</strong> stress analysis spec, piping material spec &amp; class index, pipe support spec, work method/job note, seismic-design approach, wind-load approach, loading-data information, material narrative spec.</li>
+          <li><strong>General Arrangement Drawing:</strong> the 2D plant top-view used to learn equipment layout and build stress sketches (or 3D review tools — PDMS Review, SmartPlant, Navisworks — where 3D models are used).</li>
+          <li><strong>Dimensions &amp; weights</strong> of pipes, fittings, flanges, and components.</li>
+          <li><strong>Valve dimensions &amp; weights</strong> (piping and instrument valves — control, relief, safety).</li>
+          <li><strong>Spring hanger catalogue</strong> (often held by the Lead, downloadable from vendor websites).</li>
+          <li><strong>Standard pipe support drawings</strong> — for support type selection and numbering.</li>
+          <li><strong>Structure &amp; building drawings</strong> — for accurate support placement and load reporting to Civil.</li>
+          <li><strong>Booklet (piping stress)</strong> — nozzle dimensions per flange rating, pump/compressor layout recommendations.</li>
+          <li><strong>Allowable loads for equipment</strong> — nozzle allowables for pumps, tanks, vessels, exchangers, compressors, turbines.</li>
+        </ul>
+
+        <!-- 7.2 -->
+        <h2 class="lesson" id="m5l2"><span class="l-tag">Step 7.2</span>Preparing Stress Sketches</h2>
+        <p>A Stress Sketch is a drawing of the system to be analysed in CAESAR II. It differs from the piping isometric: it omits material call-outs, small instrument connections, and branches below 2 in, and instead shows only what is needed to input the model — the location of major components (flanges, valves, elbows, tees, orifice flanges) and the location and type of supports.</p>
+        <div class="figure">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 18L9 8l4 6 3-4 4 8"/><circle cx="4" cy="18" r="1.5"/><circle cx="20" cy="18" r="1.5"/></svg>
+          <div class="fig-cap">Figure 7.1 — Sample Stress Isometric (Stress Sketch)</div>
+          <div class="fig-note">[ Insert stress isometric example here ]</div>
+        </div>
+        <p>Two ways to obtain a stress sketch: generate the stress isometric from 3D model software (PDS, PDMS, AVEVA E3D), or draw it manually from the Piping GA (older approach). Once obtained, complete it with:</p>
+        <ul class="clean">
+          <li><strong>Manual calculations:</strong> initial nozzle/support displacements for vessels, exchangers, pumps, etc.; relief-valve reaction force if any — written onto the sketch.</li>
+          <li><strong>All necessary information:</strong> line numbers, pipe size/wall/material class, corrosion allowance, criticality, design &amp; max temperature, transient conditions, ambient temperature, modulus of elasticity, fluid SG, settlement, allowable stresses (min/max temp), insulation type/thickness/density, hydrotest pressure, thermal expansion coefficient, load cases, project name, engineer name, vendor allowable loads.</li>
+          <li><strong>Node numbers:</strong> assigned along the system from start to end. The start point is normally an anchor — at the equipment nozzle, on the pipe rack, or at the pump (flange face if initial displacement is calculated, or the pump anchor if not).</li>
+          <li><strong>Dimensions, support locations &amp; types:</strong> mark every node, support location, flange/valve dimension and weight, branch location, and the planned support type (guide, line stop, anchor). Assign nodes at flange start/end points and create a CNode (anchor-type) at flanges and valves to read the forces/moments and check against vendor allowables and for leakage.</li>
+        </ul>
+
+        <!-- 7.3 -->
+        <h2 class="lesson" id="m5l3"><span class="l-tag">Step 7.3</span>Data Input to CAESAR II</h2>
+        <p>With the sketch complete, enter the data into CAESAR II (current version is v15, which may differ from the figures). Create a new file (File → New), name it, choose the folder, and confirm the unit system.</p>
+        <div class="figure">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 13h6"/></svg>
+          <div class="fig-cap">Figures 7.2–7.11 — CAESAR II Input Screens</div>
+          <div class="fig-note">[ Insert new-file box, unit review, node input, pipe properties, P&amp;T, support type, material, code, displacement screens ]</div>
+        </div>
+        <p>Then enter, node by node:</p>
+        <ul class="clean">
+          <li><strong>First element &amp; length:</strong> e.g. nodes 10–20 with the distance between them (e.g. 3000 mm).</li>
+          <li><strong>Pipe properties:</strong> diameter, wall thickness/schedule, corrosion allowance (e.g. 4 in, SCH 80 = 8.5598 mm, 1 mm C.A., no insulation).</li>
+          <li><strong>Temperature &amp; pressure:</strong> up to three T/P sets per the operating scenario (e.g. T1 = 100°C, T2 = 50°C; P1 = 20 kPa; hydrotest = 30 kPa).</li>
+          <li><strong>Restraint:</strong> support type from node 10 — always start with an anchor. For a rigid anchor, leave CNode, Stiffener, and Mu (friction) blank.</li>
+          <li><strong>Material:</strong> select (e.g. API 5L-B); CAESAR II populates the modulus of elasticity across the temperature range and pipe density automatically.</li>
+          <li><strong>Fluid density:</strong> actual density from process, or a specific gravity that CAESAR II converts. Leave insulation density blank if uninsulated.</li>
+          <li><strong>Code:</strong> select the design code (e.g. ASME B31.3); CAESAR II provides the allowable stress for each temperature.</li>
+        </ul>
+        <p>This data is entered once and auto-populates onward until something changes (size, wall, material, added rigid weight). For equipment-connected lines, double-click the Displacement box at the nozzle node and enter the manually-calculated initial displacement. Review the first page before continuing to avoid input errors.</p>
+
+        <!-- 7.4 -->
+        <h2 class="lesson" id="m5l4"><span class="l-tag">Step 7.4</span>Load Case Selection</h2>
+        <p>Three main loads — Sustained, Thermal (Expansion), and Occasional — are analysed individually and combined. Load components and stress categories:</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Load Components</th><th>Stress Categories</th></tr></thead>
+            <tbody>
+              <tr><td>W (deadweight), WNC (weight no content), WW (water weight)</td><td>EXP — Expansion</td></tr>
+              <tr><td>T1, T2, T3 (temperature) · P1, P2, P3 (pressure)</td><td>SUS — Sustained</td></tr>
+              <tr><td>D1–D3 (displacements) · F1–F3 (external forces)</td><td>OCC — Occasional</td></tr>
+              <tr><td>U1–U3 (uniform loads) · WIN1/WIN2 (wind)</td><td>OPE — Operating</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="worked">
+          <div class="worked-head"><span class="wx">≋</span>Sample — Water / Hydrocarbon System</div>
+          <div class="worked-body"><div class="calc">CASE 1  W+D1+T1+P1+F1   (OPE) Operating
+CASE 2  W+P1+F1          (SUS) Sustained
+CASE 3  U1               (OCC) Seismic X
+CASE 4  U2               (OCC) Seismic Y
+CASE 5  U3               (OCC) Seismic Z
+CASE 6  L1−L2            (EXP) Expansion range
+CASE 7  L3+L4+L5         (OCC) Resultant seismic
+CASE 8  L2+L7            (OCC) Sustained + seismic</div></div>
+        </div>
+        <div class="worked">
+          <div class="worked-head"><span class="wx">≋</span>Sample — System with Spring Hanger</div>
+          <div class="worked-body"><div class="calc">CASE 1  W+D1+T1+P1+F1   (OPE) Operating
+CASE 2  W+P1+F1          (SUS) Deadweight + P
+CASE 3  WIN1             (SUS) Wind X *
+CASE 4  WIN2             (SUS) Wind Z *
+CASE 5  U1               (OCC) Seismic X
+CASE 6  U2               (OCC) Seismic Y
+CASE 7  U3               (OCC) Seismic Z
+CASE 8  L1−L2            (EXP) Expansion range
+CASE 9  L5+L6+L7         (OCC) Resultant seismic
+CASE 10 L2+L3            (OCC) Sustained + Wind X
+CASE 11 L2+L4            (OCC) Sustained + Wind Z
+CASE 12 L2+L9            (OCC) Sustained + seismic
+
+* Wind set to SUS to avoid enabling a seismic snubber, if present</div></div>
+        </div>
+        <div class="worked">
+          <div class="worked-head"><span class="wx">≋</span>Sample — Gas / Steam / Vapour System</div>
+          <div class="worked-body"><div class="calc">CASE 1  WNC+D1+T1+P1    (OPE) Operating
+CASE 2  WNC+P1           (SUS) Deadweight + P1
+CASE 3  W+P2             (SUS) Deadweight + Hydrotest P2
+CASE 4  U1               (OCC) Seismic X
+CASE 5  U2               (OCC) Seismic Y
+CASE 6  U3               (OCC) Seismic Z
+CASE 7  L1−L2            (EXP) Expansion range
+CASE 8  L4+L5+L6         (OCC) Resultant seismic
+CASE 9  L2+L8            (OCC) Sustained + seismic (abs)</div></div>
+        </div>
+        <div class="worked">
+          <div class="worked-head"><span class="wx">≋</span>Sample — Connected to Rotating Equipment</div>
+          <div class="worked-body"><div class="calc">CASE 1  W+P1+F1+T1+D1   (OPE) Pump A run, B standby @21°C
+CASE 2  W+P1+F1+T2+D1   (OPE) Pump B run, A standby @21°C
+CASE 3  W+P1+F1+T3+D1   (OPE) Pumps A & B both running
+CASE 4  W+P1+F1         (SUS) Deadweight + P
+CASE 5  WNC+F1          (SUS) Weight no content †
+CASE 6  U1 / 7 U2 / 8 U3 (OCC) Seismic X/Y/Z
+CASE 9  L6+L7+L8        (OCC) Seismic resultant
+CASE 10 L1−L4           (EXP) Thermal T1 (A run, B standby)
+CASE 11 L2−L4           (EXP) Thermal T2 (B run, A standby)
+CASE 12 L3−L4           (EXP) Thermal T3 (both running)
+CASE 13 L4+L9           (OCC) Sustained + seismic
+
+† Used to calibrate the spring support above the pump nozzle</div></div>
+        </div>
+        <div class="callout note">
+          <span class="c-label">Note</span>
+          <p>These load cases are samples only and differ from project to project. Always consult the specific project standards and specifications.</p>
+        </div>
+
+        <!-- 7.5 -->
+        <h2 class="lesson" id="m5l5"><span class="l-tag">Step 7.5</span>Run Static Analysis</h2>
+        <p>Static analysis starts with <strong>Error Checking</strong>. You can run directly via "Batch Run" (the running-person icon), but for a first run it's best to press Error Checking so CAESAR II thoroughly checks your input. Results come as:</p>
+        <ul class="clean">
+          <li><strong>Warning:</strong> non-critical — analysis can proceed, but check each warning, as it may still influence results. Keep warnings to a minimum unless you've confirmed they have no effect.</li>
+          <li><strong>Fatal Error:</strong> too critical — results would deviate badly from the code. Go back, fix the input, and re-check.</li>
+        </ul>
+        <div class="figure">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+          <div class="fig-cap">Figures 7.12–7.15 — Error Checking, Warnings &amp; Static Run</div>
+          <div class="fig-note">[ Insert error-checking / batch-run / fatal-error / static-analysis screens ]</div>
+        </div>
+        <p>The static analysis button will not activate while a fatal error remains. Once input is clean, run the static analysis; CAESAR II automatically checks that load cases exist.</p>
+
+        <!-- 7.6 -->
+        <h2 class="lesson" id="m5l6"><span class="l-tag">Step 7.6</span>Checking Output Result</h2>
+        <p>The most important step — the computer produces results from your data, but those results need analysis to confirm they meet specifications, codes, and vendor requirements. Confirm that:</p>
+        <ul class="clean">
+          <li>Stress is below the code-allowable limit in <em>all</em> load cases.</li>
+          <li>Support loads are not excessive — the pipe in contact with the support won't collapse.</li>
+          <li>For equipment-connected systems, forces and moments are below vendor/standard allowables.</li>
+          <li>Pipe movement at direction changes (elbows, loops, overhang) is limited so it won't strike adjacent pipe, and meets the allowable span from a deflection standpoint.</li>
+          <li>Flange forces and moments are within vendor limits; if no data, run a flange analysis (CAESAR II has the facility) to check for leakage potential.</li>
+          <li>All supports are "sitting" — none lift off. Lift-off (negative vertical load) indicates non-linear behaviour and must be investigated; it can overload the adjacent support. Rerun with a changed or removed support if needed.</li>
+          <li>Spring hangers and expansion joints are within load limits; select type and size from the manufacturer catalogue.</li>
+        </ul>
+        <p>After meeting all requirements, mark the results onto the stress sketch: support forces (vertical, lateral for guides, axial for line stops), spring type/size with installation and operating loads and location, support gaps where needed, required layout changes (cloud-marked for the designer), and trunnion calculations/sketches.</p>
+
+        <!-- 7.7 -->
+        <h2 class="lesson" id="m5l7"><span class="l-tag">Step 7.7</span>Stress Report</h2>
+        <p>The final report generally consists of:</p>
+        <ul class="clean">
+          <li><strong>Cover</strong> — project name, stress engineer, and a blank space for the cross-check engineer (format set by the Lead).</li>
+          <li><strong>Critical Line List</strong> — with the analysed system highlighted for the checker.</li>
+          <li><strong>Stress Check List</strong> — design code, confirmation that diameter/thickness/material match the latest isometrics, and the load cases used.</li>
+          <li><strong>Stress Sketches</strong> — all sketches in this calculation number, including additions from the CAESAR II results.</li>
+          <li><strong>CAESAR II Results</strong> — selected outputs (by agreement with the client): summary stress report, displacements, restraints, forces &amp; moments, spring report.</li>
+          <li><strong>P&amp;ID</strong> (marked for analysed lines), equipment drawings, allowable force/moment data.</li>
+          <li><strong>Manual calculations</strong> — relief-valve reaction, trunnion calculations, etc.</li>
+        </ul>
+        <p>Additional documents to issue: forces/moments on structures and foundations (to Civil, for pipe racks, equipment structures, and special-support design); a table of nozzle forces and moments — especially any exceeding vendor allowables (escalated via the Static/Rotating Equipment group to the vendor for approval); and the marked-up stress sketch to the piping design group, following the correct submission procedure so lines can be "frozen" and progress recorded.</p>
+        <div class="callout author">
+          <span class="c-label">From the field</span>
+          <p>When finishing one calculation, maintain a complete and organised calculation file. It is very helpful when changes occur later, or when a cross-check is carried out to verify the quality of the work.</p>
+        </div>
+        <div class="figure">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 4h11l3 3v13H5z"/><path d="M9 9h6M9 13h6M9 17h4"/></svg>
+          <div class="fig-cap">Figure 7.16 — Stress Report Book</div>
+          <div class="fig-note">[ Insert stress report book layout here ]</div>
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="summary-block">
+          <h2>Module 5 — Summary &amp; Key Takeaways</h2>
+          <p class="sum-intro">The end-to-end practical workflow, from data collection to a defensible stress report.</p>
+          <ul class="keytakeaways">
+            <li>Complete, correct data collection before modelling is essential — input errors directly undermine result reliability.</li>
+            <li>Stress sketches are the engineering basis document linking the CAESAR II model to the physical layout.</li>
+            <li>Load case selection must reflect all credible operating scenarios; wrong load cases are among the most common errors.</li>
+            <li>Output review must check stress ratios vs code, support loads vs capacity, nozzle loads vs equipment allowables, and displacements vs clearances.</li>
+            <li>Supports that lift off (negative vertical load) must be investigated — they redistribute load to adjacent supports and can overload them.</li>
+            <li>The Stress Report documents all inputs, assumptions, load cases, results, and any design changes made to achieve code compliance.</li>
+          </ul>
+        </div>
+
+        <div class="self-assess">
+          <h3>Self-Assessment Questions</h3>
+          <ol class="questions">
+            <li>List the seven steps of the CAESAR II stress analysis workflow.</li>
+            <li>What is the purpose of a CNode at a flange or valve, and what does it let you check?</li>
+            <li>Why is "lift-off" at a support a problem, and how would you resolve it?</li>
+            <li>For a system connected to two pumps (one running, one standby), why are multiple operating load cases needed?</li>
+            <li>What outputs are typically printed in the Stress Report, and which documents are issued to the Civil group?</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="course-complete">
+        <h3>Course 2 — All 5 Modules Complete</h3>
+        <p>You've completed Piping Stress Engineering: analysis fundamentals, pressure design &amp; wall thickness, dynamic &amp; occasional loads, initial nozzle movement, and the full CAESAR II workflow.</p>
+        <p style="margin-top:14px;">Next: <strong style="color:var(--paper)">Course 3 — Piping Stress: Dynamic Analysis</strong> · <strong style="color:var(--paper)">Course 4 — Upheaval Buckling Analysis</strong></p>
+      </div>
+
+      <div class="mod-foot">
+        <div class="mod-nav-row">
+          <button class="mod-nav-btn prev" data-nav="4"><span class="dir">← Previous</span><span class="nm">Module 4 · Initial Nozzle Movement</span></button>
+          <button class="mod-nav-btn next" data-nav="1"><span class="dir">↺ Restart</span><span class="nm">Back to Module 1</span></button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<footer class="site">
+  <div class="f-logo">PipingPro Academy</div>
+  <div style="margin-top:6px;"><a href="https://pipingpro-academy.com">pipingpro-academy.com</a> · Course 2: Piping Stress Engineering</div>
+  <div class="f-zk">A product of <a href="https://zephrum-konsultan.co.uk">Zephrum Konsultan Limited</a> · Engineering &amp; AI</div>
+</footer>
+
+<script>
+  // Module + lesson navigation data
+  const MODULES = [
+    { n: 1, title: "Stress Analysis Fundamentals", sub: "Theory, loads &amp; allowables", lessons: [
+      ["m1l1","5.1 — Purpose of Analysis"],
+      ["m1l2","5.2 — Method of Analysis"],
+      ["m1l3","5.3 — Critical Line List"],
+      ["m1l4","5.4 — Pipe Loading"],
+      ["m1l5","5.5 — Stress Categories"],
+      ["m1l6","5.6 — Allowable Stress"]
+    ]},
+    { n: 2, title: "Pressure Design &amp; Calculations", sub: "Wall thickness, SIF, branch", lessons: [
+      ["m2l1","5.7 — Wall Thickness Calculation"],
+      ["m2l2","5.8 — Pipe Under External Pressure"],
+      ["m2l3","5.9 — Branch Connection"],
+      ["m2l4","5.10 — Stress Intensification Factor"],
+      ["m2l5","5.11 — Cold Spring"],
+      ["m2l6","5.12 — Pressure &amp; Temperature"]
+    ]},
+    { n: 3, title: "Dynamic &amp; Occasional Loads", sub: "Bellows, wind, seismic, slug", lessons: [
+      ["m3l1","5.13 — Bellows Expansion Joints"],
+      ["m3l2","5.14 — Wind Load"],
+      ["m3l3","5.15 — Seismic Loads"],
+      ["m3l4","5.16 — Slug Flow"],
+      ["m3l5","5.17 — PRV Reaction Force"]
+    ]},
+    { n: 4, title: "Initial Nozzle Movement", sub: "Equipment thermal growth", lessons: [
+      ["m4l1","6.1 — Vertical Pressure Vessel"],
+      ["m4l2","6.2 — Horizontal Vessel"],
+      ["m4l3","6.3 — Pumps"],
+      ["m4l4","6.4 — Heat Exchangers"],
+      ["m4l5","6.5 — Reciprocating Compressors"],
+      ["m4l6","6.6 — Reactor"],
+      ["m4l7","6.7 — Air Fin Cooler"],
+      ["m4l8","6.8 — Tank"]
+    ]},
+    { n: 5, title: "CAESAR II Step-by-Step", sub: "Seven-step workflow", lessons: [
+      ["m5l1","7.1 — Collecting Supporting Data"],
+      ["m5l2","7.2 — Preparing Stress Sketches"],
+      ["m5l3","7.3 — Data Input to CAESAR II"],
+      ["m5l4","7.4 — Load Case Selection"],
+      ["m5l5","7.5 — Run Static Analysis"],
+      ["m5l6","7.6 — Checking Output Result"],
+      ["m5l7","7.7 — Stress Report"]
+    ]}
+  ];
+
+  const modnav = document.getElementById('modnav');
+  MODULES.forEach(m => {
+    const wrap = document.createElement('div');
+    wrap.className = 'nav-mod';
+    wrap.dataset.mod = m.n;
+    wrap.innerHTML =
+      '<button class="nav-mod-btn" data-goto="' + m.n + '">' +
+        '<span class="nav-num">' + m.n + '</span>' +
+        '<span class="nav-mod-label"><span class="nav-mod-title">' + m.title + '</span>' +
+        '<span class="nav-mod-sub">' + m.sub + '</span></span>' +
+      '</button>' +
+      '<ul class="nav-lessons">' +
+        m.lessons.map(l => '<li><a href="#' + l[0] + '">' + l[1] + '</a></li>').join('') +
+      '</ul>';
+    modnav.appendChild(wrap);
+  });
+
+  const sidebar = document.getElementById('sidebar');
+  const scrim = document.getElementById('scrim');
+  const progFill = document.getElementById('progFill');
+  const progLabel = document.getElementById('progLabel');
+
+  function showModule(n) {
+    document.querySelectorAll('.module').forEach(el => el.classList.toggle('active', el.dataset.mod == n));
+    document.querySelectorAll('.nav-mod-btn').forEach(b => b.classList.toggle('active', b.dataset.goto == n));
+    document.querySelectorAll('.nav-mod').forEach(w => w.classList.toggle('open', w.dataset.mod == n));
+    progFill.style.width = (n / MODULES.length * 100) + '%';
+    progLabel.textContent = 'Module ' + n + ' of ' + MODULES.length;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    history.replaceState(null, '', '#module-' + n);
+    closeSidebar();
+  }
+
+  document.addEventListener('click', (e) => {
+    const goBtn = e.target.closest('[data-goto]');
+    if (goBtn) { showModule(+goBtn.dataset.goto); return; }
+    const navBtn = e.target.closest('[data-nav]');
+    if (navBtn) { showModule(+navBtn.dataset.nav); return; }
+    const lessonLink = e.target.closest('.nav-lessons a');
+    if (lessonLink) { setTimeout(closeSidebar, 50); }
+  });
+
+  function openSidebar() { sidebar.classList.add('open'); scrim.classList.add('show'); }
+  function closeSidebar() { sidebar.classList.remove('open'); scrim.classList.remove('show'); }
+  document.getElementById('menuToggle').addEventListener('click', () => {
+    sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+  });
+  scrim.addEventListener('click', closeSidebar);
+
+  // open from hash
+  const hashMatch = location.hash.match(/module-(\d)/);
+  showModule(hashMatch ? +hashMatch[1] : 1);
+</script>
+</body>
+</html>
