@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -257,7 +258,7 @@ footer a{color:var(--gold-bright);text-decoration:none;}
           <line x1="50" y1="36" x2="50" y2="50" stroke="rgba(255,255,255,0.55)" stroke-width="2.2"/>
           <line x1="44" y1="50" x2="56" y2="50" stroke="rgba(255,255,255,0.55)" stroke-width="2.2"/>
         </svg>
-        <span class="course-count">6 modules · 1 quiz · certificate</span>
+        <span class="course-count">5 modules · 1 quiz · certificate</span>
       </div>
       <div class="course-body">
         <div class="course-name">Static Piping Stress Analysis</div>
@@ -414,15 +415,14 @@ const COURSES = {
     kicker: 'Course 02 · Intermediate',
     bg: 'bg-navy',
     file: 'course-static-stress.html',
-    desc: 'Theory first, software second. Understand the loads and code rules that drive a stress analysis, then follow a guided, step-by-step CAESAR II model build from blank sheet to code-compliant report.',
-    meta: ['6 modules', '1 quiz', 'CAESAR II', 'ASME B31.3'],
+    desc: 'Theory first, software second. Understand the loads, stress categories and code rules that drive a stress analysis, then work through pressure design, dynamic loads, nozzle movements and the full step-by-step CAESAR II workflow — from blank sheet to code-compliant report.',
+    meta: ['5 modules', '1 quiz', 'CAESAR II', 'ASME B31.3'],
     modules: [
-      { t: 'Why Pipe Stress Analysis? — failures, loads & objectives',},
-      { t: 'Loads & Stress Categories — sustained, expansion, occasional' },
-      { t: 'Flexibility, SIFs & Thermal Expansion' },
-      { t: 'CAESAR II — Model Build: nodes, elements, materials, restraints' },
-      { t: 'CAESAR II — Load Cases & Running the Analysis' },
-      { t: 'CAESAR II — Interpreting Results & Reporting' },
+      { t: 'Stress Analysis Fundamentals — purpose, methods, critical line list, loads, stress categories & allowables' },
+      { t: 'Pressure Design & Calculations — wall thickness (B31.3 / B31.4 / B31.8), external pressure, branch reinforcement, SIF & cold spring' },
+      { t: 'Dynamic & Occasional Loads — bellows joints, wind, seismic, slug flow & relief-valve reaction' },
+      { t: 'Initial Nozzle Movement — vessels, pumps, exchangers, compressors, air coolers & tanks' },
+      { t: 'CAESAR II Step-by-Step — the seven-step workflow from data collection to stress report' },
       { t: 'Final Quiz — graded assessment + certificate', quiz: true }
     ],
     icon: '<svg viewBox="0 0 62 62" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="6" y1="34" x2="56" y2="34" stroke="rgba(255,255,255,0.85)" stroke-width="5" stroke-linecap="round"/><line x1="31" y1="34" x2="31" y2="16" stroke="rgba(255,210,130,0.95)" stroke-width="2.5"/><polygon points="31,14 28,21 34,21" fill="rgba(255,210,130,0.95)"/><path d="M14 34 q2.5 -5 5 0 q2.5 5 5 0 q2.5 -5 5 0" stroke="rgba(255,255,255,0.6)" stroke-width="1.8" fill="none"/><line x1="48" y1="34" x2="48" y2="48" stroke="rgba(255,255,255,0.55)" stroke-width="2"/><line x1="43" y1="48" x2="53" y2="48" stroke="rgba(255,255,255,0.55)" stroke-width="2"/></svg>'
