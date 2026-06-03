@@ -355,8 +355,8 @@
           </ul>
         </div>
 
-        <!-- 5.1 -->
-        <h2 class="lesson" id="m1l1"><span class="l-tag">Section 5.1</span>Purpose of Analysis</h2>
+        <!-- 1.1 -->
+        <h2 class="lesson" id="m1l1"><span class="l-tag">Section 1.1</span>Purpose of Analysis</h2>
         <p>The main purpose of performing piping stress analysis is to ensure the system has sufficient flexibility:</p>
         <ul class="clean">
           <li>To accommodate thermal expansion or contraction</li>
@@ -376,8 +376,8 @@
           <p>Piping stress analysis is closely interrelated with piping design and pipe support engineering. In some firms these three functions report to the same department manager. The layout is iterated until a satisfactory balance between stresses and layout efficiency is achieved — only then are the supports designed for the identified locations, types, and loads.</p>
         </div>
 
-        <!-- 5.2 -->
-        <h2 class="lesson" id="m1l2"><span class="l-tag">Section 5.2</span>Method of Analysis</h2>
+        <!-- 1.2 -->
+        <h2 class="lesson" id="m1l2"><span class="l-tag">Section 1.2</span>Method of Analysis</h2>
         <p>ASME B31.3-2024 paragraph 319.4 defines two approaches: <strong>No Formal Analysis Required</strong> and <strong>Formal Analysis Required</strong>.</p>
         <h3>No Formal Analysis Required</h3>
         <p>A piping system needs no formal analysis if it:</p>
@@ -399,8 +399,8 @@
           <li>Comprehensive analysis shall consider stress intensification factors for any component other than straight pipe; credit may be taken for the extra flexibility of such a component.</li>
         </ol>
 
-        <!-- 5.3 -->
-        <h2 class="lesson" id="m1l3"><span class="l-tag">Section 5.3</span>Critical Line List</h2>
+        <!-- 1.3 -->
+        <h2 class="lesson" id="m1l3"><span class="l-tag">Section 1.3</span>Critical Line List</h2>
         <p>In a gas plant there are countless piping systems across many services, pressures, and temperatures. Analysing every one would take enormous manhours. So the Lead Piping Stress Engineer defines which systems need formal analysis and which do not — in a document called the <strong>Critical Line List</strong>, prepared per ASME B31.3 para 319.4.1. Systems are divided into three categories.</p>
         <div class="callout author">
           <span class="c-label">From the field</span>
@@ -452,8 +452,8 @@
           <figcaption>Picture  — Sample of Stress Criticality Chart</figcaption>
         </figure>
 
-        <!-- 5.4 -->
-        <h2 class="lesson" id="m1l4"><span class="l-tag">Section 5.4</span>Pipe Loading</h2>
+        <!-- 1.4 -->
+        <h2 class="lesson" id="m1l4"><span class="l-tag">Section 1.4</span>Pipe Loading</h2>
         <p>In its installed position a piping system is subject to dead weight (pipe, fittings, insulation), snow or ice, line contents, wind on exposed piping, and earthquake or shock in special situations. Dead load effects (except contents) are essentially always present, while wind or earthquake effects vary and reach maximum design values infrequently, if ever. Loads fall into two groups:</p>
         <h3>Sustained Loads</h3>
         <p>Dead loads (pipe, flanges, fittings, valves) plus live loads (internal fluid, snow, ice) as well as pressure, wind, earthquake. The basic characteristic of sustained loads is that they can cause <strong>gross collapse</strong> of the system.</p>
@@ -464,10 +464,10 @@
           <p>Sustained load is mainly the weight of the pipe with its content sitting on the support — the support must sustain it, and the contact point must not bulge or dent. Thermal load is caused by expansion of the pipe due to hot content, or contraction if the content is cold or cryogenic.</p>
         </div>
 
-        <!-- 5.5 -->
-        <h2 class="lesson" id="m1l5"><span class="l-tag">Section 5.5</span>Stress Categories</h2>
+        <!-- 1.5 -->
+        <h2 class="lesson" id="m1l5"><span class="l-tag">Section 1.5</span>Stress Categories</h2>
         <p>The two load types produce two corresponding stress types: Primary Stress and Secondary Stress.</p>
-        <h3>5.5.1&nbsp;&nbsp;Primary Stress</h3>
+        <h3>1.5.1&nbsp;&nbsp;Primary Stress</h3>
         <p>Caused by sustained load. Its defining characteristic is that it is <strong>not self-limiting</strong>. This is a hazardous stress — if it exceeds the yield strength through the entire cross-section, the pipe material fails, which can cause an accident. When found in analysis, the solution is usually simple: support the system properly. Primary stress comprises:</p>
         <h4>Hoop Stress (Circumferential)</h4>
         <p>When the diameter-to-thickness ratio D/t &gt; 20 the pipe is considered thin-wall (Cooper, BS 8010); the hoop stress is nearly constant through the wall:</p>
@@ -485,7 +485,7 @@
         </div>
         <h4>Radial Stress</h4>
         <p>Unlike the others, radial stress varies through the wall — from P at the inner surface to zero at the outer surface.</p>
-        <h3>5.5.2&nbsp;&nbsp;Secondary Stress</h3>
+        <h3>1.5.2&nbsp;&nbsp;Secondary Stress</h3>
         <p>Caused by thermal load — pipe expansion or contraction. It satisfies an imposed strain pattern rather than being in equilibrium with an external load, and its defining characteristic is that it is <strong>self-limiting</strong>. Secondary stresses are usually of bending nature across the wall thickness. They are not a direct cause of ductile failure from a single load application; only repeated, cyclic application creates a local strain range with the potential for fatigue failure. Secondary stress is also called Expansion Stress or Displacement Stress Range, S<sub>E</sub> (ASME B31.3 para 319.4.4, eq. 17):</p>
         <div class="formula">
           <div class="formula-name">Expansion / Displacement Stress Range (max-shear theory)</div>
@@ -497,13 +497,13 @@
           <div class="eq">S<sub>b</sub> = √[ (i<sub>i</sub>M<sub>i</sub>)² + (i<sub>o</sub>M<sub>o</sub>)² ] / Z &nbsp;·&nbsp; S<sub>a</sub> = i<sub>a</sub>F<sub>a</sub> / A<sub>p</sub> &nbsp;·&nbsp; S<sub>t</sub> = i<sub>t</sub>M<sub>t</sub> / (2 Z)</div>
           <div class="where">i<sub>i</sub>, i<sub>o</sub>, i<sub>t</sub> = in-plane / out-of-plane / torsional SIF (ASME B31J) · i<sub>a</sub> = axial SIF (1.0 for elbows/bends/miters; otherwise = i<sub>o</sub>) · M<sub>i</sub>, M<sub>o</sub>, M<sub>t</sub> = in-plane / out-of-plane / torsional moment ranges · Z = section modulus · A<sub>p</sub> = pipe metal area</div>
         </div>
-        <h3>5.5.3&nbsp;&nbsp;Peak Stress</h3>
+        <h3>1.5.3&nbsp;&nbsp;Peak Stress</h3>
         <p>Described in Nayyar's Piping Handbook: peak stresses are the highest stresses in the region under consideration and are responsible for fatigue failure. Common types are stress concentrations at a discontinuity and thermal gradients through the pipe wall.</p>
 
-        <!-- 5.6 -->
-        <h2 class="lesson" id="m1l6"><span class="l-tag">Section 5.6</span>Allowable Stress</h2>
+        <!-- 1.6 -->
+        <h2 class="lesson" id="m1l6"><span class="l-tag">Section 1.6</span>Allowable Stress</h2>
         <p>Allowable stress is a function of material properties (yield or tensile strength) and safety factors tied to specific design, fabrication, and inspection requirements. There are two types: <strong>Code Allowable Stress</strong> and <strong>Allowable Stress Range</strong>.</p>
-        <h3>5.6.1&nbsp;&nbsp;Code Allowable Stress (Basic Allowable Stress)</h3>
+        <h3>1.6.1&nbsp;&nbsp;Code Allowable Stress (Basic Allowable Stress)</h3>
         <p>The maximum stress that can be safely applied to a piping material. ASME B31.3-2024 specifies the basic allowable stress for non-bolting materials as the <em>lowest</em> obtained from:</p>
         <ul class="clean">
           <li>⅓ of SMTS (specified minimum tensile strength) at room temperature</li>
@@ -523,11 +523,18 @@
         </div>
         <div class="figure">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3v18h18"/><path d="M19 7l-5 5-3-3-4 4"/></svg>
-          <div class="fig-cap">Figure 5.2 / 5.3 — Temperature vs Yield Strength &amp; Tensile Strength</div>
-          <div class="fig-note">[ Insert strength-vs-temperature diagrams here ]</div>
+          <div class="fig-cap">Figure  — Temperature vs Yield Strength</div>
+          <div class="fig-note"> <img src="images/temperature-vs-tensile-strength.png" alt="Temperature vs TS" loading="lazy" align="centrer"/></div>
         </div>
+
+ <div class="figure">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3v18h18"/><path d="M19 7l-5 5-3-3-4 4"/></svg>
+          <div class="fig-cap">Figure  — Temperature vs Yield Strength</div>
+          <div class="fig-note"> <img src="images/temperature-vs-yield-strength.png" alt="Temperature vs YS" loading="lazy" align="centrer"/></div>
+        </div>
+        
         <p>As temperature rises, yield and tensile strength fall — so the allowable stress falls with them, since it depends on SMTS and SMYS.</p>
-        <h3>5.6.2&nbsp;&nbsp;Allowable Stress Range</h3>
+        <h3>1.6.2&nbsp;&nbsp;Allowable Stress Range</h3>
         <p>First suggested by Rossheim and Markl as a measure of the permissible strain range in a cyclic load application, to guard against fatigue failure after a given number of cycles. It has appeared in the Piping Code since 1942. The load here is internal — thermal loading. A typical cycle runs from installation temperature up to maximum temperature, down at shutdown, then back to maximum: one cycle. The basic allowable range provides a minimum of 7000 cycles without failure:</p>
         <div class="formula">
           <div class="formula-name">Basic Allowable Stress Range</div>
