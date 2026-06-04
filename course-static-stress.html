@@ -998,10 +998,14 @@ F = 0.72 / 0.60 / 0.50  (Class 1 Div 2 corridor / Class 2 highway crossing / Cla
         </ul>
         <p>This must be avoided where possible; <strong>slug catchers</strong> are installed near equipment to protect against slugging force and vibration. The biggest impact is at elbows where flow changes direction — similar to water hammer, but gas velocity is far higher than fluid velocity, so the elbow impact can be very large.</p>
         <div class="figure">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 14h10v-4M13 10a4 4 0 0 1 4-4h4"/><circle cx="6" cy="12" r="1"/><circle cx="9" cy="12" r="1"/></svg>
-          <div class="fig-cap">Figure 3.2 — Slug Flow at the Elbow</div>
-          <div class="fig-note">[ Insert slug-flow elbow diagram here ]</div>
-        </div>
+                  </div>
+
+<figure class="fig-img">
+          <img src="images/slug-force.png" alt="Slug Force" loading="lazy"/>
+          <figcaption>Picture  — Slug Force</figcaption>
+        </figure>
+
+        
         <div class="formula">
           <div class="formula-name">Resultant Slug Force at 90° Elbow</div>
           <div class="eq">F<sub>r(slug)</sub> = 2 (ρ A v² / g) sin(θ/2) · DAF</div>
@@ -1027,6 +1031,14 @@ F = 0.72 / 0.60 / 0.50  (Class 1 Div 2 corridor / Class 2 highway crossing / Cla
           <div class="fig-cap">Figure 3.3 — Open Discharge Pressure Relief Valve</div>
           <div class="fig-note">[ Insert open-discharge PRV diagram here ]</div>
         </div>
+
+<figure class="fig-img">
+          <img src="images/open-discharge-relief-valve.jpg" alt="Open Discharge Relief Valve" loading="lazy"/>
+          <figcaption>Picture  — Open Discharge Relief Valve</figcaption>
+        </figure>
+
+
+        
         <h3>Closed Discharge System</h3>
         <p>Per API 520 Part II, section 4.4.2, a closed system does not produce a high reaction force — pressure and velocity changes are small, so no reaction force calculation is needed, except where there is a sudden pressure increase in the discharge piping. That case has no simple analysis; a complex time-history dynamic analysis may be required to obtain the reaction force and moment transferred to the piping.</p>
         <div class="callout takeaway">
@@ -1096,6 +1108,13 @@ F = 0.72 / 0.60 / 0.50  (Class 1 Div 2 corridor / Class 2 highway crossing / Cla
           <div class="fig-cap">Figure 4.1 — Vertical Vessel Schematic</div>
           <div class="fig-note">[ base fixed point, multiple nozzles at heights, upward + radial growth, average section temperatures ]</div>
         </div>
+
+<figure class="fig-img">
+          <img src="images/vertical-vessel-initial-mov.png" alt="Vertical Vessel" loading="lazy"/>
+          <figcaption>Picture  — Open Discharge Relief Valve</figcaption>
+        </figure>
+
+        
         <div class="callout takeaway">
           <span class="c-label">General rule</span>
           <p>For nozzles at higher elevations (e.g. top), place the nearest support as close as possible to the nozzle. Since the support attaches to the vessel shell, it <em>moves with the vessel</em> — include this displacement in the model (e.g. via CNode in CAESAR II).</p>
