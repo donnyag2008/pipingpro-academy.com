@@ -1249,11 +1249,15 @@ F = 0.72 / 0.60 / 0.50  (Class 1 Div 2 corridor / Class 2 highway crossing / Cla
         <!-- 7.2 -->
         <h2 class="lesson" id="m5l2"><span class="l-tag">Step 5.2</span>Preparing Stress Sketches</h2>
         <p>A Stress Sketch is a drawing of the system to be analysed in CAESAR II. It differs from the piping isometric: it omits material call-outs, small instrument connections, and branches below 2 in, and instead shows only what is needed to input the model — the location of major components (flanges, valves, elbows, tees, orifice flanges) and the location and type of supports.</p>
+       
         <div class="figure">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 18L9 8l4 6 3-4 4 8"/><circle cx="4" cy="18" r="1.5"/><circle cx="20" cy="18" r="1.5"/></svg>
-          <div class="fig-cap">Figure 5.1 — Sample Stress Isometric (Stress Sketch)</div>
-          <div class="fig-note">[ Insert stress isometric example here ]</div>
-        </div>
+         <figure class="fig-img">
+          <img src="images/stress-sketch.png" alt="Stress Sketch" loading="lazy"/>
+         </figure>
+          <div class="fig-cap">Figure — Sample Stress Isometric (Stress Sketch)</div>
+                 </div>
+       
         <p>Two ways to obtain a stress sketch: generate the stress isometric from 3D model software (PDS, PDMS, AVEVA E3D), or draw it manually from the Piping GA (older approach). Once obtained, complete it with:</p>
         <ul class="clean">
           <li><strong>Manual calculations:</strong> initial nozzle/support displacements for vessels, exchangers, pumps, etc.; relief-valve reaction force if any — written onto the sketch.</li>
