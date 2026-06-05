@@ -110,6 +110,9 @@ footer a{color:var(--accent2);text-decoration:none;}
 .login-btn{font-size:12px;font-weight:600;padding:7px 16px;border-radius:6px;background:var(--gold);color:var(--ink);border:none;cursor:pointer;font-family:'DM Sans',sans-serif;text-transform:uppercase;letter-spacing:.06em;transition:background .18s;}
 .login-btn:hover{background:#c9a020;}
 .login-btn.logged-in{background:var(--teal);color:#fff;}
+.nav-badge{font-size:11px;font-weight:600;padding:5px 11px;border-radius:20px;letter-spacing:.04em;text-transform:uppercase;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;}
+.nav-badge-admin{background:var(--ink);color:var(--accent2);border:1px solid var(--accent2);}
+.nav-badge-sub{background:var(--gold-light);color:#6e4f06;border:1px solid var(--gold);}
 .lmodal-bg{position:fixed;inset:0;background:rgba(26,26,24,.75);z-index:500;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .2s;}
 .lmodal-bg.show{opacity:1;pointer-events:all;}
 .lmodal{background:#fff;border-radius:14px;width:100%;max-width:400px;overflow:hidden;transform:translateY(20px);transition:transform .2s;box-shadow:0 24px 80px rgba(0,0,0,.3);}
@@ -293,7 +296,9 @@ body{ background:#faf6ef; color:#1a1510; }
   <a href="index.html" class="nav-logo">Piping<span>Pro</span> Academy</a>
   <div style="display:flex;align-items:center;gap:1rem;">
     <a href="index.html" class="nav-back">← Back</a>
-    <button class="login-btn" id="nav-login-btn" onclick="openLoginModal()">Login</button>
+    <div id="nav-auth" style="display:flex;align-items:center;gap:.65rem;">
+      <button class="login-btn" id="nav-login-btn" onclick="openLoginModal()">Login</button>
+    </div>
   </div>
 </nav>
 
@@ -928,6 +933,100 @@ function isMember(){
   return localStorage.getItem('ppa_member')==='1';
 }
 
+function isAdmin(){ return localStorage.getItem('ppa_admin')==='1'; }
+
+// ─── NAV AUTH STATE — Login / Admin / Subscriber + Logout ─────
+function refreshNavAuth(){
+  const el=document.getElementById('nav-auth');
+  if(!el) return;
+  if(isAdmin()){
+    el.innerHTML='<span class="nav-badge nav-badge-admin">🛡️ Admin</span>'
+      +'<button class="login-btn logged-in" onclick="doLogout()">Logout</button>';
+  } else if(isMember()){
+    el.innerHTML='<span class="nav-badge nav-badge-sub">✓ Subscriber</span>'
+      +'<button class="login-btn logged-in" onclick="doLogout()">Logout</button>';
+  } else {
+    el.innerHTML='<button class="login-btn" id="nav-login-btn" onclick="openLoginModal()">Login</button>';
+  }
+}
+
+// ─── LOGIN MODAL DRIVERS ──────────────────────────────────────
+function openLoginModal(){
+  const bg=document.getElementById('lmodal-bg');
+  const form=document.getElementById('lmodal-form-view');
+  const member=document.getElementById('lmodal-member-view');
+  if(isMember()){
+    form.style.display='none';
+    member.style.display='block';
+    const admin=isAdmin();
+    document.getElementById('lmodal-avatar').textContent   = admin ? '🛡️' : '✓';
+    document.getElementById('lmodal-welcome').textContent  = admin ? 'Admin Access Active' : 'Subscriber Access Active';
+    document.getElementById('lmodal-email-display').textContent = admin
+      ? 'admin@pipingpro-academy.com'
+      : (localStorage.getItem('ppa_member_email') || 'Active subscription');
+  } else {
+    form.style.display='block';
+    member.style.display='none';
+    const err=document.getElementById('lmodal-err'); if(err) err.style.display='none';
+  }
+  bg.classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function closeLModal(){
+  const bg=document.getElementById('lmodal-bg');
+  if(bg) bg.classList.remove('show');
+  document.body.style.overflow='';
+}
+function closeLModalBg(e){
+  if(e.target===document.getElementById('lmodal-bg')) closeLModal();
+}
+
+// ─── SUBSCRIBER LOGIN (Memberstack integration point) ─────────
+// Flip to false (or delete the fallback block) once Memberstack is live.
+const ALLOW_DEV_LOGIN = true;
+async function doLogin(){
+  const email=(document.getElementById('lmodal-email').value||'').trim();
+  const pw=(document.getElementById('lmodal-password').value||'').trim();
+  const err=document.getElementById('lmodal-err');
+
+  // Preferred path — authenticate via Memberstack once integrated:
+  if(window.$memberstackDom?.loginMemberEmailPassword){
+    try{
+      await window.$memberstackDom.loginMemberEmailPassword({email,password:pw});
+      localStorage.setItem('ppa_member','1');
+      localStorage.setItem('ppa_member_email',email);
+      closeLModal(); refreshNavAuth(); initCards();
+    }catch(_){
+      if(err){err.textContent='Incorrect email or password. Please try again.';err.style.display='block';}
+    }
+    return;
+  }
+
+  // Dev fallback — client-side only, NOT secure. For testing the
+  // subscriber state before Memberstack is wired up.
+  if(ALLOW_DEV_LOGIN){
+    if(email && pw){
+      localStorage.setItem('ppa_member','1');
+      localStorage.setItem('ppa_member_email',email);
+      closeLModal(); refreshNavAuth(); initCards();
+    } else if(err){
+      err.textContent='Please enter your email and password.';err.style.display='block';
+    }
+  } else if(err){
+    err.textContent='Subscriber sign-in is handled through your membership account.';
+    err.style.display='block';
+  }
+}
+
+function doLogout(){
+  localStorage.removeItem('ppa_admin');
+  localStorage.removeItem('ppa_member');
+  localStorage.removeItem('ppa_member_email');
+  closeLModal();
+  // clean reload re-locks the grid and resets the nav button
+  window.location.href=window.location.pathname;
+}
+
 // ─── MODAL ────────────────────────────────────────────────────
 function openModal(id){
   const c=CALCS[id];
@@ -956,7 +1055,7 @@ function closeModalBg(e){
   if(e.target===document.getElementById('modal-bg')) closeModal();
 }
 
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeWipModal();closeSoonModal();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeWipModal();closeSoonModal();closeLModal();}});
 
 // ─── WIP MODAL ────────────────────────────────────────────────
 function openWipModal(){
@@ -1012,6 +1111,7 @@ function initCards(){
   });
 }
 document.addEventListener('DOMContentLoaded', ()=>{
+  refreshNavAuth();
   initCards();
   // Restore suite only if user navigated BACK from a calculator (one-shot flag)
   const lastSuite = sessionStorage.getItem('ppa_last_suite');
