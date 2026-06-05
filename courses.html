@@ -62,7 +62,6 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 /* ─── COURSE GRID (Calculator-Suite card style) ─── */
 .course-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2rem;justify-content:center;align-items:stretch;max-width:840px;margin:0 auto;}
 @media(min-width:1080px){.course-grid{grid-template-columns:repeat(3,minmax(0,1fr));max-width:1140px;}}
-@media(min-width:1320px){.course-grid{grid-template-columns:repeat(4,minmax(0,1fr));max-width:1520px;}}
 @media(max-width:680px){.course-grid{grid-template-columns:1fr;max-width:400px;}}
 .course-card{border-radius:16px;overflow:hidden;cursor:pointer;position:relative;border:1px solid var(--rule);background:#fff;display:flex;flex-direction:column;opacity:0;animation:rise .5s forwards;transition:transform .28s cubic-bezier(.2,.8,.3,1),box-shadow .28s;}
 .course-card:nth-child(1){animation-delay:.05s}.course-card:nth-child(2){animation-delay:.13s}.course-card:nth-child(3){animation-delay:.21s}.course-card:nth-child(4){animation-delay:.29s}
@@ -209,10 +208,6 @@ footer a{color:var(--gold-bright);text-decoration:none;}
     <a href="calculators.html" class="tab-link">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M9 7h6M9 11h6M9 15h3"/></svg>
       Calculator Suite
-    </a>
-    <a href="guides.html" class="tab-link">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/></svg>
-      Technical Guides
     </a>
   </div>
 </div>
