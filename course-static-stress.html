@@ -1269,11 +1269,12 @@ F = 0.72 / 0.60 / 0.50  (Class 1 Div 2 corridor / Class 2 highway crossing / Cla
         <!-- 7.3 -->
         <h2 class="lesson" id="m5l3"><span class="l-tag">Step 5.3</span>Data Input to CAESAR II</h2>
         <p>With the sketch complete, enter the data into CAESAR II (current version is v15, which may differ from the figures). Create a new file (File → New), name it, choose the folder, and confirm the unit system.</p>
+        
         <div class="figure">   
           <img src="images/stress-1.png" alt="Stress Input" loading="lazy"/>
          </figure>
           <div class="fig-cap">Figure — Stress Input at CAESAR II (Stress Sketch)</div>
-        </div>
+        
 
         <p>Then enter, node by node:</p>
         <ul class="clean">
@@ -1369,11 +1370,12 @@ CASE 13 L4+L9           (OCC) Sustained + seismic
           <li><strong>Warning:</strong> non-critical — analysis can proceed, but check each warning, as it may still influence results. Keep warnings to a minimum unless you've confirmed they have no effect.</li>
           <li><strong>Fatal Error:</strong> too critical — results would deviate badly from the code. Go back, fix the input, and re-check.</li>
         </ul>
-       <div class="figure">   
+       
+          <div class="figure">   
           <img src="images/stress-2.png" alt="Stress Run" loading="lazy"/>
          </figure>
           <div class="fig-cap">Figure — Sample Stress Static Run (Stress Sketch)
-                 </div>
+                 </div></div>
 
         <p>The static analysis button will not activate while a fatal error remains. Once input is clean, run the static analysis; CAESAR II automatically checks that load cases exist.</p>
 
