@@ -94,6 +94,9 @@
     }
     .nav-login-btn:hover { border-color: var(--gold); color: var(--gold-bright); }
     .nav-login-btn.logged-in { border-color: #1a6b5a; color: #2d9679; }
+    .nav-badge{font-size:.72rem;font-weight:600;padding:.32rem .7rem;border-radius:20px;letter-spacing:.04em;text-transform:uppercase;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;}
+    .nav-badge-admin{background:rgba(212,160,23,.16);color:var(--gold-bright);border:1px solid var(--gold);}
+    .nav-badge-sub{background:rgba(45,150,121,.18);color:#3fae8c;border:1px solid #2d9679;}
 
     /* ── LOGIN MODAL ── */
     .lmodal-bg{position:fixed;inset:0;background:rgba(26,21,16,.75);z-index:500;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .2s;}
@@ -918,7 +921,9 @@
     <a href="#content">Content</a>
     <a href="#pricing">Pricing</a>
     <a href="#author">About</a>
-    <button class="nav-login-btn" id="nav-login-btn" onclick="openLoginModal()">Login</button>
+    <span id="nav-auth" style="display:inline-flex;align-items:center;gap:.6rem;">
+      <button class="nav-login-btn" id="nav-login-btn" onclick="openLoginModal()">Login</button>
+    </span>
     <a href="#pricing" class="nav-cta">Join Now</a>
   </div>
 </nav>
@@ -1387,7 +1392,14 @@
     document.getElementById('lmodal-form-view').style.display=loggedIn?'none':'block';
     document.getElementById('lmodal-member-view').style.display=loggedIn?'block':'none';
     document.getElementById('lmodal-err').style.display='none';
-    if(!loggedIn){
+    if(loggedIn){
+      const admin=localStorage.getItem('ppa_admin')==='1';
+      document.getElementById('lmodal-avatar').textContent   = admin ? '🛡️' : '✓';
+      document.getElementById('lmodal-welcome').textContent  = admin ? 'Admin Access Active' : 'Subscriber Access Active';
+      document.getElementById('lmodal-email-display').textContent = admin
+        ? ADMIN_EMAIL
+        : (localStorage.getItem('ppa_member_email') || 'Active subscription');
+    } else {
       document.getElementById('lmodal-email').value='';
       document.getElementById('lmodal-password').value='';
     }
@@ -1406,16 +1418,22 @@
   }
 
   function updateNavBtn(){
-    const btn=document.getElementById('nav-login-btn');
-    if(isMember()){
-      btn.textContent='My Account';
-      btn.classList.add('logged-in');
+    const el=document.getElementById('nav-auth');
+    if(!el) return;
+    const admin=localStorage.getItem('ppa_admin')==='1';
+    if(admin){
+      el.innerHTML='<span class="nav-badge nav-badge-admin">🛡️ Admin</span>'
+        +'<button class="nav-login-btn logged-in" onclick="doLogout()">Logout</button>';
+    } else if(isMember()){
+      el.innerHTML='<span class="nav-badge nav-badge-sub">✓ Subscriber</span>'
+        +'<button class="nav-login-btn logged-in" onclick="doLogout()">Logout</button>';
     } else {
-      btn.textContent='Login';
-      btn.classList.remove('logged-in');
+      el.innerHTML='<button class="nav-login-btn" id="nav-login-btn" onclick="openLoginModal()">Login</button>';
     }
   }
 
+  // Flip to false (or delete the fallback block) once Memberstack is live.
+  const ALLOW_DEV_LOGIN = true;
   function doLogin(){
     const email=document.getElementById('lmodal-email').value.trim();
     const password=document.getElementById('lmodal-password').value.trim();
@@ -1431,11 +1449,24 @@
       return;
     }
 
-    // ── Memberstack member login hook (uncomment when ready) ──
-    // window.$memberstackDom.loginMemberEmailPassword({email,password}).then(({data})=>{
-    //   localStorage.setItem('ppa_member','1');
-    //   applyMemberView(); updateNavBtn(); closeLModal();
-    // }).catch(()=>{ err.style.display='block'; });
+    // Subscriber via Memberstack once integrated:
+    if(window.$memberstackDom?.loginMemberEmailPassword){
+      window.$memberstackDom.loginMemberEmailPassword({email,password}).then(()=>{
+        localStorage.setItem('ppa_member','1');
+        localStorage.setItem('ppa_member_email',email);
+        applyMemberView(); updateNavBtn(); closeLModal();
+      }).catch(()=>{ err.style.display='block'; });
+      return;
+    }
+
+    // Dev fallback — client-side only, NOT secure. For testing the
+    // subscriber state before Memberstack is wired up.
+    if(ALLOW_DEV_LOGIN && email && password){
+      localStorage.setItem('ppa_member','1');
+      localStorage.setItem('ppa_member_email',email);
+      applyMemberView(); updateNavBtn(); closeLModal();
+      return;
+    }
 
     err.style.display='block';
   }
@@ -1443,6 +1474,9 @@
   function doLogout(){
     localStorage.removeItem('ppa_admin');
     localStorage.removeItem('ppa_member');
+    localStorage.removeItem('ppa_member_email');
+    sessionStorage.removeItem('ppa_admin');
+    sessionStorage.removeItem('ppa_member');
     closeLModal();
     location.reload();
   }
