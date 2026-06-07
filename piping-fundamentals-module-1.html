@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Piping Engineering Fundamentals — Module 1: Pipe Properties (Free) | PipingPro Academy</title>
+<meta name="description" content="Free first module of the Piping Engineering Fundamentals course — pipe material classification, sizes &amp; schedules, key formulas, mechanical &amp; physical properties and PWHT. No sign-up required."/>
+<meta name="robots" content="index, follow"/>
+<link rel="canonical" href="https://pipingpro-academy.com/piping-fundamentals-module-1"/>
+<meta property="og:type" content="article"/>
+<meta property="og:title" content="Free Module 1: Pipe Properties — Piping Engineering Fundamentals"/>
+<meta property="og:description" content="Read the first module free: pipe materials, sizes, schedules and key formulas — from the Piping Engineering Fundamentals course by Donny A. Bachtiar."/>
+<meta property="og:url" content="https://pipingpro-academy.com/piping-fundamentals-module-1"/>
+<meta property="og:image" content="https://pipingpro-academy.com/og-image.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNiIgZmlsbD0iI0M0NUMyQSIvPjxjaXJjbGUgY3g9IjE2IiBjeT0iMTYiIHI9IjEwIiBmaWxsPSJub25lIiBzdHJva2U9IiNmNWYyZWIiIHN0cm9rZS13aWR0aD0iMy41Ii8+PGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZjVmMmViIiBzdHJva2Utd2lkdGg9IjIiLz48dGV4dCB4PSIxNiIgeT0iMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjkiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjZjVmMmViIj5QUDwvdGV4dD48L3N2Zz4="/>
+<style>
+  :root {
+    --ink: #1a1a18; --ink2: #4a4a44; --ink3: #8a8a80;
+    --paper: #f5f2eb; --paper2: #ede9de; --paper3: #e3dfd2;
+    --accent: #c45c2a; --accent2: #e8a06a; --accent-light: #f7ede3;
+    --teal: #1a6b5a; --teal-light: #e0f0eb;
+    --amber: #b5781a; --amber-light: #faf0dd;
+    --rule: rgba(26,26,24,0.12);
+    --rule2: rgba(26,26,24,0.07);
+    --shadow-sm: 0 2px 8px rgba(26,26,24,0.06);
+    --shadow-md: 0 8px 32px rgba(26,26,24,0.10);
+    --sidebar-w: 312px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', -apple-system, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.68;
+    font-size: 16.5px;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* subtle paper texture */
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background-image: radial-gradient(rgba(26,26,24,0.018) 1px, transparent 1px);
+    background-size: 4px 4px;
+  }
+
+  /* ============ TOP BAR ============ */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; gap: 16px;
+    padding: 14px 26px;
+    background: rgba(245,242,235,0.86);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--rule);
+  }
+  .brand { display: flex; align-items: center; gap: 11px; text-decoration: none; color: var(--ink); }
+  .brand-mark {
+    width: 34px; height: 34px; border-radius: 8px; background: var(--accent);
+    display: grid; place-items: center; flex-shrink: 0; box-shadow: var(--shadow-sm);
+  }
+  .brand-mark svg { width: 22px; height: 22px; }
+  .brand-name { font-family: 'DM Serif Display', serif; font-size: 1.18rem; letter-spacing: -0.01em; line-height: 1; }
+  .brand-sub { font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink3); margin-top: 3px; }
+  .topbar-spacer { flex: 1; }
+  .progress-wrap { display: flex; align-items: center; gap: 11px; min-width: 0; }
+  .progress-label { font-size: 0.72rem; letter-spacing: 0.04em; color: var(--ink3); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .progress-track { width: 120px; height: 5px; border-radius: 3px; background: var(--paper3); overflow: hidden; }
+  .progress-fill { height: 100%; width: 20%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 3px; transition: width .4s ease; }
+  .menu-toggle { display: none; background: none; border: 1px solid var(--rule); border-radius: 8px; padding: 8px 10px; cursor: pointer; color: var(--ink); }
+
+  /* ============ LAYOUT ============ */
+  .layout { display: flex; align-items: flex-start; }
+  .sidebar {
+    position: sticky; top: 63px; align-self: flex-start;
+    width: var(--sidebar-w); flex-shrink: 0;
+    height: calc(100vh - 63px); overflow-y: auto;
+    padding: 26px 18px 60px 26px;
+    border-right: 1px solid var(--rule);
+    background: linear-gradient(180deg, var(--paper2), var(--paper));
+  }
+  .sidebar::-webkit-scrollbar { width: 8px; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--paper3); border-radius: 4px; }
+  .course-eyebrow { font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  .course-title-sb { font-family: 'DM Serif Display', serif; font-size: 1.42rem; line-height: 1.12; margin: 8px 0 4px; letter-spacing: -0.015em; }
+  .course-byline { font-size: 0.78rem; color: var(--ink3); margin-bottom: 22px; }
+  .nav-mod { margin-bottom: 4px; }
+  .nav-mod-btn {
+    display: flex; align-items: center; gap: 11px; width: 100%;
+    background: none; border: none; cursor: pointer; text-align: left;
+    padding: 11px 12px; border-radius: 9px; color: var(--ink2);
+    font-family: 'DM Sans', sans-serif; font-size: 0.93rem; font-weight: 500;
+    transition: background .18s, color .18s;
+  }
+  .nav-mod-btn:hover { background: var(--paper3); color: var(--ink); }
+  .nav-mod-btn.active { background: var(--ink); color: var(--paper); box-shadow: var(--shadow-sm); }
+  .nav-mod-btn.active .nav-num { background: var(--accent); color: #fff; }
+  .nav-mod-btn.active .nav-mod-sub { color: rgba(245,242,235,0.6); }
+  .nav-num {
+    width: 26px; height: 26px; border-radius: 7px; background: var(--paper3); color: var(--ink2);
+    display: grid; place-items: center; font-size: 0.82rem; font-weight: 700; flex-shrink: 0;
+    font-variant-numeric: tabular-nums; transition: background .18s, color .18s;
+  }
+  .nav-mod-label { display: flex; flex-direction: column; min-width: 0; }
+  .nav-mod-title { line-height: 1.2; }
+  .nav-mod-sub { font-size: 0.68rem; color: var(--ink3); letter-spacing: 0.02em; }
+  .nav-lessons { list-style: none; margin: 2px 0 8px 0; padding-left: 49px; display: none; }
+  .nav-mod.open .nav-lessons { display: block; }
+  .nav-lessons a {
+    display: block; padding: 5px 8px; font-size: 0.8rem; color: var(--ink3);
+    text-decoration: none; border-radius: 6px; border-left: 2px solid var(--rule2);
+    transition: color .15s, border-color .15s, background .15s;
+  }
+  .nav-lessons a:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-light); }
+
+  /* ============ CONTENT ============ */
+  main { flex: 1; min-width: 0; padding: 0 0 80px; }
+  .module { display: none; animation: fade .45s ease; }
+  .module.active { display: block; }
+  @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .content { max-width: 820px; margin: 0 auto; padding: 0 40px; }
+
+  /* module hero */
+  .mod-hero { padding: 56px 0 30px; border-bottom: 1px solid var(--rule); margin-bottom: 38px; position: relative; }
+  .mod-hero-eyebrow { display: inline-flex; align-items: center; gap: 9px; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 16px; }
+  .mod-hero-eyebrow::before { content: ""; width: 28px; height: 2px; background: var(--accent); }
+  .mod-hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2rem, 4.4vw, 3rem); line-height: 1.04; letter-spacing: -0.02em; }
+  .mod-hero .lead { font-size: 1.08rem; color: var(--ink2); margin-top: 18px; max-width: 70ch; }
+  .mod-hero-meta { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 24px; font-size: 0.8rem; color: var(--ink3); }
+  .mod-hero-meta span { display: inline-flex; align-items: center; gap: 7px; }
+  .mod-hero-meta b { color: var(--ink2); font-weight: 600; }
+
+  h2.lesson { font-family: 'DM Serif Display', serif; font-size: 1.74rem; letter-spacing: -0.015em; margin: 52px 0 6px; scroll-margin-top: 80px; line-height: 1.12; }
+  h2.lesson .l-tag { display: block; font-family: 'DM Mono', monospace; font-size: 0.74rem; letter-spacing: 0.1em; color: var(--accent); text-transform: uppercase; margin-bottom: 7px; font-weight: 500; }
+  h3 { font-size: 1.14rem; font-weight: 700; margin: 34px 0 10px; letter-spacing: -0.01em; }
+  h4 { font-size: 1rem; font-weight: 700; margin: 24px 0 6px; color: var(--ink); }
+  p { margin: 13px 0; }
+  ul, ol { margin: 13px 0 13px 4px; padding-left: 24px; }
+  li { margin: 7px 0; }
+  ul.clean { list-style: none; padding-left: 0; }
+  ul.clean > li { position: relative; padding-left: 26px; }
+  ul.clean > li::before { content: ""; position: absolute; left: 4px; top: 12px; width: 7px; height: 7px; border-radius: 2px; background: var(--accent); transform: rotate(45deg); }
+  strong { font-weight: 700; }
+  em { font-style: italic; }
+
+  /* learning objectives box */
+  .objectives { background: var(--paper2); border: 1px solid var(--rule); border-radius: 14px; padding: 26px 30px; margin: 30px 0; }
+  .objectives h4 { margin: 0 0 14px; font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+  .objectives ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  .objectives li { position: relative; padding-left: 30px; margin: 0; font-size: 0.95rem; color: var(--ink2); }
+  .objectives li::before {
+    content: ""; position: absolute; left: 0; top: 4px; width: 17px; height: 17px;
+    background: var(--accent); border-radius: 5px;
+    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='white' d='M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/></svg>") center/14px no-repeat;
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='white' d='M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/></svg>") center/14px no-repeat;
+  }
+
+  /* ============ CALLOUTS ============ */
+  .callout { border-radius: 13px; padding: 19px 22px 19px 22px; margin: 24px 0; font-size: 0.95rem; position: relative; }
+  .callout p:first-child { margin-top: 0; } .callout p:last-child { margin-bottom: 0; }
+  .callout .c-label { font-size: 0.7rem; letter-spacing: 0.13em; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 6px; }
+
+  /* author / field note */
+  .author { background: linear-gradient(135deg, var(--paper2), var(--paper3)); border: 1px solid var(--rule); padding-left: 70px; }
+  .author::before {
+    content: "DB"; position: absolute; left: 20px; top: 19px;
+    width: 38px; height: 38px; border-radius: 50%; background: var(--ink); color: var(--paper);
+    display: grid; place-items: center; font-family: 'DM Serif Display', serif; font-size: 0.92rem;
+  }
+  .author .c-label { color: var(--ink3); }
+
+  .note { background: var(--teal-light); border-left: 4px solid var(--teal); }
+  .note .c-label { color: var(--teal); }
+  .important { background: var(--amber-light); border-left: 4px solid var(--amber); }
+  .important .c-label { color: var(--amber); }
+  .takeaway { background: var(--accent-light); border-left: 4px solid var(--accent); }
+  .takeaway .c-label { color: var(--accent); }
+
+  /* figure placeholder */
+  .figure { border: 1.5px dashed var(--rule); border-radius: 13px; padding: 36px 20px; text-align: center; margin: 26px 0; background: var(--paper2); color: var(--ink3); }
+  .figure svg { width: 36px; height: 36px; opacity: 0.4; margin-bottom: 10px; }
+  .figure .fig-cap { font-size: 0.85rem; font-weight: 600; color: var(--ink2); }
+  .figure .fig-note { font-size: 0.74rem; margin-top: 4px; }
+
+  /* real figure image */
+  .fig-img { margin: 28px 0; text-align: center; }
+  .fig-img img { max-width: 100%; height: auto; border: 1px solid var(--rule); border-radius: 13px; background: #fff; box-shadow: var(--shadow-sm); }
+  .fig-img figcaption { font-size: 0.82rem; color: var(--ink3); margin-top: 10px; font-style: italic; }
+
+  /* ============ FORMULA ============ */
+  .formula { background: var(--ink); color: var(--paper); border-radius: 12px; padding: 22px 26px; margin: 22px 0; text-align: center; box-shadow: var(--shadow-sm); }
+  .formula .eq { font-family: 'DM Mono', monospace; font-size: 1.18rem; letter-spacing: 0.01em; }
+  .formula .eq small { color: var(--accent2); }
+  .formula .where { font-family: 'DM Sans', sans-serif; font-size: 0.78rem; color: rgba(245,242,235,0.6); margin-top: 10px; }
+  .formula-name { font-size: 0.72rem; letter-spacing: 0.13em; text-transform: uppercase; color: var(--accent2); margin-bottom: 10px; font-weight: 600; }
+  code.inl { font-family: 'DM Mono', monospace; font-size: 0.88em; background: var(--paper3); padding: 1px 6px; border-radius: 5px; }
+
+  /* worked example */
+  .worked { border: 1px solid var(--rule); border-radius: 14px; margin: 26px 0; overflow: hidden; background: #fff7; }
+  .worked-head { background: var(--ink); color: var(--paper); padding: 13px 22px; font-size: 0.78rem; letter-spacing: 0.13em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 9px; }
+  .worked-head .wx { background: var(--accent); width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center; color: #fff; font-size: 0.8rem; }
+  .worked-body { padding: 20px 24px; }
+  .worked-body .step { font-weight: 700; color: var(--accent); font-size: 0.82rem; letter-spacing: 0.04em; text-transform: uppercase; margin-top: 16px; }
+  .worked-body .calc { font-family: 'DM Mono', monospace; font-size: 0.9rem; background: var(--paper2); border-radius: 8px; padding: 10px 14px; margin: 8px 0; overflow-x: auto; }
+  .worked-body .result { font-family: 'DM Mono', monospace; font-weight: 500; color: var(--teal); }
+
+  /* ============ TABLES ============ */
+  .tbl-wrap { overflow-x: auto; margin: 22px 0; border-radius: 12px; border: 1px solid var(--rule); -webkit-overflow-scrolling: touch; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.86rem; min-width: 420px; background: #fffdfa; }
+  caption { caption-side: top; text-align: left; font-size: 0.76rem; color: var(--ink3); padding: 0 0 9px 2px; font-style: italic; }
+  thead th { background: var(--ink); color: var(--paper); font-weight: 600; text-align: left; padding: 11px 14px; font-size: 0.78rem; letter-spacing: 0.02em; vertical-align: bottom; }
+  tbody td { padding: 10px 14px; border-bottom: 1px solid var(--rule2); vertical-align: top; }
+  tbody tr:nth-child(even) { background: var(--paper2); }
+  tbody tr:last-child td { border-bottom: none; }
+  td strong, th strong { font-weight: 700; }
+  .mono { font-family: 'DM Mono', monospace; font-size: 0.92em; }
+
+  /* ============ SUMMARY / KEY TAKEAWAYS ============ */
+  .summary-block { background: var(--paper2); border: 1px solid var(--rule); border-radius: 16px; padding: 34px 36px; margin: 50px 0 24px; }
+  .summary-block h2 { font-family: 'DM Serif Display', serif; font-size: 1.5rem; margin: 0 0 6px; letter-spacing: -0.015em; }
+  .summary-block .sum-intro { color: var(--ink2); font-size: 0.95rem; margin-bottom: 18px; }
+  ul.keytakeaways { list-style: none; padding: 0; margin: 0; display: grid; gap: 11px; }
+  ul.keytakeaways li { position: relative; padding-left: 32px; font-size: 0.93rem; margin: 0; }
+  ul.keytakeaways li::before {
+    content: ""; position: absolute; left: 0; top: 3px; width: 19px; height: 19px; border-radius: 6px; background: var(--accent);
+    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='white' d='M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/></svg>") center/15px no-repeat;
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='white' d='M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/></svg>") center/15px no-repeat;
+  }
+
+  /* self assessment */
+  .self-assess { border: 1px solid var(--rule); border-radius: 14px; padding: 28px 32px; margin: 28px 0; }
+  .self-assess h3 { margin: 0 0 16px; display: flex; align-items: center; gap: 10px; }
+  .self-assess h3::before { content: "?"; width: 28px; height: 28px; border-radius: 8px; background: var(--teal); color: #fff; display: grid; place-items: center; font-family: 'DM Serif Display', serif; }
+  ol.questions { counter-reset: q; list-style: none; padding: 0; margin: 0; }
+  ol.questions li { counter-increment: q; position: relative; padding: 12px 0 12px 44px; border-bottom: 1px solid var(--rule2); font-size: 0.92rem; }
+  ol.questions li:last-child { border-bottom: none; }
+  ol.questions li::before { content: counter(q); position: absolute; left: 0; top: 11px; width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--accent); color: var(--accent); display: grid; place-items: center; font-weight: 700; font-size: 0.82rem; }
+
+  /* prev / next */
+  .mod-foot { max-width: 820px; margin: 56px auto 0; padding: 0 40px; }
+  .mod-nav-row { display: flex; gap: 14px; justify-content: space-between; border-top: 1px solid var(--rule); padding-top: 26px; }
+  .mod-nav-btn {
+    flex: 1; max-width: 340px; text-align: left; background: var(--paper2); border: 1px solid var(--rule);
+    border-radius: 12px; padding: 14px 18px; cursor: pointer; transition: transform .18s, box-shadow .18s, background .18s;
+    font-family: 'DM Sans', sans-serif; color: var(--ink);
+  }
+  .mod-nav-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); background: #fff; }
+  .mod-nav-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
+  .mod-nav-btn .dir { font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink3); }
+  .mod-nav-btn .nm { font-weight: 600; font-size: 0.95rem; margin-top: 3px; }
+  .mod-nav-btn.next { text-align: right; }
+
+  .course-complete { text-align: center; background: var(--ink); color: var(--paper); border-radius: 16px; padding: 36px; margin: 40px auto 0; max-width: 820px; }
+  .course-complete h3 { font-family: 'DM Serif Display', serif; color: var(--accent2); font-size: 1.5rem; margin: 0 0 6px; }
+  .course-complete p { color: rgba(245,242,235,0.7); margin: 6px 0 0; font-size: 0.92rem; }
+
+  /* footer */
+  footer.site { text-align: center; padding: 40px 20px 50px; border-top: 1px solid var(--rule); margin-top: 40px; color: var(--ink3); font-size: 0.82rem; }
+  footer.site .f-logo { font-family: 'DM Serif Display', serif; color: var(--ink); font-size: 1.05rem; }
+  footer.site a { color: var(--accent); text-decoration: none; }
+  footer.site .f-zk { font-size: 0.74rem; margin-top: 8px; opacity: 0.8; }
+
+  .scrim { display: none; }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 940px) {
+    :root { --sidebar-w: 280px; }
+    .sidebar {
+      position: fixed; top: 0; left: 0; height: 100vh; z-index: 200;
+      transform: translateX(-104%); transition: transform .3s ease; box-shadow: var(--shadow-md);
+      width: 300px; padding-top: 22px;
+    }
+    .sidebar.open { transform: none; }
+    .menu-toggle { display: inline-flex; }
+    .scrim.show { display: block; position: fixed; inset: 0; background: rgba(26,26,24,0.4); z-index: 150; }
+    .content, .mod-foot { padding-left: 22px; padding-right: 22px; }
+    .progress-track { width: 80px; }
+  }
+  @media (max-width: 600px) {
+    body { font-size: 16px; }
+    .content, .mod-foot { padding-left: 18px; padding-right: 18px; }
+    .mod-hero { padding-top: 36px; }
+    .brand-sub { display: none; }
+    .mod-nav-row { flex-direction: column; }
+    .mod-nav-btn { max-width: none; }
+    .author { padding-left: 22px; }
+    .author::before { display: none; }
+    .summary-block, .self-assess { padding: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ TOP BAR ============ -->
+<header class="topbar">
+  <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <a class="brand" href="https://pipingpro-academy.com">
+    <span class="brand-mark">
+      <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="10" fill="none" stroke="#f5f2eb" stroke-width="3.2"/><circle cx="16" cy="16" r="4.6" fill="none" stroke="#f5f2eb" stroke-width="2"/></svg>
+    </span>
+    <span>
+      <span class="brand-name">PipingPro Academy</span>
+      <span class="brand-sub">Engineering Education</span>
+    </span>
+  </a>
+  <div class="topbar-spacer"></div>
+  <div class="progress-wrap">
+    <span class="progress-label" id="progLabel">Module 1 of 5</span>
+    <div class="progress-track"><div class="progress-fill" id="progFill"></div></div>
+  </div>
+</header>
+
+<div class="scrim" id="scrim"></div>
+
+<div class="layout">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="course-eyebrow">Course 1</div>
+    <div class="course-title-sb">Piping Engineering Fundamentals</div>
+    <div class="course-byline">By Donny A. Bachtiar · 5 Modules</div>
+    <nav id="modnav"></nav>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main id="main">
+    <section class="module active" data-mod="1">
+      <div class="content">
+        <div class="mod-hero">
+          <span class="mod-hero-eyebrow">Module 1</span>
+          <h1>Pipe Properties</h1>
+
+<figure class="fig-img">
+          <img src="images/pipe-properties-header.png" alt="Piping System" loading="lazy"/>
+          <figcaption>Picture  — Piping System</figcaption>
+        </figure>
+
+          
+          <p class="lead">In the long history of human civilisation, the design of piping networks has been practised for thousands of years — bamboo irrigation pipes were used in China as early as 3000–2000&nbsp;BC. Rapid development came in the 19th century, with a major advance in pipe stress theory in 1934 when R.&nbsp;H.&nbsp;Tingey published <em>"Method of Calculating Thermal Expansion Stresses in Piping"</em>.</p>
+          <p class="lead">Today, a piping system is pipe sections joined with fittings, valves, and equipment, supported by hangers and supports. Pipe is just <em>one element</em> of the complete system. This module covers the fundamental properties of pipe and the materials used in Oil&nbsp;&amp;&nbsp;Gas.</p>
+          <div class="mod-hero-meta">
+            <span><b>5</b> lessons</span>
+            <span>Based on <b>Piping &amp; Pipeline Engineering — Fundamental &amp; Practical Guides</b></span>
+            <span>by <b>Donny A. Bachtiar</b></span>
+          </div>
+        </div>
+
+        <div class="objectives">
+          <h4>What You Will Learn</h4>
+          <ul>
+            <li>The classification of pipe materials — metallic and non-metallic</li>
+            <li>Pipe sizes — NPS, DN, OD, inside diameter, schedule numbers</li>
+            <li>Key pipe formulas: wall thickness, weight, moment of inertia, section modulus</li>
+            <li>Worked examples for pipe property calculations</li>
+            <li>Key mechanical, physical, and electrical properties of pipe materials</li>
+            <li>Post Weld Heat Treatment (PWHT) — purpose and code requirements</li>
+          </ul>
+        </div>
+
+        <!-- LESSON 1.1 -->
+        <h2 class="lesson" id="m1l1"><span class="l-tag">Lesson 1.1</span>Pipe Material Classification</h2>
+
+        <h3>1.1.1&nbsp;&nbsp;The Two Main Categories</h3>
+        <p>Materials widely used for pipes and their components fall into two main categories:</p>
+        <ul class="clean">
+          <li><strong>Metallic</strong> — divided into <em>Ferrous</em> and <em>Non-Ferrous</em>. Ferrous groups into cast iron and steel; non-ferrous covers aluminium, nickel, copper, etc.</li>
+          <li><strong>Non-metallic</strong> — <em>Plastic pipes</em> (thermoplastic and thermosetting) and <em>non-plastic pipes</em> (typically concrete and glass).</li>
+        </ul>
+
+        <div class="callout author">
+          <span class="c-label">From the field</span>
+          <p>When I started my career in 1990, joining an engineering firm in Jakarta on a Middle East oil refinery project, I was thrown in at the deep end with very limited knowledge of piping materials. There was no book like this to help me. Carbon steel was the dominant material, but knowing <em>when</em> to use stainless, alloy, or non-metallic pipe is a skill that took years to develop. This module gives you that foundation from day one.</p>
+        </div>
+
+        <figure class="fig-img">
+          <img src="images/piping-material-diagram.png" alt="Piping material classification diagram — metallic and non-metallic pipe materials" loading="lazy"/>
+          <figcaption>Picture 1 — Piping Material Classification</figcaption>
+        </figure>
+
+        <h3>1.1.2&nbsp;&nbsp;Ferrous Metallic Pipe — Cast Iron</h3>
+        <p>Cast iron is an alloy of iron and carbon with carbon content above 2&nbsp;wt%, often combined with silicon, nickel, or chromium to improve corrosion resistance. It is strong in compression but low in ductility and malleability, and very brittle — unsuitable for pressure piping. The most common types are white and grey cast iron; magnesium and cerium are added to increase ductility.</p>
+        <ul class="clean">
+          <li><strong>Application:</strong> sewer systems — <em>not</em> Oil &amp; Gas process piping.</li>
+          <li><strong>Key specifications:</strong> ASTM A-74 (cast iron soil pipe), ASTM A-888 (hubless cast iron), ANSI B16.45 (cast iron fittings).</li>
+        </ul>
+
+        <h3>1.1.3&nbsp;&nbsp;Ferrous Metallic Pipe — Ductile Iron</h3>
+        <p>Ductile iron is stronger and tougher than cast iron — a high-carbon magnesium-treated product containing graphite as spheroids, giving significantly better impact resistance and ductility than grey cast iron.</p>
+        <ul class="clean">
+          <li><strong>Application:</strong> sewage service and potable water distribution — not used for process hydrocarbon piping.</li>
+          <li><strong>Key specifications:</strong> ASTM A716, ASTM A746, AWWA C150.</li>
+        </ul>
+
+        <h3>1.1.4&nbsp;&nbsp;Carbon Steel Pipe — The Workhorse of Oil &amp; Gas</h3>
+        <p>Carbon steel is the most popular and widely used pipe material in Oil &amp; Gas — wide availability, high strength, and a huge range of connection systems and fittings. Steel is an alloy of iron with no more than 2&nbsp;wt% carbon.</p>
+        <p>By the amount of oxygen removed during steelmaking (deoxidising), steel is categorised as <strong>Killed Steel</strong> (fully deoxidised), <strong>Semi-Killed Steel</strong> (partially deoxidised), and <strong>Rimmed Steel</strong> (no deoxidising agent, carbon 0.12–0.15%).</p>
+        <p>Three general groups by carbon content:</p>
+        <ul class="clean">
+          <li><strong>Low Carbon Steel:</strong> 0.05–0.25% carbon</li>
+          <li><strong>Medium Carbon Steel:</strong> 0.25–0.50% carbon</li>
+          <li><strong>High Carbon Steel:</strong> 0.50% and greater</li>
+        </ul>
+
+        <h4>Manufacturing Methods &amp; Their Impact on Pipe Quality</h4>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Type</th><th>Description</th><th>Weld Joint Factor (E<sub>j</sub>)</th><th>Typical Use</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Seamless (SMLS)</strong></td><td>No welding. Produced by piercing a solid billet. Homogeneous, no weld stress — the strongest type.</td><td class="mono">1.0</td><td>High-pressure, high-temperature, sour service, critical process lines</td></tr>
+              <tr><td><strong>Electric Resistance Weld (ERW)</strong></td><td>Coil formed into a cylinder, seam welded by high-frequency electrical resistance at ~2600°F. Weld heat-treated to remove residual stress.</td><td class="mono">1.0 <span style="color:var(--ink3)">(with full NDE)</span></td><td>General purpose, utility lines, moderate pressure</td></tr>
+              <tr><td><strong>Double Submerged Arc Weld (DSAW)</strong></td><td>Plate formed into a cylinder, welded inside and outside by submerged arc. 100% wall penetration.</td><td class="mono">1.0 <span style="color:var(--ink3)">(with full NDE)</span></td><td>Large bore NPS 16+, high-pressure pipelines, plant headers</td></tr>
+              <tr><td><strong>Spiral Welded</strong></td><td>Coil rolled at an angle, spiral seam welded. Historically low pressure; now available for high pressure with advanced welding.</td><td class="mono">0.8–1.0</td><td>Large diameter lower-pressure applications, casings</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout note">
+          <span class="c-label">Note</span>
+          <p>The Longitudinal Weld Joint Quality Factor (E<sub>j</sub>) must be included in all wall thickness calculations — see Module&nbsp;5, Lesson&nbsp;5.1. A lower E<sub>j</sub> means a thicker wall for the same pressure. This is why seamless pipe is specified for critical high-pressure service.</p>
+        </div>
+
+        <h4>Key Carbon Steel Specifications</h4>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Spec</th><th>Description</th><th>Grade / Strength</th><th>Temp Range</th></tr></thead>
+            <tbody>
+              <tr><td><strong>ASTM A106</strong></td><td>Seamless CS pipe for HIGH-temperature service. The most widely specified process pipe in O&amp;G.</td><td>Gr. A: 30/48 ksi · Gr. B: 35/60 ksi · Gr. C: 40/70 ksi (SMYS/SMTS)</td><td class="mono">−29 to 427°C</td></tr>
+              <tr><td><strong>ASTM A53</strong></td><td>Seamless &amp; ERW, black and hot-dipped galvanised. Type F (furnace butt-weld), E (ERW), S (seamless). Type F is Category D fluid service only.</td><td>Gr. A &amp; B — same as A106 Gr. A &amp; B</td><td class="mono">−29 to 343°C</td></tr>
+              <tr><td><strong>ASTM A333</strong></td><td>Seamless &amp; welded CS pipe for LOW-temperature service. 11 grades with differing chemistry and impact toughness.</td><td>Gr. 6: 35 ksi SMYS to −45°C · Gr. 1: 30 ksi to −45°C</td><td class="mono">Down to −45°C (Gr. 6)</td></tr>
+              <tr><td><strong>API 5L</strong></td><td>Seamless &amp; welded line pipe for gas, water, oil pipelines. PSL 1 (basic) and PSL 2 (stringent, with impact testing).</td><td>X42 to X80 (yield in ksi)</td><td class="mono">−29 to 121°C (std)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout author">
+          <span class="c-label">From the field</span>
+          <p>ASTM A106 Grade B seamless is the pipe I have specified more than any other in my career. It's the default for O&amp;G process piping from −29°C to 427°C. When someone says "carbon steel pipe" on a project, they almost always mean A106 Gr.&nbsp;B seamless. Know this grade inside out.</p>
+        </div>
+
+        <h3>1.1.5&nbsp;&nbsp;Alloying Steel — Why Elements Are Added</h3>
+        <p>Carbon steel is alloyed with other elements to improve properties for specific service. Common alloying elements and their effects:</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Element</th><th>Effect on Steel Properties</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Carbon</strong></td><td>Higher C = higher strength and hardness, but lower ductility, toughness, and weldability. Lower C = better weldability.</td></tr>
+              <tr><td><strong>Chromium (Cr)</strong></td><td>Hardening element. Increases oxidation, abrasion, and high-temperature hydrogen attack resistance. With Nickel gives superior properties.</td></tr>
+              <tr><td><strong>Molybdenum (Mo)</strong></td><td>Increases creep resistance and high-temperature strength; improves pitting resistance. Key in chrome-moly steels (P11, P22, P91).</td></tr>
+              <tr><td><strong>Nickel (Ni)</strong></td><td>Ferrite strengthener and toughener. Increases strength, toughness, fatigue resistance. Key in stainless and low-temperature alloys.</td></tr>
+              <tr><td><strong>Manganese (Mn)</strong></td><td>Present in all commercial steels. With sulphur, improves impact toughness.</td></tr>
+              <tr><td><strong>Copper (Cu)</strong></td><td>Increases atmospheric corrosion resistance and yield strength; scavenges sulphur.</td></tr>
+              <tr><td><strong>Silicon (Si)</strong></td><td>Deoxidiser — captures dissolved oxygen, avoids porosity, improves castability.</td></tr>
+              <tr><td><strong>Aluminium (Al)</strong></td><td>Widely used as a deoxidiser and for controlling grain size.</td></tr>
+              <tr><td><strong>Boron (B)</strong></td><td>Improves hardenability — increases depth of hardening during quenching.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>1.1.6&nbsp;&nbsp;Stainless Steel Pipe</h3>
+        <p>Stainless steel is used wherever corrosion resistance is needed. A minimum of <strong>10.5% chromium</strong> is required for a material to be called stainless. Three types:</p>
+        <ul class="clean">
+          <li><strong>Austenitic (300 series — 304, 316, 316L):</strong> max 0.15% C, min 16% Cr, plus Ni and/or Mn. Excellent strength, ductility, and corrosion resistance. Non-magnetic. The most common stainless in O&amp;G piping.</li>
+          <li><strong>Ferritic (400 series):</strong> Cr 14–27%. Magnetic.</li>
+          <li><strong>Martensitic:</strong> Cr 11.5–18%. Magnetic. Stronger than austenitic but lower corrosion resistance.</li>
+        </ul>
+        <p>Low-carbon austenitic grades carry the <strong>"L"</strong> suffix (e.g. 316L). Lower carbon prevents sensitisation during welding (chromium-carbide precipitation at grain boundaries), eliminating the need for PWHT in most cases.</p>
+        <ul class="clean">
+          <li><strong>Application:</strong> food, beverage, pharmaceutical, offshore, chloride-rich environments. Never installed underground. Generally no external coating needed.</li>
+          <li><strong>Key specifications:</strong> ASTM A312 (seamless/welded austenitic), ASTM A790 (ferritic/austenitic duplex).</li>
+        </ul>
+
+        <!-- LESSON 1.2 -->
+        <h2 class="lesson" id="m1l2"><span class="l-tag">Lesson 1.2</span>Pipe Sizes, Schedules &amp; Key Formulas</h2>
+
+        <figure class="fig-img">
+          <img src="images/pipe-od-and-id-schematic.png" alt="Pipe OD and ID Schematic" loading="lazy"/>
+          <figcaption>Picture  — Pipe OD and ID Schematic </figcaption>
+        </figure>
+
+
+
+        
+        <h3>1.2.1&nbsp;&nbsp;NPS and DN — The Size Designation Systems</h3>
+        <p>A pipe is a tube with a round cross-section having an outside diameter (OD), a wall thickness, and a resulting inside diameter (ID). Pipe sizes conform to <strong>ASME B36.10M-2022</strong> (welded &amp; seamless wrought steel) and <strong>ASME B36.19M-2022</strong> (stainless steel).</p>
+        <ul class="clean">
+          <li><strong>NPS (Nominal Pipe Size):</strong> a dimensionless designator. For NPS 14 and above, NPS = OD in inches. For NPS 12 and below, OD is always larger than the NPS number.</li>
+          <li><strong>DN (Diamètre Nominal):</strong> the metric equivalent — approximate ID in millimetres (e.g. DN 50 ≈ 50 mm ID).</li>
+        </ul>
+        <p>Pipes are grouped as: <strong>Large Bore</strong> (&gt; 2 in), <strong>Small Bore</strong> (≤ 2 in), and <strong>Tubing</strong> (up to 4 in, thinner walls than standard pipe).</p>
+
+        <div class="callout note">
+          <span class="c-label">Note</span>
+          <p>NPS differs from OD below NPS 14 because in the 1930s pipes were made on inner diameter with a 1/16-inch wall, so the OD became larger by 1/8 inch. This legacy is why NPS 6 has an OD of 6.625 in, not 6.000 in.</p>
+        </div>
+
+        <h3>1.2.2&nbsp;&nbsp;Schedule Numbers</h3>
+        <p>Wall thickness once had only three designations: Standard (STD), Extra Strong (XS), and Double Extra Strong (XXS). Schedule numbers were later added: 5S, 10S, 10, 20, 30, 40, 60, 80, 100, 120, 140, 160. The suffix "S" indicates availability in stainless steel.</p>
+        <div class="callout note">
+          <span class="c-label">Note</span>
+          <p>Schedule 40 = STD for NPS 1/8 through NPS 10. For NPS 12 and above, STD = 9.53 mm wall regardless of schedule. Schedule 80 = XS for NPS 8 and below; all larger XS = 12.70 mm (½ in) wall.</p>
+        </div>
+
+        <h3>1.2.3&nbsp;&nbsp;Pipe Formulas — per ASME B36.10M-2022</h3>
+        <p>From ASME B36.10M-2022 and the Piping Handbook (Mohinder L. Nayyar, 7th ed.). These are formulas you will use throughout your career:</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Property</th><th>Formula (US Customary)</th><th>Formula (SI)</th><th>Units</th></tr></thead>
+            <tbody>
+              <tr><td>Inside Diameter</td><td class="mono">ID = OD − 2t</td><td class="mono">ID = OD − 2t</td><td>in / mm</td></tr>
+              <tr><td>Pipe Weight per foot</td><td class="mono">W = 10.6802 × (D − t) × t</td><td>—</td><td>lb/ft</td></tr>
+              <tr><td>Pipe Weight per metre</td><td>—</td><td class="mono">W = 0.0246615 × (D − t) × t</td><td>kg/m</td></tr>
+              <tr><td>Weight of Water per foot</td><td class="mono">Ww = 0.3405 × ID²</td><td>—</td><td>lb/ft</td></tr>
+              <tr><td>Area of Metal</td><td class="mono">Am = 0.7854 × (OD² − ID²)</td><td class="mono">Am = 0.7854 × (OD² − ID²)</td><td>in² / mm²</td></tr>
+              <tr><td>Flow Area (Inside)</td><td class="mono">Ai = 0.7854 × ID²</td><td class="mono">Ai = 0.7854 × ID²</td><td>in² / mm²</td></tr>
+              <tr><td>Moment of Inertia</td><td class="mono">I = 0.0491 × (OD⁴ − ID⁴)</td><td class="mono">I = 0.0491 × (OD⁴ − ID⁴)</td><td>in⁴ / mm⁴</td></tr>
+              <tr><td>Section Modulus</td><td class="mono">Z = 0.0982 × (OD⁴ − ID⁴) / OD</td><td class="mono">Z = 0.0982 × (OD⁴ − ID⁴) / OD</td><td>in³ / mm³</td></tr>
+              <tr><td>Radius of Gyration</td><td class="mono">r = 0.25 × √(OD² + ID²)</td><td class="mono">r = 0.25 × √(OD² + ID²)</td><td>in / mm</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="worked">
+          <div class="worked-head"><span class="wx">1</span>Worked Example — NPS 10, Schedule 40</div>
+          <div class="worked-body">
+            <p><strong>Given:</strong> NPS 10, Schedule 40 carbon steel pipe. Find A<sub>i</sub>, A<sub>m</sub>, and W. <em>(ASME B36.10M-2022, Table 2-1, p.7: OD = 10.75 in; t = 0.365 in)</em></p>
+            <div class="step">Inside Diameter</div>
+            <div class="calc">ID = 10.75 − (2 × 0.365) = <span class="result">10.02 in</span></div>
+            <div class="step">Flow Area</div>
+            <div class="calc">Ai = 0.7854 × 10.02² = <span class="result">78.85 in²</span></div>
+            <div class="step">Metal Area</div>
+            <div class="calc">Am = 0.7854 × (10.75² − 10.02²) = <span class="result">11.908 in²</span></div>
+            <div class="step">Pipe Weight</div>
+            <div class="calc">W = 10.6802 × (10.75 − 0.365) × 0.365 = <span class="result">40.52 lb/ft</span></div>
+            <p style="margin-top:14px;">✓ Cross-check: ASME B36.10M-2022 Table 2-1 shows 40.52 lb/ft for NPS 10 SCH 40. <strong>Calculation confirmed.</strong></p>
+          </div>
+        </div>
+
+        <div class="callout author">
+          <span class="c-label">From the field</span>
+          <p>Always cross-check your calculated pipe weight against the ASME B36.10 table. If they match, your input data is correct. If they don't, find the error before proceeding. This 2-minute check has saved me from hours of incorrect results.</p>
+        </div>
+
+        <div class="worked">
+          <div class="worked-head"><span class="wx">2</span>Worked Example — NPS 14, Schedule 40</div>
+          <div class="worked-body">
+            <p>For NPS 14, Schedule 40 does <strong>not</strong> equal Schedule STD — a distinction that catches many engineers off guard. <em>(Table 2-1, p.8: OD = 14.000 in — the crossover point where OD = NPS; t<sub>SCH40</sub> = 0.438 in, ≠ STD = 0.375 in)</em></p>
+            <div class="step">Pipe Weight</div>
+            <div class="calc">W = 10.6802 × (14.000 − 0.438) × 0.438 = <span class="result">63.50 lb/ft</span></div>
+            <p style="margin-top:14px;">✓ Cross-check: Table 2-1 p.8 confirms 63.50 lb/ft.</p>
+             <p style="margin-top:14px;"> Please note that this calculations are available at the calculator suites, for more pipe sizes.</p>
+          </div>
+        </div>
+
+        <h3>1.2.6&nbsp;&nbsp;Standard Pipe Data Reference</h3>
+        <p>Representative data for common carbon steel sizes (ASME B36.10M-2022). Always refer to the current edition for complete data.</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>NPS</th><th>OD (in)</th><th>SCH / Grade</th><th>Wall t (in)</th><th>Plain End Wt (lb/ft)</th></tr></thead>
+            <tbody>
+              <tr><td>½</td><td class="mono">0.840</td><td>SCH 10</td><td class="mono">0.083</td><td class="mono">0.67</td></tr>
+              <tr><td>2</td><td class="mono">2.375</td><td>SCH 40 / STD</td><td class="mono">0.154</td><td class="mono">3.66</td></tr>
+              <tr><td>2</td><td class="mono">2.375</td><td>SCH 80 / XS</td><td class="mono">0.218</td><td class="mono">5.03</td></tr>
+              <tr><td>4</td><td class="mono">4.500</td><td>SCH 40 / STD</td><td class="mono">0.237</td><td class="mono">10.80</td></tr>
+              <tr><td>4</td><td class="mono">4.500</td><td>SCH 80 / XS</td><td class="mono">0.337</td><td class="mono">15.00</td></tr>
+              <tr><td>6</td><td class="mono">6.625</td><td>SCH 40 / STD</td><td class="mono">0.280</td><td class="mono">18.99</td></tr>
+              <tr><td>6</td><td class="mono">6.625</td><td>SCH 80 / XS</td><td class="mono">0.432</td><td class="mono">28.60</td></tr>
+              <tr><td>8</td><td class="mono">8.625</td><td>SCH 40 / STD</td><td class="mono">0.322</td><td class="mono">28.58</td></tr>
+              <tr><td>8</td><td class="mono">8.625</td><td>SCH 80 / XS</td><td class="mono">0.500</td><td class="mono">43.43</td></tr>
+              <tr><td>10</td><td class="mono">10.750</td><td>SCH 40 / STD</td><td class="mono">0.365</td><td class="mono">40.52</td></tr>
+              <tr><td>12</td><td class="mono">12.750</td><td>SCH STD</td><td class="mono">0.375</td><td class="mono">49.61</td></tr>
+              <tr><td>14</td><td class="mono">14.000</td><td>SCH 30 / STD</td><td class="mono">0.375</td><td class="mono">54.62</td></tr>
+              <tr><td>14</td><td class="mono">14.000</td><td>SCH 40</td><td class="mono">0.438</td><td class="mono">63.50</td></tr>
+              <tr><td>16</td><td class="mono">16.000</td><td>SCH 30 / STD</td><td class="mono">0.375</td><td class="mono">62.64</td></tr>
+              <tr><td>20</td><td class="mono">20.000</td><td>SCH 20 / STD</td><td class="mono">0.375</td><td class="mono">78.67</td></tr>
+              <tr><td>24</td><td class="mono">24.000</td><td>SCH 20 / STD</td><td class="mono">0.375</td><td class="mono">94.71</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout takeaway">
+          <span class="c-label">Key point</span>
+          <p>From NPS 14 onwards, OD = NPS in inches. For NPS 12 and below, OD is always larger than NPS. SCH 40 ≠ STD for NPS 14 and above. Always verify from ASME B36.10M-2022 tables.</p>
+        </div>
+
+        <!-- LESSON 1.3 -->
+        <h2 class="lesson" id="m1l3"><span class="l-tag">Lesson 1.3</span>Mechanical Properties</h2>
+
+        <h3>1.3.1&nbsp;&nbsp;Modulus of Elasticity (Young's Modulus)</h3>
+        <p>The Modulus of Elasticity (E) is the ratio of normal stress to corresponding strain in the elastic region (Hooke's Law) — a measure of material stiffness. E varies with temperature: the higher the temperature, the softer the material and the lower its E. This matters for stress analysis:</p>
+        <ul class="clean">
+          <li>For <strong>high-temperature</strong> piping — use E at the cold (ambient) temperature for sustained and expansion stress calculations, per ASME B31.3.</li>
+          <li>For <strong>low/cold</strong> lines — use E at the minimum temperature.</li>
+        </ul>
+        <div class="tbl-wrap">
+          <table>
+            <caption>Source: ASME B31.3-2024 Appendix C, Table C-5 — E in ×10⁶ psi</caption>
+            <thead><tr><th>Material</th><th>70°F</th><th>200°F</th><th>300°F</th><th>400°F</th><th>500°F</th></tr></thead>
+            <tbody>
+              <tr><td>Carbon Steel C &lt; 0.30%</td><td class="mono">29.4</td><td class="mono">28.8</td><td class="mono">28.3</td><td class="mono">27.4</td><td class="mono">27.3</td></tr>
+              <tr><td>Carbon Steel C &gt; 0.30%</td><td class="mono">29.2</td><td class="mono">28.6</td><td class="mono">28.1</td><td class="mono">27.7</td><td class="mono">27.1</td></tr>
+              <tr><td>Austenitic SS T304 (18Cr-8Ni)</td><td class="mono">28.3</td><td class="mono">27.5</td><td class="mono">27.0</td><td class="mono">26.4</td><td class="mono">25.9</td></tr>
+              <tr><td>Austenitic SS T316 (16Cr-12Ni-2Mo)</td><td class="mono">28.3</td><td class="mono">27.5</td><td class="mono">27.0</td><td class="mono">26.4</td><td class="mono">25.9</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>1.3.2&nbsp;&nbsp;Yield Strength &amp; Ultimate Tensile Strength</h3>
+        <p>Strength is the ability to resist deformation or failure under applied force. Two key values:</p>
+        <ul class="clean">
+          <li><strong>Yield Strength (SMYS):</strong> the maximum stress maintaining elastic behaviour before plastic deformation begins. Determined by the 0.2% offset method.</li>
+          <li><strong>Ultimate Tensile Strength (SMTS):</strong> the maximum applied load ÷ original cross-sectional area sustained before breaking — the highest point on the stress-strain curve.</li>
+        </ul>
+        <div class="formula">
+          <div class="formula-name">Elastic region (Hooke's Law)</div>
+          <div class="eq">σ = E × ε</div>
+          <div class="where">Stress = Young's Modulus × Strain. Beyond the yield point the material deforms plastically and the relationship is no longer linear.</div>
+        </div>
+
+<figure class="fig-img">
+          <img src="images/stress-strain-curve-with-offset-line.png" alt="Stress-Strain Curve with 0.2% offset line" loading="lazy"/>
+          <figcaption>Picture  — Stress-Strain Curve with 0.2% offset line</figcaption>
+        </figure>
+        
+
+
+        
+        <h3>1.3.3&nbsp;&nbsp;Elongation, Reduction of Area, Hardness &amp; Toughness</h3>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Property</th><th>Definition</th><th>Relevance to Piping</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Elongation (%)</strong></td><td>Plastic stretch before rupture — a ductility measure. % = ((L<sub>final</sub> − L<sub>orig</sub>) / L<sub>orig</sub>) × 100</td><td>Ductile materials warn before failure; brittle materials fail suddenly. O&amp;G prefers ductile materials.</td></tr>
+              <tr><td><strong>Reduction of Area (%)</strong></td><td>Decrease in cross-section at the fracture point — also a ductility measure.</td><td>Higher RA = more ductile. Required in some specs for critical service.</td></tr>
+              <tr><td><strong>Hardness</strong></td><td>Resistance to surface deformation. Brinell (HBW) or Rockwell (HRC). Higher = harder.</td><td>Critical for sour service — NACE MR0175 limits CS hardness to HRC 22 max to prevent SSC.</td></tr>
+              <tr><td><strong>Toughness</strong></td><td>Resistance to fracture under rapid loading. Charpy Impact (ASTM E23), Drop Weight (ASTM E208). In ft-lb or Joules.</td><td>Essential for low-temperature service. Required by ASTM A333 and API 5L PSL 2.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- LESSON 1.4 -->
+        <h2 class="lesson" id="m1l4"><span class="l-tag">Lesson 1.4</span>Physical Properties</h2>
+
+        <h3>1.4.1&nbsp;&nbsp;Thermal Conductivity</h3>
+        <p>Thermal conductivity (k) is the ability to transmit heat from a high- to a low-temperature region. Units: Btu·ft / (hr·ft²·°F). For carbon steel, k decreases as temperature increases; for austenitic stainless, k increases with temperature.</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Material</th><th>Thermal Conductivity k</th><th>Temperature (°F)</th></tr></thead>
+            <tbody>
+              <tr><td>Gray Cast Iron</td><td class="mono">27</td><td class="mono">70</td></tr>
+              <tr><td>Carbon-½ Mo</td><td class="mono">25.8</td><td class="mono">212</td></tr>
+              <tr><td>1¼ Cr – ½ Mo (P11)</td><td class="mono">17.9</td><td class="mono">212</td></tr>
+              <tr><td>Type 304 Wrought SS</td><td class="mono">9.4</td><td class="mono">212</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>1.4.2&nbsp;&nbsp;Density</h3>
+        <p>Density is the ratio of mass to volume: ρ = m/V. A key input for pipe weight and fluid weight in stress analysis.</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Material</th><th>Density (lb/in³)</th></tr></thead>
+            <tbody>
+              <tr><td>Gray Cast Iron</td><td class="mono">0.251–0.265</td></tr>
+              <tr><td>Carbon Steel (typical)</td><td class="mono">0.283</td></tr>
+              <tr><td>Type 304 Wrought SS</td><td class="mono">0.290</td></tr>
+              <tr><td>Aluminium 1100</td><td class="mono">0.098</td></tr>
+              <tr><td>Titanium</td><td class="mono">0.163</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>1.4.3&nbsp;&nbsp;Thermal Expansion</h3>
+        <p>Most metals expand proportionally in all directions (linear expansion) when heated. The change in length:</p>
+        <div class="formula">
+          <div class="formula-name">Linear Thermal Expansion</div>
+          <div class="eq">ΔL = α × L × ΔT</div>
+          <div class="where">ΔL = change in length · α = coeff. of thermal expansion (1/°F or 1/°C) · L = original length · ΔT = temperature change</div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Material</th><th>Mean Coeff. (10⁻⁶ in/in/°F) @ 70°F</th><th>@ 400°F</th><th>Linear Exp. (in/100ft) @ 70°F</th><th>@ 400°F</th></tr></thead>
+            <tbody>
+              <tr><td>Carbon &amp; Low Alloy Steel</td><td class="mono">6.4</td><td class="mono">7.1</td><td class="mono">0</td><td class="mono">1.0</td></tr>
+              <tr><td>Austenitic SS (304, 316)</td><td class="mono">8.5</td><td class="mono">9.5</td><td class="mono">0</td><td class="mono">3.8</td></tr>
+              <tr><td>Aluminium Alloys</td><td class="mono">12.1</td><td class="mono">13.6</td><td class="mono">0</td><td class="mono">5.4</td></tr>
+              <tr><td>Duplex — 27% Cr</td><td class="mono">5.0</td><td class="mono">5.3</td><td class="mono">0</td><td class="mono">2.1</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout author">
+          <span class="c-label">From the field</span>
+          <p>Thermal expansion coefficient and Modulus of Elasticity are the two most critical material properties in pipe stress analysis. Get them wrong in your CAESAR II model and <em>every</em> stress result is wrong. Always use the values from ASME B31.3 Appendix C for the specific material and temperature — do not use generic values.</p>
+        </div>
+
+        <!-- LESSON 1.5 -->
+        <h2 class="lesson" id="m1l5"><span class="l-tag">Lesson 1.5</span>Post Weld Heat Treatment (PWHT)</h2>
+
+        <h3>1.5.1&nbsp;&nbsp;Purpose of PWHT</h3>
+        <p>PWHT is applied to a weld to improve mechanical properties, corrosion resistance, microstructure, and environmental cracking resistance, and to reduce residual stress. Residual welding stresses can cause stress corrosion cracking (SCC), hydrogen-induced cracking (HIC), and premature fatigue failure — particularly in sour service.</p>
+
+        <h3>1.5.2&nbsp;&nbsp;When PWHT Is Required</h3>
+        <p>The requirement depends on code, material, wall thickness, and carbon content:</p>
+        <ul class="clean">
+          <li><strong>ASME B31.4 &amp; B31.8 (2025):</strong> PWHT for carbon steel above certain wall thickness limits — e.g. &gt; 1.25 in (32 mm) in some cases. Depends on carbon content, carbon equivalent, and wall thickness.</li>
+          <li><strong>ASME B31.3 &amp; B31.1:</strong> PWHT on shop/field girth welds based on material P-group, wall thickness, carbon content, and UTS. E.g. P-1 carbon steel requires PWHT above 19 mm (¾ in) nominal wall for most applications.</li>
+          <li><strong>Sour service (NACE MR0175):</strong> PWHT mandatory for all carbon steel welds in H₂S service to reduce HAZ hardness below HRC 22.</li>
+          <li><strong>Chrome-moly (P11, P22, P91):</strong> PWHT mandatory for all welds — no exceptions. Without it, brittle martensite forms in the HAZ and the risk of hydrogen cracking rises sharply.</li>
+        </ul>
+        <div class="callout important">
+          <span class="c-label">Important</span>
+          <p>PWHT requirements vary by code edition, material group, wall thickness, and carbon equivalent. Always check the project-specific code edition — do not rely on memory or previous project experience. The consequence of missing a PWHT requirement is a weld that can fail in service.</p>
+        </div>
+        <div class="callout takeaway">
+          <span class="c-label">Key point</span>
+          <p>PWHT is not optional when required by code. It is a controlled, documented process performed by qualified welders and witnessed or verified by inspection. On Aramco projects, PWHT is a mandatory hold point in the Inspection and Test Plan (ITP).</p>
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="summary-block">
+          <h2>Module 1 — Summary &amp; Key Takeaways</h2>
+          <p class="sum-intro">This module establishes the foundation for everything else in the course. Pipe materials, their properties, and dimensional standards are the starting point for every engineering decision you will make.</p>
+          <ul class="keytakeaways">
+            <li>Pipe materials are <strong>Metallic</strong> (Ferrous: CS, Alloy, SS; Non-Ferrous: Al, Cu) and <strong>Non-Metallic</strong> (Plastic: HDPE, TCP, FRP; Non-Plastic: concrete, glass).</li>
+            <li>Carbon Steel <strong>ASTM A106 Gr. B seamless</strong> is the most widely used pipe in O&amp;G. Valid −29°C to 427°C. Know it inside out.</li>
+            <li>Pipe weight per ASME B36.10M: <span class="mono">W = 10.6802 × (D − t) × t</span> (lb/ft) or <span class="mono">0.0246615 × (D − t) × t</span> (kg/m). Always cross-check the table.</li>
+            <li>From NPS 14 onwards, OD = NPS in inches. For NPS 12 and below, OD &gt; NPS.</li>
+            <li>Thermal expansion coefficient (α) and Modulus of Elasticity (E) are the two most critical properties in stress analysis. Use ASME B31.3 Appendix C values.</li>
+            <li>Longitudinal Weld Joint Quality Factor (E<sub>j</sub>) affects wall thickness — seamless = 1.0; ERW = 1.0 with full NDE; furnace butt-weld = 0.6.</li>
+            <li>PWHT is mandatory for sour service, chrome-moly steels, and above certain wall thickness thresholds. Always check the project-specific code edition.</li>
+          </ul>
+        </div>
+
+        <div class="self-assess">
+          <h3>Self-Assessment Questions</h3>
+          <ol class="questions">
+            <li>What is the plain end weight per foot of NPS 6, SCH 80 (XS) pipe? (OD = 6.625 in, t = 0.432 in). Use the ASME B36.10 formula and cross-check the table.</li>
+            <li>A process line operates at 350°C. What Modulus of Elasticity value would you use for carbon steel (C &lt; 0.30%) in your CAESAR II model?</li>
+            <li>What is the difference between ASTM A106 and ASTM A333 Grade 6, and when would you specify each?</li>
+            <li>Why is the "L" suffix important in stainless steel grades (e.g. 316L vs 316)? What failure mode does it prevent?</li>
+            <li>PWHT is required for carbon steel weld in sour service. What hardness limit must the HAZ meet, and which standard governs this?</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="mod-foot">
+        <div class="mod-nav-row" style="display:block;">
+          <div style="background:var(--ink);border-radius:14px;padding:32px 26px;text-align:center;">
+            <div style="font-family:'DM Mono',monospace;font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent2);margin-bottom:10px;">End of free preview</div>
+            <h3 style="font-family:'DM Serif Display',serif;color:var(--paper);font-size:1.5rem;line-height:1.2;margin:0 0 8px;">Continue the course — Modules 2 to 5 + final quiz</h3>
+            <p style="color:rgba(245,242,235,0.62);font-size:0.92rem;line-height:1.6;max-width:470px;margin:0 auto 18px;">Pipe materials, supports, codes &amp; standards, fittings &amp; flanges — plus the graded assessment and your completion certificate. Included with membership, alongside every course and all 17 calculators.</p>
+            <a href="https://pipingpro-academy.com/membership" style="display:inline-block;background:var(--accent);color:#fff;text-decoration:none;font-family:'DM Sans',sans-serif;font-weight:600;font-size:0.95rem;padding:13px 30px;border-radius:9px;">Become a Member — $10/month →</a>
+            <div style="margin-top:12px;font-size:0.8rem;color:rgba(245,242,235,0.45);">or $100/year · cancel anytime</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<footer class="site">
+  <div class="f-logo">PipingPro Academy</div>
+  <div style="margin-top:6px;"><a href="https://pipingpro-academy.com">pipingpro-academy.com</a> · Course 1: Piping Engineering Fundamentals</div>
+  <div class="f-zk">A product of <a href="https://zephrum-konsultan.co.uk">Zephrum Konsultan Limited</a> · Engineering &amp; AI</div>
+</footer>
+
+<script>
+  // Free preview: only Module 1 is present on this page. Modules 2–5 are locked teasers.
+  const MEMBERSHIP_URL = 'https://pipingpro-academy.com/membership';
+  const MODULES = [
+    { n:1, title:"Pipe Properties", sub:"Materials, sizes &amp; formulas", free:true, lessons:[
+      ["m1l1","1.1 — Pipe Material Classification"],
+      ["m1l2","1.2 — Sizes, Schedules &amp; Formulas"],
+      ["m1l3","1.3 — Mechanical Properties"],
+      ["m1l4","1.4 — Physical Properties"],
+      ["m1l5","1.5 — Post Weld Heat Treatment"]
+    ]},
+    { n:2, title:"Pipe Materials", sub:"Metallic &amp; non-metallic", free:false },
+    { n:3, title:"Pipe Supports", sub:"Types, spans &amp; design", free:false },
+    { n:4, title:"Codes &amp; Standards", sub:"ASME, API, B31 family", free:false },
+    { n:5, title:"Fittings &amp; Flanges", sub:"Gaskets, bolting, insulation", free:false }
+  ];
+
+  const modnav = document.getElementById('modnav');
+  MODULES.forEach(m => {
+    const wrap = document.createElement('div');
+    wrap.className = 'nav-mod' + (m.free ? ' open' : '');
+    wrap.dataset.mod = m.n;
+    if (m.free) {
+      wrap.innerHTML =
+        '<button class="nav-mod-btn active" data-goto="1">' +
+          '<span class="nav-num">1</span>' +
+          '<span class="nav-mod-label"><span class="nav-mod-title">' + m.title + '</span>' +
+          '<span class="nav-mod-sub">' + m.sub + '</span></span>' +
+        '</button>' +
+        '<ul class="nav-lessons">' +
+          m.lessons.map(l => '<li><a href="#' + l[0] + '">' + l[1] + '</a></li>').join('') +
+        '</ul>';
+    } else {
+      wrap.innerHTML =
+        '<button class="nav-mod-btn" data-locked="1" style="opacity:.72;">' +
+          '<span class="nav-num">🔒</span>' +
+          '<span class="nav-mod-label"><span class="nav-mod-title">' + m.title + '</span>' +
+          '<span class="nav-mod-sub">' + m.sub + ' · Members</span></span>' +
+        '</button>';
+    }
+    modnav.appendChild(wrap);
+  });
+
+  const sidebar  = document.getElementById('sidebar');
+  const scrim    = document.getElementById('scrim');
+  const progFill = document.getElementById('progFill');
+  const progLabel= document.getElementById('progLabel');
+  if (progFill)  progFill.style.width = '20%';
+  if (progLabel) progLabel.textContent = 'Module 1 of 5';
+
+  function openSidebar(){ sidebar.classList.add('open'); scrim.classList.add('show'); }
+  function closeSidebar(){ sidebar.classList.remove('open'); scrim.classList.remove('show'); }
+
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('[data-locked]')) { window.location.href = MEMBERSHIP_URL; return; }
+    if (e.target.closest('.nav-lessons a')) { setTimeout(closeSidebar, 50); }
+  });
+
+  const menuToggle = document.getElementById('menuToggle');
+  if (menuToggle) menuToggle.addEventListener('click', () => {
+    sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+  });
+  scrim.addEventListener('click', closeSidebar);
+</script>
+</body>
+</html>

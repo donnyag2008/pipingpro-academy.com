@@ -230,7 +230,7 @@ footer a{color:var(--gold-bright);text-decoration:none;}
     <!-- Course 1 -->
     <div class="course-card" id="card-piping-fund" onclick="openCourse('piping-fund')">
       <div class="course-banner bg-rust">
-        <span class="course-badge badge-members" id="badge-piping-fund">👑 Members</span>
+        <span class="course-badge badge-unlocked" id="badge-piping-fund">✦ Module 1 Free</span>
         <svg class="course-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M32 14 L58 25 L32 36 L6 25 Z" fill="rgba(255,255,255,0.92)"/>
           <path d="M16 30 V42 C16 47 48 47 48 42 V30" stroke="rgba(255,255,255,0.85)" stroke-width="2.6" fill="none"/>
@@ -243,7 +243,7 @@ footer a{color:var(--gold-bright);text-decoration:none;}
         <div class="course-name">Fundamental of Piping Engineering</div>
         <div class="course-sub">Course 01 · Foundation · ASME B31.3</div>
         <div class="course-desc">Build a solid foundation — codes &amp; standards, materials, sizing, components, layout and supports. Five structured modules taking you from first principles to plant-floor confidence.</div>
-        <button class="suite-btn locked" id="btn-piping-fund">👑 Members Only</button>
+        <button class="suite-btn open" id="btn-piping-fund">Start Module 1 — Free →</button>
       </div>
     </div>
 
@@ -399,6 +399,7 @@ const COURSES = {
     kicker: 'Course 01 · Foundation',
     bg: 'bg-rust',
     file: 'course-piping-fundamentals.html',
+    freeModule: 'piping-fundamentals-module-1.html',
     desc: 'A complete grounding in piping engineering for graduates and engineers crossing into the discipline. Each module builds on the last, ending with a graded quiz and a shareable certificate.',
     meta: ['5 modules', '1 quiz', 'Self-paced', 'Certificate'],
     modules: [
@@ -482,10 +483,17 @@ function initCards(){
       btn.textContent = 'Open Course →';
       btn.className = 'suite-btn open';
     } else {
-      badge.textContent = '👑 Members';
-      badge.className = 'course-badge badge-members';
-      btn.textContent = '👑 Members Only';
-      btn.className = 'suite-btn locked';
+      if(COURSES[id] && COURSES[id].freeModule){
+        badge.textContent = '✦ Module 1 Free';
+        badge.className = 'course-badge badge-unlocked';
+        btn.textContent = 'Start Module 1 — Free →';
+        btn.className = 'suite-btn open';
+      } else {
+        badge.textContent = '👑 Members';
+        badge.className = 'course-badge badge-members';
+        btn.textContent = '👑 Members Only';
+        btn.className = 'suite-btn locked';
+      }
     }
   });
 }
@@ -521,8 +529,14 @@ function openCourse(id){
     hint.textContent = '';
     hint.style.display = 'none';
   } else {
-    actions.innerHTML = '<a href="index.html#pricing" class="modal-btn modal-btn-sub">👑 Subscribe to Unlock</a>';
-    hint.textContent = 'Full course included with membership · subscribe to unlock';
+    var subBtn = '<a href="index.html#pricing" class="modal-btn modal-btn-sub">👑 Subscribe to Unlock</a>';
+    if(c.freeModule){
+      actions.innerHTML = '<a href="' + c.freeModule + '" class="modal-btn modal-btn-open">Start Module 1 — Free →</a>' + subBtn;
+      hint.textContent = 'Module 1 is free · subscribe to unlock all 5 modules + quiz';
+    } else {
+      actions.innerHTML = subBtn;
+      hint.textContent = 'Full course included with membership · subscribe to unlock';
+    }
     hint.style.display = 'block';
   }
 
