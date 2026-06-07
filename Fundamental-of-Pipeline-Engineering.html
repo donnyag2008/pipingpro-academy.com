@@ -383,14 +383,117 @@
 <div class="callout takeaway"><span class="c-label">How this course is organised</span><p>Module 1 — design basis &amp; routing. Module 2 — wall thickness &amp; code sizing. Module 3 — pipeline stress. Module 4 — buried-pipe design. Module 5 — integrity (fracture, coating, buckling). Each lesson is numbered for easy reference, starting at 1.0.</p></div>
 
 
-<h2 class="lesson" id="m1l1"><span class="l-tag">Section 1.1</span>Flow Assurance Study</h2>
+<h2 class="lesson" id="m1l1"><span class="l-tag">Section 1.1</span>Flow Assurance Basic Theory</h2>
 
-<p>The primary goal of flow assurance is to select an optimal configuration that ensures reliable hydraulic performance and robust operability over the pipeline's life. Where necessary, mitigations are introduced against upsets from the fluid's thermo-hydraulic characteristics or its production chemistry.</p>
-<p>The study begins with the steady-state model, built from the start point to the end point. Common tools include <code class="inl">OLGA</code> (transient and steady-state) with <code class="inl">Multiflash</code> or <code class="inl">PVTsim</code> for fluid PVT behaviour. The model needs route topography, layout configuration, and pipe geometry. Fluid composition is defined as a proportion of the production rate, with all process data: scenarios, inlet pressure, tie-in pressure and MAOP.</p>
-<p>Simulations are run for a range of diameters; pressure and temperature are evaluated and hydrate (or other) risk assessed. The analysis identifies hydraulic capacity, velocity and erosional velocity, and defines steady-state operating pressures/temperatures as input to the mechanical design. The preferred diameter is selected on hydraulic capacity and flow stability.</p>
-<p>Once steady-state is complete, the transient analysis addresses:</p>
-<ul class="clean"><li><strong>Ramp-up</strong> — liquid surge and gas-rate increase developed during ramp-up from turndown.</li><li><strong>Ramp-down</strong> — the transition period to reach a new steady state after a flow reduction.</li><li><strong>Scraping</strong> — liquid surge into the slug catcher generated during pigging.</li></ul>
-<p>The transient work also confirms the selected size is fit for purpose for the required maximum flow, inlet pressure and tie-in pressure.</p>
+<p><strong>Flow assurance</strong> is the engineering process of guaranteeing that produced fluids can be transported reliably and economically from the reservoir to the delivery point throughout the entire life of the field. It combines knowledge of fluid behaviour with thermal-hydraulic analysis to develop strategies that keep the flow path clear of anything that would obstruct, restrict or stop production.</p>
+<p>The term was coined by Petrobras in the early 1990s, originally covering only the thermal-hydraulic and production-chemistry problems of offshore production. The problems themselves are far older — hydrate blockages were recognised in gas pipelines in the 1930s, and methanol was already in use to suppress them. What changed was the move into deepwater and long tiebacks, where a single blockage can shut in a development for weeks. Today the discipline spans the earliest concept-selection decisions through to abandonment.</p>
+
+<div class="callout note"><span class="c-label">Key idea — life of field</span><p>Flow assurance is fundamentally a <em>life-of-field</em> discipline. A line that flows perfectly on day one may struggle in late life as reservoir pressure declines, water cut rises, and flow rates fall below the minimum needed to stay above the hydrate and wax boundaries.</p></div>
+
+<p>For an onshore transmission pipeline, the primary goal is to select an optimal configuration that ensures reliable hydraulic performance and robust operability over the pipeline's life — introducing mitigations, where necessary, against upsets from the fluid's thermo-hydraulic characteristics or its production chemistry.</p>
+
+<h3>The two branches of flow assurance</h3>
+<p>Flow assurance rests on two complementary pillars:</p>
+<ul class="clean">
+<li><strong>Fluid hydrodynamics</strong> — the physics of how the fluids move through the pipe: multiphase flow regimes, slugging, liquid holdup, pressure drop and erosion. It asks <em>"will it flow?"</em></li>
+<li><strong>Production chemistry</strong> — what the fluids <em>do</em> as pressure and temperature change along the line: hydrates, wax, asphaltenes, scale, emulsions, foaming and corrosion. It asks <em>"will it stay clean while it flows?"</em></li>
+</ul>
+
+<h3>The principal flow assurance threats</h3>
+<p>For a given fluid, each solid appears within a specific window of pressure and temperature, then deposits on the pipe wall — progressively narrowing the bore until the line plugs.</p>
+<div class="tbl-wrap">
+<table>
+<caption>Common flow assurance threats, triggers and mitigations.</caption>
+<thead><tr><th>Threat</th><th>What it is</th><th>What triggers it</th><th>Typical mitigation</th></tr></thead>
+<tbody>
+<tr><td><strong>Hydrates</strong></td><td>Ice-like crystals of gas and water</td><td>High pressure + low temperature</td><td>Insulation, depressurisation, MEG / methanol</td></tr>
+<tr><td><strong>Wax (paraffin)</strong></td><td>Long-chain hydrocarbons crystallising out</td><td>Wall temperature below the WAT</td><td>Insulation, pigging, wax inhibitors</td></tr>
+<tr><td><strong>Asphaltenes</strong></td><td>Heavy organic solids that precipitate</td><td>Pressure drop, incompatible blending</td><td>Dispersants, pressure management</td></tr>
+<tr><td><strong>Scale</strong></td><td>Inorganic mineral deposits</td><td>Mixing of incompatible waters</td><td>Scale inhibitors, water management</td></tr>
+<tr><td><strong>Slugging</strong></td><td>Intermittent surges of liquid and gas</td><td>Terrain, riser geometry, low rates</td><td>Slug catchers, control strategy, line sizing</td></tr>
+<tr><td><strong>Erosion / corrosion</strong></td><td>Wall loss from velocity or chemistry</td><td>High velocity, CO₂ / H₂S, water</td><td>Material selection, velocity limits, inhibitors</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Hydrates</strong> are usually the most feared — they form fastest and can plug a line during cooldown and restart, exactly when the fluid is coldest. <strong>Slugging</strong> matters most to the pipeline engineer: its intermittent pressure and flow surges impose cyclic loads on the pipeline–riser system that become real cases for stress and support design.</p>
+
+<h3>The flow assurance workflow</h3>
+<p>Although every project differs, the flow assurance <em>process</em> has become standardised into a recognisable sequence, front-loaded into FEED — getting it wrong early is enormously expensive to correct later.</p>
+
+<figure class="fig-img" aria-label="Flow assurance study workflow">
+<svg viewBox="0 0 460 540" style="max-width:480px;width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg" role="img" font-family="'DM Sans', sans-serif">
+<title>The six-stage flow assurance workflow</title>
+<defs><marker id="fa-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#8a8a80" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+
+<rect x="70" y="30" width="320" height="54" rx="11" fill="#e9e5d8" stroke="#a8a89c" stroke-width="1"/>
+<text x="230" y="52" text-anchor="middle" dominant-baseline="central" font-size="14.5" font-weight="600" fill="#1a1a18">1 — Fluid characterisation</text>
+<text x="230" y="70" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#6a6a62">PVT, hydrate &amp; wax curves</text>
+<line x1="230" y1="84" x2="230" y2="112" stroke="#8a8a80" stroke-width="1.6" marker-end="url(#fa-arrow)"/>
+
+<rect x="70" y="116" width="320" height="54" rx="11" fill="#e0f0eb" stroke="#1a6b5a" stroke-width="1"/>
+<text x="230" y="138" text-anchor="middle" dominant-baseline="central" font-size="14.5" font-weight="600" fill="#134f43">2 — Steady-state hydraulics</text>
+<text x="230" y="156" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#1a6b5a">Line size, slug size, insulation</text>
+<line x1="230" y1="170" x2="230" y2="198" stroke="#8a8a80" stroke-width="1.6" marker-end="url(#fa-arrow)"/>
+
+<rect x="70" y="202" width="320" height="54" rx="11" fill="#e0f0eb" stroke="#1a6b5a" stroke-width="1"/>
+<text x="230" y="224" text-anchor="middle" dominant-baseline="central" font-size="14.5" font-weight="600" fill="#134f43">3 — Transient hydraulics</text>
+<text x="230" y="242" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#1a6b5a">Start-up, shut-in, blowdown, restart</text>
+<line x1="230" y1="256" x2="230" y2="284" stroke="#8a8a80" stroke-width="1.6" marker-end="url(#fa-arrow)"/>
+
+<rect x="70" y="288" width="320" height="54" rx="11" fill="#faf0dd" stroke="#b5781a" stroke-width="1.2"/>
+<text x="230" y="310" text-anchor="middle" dominant-baseline="central" font-size="14.5" font-weight="600" fill="#7a5212">4 — Re-evaluate preferred concept</text>
+<text x="230" y="328" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#b5781a">Screened on CAPEX / OPEX</text>
+<line x1="230" y1="342" x2="230" y2="370" stroke="#8a8a80" stroke-width="1.6" marker-end="url(#fa-arrow)"/>
+
+<rect x="70" y="374" width="320" height="54" rx="11" fill="#f7ede3" stroke="#c45c2a" stroke-width="1"/>
+<text x="230" y="396" text-anchor="middle" dominant-baseline="central" font-size="14.5" font-weight="600" fill="#8f3f1c">5 — Detailed FA analyses</text>
+<text x="230" y="414" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#c45c2a">Operating logic, chemical rates</text>
+<line x1="230" y1="428" x2="230" y2="456" stroke="#8a8a80" stroke-width="1.6" marker-end="url(#fa-arrow)"/>
+
+<rect x="70" y="460" width="320" height="54" rx="11" fill="#f7ede3" stroke="#c45c2a" stroke-width="1"/>
+<text x="230" y="482" text-anchor="middle" dominant-baseline="central" font-size="14.5" font-weight="600" fill="#8f3f1c">6 — Risk management plan</text>
+<text x="230" y="500" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#c45c2a">Operating guidelines, tender packages</text>
+</svg>
+<figcaption>The standard six-stage flow assurance workflow, from fluid characterisation through to the operating guidelines. The bulk of the work is completed during FEED.</figcaption>
+</figure>
+
+<p>Reading the stages in turn:</p>
+<ul class="clean">
+<li><strong>1 — Fluid characterisation.</strong> Validate the reservoir-fluid data and identify which issues apply. Outputs: PVT data, wax properties, the hydrate curve, asphaltene-stability and scale assessment.</li>
+<li><strong>2 — Steady-state thermal-hydraulics.</strong> Establish the concept under steady flow. Outputs: flowline pressure and rate, line size, maximum allowable slug size, insulation requirement.</li>
+<li><strong>3 — Transient thermal-hydraulics.</strong> Test under changing conditions — start-up, shut-down, blowdown, warm-up — with the risk and safe-operating analysis. <em>This is where the real risk lives</em>, because cooldown after a shut-in is when hydrates and wax form.</li>
+<li><strong>4 — Re-evaluate the preferred concept.</strong> Candidate concepts are screened on CAPEX and OPEX; note the feedback loop — the economics feed back into the technical choice.</li>
+<li><strong>5 — Detailed analyses.</strong> Take the fixed concept to detailed design: operating logic, chemical-injection type and rates, storage volumes, host-facility requirements.</li>
+<li><strong>6 — Risk management plan.</strong> Update the FA risk management plan and develop the operating guidelines; produce the final CAPEX / OPEX and tender packages.</li>
+</ul>
+
+<h3>Steady-state and transient analysis</h3>
+<p>Two analysis modes run through the workflow. The study begins with the <strong>steady-state model</strong>, built from the start point to the end point. Common tools include <code class="inl">OLGA</code> (transient and steady-state) with <code class="inl">Multiflash</code> or <code class="inl">PVTsim</code> for fluid PVT behaviour. The model needs route topography, layout configuration and pipe geometry; fluid composition is defined as a proportion of the production rate, together with all process data — scenarios, inlet pressure, tie-in pressure and MAOP. Simulations are run for a range of diameters; pressure and temperature are evaluated and hydrate (or other) risk assessed. The analysis identifies hydraulic capacity, velocity and erosional velocity, and defines steady-state operating pressures/temperatures as input to the mechanical design. The preferred diameter is selected on hydraulic capacity and flow stability.</p>
+<p>Once steady-state is complete, the <strong>transient analysis</strong> captures time-dependent behaviour:</p>
+<ul class="clean">
+<li><strong>Ramp-up</strong> — liquid surge and gas-rate increase developed during ramp-up from turndown.</li>
+<li><strong>Ramp-down</strong> — the transition period to reach a new steady state after a flow reduction.</li>
+<li><strong>Scraping</strong> — liquid surge into the slug catcher generated during pigging.</li>
+</ul>
+<p>The transient work also confirms the selected size is fit for purpose for the required maximum flow, inlet pressure and tie-in pressure. As a rule of thumb: steady-state sizes the system, while transient exposes the genuine hazards during start-up, shut-in and restart.</p>
+
+<h3>Software used in the oil &amp; gas industry</h3>
+<p>Flow assurance is almost entirely simulation-driven. A fluid-characterisation (PVT) layer feeds validated fluid models into the hydraulic simulators, which split into steady-state and transient packages.</p>
+<div class="tbl-wrap">
+<table>
+<caption>Recognised flow assurance software, grouped by function.</caption>
+<thead><tr><th>Tool</th><th>Vendor</th><th>Type</th><th>Primary use</th></tr></thead>
+<tbody>
+<tr><td class="mono">PIPESIM</td><td>SLB</td><td>Steady-state multiphase</td><td>Line sizing, nodal analysis, arrival conditions</td></tr>
+<tr><td class="mono">OLGA</td><td>SLB</td><td>Transient multiphase</td><td>Start-up, shut-in, cooldown, pigging, slugging</td></tr>
+<tr><td class="mono">LedaFlow</td><td>Kongsberg</td><td>Transient multiphase</td><td>Same transient scope as OLGA</td></tr>
+<tr><td class="mono">PVTsim Nova</td><td>Calsep</td><td>PVT / fluid model</td><td>Fluid characterisation, solids boundaries</td></tr>
+<tr><td class="mono">Multiflash</td><td>KBC / AspenTech</td><td>PVT / fluid model</td><td>Fluid characterisation, solids boundaries</td></tr>
+<tr><td class="mono">HYSYS / Symmetry</td><td>AspenTech / SLB</td><td>Process simulation</td><td>Topside facilities at the system boundary</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout important"><span class="c-label">In practice</span><p>The usual progression is <code class="inl">PIPESIM</code> first for steady-state sizing, then <code class="inl">OLGA</code> (or <code class="inl">LedaFlow</code>) for the transient studies — always with a PVT package such as <code class="inl">PVTsim</code> or <code class="inl">Multiflash</code> underpinning the fluid model. Transient-tool licences are expensive, which is one reason many operators outsource transient studies to specialist consultancies.</p></div>
 
 <h2 class="lesson" id="m1l2"><span class="l-tag">Section 1.2</span>Coordinate System</h2>
 
@@ -438,6 +541,8 @@
       <ol class="questions">
         <li>What are the two main workstreams when a new onshore pipeline project begins?</li>
         <li>Name the three transient scenarios a flow assurance study typically addresses.</li>
+        <li>Which flow assurance threat is generally the most feared, and why?</li>
+        <li>Which software is used for steady-state line sizing, and which two are the industry-standard transient multiphase simulators?</li>
         <li>What clear distance (OD to OD) is required between two parallel lines built at different times?</li>
         <li>Give the approximate sectionalizing-valve spacing for Location Classes 1 through 4 under ASME B31.8.</li>
       </ol>
@@ -797,7 +902,7 @@
   const MODULES = [
     { n: 1, title: "Pipeline Design Basis", sub: "Flow assurance, route, valves", lessons: [
       ["m1l0","1.0 — Course Introduction & Objectives"],
-      ["m1l1","1.1 — Flow Assurance Study"],
+      ["m1l1","1.1 — Flow Assurance Basic Theory"],
       ["m1l2","1.2 — Coordinate System"],
       ["m1l3","1.3 — Pipeline Routing"],
       ["m1l4","1.4 — Pipeline Spacing"],
