@@ -4,18 +4,15 @@
   const params = new URLSearchParams(window.location.search);
   const isAdmin =
     params.get("admin") === "PPA-ADMIN-2026" ||
-    localStorage.getItem("ppa_admin") === "PPA-ADMIN-2026";
+    localStorage.getItem("ppa_admin") === "1";   // ← your site stores "1"
 
   const today = new Date().toDateString();
   const isNewVisitToday = localStorage.getItem("ppa_visit_day") !== today;
 
-  // Count the visit for everyone (real number keeps growing)
   fetch(WORKER, { method: isNewVisitToday ? "POST" : "GET" })
     .then(r => r.json())
     .then(d => {
       if (isNewVisitToday) localStorage.setItem("ppa_visit_day", today);
-
-      // Only admins get a counter element at all
       if (!isAdmin) return;
 
       const footer = document.querySelector("footer");
@@ -27,5 +24,5 @@
       p.textContent = "👁️ " + d.count.toLocaleString() + " visitors";
       footer.appendChild(p);
     })
-    .catch(() => {}); // silent fail — nothing shows
+    .catch(() => {});
 })();
