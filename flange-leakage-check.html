@@ -3,125 +3,129 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flange Leakage Check — PipingPro Academy</title>
-
-
+<title>Flange Leakage Check — ASME B16.5 | PipingPro Academy</title>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --ink:#1c1917;--ink2:#57534e;--ink3:#a8a29e;
-  --paper:#fdf8f0;--paper2:#fef3e2;--paper3:#fde8c8;
-  --gold:#8b6508;--gold2:#b8860b;--gold-bd:rgba(217,119,6,0.2);
-  --pass:#065f46;--pass-bg:#d1fae5;--pass-bd:#6ee7b7;
-  --fail:#991b1b;--fail-bg:#fee2e2;--fail-bd:#fca5a5;
-  --warn:#6e2e14;--warn-bg:#fef3c7;--warn-bd:#fcd34d;
-  --serif:'DM Serif Display',Georgia,serif;
-  --sans:'DM Sans',system-ui,sans-serif;
-  --mono:'DM Mono',monospace;
+  --bg:#F7F6F3;--surface:#FFFFFF;--border:#E2E0D8;--border-strong:#C8C5BA;
+  --text:#1A1917;--text-2:#5C5A54;--text-3:#9C9A94;
+  --accent:#8b3a1a;--accent-light:#e7f1ee;--accent-border:#A8D4B8;
+  --info:#1A4A7A;--info-light:#E8F0F8;--info-border:#A8C4E0;
+  --warn:#7A4A0A;--warn-light:#FDF3E3;--warn-border:#F0C878;
+  --danger:#7A1A1A;--danger-light:#f6e6df;--danger-border:#F0A0A0;
+  --success:#8b3a1a;--success-light:#e7f1ee;
+  --radius:6px;--radius-lg:10px;
+  --font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;
 }
-body{font-family:var(--sans);background:var(--paper);color:var(--ink);min-height:100vh;padding:2rem 1rem 3rem;}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 15% 15%,rgba(217,119,6,0.07) 0%,transparent 55%),radial-gradient(ellipse at 85% 85%,rgba(180,83,9,0.04) 0%,transparent 55%);pointer-events:none;z-index:0;}
-.wrapper{position:relative;z-index:1;max-width:880px;margin:0 auto;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.6;min-height:100vh}
+.header{background:var(--accent);color:#fff;padding:1.5rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem}
+.header-title{font-size:20px;font-weight:600;letter-spacing:-0.02em}
+.header-sub{font-size:12px;opacity:0.75;margin-top:2px}
+.header-badge{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:500}
+.container{max-width:980px;margin:0 auto;padding:1.5rem 1rem}
+.disclaimer{background:var(--warn-light);border:1px solid var(--warn-border);border-radius:var(--radius);padding:0.75rem 1rem;margin-bottom:1.5rem;font-size:12px;color:var(--warn);line-height:1.6}
+.disclaimer strong{font-weight:600}
 
-/* Header */
-.header{display:flex;align-items:flex-start;gap:14px;margin-bottom:2rem;animation:fadeUp .5s ease both;}
-.hicon{width:50px;height:50px;min-width:50px;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 14px rgba(180,83,9,0.28);}
-.htitle{font-family:var(--serif);font-size:1.8rem;color:var(--ink);line-height:1.1;}
-.hsub{font-size:11px;color:#a78150;letter-spacing:.08em;text-transform:uppercase;font-weight:600;margin-top:3px;}
-.hdesc{font-size:13px;color:var(--ink2);margin-top:6px;max-width:600px;line-height:1.6;}
+/* CODE TABS */
+.code-bar{display:flex;gap:0;margin-bottom:1.5rem;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--surface)}
+.code-btn{flex:1;padding:11px 16px;font-size:13px;font-weight:500;border:none;background:transparent;color:var(--text-2);cursor:pointer;font-family:var(--font);transition:all 0.15s;border-right:1px solid var(--border);line-height:1.3}
+.code-btn:last-child{border-right:none}
+.code-btn.on{background:var(--accent);color:#fff;font-weight:600}
+.code-btn:hover:not(.on){background:var(--accent-light);color:var(--accent)}
+.code-desc{font-size:10px;opacity:0.8;display:block;margin-top:1px}
 
-/* Cards */
-.card{background:rgba(255,255,255,.9);border:1px solid var(--gold-bd);border-radius:14px;box-shadow:0 4px 24px rgba(120,80,20,.07);padding:1.5rem;margin-bottom:1.25rem;animation:fadeUp .5s ease both;}
-.ctitle{font-family:var(--serif);font-size:1.05rem;color:var(--ink);margin-bottom:1.1rem;padding-bottom:.65rem;border-bottom:1px solid var(--gold-bd);}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1rem;overflow:hidden;min-width:0}
+.card-title{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 16px}
+.grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 16px}
+.grid2>*,.grid3>*,.grid4>*{min-width:0}
+@media(max-width:700px){.grid2,.grid3,.grid4{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:11px;font-weight:500;color:var(--text-2)}
+.field input,.field select{font-size:13px;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius);background:#FAFAF8;color:var(--text);outline:none;transition:border-color 0.15s;font-family:var(--mono);width:100%;min-width:0;box-sizing:border-box}
+.field input:focus,.field select:focus{border-color:var(--accent);background:#fff}
+.field .hint{font-size:10px;color:var(--text-3)}
+.field .auto{background:#F0F4F0;color:var(--accent);font-weight:500;cursor:default}
+.hr{border:none;border-top:1px solid var(--border);margin:1rem 0}
 
-/* Form */
-.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
-.fg2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-.fg4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;}
-@media(max-width:600px){.fg3,.fg4{grid-template-columns:1fr 1fr;}.fg2{grid-template-columns:1fr;}}
-.field{display:flex;flex-direction:column;margin-bottom:0;}
-label{font-size:10.5px;font-weight:700;color:#8a7560;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;}
-select,input[type=number]{width:100%;padding:9px 12px;border:1.5px solid #e0cc9e;border-radius:8px;background:#fffbf4;font-family:var(--sans);font-size:13.5px;color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none;appearance:none;}
-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23b45309' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
-select:focus,input[type=number]:focus{border-color:var(--gold2);box-shadow:0 0 0 3px rgba(217,119,6,.12);}
-.gap{margin-top:14px;}
+/* FORMULA DISPLAY */
+.formula-box{background:var(--info-light);border:1px solid var(--info-border);border-radius:var(--radius);padding:0.75rem 1rem;margin-bottom:1rem;font-family:var(--mono);font-size:13px;color:var(--info);line-height:1.8}
+.formula-box .eq{font-size:15px;font-weight:600;margin-bottom:4px}
+.formula-box .vars{font-size:11px;color:var(--text-2);font-family:var(--font);line-height:1.7}
 
-/* Load group */
-.load-group{background:rgba(254,248,240,.6);border:1px solid var(--gold-bd);border-radius:10px;padding:1rem;}
-.lgtitle{font-size:10.5px;font-weight:700;color:#a38060;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;}
+.calcbtn{width:100%;padding:13px;font-size:14px;font-weight:600;border:none;border-radius:var(--radius);background:var(--accent);color:#fff;cursor:pointer;margin-top:0.75rem;transition:opacity 0.15s;font-family:var(--font);letter-spacing:0.01em}
+.calcbtn:hover{opacity:0.88}
 
-/* Gasket G display */
-.g-display{background:rgba(254,243,226,.7);border:1px solid rgba(217,119,6,.18);border-radius:8px;padding:8px 14px;display:flex;align-items:center;justify-content:space-between;margin-top:10px;}
-.g-val{font-family:var(--serif);font-size:1.3rem;color:#6e2e14;}
-.g-label{font-size:11px;color:#a78150;font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
+/* RESULTS */
+.results{display:none;margin-top:1.5rem}
 
-/* Button */
-.btn{display:block;width:100%;padding:14px;background:linear-gradient(135deg,#8b6508,#b8860b);color:#fff;border:none;border-radius:9px;font-family:var(--sans);font-size:15px;font-weight:700;letter-spacing:.03em;cursor:pointer;box-shadow:0 4px 14px rgba(180,83,9,.3);transition:all .2s;margin-top:1.25rem;}
-.btn:hover{background:linear-gradient(135deg,#6e2e14,#8b6508);transform:translateY(-1px);box-shadow:0 6px 18px rgba(180,83,9,.38);}
-.btn:active{transform:translateY(0);}
+/* RESULT HERO */
+.result-hero{background:var(--accent);border-radius:var(--radius-lg);padding:1.5rem 2rem;margin-bottom:1rem;color:#fff;display:flex;gap:2rem;flex-wrap:wrap;align-items:center}
+.hero-main{flex:1;min-width:160px}
+.hero-label{font-size:11px;opacity:0.7;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px}
+.hero-val{font-size:36px;font-weight:600;font-family:var(--mono);letter-spacing:-0.02em;line-height:1}
+.hero-unit{font-size:14px;opacity:0.8;margin-top:4px}
+.hero-divider{width:1px;background:rgba(255,255,255,0.2);align-self:stretch}
+.hero-sub{display:flex;flex-direction:column;gap:0.75rem}
+.hero-item{}
+.hero-item-label{font-size:10px;opacity:0.65;text-transform:uppercase;letter-spacing:0.06em}
+.hero-item-val{font-size:16px;font-weight:600;font-family:var(--mono)}
 
-/* Results */
-.results{display:none;animation:fadeUp .45s ease both;}
-.results.show{display:block;}
+/* SCHEDULE TABLE */
+.sched-table{width:100%;border-collapse:collapse;font-size:12px}
+.sched-table th{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.06em;text-align:left;padding:5px 8px;border-bottom:2px solid var(--border);background:var(--bg)}
+.sched-table td{padding:6px 8px;border-bottom:1px solid var(--border);font-family:var(--mono)}
+.sched-table tr:last-child td{border-bottom:none}
+.sched-table .label-col{font-family:var(--font);color:var(--text-2)}
+.sched-table tbody tr.clickable-row{cursor:pointer;transition:background 0.1s}
+.sched-table tbody tr.clickable-row:hover td{background:var(--accent-light)}
+.sched-table tbody tr.selected-row td{background:var(--accent-light);font-weight:600}
+.sched-table tbody tr.selected-row .label-col{color:var(--accent)}
+.sched-table tbody tr.thin-row td{opacity:0.55}
+.min-req-marker td{background:#FFF8E1;font-size:10px;color:#7A5C00;font-family:var(--font);padding:3px 8px;border-bottom:2px dashed #E0C040;letter-spacing:0.03em}
+.pass-tag{display:inline-block;background:var(--success-light);color:var(--success);font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px;margin-left:6px}
+.fail-tag{display:inline-block;background:var(--danger-light);color:var(--danger);font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px;margin-left:6px}
 
-/* Verdict */
-.verdict{border-radius:12px;padding:1.2rem 1.5rem;display:flex;align-items:center;gap:14px;margin-bottom:1.25rem;border:2px solid;}
-.verdict.pass{background:var(--pass-bg);border-color:var(--pass-bd);}
-.verdict.fail{background:var(--fail-bg);border-color:var(--fail-bd);}
-.verdict.warn{background:var(--warn-bg);border-color:var(--warn-bd);}
-.vicon{font-size:2rem;}
-.vtitle{font-family:var(--serif);font-size:1.25rem;}
-.verdict.pass .vtitle{color:var(--pass);}
-.verdict.fail .vtitle{color:var(--fail);}
-.verdict.warn .vtitle{color:var(--warn);}
-.vsub{font-size:12.5px;color:var(--ink2);margin-top:3px;}
+.rs{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1rem}
+.rs-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:0.5rem}
+.rs-title{font-size:13px;font-weight:600;color:var(--text)}
 
-/* Metrics */
-.mrow{display:grid;gap:8px;margin-bottom:10px;}
-.m2{grid-template-columns:1fr 1fr;}
-.m3{grid-template-columns:1fr 1fr 1fr;}
-.m4{grid-template-columns:1fr 1fr 1fr 1fr;}
-@media(max-width:500px){.m2,.m3,.m4{grid-template-columns:1fr 1fr;}}
-.metric{background:rgba(254,243,226,.6);border:1px solid rgba(217,119,6,.12);border-radius:8px;padding:10px 8px;text-align:center;}
-.metric.hi{background:rgba(180,83,9,.07);border-color:rgba(180,83,9,.22);}
-.metric.pass-m{background:var(--pass-bg);border-color:var(--pass-bd);}
-.metric.fail-m{background:var(--fail-bg);border-color:var(--fail-bd);}
-.metric.warn-m{background:var(--warn-bg);border-color:var(--warn-bd);}
-.mv{font-family:var(--serif);font-size:1.55rem;color:#6e2e14;line-height:1.1;}
-.mv.sm{font-size:1.15rem;}
-.mu{font-size:10px;color:#a87a40;text-transform:uppercase;letter-spacing:.07em;margin-top:1px;}
-.ml{font-size:10px;color:var(--ink2);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-top:3px;}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:0.75rem}
+.metric{background:var(--bg);border-radius:var(--radius);padding:0.6rem 0.75rem}
+.m-label{font-size:10px;font-weight:500;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px}
+.m-val{font-size:15px;font-weight:600;color:var(--text);font-family:var(--mono)}
+.m-unit{font-size:10px;color:var(--text-3);margin-top:1px}
 
-/* Progress bar */
-.pbar-bg{height:8px;border-radius:4px;background:rgba(217,119,6,.12);margin-top:6px;overflow:hidden;}
-.pbar-fill{height:100%;border-radius:4px;transition:width .7s ease;}
-.bar-pass{background:linear-gradient(90deg,#6ee7b7,#10b981);}
-.bar-warn{background:linear-gradient(90deg,#fcd34d,#d4a017);}
-.bar-fail{background:linear-gradient(90deg,#fca5a5,#8b3a1a);}
+/* WORKINGS */
+.wt-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;padding:0.5rem 0.75rem;background:var(--info-light);border:1px solid var(--info-border);border-radius:var(--radius);margin-top:0.75rem;user-select:none}
+.wt-toggle:hover{background:#D0E4F5}
+.wt-label{font-size:12px;font-weight:600;color:var(--info);flex:1}
+.wt-icon{font-size:14px;color:var(--info);transition:transform 0.2s}
+.wt-toggle.open .wt-icon{transform:rotate(180deg)}
+.wb{display:none;margin-top:0.75rem;border:1px solid var(--info-border);border-radius:var(--radius);overflow:hidden}
+.wb.open{display:block}
+.step{display:grid;grid-template-columns:30px 1fr;border-bottom:1px solid var(--border)}
+.step:last-child{border-bottom:none}
+.step-n{background:var(--info-light);color:var(--info);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--info-border)}
+.step-c{padding:0.55rem 0.85rem;background:#fff}
+.step-name{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px}
+.step-formula{font-family:var(--mono);font-size:12px;color:var(--info);background:var(--info-light);padding:2px 7px;border-radius:3px;display:inline-block;margin-bottom:4px;word-break:break-all}
+.step-sub{font-family:var(--mono);font-size:11px;color:var(--text-2);margin-bottom:3px;line-height:1.5}
+.step-result{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent)}
 
-/* Formula box */
-.formula-box{background:#fffbf4;border:1px solid rgba(217,119,6,.2);border-radius:8px;padding:10px 14px;font-family:var(--mono);font-size:12px;color:#78350f;margin-bottom:10px;line-height:1.8;}
+.refs{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-top:1.5rem}
+.refs-title{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem}
+.ref-item{font-size:12px;color:var(--text-2);margin-bottom:0.4rem;padding-left:1rem;position:relative;line-height:1.5}
+.ref-item::before{content:'—';position:absolute;left:0;color:var(--text-3)}
+.footer{text-align:center;padding:2rem 1rem;font-size:11px;color:var(--text-3)}
+.info-box{font-size:12px;color:var(--info);background:var(--info-light);border:1px solid var(--info-border);border-radius:var(--radius);padding:0.6rem 0.75rem;margin-top:0.75rem;line-height:1.7;word-break:break-word;overflow-wrap:break-word;width:100%;box-sizing:border-box}
+.warn-box{font-size:12px;color:var(--warn);background:var(--warn-light);border:1px solid var(--warn-border);border-radius:var(--radius);padding:0.6rem 0.75rem;margin-top:0.5rem;line-height:1.6}
 
-/* Section title */
-.stitle{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#a38060;margin-bottom:8px;}
-
-/* Notes */
-.note{display:flex;align-items:flex-start;gap:7px;padding:8px 12px;border-left:3px solid #b8860b;border-radius:0 6px 6px 0;margin-bottom:6px;font-size:12.5px;color:#78350f;line-height:1.5;}
-.note.fail-n{border-left-color:#8b3a1a;background:rgba(254,226,226,.5);color:#7f1d1d;}
-.note.ok-n{border-left-color:#10b981;background:rgba(209,250,229,.5);color:#064e3b;}
-.note-arr{flex-shrink:0;margin-top:1px;color:#b8860b;}
-.note.fail-n .note-arr{color:#8b3a1a;}
-.note.ok-n .note-arr{color:#10b981;}
-
-.disclaimer{font-size:10.5px;color:var(--ink3);border-top:1px solid var(--gold-bd);padding-top:10px;margin-top:1rem;line-height:1.6;}
-
-/* Pill */
-.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;}
-.p-pass{background:var(--pass-bg);color:var(--pass);border:1px solid var(--pass-bd);}
-.p-fail{background:var(--fail-bg);color:var(--fail);border:1px solid var(--fail-bd);}
-.p-warn{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-bd);}
-
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+/* code-specific panels */
+.panel{display:none}
+.panel.active{display:block}
 
 /* ─── THEORY & REFERENCE TAB ─── */
 .ref-section{background:#fff;border:1px solid var(--rule, rgba(26,26,24,0.12));border-radius:12px;padding:1.4rem 1.6rem;margin-bottom:1.1rem;}
@@ -254,8 +258,65 @@ body{ background:#faf6ef; color:#1a1510; }
 </style>
 <!-- ===== end PipingPro Brand Bridge ===== -->
 
+<style id="fl-extra">
+/* ---- Flange restyle to match the suite layout (markup + JS untouched) ---- */
+.ctitle{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--border);}
+.ctitle span{font-family:var(--font);}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;}
+.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 16px;}
+.fg2>*,.fg3>*{min-width:0;}
+.gap{margin-top:12px;}
+@media(max-width:700px){.fg3{grid-template-columns:1fr 1fr;}}
+@media(max-width:480px){.fg2,.fg3{grid-template-columns:1fr;}}
+.btn{width:100%;padding:13px;font-size:14px;font-weight:600;border:none;border-radius:var(--radius);background:var(--accent);color:#fff;cursor:pointer;margin-top:.75rem;font-family:var(--font);letter-spacing:.01em;transition:opacity .15s;}
+.btn:hover{opacity:.88;}
+/* verdict banner (hero-equivalent) */
+.verdict{display:flex;align-items:center;gap:1rem;border-radius:var(--radius-lg);padding:1.25rem 1.5rem;margin-bottom:1rem;border:1px solid;}
+.verdict .vicon{font-size:1.9rem;line-height:1;}
+.vtitle{font-size:1.05rem;font-weight:700;}
+.vsub{font-size:.78rem;opacity:.85;margin-top:3px;font-family:var(--mono);}
+.verdict.pass{background:var(--pass-bg);border-color:var(--pass);color:var(--pass);}
+.verdict.fail{background:var(--fail-bg);border-color:var(--fail);color:var(--fail);}
+.verdict.warn{background:var(--warn-bg);border-color:var(--warn-bd);color:var(--warn);}
+/* metrics */
+.mrow{display:grid;gap:8px;margin-bottom:.75rem;}
+.mrow.m4{grid-template-columns:repeat(4,1fr);}
+.mrow.m3{grid-template-columns:repeat(3,1fr);}
+@media(max-width:600px){.mrow.m4,.mrow.m3{grid-template-columns:1fr 1fr;}}
+.mv{font-size:18px;font-weight:600;color:var(--text);font-family:var(--mono);line-height:1.1;}
+.mv.sm{font-size:15px;}
+.mu{font-size:10px;color:var(--text-3);margin-top:1px;}
+.ml{font-size:10px;font-weight:500;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;margin-top:4px;}
+.metric.hi{background:var(--accent-light);}
+.metric.hi .mv{color:var(--accent);}
+.metric.pass-m{background:var(--pass-bg);}
+.metric.warn-m{background:var(--warn-bg);}
+.metric.fail-m{background:var(--fail-bg);}
+.stitle{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.08em;margin:1rem 0 .6rem;}
+.pbar-bg{height:6px;background:var(--border);border-radius:3px;margin-top:8px;overflow:hidden;}
+.pbar-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .4s;}
+.pbar-fill.bar-pass{background:var(--pass);}
+.pbar-fill.bar-warn{background:var(--warn-bd);}
+.pbar-fill.bar-fail{background:var(--fail);}
+/* gasket display */
+.g-display{display:flex;justify-content:space-between;align-items:center;gap:1rem;background:var(--accent-light);border:1px solid var(--accent-border);border-radius:var(--radius);padding:.8rem 1rem;margin:14px 0;flex-wrap:wrap;}
+.g-label{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.04em;}
+.g-val{font-size:22px;font-weight:600;font-family:var(--mono);color:var(--accent);}
+/* load groups */
+.load-group{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:.85rem;}
+.lgtitle{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.6rem;}
+/* notes */
+.note{display:flex;gap:8px;font-size:12px;color:var(--info);background:var(--info-light);border:1px solid var(--info-border);border-radius:var(--radius);padding:.6rem .75rem;margin-bottom:.5rem;line-height:1.6;}
+.note .note-arr{color:var(--accent);font-weight:700;}
+.note.ok-n{color:var(--pass);background:var(--pass-bg);border-color:var(--pass);}
+.note.fail-n{color:var(--fail);background:var(--fail-bg);border-color:var(--fail);}
+/* results show toggle (flange JS uses .show) */
+.results.show{display:block;}
+</style>
+
 </head>
 <body>
+
 <nav class="ppa-nav">
   <a href="index.html" class="ppa-nav-logo">Piping<span>Pro</span> Academy</a>
   <a href="calculators.html" class="ppa-nav-back">← Back to Calculators</a>
@@ -263,21 +324,16 @@ body{ background:#faf6ef; color:#1a1510; }
 <div class="ppa-hero">
   <div class="ppa-hero-eyebrow">Members · Engineering Calculator Suite</div>
   <h1>Flange Leakage <em>Check</em></h1>
-  <p>Pressure Equivalent (PEQ) method — combined pressure, bending moment &amp; axial force per ASME B16.5</p>
+  <p>Pressure Equivalent (PEQ) method — combined pressure, bending moment &amp; axial force per ASME B16.5.</p>
 </div>
 
-<div class="wrapper">
-
-<!-- Header -->
-<div class="header">
-  <div class="hicon">🔩</div>
-  <div>
-    <div class="htitle">Flange Leakage Check</div>
-    <div class="hsub">PipingPro Academy · Calculator Suite</div>
-    <p class="hdesc">Pressure Equivalent (PEQ) method — checks flange leakage under combined pressure, bending moment, and axial force per <strong>ASME B16.5</strong> pressure-temperature ratings. Gasket G dimensions auto-populated from ASME B16.20 / B16.21 tables.</p>
-  </div>
+<div class="calc-tabs">
+  <button class="calc-tab active" onclick="showCalcTab('calculator')">⚙ Calculator</button>
+  <button class="calc-tab" onclick="showCalcTab('theory')">📚 Theory &amp; Reference</button>
 </div>
 
+<div class="calc-panel active" id="calctab-calculator">
+<div class="container">
 <!-- Flange Setup -->
 <div class="card">
   <div class="ctitle">Flange Configuration</div>
@@ -478,11 +534,178 @@ body{ background:#faf6ef; color:#1a1510; }
   </div>
 </div>
 
-</div><!-- /wrapper -->
+</div>
+</div><!-- /calctab-calculator -->
 
+<div class="calc-panel" id="calctab-theory">
+<div class="container">
+  <div class="ref-section">
+    <div class="ref-title">Pressure Equivalent (PEQ) Method</div>
+    <div class="ref-formula"><b>Peq = Pdes + PEQ-M + PEQ-F</b><br>PEQ-M = (16/π) · Mr / G³ &nbsp;·&nbsp; PEQ-F = (4/π) · Fa / G²<br>Mr = √(Mb1² + Mb2²) &nbsp;·&nbsp; G = gasket mean diameter</div>
+    <div class="ref-note">External bending moment and axial force are converted into an equivalent pressure and added to design pressure. The flange is leak-tight when the total equivalent pressure stays within the ASME B16.5 pressure-temperature rating.</div>
+  </div>
+  <div class="ref-section">
+    <div class="ref-title">Acceptance Check</div>
+    <div class="ref-formula"><b>Peq ≤ P16.5 (allowable at temperature)</b><br>Utilisation = Peq / P16.5 × 100%</div>
+    <div class="ref-note">≤ 85% — comfortable margin · 85–100% — marginal, recheck under upset/hydrotest · &gt; 100% — fails; re-route piping, add flexibility, or upgrade the flange class.</div>
+  </div>
+  <div class="ref-section">
+    <div class="ref-title">Gasket Mean Diameter G</div>
+    <div class="ref-formula"><b>G from ASME B16.20 / B16.21 tables</b><br>Spiral wound (B16.20) · Flat / raised face (B16.21) · Ring joint (B16.20)</div>
+    <div class="ref-note">G is auto-populated by NPS, class and gasket type, and can be overridden from the actual gasket datasheet. For spiral wound gaskets, G is taken at the inner winding seating diameter.</div>
+  </div>
+  <div class="ref-section">
+    <div class="ref-title">Reference</div>
+    <div class="ref-table-wrap"><table class="ref-table">
+      <tr><th>Reference</th><th>Application</th></tr>
+      <tr><td>ASME B16.5</td><td>Flange pressure-temperature ratings (Group 1.1 carbon steel)</td></tr>
+      <tr><td>ASME B16.20/21</td><td>Gasket mean diameter G</td></tr>
+      <tr><td>EN 1591-1 / VIII-2</td><td>Formal flange integrity analysis for safety-critical duty</td></tr>
+    </table></div>
+  </div>
+</div>
+</div><!-- /calctab-theory -->
 
+<footer class="ppa-footer">
+  <div class="ppa-footer-logo">Piping<span>Pro</span> Academy</div>
+  <div>Engineering Calculator Suite · Flange Leakage Check · © Zephrum Konsultan Limited</div>
+</footer>
 
+<script>
+function showCalcTab(name){
+  ['calculator','theory'].forEach(function(t){
+    var b=document.querySelector('.calc-tab[onclick*="'+t+'"]');var p=document.getElementById('calctab-'+t);
+    if(b)b.classList.toggle('active',t===name);if(p)p.classList.toggle('active',t===name);
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+<!-- ════════ PipingPro Shared Report Engine v1.0 ════════
+     Inject before </body>. Each calculator sets window.PPA_REPORT = {...} on
+     calculate(), then a button calls ppaOpenReport(). One template, all calcs. -->
+<div id="ppa-rpt-modal" style="display:none;position:fixed;inset:0;background:rgba(26,21,16,.55);z-index:10000;align-items:center;justify-content:center;padding:1rem">
+  <div style="background:#faf6ef;border-radius:8px;max-width:560px;width:100%;padding:1.6rem 1.8rem;box-shadow:0 10px 40px rgba(26,21,16,.3);font-family:'DM Sans',sans-serif">
+    <h3 style="font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:1.3rem;color:#1a1510;margin:0 0 .3rem">Report Details</h3>
+    <p style="font-size:.82rem;color:#4a3f30;margin:0 0 1.1rem">Project information for the report header. All fields optional.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.7rem .9rem">
+      <div><label class="ppa-rl">Your Company</label><input id="ppa-rpt-company" type="text" placeholder="e.g. Zephrum Konsultan" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Client</label><input id="ppa-rpt-client" type="text" placeholder="e.g. Saudi Aramco" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Project</label><input id="ppa-rpt-project" type="text" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Project No.</label><input id="ppa-rpt-projectno" type="text" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Line / Tag</label><input id="ppa-rpt-line" type="text" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Revision</label><input id="ppa-rpt-rev" type="text" placeholder="0" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Prepared by</label><input id="ppa-rpt-engineer" type="text" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Checked by</label><input id="ppa-rpt-checker" type="text" class="ppa-ri"></div>
+    </div>
+    <div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1.3rem">
+      <button onclick="ppaCloseReport()" style="background:transparent;color:#4a3f30;border:1px solid #c8b89a;padding:.6rem 1.2rem;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600">Cancel</button>
+      <button onclick="ppaGenerateReport()" style="background:#b8860b;color:#1a1510;border:none;padding:.6rem 1.5rem;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:700">Generate Report →</button>
+    </div>
+  </div>
+</div>
+<style>
+.ppa-rl{display:block;font-size:.72rem;font-weight:600;color:#4a3f30;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.25rem}
+.ppa-ri{width:100%;padding:.5rem;border:1px solid #c8b89a;border-radius:4px;background:#fff;font-size:.85rem;font-family:'DM Sans',sans-serif}
+</style>
+<script>
+function ppaOpenReport(){
+  if(!window.PPA_REPORT){ alert('Please run a calculation first.'); return; }
+  try{ const s=JSON.parse(localStorage.getItem('ppa_report_meta')||'{}');
+    [['ppa-rpt-company','company'],['ppa-rpt-client','client'],['ppa-rpt-project','project'],
+     ['ppa-rpt-projectno','projectNo'],['ppa-rpt-engineer','engineer'],['ppa-rpt-checker','checker']]
+     .forEach(([id,k])=>{const el=document.getElementById(id); if(el&&!el.value&&s[k]) el.value=s[k];});
+  }catch(e){}
+  document.getElementById('ppa-rpt-modal').style.display='flex';
+}
+function ppaCloseReport(){ document.getElementById('ppa-rpt-modal').style.display='none'; }
+function ppaGenerateReport(){
+  const R=window.PPA_REPORT; if(!R){ alert('Please run a calculation first.'); return; }
+  const g=id=>(document.getElementById(id)?.value||'').trim();
+  const m={company:g('ppa-rpt-company'),client:g('ppa-rpt-client'),project:g('ppa-rpt-project'),
+    projectNo:g('ppa-rpt-projectno'),line:g('ppa-rpt-line'),engineer:g('ppa-rpt-engineer'),
+    checker:g('ppa-rpt-checker'),rev:g('ppa-rpt-rev')||'0'};
+  try{ localStorage.setItem('ppa_report_meta',JSON.stringify({company:m.company,client:m.client,
+    project:m.project,projectNo:m.projectNo,engineer:m.engineer,checker:m.checker})); }catch(e){}
+  const now=new Date().toLocaleDateString('en-GB');
 
+  // Build sections from R.sections: [{title, type:'table'|'steps'|'text', ...}]
+  let bodyHtml='';
+  (R.sections||[]).forEach((s,i)=>{
+    bodyHtml+=`<h3>${i+1}. ${s.title}</h3>`;
+    if(s.badge) bodyHtml+=`<div class="code-badge">${s.badge}</div>`;
+    if(s.type==='table'){
+      const head=s.head||['Parameter','Value','Unit'];
+      bodyHtml+=`<table class="d"><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr>`+
+        s.rows.map(r=>`<tr>${r.map((c,ci)=>`<td class="${ci>0&&ci<r.length-1||head[ci]==='Value'?'num':''}">${c}</td>`).join('')}</tr>`).join('')+`</table>`;
+    } else if(s.type==='steps'){
+      bodyHtml+=`<div class="steps">${s.html}</div>`;
+    } else if(s.type==='text'){
+      bodyHtml+=`<div class="ptext">${s.html}</div>`;
+    }
+  });
+  let v=''; if(R.verdict){ const c=R.verdict.status; v=`<div class="verdict ${c}">${R.verdict.text}</div>`; }
+
+  const html=`<!DOCTYPE html><html><head><meta charset="utf-8"/>
+<title>${R.docType||'Calculation'} Report — ${m.project||'PipingPro'}</title>
+<style>
+@page{margin:18mm 16mm}*{box-sizing:border-box}
+body{font-family:'Helvetica Neue',Arial,sans-serif;font-size:10.5pt;color:#1a1510;margin:0;line-height:1.5}
+.sheet{max-width:780px;margin:0 auto}
+.head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #b8860b;padding-bottom:12px}
+.logo{font-family:Georgia,serif;font-size:19pt;color:#1a1510;font-weight:bold;line-height:1.15}
+.logo span.sub{display:block;font-family:Arial;font-size:8pt;color:#6b5d49;letter-spacing:.08em;font-weight:normal;margin-top:3px}
+.logo span.sub b{font-weight:bold;color:#b8860b}
+.doctype{text-align:right;font-size:8.5pt;color:#4a3f30}
+.doctype b{display:block;font-size:11pt;color:#1a1510;font-family:Georgia,serif}
+.meta{width:100%;border-collapse:collapse;font-size:8.5pt;margin:14px 0 6px}
+.meta td{border:1px solid #c8b89a;padding:4px 8px}
+.meta td.l{background:#f5e9c8;color:#4a3f30;font-weight:bold;width:18%;text-transform:uppercase;font-size:7.5pt;letter-spacing:.04em}
+h3{font-family:Georgia,serif;font-size:12pt;color:#1a1510;border-bottom:1.5px solid #b8860b;padding-bottom:4px;margin:22px 0 8px}
+.code-badge{display:inline-block;background:#1a1510;color:#d4a017;font-family:monospace;font-size:9pt;padding:3px 10px;border-radius:3px;margin-bottom:4px}
+table.d{width:100%;border-collapse:collapse;font-size:9.5pt}
+table.d th{background:#1a1510;color:#d4a017;padding:6px 9px;text-align:left;font-size:8.5pt;text-transform:uppercase;letter-spacing:.03em}
+table.d td{padding:5px 9px;border-bottom:1px solid #e8dfd0}
+table.d td.num{text-align:right;font-family:'IBM Plex Mono',monospace}
+table.d tr:nth-child(even) td{background:#faf6ef}
+.verdict{padding:12px 16px;border-radius:5px;font-weight:bold;font-size:11pt;margin:16px 0;border:1px solid}
+.verdict.pass{background:#e7f1ee;color:#1a6b5a;border-color:#1a6b5a}
+.verdict.fail{background:#f6e6df;color:#8b3a1a;border-color:#8b3a1a}
+.verdict.warn{background:#f5e9c8;color:#6b4e00;border-color:#b8860b}
+.steps{font-family:'IBM Plex Mono',monospace;font-size:8.5pt;background:#faf6ef;border:1px solid #e8dfd0;border-left:3px solid #b8860b;padding:10px 14px;line-height:1.85}
+.ptext{font-size:9.5pt;line-height:1.65;color:#1a1510;white-space:pre-wrap}
+.sig{display:flex;gap:30px;margin-top:26px}
+.sig div{flex:1;border-top:1px solid #1a1510;padding-top:5px;font-size:8pt;color:#4a3f30}
+.disc{font-size:7.5pt;color:#6b5d49;margin-top:22px;line-height:1.55;border-top:1px solid #e8dfd0;padding-top:10px}
+.foot{margin-top:14px;font-size:7.5pt;color:#6b5d49;text-align:center}
+@media print{.noprint{display:none}}
+.noprint{text-align:center;margin:16px 0}
+.noprint button{background:#b8860b;color:#1a1510;border:none;padding:10px 22px;font-size:11pt;font-weight:bold;border-radius:3px;cursor:pointer;font-family:Arial}
+</style></head><body>
+<div class="noprint"><button onclick="window.print()">⬇ Print / Save as PDF</button></div>
+<div class="sheet">
+  <div class="head">
+    <div class="logo">${m.company||'Engineering Calculation'}<span class="sub">Powered by Piping<b>Pro</b> Academy · Calculator Suite</span></div>
+    <div class="doctype"><b>${(R.docType||'CALCULATION').toUpperCase()}</b>Calculation Report<br/>Doc Rev. ${m.rev} &nbsp;·&nbsp; ${now}</div>
+  </div>
+  <table class="meta">
+    <tr><td class="l">Client</td><td>${m.client||'—'}</td><td class="l">Project</td><td>${m.project||'—'}</td></tr>
+    <tr><td class="l">Project No.</td><td>${m.projectNo||'—'}</td><td class="l">Line / Tag</td><td>${m.line||'—'}</td></tr>
+    <tr><td class="l">Prepared by</td><td>${m.engineer||'—'}</td><td class="l">Checked by</td><td>${m.checker||'—'}</td></tr>
+  </table>
+  ${bodyHtml}
+  ${v}
+  <div class="sig">
+    <div>Prepared: ${m.engineer||'________________'}<br/>Date: ${now}</div>
+    <div>Checked: ${m.checker||'________________'}<br/>Date: ________________</div>
+  </div>
+  <div class="disc"><b>Preliminary engineering output</b> — results must be independently verified by a competent engineer against the governing code edition${R.codeNote?(' ('+R.codeNote+')'):''} and project specifications before use in any design, procurement, or construction package. Issued subject to the PipingPro Academy Terms of Use. © 2026 Zephrum Konsultan Limited.</div>
+  <div class="foot">${m.company||'PipingPro Academy'} · Generated with PipingPro Academy Calculator Suite · ${now}</div>
+</div></body></html>`;
+  const w=window.open('','_blank'); w.document.write(html); w.document.close(); ppaCloseReport();
+}
+</script>
+<!-- ════════ end Shared Report Engine ════════ -->
+<script src="/ppa-report-gate.js"></script>
 
 <script>
 // ── Gasket G dimension tables (mm) — ASME B16.20 / B16.21
@@ -806,131 +1029,6 @@ function ppaOpenReportFlange(){
   window.PPA_REPORT = window.FLANGE_R; ppaOpenReport();
 }
 </script>
-<!-- ════════ PipingPro Shared Report Engine v1.0 ════════
-     Inject before </body>. Each calculator sets window.PPA_REPORT = {...} on
-     calculate(), then a button calls ppaOpenReport(). One template, all calcs. -->
-<div id="ppa-rpt-modal" style="display:none;position:fixed;inset:0;background:rgba(26,21,16,.55);z-index:10000;align-items:center;justify-content:center;padding:1rem">
-  <div style="background:#faf6ef;border-radius:8px;max-width:560px;width:100%;padding:1.6rem 1.8rem;box-shadow:0 10px 40px rgba(26,21,16,.3);font-family:'DM Sans',sans-serif">
-    <h3 style="font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:1.3rem;color:#1a1510;margin:0 0 .3rem">Report Details</h3>
-    <p style="font-size:.82rem;color:#4a3f30;margin:0 0 1.1rem">Project information for the report header. All fields optional.</p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.7rem .9rem">
-      <div><label class="ppa-rl">Your Company</label><input id="ppa-rpt-company" type="text" placeholder="e.g. Zephrum Konsultan" class="ppa-ri"></div>
-      <div><label class="ppa-rl">Client</label><input id="ppa-rpt-client" type="text" placeholder="e.g. Saudi Aramco" class="ppa-ri"></div>
-      <div><label class="ppa-rl">Project</label><input id="ppa-rpt-project" type="text" class="ppa-ri"></div>
-      <div><label class="ppa-rl">Project No.</label><input id="ppa-rpt-projectno" type="text" class="ppa-ri"></div>
-      <div><label class="ppa-rl">Line / Tag</label><input id="ppa-rpt-line" type="text" class="ppa-ri"></div>
-      <div><label class="ppa-rl">Revision</label><input id="ppa-rpt-rev" type="text" placeholder="0" class="ppa-ri"></div>
-      <div><label class="ppa-rl">Prepared by</label><input id="ppa-rpt-engineer" type="text" class="ppa-ri"></div>
-      <div><label class="ppa-rl">Checked by</label><input id="ppa-rpt-checker" type="text" class="ppa-ri"></div>
-    </div>
-    <div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1.3rem">
-      <button onclick="ppaCloseReport()" style="background:transparent;color:#4a3f30;border:1px solid #c8b89a;padding:.6rem 1.2rem;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600">Cancel</button>
-      <button onclick="ppaGenerateReport()" style="background:#b8860b;color:#1a1510;border:none;padding:.6rem 1.5rem;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:700">Generate Report →</button>
-    </div>
-  </div>
-</div>
-<style>
-.ppa-rl{display:block;font-size:.72rem;font-weight:600;color:#4a3f30;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.25rem}
-.ppa-ri{width:100%;padding:.5rem;border:1px solid #c8b89a;border-radius:4px;background:#fff;font-size:.85rem;font-family:'DM Sans',sans-serif}
-</style>
-<script>
-function ppaOpenReport(){
-  if(!window.PPA_REPORT){ alert('Please run a calculation first.'); return; }
-  try{ const s=JSON.parse(localStorage.getItem('ppa_report_meta')||'{}');
-    [['ppa-rpt-company','company'],['ppa-rpt-client','client'],['ppa-rpt-project','project'],
-     ['ppa-rpt-projectno','projectNo'],['ppa-rpt-engineer','engineer'],['ppa-rpt-checker','checker']]
-     .forEach(([id,k])=>{const el=document.getElementById(id); if(el&&!el.value&&s[k]) el.value=s[k];});
-  }catch(e){}
-  document.getElementById('ppa-rpt-modal').style.display='flex';
-}
-function ppaCloseReport(){ document.getElementById('ppa-rpt-modal').style.display='none'; }
-function ppaGenerateReport(){
-  const R=window.PPA_REPORT; if(!R){ alert('Please run a calculation first.'); return; }
-  const g=id=>(document.getElementById(id)?.value||'').trim();
-  const m={company:g('ppa-rpt-company'),client:g('ppa-rpt-client'),project:g('ppa-rpt-project'),
-    projectNo:g('ppa-rpt-projectno'),line:g('ppa-rpt-line'),engineer:g('ppa-rpt-engineer'),
-    checker:g('ppa-rpt-checker'),rev:g('ppa-rpt-rev')||'0'};
-  try{ localStorage.setItem('ppa_report_meta',JSON.stringify({company:m.company,client:m.client,
-    project:m.project,projectNo:m.projectNo,engineer:m.engineer,checker:m.checker})); }catch(e){}
-  const now=new Date().toLocaleDateString('en-GB');
-
-  // Build sections from R.sections: [{title, type:'table'|'steps'|'text', ...}]
-  let bodyHtml='';
-  (R.sections||[]).forEach((s,i)=>{
-    bodyHtml+=`<h3>${i+1}. ${s.title}</h3>`;
-    if(s.badge) bodyHtml+=`<div class="code-badge">${s.badge}</div>`;
-    if(s.type==='table'){
-      const head=s.head||['Parameter','Value','Unit'];
-      bodyHtml+=`<table class="d"><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr>`+
-        s.rows.map(r=>`<tr>${r.map((c,ci)=>`<td class="${ci>0&&ci<r.length-1||head[ci]==='Value'?'num':''}">${c}</td>`).join('')}</tr>`).join('')+`</table>`;
-    } else if(s.type==='steps'){
-      bodyHtml+=`<div class="steps">${s.html}</div>`;
-    } else if(s.type==='text'){
-      bodyHtml+=`<div class="ptext">${s.html}</div>`;
-    }
-  });
-  let v=''; if(R.verdict){ const c=R.verdict.status; v=`<div class="verdict ${c}">${R.verdict.text}</div>`; }
-
-  const html=`<!DOCTYPE html><html><head><meta charset="utf-8"/>
-<title>${R.docType||'Calculation'} Report — ${m.project||'PipingPro'}</title>
-<style>
-@page{margin:18mm 16mm}*{box-sizing:border-box}
-body{font-family:'Helvetica Neue',Arial,sans-serif;font-size:10.5pt;color:#1a1510;margin:0;line-height:1.5}
-.sheet{max-width:780px;margin:0 auto}
-.head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #b8860b;padding-bottom:12px}
-.logo{font-family:Georgia,serif;font-size:19pt;color:#1a1510;font-weight:bold;line-height:1.15}
-.logo span.sub{display:block;font-family:Arial;font-size:8pt;color:#6b5d49;letter-spacing:.08em;font-weight:normal;margin-top:3px}
-.logo span.sub b{font-weight:bold;color:#b8860b}
-.doctype{text-align:right;font-size:8.5pt;color:#4a3f30}
-.doctype b{display:block;font-size:11pt;color:#1a1510;font-family:Georgia,serif}
-.meta{width:100%;border-collapse:collapse;font-size:8.5pt;margin:14px 0 6px}
-.meta td{border:1px solid #c8b89a;padding:4px 8px}
-.meta td.l{background:#f5e9c8;color:#4a3f30;font-weight:bold;width:18%;text-transform:uppercase;font-size:7.5pt;letter-spacing:.04em}
-h3{font-family:Georgia,serif;font-size:12pt;color:#1a1510;border-bottom:1.5px solid #b8860b;padding-bottom:4px;margin:22px 0 8px}
-.code-badge{display:inline-block;background:#1a1510;color:#d4a017;font-family:monospace;font-size:9pt;padding:3px 10px;border-radius:3px;margin-bottom:4px}
-table.d{width:100%;border-collapse:collapse;font-size:9.5pt}
-table.d th{background:#1a1510;color:#d4a017;padding:6px 9px;text-align:left;font-size:8.5pt;text-transform:uppercase;letter-spacing:.03em}
-table.d td{padding:5px 9px;border-bottom:1px solid #e8dfd0}
-table.d td.num{text-align:right;font-family:'IBM Plex Mono',monospace}
-table.d tr:nth-child(even) td{background:#faf6ef}
-.verdict{padding:12px 16px;border-radius:5px;font-weight:bold;font-size:11pt;margin:16px 0;border:1px solid}
-.verdict.pass{background:#e7f1ee;color:#1a6b5a;border-color:#1a6b5a}
-.verdict.fail{background:#f6e6df;color:#8b3a1a;border-color:#8b3a1a}
-.verdict.warn{background:#f5e9c8;color:#6b4e00;border-color:#b8860b}
-.steps{font-family:'IBM Plex Mono',monospace;font-size:8.5pt;background:#faf6ef;border:1px solid #e8dfd0;border-left:3px solid #b8860b;padding:10px 14px;line-height:1.85}
-.ptext{font-size:9.5pt;line-height:1.65;color:#1a1510;white-space:pre-wrap}
-.sig{display:flex;gap:30px;margin-top:26px}
-.sig div{flex:1;border-top:1px solid #1a1510;padding-top:5px;font-size:8pt;color:#4a3f30}
-.disc{font-size:7.5pt;color:#6b5d49;margin-top:22px;line-height:1.55;border-top:1px solid #e8dfd0;padding-top:10px}
-.foot{margin-top:14px;font-size:7.5pt;color:#6b5d49;text-align:center}
-@media print{.noprint{display:none}}
-.noprint{text-align:center;margin:16px 0}
-.noprint button{background:#b8860b;color:#1a1510;border:none;padding:10px 22px;font-size:11pt;font-weight:bold;border-radius:3px;cursor:pointer;font-family:Arial}
-</style></head><body>
-<div class="noprint"><button onclick="window.print()">⬇ Print / Save as PDF</button></div>
-<div class="sheet">
-  <div class="head">
-    <div class="logo">${m.company||'Engineering Calculation'}<span class="sub">Powered by Piping<b>Pro</b> Academy · Calculator Suite</span></div>
-    <div class="doctype"><b>${(R.docType||'CALCULATION').toUpperCase()}</b>Calculation Report<br/>Doc Rev. ${m.rev} &nbsp;·&nbsp; ${now}</div>
-  </div>
-  <table class="meta">
-    <tr><td class="l">Client</td><td>${m.client||'—'}</td><td class="l">Project</td><td>${m.project||'—'}</td></tr>
-    <tr><td class="l">Project No.</td><td>${m.projectNo||'—'}</td><td class="l">Line / Tag</td><td>${m.line||'—'}</td></tr>
-    <tr><td class="l">Prepared by</td><td>${m.engineer||'—'}</td><td class="l">Checked by</td><td>${m.checker||'—'}</td></tr>
-  </table>
-  ${bodyHtml}
-  ${v}
-  <div class="sig">
-    <div>Prepared: ${m.engineer||'________________'}<br/>Date: ${now}</div>
-    <div>Checked: ${m.checker||'________________'}<br/>Date: ________________</div>
-  </div>
-  <div class="disc"><b>Preliminary engineering output</b> — results must be independently verified by a competent engineer against the governing code edition${R.codeNote?(' ('+R.codeNote+')'):''} and project specifications before use in any design, procurement, or construction package. Issued subject to the PipingPro Academy Terms of Use. © 2026 Zephrum Konsultan Limited.</div>
-  <div class="foot">${m.company||'PipingPro Academy'} · Generated with PipingPro Academy Calculator Suite · ${now}</div>
-</div></body></html>`;
-  const w=window.open('','_blank'); w.document.write(html); w.document.close(); ppaCloseReport();
-}
-</script>
-<!-- ════════ end Shared Report Engine ════════ -->
 
 </body>
 </html>

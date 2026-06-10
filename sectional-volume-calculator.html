@@ -4,123 +4,128 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sectional Volume Calculator — PipingPro Academy</title>
-
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --ink:#1c1917;--ink2:#57534e;--ink3:#a8a29e;
-  --paper:#fdf8f0;--paper2:#fef3e2;--paper3:#fde8c8;
-  --gold:#8b6508;--gold2:#b8860b;--gold-bd:rgba(217,119,6,0.2);
-  --pass:#065f46;--pass-bg:#d1fae5;--pass-bd:#6ee7b7;
-  --fail:#991b1b;--fail-bg:#fee2e2;--fail-bd:#fca5a5;
-  --warn:#6e2e14;--warn-bg:#fef3c7;--warn-bd:#fcd34d;
-  --serif:'DM Serif Display',Georgia,serif;
-  --sans:'DM Sans',system-ui,sans-serif;
-  --mono:'DM Mono',monospace;
+  --bg:#F7F6F3;--surface:#FFFFFF;--border:#E2E0D8;--border-strong:#C8C5BA;
+  --text:#1A1917;--text-2:#5C5A54;--text-3:#9C9A94;
+  --accent:#8b3a1a;--accent-light:#e7f1ee;--accent-border:#A8D4B8;
+  --info:#1A4A7A;--info-light:#E8F0F8;--info-border:#A8C4E0;
+  --warn:#7A4A0A;--warn-light:#FDF3E3;--warn-border:#F0C878;
+  --danger:#7A1A1A;--danger-light:#f6e6df;--danger-border:#F0A0A0;
+  --success:#8b3a1a;--success-light:#e7f1ee;
+  --radius:6px;--radius-lg:10px;
+  --font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;
 }
-body{font-family:var(--sans);background:var(--paper);color:var(--ink);min-height:100vh;padding:2rem 1rem 3rem;}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 15% 15%,rgba(217,119,6,0.07) 0%,transparent 55%),radial-gradient(ellipse at 85% 85%,rgba(180,83,9,0.04) 0%,transparent 55%);pointer-events:none;z-index:0;}
-.wrapper{position:relative;z-index:1;max-width:880px;margin:0 auto;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.6;min-height:100vh}
+.header{background:var(--accent);color:#fff;padding:1.5rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem}
+.header-title{font-size:20px;font-weight:600;letter-spacing:-0.02em}
+.header-sub{font-size:12px;opacity:0.75;margin-top:2px}
+.header-badge{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:500}
+.container{max-width:980px;margin:0 auto;padding:1.5rem 1rem}
+.disclaimer{background:var(--warn-light);border:1px solid var(--warn-border);border-radius:var(--radius);padding:0.75rem 1rem;margin-bottom:1.5rem;font-size:12px;color:var(--warn);line-height:1.6}
+.disclaimer strong{font-weight:600}
 
-/* Header */
-.header{display:flex;align-items:flex-start;gap:14px;margin-bottom:2rem;animation:fadeUp .5s ease both;}
-.hicon{width:50px;height:50px;min-width:50px;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 14px rgba(180,83,9,0.28);}
-.htitle{font-family:var(--serif);font-size:1.8rem;color:var(--ink);line-height:1.1;}
-.hsub{font-size:11px;color:#a78150;letter-spacing:.08em;text-transform:uppercase;font-weight:600;margin-top:3px;}
-.hdesc{font-size:13px;color:var(--ink2);margin-top:6px;max-width:600px;line-height:1.6;}
+/* CODE TABS */
+.code-bar{display:flex;gap:0;margin-bottom:1.5rem;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--surface)}
+.code-btn{flex:1;padding:11px 16px;font-size:13px;font-weight:500;border:none;background:transparent;color:var(--text-2);cursor:pointer;font-family:var(--font);transition:all 0.15s;border-right:1px solid var(--border);line-height:1.3}
+.code-btn:last-child{border-right:none}
+.code-btn.on{background:var(--accent);color:#fff;font-weight:600}
+.code-btn:hover:not(.on){background:var(--accent-light);color:var(--accent)}
+.code-desc{font-size:10px;opacity:0.8;display:block;margin-top:1px}
 
-/* Cards */
-.card{background:rgba(255,255,255,.9);border:1px solid var(--gold-bd);border-radius:14px;box-shadow:0 4px 24px rgba(120,80,20,.07);padding:1.5rem;margin-bottom:1.25rem;animation:fadeUp .5s ease both;}
-.ctitle{font-family:var(--serif);font-size:1.05rem;color:var(--ink);margin-bottom:1.1rem;padding-bottom:.65rem;border-bottom:1px solid var(--gold-bd);}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1rem;overflow:hidden;min-width:0}
+.card-title{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 16px}
+.grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 16px}
+.grid2>*,.grid3>*,.grid4>*{min-width:0}
+@media(max-width:700px){.grid2,.grid3,.grid4{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:11px;font-weight:500;color:var(--text-2)}
+.field input,.field select{font-size:13px;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius);background:#FAFAF8;color:var(--text);outline:none;transition:border-color 0.15s;font-family:var(--mono);width:100%;min-width:0;box-sizing:border-box}
+.field input:focus,.field select:focus{border-color:var(--accent);background:#fff}
+.field .hint{font-size:10px;color:var(--text-3)}
+.field .auto{background:#F0F4F0;color:var(--accent);font-weight:500;cursor:default}
+.hr{border:none;border-top:1px solid var(--border);margin:1rem 0}
 
-/* Form */
-.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
-.fg2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-.fg4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;}
-@media(max-width:600px){.fg3,.fg4{grid-template-columns:1fr 1fr;}.fg2{grid-template-columns:1fr;}}
-.field{display:flex;flex-direction:column;margin-bottom:0;}
-label{font-size:10.5px;font-weight:700;color:#8a7560;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;}
-select,input[type=number]{width:100%;padding:9px 12px;border:1.5px solid #e0cc9e;border-radius:8px;background:#fffbf4;font-family:var(--sans);font-size:13.5px;color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none;appearance:none;}
-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23b45309' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
-select:focus,input[type=number]:focus{border-color:var(--gold2);box-shadow:0 0 0 3px rgba(217,119,6,.12);}
-.gap{margin-top:14px;}
+/* FORMULA DISPLAY */
+.formula-box{background:var(--info-light);border:1px solid var(--info-border);border-radius:var(--radius);padding:0.75rem 1rem;margin-bottom:1rem;font-family:var(--mono);font-size:13px;color:var(--info);line-height:1.8}
+.formula-box .eq{font-size:15px;font-weight:600;margin-bottom:4px}
+.formula-box .vars{font-size:11px;color:var(--text-2);font-family:var(--font);line-height:1.7}
 
-/* Load group */
-.load-group{background:rgba(254,248,240,.6);border:1px solid var(--gold-bd);border-radius:10px;padding:1rem;}
-.lgtitle{font-size:10.5px;font-weight:700;color:#a38060;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;}
+.calcbtn{width:100%;padding:13px;font-size:14px;font-weight:600;border:none;border-radius:var(--radius);background:var(--accent);color:#fff;cursor:pointer;margin-top:0.75rem;transition:opacity 0.15s;font-family:var(--font);letter-spacing:0.01em}
+.calcbtn:hover{opacity:0.88}
 
-/* Gasket G display */
-.g-display{background:rgba(254,243,226,.7);border:1px solid rgba(217,119,6,.18);border-radius:8px;padding:8px 14px;display:flex;align-items:center;justify-content:space-between;margin-top:10px;}
-.g-val{font-family:var(--serif);font-size:1.3rem;color:#6e2e14;}
-.g-label{font-size:11px;color:#a78150;font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
+/* RESULTS */
+.results{display:none;margin-top:1.5rem}
 
-/* Button */
-.btn{display:block;width:100%;padding:14px;background:linear-gradient(135deg,#8b6508,#b8860b);color:#fff;border:none;border-radius:9px;font-family:var(--sans);font-size:15px;font-weight:700;letter-spacing:.03em;cursor:pointer;box-shadow:0 4px 14px rgba(180,83,9,.3);transition:all .2s;margin-top:1.25rem;}
-.btn:hover{background:linear-gradient(135deg,#6e2e14,#8b6508);transform:translateY(-1px);box-shadow:0 6px 18px rgba(180,83,9,.38);}
-.btn:active{transform:translateY(0);}
+/* RESULT HERO */
+.result-hero{background:var(--accent);border-radius:var(--radius-lg);padding:1.5rem 2rem;margin-bottom:1rem;color:#fff;display:flex;gap:2rem;flex-wrap:wrap;align-items:center}
+.hero-main{flex:1;min-width:160px}
+.hero-label{font-size:11px;opacity:0.7;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px}
+.hero-val{font-size:36px;font-weight:600;font-family:var(--mono);letter-spacing:-0.02em;line-height:1}
+.hero-unit{font-size:14px;opacity:0.8;margin-top:4px}
+.hero-divider{width:1px;background:rgba(255,255,255,0.2);align-self:stretch}
+.hero-sub{display:flex;flex-direction:column;gap:0.75rem}
+.hero-item{}
+.hero-item-label{font-size:10px;opacity:0.65;text-transform:uppercase;letter-spacing:0.06em}
+.hero-item-val{font-size:16px;font-weight:600;font-family:var(--mono)}
 
-/* Results */
-.results{display:none;animation:fadeUp .45s ease both;}
-.results.show{display:block;}
+/* SCHEDULE TABLE */
+.sched-table{width:100%;border-collapse:collapse;font-size:12px}
+.sched-table th{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.06em;text-align:left;padding:5px 8px;border-bottom:2px solid var(--border);background:var(--bg)}
+.sched-table td{padding:6px 8px;border-bottom:1px solid var(--border);font-family:var(--mono)}
+.sched-table tr:last-child td{border-bottom:none}
+.sched-table .label-col{font-family:var(--font);color:var(--text-2)}
+.sched-table tbody tr.clickable-row{cursor:pointer;transition:background 0.1s}
+.sched-table tbody tr.clickable-row:hover td{background:var(--accent-light)}
+.sched-table tbody tr.selected-row td{background:var(--accent-light);font-weight:600}
+.sched-table tbody tr.selected-row .label-col{color:var(--accent)}
+.sched-table tbody tr.thin-row td{opacity:0.55}
+.min-req-marker td{background:#FFF8E1;font-size:10px;color:#7A5C00;font-family:var(--font);padding:3px 8px;border-bottom:2px dashed #E0C040;letter-spacing:0.03em}
+.pass-tag{display:inline-block;background:var(--success-light);color:var(--success);font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px;margin-left:6px}
+.fail-tag{display:inline-block;background:var(--danger-light);color:var(--danger);font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px;margin-left:6px}
 
-/* Verdict */
-.verdict{border-radius:12px;padding:1.2rem 1.5rem;display:flex;align-items:center;gap:14px;margin-bottom:1.25rem;border:2px solid;}
-.verdict.pass{background:var(--pass-bg);border-color:var(--pass-bd);}
-.verdict.fail{background:var(--fail-bg);border-color:var(--fail-bd);}
-.verdict.warn{background:var(--warn-bg);border-color:var(--warn-bd);}
-.vicon{font-size:2rem;}
-.vtitle{font-family:var(--serif);font-size:1.25rem;}
-.verdict.pass .vtitle{color:var(--pass);}
-.verdict.fail .vtitle{color:var(--fail);}
-.verdict.warn .vtitle{color:var(--warn);}
-.vsub{font-size:12.5px;color:var(--ink2);margin-top:3px;}
+.rs{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1rem}
+.rs-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:0.5rem}
+.rs-title{font-size:13px;font-weight:600;color:var(--text)}
 
-/* Metrics */
-.mrow{display:grid;gap:8px;margin-bottom:10px;}
-.m2{grid-template-columns:1fr 1fr;}
-.m3{grid-template-columns:1fr 1fr 1fr;}
-.m4{grid-template-columns:1fr 1fr 1fr 1fr;}
-@media(max-width:500px){.m2,.m3,.m4{grid-template-columns:1fr 1fr;}}
-.metric{background:rgba(254,243,226,.6);border:1px solid rgba(217,119,6,.12);border-radius:8px;padding:10px 8px;text-align:center;}
-.metric.hi{background:rgba(180,83,9,.07);border-color:rgba(180,83,9,.22);}
-.metric.pass-m{background:var(--pass-bg);border-color:var(--pass-bd);}
-.metric.fail-m{background:var(--fail-bg);border-color:var(--fail-bd);}
-.metric.warn-m{background:var(--warn-bg);border-color:var(--warn-bd);}
-.mv{font-family:var(--serif);font-size:1.55rem;color:#6e2e14;line-height:1.1;}
-.mv.sm{font-size:1.15rem;}
-.mu{font-size:10px;color:#a87a40;text-transform:uppercase;letter-spacing:.07em;margin-top:1px;}
-.ml{font-size:10px;color:var(--ink2);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-top:3px;}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:0.75rem}
+.metric{background:var(--bg);border-radius:var(--radius);padding:0.6rem 0.75rem}
+.m-label{font-size:10px;font-weight:500;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px}
+.m-val{font-size:15px;font-weight:600;color:var(--text);font-family:var(--mono)}
+.m-unit{font-size:10px;color:var(--text-3);margin-top:1px}
 
-/* Progress bar */
-.pbar-bg{height:8px;border-radius:4px;background:rgba(217,119,6,.12);margin-top:6px;overflow:hidden;}
-.pbar-fill{height:100%;border-radius:4px;transition:width .7s ease;}
-.bar-pass{background:linear-gradient(90deg,#6ee7b7,#10b981);}
-.bar-warn{background:linear-gradient(90deg,#fcd34d,#d4a017);}
-.bar-fail{background:linear-gradient(90deg,#fca5a5,#8b3a1a);}
+/* WORKINGS */
+.wt-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;padding:0.5rem 0.75rem;background:var(--info-light);border:1px solid var(--info-border);border-radius:var(--radius);margin-top:0.75rem;user-select:none}
+.wt-toggle:hover{background:#D0E4F5}
+.wt-label{font-size:12px;font-weight:600;color:var(--info);flex:1}
+.wt-icon{font-size:14px;color:var(--info);transition:transform 0.2s}
+.wt-toggle.open .wt-icon{transform:rotate(180deg)}
+.wb{display:none;margin-top:0.75rem;border:1px solid var(--info-border);border-radius:var(--radius);overflow:hidden}
+.wb.open{display:block}
+.step{display:grid;grid-template-columns:30px 1fr;border-bottom:1px solid var(--border)}
+.step:last-child{border-bottom:none}
+.step-n{background:var(--info-light);color:var(--info);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--info-border)}
+.step-c{padding:0.55rem 0.85rem;background:#fff}
+.step-name{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px}
+.step-formula{font-family:var(--mono);font-size:12px;color:var(--info);background:var(--info-light);padding:2px 7px;border-radius:3px;display:inline-block;margin-bottom:4px;word-break:break-all}
+.step-sub{font-family:var(--mono);font-size:11px;color:var(--text-2);margin-bottom:3px;line-height:1.5}
+.step-result{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent)}
 
-/* Formula box */
-.formula-box{background:#fffbf4;border:1px solid rgba(217,119,6,.2);border-radius:8px;padding:10px 14px;font-family:var(--mono);font-size:12px;color:#78350f;margin-bottom:10px;line-height:1.8;}
+.refs{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-top:1.5rem}
+.refs-title{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem}
+.ref-item{font-size:12px;color:var(--text-2);margin-bottom:0.4rem;padding-left:1rem;position:relative;line-height:1.5}
+.ref-item::before{content:'—';position:absolute;left:0;color:var(--text-3)}
+.footer{text-align:center;padding:2rem 1rem;font-size:11px;color:var(--text-3)}
+.info-box{font-size:12px;color:var(--info);background:var(--info-light);border:1px solid var(--info-border);border-radius:var(--radius);padding:0.6rem 0.75rem;margin-top:0.75rem;line-height:1.7;word-break:break-word;overflow-wrap:break-word;width:100%;box-sizing:border-box}
+.warn-box{font-size:12px;color:var(--warn);background:var(--warn-light);border:1px solid var(--warn-border);border-radius:var(--radius);padding:0.6rem 0.75rem;margin-top:0.5rem;line-height:1.6}
 
-/* Section title */
-.stitle{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#a38060;margin-bottom:8px;}
-
-/* Notes */
-.note{display:flex;align-items:flex-start;gap:7px;padding:8px 12px;border-left:3px solid #b8860b;border-radius:0 6px 6px 0;margin-bottom:6px;font-size:12.5px;color:#78350f;line-height:1.5;}
-.note.fail-n{border-left-color:#8b3a1a;background:rgba(254,226,226,.5);color:#7f1d1d;}
-.note.ok-n{border-left-color:#10b981;background:rgba(209,250,229,.5);color:#064e3b;}
-.note-arr{flex-shrink:0;margin-top:1px;color:#b8860b;}
-.note.fail-n .note-arr{color:#8b3a1a;}
-.note.ok-n .note-arr{color:#10b981;}
-
-.disclaimer{font-size:10.5px;color:var(--ink3);border-top:1px solid var(--gold-bd);padding-top:10px;margin-top:1rem;line-height:1.6;}
-
-/* Pill */
-.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;}
-.p-pass{background:var(--pass-bg);color:var(--pass);border:1px solid var(--pass-bd);}
-.p-fail{background:var(--fail-bg);color:var(--fail);border:1px solid var(--fail-bd);}
-.p-warn{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-bd);}
-
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+/* code-specific panels */
+.panel{display:none}
+.panel.active{display:block}
 
 /* ─── THEORY & REFERENCE TAB ─── */
 .ref-section{background:#fff;border:1px solid var(--rule, rgba(26,26,24,0.12));border-radius:12px;padding:1.4rem 1.6rem;margin-bottom:1.1rem;}
@@ -254,25 +259,24 @@ body{ background:#faf6ef; color:#1a1510; }
 <!-- ===== end PipingPro Brand Bridge ===== -->
 
 <style id="sv-extra">
-/* Sectional-volume table + mini buttons — uses brand tokens */
-.sv-table{width:100%;border-collapse:collapse;min-width:520px;}
-.sv-table thead th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#8a7560;text-align:left;padding:0 8px 8px;border-bottom:1px solid var(--rule);white-space:nowrap;}
-.sv-table thead th.num{text-align:right;}
-.sv-table tbody td{padding:5px 6px;border-bottom:1px solid var(--rule);vertical-align:middle;}
-.sv-table tbody tr:last-child td{border-bottom:none;}
-.sv-table td.num{text-align:right;}
-.sv-table .rownum{font-family:var(--mono);font-size:12px;color:#a8a29e;width:26px;}
-.sv-table input[type=number]{padding:7px 9px;}
-.sv-table td.num input{font-family:var(--mono);text-align:right;}
-.sv-table .area-cell{font-family:var(--mono);font-weight:600;color:#6e2e14;}
-.sv-del{border:none;background:transparent;color:#a8a29e;cursor:pointer;font-size:17px;line-height:1;padding:2px 6px;border-radius:6px;}
-.sv-del:hover{color:#8b3a1a;background:#f6e6df;}
-.sv-scroll{overflow-x:auto;margin:0 -.3rem;}
-.btn-mini{background:#fff;border:1.5px solid #e0cc9e;color:#6e2e14;font-family:var(--sans);font-weight:600;font-size:13px;padding:8px 14px;border-radius:8px;cursor:pointer;transition:border-color .2s,color .2s;}
-.btn-mini:hover{border-color:var(--gold2);}
-.btn-mini.ghost{color:#8a7560;}
-.metric.na .mv{font-size:.95rem;color:#a8a29e;}
-.calc-panel{display:none;}.calc-panel.active{display:block;}
+.wtab{width:100%;border-collapse:collapse;font-size:12px;min-width:520px;}
+.wtab th{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;text-align:left;padding:5px 8px;border-bottom:2px solid var(--border);background:var(--bg);white-space:nowrap;}
+.wtab th.num{text-align:right;}
+.wtab td{padding:4px 6px;border-bottom:1px solid var(--border);}
+.wtab td.num{text-align:right;}
+.wtab tr:last-child td{border-bottom:none;}
+.wtab .rownum{font-family:var(--mono);color:var(--text-3);font-size:11px;width:24px;}
+.wtab input{font-size:12px;padding:6px 8px;border:1px solid var(--border);border-radius:var(--radius);background:#FAFAF8;color:var(--text);font-family:var(--mono);width:100%;outline:none;}
+.wtab input:focus{border-color:var(--accent);background:#fff;}
+.wtab td.num input{text-align:right;}
+.wtab .area-out{font-family:var(--mono);font-weight:600;color:var(--accent);}
+.wt-del{border:none;background:transparent;color:var(--text-3);cursor:pointer;font-size:16px;padding:2px 6px;border-radius:4px;}
+.wt-del:hover{color:var(--danger);background:var(--danger-light);}
+.tscroll{overflow-x:auto;}
+.minibtn{background:#fff;border:1px solid var(--border-strong);color:var(--accent);font-family:var(--font);font-weight:600;font-size:12px;padding:7px 13px;border-radius:var(--radius);cursor:pointer;}
+.minibtn:hover{background:var(--accent-light);}
+.minibtn.ghost{color:var(--text-2);}
+.m-val.na{font-size:12px;color:var(--text-3);}
 </style>
 
 </head>
@@ -284,198 +288,139 @@ body{ background:#faf6ef; color:#1a1510; }
 </nav>
 <div class="ppa-hero">
   <div class="ppa-hero-eyebrow">Members · Engineering Calculator Suite</div>
-  <h1>Sectional Volume <em>Calculator</em></h1>
-  <p>Trench &amp; excavation volume from cross-sections — average end-area &amp; prismoidal (Simpson's) methods</p>
+  <h1>Sectional <em>Volume</em></h1>
+  <p>Trench, excavation or irregular-prism volume from cross-sections by station — average end-area &amp; prismoidal (Simpson's) methods.</p>
 </div>
 
-<div class="calc-tabs" style="max-width:880px;margin:0 auto;">
-  <button class="calc-tab active" onclick="showCalcTab('calculator')">Calculator</button>
-  <button class="calc-tab" onclick="showCalcTab('theory')">Theory &amp; Reference</button>
+<div class="calc-tabs">
+  <button class="calc-tab active" onclick="showCalcTab('calculator')">⚙ Calculator</button>
+  <button class="calc-tab" onclick="showCalcTab('theory')">📚 Theory &amp; Reference</button>
 </div>
 
-<!-- ===== CALCULATOR PANEL ===== -->
 <div class="calc-panel active" id="calctab-calculator">
-<div class="wrapper">
+<div class="container">
 
-  <div class="header">
-    <div class="hicon">⛏️</div>
-    <div>
-      <div class="htitle">Sectional Volume Calculator</div>
-      <div class="hsub">PipingPro Academy · Calculator Suite</div>
-      <p class="hdesc">Volume of a trench, excavation or irregular prism from cross-sectional areas taken at stations along its length. Enter the area directly, or compute it from trapezoidal trench geometry. <strong>Average end-area</strong> and <strong>prismoidal (Simpson's)</strong> methods side by side.</p>
-    </div>
+  <div class="formula-box">
+    <div class="eq">End-area: V = Σ (A₁+A₂)/2 · L &nbsp;·&nbsp; Prismoidal: V = (d/3)[A₀ + 4·Σodd + 2·Σeven + Aₙ]</div>
+    <div class="vars">Take the cross-sectional area at stations along the run. Average end-area works for any spacing; prismoidal (Simpson's) is more accurate but needs equal spacing and an odd number of sections.</div>
   </div>
 
-  <!-- Setup -->
   <div class="card">
-    <div class="ctitle">Setup</div>
-    <div class="fg3">
+    <div class="card-title">1 — Setup</div>
+    <div class="grid3">
       <div class="field">
         <label>Area Input</label>
-        <select id="mode" onchange="onMode()">
-          <option value="direct">Enter area directly</option>
-          <option value="trench">Trench geometry → area</option>
-        </select>
+        <select id="mode" onchange="onMode()"><option value="direct">Enter area directly</option><option value="trench">Trench geometry → area</option></select>
       </div>
       <div class="field">
         <label>Units</label>
-        <select id="unit" onchange="onUnit()">
-          <option value="m">Metric (m, m³)</option>
-          <option value="ft">Imperial (ft, ft³)</option>
-        </select>
+        <select id="unit" onchange="onUnit()"><option value="m">Metric (m, m³)</option><option value="ft">Imperial (ft, ft³)</option></select>
       </div>
       <div class="field">
         <label>Swell / Bulking Factor (%)</label>
         <input type="number" id="swell" value="0" min="0" step="1">
+        <span class="hint">In-situ → loose volume (optional)</span>
       </div>
     </div>
-    <div class="note" id="trenchNote" style="display:none;margin-top:14px;">
-      <span class="note-arr">▸</span>
-      <div><b>Trapezoidal trench area</b> = (b + s·h)·h — b = bottom width, h = depth, s = side slope (horizontal run per 1 vertical). Use s = 0 for vertical shored walls; side slopes assumed symmetric.</div>
-    </div>
+    <div class="info-box" id="trenchNote" style="display:none;"><b>Trapezoidal trench area</b> = (b + s·h)·h — b = bottom width, h = depth, s = side slope (H per 1 V). s = 0 for vertical shored walls; slopes symmetric.</div>
   </div>
 
-  <!-- Cross-sections -->
-  <div class="card" style="animation-delay:.07s">
-    <div class="ctitle">Cross-Sections by Station <span style="font-family:var(--sans);font-size:12px;color:#a38060;font-weight:400;">(ordered along the run)</span></div>
-    <div class="sv-scroll">
-      <table class="sv-table"><thead id="thead"></thead><tbody id="rows"></tbody></table>
+  <div class="card">
+    <div class="card-title">2 — Cross-Sections by Station <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-3);">(ordered along the run)</span></div>
+    <div class="tscroll"><table class="wtab"><thead id="thead"></thead><tbody id="rows"></tbody></table></div>
+    <div style="display:flex;gap:.5rem;margin-top:.8rem;flex-wrap:wrap;">
+      <button class="minibtn" onclick="addRow()">+ Add station</button>
+      <button class="minibtn ghost" onclick="clearAll()">Clear all</button>
     </div>
-    <div style="display:flex;gap:.6rem;margin-top:1rem;flex-wrap:wrap;">
-      <button class="btn-mini" onclick="addRow()">+ Add station</button>
-      <button class="btn-mini ghost" onclick="clearAll()">Clear all</button>
-    </div>
-    <button class="btn" onclick="calculate()">Calculate Volume →</button>
+    <button class="calcbtn" onclick="calculate()">Calculate Volume</button>
   </div>
 
-  <!-- RESULTS -->
   <div class="results" id="results">
-    <div class="verdict warn" id="verdict">
-      <div class="vicon">📐</div>
-      <div>
-        <div class="vtitle" id="vtitle">—</div>
-        <div class="vsub" id="vsub"></div>
+    <div class="result-hero">
+      <div class="hero-main">
+        <div class="hero-label">Governing Volume</div>
+        <div class="hero-val"><span id="h-vol">—</span> <span style="font-size:18px;opacity:.8;" id="h-vunit">m³</span></div>
+        <div class="hero-unit" id="h-method">—</div>
+      </div>
+      <div class="hero-divider"></div>
+      <div class="hero-sub">
+        <div class="hero-item"><div class="hero-item-label">Total Length</div><div class="hero-item-val"><span id="h-len">—</span> <span id="h-lunit">m</span></div></div>
+        <div class="hero-item"><div class="hero-item-label">Sections</div><div class="hero-item-val" id="h-secs">—</div></div>
+        <div class="hero-item"><div class="hero-item-label">In cubic yards</div><div class="hero-item-val"><span id="h-yd">—</span> yd³</div></div>
       </div>
     </div>
 
-    <div class="card">
-      <div class="stitle">Volume Summary</div>
-      <div class="formula-box" id="formula-box"></div>
-
-      <div class="mrow m4" style="margin-bottom:12px;">
-        <div class="metric hi"><div class="mv sm" id="r-aea">—</div><div class="mu" id="u-aea">m³</div><div class="ml">Average End-Area</div></div>
-        <div class="metric" id="m-pris"><div class="mv sm" id="r-pris">—</div><div class="mu" id="u-pris">m³</div><div class="ml">Prismoidal (Simpson)</div></div>
-        <div class="metric"><div class="mv sm" id="r-yd">—</div><div class="mu">yd³</div><div class="ml">Cubic Yards</div></div>
-        <div class="metric" id="m-loose" style="display:none;"><div class="mv sm" id="r-loose">—</div><div class="mu" id="u-loose">m³</div><div class="ml">Loose (after swell)</div></div>
+    <div class="rs">
+      <div class="rs-head"><div class="rs-title">Volume Methods</div></div>
+      <div class="metrics">
+        <div class="metric"><div class="m-label">Average End-Area</div><div class="m-val" id="m-aea">—</div><div class="m-unit" id="u-aea">m³</div></div>
+        <div class="metric"><div class="m-label">Prismoidal (Simpson)</div><div class="m-val" id="m-pris">—</div><div class="m-unit" id="u-pris">m³</div></div>
+        <div class="metric"><div class="m-label">Cubic Yards</div><div class="m-val" id="m-yd">—</div><div class="m-unit">yd³</div></div>
+        <div class="metric" id="m-loose-box" style="display:none;"><div class="m-label">Loose (after swell)</div><div class="m-val" id="m-loose">—</div><div class="m-unit" id="u-loose">m³</div></div>
       </div>
+      <div class="warn-box" id="prisNote" style="display:none;"></div>
+    </div>
 
-      <div class="stitle">Segment Breakdown — End-Area</div>
-      <div class="sv-scroll" style="margin-bottom:12px;">
-        <table class="sv-table">
-          <thead><tr><th>Segment</th><th class="num">Length</th><th class="num">A₁</th><th class="num">A₂</th><th class="num">Volume</th></tr></thead>
-          <tbody id="segRows"></tbody>
-          <tfoot><tr><td style="font-weight:700;color:#6e2e14;">Total</td><td class="num" id="segLen" style="font-weight:700;">—</td><td class="num"></td><td class="num"></td><td class="num" id="segVol" style="font-weight:700;color:#6e2e14;">—</td></tr></tfoot>
-        </table>
-      </div>
+    <div class="rs">
+      <div class="rs-head"><div class="rs-title">Segment Breakdown — End-Area</div></div>
+      <div class="tscroll"><table class="wtab" style="min-width:0;">
+        <thead><tr><th>Segment</th><th class="num">Length</th><th class="num">A₁</th><th class="num">A₂</th><th class="num">Volume</th></tr></thead>
+        <tbody id="segRows"></tbody>
+      </table></div>
+    </div>
 
-      <div class="stitle">Engineering Notes</div>
+    <div class="rs">
+      <div class="rs-head"><div class="rs-title">Engineering Notes</div></div>
       <div id="notes"></div>
-
-      <div style="text-align:center;margin:1.3rem 0 .3rem;display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;">
-        <button onclick="ppaOpenReportSV()" style="background:#8b3a1a;color:#fff;border:none;padding:.8rem 1.8rem;font-size:.95rem;font-weight:700;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif">⬇ Download PDF Report</button>
-        <button onclick="exportCsv()" class="btn-mini">Export CSV</button>
-      </div>
-
-      <div class="disclaimer">
-        Average end-area: V = Σ (A₁+A₂)/2 · L — always valid for any spacing. Prismoidal (Simpson's): V = (d/3)[A₀ + 4·Σodd + 2·Σeven + Aₙ] — valid only for equal spacing with an odd number of stations.<br>
-        End-area slightly over-reads on concave runs. Swell/bulking factors vary with soil type and compaction.<br>
-        For preliminary engineering use only. Verify against survey data and project earthwork specifications before use in any quantity, procurement or claim.
+      <div style="display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:1rem;">
+        <button class="calcbtn" style="width:auto;margin-top:0;" onclick="ppaOpenReportSV()">⬇ Download PDF Report</button>
+        <button class="minibtn" onclick="exportCsv()">Export CSV</button>
       </div>
     </div>
   </div>
 
-</div><!-- /wrapper -->
+</div>
 </div><!-- /calctab-calculator -->
 
-<!-- ===== THEORY PANEL ===== -->
 <div class="calc-panel" id="calctab-theory">
-<div style="max-width:920px;margin:0 auto;padding:2rem 1.5rem;">
-  <div style="background:var(--accent-light,#f7ede3);border:1px solid rgba(196,92,42,.2);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--accent,#8b3a1a);margin-bottom:1.2rem;line-height:1.7;">
-    📚 Methods and code references for sectional earthwork volumes. For full worked examples, visit <strong>PipingPro Academy</strong> courses.
-  </div>
-
+<div class="container">
   <div class="ref-section">
     <div class="ref-title">Average End-Area Method</div>
-    <div class="ref-formula">
-      <b>V = Σ [ (Aᵢ + Aᵢ₊₁) / 2 × Lᵢ ]</b><br/>
-      Aᵢ, Aᵢ₊₁ = cross-section areas at consecutive stations<br/>
-      Lᵢ = distance (chainage) between the two stations
-    </div>
-    <div class="ref-note">The workhorse method for trench and excavation quantities. Works for any station spacing. It slightly over-estimates volume where the run is concave between sections; the prismoidal method corrects this.</div>
+    <div class="ref-formula"><b>V = Σ [ (Aᵢ + Aᵢ₊₁)/2 × Lᵢ ]</b><br>A = cross-section areas at consecutive stations · L = distance between them</div>
+    <div class="ref-note">The workhorse method for trench and excavation quantities; works for any spacing. Slightly over-estimates on concave runs — the prismoidal method corrects this.</div>
   </div>
-
   <div class="ref-section">
     <div class="ref-title">Prismoidal (Simpson's 1/3) Method</div>
-    <div class="ref-formula">
-      <b>V = (d/3) × [ A₀ + 4(A₁+A₃+…) + 2(A₂+A₄+…) + Aₙ ]</b><br/>
-      d = constant station spacing<br/>
-      n = number of intervals (must be even → odd number of sections)
-    </div>
-    <div class="ref-note">More accurate for solids whose area varies smoothly. Requires equal spacing and an odd number of cross-sections. Where conditions are not met the calculator falls back to the average end-area total.</div>
+    <div class="ref-formula"><b>V = (d/3) × [ A₀ + 4(A₁+A₃+…) + 2(A₂+A₄+…) + Aₙ ]</b><br>d = constant spacing · requires an odd number of sections</div>
+    <div class="ref-note">More accurate where area varies smoothly. Requires equal spacing and an odd number of cross-sections; otherwise the calculator falls back to average end-area.</div>
   </div>
-
   <div class="ref-section">
     <div class="ref-title">Trapezoidal Trench Area</div>
-    <div class="ref-formula">
-      <b>A = (b + s·h) · h</b> &nbsp; (symmetric side slopes)<br/>
-      b = trench bottom width &nbsp; h = depth &nbsp; s = side slope (H : 1 V)<br/>
-      Top width = b + 2·s·h &nbsp;·&nbsp; s = 0 for vertical (shored) walls
-    </div>
-    <div class="ref-note">Side-slope selection follows the soil's safe angle of repose and the governing excavation safety code. Common battered slopes range s = 0.5 to 1.5; vertical faces require shoring/trench boxes.</div>
+    <div class="ref-formula"><b>A = (b + s·h) · h</b> (symmetric side slopes)<br>b = bottom width · h = depth · s = side slope (H:1V) · top width = b + 2sh</div>
+    <div class="ref-note">Side-slope selection follows the soil's safe angle and the governing excavation safety code. Vertical faces (s = 0) require shoring or trench boxes.</div>
   </div>
-
   <div class="ref-section">
     <div class="ref-title">Swell / Bulking Factor</div>
-    <div class="ref-formula">
-      <b>Loose volume = In-situ (bank) volume × (1 + swell%)</b><br/>
-      1 m³ = 1.30795 yd³ &nbsp;·&nbsp; 1 yd³ = 27 ft³
-    </div>
-    <div class="ref-note">Soil swells when excavated. Indicative bank → loose swell: sand 10–15%, common earth 20–30%, clay 30–40%, rock 50%+. Use project-specific factors for haulage and disposal quantities.</div>
-  </div>
-
-  <div class="ref-section">
-    <div class="ref-title">Reference Standards</div>
-    <div class="ref-table-wrap"><table class="ref-table">
-      <tr><th>Reference</th><th>Application</th></tr>
-      <tr><td>End-Area / Prismoidal</td><td>Standard earthwork volume methods (cut/fill, trench, excavation)</td></tr>
-      <tr><td>Simpson's Rule</td><td>Numerical integration of evenly-spaced cross-sectional areas</td></tr>
-      <tr><td>Project Earthwork Spec</td><td>Side-slope, bedding, working width and swell-factor requirements</td></tr>
-    </table></div>
+    <div class="ref-formula"><b>Loose = in-situ (bank) volume × (1 + swell%)</b><br>1 m³ = 1.30795 yd³ · 1 yd³ = 27 ft³</div>
+    <div class="ref-note">Indicative bank → loose swell: sand 10–15%, common earth 20–30%, clay 30–40%, rock 50%+. Use project-specific factors for haulage and disposal.</div>
   </div>
 </div>
 </div><!-- /calctab-theory -->
 
 <footer class="ppa-footer">
   <div class="ppa-footer-logo">Piping<span>Pro</span> Academy</div>
-  <div>Engineering Calculator Suite · Sectional Volume</div>
+  <div>Engineering Calculator Suite · Sectional Volume · © Zephrum Konsultan Limited</div>
 </footer>
 
 <script>
 function showCalcTab(name){
   ['calculator','theory'].forEach(function(t){
-    var btn=document.querySelector('.calc-tab[onclick*="'+t+'"]');
-    var panel=document.getElementById('calctab-'+t);
-    if(btn) btn.classList.toggle('active',t===name);
-    if(panel) panel.classList.toggle('active',t===name);
+    var b=document.querySelector('.calc-tab[onclick*="'+t+'"]');var p=document.getElementById('calctab-'+t);
+    if(b)b.classList.toggle('active',t===name);if(p)p.classList.toggle('active',t===name);
   });
   window.scrollTo({top:0,behavior:'smooth'});
 }
-</script>
-<script>
-function ppaOpenReportSV(){
-  if(!window.SV_R){ alert('Please run a calculation first.'); return; }
-  window.PPA_REPORT = window.SV_R; ppaOpenReport();
-}
+function ppaOpenReportSV(){if(!window.SV_R){alert('Please run a calculation first.');return;}window.PPA_REPORT=window.SV_R;ppaOpenReport();}
 </script>
 <!-- ════════ PipingPro Shared Report Engine v1.0 ════════
      Inject before </body>. Each calculator sets window.PPA_REPORT = {...} on
@@ -602,185 +547,111 @@ table.d tr:nth-child(even) td{background:#faf6ef}
 }
 </script>
 <!-- ════════ end Shared Report Engine ════════ -->
+<script src="/ppa-report-gate.js"></script>
 
 <script>
-var fmt=function(v,d){ d=(d==null?2:d); if(!isFinite(v))v=0; return v.toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d}); };
-var mode='direct', unit='m';
-var state=[];
+var fmt=function(v,d){d=(d==null?2:d);if(!isFinite(v))v=0;return v.toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d});};
+var mode='direct',unit='m',state=[];
 function Lunit(){return unit==='m'?'m':'ft';}
 function Aunit(){return unit==='m'?'m\u00b2':'ft\u00b2';}
 function Vunit(){return unit==='m'?'m\u00b3':'ft\u00b3';}
-
-function onMode(){ mode=document.getElementById('mode').value;
-  document.getElementById('trenchNote').style.display = mode==='trench'?'flex':'none';
-  renderHead(); renderRows(); }
-function onUnit(){ unit=document.getElementById('unit').value;
-  document.getElementById('u-aea').textContent=Vunit();
-  document.getElementById('u-pris').textContent=Vunit();
-  document.getElementById('u-loose').textContent=Vunit();
-  renderHead(); renderRows(); }
-
-function trenchArea(r){ if(r.b==null||r.h==null) return null; var s=(r.s==null?0:r.s); return (r.b + s*r.h)*r.h; }
+function onMode(){mode=document.getElementById('mode').value;document.getElementById('trenchNote').style.display=mode==='trench'?'block':'none';renderHead();renderRows();}
+function onUnit(){unit=document.getElementById('unit').value;document.getElementById('u-aea').textContent=Vunit();document.getElementById('u-pris').textContent=Vunit();document.getElementById('u-loose').textContent=Vunit();document.getElementById('h-vunit').textContent=Vunit();document.getElementById('h-lunit').textContent=Lunit();renderHead();renderRows();}
+function trenchArea(r){if(r.b==null||r.h==null)return null;var s=(r.s==null?0:r.s);return (r.b+s*r.h)*r.h;}
 
 function renderHead(){
   var th=document.getElementById('thead');
-  if(mode==='direct'){
-    th.innerHTML='<tr><th class="rownum">#</th><th>Station ('+Lunit()+')</th><th class="num">Area ('+Aunit()+')</th><th style="width:30px;"></th></tr>';
-  }else{
-    th.innerHTML='<tr><th class="rownum">#</th><th>Station ('+Lunit()+')</th><th class="num">Bottom b ('+Lunit()+')</th><th class="num">Depth h ('+Lunit()+')</th><th class="num">Slope s (H:V)</th><th class="num">Area ('+Aunit()+')</th><th style="width:30px;"></th></tr>';
-  }
+  if(mode==='direct'){th.innerHTML='<tr><th class="rownum">#</th><th>Station ('+Lunit()+')</th><th class="num">Area ('+Aunit()+')</th><th style="width:28px;"></th></tr>';}
+  else{th.innerHTML='<tr><th class="rownum">#</th><th>Station ('+Lunit()+')</th><th class="num">Bottom b ('+Lunit()+')</th><th class="num">Depth h ('+Lunit()+')</th><th class="num">Slope s</th><th class="num">Area ('+Aunit()+')</th><th style="width:28px;"></th></tr>';}
 }
-
 function renderRows(){
-  var tb=document.getElementById('rows'); tb.innerHTML='';
+  var tb=document.getElementById('rows');tb.innerHTML='';
   state.forEach(function(r,i){
     var tr=document.createElement('tr');
     if(mode==='direct'){
-      tr.innerHTML='<td class="rownum">'+(i+1)+'</td>'+
-        '<td><input type="number" step="any" class="f-st" value="'+(r.station!=null?r.station:'')+'"></td>'+
-        '<td class="num"><input type="number" step="any" class="f-area" value="'+(r.area!=null?r.area:'')+'"></td>'+
-        '<td><button class="sv-del" title="Remove">\u00d7</button></td>';
+      tr.innerHTML='<td class="rownum">'+(i+1)+'</td><td><input type="number" step="any" class="f-st" value="'+(r.station!=null?r.station:'')+'"></td><td class="num"><input type="number" step="any" class="f-area" value="'+(r.area!=null?r.area:'')+'"></td><td><button class="wt-del">\u00d7</button></td>';
     }else{
       var a=trenchArea(r);
-      tr.innerHTML='<td class="rownum">'+(i+1)+'</td>'+
-        '<td><input type="number" step="any" class="f-st" value="'+(r.station!=null?r.station:'')+'"></td>'+
-        '<td class="num"><input type="number" step="any" class="f-b" value="'+(r.b!=null?r.b:'')+'"></td>'+
-        '<td class="num"><input type="number" step="any" class="f-h" value="'+(r.h!=null?r.h:'')+'"></td>'+
-        '<td class="num"><input type="number" step="any" class="f-s" value="'+(r.s!=null?r.s:'')+'"></td>'+
-        '<td class="num area-cell f-area-out">'+(a!=null?fmt(a,3):'\u2014')+'</td>'+
-        '<td><button class="sv-del" title="Remove">\u00d7</button></td>';
+      tr.innerHTML='<td class="rownum">'+(i+1)+'</td><td><input type="number" step="any" class="f-st" value="'+(r.station!=null?r.station:'')+'"></td><td class="num"><input type="number" step="any" class="f-b" value="'+(r.b!=null?r.b:'')+'"></td><td class="num"><input type="number" step="any" class="f-h" value="'+(r.h!=null?r.h:'')+'"></td><td class="num"><input type="number" step="any" class="f-s" value="'+(r.s!=null?r.s:'')+'"></td><td class="num area-out f-area-out">'+(a!=null?fmt(a,3):'\u2014')+'</td><td><button class="wt-del">\u00d7</button></td>';
     }
     tb.appendChild(tr);
-    tr.querySelector('.sv-del').addEventListener('click',function(){ state.splice(i,1); renderRows(); });
-    tr.querySelectorAll('input').forEach(function(el){ el.addEventListener('input',function(){
-      readRow(tr,i);
-      if(mode==='trench'){ var o=tr.querySelector('.f-area-out'); var a=trenchArea(state[i]); o.textContent=a!=null?fmt(a,3):'\u2014'; }
-    }); });
+    tr.querySelector('.wt-del').addEventListener('click',function(){state.splice(i,1);renderRows();});
+    tr.querySelectorAll('input').forEach(function(el){el.addEventListener('input',function(){readRow(tr,i);if(mode==='trench'){var o=tr.querySelector('.f-area-out');var a=trenchArea(state[i]);o.textContent=a!=null?fmt(a,3):'\u2014';}});});
   });
 }
-
 function readRow(tr,i){
-  var g=function(s){ var el=tr.querySelector(s); return (el&&el.value!=='')?parseFloat(el.value):null; };
+  var g=function(s){var el=tr.querySelector(s);return (el&&el.value!=='')?parseFloat(el.value):null;};
   state[i].station=g('.f-st');
-  if(mode==='direct'){ state[i].area=g('.f-area'); }
-  else { state[i].b=g('.f-b'); state[i].h=g('.f-h'); state[i].s=g('.f-s'); }
+  if(mode==='direct'){state[i].area=g('.f-area');}else{state[i].b=g('.f-b');state[i].h=g('.f-h');state[i].s=g('.f-s');}
 }
-
-function addRow(d){ state.push(d||{}); renderRows(); }
-function clearAll(){ if(confirm('Clear all stations?')){ state=[]; addRow(); } }
+function addRow(d){state.push(d||{});renderRows();}
+function clearAll(){if(confirm('Clear all stations?')){state=[];addRow();}}
 
 function calculate(){
-  var secs=state.map(function(r){ return {st:r.station, A:(mode==='direct'?r.area:trenchArea(r))}; })
-    .filter(function(s){ return s.st!=null && s.A!=null && isFinite(s.st) && isFinite(s.A); })
-    .sort(function(a,b){ return a.st-b.st; });
+  var secs=state.map(function(r){return {st:r.station,A:(mode==='direct'?r.area:trenchArea(r))};})
+    .filter(function(s){return s.st!=null&&s.A!=null&&isFinite(s.st)&&isFinite(s.A);})
+    .sort(function(a,b){return a.st-b.st;});
+  if(secs.length<2){alert('Enter at least two stations with areas.');return;}
+  var set=function(id,v){document.getElementById(id).textContent=v;};
 
-  var res=document.getElementById('results');
-  if(secs.length<2){ alert('Enter at least two stations with areas.'); return; }
-
-  // average end-area + segment table
-  var totalAEA=0, totalLen=0, segEl=document.getElementById('segRows'); segEl.innerHTML='';
+  var totalAEA=0,totalLen=0,segEl=document.getElementById('segRows');segEl.innerHTML='';
   for(var i=0;i<secs.length-1;i++){
-    var L=secs[i+1].st-secs[i].st;
-    var v=(secs[i].A+secs[i+1].A)/2*L; totalAEA+=v; totalLen+=L;
+    var L=secs[i+1].st-secs[i].st;var v=(secs[i].A+secs[i+1].A)/2*L;totalAEA+=v;totalLen+=L;
     var tr=document.createElement('tr');
     tr.innerHTML='<td>'+fmt(secs[i].st,2)+' \u2192 '+fmt(secs[i+1].st,2)+'</td><td class="num">'+fmt(L,2)+'</td><td class="num">'+fmt(secs[i].A,3)+'</td><td class="num">'+fmt(secs[i+1].A,3)+'</td><td class="num">'+fmt(v,3)+'</td>';
     segEl.appendChild(tr);
   }
-  document.getElementById('r-aea').textContent=fmt(totalAEA);
-  document.getElementById('segVol').textContent=fmt(totalAEA,3);
-  document.getElementById('segLen').textContent=fmt(totalLen,2);
+  set('m-aea',fmt(totalAEA));
 
-  // prismoidal
-  var n=secs.length, spacing=secs[1].st-secs[0].st, equal=true;
-  for(var k=1;k<n-1;k++){ if(Math.abs((secs[k+1].st-secs[k].st)-spacing) > Math.max(1e-9,1e-4*Math.abs(spacing))){ equal=false; break; } }
-  var prisOK=(equal && n>=3 && n%2===1), pris=null, govMethod, gov;
-  var mPris=document.getElementById('m-pris');
+  var n=secs.length,spacing=secs[1].st-secs[0].st,equal=true;
+  for(var k=1;k<n-1;k++){if(Math.abs((secs[k+1].st-secs[k].st)-spacing)>Math.max(1e-9,1e-4*Math.abs(spacing))){equal=false;break;}}
+  var prisOK=(equal&&n>=3&&n%2===1),pris=null,gov,govMethod;
+  var mPris=document.getElementById('m-pris'),pNote=document.getElementById('prisNote');
   if(prisOK){
-    var sum=secs[0].A+secs[n-1].A;
-    for(var j=1;j<n-1;j++){ sum += (j%2===1?4:2)*secs[j].A; }
-    pris=spacing/3*sum;
-    document.getElementById('r-pris').textContent=fmt(pris);
-    mPris.classList.remove('na');
-    gov=pris; govMethod='prismoidal';
+    var sum=secs[0].A+secs[n-1].A;for(var j=1;j<n-1;j++){sum+=(j%2===1?4:2)*secs[j].A;}
+    pris=spacing/3*sum;set('m-pris',fmt(pris));mPris.classList.remove('na');pNote.style.display='none';
+    gov=pris;govMethod='prismoidal (Simpson)';
   }else{
-    document.getElementById('r-pris').textContent='n/a';
-    mPris.classList.add('na');
-    gov=totalAEA; govMethod='average end-area';
+    set('m-pris','n/a');mPris.classList.add('na');
+    var reason=!equal?'station spacing is not equal':(n%2===0?'an even number of stations was supplied':'fewer than 3 stations');
+    pNote.innerHTML='Prismoidal needs equal spacing and an odd number of stations \u2014 here '+reason+'. The average end-area total governs.';pNote.style.display='block';
+    gov=totalAEA;govMethod='average end-area';
   }
+  var yd=unit==='m'?gov*1.307950619:gov/27;
+  var sw=parseFloat(document.getElementById('swell').value)||0,loose=gov*(1+sw/100);
+  var mLooseBox=document.getElementById('m-loose-box');
+  if(sw>0){set('m-loose',fmt(loose));mLooseBox.style.display='block';}else{mLooseBox.style.display='none';}
 
-  var yd = unit==='m' ? gov*1.307950619 : gov/27;
-  document.getElementById('r-yd').textContent=fmt(yd);
+  set('h-vol',fmt(gov));set('h-vunit',Vunit());set('h-method','Method: '+govMethod);
+  set('h-len',fmt(totalLen,2));set('h-lunit',Lunit());set('h-secs',n);set('h-yd',fmt(yd));set('m-yd',fmt(yd));
 
-  var sw=parseFloat(document.getElementById('swell').value)||0;
-  var loose=gov*(1+sw/100), mLoose=document.getElementById('m-loose');
-  if(sw>0){ document.getElementById('r-loose').textContent=fmt(loose); mLoose.style.display='block'; }
-  else { mLoose.style.display='none'; }
-
-  // verdict + formula
-  document.getElementById('vtitle').textContent='Governing volume \u2248 '+fmt(gov)+' '+Vunit();
-  document.getElementById('vsub').textContent='Method: '+govMethod+'  \u00b7  '+secs.length+' sections  \u00b7  '+fmt(totalLen,2)+' '+Lunit()+' total length'+(sw>0?('  \u00b7  loose '+fmt(loose)+' '+Vunit()):'');
-  document.getElementById('formula-box').innerHTML =
-    'End-area:  V = \u03a3 (A\u2081+A\u2082)/2 \u00b7 L  =  '+fmt(totalAEA)+' '+Vunit()+'<br>'+
-    (prisOK ? ('Prismoidal: V = (d/3)[A\u2080 + 4\u00b7\u03a3odd + 2\u00b7\u03a3even + A\u2099]  =  '+fmt(pris)+' '+Vunit()) :
-              'Prismoidal: n/a \u2014 needs equal spacing &amp; odd no. of sections');
-
-  // notes
-  var notes='';
-  function note(cls,arr,txt){ return '<div class="note '+cls+'"><span class="note-arr">'+arr+'</span><div>'+txt+'</div></div>'; }
-  if(prisOK){
-    var diff = totalAEA!==0 ? (totalAEA-pris)/totalAEA*100 : 0;
-    notes+=note('ok-n','\u2713','Both methods computed. End-area reads '+fmt(diff,1)+'% '+(diff>=0?'higher':'lower')+' than prismoidal \u2014 prismoidal governs and is the more accurate figure.');
-  }else{
-    var reason = !equal ? 'station spacing is not equal' : (n%2===0 ? 'an even number of stations was supplied' : 'fewer than 3 stations');
-    notes+=note('','\u25b8','Prismoidal not available \u2014 '+reason+'. The average end-area total governs. For prismoidal accuracy, survey at equal intervals with an odd number of sections.');
-  }
-  if(sw>0){ notes+=note('','\u25b8','Loose (haul) volume = in-situ \u00d7 (1 + '+sw+'%) = '+fmt(loose)+' '+Vunit()+'. Use the project swell factor for the soil/rock encountered.'); }
-  notes+=note('','\u25b8','Cubic yards shown for the governing volume ('+fmt(yd)+' yd\u00b3).');
+  var notes='';function nb(cls,t){return '<div class="'+cls+'">'+t+'</div>';}
+  if(prisOK){var diff=totalAEA!==0?(totalAEA-pris)/totalAEA*100:0;notes+=nb('info-box','Both methods computed. End-area reads '+fmt(diff,1)+'% '+(diff>=0?'higher':'lower')+' than prismoidal \u2014 prismoidal governs and is the more accurate figure.');}
+  else{notes+=nb('warn-box','Prismoidal not available. Average end-area governs. For prismoidal accuracy, survey at equal intervals with an odd number of sections.');}
+  if(sw>0){notes+=nb('info-box','Loose (haul) volume = in-situ \u00d7 (1 + '+sw+'%) = '+fmt(loose)+' '+Vunit()+'. Use the project swell factor for the soil/rock encountered.');}
+  notes+=nb('info-box','Cubic yards shown for the governing volume ('+fmt(yd)+' yd\u00b3).');
   document.getElementById('notes').innerHTML=notes;
 
-  // report object
-  var inHead = (mode==='direct') ? ['Station ('+Lunit()+')','Area ('+Aunit()+')']
-                                 : ['Station ('+Lunit()+')','b ('+Lunit()+')','h ('+Lunit()+')','s (H:V)','Area ('+Aunit()+')'];
-  var inRows = state.filter(function(r){return r.station!=null;}).map(function(r){
-    if(mode==='direct') return [fmt(r.station,2), (r.area!=null?fmt(r.area,3):'\u2014')];
-    var a=trenchArea(r); return [fmt(r.station,2), r.b!=null?fmt(r.b,2):'\u2014', r.h!=null?fmt(r.h,2):'\u2014', r.s!=null?fmt(r.s,2):'0', a!=null?fmt(a,3):'\u2014'];
+  var inHead=(mode==='direct')?['Station ('+Lunit()+')','Area ('+Aunit()+')']:['Station ('+Lunit()+')','b ('+Lunit()+')','h ('+Lunit()+')','s','Area ('+Aunit()+')'];
+  var inRows=state.filter(function(r){return r.station!=null;}).map(function(r){
+    if(mode==='direct')return [fmt(r.station,2),(r.area!=null?fmt(r.area,3):'\u2014')];
+    var a=trenchArea(r);return [fmt(r.station,2),r.b!=null?fmt(r.b,2):'\u2014',r.h!=null?fmt(r.h,2):'\u2014',r.s!=null?fmt(r.s,2):'0',a!=null?fmt(a,3):'\u2014'];
   });
-  var volRows=[
-    ['Average end-area volume', fmt(totalAEA), Vunit()],
-    ['Prismoidal (Simpson) volume', prisOK?fmt(pris):'n/a', Vunit()],
-    ['Governing volume', fmt(gov)+' ('+govMethod+')', Vunit()],
-    ['Total length', fmt(totalLen,2), Lunit()],
-    ['In cubic yards', fmt(yd), 'yd\u00b3']
-  ];
-  if(sw>0) volRows.push(['Loose volume (swell '+sw+'%)', fmt(loose), Vunit()]);
-  window.SV_R={
-    docType:'Sectional Volume',
-    codeNote:'average end-area / prismoidal method',
-    sections:[
-      {title:'Cross-Section Input', type:'table', head:inHead, rows:inRows},
-      {title:'Volume Results', type:'table', head:['Quantity','Value','Unit'], rows:volRows}
-    ],
-    verdict:{status:'warn', text:'Governing volume \u2248 '+fmt(gov)+' '+Vunit()+'  ('+govMethod+')'}
-  };
+  var volRows=[['Average end-area volume',fmt(totalAEA),Vunit()],['Prismoidal (Simpson) volume',prisOK?fmt(pris):'n/a',Vunit()],['Governing volume',fmt(gov)+' ('+govMethod+')',Vunit()],['Total length',fmt(totalLen,2),Lunit()],['In cubic yards',fmt(yd),'yd\u00b3']];
+  if(sw>0)volRows.push(['Loose volume (swell '+sw+'%)',fmt(loose),Vunit()]);
+  window.SV_R={docType:'Sectional Volume',codeNote:'average end-area / prismoidal method',
+    sections:[{title:'Cross-Section Input',type:'table',head:inHead,rows:inRows},{title:'Volume Results',type:'table',head:['Quantity','Value','Unit'],rows:volRows}],
+    verdict:{status:'warn',text:'Governing volume \u2248 '+fmt(gov)+' '+Vunit()+'  ('+govMethod+')'}};
 
-  res.classList.add('show');
-  res.scrollIntoView({behavior:'smooth',block:'nearest'});
+  document.getElementById('results').style.display='block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
-
 function exportCsv(){
-  var csv = (mode==='direct') ? 'Station,Area\n' : 'Station,Bottom b,Depth h,Slope s,Area\n';
-  state.forEach(function(r){
-    if(mode==='direct') csv+=(r.station!=null?r.station:'')+','+(r.area!=null?r.area:'')+'\n';
-    else csv+=(r.station!=null?r.station:'')+','+(r.b!=null?r.b:'')+','+(r.h!=null?r.h:'')+','+(r.s!=null?r.s:'')+','+(trenchArea(r)!=null?trenchArea(r):'')+'\n';
-  });
-  csv+='\nAverage End-Area,'+document.getElementById('r-aea').textContent+'\n';
-  csv+='Prismoidal,'+document.getElementById('r-pris').textContent+'\n';
-  csv+='Cubic yards,'+document.getElementById('r-yd').textContent+'\n';
-  var blob=new Blob([csv],{type:'text/csv'}); var a=document.createElement('a');
-  a.href=URL.createObjectURL(blob); a.download='sectional-volume.csv'; a.click();
+  var csv=(mode==='direct')?'Station,Area\n':'Station,Bottom b,Depth h,Slope s,Area\n';
+  state.forEach(function(r){if(mode==='direct')csv+=(r.station!=null?r.station:'')+','+(r.area!=null?r.area:'')+'\n';else csv+=(r.station!=null?r.station:'')+','+(r.b!=null?r.b:'')+','+(r.h!=null?r.h:'')+','+(r.s!=null?r.s:'')+','+(trenchArea(r)!=null?trenchArea(r):'')+'\n';});
+  csv+='\nAverage End-Area,'+document.getElementById('m-aea').textContent+'\nPrismoidal,'+document.getElementById('m-pris').textContent+'\nCubic yards,'+document.getElementById('m-yd').textContent+'\n';
+  var b=new Blob([csv],{type:'text/csv'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='sectional-volume.csv';a.click();
 }
-
-// init
 renderHead();
 state=[{station:0,area:4.2},{station:10,area:5.1},{station:20,area:6.0},{station:30,area:5.4},{station:40,area:4.0}];
 renderRows();
