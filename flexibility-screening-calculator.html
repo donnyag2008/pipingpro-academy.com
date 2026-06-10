@@ -296,30 +296,31 @@ body{ background:#faf6ef; color:#1a1510; }
   <div class="card" id="gateCard">
     <div class="card-title">Step 1 — Eligibility Gate (§319.4.1(c))</div>
     <p style="font-size:12px;color:var(--text-2);margin-bottom:.8rem">Eq. (16) applies <strong>only</strong> if all three hold. If any is unchecked, the empirical check is not valid and formal analysis (or the service-record / comparison routes in §319.4.1(a),(b)) is required.</p>
-    <label style="display:flex;gap:.5rem;align-items:flex-start;margin-bottom:.6rem;font-size:13px;cursor:pointer"><input type="checkbox" id="g1" onchange="recalc()" style="margin-top:3px"/> System has <strong>exactly two points of fixation</strong> (two anchors)</label>
-    <label style="display:flex;gap:.5rem;align-items:flex-start;margin-bottom:.6rem;font-size:13px;cursor:pointer"><input type="checkbox" id="g2" onchange="recalc()" style="margin-top:3px"/> <strong>No intermediate restraints</strong> of any kind</label>
-    <label style="display:flex;gap:.5rem;align-items:flex-start;font-size:13px;cursor:pointer"><input type="checkbox" id="g3" onchange="recalc()" style="margin-top:3px"/> <strong>Uniform pipe size</strong> (essentially constant diameter)</label>
+    <label style="display:flex;gap:.5rem;align-items:flex-start;margin-bottom:.6rem;font-size:13px;cursor:pointer"><input type="checkbox" id="g1" style="margin-top:3px"/> System has <strong>exactly two points of fixation</strong> (two anchors)</label>
+    <label style="display:flex;gap:.5rem;align-items:flex-start;margin-bottom:.6rem;font-size:13px;cursor:pointer"><input type="checkbox" id="g2" style="margin-top:3px"/> <strong>No intermediate restraints</strong> of any kind</label>
+    <label style="display:flex;gap:.5rem;align-items:flex-start;font-size:13px;cursor:pointer"><input type="checkbox" id="g3" style="margin-top:3px"/> <strong>Uniform pipe size</strong> (essentially constant diameter)</label>
   </div>
 
   <div class="card">
     <div class="card-title">Step 2 — Geometry &amp; Pipe</div>
-    <div class="grid3">
-      <div class="field"><label>Pipe OD, D <span id="uD">(mm)</span></label><input id="D" value="219.1" oninput="recalc()"/></div>
+    <div class="grid4">
+      <div class="field"><label>Nominal size (NPS)</label><select id="nps" onchange="onNps()"></select></div>
+      <div class="field"><label>Pipe OD, D <span id="uD">(mm)</span></label><input id="D" value="219.1" oninput="onDedit()"/></div>
       <div class="field"><label>Input method for y &amp; U</label>
-        <select id="mode" onchange="onMode();recalc()">
+        <select id="mode" onchange="onMode()">
           <option value="layout">From layout (offsets + expansion)</option>
           <option value="direct">Direct (enter y, L, U)</option>
         </select>
       </div>
-      <div class="field"><label>Developed length, L <span id="uL">(m)</span></label><input id="L" value="11.28" oninput="recalc()"/><span class="hint">total centreline length between anchors</span></div>
+      <div class="field"><label>Developed length, L <span id="uL">(m)</span></label><input id="L" value="11.28"/><span class="hint">total centreline length between anchors</span></div>
     </div>
     <div id="layoutFields">
       <hr class="hr"/>
       <div class="grid4">
-        <div class="field"><label>Net offset ΔX <span class="uoff">(m)</span></label><input id="dx" value="0" oninput="recalc()"/></div>
-        <div class="field"><label>Net offset ΔY <span class="uoff">(m)</span></label><input id="dy" value="3.66" oninput="recalc()"/></div>
-        <div class="field"><label>Net offset ΔZ <span class="uoff">(m)</span></label><input id="dz" value="7.62" oninput="recalc()"/></div>
-        <div class="field"><label>Expansion rate, e <span id="ue">(mm/m)</span></label><input id="e" value="0.8" oninput="recalc()"/><span class="hint">per ASME B31.3 Table C-1 at design temp</span></div>
+        <div class="field"><label>Net offset ΔX <span class="uoff">(m)</span></label><input id="dx" value="0"/></div>
+        <div class="field"><label>Net offset ΔY <span class="uoff">(m)</span></label><input id="dy" value="3.66"/></div>
+        <div class="field"><label>Net offset ΔZ <span class="uoff">(m)</span></label><input id="dz" value="7.62"/></div>
+        <div class="field"><label>Expansion rate, e <span id="ue">(mm/m)</span></label><input id="e" value="0.8"/><span class="hint">per ASME B31.3 Table C-1 at design temp</span></div>
       </div>
       <div class="grid3" style="margin-top:8px">
         <div class="field"><label>Computed U <span class="uU2">(m)</span></label><input class="auto" id="Uout" readonly/></div>
@@ -329,8 +330,8 @@ body{ background:#faf6ef; color:#1a1510; }
     <div id="directFields" style="display:none">
       <hr class="hr"/>
       <div class="grid2">
-        <div class="field"><label>Resultant displacement y <span id="uy">(mm)</span></label><input id="yd" value="7" oninput="recalc()"/></div>
-        <div class="field"><label>Anchor straight-line distance U <span id="uU">(m)</span></label><input id="Ud" value="8.5" oninput="recalc()"/></div>
+        <div class="field"><label>Resultant displacement y <span id="uy">(mm)</span></label><input id="yd" value="7"/></div>
+        <div class="field"><label>Anchor straight-line distance U <span id="uU">(m)</span></label><input id="Ud" value="8.5"/></div>
       </div>
     </div>
   </div>
@@ -338,10 +339,14 @@ body{ background:#faf6ef; color:#1a1510; }
   <div class="card">
     <div class="card-title">Step 3 — Allowable Limit, K₁</div>
     <div class="grid3">
-      <div class="field"><label>Allowable disp. stress range S<sub>A</sub> <span id="uSA">(MPa)</span></label><input id="SA" value="203" oninput="recalc()"/><span class="hint">eq. (1a): f(1.25S<sub>c</sub>+0.25S<sub>h</sub>)</span></div>
-      <div class="field"><label>Reference modulus E<sub>a</sub> @21°C <span id="uEa">(MPa)</span></label><input id="Ea" value="203000" oninput="recalc()"/></div>
+      <div class="field"><label>Allowable disp. stress range S<sub>A</sub> <span id="uSA">(MPa)</span></label><input id="SA" value="203"/><span class="hint">eq. (1a): f(1.25S<sub>c</sub>+0.25S<sub>h</sub>)</span></div>
+      <div class="field"><label>Reference modulus E<sub>a</sub> @21°C <span id="uEa">(MPa)</span></label><input id="Ea" value="203000"/></div>
       <div class="field"><label>K₁ = 208000·S<sub>A</sub>/E<sub>a</sub></label><input class="auto" id="K1out" readonly/></div>
     </div>
+  </div>
+
+  <div style="text-align:center;margin:0 0 1.1rem">
+    <button onclick="recalc()" style="background:var(--accent);color:#fff;border:none;padding:.95rem 2.4rem;font-size:1rem;font-weight:700;border-radius:6px;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.02em">⚙ Calculate</button>
   </div>
 
   <div class="card" id="resultCard" style="background:var(--ink);border-color:var(--ink)">
@@ -385,6 +390,26 @@ body{ background:#faf6ef; color:#1a1510; }
 
 <script>
 let units='SI';
+/* NPS -> outside diameter (ASME B36.10M): [mm, inch] */
+const NPS_OD={'1/2':[21.3,0.840],'3/4':[26.7,1.050],'1':[33.4,1.315],'1-1/4':[42.2,1.660],'1-1/2':[48.3,1.900],'2':[60.3,2.375],'2-1/2':[73.0,2.875],'3':[88.9,3.500],'3-1/2':[101.6,4.000],'4':[114.3,4.500],'5':[141.3,5.563],'6':[168.3,6.625],'8':[219.1,8.625],'10':[273.0,10.750],'12':[323.8,12.750],'14':[355.6,14.000],'16':[406.4,16.000],'18':[457.0,18.000],'20':[508.0,20.000],'24':[610.0,24.000]};
+function buildNps(){
+  const sel=el('nps');
+  sel.innerHTML='<option value="custom">Custom (type OD)</option>'+Object.keys(NPS_OD).map(n=>`<option value="${n}">${n}"</option>`).join('');
+  sel.value='8';            // default matches the validation example
+}
+function applyNpsToD(){
+  const n=el('nps').value; if(n==='custom') return;
+  const od=NPS_OD[n][units==='SI'?0:1];
+  el('D').value = units==='SI'? od : od;
+}
+function onNps(){ applyNpsToD(); clearResult(); }
+function onDedit(){ el('nps').value='custom'; clearResult(); }
+function clearResult(){
+  el('lhs').textContent='—';
+  const v=el('verdict'); v.textContent='press Calculate'; v.style.background='var(--text-3)';
+  el('flags').innerHTML='';
+}
+
 const el=id=>document.getElementById(id);
 const num=id=>parseFloat(el(id).value);
 function setUnits(u){
@@ -399,7 +424,8 @@ function setUnits(u){
   document.querySelectorAll('.uy2').forEach(s=>s.textContent=SI?'(mm)':'(in)');
   el('K1out').previousElementSibling; // label updated below
   el('K1out').closest('.field').querySelector('label').innerHTML=SI?'K₁ = 208000·S<sub>A</sub>/E<sub>a</sub>':'K₁ = 30·S<sub>A</sub>/E<sub>a</sub>';
-  recalc();
+  applyNpsToD();
+  clearResult();
 }
 function onMode(){const m=el('mode').value;el('layoutFields').style.display=m==='layout'?'block':'none';
   el('directFields').style.display=m==='direct'?'block':'none';}
@@ -472,7 +498,7 @@ function showCalcTab(name){
   document.querySelectorAll('.calc-tab').forEach(b=>b.classList.remove('active'));
   document.getElementById('calctab-'+name).classList.add('active');event.target.classList.add('active');
 }
-onMode();recalc();
+buildNps();applyNpsToD();onMode();recalc();
 </script>
 
 
