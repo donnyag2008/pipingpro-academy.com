@@ -296,9 +296,9 @@ body{ background:#faf6ef; color:#1a1510; }
   <div class="card" id="gateCard">
     <div class="card-title">Step 1 — Eligibility Gate (§319.4.1(c))</div>
     <p style="font-size:12px;color:var(--text-2);margin-bottom:.8rem">Eq. (16) applies <strong>only</strong> if all three hold. If any is unchecked, the empirical check is not valid and formal analysis (or the service-record / comparison routes in §319.4.1(a),(b)) is required.</p>
-    <label style="display:flex;gap:.5rem;align-items:flex-start;margin-bottom:.6rem;font-size:13px;cursor:pointer"><input type="checkbox" id="g1" style="margin-top:3px"/> System has <strong>exactly two points of fixation</strong> (two anchors)</label>
-    <label style="display:flex;gap:.5rem;align-items:flex-start;margin-bottom:.6rem;font-size:13px;cursor:pointer"><input type="checkbox" id="g2" style="margin-top:3px"/> <strong>No intermediate restraints</strong> of any kind</label>
-    <label style="display:flex;gap:.5rem;align-items:flex-start;font-size:13px;cursor:pointer"><input type="checkbox" id="g3" style="margin-top:3px"/> <strong>Uniform pipe size</strong> (essentially constant diameter)</label>
+    <label style="display:flex;gap:.5rem;align-items:flex-start;margin-bottom:.6rem;font-size:13px;cursor:pointer"><input type="checkbox" id="g1" checked onchange="clearResult()" style="margin-top:3px"/> System has <strong>exactly two points of fixation</strong> (two anchors)</label>
+    <label style="display:flex;gap:.5rem;align-items:flex-start;margin-bottom:.6rem;font-size:13px;cursor:pointer"><input type="checkbox" id="g2" checked onchange="clearResult()" style="margin-top:3px"/> <strong>No intermediate restraints</strong> of any kind</label>
+    <label style="display:flex;gap:.5rem;align-items:flex-start;font-size:13px;cursor:pointer"><input type="checkbox" id="g3" checked onchange="clearResult()" style="margin-top:3px"/> <strong>Uniform pipe size</strong> (essentially constant diameter)</label>
   </div>
 
   <div class="card">
@@ -412,6 +412,7 @@ function clearResult(){
 
 const el=id=>document.getElementById(id);
 const num=id=>parseFloat(el(id).value);
+const sig=x=>isFinite(x)?String(parseFloat(x.toPrecision(3))):'\u2014';
 function setUnits(u){
   units=u;el('uSI').classList.toggle('on',u==='SI');el('uUS').classList.toggle('on',u==='US');
   const SI=u==='SI';
@@ -442,15 +443,15 @@ function recalc(){
   } else { y=num('yd');U=num('Ud'); }
   const SA=num('SA'),Ea=num('Ea');
   const K1=(SI?208000:30)*SA/Ea;
-  el('K1out').value=isFinite(K1)?K1.toFixed(SI?1:4):'—';
+  el('K1out').value=sig(K1);
   const denom=(L-U);const lhs=D*y/(denom*denom);
-  el('lhs').textContent=isFinite(lhs)?(lhs.toFixed(SI?1:4)+'  ≤  '+K1.toFixed(SI?1:4)):'—';
+  el('lhs').textContent=isFinite(lhs)?(sig(lhs)+'  \u2264  '+sig(K1)):'\u2014';
   // eligibility
   const gate=el('g1').checked&&el('g2').checked&&el('g3').checked;
   const v=el('verdict');const fl=el('flags');fl.innerHTML='';
   if(!gate){
     v.textContent='NOT ELIGIBLE';v.style.background='var(--warn)';
-    fl.innerHTML='<div style="font-size:12px;color:#fdd;line-height:1.6">Eq. (16) does not apply — check the eligibility gate. Use formal analysis, or qualify via §319.4.1(a) service record or (b) comparison.</div>';
+    fl.innerHTML='<div style="font-size:12px;color:#fdd;line-height:1.6">One or more Step\u00a01 conditions is unticked, so the system does not qualify for the eq.\u00a0(16) check. Re-tick all three if it is a two-anchor, uniform-size run with no intermediate restraints \u2014 otherwise use a formal flexibility analysis (or qualify via \u00a7319.4.1(a) service record / (b) comparison).</div>';
     return;
   }
   if(!isFinite(lhs)||denom<=0){
@@ -458,20 +459,27 @@ function recalc(){
     if(denom<=0) fl.innerHTML='<div style="font-size:12px;color:#fdd">L must be greater than U (developed length exceeds the straight anchor distance).</div>';
     return;
   }
-  const pass=lhs<=K1;
-  v.textContent=pass?'NO FORMAL ANALYSIS REQ\u2019D':'FORMAL ANALYSIS REQUIRED';
-  v.style.background=pass?'var(--success)':'var(--danger)';
-  // unconservative flags
-  const ratio=L/U;let warns=[];
-  if(ratio>=2.5) warns.push('L/U = '+ratio.toFixed(2)+' (≥2.5) — unequal-leg U-bend territory; eq.(16) may be unconservative. Consider formal analysis.');
-  if(ratio<=1.15) warns.push('L/U = '+ratio.toFixed(2)+' (near 1) — nearly straight run; eq.(16) may be unconservative.');
-  if((SI?D:D*25.4)>=600) warns.push('Large diameter — verify thin-wall ovalization/SIF effects; eq.(16) may be unconservative.');
-  if(pass&&warns.length){
-    fl.innerHTML='<div style="background:var(--warn-light);border:1px solid var(--warn-border);border-radius:6px;padding:.6rem .8rem;font-size:12px;color:var(--warn);line-height:1.6"><strong>Passes, but flagged geometry:</strong><br/>'+warns.join('<br/>')+'</div>';
+  const ratio=U>0?L/U:Infinity;const rtxt=isFinite(ratio)?ratio.toFixed(2):'\u221e';
+  // eq.(16) is only reliable within a limited geometry band (ASME caution: unconservative for L/U>2.5; also unreliable near-straight). Outside it, the empirical screen cannot grant a pass.
+  const RLO=1.15, RHI=2.5;
+  const inRange = ratio>RLO && ratio<=RHI;
+  const numOK = lhs<=K1;
+  const satisfies = numOK && inRange;
+  const status = satisfies?'pass':'fail';
+  v.textContent=satisfies?'SATISFY REQUIREMENT':'NOT SATISFY';
+  v.style.background=satisfies?'var(--success)':'var(--danger)';
+  let notes=[];
+  if(!numOK) notes.push('D\u00b7y/(L\u2212U)\u00b2 = '+sig(lhs)+' exceeds K\u2081 = '+sig(K1)+'.');
+  if(ratio>RHI) notes.push('L/U = '+rtxt+' (>'+RHI+'): long developed length / unequal-leg U-bend is outside eq.(16)\u2019s reliable range \u2014 the empirical screen cannot clear this geometry; a formal flexibility analysis is required.'+(ratio>50?' (Also confirm L and the offsets use consistent units \u2014 L/U this large usually signals an input error.)':''));
+  if(ratio<=RLO) notes.push('L/U = '+rtxt+' (\u2264'+RLO+', near-straight run): outside eq.(16)\u2019s reliable range \u2014 formal flexibility analysis required.');
+  if((SI?D:D*25.4)>=600) notes.push('Large diameter \u2014 separately verify thin-wall ovalization / SIF effects.');
+  if(notes.length){
+    const hdr = satisfies ? 'Advisory note:' : 'Reason \u2014 why this does not satisfy:';
+    fl.innerHTML='<div style="background:var(--warn-light);border:1px solid var(--warn-border);border-radius:6px;padding:.6rem .8rem;font-size:12px;color:var(--warn);line-height:1.6"><strong>'+hdr+'</strong><br/>'+notes.join('<br/>')+'</div>';
   }
-  buildReport(lhs,K1,y,U,L,D,pass,warns,ratio);
+  buildReport(lhs,K1,y,U,L,D,status,notes,ratio);
 }
-function buildReport(lhs,K1,y,U,L,D,pass,warns,ratio){
+function buildReport(lhs,K1,y,U,L,D,status,warns,ratio){
   const SI=units==='SI';const un=SI?{D:'mm',L:'m',y:'mm',U:'m',S:'MPa'}:{D:'in',L:'ft',y:'in',U:'ft',S:'ksi'};
   window.PPA_REPORT={
     docType:'B31.3 Flexibility Screening', codeNote:'ASME B31.3 §319.4.1(c), eq. (16)',
@@ -485,11 +493,11 @@ function buildReport(lhs,K1,y,U,L,D,pass,warns,ratio){
              ['Developed length, L',L,un.L],['Anchor distance, U',U.toFixed(2),un.U],
              ['S\u2090',el('SA').value,un.S],['E\u2090 @21°C',el('Ea').value,un.S]]},
       {title:'Result', type:'table', head:['Quantity','Value','Unit'],
-       rows:[['D·y/(L−U)²',lhs.toFixed(SI?1:4),SI?'(mm/m)²':'—'],
-             ['K\u2081',K1.toFixed(SI?1:4),SI?'(mm/m)²':'—'],['L/U ratio',ratio.toFixed(2),'off']]}
+       rows:[['D·y/(L−U)²',sig(lhs),SI?'(mm/m)²':'—'],
+             ['K\u2081',sig(K1),SI?'(mm/m)²':'—'],['L/U ratio',isFinite(ratio)?ratio.toFixed(2):'\u221e','off']]}
     ],
-    verdict: pass?{status:'pass',text:'D·y/(L−U)² ≤ K₁ — formal flexibility analysis NOT required by §319.4.1(c)'+(warns.length?' (see flagged geometry).':'.')}
-                 :{status:'fail',text:'D·y/(L−U)² > K₁ — formal flexibility analysis IS required.'}
+    verdict: status==='pass'?{status:'pass',text:'Satisfies eq.(16) within its valid geometry range — §319.4.1(c) requirement met; formal flexibility analysis not required'+(warns.length?' (see advisory note).':'.')}
+            : {status:'fail',text:'Does NOT satisfy §319.4.1(c) — either D·y/(L−U)² > K₁, or the geometry is outside eq.(16)\u2019s reliable range (see reason). Formal flexibility analysis required.'}
   };
 }
 function ppaOpenReportFX(){ recalc(); if(typeof ppaOpenReport==='function') ppaOpenReport(); else alert('Run a calculation first.'); }
