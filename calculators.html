@@ -61,6 +61,7 @@ nav{background:rgba(245,242,235,0.96);backdrop-filter:blur(14px);border-bottom:1
 .card-img.bg-plum{background:linear-gradient(135deg,#3a1a2a 0%,#6a2a4a 100%);}
 .card-img.bg-vibration{background:linear-gradient(135deg,#1a3a4a 0%,#2a6a5a 100%);}
 .card-img.bg-coating{background:linear-gradient(135deg,#2a4a3a 0%,#3a7a5a 100%);}
+.card-img.bg-diainch{background:linear-gradient(135deg,#5a2a0d 0%,#b05730 100%);}
 
 
 .card-img svg{width:90px;height:90px;opacity:.9;}
@@ -359,7 +360,7 @@ body{ background:#faf6ef; color:#1a1510; }
   <div class="suite-landing">
     <div class="suite-intro">
       <h2>Select a Calculator Suite</h2>
-      <p>Two specialist suites — process piping &amp; pipelines, and pipeline integrity — each built on the governing codes for that discipline. 9 calculators are live now, with new tools added every month.</p>
+      <p>Two specialist suites — process piping &amp; pipelines, and pipeline integrity — each built on the governing codes for that discipline. 10 calculators are live now, with new tools added every month.</p>
     </div>
     <div class="suite-grid">
 
@@ -374,12 +375,12 @@ body{ background:#faf6ef; color:#1a1510; }
             <line x1="44" y1="20" x2="51" y2="24" stroke="rgba(255,200,120,0.95)" stroke-width="2" stroke-linecap="round"/>
             <line x1="16" y1="42" x2="16" y2="56" stroke="rgba(255,255,255,0.45)" stroke-width="2" stroke-linecap="round"/>
           </svg>
-          <span class="suite-count">9 live now</span>
+          <span class="suite-count">10 live now</span>
         </div>
         <div class="suite-body">
           <div class="suite-name">Piping &amp; Pipeline</div>
           <div class="suite-sub">ASME B31.3 · B31.4 · B31.8 · API · DNV</div>
-          <div class="suite-desc">Wall thickness, expansion loops, supports, trunnions and flange leakage — plus pipeline crossings and upheaval buckling. 9 calculators live now, with more added every month.</div>
+          <div class="suite-desc">Wall thickness, expansion loops, supports, trunnions and flange leakage — plus pipeline crossings and upheaval buckling. 10 calculators live now, with more added every month.</div>
           <button class="suite-btn open">Open Suite →</button>
         </div>
       </div>
@@ -713,6 +714,28 @@ body{ background:#faf6ef; color:#1a1510; }
       </div>
     </div>
 
+    <!-- 18. Dia-Inch & Change-Order Estimator -->
+    <div class="calc-card" onclick="openModal('di')">
+      <div class="card-img bg-diainch">
+        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="8" y1="48" x2="40" y2="48" stroke="rgba(255,255,255,0.85)" stroke-width="9" stroke-linecap="round"/>
+          <line x1="50" y1="48" x2="82" y2="48" stroke="rgba(255,255,255,0.85)" stroke-width="9" stroke-linecap="round"/>
+          <path d="M45 39 l-3 4 l3 4 l-3 4" stroke="rgba(255,200,120,0.95)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <line x1="18" y1="36" x2="18" y2="60" stroke="rgba(255,255,255,0.55)" stroke-width="1.4"/>
+          <polygon points="18,34 15,41 21,41" fill="rgba(255,255,255,0.55)"/>
+          <polygon points="18,62 15,55 21,55" fill="rgba(255,255,255,0.55)"/>
+          <text x="50" y="26" text-anchor="middle" font-size="13" fill="rgba(255,255,255,0.9)" font-family="monospace">Ø×N</text>
+        </svg>
+        <span class="card-badge badge-member" id="badge-di">👑 Members</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Dia-Inch &amp; Change-Order Estimator</div>
+        <div class="card-desc">Weld diameter-inch take-off split by pipe rack vs equipment area, converted to welding man-hours and labour cost — an independent OE check on a contractor's change-order claim.</div>
+        <div class="card-tags"><span class="tag">Dia-Inch</span><span class="tag">Welding MTO</span><span class="tag">Change Order</span></div>
+        <div class="card-action"><span class="card-btn btn-locked" id="btn-di">👑 Members Only</span></div>
+      </div>
+    </div>
+
     <div class="calc-card" onclick="openModal('ss')">
       <div class="card-img" style="background:linear-gradient(135deg,#1a2a4a 0%,#2a4a7a 100%)">
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -933,7 +956,8 @@ const CALCS = {
   tr:{name:'Trunnion Support Calculator',desc:'Trunnion pipe support design — local stress at the trunnion-to-pipe junction, weld loads, and adequacy check for vertical and horizontal piping loads.',tags:['Trunnion','Local Stress','Support Design'],what:['Trunnion load decomposition','Local shell stress at junction','Weld adequacy check','Support reaction forces','Design adequacy per code'],file:'trunnion-calculator.html',bg:'bg-plum',svgId:'tr'},
   vf:{name:'Vibration Fatigue Calculator',desc:'Reciprocating compressor piping — MNFP, allowable span, support stiffness, pulsation compliance, and surge bottle sizing per API-618 / ASME B31.3.',tags:['API-618','ASME B31.3','Vibration'],what:['Minimum mechanical natural frequency (MNFP)','Maximum allowable pipe span','Vibration support stiffness','API-618 pulsation compliance check','Surge bottle volume sizing'],file:'vibration-fatigue-calculator.html',bg:'bg-vibration',svgId:'vf'},
   ci:{name:'Pipe Coating & Insulation Calculator',desc:'Paint quantity per coat (litres & drums) and hot insulation MTO — mineral wool, calcium silicate, aerogel and more for O&G plant piping.',tags:['ISO 12944','ASTM C547','Hot Insulation'],what:['Paint litres per coat','20L drum count','Insulation volume (m³)','Cladding area (m²)','Multi-size project MTO'],file:'pipe-coating-insulation-calculator.html',bg:'bg-coating',svgId:'ci'},
-  ps:{name:'Pipe Support Span Calculator',desc:'Maximum allowable span between supports — stress method, deflection method & natural frequency check per M.W. Kellogg / ASME B31.3. Includes layout reduction factors for L-bend and Z-bend configurations.',tags:['M.W. Kellogg','ASME B31.3','Span / Deflection'],what:['Max span — stress method','Max span — deflection method','Governing span (lesser of two)','Layout factor for L/Z-bend','Natural frequency check (4 & 8 cps targets)'],file:'pipe-support-span-calculator.html',bg:'bg-navy',svgId:'ps'}
+  ps:{name:'Pipe Support Span Calculator',desc:'Maximum allowable span between supports — stress method, deflection method & natural frequency check per M.W. Kellogg / ASME B31.3. Includes layout reduction factors for L-bend and Z-bend configurations.',tags:['M.W. Kellogg','ASME B31.3','Span / Deflection'],what:['Max span — stress method','Max span — deflection method','Governing span (lesser of two)','Layout factor for L/Z-bend','Natural frequency check (4 & 8 cps targets)'],file:'pipe-support-span-calculator.html',bg:'bg-navy',svgId:'ps'},
+  di:{name:'Dia-Inch & Change-Order Estimator',desc:'Weld diameter-inch take-off split between pipe rack and equipment area, converted to welding man-hours and labour cost. Built as an independent Owner\u2019s Engineer check on a contractor\u2019s change-order claim — Dia-Inch = \u03a3 (NPS \u00d7 welds), with zone-specific productivity rates and an all-in cost/hour.',tags:['Dia-Inch','Welding MTO','Change Order'],what:['Total Dia-Inch (\u03a3 NPS \u00d7 welds)','Pipe-rack vs equipment-area split','Welding man-hours by zone','Labour cost (USD / SAR / GBP / EUR)','Breakdown by size & location','CSV export'],file:'dia-inch-calculator.html',bg:'bg-diainch',svgId:'di'}
 };
 
 // ─── COMING SOON (rolling monthly release) ───────────────────
@@ -963,7 +987,8 @@ const SVGS = {
   tr:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="45" x2="80" y2="45" stroke="rgba(255,255,255,0.8)" stroke-width="8" stroke-linecap="round"/><rect x="38" y="30" width="14" height="30" rx="2" fill="rgba(255,255,255,0.6)"/><line x1="45" y1="60" x2="45" y2="75" stroke="rgba(255,255,255,0.7)" stroke-width="3" stroke-linecap="round"/><line x1="35" y1="75" x2="55" y2="75" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"/><line x1="45" y1="30" x2="45" y2="15" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-dasharray="3 2"/><polygon points="45,13 41,21 49,21" fill="rgba(255,255,255,0.4)"/></svg>`,
   vf:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="5" y1="48" x2="85" y2="48" stroke="rgba(255,255,255,0.75)" stroke-width="5" stroke-linecap="round"/><path d="M10 48 Q20 30 30 48 Q40 66 50 48 Q60 30 70 48 Q78 60 83 48" stroke="rgba(255,255,255,0.95)" stroke-width="2.2" fill="none" stroke-linecap="round"/><rect x="8" y="43" width="6" height="10" rx="1" fill="rgba(255,255,255,0.5)"/><rect x="76" y="43" width="6" height="10" rx="1" fill="rgba(255,255,255,0.5)"/><line x1="45" y1="28" x2="45" y2="20" stroke="rgba(255,230,180,0.9)" stroke-width="1.5"/><polygon points="45,18 42,24 48,24" fill="rgba(255,230,180,0.9)"/></svg>`,
   ci:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="45" x2="80" y2="45" stroke="rgba(255,255,255,0.9)" stroke-width="7" stroke-linecap="round"/><rect x="10" y="36" width="70" height="18" rx="5" stroke="rgba(255,255,255,0.45)" stroke-width="2" fill="none"/><rect x="10" y="30" width="70" height="30" rx="7" stroke="rgba(255,255,255,0.20)" stroke-width="1.5" fill="none"/><path d="M22 25 Q30 20 38 25" stroke="rgba(255,220,160,0.85)" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M42 22 Q50 17 58 22" stroke="rgba(255,220,160,0.85)" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M62 25 Q70 20 78 25" stroke="rgba(255,220,160,0.85)" stroke-width="2" fill="none" stroke-linecap="round"/><line x1="30" y1="67" x2="30" y2="58" stroke="rgba(255,180,100,0.7)" stroke-width="1.5"/><polygon points="30,56 27,62 33,62" fill="rgba(255,180,100,0.7)"/><line x1="55" y1="67" x2="55" y2="58" stroke="rgba(255,180,100,0.7)" stroke-width="1.5"/><polygon points="55,56 52,62 58,62" fill="rgba(255,180,100,0.7)"/></svg>`,
-  ps:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="5" y1="38" x2="85" y2="38" stroke="rgba(255,255,255,0.85)" stroke-width="5" stroke-linecap="round"/><line x1="20" y1="38" x2="20" y2="58" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round"/><line x1="70" y1="38" x2="70" y2="58" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round"/><line x1="12" y1="58" x2="28" y2="58" stroke="rgba(255,255,255,0.5)" stroke-width="3" stroke-linecap="round"/><line x1="62" y1="58" x2="78" y2="58" stroke="rgba(255,255,255,0.5)" stroke-width="3" stroke-linecap="round"/><path d="M20 38 Q45 52 70 38" stroke="rgba(255,220,100,0.9)" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-dasharray="4 2"/><line x1="20" y1="25" x2="70" y2="25" stroke="rgba(255,255,255,0.6)" stroke-width="1.2"/><polygon points="20,25 27,22 27,28" fill="rgba(255,255,255,0.6)"/><polygon points="70,25 63,22 63,28" fill="rgba(255,255,255,0.6)"/></svg>`
+  ps:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="5" y1="38" x2="85" y2="38" stroke="rgba(255,255,255,0.85)" stroke-width="5" stroke-linecap="round"/><line x1="20" y1="38" x2="20" y2="58" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round"/><line x1="70" y1="38" x2="70" y2="58" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round"/><line x1="12" y1="58" x2="28" y2="58" stroke="rgba(255,255,255,0.5)" stroke-width="3" stroke-linecap="round"/><line x1="62" y1="58" x2="78" y2="58" stroke="rgba(255,255,255,0.5)" stroke-width="3" stroke-linecap="round"/><path d="M20 38 Q45 52 70 38" stroke="rgba(255,220,100,0.9)" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-dasharray="4 2"/><line x1="20" y1="25" x2="70" y2="25" stroke="rgba(255,255,255,0.6)" stroke-width="1.2"/><polygon points="20,25 27,22 27,28" fill="rgba(255,255,255,0.6)"/><polygon points="70,25 63,22 63,28" fill="rgba(255,255,255,0.6)"/></svg>`,
+  di:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="8" y1="48" x2="40" y2="48" stroke="rgba(255,255,255,0.85)" stroke-width="9" stroke-linecap="round"/><line x1="50" y1="48" x2="82" y2="48" stroke="rgba(255,255,255,0.85)" stroke-width="9" stroke-linecap="round"/><path d="M45 39 l-3 4 l3 4 l-3 4" stroke="rgba(255,200,120,0.95)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="18" y1="36" x2="18" y2="60" stroke="rgba(255,255,255,0.55)" stroke-width="1.4"/><polygon points="18,34 15,41 21,41" fill="rgba(255,255,255,0.55)"/><polygon points="18,62 15,55 21,55" fill="rgba(255,255,255,0.55)"/><text x="50" y="26" text-anchor="middle" font-size="13" fill="rgba(255,255,255,0.9)" font-family="monospace">Ø×N</text></svg>`
 };
 
 // ─── ADMIN BYPASS ─────────────────────────────────────────────

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dia-Inch &amp; Change-Order Estimator — PipingPro Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper:#f4f1ea; --paper-2:#ece7db; --card:#fbf9f4;
+    --ink:#2b2622; --ink-soft:#5c5349; --ink-faint:#8a8073;
+    --line:#ddd5c6; --line-soft:#e8e1d3;
+    --accent:#b05730; --accent-deep:#8a3f20; --accent-soft:#f0e3d8;
+    --rack:#3c6e8f; --rack-soft:#dde9f0;
+    --equip:#9a6b2f; --equip-soft:#f0e6d4;
+    --money:#4d6b43; --money-soft:#e6ecdf;
+    --radius:10px; --shadow:0 1px 2px rgba(43,38,34,.05),0 8px 24px rgba(43,38,34,.06);
+  }
+  * { box-sizing:border-box; }
+  html { -webkit-text-size-adjust:100%; }
+  body { margin:0; background:var(--paper); color:var(--ink); font-family:"DM Sans",system-ui,sans-serif; line-height:1.55; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:980px; margin:0 auto; padding:2.4rem 1.25rem 4rem; }
+
+  header.masthead { margin-bottom:2rem; }
+  .eyebrow { font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); margin:0 0 .5rem; }
+  h1 { font-family:"DM Serif Display",serif; font-weight:400; font-size:clamp(2rem,5vw,2.9rem); line-height:1.05; margin:0 0 .6rem; }
+  .lede { color:var(--ink-soft); max-width:62ch; margin:0; font-size:1.02rem; }
+  .formula { display:inline-block; margin-top:1rem; font-family:"IBM Plex Mono",monospace; font-size:13px; background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:.6rem .9rem; color:var(--ink-soft); }
+  .formula b { color:var(--accent-deep); }
+
+  .card { background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:1.4rem 1.4rem 1.6rem; margin-top:1.6rem; }
+  .card h2 { font-family:"DM Serif Display",serif; font-weight:400; font-size:1.35rem; margin:0 0 .25rem; }
+  .card .sub { color:var(--ink-faint); font-size:.9rem; margin:0 0 1.1rem; }
+
+  .table-scroll { overflow-x:auto; margin:0 -.4rem; }
+  table.di { width:100%; border-collapse:collapse; min-width:780px; }
+  table.di thead th { font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); text-align:left; padding:0 .5rem .55rem; font-weight:600; border-bottom:1.5px solid var(--line); }
+  table.di thead th.num, table.di tbody td.num { text-align:right; }
+  table.di tbody td { padding:.4rem .5rem; border-bottom:1px solid var(--line-soft); vertical-align:middle; }
+  table.di tbody tr:last-child td { border-bottom:none; }
+  .rownum { font-family:"IBM Plex Mono",monospace; color:var(--ink-faint); font-size:12px; }
+
+  input, select { font-family:"DM Sans",sans-serif; font-size:.95rem; color:var(--ink); background:#fff; border:1px solid var(--line); border-radius:7px; padding:.42rem .55rem; width:100%; transition:border-color .12s,box-shadow .12s; }
+  td.num input { font-family:"IBM Plex Mono",monospace; text-align:right; }
+  input:focus, select:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+  input[type=number] { -moz-appearance:textfield; }
+  input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+
+  .di-cell { font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:.95rem; color:var(--accent-deep); }
+  .del { border:none; background:transparent; color:var(--ink-faint); cursor:pointer; font-size:18px; line-height:1; padding:.2rem .4rem; border-radius:6px; }
+  .del:hover { color:var(--accent-deep); background:var(--accent-soft); }
+
+  .btn { font-family:"DM Sans",sans-serif; font-weight:600; font-size:.9rem; border-radius:8px; padding:.58rem 1rem; cursor:pointer; border:1px solid transparent; transition:background .12s,border-color .12s,color .12s; }
+  .btn-primary { background:var(--accent); color:#fff; }
+  .btn-primary:hover { background:var(--accent-deep); }
+  .btn-ghost { background:transparent; color:var(--ink-soft); border-color:var(--line); }
+  .btn-ghost:hover { border-color:var(--accent); color:var(--accent-deep); }
+  .btn-row { display:flex; flex-wrap:wrap; gap:.6rem; margin-top:1.1rem; }
+
+  .calc-bar { display:flex; align-items:center; gap:1rem; flex-wrap:wrap; margin-top:1.6rem; }
+  .btn-calc { background:var(--accent); color:#fff; font-size:1.05rem; font-weight:700; padding:.85rem 2.4rem; border-radius:10px; border:none; cursor:pointer; box-shadow:var(--shadow); transition:background .12s,transform .06s; }
+  .btn-calc:hover { background:var(--accent-deep); }
+  .btn-calc:active { transform:translateY(1px); }
+  .stale { font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--accent-deep); display:none; }
+  .stale.show { display:inline; }
+
+  .results { transition:opacity .15s; }
+  .results.dim { opacity:.4; }
+
+  .totals { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1rem; margin-top:.2rem; }
+  .stat { background:var(--paper); border:1px solid var(--line); border-radius:var(--radius); padding:1rem 1.1rem; }
+  .stat .label { font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:.35rem; }
+  .stat .value { font-family:"IBM Plex Mono",monospace; font-size:1.7rem; font-weight:600; line-height:1; }
+  .stat .value .unit { font-size:.8rem; color:var(--ink-faint); font-weight:500; margin-left:.25rem; }
+  .stat.headline { background:var(--accent-soft); border-color:#e3c9b8; }
+  .stat.headline .value { color:var(--accent-deep); }
+  .stat.rack { background:var(--rack-soft); border-color:#c2d6e2; } .stat.rack .value { color:var(--rack); }
+  .stat.equip { background:var(--equip-soft); border-color:#dfc99f; } .stat.equip .value { color:var(--equip); }
+  .stat.money { background:var(--money-soft); border-color:#c8d6bd; } .stat.money .value { color:var(--money); font-size:1.5rem; }
+
+  table.summary { width:100%; border-collapse:collapse; margin-top:.4rem; }
+  table.summary th, table.summary td { padding:.45rem .5rem; font-size:.9rem; border-bottom:1px solid var(--line-soft); }
+  table.summary th { font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); text-align:left; font-weight:600; }
+  table.summary td.num, table.summary th.num { text-align:right; font-family:"IBM Plex Mono",monospace; }
+  table.summary tfoot td { font-weight:700; border-top:1.5px solid var(--line); border-bottom:none; color:var(--accent-deep); }
+  .pill { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:.45rem; }
+  .pill.rack { background:var(--rack); } .pill.equip { background:var(--equip); }
+
+  .rate-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1rem; }
+  .rate-box { background:var(--paper); border:1px solid var(--line); border-radius:var(--radius); padding:.9rem 1rem; }
+  .rate-box.rack { border-left:3px solid var(--rack); }
+  .rate-box.equip { border-left:3px solid var(--equip); }
+  .rate-box.cost { border-left:3px solid var(--money); }
+  .rate-box .zlabel { font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:.55rem; }
+  .rate-box .rrow { display:flex; align-items:center; gap:.5rem; font-size:.9rem; color:var(--ink-soft); }
+  .rate-box .rrow input { width:90px; }
+  .rate-box .rrow select { width:auto; }
+
+  .note { font-size:.85rem; color:var(--ink-soft); background:var(--paper); border-left:3px solid var(--accent); border-radius:0 8px 8px 0; padding:.7rem .9rem; margin:1.1rem 0; }
+  .note b { color:var(--ink); }
+  .disclaimer { font-size:11px; color:var(--ink-faint); margin-top:1.4rem; line-height:1.6; }
+  footer.foot { margin-top:2.2rem; padding-top:1.2rem; border-top:1px solid var(--line); font-size:12px; color:var(--ink-faint); display:flex; justify-content:space-between; flex-wrap:wrap; gap:.5rem; }
+
+  @media (max-width:560px){ .wrap{padding:1.6rem 1rem 3rem;} .stat .value{font-size:1.35rem;} }
+  @media print { body{background:#fff;} .btn-row,.del,.calc-bar{display:none;} .card{box-shadow:none;border-color:#ccc;} .results{opacity:1!important;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">PipingPro Academy · OE / Estimating Tools</p>
+    <h1>Dia-Inch &amp; Change-Order Estimator</h1>
+    <p class="lede">Build the weld scope, split it between pipe rack and equipment area, and get an independent Dia-Inch → man-hour → cost estimate. Use it to verify a contractor's change-order claim against your own numbers.</p>
+    <span class="formula">Dia-Inch = Σ ( <b>NPS</b> × <b>welds</b> ) &nbsp;·&nbsp; Man-hours = <b>DI</b> × <b>rate</b> &nbsp;·&nbsp; Cost = <b>MH</b> × <b>$/hr</b></span>
+  </header>
+
+  <section class="card">
+    <h2>Weld Schedule</h2>
+    <p class="sub">Add a row per pipe size and set its location. Weld type is for the breakdown only and does not change the Dia-Inch.</p>
+    <div class="table-scroll">
+      <table class="di">
+        <thead>
+          <tr>
+            <th style="width:30px;">#</th>
+            <th>Line / Spec ref</th>
+            <th style="width:110px;">NPS (in)</th>
+            <th style="width:150px;">Location</th>
+            <th style="width:140px;">Weld type</th>
+            <th class="num" style="width:95px;">Welds</th>
+            <th class="num" style="width:90px;">Dia-Inch</th>
+            <th style="width:30px;"></th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="addRow">+ Add weld line</button>
+      <button class="btn btn-ghost" id="clearAll">Clear all</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Rates &amp; Labour Cost</h2>
+    <p class="sub">Productivity differs by zone; the labour rate is your all-in cost per welding man-hour.</p>
+    <div class="rate-grid">
+      <div class="rate-box rack">
+        <div class="zlabel"><span class="pill rack"></span>Pipe Rack — productivity</div>
+        <div class="rrow"><input type="number" id="rackRate" value="1.0" min="0" step="0.1"><span>mh / DI</span></div>
+      </div>
+      <div class="rate-box equip">
+        <div class="zlabel"><span class="pill equip"></span>Equipment Area — productivity</div>
+        <div class="rrow"><input type="number" id="equipRate" value="1.5" min="0" step="0.1"><span>mh / DI</span></div>
+      </div>
+      <div class="rate-box cost">
+        <div class="zlabel">Labour rate — cost per hour</div>
+        <div class="rrow">
+          <select id="ccy">
+            <option value="$">USD $</option>
+            <option value="SAR ">SAR</option>
+            <option value="£">GBP £</option>
+            <option value="€">EUR €</option>
+          </select>
+          <input type="number" id="costRate" value="45" min="0" step="1">
+          <span>/ hr</span>
+        </div>
+      </div>
+    </div>
+    <div class="note" style="margin-bottom:0;">Typical shop/rack carbon-steel butt welding ≈ 0.8–1.2 mh/DI; equipment-area field work ≈ 1.3–2.0 mh/DI. Set the cost/hr as an all-in rate (welder + fitter + helper + overhead) to match how the contractor prices the change order.</div>
+  </section>
+
+  <div class="calc-bar">
+    <button class="btn-calc" id="calcBtn">Calculate</button>
+    <span class="stale" id="stale">Inputs changed — press Calculate to update.</span>
+  </div>
+
+  <section class="card results" id="resultsCard">
+    <h2>Result</h2>
+    <p class="sub">Independent estimate for this scope — your benchmark against the contractor's claim.</p>
+    <div class="totals">
+      <div class="stat headline"><div class="label">Total Dia-Inch</div><div class="value"><span id="totalDI">—</span><span class="unit">DI</span></div></div>
+      <div class="stat rack"><div class="label">Rack DI</div><div class="value"><span id="rackDI">—</span><span class="unit">DI</span></div></div>
+      <div class="stat equip"><div class="label">Equip Area DI</div><div class="value"><span id="equipDI">—</span><span class="unit">DI</span></div></div>
+      <div class="stat"><div class="label">Total Welds</div><div class="value"><span id="totalWelds">—</span></div></div>
+    </div>
+    <div class="totals" style="margin-top:1rem;">
+      <div class="stat"><div class="label">Rack Man-hours</div><div class="value"><span id="rackMH">—</span><span class="unit">mh</span></div></div>
+      <div class="stat"><div class="label">Equip Man-hours</div><div class="value"><span id="equipMH">—</span><span class="unit">mh</span></div></div>
+      <div class="stat headline"><div class="label">Total Man-hours</div><div class="value"><span id="totalMH">—</span><span class="unit">mh</span></div></div>
+      <div class="stat money"><div class="label">Total Labour Cost</div><div class="value"><span id="totalCost">—</span></div></div>
+    </div>
+    <table class="summary" style="margin-top:1.4rem;">
+      <thead>
+        <tr><th>Zone</th><th class="num">Dia-Inch</th><th class="num">Man-hours</th><th class="num">Labour cost</th></tr>
+      </thead>
+      <tbody id="zoneRows"></tbody>
+      <tfoot>
+        <tr><td>Total</td><td class="num" id="zTotDI">—</td><td class="num" id="zTotMH">—</td><td class="num" id="zTotCost">—</td></tr>
+      </tfoot>
+    </table>
+  </section>
+
+  <section class="card">
+    <h2>Breakdown by Size &amp; Location</h2>
+    <p class="sub">Dia-Inch per NPS, split by zone — for welder allocation and consumable take-off.</p>
+    <table class="summary">
+      <thead>
+        <tr>
+          <th>NPS (in)</th>
+          <th class="num"><span class="pill rack"></span>Rack welds</th>
+          <th class="num"><span class="pill rack"></span>Rack DI</th>
+          <th class="num"><span class="pill equip"></span>Equip welds</th>
+          <th class="num"><span class="pill equip"></span>Equip DI</th>
+          <th class="num">Total DI</th>
+        </tr>
+      </thead>
+      <tbody id="summaryRows"></tbody>
+      <tfoot>
+        <tr><td>Total</td><td class="num" id="sumRackW">—</td><td class="num" id="sumRackDI">—</td><td class="num" id="sumEquipW">—</td><td class="num" id="sumEquipDI">—</td><td class="num" id="sumDI">—</td></tr>
+      </tfoot>
+    </table>
+    <div class="btn-row">
+      <button class="btn btn-ghost" id="exportCsv">Export CSV</button>
+      <button class="btn btn-ghost" id="printBtn">Print / PDF</button>
+    </div>
+  </section>
+
+  <p class="disclaimer">Disclaimer: This tool is for preliminary engineering, estimating and change-order verification use only. Results depend on the accuracy of the weld count, zone classification and rates supplied, and represent an independent indicative estimate — not a substitute for a detailed quotation review. All figures must be verified by a competent engineer/estimator before use in any commercial position or claim settlement. PipingPro Academy accepts no liability for decisions made on the basis of this calculator.</p>
+
+  <footer class="foot">
+    <span>PipingPro Academy · Dia-Inch &amp; Change-Order Estimator</span>
+    <span>DI × rate × $/hr</span>
+  </footer>
+</div>
+
+<script>
+  const NPS_LIST = [0.5,0.75,1,1.5,2,3,4,6,8,10,12,14,16,18,20,24,26,30,36,42,48];
+  const LOCS = ["Pipe Rack","Equipment Area"];
+  const WELD_TYPES = ["Butt Weld (BW)","Socket Weld (SW)","Branch / Stub-in","Flange weld","Other"];
+  const rowsEl = document.getElementById('rows');
+  const fmt = (v,d=1) => v.toLocaleString(undefined,{maximumFractionDigits:d});
+  const ccy = () => document.getElementById('ccy').value;
+  const money = v => ccy() + v.toLocaleString(undefined,{maximumFractionDigits:0});
+
+  const npsOptions  = sel => NPS_LIST.map(n=>`<option value="${n}" ${n===sel?'selected':''}>${n}"</option>`).join('');
+  const locOptions  = sel => LOCS.map(l=>`<option ${l===sel?'selected':''}>${l}</option>`).join('');
+  const weldOptions = sel => WELD_TYPES.map(t=>`<option ${t===sel?'selected':''}>${t}</option>`).join('');
+
+  function markStale(){ document.getElementById('stale').classList.add('show'); document.getElementById('resultsCard').classList.add('dim'); }
+  function clearStale(){ document.getElementById('stale').classList.remove('show'); document.getElementById('resultsCard').classList.remove('dim'); }
+
+  function updateRowDI(tr){
+    const nps=parseFloat(tr.querySelector('.f-nps').value)||0;
+    const w=parseFloat(tr.querySelector('.f-welds').value)||0;
+    tr.querySelector('.f-di').textContent = (nps*w) ? fmt(nps*w,2) : '0';
+  }
+
+  function addRow(d){
+    d=d||{};
+    const tr=document.createElement('tr');
+    tr.innerHTML = `
+      <td class="rownum"></td>
+      <td><input type="text" class="f-ref" placeholder='e.g. 10"-P-1001' value="${d.ref||''}"></td>
+      <td><select class="f-nps">${npsOptions(d.nps||6)}</select></td>
+      <td><select class="f-loc">${locOptions(d.loc||LOCS[0])}</select></td>
+      <td><select class="f-type">${weldOptions(d.type||WELD_TYPES[0])}</select></td>
+      <td class="num"><input type="number" class="f-welds" min="0" step="1" value="${d.welds!=null?d.welds:''}" placeholder="0"></td>
+      <td class="num di-cell f-di">0</td>
+      <td><button class="del" title="Remove row">×</button></td>`;
+    tr.querySelector('.del').addEventListener('click', ()=>{ tr.remove(); renumber(); markStale(); });
+    tr.querySelectorAll('input,select').forEach(el=>el.addEventListener('input', ()=>{ updateRowDI(tr); markStale(); }));
+    rowsEl.appendChild(tr);
+    renumber(); updateRowDI(tr);
+  }
+  function renumber(){ rowsEl.querySelectorAll('tr').forEach((tr,i)=>tr.querySelector('.rownum').textContent=i+1); }
+
+  function calculate(){
+    let totalDI=0, totalWelds=0, rackDI=0, equipDI=0;
+    const bySize={};
+    rowsEl.querySelectorAll('tr').forEach(tr=>{
+      const nps=parseFloat(tr.querySelector('.f-nps').value)||0;
+      const w=parseFloat(tr.querySelector('.f-welds').value)||0;
+      const loc=tr.querySelector('.f-loc').value;
+      const di=nps*w; totalDI+=di; totalWelds+=w;
+      const isRack=loc===LOCS[0];
+      if(isRack) rackDI+=di; else equipDI+=di;
+      if(w>0){
+        if(!bySize[nps]) bySize[nps]={rw:0,rdi:0,ew:0,edi:0};
+        if(isRack){ bySize[nps].rw+=w; bySize[nps].rdi+=di; } else { bySize[nps].ew+=w; bySize[nps].edi+=di; }
+      }
+    });
+
+    const rRate=parseFloat(document.getElementById('rackRate').value)||0;
+    const eRate=parseFloat(document.getElementById('equipRate').value)||0;
+    const cRate=parseFloat(document.getElementById('costRate').value)||0;
+    const rackMH=rackDI*rRate, equipMH=equipDI*eRate, totalMH=rackMH+equipMH;
+    const rackCost=rackMH*cRate, equipCost=equipMH*cRate, totalCost=totalMH*cRate;
+
+    const set=(id,v)=>document.getElementById(id).textContent=v;
+    set('totalDI',fmt(totalDI)); set('rackDI',fmt(rackDI)); set('equipDI',fmt(equipDI));
+    set('totalWelds',totalWelds.toLocaleString());
+    set('rackMH',fmt(rackMH,0)); set('equipMH',fmt(equipMH,0)); set('totalMH',fmt(totalMH,0));
+    set('totalCost',money(totalCost));
+
+    // zone table
+    const zEl=document.getElementById('zoneRows'); zEl.innerHTML='';
+    [['Pipe Rack','rack',rackDI,rackMH,rackCost],['Equipment Area','equip',equipDI,equipMH,equipCost]].forEach(([name,cls,di,mh,cost])=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td><span class="pill ${cls}"></span>${name}</td><td class="num">${fmt(di)}</td><td class="num">${fmt(mh,0)}</td><td class="num">${money(cost)}</td>`;
+      zEl.appendChild(tr);
+    });
+    set('zTotDI',fmt(totalDI)); set('zTotMH',fmt(totalMH,0)); set('zTotCost',money(totalCost));
+
+    // size breakdown
+    const sumEl=document.getElementById('summaryRows'); sumEl.innerHTML='';
+    let sRW=0,sRDI=0,sEW=0,sEDI=0;
+    Object.keys(bySize).map(Number).sort((a,b)=>a-b).forEach(nps=>{
+      const s=bySize[nps]; sRW+=s.rw; sRDI+=s.rdi; sEW+=s.ew; sEDI+=s.edi;
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${nps}"</td><td class="num">${s.rw.toLocaleString()}</td><td class="num">${fmt(s.rdi)}</td><td class="num">${s.ew.toLocaleString()}</td><td class="num">${fmt(s.edi)}</td><td class="num">${fmt(s.rdi+s.edi)}</td>`;
+      sumEl.appendChild(tr);
+    });
+    set('sumRackW',sRW.toLocaleString()); set('sumRackDI',fmt(sRDI));
+    set('sumEquipW',sEW.toLocaleString()); set('sumEquipDI',fmt(sEDI)); set('sumDI',fmt(totalDI));
+
+    clearStale();
+  }
+
+  document.getElementById('addRow').addEventListener('click', ()=>{ addRow(); markStale(); });
+  document.getElementById('clearAll').addEventListener('click', ()=>{ if(confirm('Clear all weld lines?')){ rowsEl.innerHTML=''; addRow(); markStale(); } });
+  ['rackRate','equipRate','costRate','ccy'].forEach(id=>document.getElementById(id).addEventListener('input', markStale));
+  document.getElementById('calcBtn').addEventListener('click', calculate);
+  document.getElementById('printBtn').addEventListener('click', ()=>window.print());
+
+  document.getElementById('exportCsv').addEventListener('click', ()=>{
+    let csv='Line/Spec ref,NPS (in),Location,Weld type,No. of welds,Dia-Inch\n';
+    rowsEl.querySelectorAll('tr').forEach(tr=>{
+      const ref=(tr.querySelector('.f-ref').value||'').replace(/,/g,';');
+      const nps=tr.querySelector('.f-nps').value, loc=tr.querySelector('.f-loc').value;
+      const type=tr.querySelector('.f-type').value, w=tr.querySelector('.f-welds').value||'0';
+      csv+=`${ref},${nps},${loc},${type},${w},${(parseFloat(nps)||0)*(parseFloat(w)||0)}\n`;
+    });
+    csv+=`\nTotal Dia-Inch,,,,,${document.getElementById('totalDI').textContent.replace(/,/g,'')}\n`;
+    csv+=`Total Man-hours,,,,,${document.getElementById('totalMH').textContent.replace(/,/g,'')}\n`;
+    csv+=`Total Labour Cost,,,,,${document.getElementById('totalCost').textContent}\n`;
+    const blob=new Blob([csv],{type:'text/csv'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='change-order-estimate.csv'; a.click();
+  });
+
+  // seed examples + first calc
+  addRow({nps:8, loc:'Pipe Rack',      type:WELD_TYPES[0], welds:10});
+  addRow({nps:6, loc:'Pipe Rack',      type:WELD_TYPES[0], welds:8});
+  addRow({nps:4, loc:'Equipment Area', type:WELD_TYPES[0], welds:14});
+  addRow({nps:2, loc:'Equipment Area', type:WELD_TYPES[1], welds:22});
+  calculate();
+</script>
+</body>
+</html>
