@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dia-Inch &amp; Change-Order Estimator — PipingPro Academy</title>
+<title>Sectional Volume Calculator — PipingPro Academy</title>
 
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -253,29 +253,25 @@ body{ background:#faf6ef; color:#1a1510; }
 </style>
 <!-- ===== end PipingPro Brand Bridge ===== -->
 
-<style id="di-extra">
-.ctab{width:100%;border-collapse:collapse;min-width:700px;}
-.ctab thead th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#8a7560;text-align:left;padding:0 8px 8px;border-bottom:1px solid var(--rule);white-space:nowrap;}
-.ctab thead th.num{text-align:right;}
-.ctab tbody td{padding:5px 6px;border-bottom:1px solid var(--rule);vertical-align:middle;}
-.ctab tbody tr:last-child td{border-bottom:none;}
-.ctab td.num{text-align:right;}
-.ctab .rownum{font-family:var(--mono);font-size:12px;color:#a8a29e;width:26px;}
-.ctab input[type=number],.ctab input[type=text]{padding:7px 9px;}
-.ctab td.num input{font-family:var(--mono);text-align:right;}
-.ctab select{padding:7px 26px 7px 9px;}
-.ctab .di-cell{font-family:var(--mono);font-weight:600;color:#6e2e14;}
-.ct-del{border:none;background:transparent;color:#a8a29e;cursor:pointer;font-size:17px;line-height:1;padding:2px 6px;border-radius:6px;}
-.ct-del:hover{color:#8b3a1a;background:#f6e6df;}
-.ct-scroll{overflow-x:auto;margin:0 -.3rem;}
+<style id="sv-extra">
+/* Sectional-volume table + mini buttons — uses brand tokens */
+.sv-table{width:100%;border-collapse:collapse;min-width:520px;}
+.sv-table thead th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#8a7560;text-align:left;padding:0 8px 8px;border-bottom:1px solid var(--rule);white-space:nowrap;}
+.sv-table thead th.num{text-align:right;}
+.sv-table tbody td{padding:5px 6px;border-bottom:1px solid var(--rule);vertical-align:middle;}
+.sv-table tbody tr:last-child td{border-bottom:none;}
+.sv-table td.num{text-align:right;}
+.sv-table .rownum{font-family:var(--mono);font-size:12px;color:#a8a29e;width:26px;}
+.sv-table input[type=number]{padding:7px 9px;}
+.sv-table td.num input{font-family:var(--mono);text-align:right;}
+.sv-table .area-cell{font-family:var(--mono);font-weight:600;color:#6e2e14;}
+.sv-del{border:none;background:transparent;color:#a8a29e;cursor:pointer;font-size:17px;line-height:1;padding:2px 6px;border-radius:6px;}
+.sv-del:hover{color:#8b3a1a;background:#f6e6df;}
+.sv-scroll{overflow-x:auto;margin:0 -.3rem;}
 .btn-mini{background:#fff;border:1.5px solid #e0cc9e;color:#6e2e14;font-family:var(--sans);font-weight:600;font-size:13px;padding:8px 14px;border-radius:8px;cursor:pointer;transition:border-color .2s,color .2s;}
 .btn-mini:hover{border-color:var(--gold2);}
 .btn-mini.ghost{color:#8a7560;}
-.ccy-row{display:flex;gap:6px;}
-.ccy-row select{flex:0 0 auto;width:auto;}
-.metric.cost .mv{color:#1a6b5a;}
-.pill-rack{display:inline-block;width:9px;height:9px;border-radius:50%;background:#3c6e8f;margin-right:5px;vertical-align:middle;}
-.pill-equip{display:inline-block;width:9px;height:9px;border-radius:50%;background:#9a6b2f;margin-right:5px;vertical-align:middle;}
+.metric.na .mv{font-size:.95rem;color:#a8a29e;}
 .calc-panel{display:none;}.calc-panel.active{display:block;}
 </style>
 
@@ -288,8 +284,8 @@ body{ background:#faf6ef; color:#1a1510; }
 </nav>
 <div class="ppa-hero">
   <div class="ppa-hero-eyebrow">Members · Engineering Calculator Suite</div>
-  <h1>Dia-Inch &amp; Change-Order <em>Estimator</em></h1>
-  <p>Weld diameter-inch take-off → welding man-hours → labour cost — an independent OE check on a contractor's change-order claim</p>
+  <h1>Sectional Volume <em>Calculator</em></h1>
+  <p>Trench &amp; excavation volume from cross-sections — average end-area &amp; prismoidal (Simpson's) methods</p>
 </div>
 
 <div class="calc-tabs" style="max-width:880px;margin:0 auto;">
@@ -302,62 +298,60 @@ body{ background:#faf6ef; color:#1a1510; }
 <div class="wrapper">
 
   <div class="header">
-    <div class="hicon">🧮</div>
+    <div class="hicon">⛏️</div>
     <div>
-      <div class="htitle">Dia-Inch &amp; Change-Order Estimator</div>
+      <div class="htitle">Sectional Volume Calculator</div>
       <div class="hsub">PipingPro Academy · Calculator Suite</div>
-      <p class="hdesc">Build the weld scope, split it between pipe rack and equipment area, and get an independent <strong>Dia-Inch → man-hour → cost</strong> estimate. Use it to verify a contractor's change-order claim against your own numbers.</p>
+      <p class="hdesc">Volume of a trench, excavation or irregular prism from cross-sectional areas taken at stations along its length. Enter the area directly, or compute it from trapezoidal trench geometry. <strong>Average end-area</strong> and <strong>prismoidal (Simpson's)</strong> methods side by side.</p>
     </div>
   </div>
 
-  <!-- Weld schedule -->
+  <!-- Setup -->
   <div class="card">
-    <div class="ctitle">Weld Schedule <span style="font-family:var(--sans);font-size:12px;color:#a38060;font-weight:400;">(one weld of an NPS-n pipe = n dia-inches)</span></div>
-    <div class="ct-scroll">
-      <table class="ctab"><thead id="thead"></thead><tbody id="rows"></tbody></table>
-    </div>
-    <div style="display:flex;gap:.6rem;margin-top:1rem;flex-wrap:wrap;">
-      <button class="btn-mini" onclick="addRow()">+ Add weld line</button>
-      <button class="btn-mini ghost" onclick="clearAll()">Clear all</button>
-    </div>
-  </div>
-
-  <!-- Rates & cost -->
-  <div class="card" style="animation-delay:.07s">
-    <div class="ctitle">Rates &amp; Labour Cost</div>
+    <div class="ctitle">Setup</div>
     <div class="fg3">
       <div class="field">
-        <label><span class="pill-rack"></span>Pipe Rack — Productivity</label>
-        <input type="number" id="rackRate" value="1.0" min="0" step="0.1"> 
+        <label>Area Input</label>
+        <select id="mode" onchange="onMode()">
+          <option value="direct">Enter area directly</option>
+          <option value="trench">Trench geometry → area</option>
+        </select>
       </div>
       <div class="field">
-        <label><span class="pill-equip"></span>Equipment Area — Productivity</label>
-        <input type="number" id="equipRate" value="1.5" min="0" step="0.1">
+        <label>Units</label>
+        <select id="unit" onchange="onUnit()">
+          <option value="m">Metric (m, m³)</option>
+          <option value="ft">Imperial (ft, ft³)</option>
+        </select>
       </div>
       <div class="field">
-        <label>Labour Rate — Cost / Hour</label>
-        <div class="ccy-row">
-          <select id="ccy">
-            <option value="$">USD $</option>
-            <option value="SAR ">SAR</option>
-            <option value="£">GBP £</option>
-            <option value="€">EUR €</option>
-          </select>
-          <input type="number" id="costRate" value="45" min="0" step="1">
-        </div>
+        <label>Swell / Bulking Factor (%)</label>
+        <input type="number" id="swell" value="0" min="0" step="1">
       </div>
     </div>
-    <div class="note" style="margin-top:14px;">
+    <div class="note" id="trenchNote" style="display:none;margin-top:14px;">
       <span class="note-arr">▸</span>
-      <div>Productivity is in <b>man-hours per dia-inch</b>. Shop/rack carbon-steel butt welding ≈ 0.8–1.2 mh/DI; congested equipment-area / field work ≈ 1.3–2.0 mh/DI. Set cost/hr as an all-in rate (welder + fitter + helper + overhead) to match how the contractor prices the change order.</div>
+      <div><b>Trapezoidal trench area</b> = (b + s·h)·h — b = bottom width, h = depth, s = side slope (horizontal run per 1 vertical). Use s = 0 for vertical shored walls; side slopes assumed symmetric.</div>
     </div>
-    <button class="btn" onclick="calculate()">Calculate Estimate →</button>
+  </div>
+
+  <!-- Cross-sections -->
+  <div class="card" style="animation-delay:.07s">
+    <div class="ctitle">Cross-Sections by Station <span style="font-family:var(--sans);font-size:12px;color:#a38060;font-weight:400;">(ordered along the run)</span></div>
+    <div class="sv-scroll">
+      <table class="sv-table"><thead id="thead"></thead><tbody id="rows"></tbody></table>
+    </div>
+    <div style="display:flex;gap:.6rem;margin-top:1rem;flex-wrap:wrap;">
+      <button class="btn-mini" onclick="addRow()">+ Add station</button>
+      <button class="btn-mini ghost" onclick="clearAll()">Clear all</button>
+    </div>
+    <button class="btn" onclick="calculate()">Calculate Volume →</button>
   </div>
 
   <!-- RESULTS -->
   <div class="results" id="results">
     <div class="verdict warn" id="verdict">
-      <div class="vicon">💰</div>
+      <div class="vicon">📐</div>
       <div>
         <div class="vtitle" id="vtitle">—</div>
         <div class="vsub" id="vsub"></div>
@@ -365,36 +359,22 @@ body{ background:#faf6ef; color:#1a1510; }
     </div>
 
     <div class="card">
-      <div class="stitle">Dia-Inch &amp; Cost Summary</div>
+      <div class="stitle">Volume Summary</div>
       <div class="formula-box" id="formula-box"></div>
 
-      <div class="mrow m4" style="margin-bottom:10px;">
-        <div class="metric hi"><div class="mv sm" id="r-tdi">—</div><div class="mu">DI</div><div class="ml">Total Dia-Inch</div></div>
-        <div class="metric"><div class="mv sm" id="r-rdi">—</div><div class="mu">DI</div><div class="ml">Pipe Rack</div></div>
-        <div class="metric"><div class="mv sm" id="r-edi">—</div><div class="mu">DI</div><div class="ml">Equipment Area</div></div>
-        <div class="metric"><div class="mv sm" id="r-welds">—</div><div class="mu">no.</div><div class="ml">Total Welds</div></div>
-      </div>
       <div class="mrow m4" style="margin-bottom:12px;">
-        <div class="metric"><div class="mv sm" id="r-rmh">—</div><div class="mu">mh</div><div class="ml">Rack Man-hours</div></div>
-        <div class="metric"><div class="mv sm" id="r-emh">—</div><div class="mu">mh</div><div class="ml">Equip Man-hours</div></div>
-        <div class="metric hi"><div class="mv sm" id="r-tmh">—</div><div class="mu">mh</div><div class="ml">Total Man-hours</div></div>
-        <div class="metric cost"><div class="mv sm" id="r-cost">—</div><div class="mu">labour</div><div class="ml">Total Cost</div></div>
+        <div class="metric hi"><div class="mv sm" id="r-aea">—</div><div class="mu" id="u-aea">m³</div><div class="ml">Average End-Area</div></div>
+        <div class="metric" id="m-pris"><div class="mv sm" id="r-pris">—</div><div class="mu" id="u-pris">m³</div><div class="ml">Prismoidal (Simpson)</div></div>
+        <div class="metric"><div class="mv sm" id="r-yd">—</div><div class="mu">yd³</div><div class="ml">Cubic Yards</div></div>
+        <div class="metric" id="m-loose" style="display:none;"><div class="mv sm" id="r-loose">—</div><div class="mu" id="u-loose">m³</div><div class="ml">Loose (after swell)</div></div>
       </div>
 
-      <div class="stitle">By Zone</div>
-      <div class="ct-scroll" style="margin-bottom:12px;">
-        <table class="ctab" style="min-width:0;">
-          <thead><tr><th>Zone</th><th class="num">Dia-Inch</th><th class="num">Man-hours</th><th class="num">Labour cost</th></tr></thead>
-          <tbody id="zoneRows"></tbody>
-          <tfoot><tr><td style="font-weight:700;color:#6e2e14;">Total</td><td class="num" id="z-di" style="font-weight:700;">—</td><td class="num" id="z-mh" style="font-weight:700;">—</td><td class="num" id="z-cost" style="font-weight:700;color:#6e2e14;">—</td></tr></tfoot>
-        </table>
-      </div>
-
-      <div class="stitle">By Size &amp; Location</div>
-      <div class="ct-scroll" style="margin-bottom:12px;">
-        <table class="ctab" style="min-width:0;">
-          <thead><tr><th>NPS</th><th class="num"><span class="pill-rack"></span>Rack welds</th><th class="num">Rack DI</th><th class="num"><span class="pill-equip"></span>Equip welds</th><th class="num">Equip DI</th><th class="num">Total DI</th></tr></thead>
-          <tbody id="sizeRows"></tbody>
+      <div class="stitle">Segment Breakdown — End-Area</div>
+      <div class="sv-scroll" style="margin-bottom:12px;">
+        <table class="sv-table">
+          <thead><tr><th>Segment</th><th class="num">Length</th><th class="num">A₁</th><th class="num">A₂</th><th class="num">Volume</th></tr></thead>
+          <tbody id="segRows"></tbody>
+          <tfoot><tr><td style="font-weight:700;color:#6e2e14;">Total</td><td class="num" id="segLen" style="font-weight:700;">—</td><td class="num"></td><td class="num"></td><td class="num" id="segVol" style="font-weight:700;color:#6e2e14;">—</td></tr></tfoot>
         </table>
       </div>
 
@@ -402,13 +382,14 @@ body{ background:#faf6ef; color:#1a1510; }
       <div id="notes"></div>
 
       <div style="text-align:center;margin:1.3rem 0 .3rem;display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;">
-        <button onclick="ppaOpenReportDI()" style="background:#8b3a1a;color:#fff;border:none;padding:.8rem 1.8rem;font-size:.95rem;font-weight:700;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif">⬇ Download PDF Report</button>
+        <button onclick="ppaOpenReportSV()" style="background:#8b3a1a;color:#fff;border:none;padding:.8rem 1.8rem;font-size:.95rem;font-weight:700;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif">⬇ Download PDF Report</button>
         <button onclick="exportCsv()" class="btn-mini">Export CSV</button>
       </div>
 
       <div class="disclaimer">
-        Dia-Inch = Σ (NPS × number of welds). Man-hours = DI × zone productivity; labour cost = man-hours × all-in rate. Weld type is recorded for the breakdown only and does not change the dia-inch.<br>
-        For preliminary estimating and change-order verification only — an independent indicative estimate, not a substitute for a detailed quotation review. Verify against project norms before any commercial position or claim settlement.
+        Average end-area: V = Σ (A₁+A₂)/2 · L — always valid for any spacing. Prismoidal (Simpson's): V = (d/3)[A₀ + 4·Σodd + 2·Σeven + Aₙ] — valid only for equal spacing with an odd number of stations.<br>
+        End-area slightly over-reads on concave runs. Swell/bulking factors vary with soil type and compaction.<br>
+        For preliminary engineering use only. Verify against survey data and project earthwork specifications before use in any quantity, procurement or claim.
       </div>
     </div>
   </div>
@@ -420,45 +401,55 @@ body{ background:#faf6ef; color:#1a1510; }
 <div class="calc-panel" id="calctab-theory">
 <div style="max-width:920px;margin:0 auto;padding:2rem 1.5rem;">
   <div style="background:var(--accent-light,#f7ede3);border:1px solid rgba(196,92,42,.2);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--accent,#8b3a1a);margin-bottom:1.2rem;line-height:1.7;">
-    📚 Method and references for weld dia-inch estimating and change-order verification. For full worked examples, visit <strong>PipingPro Academy</strong> courses.
+    📚 Methods and code references for sectional earthwork volumes. For full worked examples, visit <strong>PipingPro Academy</strong> courses.
   </div>
 
   <div class="ref-section">
-    <div class="ref-title">Dia-Inch (Diameter-Inch)</div>
+    <div class="ref-title">Average End-Area Method</div>
     <div class="ref-formula">
-      <b>Dia-Inch = Σ ( NPS × number of welds )</b><br/>
-      One butt weld of an NPS-n pipe = n dia-inches<br/>
-      e.g. 8 welds on 6" pipe = 48 DI
+      <b>V = Σ [ (Aᵢ + Aᵢ₊₁) / 2 × Lᵢ ]</b><br/>
+      Aᵢ, Aᵢ₊₁ = cross-section areas at consecutive stations<br/>
+      Lᵢ = distance (chainage) between the two stations
     </div>
-    <div class="ref-note">Dia-inch is the standard unit for estimating fabrication, welding and NDE effort. It scales weld count by pipe size, so a single large-bore weld counts for more than a small-bore one. Weld type (butt, socket, branch) is recorded for the breakdown but does not change the DI value.</div>
+    <div class="ref-note">The workhorse method for trench and excavation quantities. Works for any station spacing. It slightly over-estimates volume where the run is concave between sections; the prismoidal method corrects this.</div>
   </div>
 
   <div class="ref-section">
-    <div class="ref-title">Man-Hours by Zone Productivity</div>
+    <div class="ref-title">Prismoidal (Simpson's 1/3) Method</div>
     <div class="ref-formula">
-      <b>Man-hours = Dia-Inch × productivity (mh / DI)</b><br/>
-      Pipe rack ≈ 0.8–1.2 mh/DI (repetitive, good access)<br/>
-      Equipment area ≈ 1.3–2.0 mh/DI (congested, small-bore, tie-ins)
+      <b>V = (d/3) × [ A₀ + 4(A₁+A₃+…) + 2(A₂+A₄+…) + Aₙ ]</b><br/>
+      d = constant station spacing<br/>
+      n = number of intervals (must be even → odd number of sections)
     </div>
-    <div class="ref-note">Splitting the scope by location is where most estimates go soft. Pipe-rack welding is straight-run, repetitive work; equipment-area welding is congested and tie-in heavy and runs materially slower per dia-inch. Applying a separate productivity rate to each gives a far more honest man-hour figure.</div>
+    <div class="ref-note">More accurate for solids whose area varies smoothly. Requires equal spacing and an odd number of cross-sections. Where conditions are not met the calculator falls back to the average end-area total.</div>
   </div>
 
   <div class="ref-section">
-    <div class="ref-title">Labour Cost &amp; Change-Order Check</div>
+    <div class="ref-title">Trapezoidal Trench Area</div>
     <div class="ref-formula">
-      <b>Labour cost = man-hours × all-in rate (cost / hr)</b><br/>
-      All-in rate = welder + fitter + helper + overhead
+      <b>A = (b + s·h) · h</b> &nbsp; (symmetric side slopes)<br/>
+      b = trench bottom width &nbsp; h = depth &nbsp; s = side slope (H : 1 V)<br/>
+      Top width = b + 2·s·h &nbsp;·&nbsp; s = 0 for vertical (shored) walls
     </div>
-    <div class="ref-note">As an Owner's Engineer, build the weld scope independently, compute DI → man-hours → cost, and benchmark it against the contractor's claimed figure. A large gap is the prompt to interrogate the claimed weld count, productivity assumption or rate — not to accept or reject the number outright.</div>
+    <div class="ref-note">Side-slope selection follows the soil's safe angle of repose and the governing excavation safety code. Common battered slopes range s = 0.5 to 1.5; vertical faces require shoring/trench boxes.</div>
   </div>
 
   <div class="ref-section">
-    <div class="ref-title">Reference</div>
+    <div class="ref-title">Swell / Bulking Factor</div>
+    <div class="ref-formula">
+      <b>Loose volume = In-situ (bank) volume × (1 + swell%)</b><br/>
+      1 m³ = 1.30795 yd³ &nbsp;·&nbsp; 1 yd³ = 27 ft³
+    </div>
+    <div class="ref-note">Soil swells when excavated. Indicative bank → loose swell: sand 10–15%, common earth 20–30%, clay 30–40%, rock 50%+. Use project-specific factors for haulage and disposal quantities.</div>
+  </div>
+
+  <div class="ref-section">
+    <div class="ref-title">Reference Standards</div>
     <div class="ref-table-wrap"><table class="ref-table">
-      <tr><th>Topic</th><th>Application</th></tr>
-      <tr><td>Dia-Inch</td><td>Welding / fabrication / NDE effort estimating unit</td></tr>
-      <tr><td>Productivity (mh/DI)</td><td>Shop vs field, rack vs equipment-area welding rates</td></tr>
-      <tr><td>Change Order</td><td>Independent estimate to benchmark contractor claims</td></tr>
+      <tr><th>Reference</th><th>Application</th></tr>
+      <tr><td>End-Area / Prismoidal</td><td>Standard earthwork volume methods (cut/fill, trench, excavation)</td></tr>
+      <tr><td>Simpson's Rule</td><td>Numerical integration of evenly-spaced cross-sectional areas</td></tr>
+      <tr><td>Project Earthwork Spec</td><td>Side-slope, bedding, working width and swell-factor requirements</td></tr>
     </table></div>
   </div>
 </div>
@@ -466,7 +457,7 @@ body{ background:#faf6ef; color:#1a1510; }
 
 <footer class="ppa-footer">
   <div class="ppa-footer-logo">Piping<span>Pro</span> Academy</div>
-  <div>Engineering Calculator Suite · Dia-Inch &amp; Change-Order Estimator</div>
+  <div>Engineering Calculator Suite · Sectional Volume</div>
 </footer>
 
 <script>
@@ -481,9 +472,9 @@ function showCalcTab(name){
 }
 </script>
 <script>
-function ppaOpenReportDI(){
-  if(!window.DI_R){ alert('Please run a calculation first.'); return; }
-  window.PPA_REPORT = window.DI_R; ppaOpenReport();
+function ppaOpenReportSV(){
+  if(!window.SV_R){ alert('Please run a calculation first.'); return; }
+  window.PPA_REPORT = window.SV_R; ppaOpenReport();
 }
 </script>
 <!-- ════════ PipingPro Shared Report Engine v1.0 ════════
@@ -613,169 +604,185 @@ table.d tr:nth-child(even) td{background:#faf6ef}
 <!-- ════════ end Shared Report Engine ════════ -->
 
 <script>
-var NPS_LIST=[0.5,0.75,1,1.5,2,3,4,6,8,10,12,14,16,18,20,24,26,30,36,42,48];
-var LOCS=["Pipe Rack","Equipment Area"];
-var WELDS=["Butt Weld (BW)","Socket Weld (SW)","Branch / Stub-in","Flange weld","Other"];
+var fmt=function(v,d){ d=(d==null?2:d); if(!isFinite(v))v=0; return v.toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d}); };
+var mode='direct', unit='m';
 var state=[];
-var fmt=function(v,d){ d=(d==null?1:d); if(!isFinite(v))v=0; return v.toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d}); };
-var ccy=function(){ return document.getElementById('ccy').value; };
-var money=function(v){ return ccy()+v.toLocaleString(undefined,{maximumFractionDigits:0}); };
+function Lunit(){return unit==='m'?'m':'ft';}
+function Aunit(){return unit==='m'?'m\u00b2':'ft\u00b2';}
+function Vunit(){return unit==='m'?'m\u00b3':'ft\u00b3';}
 
-function npsOpts(sel){ return NPS_LIST.map(function(n){return '<option value="'+n+'"'+(n===sel?' selected':'')+'>'+n+'"</option>';}).join(''); }
-function locOpts(sel){ return LOCS.map(function(l){return '<option'+(l===sel?' selected':'')+'>'+l+'</option>';}).join(''); }
-function weldOpts(sel){ return WELDS.map(function(w){return '<option'+(w===sel?' selected':'')+'>'+w+'</option>';}).join(''); }
+function onMode(){ mode=document.getElementById('mode').value;
+  document.getElementById('trenchNote').style.display = mode==='trench'?'flex':'none';
+  renderHead(); renderRows(); }
+function onUnit(){ unit=document.getElementById('unit').value;
+  document.getElementById('u-aea').textContent=Vunit();
+  document.getElementById('u-pris').textContent=Vunit();
+  document.getElementById('u-loose').textContent=Vunit();
+  renderHead(); renderRows(); }
+
+function trenchArea(r){ if(r.b==null||r.h==null) return null; var s=(r.s==null?0:r.s); return (r.b + s*r.h)*r.h; }
 
 function renderHead(){
-  document.getElementById('thead').innerHTML =
-    '<tr><th class="rownum">#</th><th>Line / Spec ref</th><th>NPS (in)</th><th>Location</th><th>Weld type</th><th class="num">Welds</th><th class="num">Dia-Inch</th><th style="width:30px;"></th></tr>';
+  var th=document.getElementById('thead');
+  if(mode==='direct'){
+    th.innerHTML='<tr><th class="rownum">#</th><th>Station ('+Lunit()+')</th><th class="num">Area ('+Aunit()+')</th><th style="width:30px;"></th></tr>';
+  }else{
+    th.innerHTML='<tr><th class="rownum">#</th><th>Station ('+Lunit()+')</th><th class="num">Bottom b ('+Lunit()+')</th><th class="num">Depth h ('+Lunit()+')</th><th class="num">Slope s (H:V)</th><th class="num">Area ('+Aunit()+')</th><th style="width:30px;"></th></tr>';
+  }
 }
 
 function renderRows(){
   var tb=document.getElementById('rows'); tb.innerHTML='';
   state.forEach(function(r,i){
-    var di=(parseFloat(r.nps)||0)*(parseFloat(r.welds)||0);
     var tr=document.createElement('tr');
-    tr.innerHTML='<td class="rownum">'+(i+1)+'</td>'+
-      '<td><input type="text" class="f-ref" placeholder="e.g. 10&quot;-P-1001" value="'+(r.ref||'')+'"></td>'+
-      '<td><select class="f-nps">'+npsOpts(r.nps||6)+'</select></td>'+
-      '<td><select class="f-loc">'+locOpts(r.loc||LOCS[0])+'</select></td>'+
-      '<td><select class="f-type">'+weldOpts(r.type||WELDS[0])+'</select></td>'+
-      '<td class="num"><input type="number" class="f-welds" min="0" step="1" value="'+(r.welds!=null?r.welds:'')+'" placeholder="0"></td>'+
-      '<td class="num di-cell f-di">'+(di?fmt(di,1):'0')+'</td>'+
-      '<td><button class="ct-del" title="Remove">\u00d7</button></td>';
+    if(mode==='direct'){
+      tr.innerHTML='<td class="rownum">'+(i+1)+'</td>'+
+        '<td><input type="number" step="any" class="f-st" value="'+(r.station!=null?r.station:'')+'"></td>'+
+        '<td class="num"><input type="number" step="any" class="f-area" value="'+(r.area!=null?r.area:'')+'"></td>'+
+        '<td><button class="sv-del" title="Remove">\u00d7</button></td>';
+    }else{
+      var a=trenchArea(r);
+      tr.innerHTML='<td class="rownum">'+(i+1)+'</td>'+
+        '<td><input type="number" step="any" class="f-st" value="'+(r.station!=null?r.station:'')+'"></td>'+
+        '<td class="num"><input type="number" step="any" class="f-b" value="'+(r.b!=null?r.b:'')+'"></td>'+
+        '<td class="num"><input type="number" step="any" class="f-h" value="'+(r.h!=null?r.h:'')+'"></td>'+
+        '<td class="num"><input type="number" step="any" class="f-s" value="'+(r.s!=null?r.s:'')+'"></td>'+
+        '<td class="num area-cell f-area-out">'+(a!=null?fmt(a,3):'\u2014')+'</td>'+
+        '<td><button class="sv-del" title="Remove">\u00d7</button></td>';
+    }
     tb.appendChild(tr);
-    tr.querySelector('.ct-del').addEventListener('click',function(){ state.splice(i,1); renderRows(); });
-    tr.querySelectorAll('input,select').forEach(function(el){ el.addEventListener('input',function(){
+    tr.querySelector('.sv-del').addEventListener('click',function(){ state.splice(i,1); renderRows(); });
+    tr.querySelectorAll('input').forEach(function(el){ el.addEventListener('input',function(){
       readRow(tr,i);
-      var d=(parseFloat(state[i].nps)||0)*(parseFloat(state[i].welds)||0);
-      tr.querySelector('.f-di').textContent=d?fmt(d,1):'0';
+      if(mode==='trench'){ var o=tr.querySelector('.f-area-out'); var a=trenchArea(state[i]); o.textContent=a!=null?fmt(a,3):'\u2014'; }
     }); });
   });
 }
 
 function readRow(tr,i){
-  state[i].ref=tr.querySelector('.f-ref').value;
-  state[i].nps=parseFloat(tr.querySelector('.f-nps').value);
-  state[i].loc=tr.querySelector('.f-loc').value;
-  state[i].type=tr.querySelector('.f-type').value;
-  var w=tr.querySelector('.f-welds').value;
-  state[i].welds=(w!==''?parseFloat(w):null);
+  var g=function(s){ var el=tr.querySelector(s); return (el&&el.value!=='')?parseFloat(el.value):null; };
+  state[i].station=g('.f-st');
+  if(mode==='direct'){ state[i].area=g('.f-area'); }
+  else { state[i].b=g('.f-b'); state[i].h=g('.f-h'); state[i].s=g('.f-s'); }
 }
 
 function addRow(d){ state.push(d||{}); renderRows(); }
-function clearAll(){ if(confirm('Clear all weld lines?')){ state=[]; addRow(); } }
+function clearAll(){ if(confirm('Clear all stations?')){ state=[]; addRow(); } }
 
 function calculate(){
-  var totalDI=0, totalWelds=0, rackDI=0, equipDI=0, bySize={};
-  state.forEach(function(r){
-    var nps=parseFloat(r.nps)||0, w=parseFloat(r.welds)||0, di=nps*w;
-    totalDI+=di; totalWelds+=w;
-    var isRack=(r.loc===LOCS[0]);
-    if(isRack) rackDI+=di; else equipDI+=di;
-    if(w>0){
-      if(!bySize[nps]) bySize[nps]={rw:0,rdi:0,ew:0,edi:0};
-      if(isRack){ bySize[nps].rw+=w; bySize[nps].rdi+=di; } else { bySize[nps].ew+=w; bySize[nps].edi+=di; }
-    }
-  });
-  if(totalDI<=0){ alert('Add at least one weld line with a size and weld count.'); return; }
+  var secs=state.map(function(r){ return {st:r.station, A:(mode==='direct'?r.area:trenchArea(r))}; })
+    .filter(function(s){ return s.st!=null && s.A!=null && isFinite(s.st) && isFinite(s.A); })
+    .sort(function(a,b){ return a.st-b.st; });
 
-  var rRate=parseFloat(document.getElementById('rackRate').value)||0;
-  var eRate=parseFloat(document.getElementById('equipRate').value)||0;
-  var cRate=parseFloat(document.getElementById('costRate').value)||0;
-  var rackMH=rackDI*rRate, equipMH=equipDI*eRate, totalMH=rackMH+equipMH;
-  var rackCost=rackMH*cRate, equipCost=equipMH*cRate, totalCost=totalMH*cRate;
+  var res=document.getElementById('results');
+  if(secs.length<2){ alert('Enter at least two stations with areas.'); return; }
 
-  var set=function(id,v){ document.getElementById(id).textContent=v; };
-  set('r-tdi',fmt(totalDI)); set('r-rdi',fmt(rackDI)); set('r-edi',fmt(equipDI)); set('r-welds',totalWelds.toLocaleString());
-  set('r-rmh',fmt(rackMH,0)); set('r-emh',fmt(equipMH,0)); set('r-tmh',fmt(totalMH,0)); set('r-cost',money(totalCost));
-
-  // zone table
-  var zEl=document.getElementById('zoneRows'); zEl.innerHTML='';
-  [['Pipe Rack','pill-rack',rackDI,rackMH,rackCost],['Equipment Area','pill-equip',equipDI,equipMH,equipCost]].forEach(function(z){
+  // average end-area + segment table
+  var totalAEA=0, totalLen=0, segEl=document.getElementById('segRows'); segEl.innerHTML='';
+  for(var i=0;i<secs.length-1;i++){
+    var L=secs[i+1].st-secs[i].st;
+    var v=(secs[i].A+secs[i+1].A)/2*L; totalAEA+=v; totalLen+=L;
     var tr=document.createElement('tr');
-    tr.innerHTML='<td><span class="'+z[1]+'"></span>'+z[0]+'</td><td class="num">'+fmt(z[2])+'</td><td class="num">'+fmt(z[3],0)+'</td><td class="num">'+money(z[4])+'</td>';
-    zEl.appendChild(tr);
-  });
-  set('z-di',fmt(totalDI)); set('z-mh',fmt(totalMH,0)); set('z-cost',money(totalCost));
+    tr.innerHTML='<td>'+fmt(secs[i].st,2)+' \u2192 '+fmt(secs[i+1].st,2)+'</td><td class="num">'+fmt(L,2)+'</td><td class="num">'+fmt(secs[i].A,3)+'</td><td class="num">'+fmt(secs[i+1].A,3)+'</td><td class="num">'+fmt(v,3)+'</td>';
+    segEl.appendChild(tr);
+  }
+  document.getElementById('r-aea').textContent=fmt(totalAEA);
+  document.getElementById('segVol').textContent=fmt(totalAEA,3);
+  document.getElementById('segLen').textContent=fmt(totalLen,2);
 
-  // size table
-  var sEl=document.getElementById('sizeRows'); sEl.innerHTML='';
-  Object.keys(bySize).map(Number).sort(function(a,b){return a-b;}).forEach(function(nps){
-    var s=bySize[nps];
-    var tr=document.createElement('tr');
-    tr.innerHTML='<td>'+nps+'"</td><td class="num">'+s.rw.toLocaleString()+'</td><td class="num">'+fmt(s.rdi)+'</td><td class="num">'+s.ew.toLocaleString()+'</td><td class="num">'+fmt(s.edi)+'</td><td class="num">'+fmt(s.rdi+s.edi)+'</td>';
-    sEl.appendChild(tr);
-  });
+  // prismoidal
+  var n=secs.length, spacing=secs[1].st-secs[0].st, equal=true;
+  for(var k=1;k<n-1;k++){ if(Math.abs((secs[k+1].st-secs[k].st)-spacing) > Math.max(1e-9,1e-4*Math.abs(spacing))){ equal=false; break; } }
+  var prisOK=(equal && n>=3 && n%2===1), pris=null, govMethod, gov;
+  var mPris=document.getElementById('m-pris');
+  if(prisOK){
+    var sum=secs[0].A+secs[n-1].A;
+    for(var j=1;j<n-1;j++){ sum += (j%2===1?4:2)*secs[j].A; }
+    pris=spacing/3*sum;
+    document.getElementById('r-pris').textContent=fmt(pris);
+    mPris.classList.remove('na');
+    gov=pris; govMethod='prismoidal';
+  }else{
+    document.getElementById('r-pris').textContent='n/a';
+    mPris.classList.add('na');
+    gov=totalAEA; govMethod='average end-area';
+  }
+
+  var yd = unit==='m' ? gov*1.307950619 : gov/27;
+  document.getElementById('r-yd').textContent=fmt(yd);
+
+  var sw=parseFloat(document.getElementById('swell').value)||0;
+  var loose=gov*(1+sw/100), mLoose=document.getElementById('m-loose');
+  if(sw>0){ document.getElementById('r-loose').textContent=fmt(loose); mLoose.style.display='block'; }
+  else { mLoose.style.display='none'; }
 
   // verdict + formula
-  document.getElementById('vtitle').textContent='Estimated labour cost \u2248 '+money(totalCost);
-  document.getElementById('vsub').textContent=fmt(totalDI)+' dia-inch  \u00b7  '+fmt(totalMH,0)+' man-hours  \u00b7  rack '+money(rackCost)+' / equip '+money(equipCost);
-  document.getElementById('formula-box').innerHTML=
-    'Dia-Inch = \u03a3 (NPS \u00d7 welds) = '+fmt(totalDI)+' DI<br>'+
-    'Man-hours = rack '+fmt(rackDI)+'\u00d7'+rRate+' + equip '+fmt(equipDI)+'\u00d7'+eRate+' = '+fmt(totalMH,0)+' mh<br>'+
-    'Cost = '+fmt(totalMH,0)+' mh \u00d7 '+ccy()+cRate+'/hr = '+money(totalCost);
+  document.getElementById('vtitle').textContent='Governing volume \u2248 '+fmt(gov)+' '+Vunit();
+  document.getElementById('vsub').textContent='Method: '+govMethod+'  \u00b7  '+secs.length+' sections  \u00b7  '+fmt(totalLen,2)+' '+Lunit()+' total length'+(sw>0?('  \u00b7  loose '+fmt(loose)+' '+Vunit()):'');
+  document.getElementById('formula-box').innerHTML =
+    'End-area:  V = \u03a3 (A\u2081+A\u2082)/2 \u00b7 L  =  '+fmt(totalAEA)+' '+Vunit()+'<br>'+
+    (prisOK ? ('Prismoidal: V = (d/3)[A\u2080 + 4\u00b7\u03a3odd + 2\u00b7\u03a3even + A\u2099]  =  '+fmt(pris)+' '+Vunit()) :
+              'Prismoidal: n/a \u2014 needs equal spacing &amp; odd no. of sections');
 
   // notes
   var notes='';
   function note(cls,arr,txt){ return '<div class="note '+cls+'"><span class="note-arr">'+arr+'</span><div>'+txt+'</div></div>'; }
-  notes+=note('','\u25b8','Zone split \u2014 rack '+fmt(rackDI)+' DI at '+rRate+' mh/DI, equipment area '+fmt(equipDI)+' DI at '+eRate+' mh/DI. Adjust the rates to your project norms.');
-  notes+=note('','\u25b8','This is your independent estimate. Compare it line-for-line with the contractor\u2019s claimed dia-inch, man-hours and cost; investigate any material gap before agreeing the change order.');
+  if(prisOK){
+    var diff = totalAEA!==0 ? (totalAEA-pris)/totalAEA*100 : 0;
+    notes+=note('ok-n','\u2713','Both methods computed. End-area reads '+fmt(diff,1)+'% '+(diff>=0?'higher':'lower')+' than prismoidal \u2014 prismoidal governs and is the more accurate figure.');
+  }else{
+    var reason = !equal ? 'station spacing is not equal' : (n%2===0 ? 'an even number of stations was supplied' : 'fewer than 3 stations');
+    notes+=note('','\u25b8','Prismoidal not available \u2014 '+reason+'. The average end-area total governs. For prismoidal accuracy, survey at equal intervals with an odd number of sections.');
+  }
+  if(sw>0){ notes+=note('','\u25b8','Loose (haul) volume = in-situ \u00d7 (1 + '+sw+'%) = '+fmt(loose)+' '+Vunit()+'. Use the project swell factor for the soil/rock encountered.'); }
+  notes+=note('','\u25b8','Cubic yards shown for the governing volume ('+fmt(yd)+' yd\u00b3).');
   document.getElementById('notes').innerHTML=notes;
 
   // report object
-  var schedRows=state.filter(function(r){return (parseFloat(r.welds)||0)>0;}).map(function(r){
-    var nps=parseFloat(r.nps)||0, w=parseFloat(r.welds)||0;
-    return [r.ref||'\u2014', nps+'"', r.loc||LOCS[0], r.type||WELDS[0], String(w), fmt(nps*w,1)];
+  var inHead = (mode==='direct') ? ['Station ('+Lunit()+')','Area ('+Aunit()+')']
+                                 : ['Station ('+Lunit()+')','b ('+Lunit()+')','h ('+Lunit()+')','s (H:V)','Area ('+Aunit()+')'];
+  var inRows = state.filter(function(r){return r.station!=null;}).map(function(r){
+    if(mode==='direct') return [fmt(r.station,2), (r.area!=null?fmt(r.area,3):'\u2014')];
+    var a=trenchArea(r); return [fmt(r.station,2), r.b!=null?fmt(r.b,2):'\u2014', r.h!=null?fmt(r.h,2):'\u2014', r.s!=null?fmt(r.s,2):'0', a!=null?fmt(a,3):'\u2014'];
   });
-  window.DI_R={
-    docType:'Dia-Inch Change-Order Estimate',
-    codeNote:'dia-inch = \u03a3 NPS \u00d7 welds',
+  var volRows=[
+    ['Average end-area volume', fmt(totalAEA), Vunit()],
+    ['Prismoidal (Simpson) volume', prisOK?fmt(pris):'n/a', Vunit()],
+    ['Governing volume', fmt(gov)+' ('+govMethod+')', Vunit()],
+    ['Total length', fmt(totalLen,2), Lunit()],
+    ['In cubic yards', fmt(yd), 'yd\u00b3']
+  ];
+  if(sw>0) volRows.push(['Loose volume (swell '+sw+'%)', fmt(loose), Vunit()]);
+  window.SV_R={
+    docType:'Sectional Volume',
+    codeNote:'average end-area / prismoidal method',
     sections:[
-      {title:'Weld Schedule', type:'table', head:['Line / Spec ref','NPS','Location','Weld type','Welds','Dia-Inch'], rows:schedRows},
-      {title:'By Zone', type:'table', head:['Zone','Value','Unit'], rows:[
-        ['Pipe Rack \u2014 dia-inch', fmt(rackDI), 'DI'],
-        ['Pipe Rack \u2014 man-hours', fmt(rackMH,0), 'mh'],
-        ['Pipe Rack \u2014 labour cost', money(rackCost), ''],
-        ['Equipment Area \u2014 dia-inch', fmt(equipDI), 'DI'],
-        ['Equipment Area \u2014 man-hours', fmt(equipMH,0), 'mh'],
-        ['Equipment Area \u2014 labour cost', money(equipCost), '']
-      ]},
-      {title:'Totals', type:'table', head:['Quantity','Value','Unit'], rows:[
-        ['Total Dia-Inch', fmt(totalDI), 'DI'],
-        ['Total Welds', totalWelds.toLocaleString(), 'no.'],
-        ['Total Man-hours', fmt(totalMH,0), 'mh'],
-        ['Labour Rate', ccy()+cRate, '/hr'],
-        ['Total Labour Cost', money(totalCost), '']
-      ]}
+      {title:'Cross-Section Input', type:'table', head:inHead, rows:inRows},
+      {title:'Volume Results', type:'table', head:['Quantity','Value','Unit'], rows:volRows}
     ],
-    verdict:{status:'warn', text:'Estimated labour cost \u2248 '+money(totalCost)+'  \u00b7  '+fmt(totalMH,0)+' man-hours  \u00b7  '+fmt(totalDI)+' dia-inch'}
+    verdict:{status:'warn', text:'Governing volume \u2248 '+fmt(gov)+' '+Vunit()+'  ('+govMethod+')'}
   };
 
-  var res=document.getElementById('results');
   res.classList.add('show');
   res.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
 function exportCsv(){
-  var csv='Line/Spec ref,NPS (in),Location,Weld type,No. of welds,Dia-Inch\n';
+  var csv = (mode==='direct') ? 'Station,Area\n' : 'Station,Bottom b,Depth h,Slope s,Area\n';
   state.forEach(function(r){
-    var nps=parseFloat(r.nps)||0, w=parseFloat(r.welds)||0;
-    var ref=(r.ref||'').replace(/,/g,';');
-    csv+=ref+','+nps+','+(r.loc||LOCS[0])+','+(r.type||WELDS[0])+','+w+','+(nps*w)+'\n';
+    if(mode==='direct') csv+=(r.station!=null?r.station:'')+','+(r.area!=null?r.area:'')+'\n';
+    else csv+=(r.station!=null?r.station:'')+','+(r.b!=null?r.b:'')+','+(r.h!=null?r.h:'')+','+(r.s!=null?r.s:'')+','+(trenchArea(r)!=null?trenchArea(r):'')+'\n';
   });
-  csv+='\nTotal Dia-Inch,'+document.getElementById('r-tdi').textContent+'\n';
-  csv+='Total Man-hours,'+document.getElementById('r-tmh').textContent+'\n';
-  csv+='Total Labour Cost,'+document.getElementById('r-cost').textContent+'\n';
+  csv+='\nAverage End-Area,'+document.getElementById('r-aea').textContent+'\n';
+  csv+='Prismoidal,'+document.getElementById('r-pris').textContent+'\n';
+  csv+='Cubic yards,'+document.getElementById('r-yd').textContent+'\n';
   var blob=new Blob([csv],{type:'text/csv'}); var a=document.createElement('a');
-  a.href=URL.createObjectURL(blob); a.download='dia-inch-change-order.csv'; a.click();
+  a.href=URL.createObjectURL(blob); a.download='sectional-volume.csv'; a.click();
 }
 
 // init
 renderHead();
-state=[{nps:8,loc:'Pipe Rack',type:WELDS[0],welds:10},
-       {nps:6,loc:'Pipe Rack',type:WELDS[0],welds:8},
-       {nps:4,loc:'Equipment Area',type:WELDS[0],welds:14},
-       {nps:2,loc:'Equipment Area',type:WELDS[1],welds:22}];
+state=[{station:0,area:4.2},{station:10,area:5.1},{station:20,area:6.0},{station:30,area:5.4},{station:40,area:4.0}];
 renderRows();
 </script>
 
