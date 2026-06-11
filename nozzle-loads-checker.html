@@ -388,6 +388,159 @@ body{ background:#faf6ef; color:#1a1510; }
 </style>
 <!-- ===== end PipingPro Brand Bridge ===== -->
 
+<!-- ===== Flat / clean / rust skin — matches Dia-Inch Estimator look ===== -->
+<style id="pp-flatten-match">
+/* Re-skins this calculator's surfaces to the flat, clean, rust treatment used
+   by the Dia-Inch Estimator. Placed last so it wins the cascade. No markup/JS touched. */
+
+/* ---- flat page (drop gradient + noise texture) ---- */
+body{ background:#faf6ef !important; padding:0 !important; }
+body::before{ display:none !important; }
+
+/* content column: match Dia-Inch .container rhythm */
+.wrapper{ max-width:980px !important; margin:0 auto !important; padding:1.5rem 1rem !important; }
+
+/* ---- flat cards (was translucent + blur + gold shadow) ---- */
+.card{
+  background:var(--surface) !important;            /* #f3ede2 */
+  backdrop-filter:none !important;
+  border:1px solid var(--border) !important;        /* #c8b89a */
+  border-radius:var(--radius-lg) !important;        /* 6px */
+  box-shadow:none !important;
+  padding:1.25rem !important;
+  margin-bottom:1rem !important;
+}
+
+/* card titles: small, uppercase, neutral rule (match Dia-Inch .card-title) */
+.card-title{
+  font-size:11px !important;
+  font-weight:600 !important;
+  color:var(--text-2) !important;
+  text-transform:uppercase !important;
+  letter-spacing:.08em !important;
+  margin-bottom:1rem !important;
+  padding-bottom:.5rem !important;
+  border-bottom:1px solid var(--border) !important;
+}
+.card-title span{ font-size:11px !important; color:var(--text-3) !important; }
+
+/* field labels: sentence-case, neutral (match Dia-Inch) */
+.field label{
+  font-size:11px !important;
+  font-weight:500 !important;
+  color:var(--text-2) !important;
+  text-transform:none !important;
+  letter-spacing:0 !important;
+  margin-bottom:4px !important;
+}
+
+/* inputs: neutral border, mono, light bg, rust focus (match Dia-Inch) */
+select, input[type="number"]{
+  border:1px solid var(--border) !important;        /* #c8b89a */
+  border-radius:var(--radius) !important;           /* 4px */
+  background:#FAFAF8 !important;
+  font-family:var(--mono) !important;               /* IBM Plex Mono */
+  font-size:13px !important;
+  padding:7px 10px !important;
+}
+select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238b3a1a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") !important;
+  background-repeat:no-repeat !important;
+  background-position:right 10px center !important;
+  background-color:#FAFAF8 !important;
+  padding-right:30px !important;
+}
+select:focus, input[type="number"]:focus{
+  border-color:var(--accent) !important;            /* rust */
+  background-color:#fff !important;
+  box-shadow:none !important;
+}
+
+/* primary button: solid rust, opacity hover (match Dia-Inch .calcbtn) */
+.btn-calc{
+  background:var(--accent) !important;              /* #8b3a1a */
+  color:#fff !important;
+  border-radius:var(--radius) !important;
+  box-shadow:none !important;
+  font-weight:600 !important;
+  letter-spacing:.01em !important;
+  padding:13px !important;
+  margin-top:.75rem !important;
+  transition:opacity .15s !important;
+}
+.btn-calc:hover{
+  background:var(--accent) !important;
+  opacity:.88 !important;
+  transform:none !important;
+  box-shadow:none !important;
+}
+
+/* header icon: solid rust instead of gold gradient */
+.header-icon{
+  background:var(--accent) !important;
+  box-shadow:none !important;
+  border-radius:var(--radius-lg) !important;
+}
+.header-sub{ color:var(--text-3) !important; letter-spacing:.06em !important; }
+
+/* load-group blocks: flat surface + neutral border */
+.load-group{
+  background:var(--bg) !important;                  /* #faf6ef */
+  border:1px solid var(--border) !important;
+  border-radius:var(--radius) !important;
+}
+.load-group-title{ color:var(--text-2) !important; }
+.unit-tag{ color:var(--text-3) !important; }
+
+/* results table: neutral header, rust hover */
+.results-table th{
+  color:var(--text-3) !important;
+  border-bottom:2px solid var(--border) !important;
+}
+.results-table td{ border-bottom:1px solid var(--border) !important; }
+.results-table tr:hover td{ background:var(--accent-light) !important; }   /* #f6e6df */
+
+/* combined check + allowables: flat surfaces, rust figures */
+.combined-box, .allow-block{
+  background:var(--bg) !important;
+  border:1px solid var(--border) !important;
+  border-radius:var(--radius) !important;
+}
+.combined-title, .allow-label{ color:var(--text-3) !important; }
+.combined-formula{
+  background:var(--accent-light) !important;
+  border:1px solid var(--accent-border, #c8b89a) !important;
+  color:var(--accent) !important;
+  font-family:var(--mono) !important;
+}
+.combined-val, .allow-val{ color:var(--accent) !important; }
+
+/* notes: rust accent rail (fail stays red) */
+.note-item{
+  background:var(--accent-light) !important;
+  border-left:3px solid var(--accent) !important;
+  color:var(--text-2) !important;
+  border-radius:0 var(--radius) var(--radius) 0 !important;
+}
+.note-arrow{ color:var(--accent) !important; }
+.note-item.note-fail{
+  background:var(--danger-light, #f6e6df) !important;
+  border-left-color:var(--danger, #7A1A1A) !important;
+  color:var(--danger, #7A1A1A) !important;
+}
+
+/* verdict cards: flatten border weight + radius (keep pass-green / fail-rust) */
+.verdict{ border-width:1px !important; border-radius:var(--radius-lg) !important; }
+
+/* ratio bars: rust for fail, gold for warn */
+.bar-fail{ background:var(--accent) !important; }
+.bar-warn{ background:var(--gold) !important; }
+
+/* misc neutral rules */
+.disclaimer{ border-top:1px solid var(--border) !important; }
+</style>
+<!-- ===== end flat/clean/rust skin ===== -->
+
 </head>
 <body>
 <nav class="ppa-nav">
@@ -401,16 +554,6 @@ body{ background:#faf6ef; color:#1a1510; }
 </div>
 
 <div class="wrapper">
-
-<!-- Header -->
-<div class="header">
-  <div class="header-icon">⚙️</div>
-  <div>
-    <div class="header-title">Nozzle Loads Checker</div>
-    <div class="header-sub">PipingPro Academy · Calculator Suite</div>
-    <p class="header-desc">Checks piping nozzle loads against allowables per <strong>API 610</strong> (pumps), <strong>API 617</strong> (compressors), <strong>API 661</strong> (air coolers), and <strong>WRC 107/297</strong> (vessels). Enter Caesar II or manual load outputs.</p>
-  </div>
-</div>
 
 <!-- Equipment & Nozzle Setup -->
 <div class="card">
