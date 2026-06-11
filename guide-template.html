@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<!-- ░░░ FILL IN: title, description, and the two URLs below (same slug as this file's name) ░░░ -->
+<title>GUIDE TITLE — PipingPro Academy</title>
+<meta name="description" content="One-sentence summary, ~150 characters, written for search."/>
+<link rel="canonical" href="https://pipingpro-academy.com/guide-SLUG.html"/>
+<meta property="og:type" content="article"/>
+<meta property="og:title" content="GUIDE TITLE"/>
+<meta property="og:description" content="Short social description."/>
+<meta property="og:url" content="https://pipingpro-academy.com/guide-SLUG.html"/>
+<meta property="og:site_name" content="PipingPro Academy"/>
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="GUIDE TITLE"/>
+<meta name="twitter:description" content="Short social description."/>
+
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --ink:#1a1510;--ink2:#4a4a44;--ink3:#8a8a80;
+  --paper:#f5f2eb;--paper2:#ede9de;--paper3:#e3dfd2;
+  --accent:#8b3a1a;--accent2:#d4a017;--accent-light:#f7ede3;
+  --teal:#1a6b5a;--teal-light:#e7f1ee;
+  --rule:rgba(26,26,24,0.12);
+  --gold:#b8860b;--gold-light:#f5e9c8;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);font-size:15px;line-height:1.6;min-height:100vh;}
+nav{background:rgba(245,242,235,0.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--rule);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:200;}
+.nav-logo{font-family:'DM Serif Display',serif;font-size:17px;color:var(--ink);text-decoration:none;}
+.nav-logo span{color:var(--accent);}
+.nav-right{display:flex;align-items:center;gap:1rem;}
+.nav-back{font-size:13px;color:var(--ink2);text-decoration:none;}
+.nav-back:hover{color:var(--accent);}
+.nav-login{font-size:13px;font-weight:600;color:#fff;background:var(--accent);padding:7px 15px;border-radius:7px;text-decoration:none;}
+.nav-login:hover{background:#a5471f;}
+.hero{background:var(--ink);color:var(--paper);padding:3.4rem 2rem 3rem;text-align:center;border-bottom:3px solid var(--accent);position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 60px),repeating-linear-gradient(0deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 60px);}
+.hero-inner{position:relative;max-width:760px;margin:0 auto;}
+.hero-eyebrow{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent2);margin-bottom:1rem;}
+.hero h1{font-family:'DM Serif Display',serif;font-weight:400;font-size:clamp(28px,4.6vw,42px);line-height:1.12;margin-bottom:1rem;}
+.hero-deck{font-size:1.05rem;color:rgba(245,242,235,0.82);line-height:1.6;max-width:60ch;margin:0 auto;}
+.hero-meta{margin-top:1.6rem;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.05em;color:rgba(245,242,235,0.6);display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap;}
+.hero-meta span+span::before{content:'·';margin-right:.6rem;color:var(--accent2);}
+.article{max-width:720px;margin:0 auto;padding:3rem 1.5rem 2rem;}
+.article > p{font-size:16.5px;color:var(--ink2);margin-bottom:1.15rem;line-height:1.72;}
+.article .lead{font-size:19px;color:var(--ink);line-height:1.6;margin-bottom:1.6rem;}
+.article h2{font-family:'DM Serif Display',serif;font-weight:400;font-size:1.65rem;color:var(--ink);margin:2.4rem 0 .9rem;line-height:1.2;padding-top:.6rem;border-top:1px solid var(--rule);}
+.article h2:first-of-type{border-top:none;padding-top:0;}
+.article strong{color:var(--ink);font-weight:600;}
+.article a.inl{color:var(--teal);text-decoration:none;border-bottom:1px solid rgba(26,107,90,.3);}
+.article a.inl:hover{border-bottom-color:var(--teal);}
+.pq{margin:2rem 0;padding:.4rem 0 .4rem 1.5rem;border-left:3px solid var(--accent);font-family:'DM Serif Display',serif;font-style:italic;font-size:1.45rem;line-height:1.4;color:var(--ink);}
+.tbl-wrap{margin:1.6rem 0;overflow-x:auto;border:1px solid var(--rule);border-radius:10px;}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:440px;}
+caption{caption-side:top;text-align:left;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);padding:.7rem .9rem .2rem;}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--rule);}
+thead th{background:var(--paper2);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2);font-weight:600;}
+td.num,th.num{text-align:right;font-family:'DM Mono',monospace;}
+tbody tr:last-child td{border-bottom:none;}
+tr.hl{background:var(--accent-light);}
+tr.hl td{color:var(--ink);font-weight:600;}
+.tbl-note{font-size:12px;color:var(--ink3);padding:.6rem .9rem .8rem;line-height:1.5;border-top:1px solid var(--rule);background:var(--paper2);}
+.callout{margin:2.2rem 0;border:1px solid var(--rule);border-radius:12px;overflow:hidden;background:#fff;display:flex;flex-wrap:wrap;align-items:center;}
+.callout-band{flex:0 0 8px;align-self:stretch;background:linear-gradient(180deg,var(--accent),var(--accent2));}
+.callout-body{flex:1;padding:1.2rem 1.4rem;min-width:240px;}
+.callout-eyebrow{font-family:'DM Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:.3rem;}
+.callout-body h4{font-family:'DM Serif Display',serif;font-weight:400;font-size:1.2rem;color:var(--ink);margin-bottom:.3rem;}
+.callout-body p{font-size:13.5px;color:var(--ink2);line-height:1.55;margin-bottom:.8rem;}
+.callout-btn{display:inline-block;background:var(--ink);color:#fff;font-size:13px;font-weight:600;padding:9px 17px;border-radius:8px;text-decoration:none;}
+.callout-btn:hover{background:#000;}
+.refs{margin-top:2.6rem;padding-top:1.4rem;border-top:2px solid var(--rule);}
+.refs h2{border-top:none;padding-top:0;margin-top:0;font-size:1.4rem;}
+.tier{margin-bottom:1.3rem;}
+.tier-lab{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:500;color:var(--ink2);margin-bottom:.55rem;display:flex;align-items:center;gap:8px;}
+.tier-lab .dot{width:9px;height:9px;border-radius:50%;flex:none;}
+.ref{font-size:13.5px;color:var(--ink2);line-height:1.55;margin-bottom:.6rem;}
+.ref b{color:var(--ink);}
+.ref a{color:var(--teal);text-decoration:none;border-bottom:1px solid rgba(26,107,90,.3);}
+.ref a:hover{border-bottom-color:var(--teal);}
+.ref .note{color:var(--ink3);font-size:12.5px;}
+.cta{background:var(--ink);color:var(--paper);text-align:center;padding:3rem 1.5rem;margin-top:3rem;}
+.cta h3{font-family:'DM Serif Display',serif;font-weight:400;font-size:1.8rem;margin-bottom:.6rem;}
+.cta p{color:rgba(245,242,235,0.75);max-width:46ch;margin:0 auto 1.4rem;font-size:15px;line-height:1.6;}
+.cta-price{font-family:'DM Mono',monospace;color:var(--accent2);font-size:13px;letter-spacing:.05em;margin-bottom:1.3rem;}
+.cta-btn{display:inline-block;background:var(--accent);color:#fff;font-weight:600;font-size:15px;padding:13px 30px;border-radius:9px;text-decoration:none;}
+.cta-btn:hover{background:#a5471f;}
+footer{background:var(--ink);color:rgba(245,242,235,0.5);text-align:center;padding:2rem;font-size:13px;}
+footer .fl{font-family:'DM Serif Display',serif;font-size:16px;color:var(--paper);margin-bottom:.5rem;}
+footer .fl span{color:var(--accent);}
+footer a{color:var(--accent2);text-decoration:none;}
+@media(max-width:600px){nav{padding:0 1rem;}.nav-back{display:none;}.article{padding:2rem 1.2rem;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Piping<span>Pro</span> Academy</a>
+  <div class="nav-right">
+    <a href="guides.html" class="nav-back">← All guides</a>
+    <a href="index.html#content" class="nav-login">Subscribe</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <!-- ░░░ FILL IN: eyebrow (topic), title, deck (one-line summary), author, date, read time ░░░ -->
+    <div class="hero-eyebrow">Technical Guide · TOPIC</div>
+    <h1>GUIDE TITLE GOES HERE</h1>
+    <p class="hero-deck">One-sentence deck that tells the reader exactly what they'll get.</p>
+    <div class="hero-meta"><span>Donny A. Bachtiar, CEng MIMechE</span><span>DD Month 2026</span><span>X min read</span></div>
+  </div>
+</header>
+
+<article class="article">
+
+  <!-- ░░░ BODY — write in plain <p> paragraphs. Use the components below as needed. ░░░ -->
+
+  <p class="lead">Opening line — the hook. Keep it short and sharp.</p>
+
+  <p>First paragraph of the introduction. Use <strong>strong</strong> for emphasis and
+     <a class="inl" href="#">inline links</a> where useful.</p>
+
+  <h2>First section heading</h2>
+  <p>Section body text…</p>
+
+  <!-- ── PULL QUOTE (optional) — for a single memorable line ──
+  <p class="pq">The one sentence you want the reader to remember.</p>
+  -->
+
+  <!-- ── DATA TABLE (optional) — add class="hl" to a <tr> to highlight it ──
+  <div class="tbl-wrap">
+    <table>
+      <caption>Table caption</caption>
+      <thead><tr><th>Column A</th><th class="num">Column B</th></tr></thead>
+      <tbody>
+        <tr><td>Row label</td><td class="num">value</td></tr>
+        <tr class="hl"><td>Highlighted row</td><td class="num">value</td></tr>
+      </tbody>
+    </table>
+    <div class="tbl-note">Source / caveat note under the table.</div>
+  </div>
+  -->
+
+  <!-- ── CALCULATOR CALLOUT (optional) — link a relevant tool ──
+  <div class="callout">
+    <div class="callout-band"></div>
+    <div class="callout-body">
+      <div class="callout-eyebrow">Try it yourself</div>
+      <h4>Calculator name</h4>
+      <p>One line on what it does.</p>
+      <a class="callout-btn" href="some-calculator.html">Open the calculator →</a>
+    </div>
+  </div>
+  -->
+
+  <h2>Closing section</h2>
+  <p>Wrap-up text…</p>
+
+  <!-- ── REFERENCES (optional but recommended) — keep tiers honest ── -->
+  <div class="refs">
+    <h2>Technical references</h2>
+    <div class="tier">
+      <div class="tier-lab"><span class="dot" style="background:var(--teal)"></span>Standards</div>
+      <p class="ref"><b>Standard / RP name</b> — full title and revision. <a href="#" target="_blank" rel="noopener">link</a></p>
+    </div>
+    <div class="tier">
+      <div class="tier-lab"><span class="dot" style="background:var(--gold)"></span>Literature</div>
+      <p class="ref"><b>Author</b> — Title, edition, publisher, year. <span class="note">note on scope.</span></p>
+    </div>
+    <div class="tier" style="margin-bottom:0;">
+      <div class="tier-lab"><span class="dot" style="background:var(--accent)"></span>Practitioner norms</div>
+      <p class="ref">State plainly which figures are calibration-dependent rather than from a published source.</p>
+    </div>
+  </div>
+
+</article>
+
+<section class="cta">
+  <h3>Every guide, course and calculator — one subscription</h3>
+  <p>Full access to the courses, the engineering tools suite, and the growing library of technical guides.</p>
+  <div class="cta-price">$10 / month · or $100 / year</div>
+  <a class="cta-btn" href="index.html#content">Become a member</a>
+</section>
+
+<footer>
+  <div class="fl">Piping<span>Pro</span> Academy</div>
+  <p>PipingPro Academy is a trademark of <strong style="color:var(--accent2);">Zephrum Konsultan Limited</strong>, registered in England and Wales. Company Registration No. 13537626.</p>
+  <p style="margin-top:.4rem">© 2026 Zephrum Konsultan Limited. All rights reserved.</p>
+</footer>
+
+</body>
+</html>
