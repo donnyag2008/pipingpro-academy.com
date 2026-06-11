@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ComplianceIQ Branch-1 · Plot Plan Verification | PipingPro Academy</title>
+<meta name="description" content="AI-assisted SAES-B-055 plot plan verification. Upload a plot plan; get a cited, editable comment register in ZKL format."/>
+<link rel="canonical" href="https://pipingpro-academy.com/complianceiq-plot-plan"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --cream:#faf6ef; --paper:#f3ede2; --paper3:#e8dfd0; --panel:#fbfaf6;
+  --ink:#1a1510; --ink2:#4a3f30; --ink3:#6b5d49;
+  --accent:#8b3a1a; --gold:#b8860b; --gold-bright:#d4a017; --gold-light:#f5e9c8;
+  --teal:#1a6b5a; --rule:#c8b89a;
+  --high:#8b3a1a; --med:#b8860b; --low:#3e6b88; --info:#6b5d49;
+  --serif:'DM Serif Display',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--sans);background:var(--cream);color:var(--ink);font-size:15px;line-height:1.55;min-height:100vh;}
+nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;height:60px;padding:0 5%;background:var(--ink);border-bottom:2px solid var(--gold);}
+.nav-logo{font-family:var(--serif);font-size:1.15rem;color:var(--gold-bright);text-decoration:none;}
+.nav-logo span{color:var(--gold);}
+.nav-right{display:flex;align-items:center;gap:1rem;}
+.nav-back{color:#ccc;font-size:.82rem;font-weight:500;letter-spacing:.05em;text-transform:uppercase;text-decoration:none;}
+.nav-back:hover{color:var(--gold-bright);}
+.wrap{max-width:1000px;margin:0 auto;padding:30px 5% 80px;}
+
+.masthead{border-bottom:1px solid var(--rule);padding-bottom:18px;margin-bottom:22px;}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin:0 0 8px;}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(28px,5vw,42px);line-height:1.05;margin:0 0 4px;}
+h1 em{font-style:italic;color:var(--gold);}
+.basis{font-family:var(--mono);font-size:12px;color:var(--ink3);}
+
+.panel{background:var(--panel);border:1px solid var(--rule);border-radius:8px;padding:18px;margin-bottom:18px;}
+.lbl{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px;}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
+.btn{border-radius:6px;padding:9px 18px;cursor:pointer;font-family:var(--sans);font-size:14px;border:1px solid var(--gold);background:transparent;color:var(--accent);font-weight:500;}
+.btn:hover{background:var(--gold-light);}
+.btn-primary{background:var(--gold);color:var(--ink);border:none;font-weight:600;padding:10px 22px;}
+.btn-primary:hover{background:var(--gold-bright);}
+.btn-primary:disabled{background:var(--paper3);color:var(--ink3);cursor:not-allowed;}
+.btn-ghost{border:1px solid var(--rule);color:var(--ink2);}
+.fname{font-family:var(--mono);font-size:13px;color:var(--ink3);}
+.hint{margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--ink3);line-height:1.5;}
+.err{margin-top:12px;color:var(--accent);font-size:13px;}
+.note{font-family:var(--mono);font-size:12px;color:var(--gold);margin:8px 0 0;}
+
+.summary-strip{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-bottom:16px;}
+.score-box{background:var(--panel);border:1px solid var(--rule);border-radius:8px;padding:12px 20px;text-align:center;}
+.score-num{font-family:var(--serif);font-size:38px;line-height:1;}
+.score-lbl{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--ink3);}
+.chip{border-radius:20px;padding:6px 13px;cursor:pointer;font-family:var(--mono);font-size:12px;background:transparent;}
+.meta-line{font-family:var(--mono);font-size:12px;color:var(--ink3);margin-bottom:16px;}
+
+.finding{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:14px;margin-bottom:10px;}
+.finding-head{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:6px;}
+.f-ref{font-family:var(--mono);font-size:11px;color:var(--gold);}
+.f-sev{font-family:var(--mono);font-size:11px;letter-spacing:.06em;}
+.f-cat{font-family:var(--mono);font-size:11px;color:var(--ink3);}
+.f-clause{font-family:var(--mono);font-size:11px;color:var(--ink3);margin-left:auto;}
+.f-text{font-size:14px;line-height:1.55;margin-bottom:10px;}
+.f-controls{display:flex;gap:10px;flex-wrap:wrap;}
+.f-controls select,.f-controls input{background:#fff;border:1px solid var(--rule);border-radius:4px;padding:6px 9px;font-size:13px;}
+.f-controls select{font-family:var(--mono);font-size:12px;}
+.f-controls input{flex:1;min-width:200px;font-family:var(--sans);}
+
+.summary-box{margin-top:20px;background:var(--panel);border:1px solid var(--rule);border-left:3px solid var(--gold);border-radius:6px;padding:16px;}
+.summary-box .lbl{color:var(--gold);}
+.summary-box .sline{font-size:13.5px;line-height:1.6;margin-bottom:6px;}
+.disclaimer{margin-top:26px;padding-top:16px;border-top:1px solid var(--rule);font-family:var(--mono);font-size:10.5px;color:var(--ink3);line-height:1.6;}
+
+/* gate overlay */
+.gate{display:none;position:fixed;inset:0;background:rgba(26,21,16,.7);z-index:200;align-items:center;justify-content:center;padding:20px;}
+.gate.show{display:flex;}
+.gate-card{background:var(--cream);border:1px solid var(--rule);border-radius:10px;max-width:380px;width:100%;padding:26px;}
+.gate-card h2{font-family:var(--serif);font-weight:400;font-size:1.4rem;margin-bottom:6px;}
+.gate-card p{font-size:13.5px;color:var(--ink2);margin-bottom:16px;}
+.gate-card label{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);display:block;margin-bottom:5px;}
+.gate-card input{width:100%;padding:10px 12px;border:1px solid var(--rule);border-radius:6px;background:#fff;font-size:14px;margin-bottom:14px;}
+.gate-card .gerr{color:var(--accent);font-size:12px;min-height:14px;margin-bottom:8px;}
+details summary{cursor:pointer;font-family:var(--mono);font-size:11px;color:var(--ink3);}
+details pre{margin-top:8px;max-height:200px;overflow:auto;background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:10px;font-family:var(--mono);font-size:11px;color:var(--ink3);white-space:pre-wrap;}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" class="nav-logo">PipingPro<span>Academy</span></a>
+  <div class="nav-right">
+    <a href="/complianceiq" class="nav-back">← ComplianceIQ Suite</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="masthead">
+    <p class="eyebrow">ComplianceIQ · Branch-1 · Zephrum Konsultan</p>
+    <h1>Plot Plan <em>Verification</em></h1>
+    <p class="basis">SAES-B-055 Fig.1 · SAES-B-014 · SAEP-141 · SAES-M-009 · cited findings, engineer disposition</p>
+  </div>
+
+  <!-- upload -->
+  <div class="panel">
+    <div class="lbl">Upload plot plan — PDF or image</div>
+    <div class="row">
+      <button class="btn" onclick="document.getElementById('fileInput').click()">Choose file</button>
+      <input id="fileInput" type="file" accept="application/pdf,image/*" style="display:none"/>
+      <span class="fname" id="fname">No file selected</span>
+      <button class="btn-primary btn" id="runBtn" style="margin-left:auto" onclick="runVerification()" disabled>Verify against SAES-B-055</button>
+    </div>
+    <div class="err" id="err" style="display:none"></div>
+    <details id="rawWrap" style="margin-top:10px;display:none">
+      <summary>Show raw read-out (diagnostic)</summary>
+      <pre id="rawPre"></pre>
+    </details>
+    <div class="hint">
+      Spacing verdicts are computed in code from the encoded Figure 1 basic-spacing rows. The AI reads and classifies
+      the drawing; it does not generate distances. All cells must be confirmed against the controlled Figure 1 — fire
+      floors only; the BRA toxic contour governs for sour service.
+    </div>
+    <div id="runsLeft" style="display:none;margin-top:10px;font-family:var(--mono);font-size:12px;color:var(--teal);"></div>
+    <div id="limitBox" style="display:none;margin-top:14px;padding:14px;border:1px solid var(--gold);background:var(--gold-light);border-radius:6px;">
+      <div style="font-family:var(--serif);font-size:1.05rem;margin-bottom:4px;">Monthly runs used up</div>
+      <div id="limitMsg" style="font-size:13.5px;color:var(--ink2);margin-bottom:12px;"></div>
+      <a href="/#pricing" class="btn btn-primary" style="text-decoration:none;display:inline-block;">Buy more runs / upgrade</a>
+    </div>
+  </div>
+
+  <div id="results" style="display:none">
+    <div class="summary-strip">
+      <div class="score-box"><div class="score-num" id="scoreNum">—</div><div class="score-lbl">SCREEN INDEX</div></div>
+      <div class="row" id="chips"></div>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <button class="btn" onclick="downloadCSV()">Download CSV</button>
+        <button class="btn" onclick="copyCSV()">Copy CSV</button>
+        <button class="btn btn-ghost" onclick="clearAll()">Clear &amp; start new</button>
+      </div>
+    </div>
+    <div class="note" id="exportNote" style="display:none"></div>
+    <div class="meta-line" id="metaLine"></div>
+    <div id="findings"></div>
+    <div class="summary-box" id="summaryBox" style="display:none">
+      <div class="lbl">Screening summary</div>
+      <div id="summaryLines"></div>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    ComplianceIQ Branch-1 is a screening aid. Outputs are not a substitute for a controlled SAES-B-055 Figure 1 check,
+    a SAEP-141 Building Risk Assessment, or Loss Prevention review. All spacing cells and toxic contours must be
+    confirmed against controlled project documents before disposition.
+  </div>
+</div>
+
+<!-- member gate -->
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <h2>Member tool</h2>
+    <p>ComplianceIQ Branch-1 is part of PipingPro Academy membership. Enter your access code, or <a href="/#pricing">view membership</a>.</p>
+    <label>Access code</label>
+    <input id="gateInput" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')gateLogin()"/>
+    <div class="gerr" id="gateErr"></div>
+    <div class="row">
+      <a href="/complianceiq" class="btn btn-ghost" style="flex:1;text-align:center;text-decoration:none">Back to suite</a>
+      <button class="btn btn-primary" style="flex:1" onclick="gateLogin()">Sign in</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ====================== CONFIG ====================== */
+// Your Cloudflare Worker proxy that holds the Anthropic key as a secret.
+// The Worker receives {system, fileBase64, mediaType} and returns Anthropic's JSON.
+const API_PROXY = "/api/complianceiq";   // <-- point this at your Worker route
+
+/* ====================== VERIFIED REFERENCE DATA ====================== */
+const B055_ROWS = {
+  "A-1":{name:"Control Building",basic:30,occupied:true},
+  "B-1":{name:"Satellite Instrument Building / PIB / SIH",basic:15,occupied:true},
+  "C-1":{name:"Substation / Load Centre",basic:15,occupied:false},
+  "E-1":{name:"Emergency Shutdown / Block Valves",basic:15,occupied:false},
+  "M-1":{name:"Drums",basic:1.5,occupied:false},
+  "N-1":{name:"Towers & Columns",basic:1.5,occupied:false},
+  "U-1":{name:"Onsite Pressure Storage Vessels",basic:25,occupied:false},
+  "F-1":{name:"Fired Equipment / Furnaces / Heaters",basic:15,occupied:false},
+  "H-1":{name:"Gas Compressors",basic:9,occupied:false},
+  "OME":{name:"Operations / Maintenance Building (occupied)",basic:30,occupied:true,siting:"highPopulation"},
+  "HPB":{name:"High-Population Building (≥25 persons)",basic:30,occupied:true,siting:"highPopulation"},
+  "SHELTER":{name:"Operator / Bus / Smoking Shelter",basic:15,occupied:true,siting:"operatorShelter"},
+};
+const SITING_NOTES = {
+  highPopulation:"High-population buildings (≥25 persons): ≥500 m from hydrocarbon process units unless BRA tolerable (SAES-B-014 §5.1). Not a Figure 1 value.",
+  operatorShelter:"Operator shelters: BRA-driven; windows/blast per SAES-B-014 §5.7.4 & SAES-M-009. Not a Figure 1 value.",
+};
+const TOX = { ERPG2:30, IDLH:100 };
+const STANDARDS = {
+  "SAES-B-055":1,"SAES-B-054":1,"SAES-B-014":1,"SAES-B-057":1,"SAES-B-058":1,
+  "SAES-B-068":1,"SAES-B-006":1,"SAES-F-007":1,"SAES-M-009":1,"SAES-M-100":1,
+  "SAEP-141":1,"SAEP-302":1,"SAES-B-064":1,"SAES-L-420":1,"SAES-J-510":1,"SAES-J-505":1,
+};
+const STD_RE=/\b(SAES-[A-Z]-\d{3}|SAEP-\d{3})\b/g;
+function vetReference(clause,text){
+  const cited=new Set([...(`${clause} ${text}`.matchAll(STD_RE))].map(m=>m[1]));
+  return [...cited].filter(s=>!STANDARDS[s]);
+}
+
+const SEV=["HIGH","MEDIUM","LOW","INFO"];
+const SEV_RANK={HIGH:0,MEDIUM:1,LOW:2,INFO:3};
+const SEV_COLOR={HIGH:"var(--high)",MEDIUM:"var(--med)",LOW:"var(--low)",INFO:"var(--info)"};
+
+const SYSTEM_PROMPT = `You are a Senior Owner's Engineer reading a Saudi Aramco plot plan for ComplianceIQ Branch-1 (Plot Plan Verification). You read drawings at equipment-tag level and you are precise and conservative.
+
+CRITICAL RULES:
+- You DO NOT generate, recall, or estimate any SAES-B-055 spacing distance. The spacing verdict is computed downstream from a verified table. Your job is to READ the drawing and CLASSIFY items.
+- For each building/equipment item, assign the SAES-B-055 Figure 1 row code from this fixed list ONLY: A-1 (Control Building — a manned process control room ONLY), B-1 (Satellite Instrument Building / PIB / SIH), C-1 (Substation / Load Centre), E-1 (ESD/Block Valves), M-1 (Drums), N-1 (Towers & Columns), U-1 (Pressure Storage Vessels), F-1 (Fired Equipment), H-1 (Gas Compressors), OME (Operations/Maintenance building — occupied, NOT a control room), HPB (high-population building >=25 persons), SHELTER (operator / bus / smoking shelter).
+- Do NOT default occupied buildings to A-1. A-1 is reserved for the manned process control building. An OME/admin/workshop building is OME. A PIB or SIH is B-1. A bus/smoking/operator shelter is SHELTER. If unclear, leave b055Row empty.
+- Only report a numeric apparentDistance_m when an actual dimension is shown on the drawing OR clearly stated in text. If not dimensioned, set apparentDistance_m to null. NEVER guess a distance.
+- Context findings (wind, egress, air intakes, BRA scope, toxic exposure) are your domain. Cite the clause. For sour service, note Figure 1 is fire-only and the BRA toxic contour governs occupied buildings.
+- ONLY cite these standards (exact number): SAES-B-055, SAES-B-054, SAES-B-014, SAES-B-057 (Refrigerated and Pressure Storage Tanks and Vessels — use THIS for storage spacing, NOT B-067), SAES-B-058, SAES-B-068, SAES-B-006, SAES-F-007, SAES-M-009, SAES-M-100, SAEP-141, SAEP-302, SAES-B-064, SAES-L-420. If unsure a number is correct, name the topic in words and do NOT guess.
+
+Return ONLY valid JSON, no preamble, no markdown fences. Keep every "notes" and "text" field to one short sentence. List the most significant pairs and findings first. Schema:
+{"facilityType":"string","service":"sweet"|"sour"|"unknown","windDirection":"string","items":[{"tag":"string","type":"building"|"equipment","b055Row":"row or empty","notes":"string"}],"pairs":[{"from":"string","to":"string","fromRow":"row","toRow":"row","apparentDistance_m":number|null}],"contextFindings":[{"severity":"HIGH|MEDIUM|LOW|INFO","category":"string","clause":"string","text":"string"}]}`;
+
+/* ====================== STATE ====================== */
+let FILE=null, FINDINGS=[], META=null, RAW="", REVIEW=new Date().toISOString().slice(0,10);
+let FILTERS={HIGH:true,MEDIUM:true,LOW:true,INFO:true};
+
+/* ====================== HELPERS ====================== */
+function safeParse(text){
+  if(!text) return null;
+  let t=text.trim().replace(/^```json\s*/i,"").replace(/^```\s*/i,"").replace(/```\s*$/i,"").trim();
+  const first=t.indexOf("{"); if(first===-1) return null; t=t.slice(first);
+  const last=t.lastIndexOf("}");
+  if(last!==-1){ try{ return JSON.parse(t.slice(0,last+1)); }catch(e){} }
+  try{
+    let s=t;
+    const cut=Math.max(s.lastIndexOf(","),s.lastIndexOf("["),s.lastIndexOf("{"));
+    if(cut>0) s=s.slice(0,cut+(/[\[{]$/.test(s.slice(0,cut+1))?1:0));
+    s=s.replace(/,\s*$/,"");
+    const stack=[]; let inStr=false,esc=false;
+    for(const ch of s){
+      if(esc){esc=false;continue;}
+      if(ch==="\\"){esc=true;continue;}
+      if(ch==='"') inStr=!inStr;
+      if(inStr) continue;
+      if(ch==="{"||ch==="[") stack.push(ch);
+      else if(ch==="}"||ch==="]") stack.pop();
+    }
+    if(inStr) s+='"';
+    while(stack.length) s+= (stack.pop()==="{"?"}":"]");
+    return JSON.parse(s);
+  }catch(e){ return null; }
+}
+function fileToBase64(file){
+  return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(",")[1]);r.onerror=()=>rej(new Error("Could not read the file."));r.readAsDataURL(file);});
+}
+
+/* ====================== ENGINE (code owns spacing verdicts) ====================== */
+function verifySpacing(pairs,service){
+  const findings=[]; const sour=service==="sour"; const seen=new Map();
+  (pairs||[]).forEach((p,i)=>{
+    const fromRow=B055_ROWS[p.fromRow], toRow=B055_ROWS[p.toRow];
+    const tagPair=`${p.from||p.fromRow} ↔ ${p.to||p.toRow}`;
+    if(!fromRow||!toRow){
+      findings.push({severity:"INFO",category:"Spacing — unclassified",clause:"SAES-B-055 Fig.1",
+        text:`Pair "${tagPair}" could not be matched to a Figure 1 row (${p.fromRow||"?"} / ${p.toRow||"?"}). Assign the correct row from the controlled chart before the cell can be verified.`});
+      return;
+    }
+    // siting-governed (OME/HPB/SHELTER) — no fabricated fire floor
+    const sitingRow = fromRow.siting==="highPopulation"?fromRow : toRow.siting==="highPopulation"?toRow : fromRow.siting?fromRow : toRow.siting?toRow : null;
+    if(sitingRow){
+      const other=sitingRow===fromRow?toRow:fromRow;
+      const key="siting|"+sitingRow.siting;
+      if(seen.has(key)){
+        const idx=seen.get(key);
+        if(!findings[idx]._tags.includes(tagPair)){ findings[idx]._tags.push(tagPair);
+          findings[idx].text=findings[idx]._base+` Pairs on this sheet (${findings[idx]._tags.length}): ${findings[idx]._tags.join("; ")}.`; }
+        return;
+      }
+      const sour2=sour?` Service is sour: the BRA H₂S toxic contour (ERPG-2 ${TOX.ERPG2} ppm / IDLH ${TOX.IDLH} ppm) is the likely governing distance.`:"";
+      const base=`${sitingRow.name} ↔ ${other.name}: this building is NOT governed by a SAES-B-055 Figure 1 cell. ${SITING_NOTES[sitingRow.siting]} A SAEP-141 Building Risk Assessment establishes the required separation; no fire-floor distance is asserted here.${sour2}`;
+      findings.push({severity:"MEDIUM",category:"Siting (non-Figure 1)",
+        clause: sitingRow.siting==="highPopulation"?"SAES-B-014 §5.1 / SAEP-141":"SAES-B-014 §5.7.4 / SAEP-141",
+        text:base,_base:base,_tags:[tagPair]});
+      seen.set(key,findings.length-1); return;
+    }
+    const floor=Math.max(fromRow.basic,toRow.basic);
+    const d=typeof p.apparentDistance_m==="number"?p.apparentDistance_m:null;
+    const cell=[p.fromRow,p.toRow].sort().join("↔");
+    const cellKey=`${cell}|${d===null?"nodim":d<floor?"breach":"ok"}`;
+    if(seen.has(cellKey)){
+      const idx=seen.get(cellKey);
+      if(!findings[idx]._tags.includes(tagPair)){ findings[idx]._tags.push(tagPair);
+        findings[idx].text=findings[idx]._base+` Applies to ${findings[idx]._tags.length} pairs on this sheet: ${findings[idx]._tags.join("; ")}.`; }
+      return;
+    }
+    let severity,verdict;
+    if(d===null){ severity="MEDIUM"; verdict=`No dimensioned distance read from the drawing. Basic-spacing fire floor for this cell is ≥${floor} m (${cell}). Add the dimension and confirm against the controlled Figure 1.`; }
+    else if(d<floor){ severity="HIGH"; verdict=`Apparent ${d} m is BELOW the ≥${floor} m basic-spacing fire floor (${cell}). Verify against the controlled Figure 1 and confirm.`; }
+    else { severity="LOW"; verdict=`Apparent ${d} m meets the ≥${floor} m basic-spacing fire floor (${cell}). Confirm the specific cell value; fire/explosion floor only.`; }
+    let toxic="";
+    if(sour&&(fromRow.occupied||toRow.occupied)){
+      toxic=` SOUR SERVICE: Figure 1 is a fire/explosion floor only — the BRA H₂S toxic contour (ERPG-2 ${TOX.ERPG2} ppm / IDLH ${TOX.IDLH} ppm, SAEP-141) governs this occupied building and typically sits beyond the fire floor. The compliant distance is the larger of the two (SAES-B-055 §5.3 / §6.4.1).`;
+      if(severity==="LOW") severity="MEDIUM";
+    }
+    const base=`${fromRow.name} ↔ ${toRow.name}: ${verdict}${toxic}`;
+    findings.push({severity,category:"Spacing",clause:`SAES-B-055 Fig.1 (${cell})`,text:base,_base:base,_tags:[tagPair]});
+    seen.set(cellKey,findings.length-1);
+  });
+  return findings.map(({_base,_tags,...f})=>f);
+}
+
+/* ====================== RUN ====================== */
+async function runVerification(){
+  if(!FILE){ showErr("Upload a plot plan PDF or image first."); return; }
+  showErr(""); RAW=""; document.getElementById('rawWrap').style.display='none';
+  const btn=document.getElementById('runBtn'); btn.textContent="Reading drawing…"; btn.disabled=true;
+  try{
+    const b64=await fileToBase64(FILE);
+    const isPdf=FILE.type==="application/pdf"||/\.pdf$/i.test(FILE.name);
+    const resp=await fetch(API_PROXY,{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({ system:SYSTEM_PROMPT, mediaType:isPdf?"application/pdf":(FILE.type||"image/png"), fileBase64:b64, isPdf, token:(localStorage.getItem('ppa_token')||'') })
+    });
+    const data=await resp.json();
+    if(data.error){
+      if(data.error.code==="LIMIT_REACHED"){ showLimit(data.error.message); finishRun(); return; }
+      showErr(data.error.message||"Backend error."); finishRun(); return;
+    }
+    if(data._usage){ showRunsLeft(data._usage); }
+    const text=(data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n");
+    const parsed=safeParse(text);
+    if(!parsed){
+      const truncated=data.stop_reason==="max_tokens";
+      showErr((truncated?"The read-out was cut off (output limit). ":"Could not parse the drawing read-out. ")+"Split the plot into single areas and run one sheet at a time, or upload a clearer dimensioned sheet.");
+      RAW=text||"(empty response)"; document.getElementById('rawPre').textContent=RAW; document.getElementById('rawWrap').style.display='block';
+      finishRun(); return;
+    }
+    const service=parsed.service||"unknown";
+    META={facilityType:parsed.facilityType||"—",service,windDirection:parsed.windDirection||"unknown"};
+    const spacing=verifySpacing(parsed.pairs,service);
+    const context=(parsed.contextFindings||[]).map(f=>{
+      const clause=f.clause||"—", body=f.text||"";
+      const bad=vetReference(clause,body);
+      const flag=bad.length?` [UNVERIFIED REFERENCE: ${bad.join(", ")} is not in the ComplianceIQ standards index — confirm before citing. Did you mean SAES-B-057 (Refrigerated and Pressure Storage Tanks and Vessels)?]`:"";
+      return {severity:bad.length?"MEDIUM":(SEV.includes(f.severity)?f.severity:"INFO"),category:f.category||"Context",clause,text:body+flag};
+    });
+    FINDINGS=[...spacing,...context].sort((a,b)=>SEV_RANK[a.severity]-SEV_RANK[b.severity])
+      .map((f,i)=>({...f,ref:`ZKL-AHGP-PPR-${String(i+1).padStart(3,"0")}`,status:"OPEN",response:""}));
+    persist(); render();
+  }catch(e){ showErr(e.message||"Verification failed. Check the file and try again."); }
+  finishRun();
+}
+function finishRun(){ const b=document.getElementById('runBtn'); b.textContent="Verify against SAES-B-055"; b.disabled=!FILE; }
+
+/* ====================== RENDER ====================== */
+function tally(){ const t={HIGH:0,MEDIUM:0,LOW:0,INFO:0}; FINDINGS.forEach(f=>t[f.severity]++); return t; }
+function scoreVal(){ if(!FINDINGS.length) return null; const pen=FINDINGS.reduce((s,f)=>s+({HIGH:18,MEDIUM:8,LOW:3,INFO:0}[f.severity]||0),0); return Math.max(0,100-pen); }
+function buildSummary(){
+  if(!FINDINGS.length) return [];
+  const cat=n=>FINDINGS.filter(f=>f.category.startsWith(n)).length;
+  const unclassified=cat("Spacing —"); const spacing=cat("Spacing")-unclassified; const siting=cat("Siting");
+  const context=FINDINGS.length-spacing-unclassified-siting;
+  const t=tally();
+  const unverified=FINDINGS.filter(f=>/UNVERIFIED REFERENCE/.test(f.text)).length;
+  const open=FINDINGS.filter(f=>f.status==="OPEN").length;
+  const lines=[
+    `${FINDINGS.length} comments raised: ${t.HIGH} high, ${t.MEDIUM} medium, ${t.LOW} low, ${t.INFO} info.`,
+    `${spacing} Figure 1 spacing, ${siting} siting (non-Figure 1), ${context} context, ${unclassified} unclassified.`
+  ];
+  if(unverified) lines.push(`${unverified} comment(s) carry an unverified standard reference — confirm before disposition.`);
+  lines.push(META&&META.service==="sour"
+    ? "Service read as sour: Figure 1 is a fire/explosion floor only; a SAEP-141 BRA toxic contour governs occupied-building separation and must be obtained."
+    : "Confirm service classification; if any sour stream is present, a SAEP-141 BRA toxic contour governs occupied-building separation.");
+  lines.push(`${open} of ${FINDINGS.length} comments remain OPEN and require engineer disposition. No spacing cell or contour herein is a substitute for a controlled Figure 1 check or LPD review.`);
+  return lines;
+}
+function render(){
+  const res=document.getElementById('results');
+  if(!FINDINGS.length){ res.style.display='none'; return; }
+  res.style.display='block';
+  const sc=scoreVal(); const t=tally();
+  const scEl=document.getElementById('scoreNum'); scEl.textContent=sc;
+  scEl.style.color = sc>=80?"var(--teal)":sc>=55?"var(--gold)":"var(--accent)";
+  document.getElementById('chips').innerHTML=SEV.map(s=>{
+    const on=FILTERS[s];
+    return `<button class="chip" onclick="toggleFilter('${s}')" style="border:1px solid ${on?SEV_COLOR[s]:'var(--rule)'};color:${on?SEV_COLOR[s]:'var(--ink3)'};background:${on?'var(--panel)':'transparent'}">${s} · ${t[s]||0}</button>`;
+  }).join('');
+  document.getElementById('metaLine').textContent=`${META.facilityType} · service: ${META.service} · wind: ${META.windDirection} · reviewed ${REVIEW}`;
+  const wrap=document.getElementById('findings');
+  wrap.innerHTML=FINDINGS.map((f,idx)=> FILTERS[f.severity] ? `
+    <div class="finding" style="border-left:3px solid ${SEV_COLOR[f.severity]}">
+      <div class="finding-head">
+        <span class="f-ref">${f.ref}</span>
+        <span class="f-sev" style="color:${SEV_COLOR[f.severity]}">${f.severity}</span>
+        <span class="f-cat">${f.category}</span>
+        <span class="f-clause">${f.clause}</span>
+      </div>
+      <div class="f-text">${escapeHtml(f.text)}</div>
+      <div class="f-controls">
+        <select onchange="setStatus(${idx},this.value)">
+          ${["OPEN","CLOSED","FOR INFO","PROPONENT TO CONFIRM"].map(s=>`<option ${f.status===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+        <input value="${escapeAttr(f.response)}" placeholder="OE response / disposition…" oninput="setResponse(${idx},this.value)"/>
+      </div>
+    </div>` : '').join('');
+  const sb=document.getElementById('summaryBox'); const lines=buildSummary();
+  sb.style.display='block';
+  document.getElementById('summaryLines').innerHTML=lines.map((l,i)=>`<div class="sline" style="color:${i>=lines.length-1?'var(--ink3)':'var(--ink)'}">${escapeHtml(l)}</div>`).join('');
+}
+function escapeHtml(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+function escapeAttr(s){return String(s).replace(/"/g,'&quot;');}
+function toggleFilter(s){ FILTERS[s]=!FILTERS[s]; render(); }
+function setStatus(i,v){ FINDINGS[i].status=v; persist(); document.getElementById('summaryLines'); render(); }
+function setResponse(i,v){ FINDINGS[i].response=v; persist(); }
+
+/* ====================== EXPORT ====================== */
+function buildCSV(){
+  const head=["Ref","Severity","Category","Clause","Comment","Status","OE Response"];
+  const esc=v=>`"${String(v).replace(/"/g,'""')}"`;
+  const rows=FINDINGS.map(f=>[f.ref,f.severity,f.category,f.clause,f.text,f.status,f.response]);
+  const summaryRows=buildSummary().map(l=>["","","","",l,"",""]);
+  return `ComplianceIQ Branch-1 — Plot Plan Verification,,,Review date,${REVIEW}\n`
+    +`Facility,${META?META.facilityType:""},Service,${META?META.service:""},Wind,${META?META.windDirection:""}\n\n`
+    +[head,...rows].map(r=>r.map(esc).join(",")).join("\n")
+    +`\n\nSCREENING SUMMARY\n`+summaryRows.map(r=>r.map(esc).join(",")).join("\n");
+}
+function downloadCSV(){
+  const csv=buildCSV(); const filename=`ZKL-AHGP-PPR_register_${REVIEW}.csv`;
+  const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});
+  try{
+    const url=URL.createObjectURL(blob); const a=document.createElement("a");
+    a.href=url; a.download=filename; a.style.display="none"; document.body.appendChild(a); a.click();
+    setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},0);
+    showNote(`Exported ${filename}. If no download appeared, use Copy CSV.`);
+  }catch(e){ showNote("Download blocked by the browser. Use Copy CSV instead."); }
+}
+async function copyCSV(){
+  try{ await navigator.clipboard.writeText(buildCSV()); showNote("Register copied to clipboard. Paste into Excel or a .csv file."); }
+  catch(e){ const w=window.open("","_blank"); if(w){ w.document.write("<pre>"+buildCSV().replace(/</g,"&lt;")+"</pre>"); showNote("Opened the register in a new tab — select all and copy."); } else showNote("Clipboard and pop-ups blocked. Copy manually."); }
+}
+function showNote(m){ const n=document.getElementById('exportNote'); n.textContent=m; n.style.display='block'; }
+function showErr(m){ const e=document.getElementById('err'); e.textContent=m; e.style.display=m?'block':'none'; }
+function showRunsLeft(u){
+  const el=document.getElementById('runsLeft');
+  el.textContent = `${u.remaining} of ${u.limit} ComplianceIQ runs left this month.`;
+  el.style.display='block';
+}
+function showLimit(msg){
+  const box=document.getElementById('limitBox');
+  document.getElementById('limitMsg').textContent=msg;
+  box.style.display='block';
+  box.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+/* ====================== CLEAR / PERSIST ====================== */
+function clearAll(){
+  if(FINDINGS.some(f=>f.response||f.status!=="OPEN")){ if(!confirm("Clear this register? Your dispositions and responses will be lost.")) return; }
+  FINDINGS=[]; META=null; FILE=null; RAW="";
+  document.getElementById('fname').textContent="No file selected";
+  document.getElementById('fileInput').value="";
+  document.getElementById('runBtn').disabled=true;
+  document.getElementById('exportNote').style.display='none';
+  document.getElementById('rawWrap').style.display='none';
+  showErr("");
+  try{ localStorage.removeItem("zkl_ppr_branch1"); }catch(e){}
+  render();
+}
+function persist(){ try{ localStorage.setItem("zkl_ppr_branch1",JSON.stringify({FINDINGS,META})); }catch(e){} }
+function restore(){ try{ const o=JSON.parse(localStorage.getItem("zkl_ppr_branch1")||"null"); if(o&&o.FINDINGS){ FINDINGS=o.FINDINGS; META=o.META; render(); } }catch(e){} }
+
+/* ====================== FILE INPUT ====================== */
+document.getElementById('fileInput').addEventListener('change',e=>{
+  FILE=e.target.files[0]||null;
+  document.getElementById('fname').textContent=FILE?FILE.name:"No file selected";
+  document.getElementById('runBtn').disabled=!FILE; showErr("");
+});
+
+/* ====================== MEMBER GATE ======================
+   Two layers:
+   (1) UX gate below — hides the tool from non-members (cosmetic only).
+   (2) REAL gate — the /api/complianceiq proxy refuses any call without a
+       valid session token, so the API spend is protected server-side even
+       if someone bypasses this UI.
+   The session token is minted by /api/session AFTER Memberstack verifies the
+   member. Wire signIn() to your Memberstack login.
+*/
+function isMember(){
+  try{
+    if(localStorage.getItem('ppa_admin')==='1'||localStorage.getItem('ppa_member')==='1') return true;
+    if(new URLSearchParams(location.search).get('preview_member')==='1') return true;
+  }catch(e){} return false;
+}
+
+// Real login: hand the Memberstack JWT to /api/session, store the returned token.
+async function signIn(msToken){
+  try{
+    const r=await fetch('/api/session',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({msToken})});
+    const d=await r.json();
+    if(d.token){
+      localStorage.setItem('ppa_token', d.token);
+      localStorage.setItem('ppa_member','1');
+      passGate(); return true;
+    }
+    document.getElementById('gateErr').textContent=(d.error&&d.error.message)||'Could not verify membership.';
+  }catch(e){ document.getElementById('gateErr').textContent='Login failed. Try again.'; }
+  return false;
+}
+
+// Pull the current Memberstack member's JWT and sign in.
+// Requires the Memberstack DOM package loaded on the page (window.$memberstackDom).
+async function memberstackLogin(){
+  try{
+    const ms = window.$memberstackDom;
+    if(!ms){ document.getElementById('gateErr').textContent='Member portal not loaded. Refresh and try again.'; return; }
+    const member = await ms.getCurrentMember();
+    if(!member || !member.data){ // not logged in to Memberstack yet — send them to login
+      await ms.openModal('LOGIN');
+      return;
+    }
+    const tok = await ms.getMemberToken(); // member JWT
+    signIn(tok);
+  }catch(e){ document.getElementById('gateErr').textContent='Could not reach the member portal.'; }
+}
+
+// Gate button. ADMIN is a LOCAL UI PREVIEW ONLY — it sets the cosmetic flag but
+// mints NO server token, so the proxy still rejects every run (by design).
+function gateLogin(){
+  const code=document.getElementById('gateInput').value.trim();
+  if(code==='ADMIN'){ localStorage.setItem('ppa_admin','1'); passGate(); return; }
+  memberstackLogin();
+}
+function passGate(){ document.getElementById('gate').classList.remove('show'); restore(); }
+function checkGate(){ if(isMember()){ restore(); } else { document.getElementById('gate').classList.add('show'); } }
+checkGate();
+</script>
+</body>
+</html>

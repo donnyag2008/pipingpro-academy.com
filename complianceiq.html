@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ComplianceIQ Suite — AI-Based Software | PipingPro Academy</title>
+<meta name="description" content="ComplianceIQ — AI-assisted Saudi Aramco compliance screening tools for FEED-stage engineering. Branch-1: Plot Plan Verification against SAES-B-055."/>
+<link rel="canonical" href="https://pipingpro-academy.com/complianceiq"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --cream:#faf6ef;
+  --paper:#f3ede2; --paper3:#e8dfd0;
+  --ink:#1a1510; --ink2:#4a3f30; --ink3:#6b5d49;
+  --accent:#8b3a1a; --gold:#b8860b; --gold-bright:#d4a017; --gold-light:#f5e9c8;
+  --teal:#1a6b5a;
+  --rule:#c8b89a;
+  --serif:'DM Serif Display',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--sans);background:var(--cream);color:var(--ink);font-size:15px;line-height:1.6;min-height:100vh;}
+
+/* ── NAV (canonical PipingPro header) ── */
+nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;height:60px;padding:0 5%;background:var(--ink);border-bottom:2px solid var(--gold);}
+.nav-logo{font-family:var(--serif);font-size:1.15rem;color:var(--gold-bright);letter-spacing:.02em;text-decoration:none;}
+.nav-logo span{color:var(--gold);}
+.nav-right{display:flex;align-items:center;gap:1rem;}
+.nav-back{color:#ccc;font-size:.82rem;font-weight:500;letter-spacing:.05em;text-transform:uppercase;text-decoration:none;transition:color .2s;}
+.nav-back:hover{color:var(--gold-bright);}
+.login-btn{font-size:12px;font-weight:600;padding:7px 16px;border-radius:4px;background:var(--gold);color:var(--ink);border:none;cursor:pointer;font-family:var(--sans);text-transform:uppercase;letter-spacing:.04em;}
+.login-btn:hover{background:var(--gold-bright);}
+.member-pill{font-family:var(--mono);font-size:11px;color:var(--gold-bright);border:1px solid var(--gold);border-radius:20px;padding:5px 12px;}
+
+/* ── HERO ── */
+.hero{max-width:1080px;margin:0 auto;padding:54px 5% 30px;}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin:0 0 12px;}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(30px,5vw,46px);line-height:1.05;margin:0 0 14px;letter-spacing:-.01em;}
+h1 em{font-style:italic;color:var(--gold);}
+.lede{color:var(--ink2);max-width:64ch;font-size:16px;}
+.basis{font-family:var(--mono);font-size:12px;color:var(--ink3);margin-top:14px;}
+
+/* ── GRID ── */
+.grid-wrap{max-width:1080px;margin:0 auto;padding:20px 5% 70px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;}
+.card{background:var(--paper);border:1px solid var(--rule);border-radius:8px;overflow:hidden;display:flex;flex-direction:column;transition:transform .15s, box-shadow .15s;}
+.card.live{cursor:pointer;}
+.card.live:hover{transform:translateY(-3px);box-shadow:0 12px 30px -16px rgba(26,21,16,.4);}
+.card-banner{height:8px;background:linear-gradient(90deg,var(--gold),var(--accent));}
+.card.soon .card-banner{background:var(--paper3);}
+.card-body{padding:20px 20px 22px;display:flex;flex-direction:column;flex:1;}
+.branch-no{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);}
+.card.soon .branch-no{color:var(--ink3);}
+.card h3{font-family:var(--serif);font-weight:400;font-size:1.3rem;margin:6px 0 8px;line-height:1.15;}
+.card p{color:var(--ink2);font-size:13.5px;flex:1;}
+.card-foot{display:flex;align-items:center;justify-content:space-between;margin-top:16px;}
+.tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:4px 9px;border-radius:20px;}
+.tag.live{background:var(--gold-light);color:var(--accent);border:1px solid var(--gold);}
+.tag.soon{background:var(--paper3);color:var(--ink3);border:1px solid var(--rule);}
+.tag.member{background:#efe7d6;color:var(--ink2);border:1px solid var(--rule);}
+.open-link{font-family:var(--mono);font-size:12px;color:var(--gold);font-weight:500;}
+.card.soon{opacity:.82;}
+
+/* ── modal (login) ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(26,21,16,.6);z-index:200;align-items:center;justify-content:center;padding:20px;}
+.modal-bg.show{display:flex;}
+.modal{background:var(--cream);border:1px solid var(--rule);border-radius:10px;max-width:380px;width:100%;padding:26px;}
+.modal h2{font-family:var(--serif);font-weight:400;font-size:1.4rem;margin-bottom:6px;}
+.modal p{font-size:13.5px;color:var(--ink2);margin-bottom:16px;}
+.modal label{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);display:block;margin-bottom:5px;}
+.modal input{width:100%;padding:10px 12px;border:1px solid var(--rule);border-radius:6px;background:#fff;font-family:var(--sans);font-size:14px;margin-bottom:14px;}
+.modal .row{display:flex;gap:10px;}
+.btn{flex:1;padding:10px;border-radius:6px;border:none;cursor:pointer;font-family:var(--sans);font-weight:600;font-size:13px;}
+.btn-primary{background:var(--gold);color:var(--ink);}
+.btn-primary:hover{background:var(--gold-bright);}
+.btn-ghost{background:transparent;border:1px solid var(--rule);color:var(--ink2);}
+.modal .note{font-size:11.5px;color:var(--ink3);margin-top:10px;text-align:center;}
+.modal .note a{color:var(--accent);}
+.modal .err{color:var(--accent);font-size:12px;margin-top:-6px;margin-bottom:10px;min-height:14px;}
+
+footer{border-top:1px solid var(--rule);padding:24px 5%;text-align:center;font-family:var(--mono);font-size:11px;color:var(--ink3);}
+footer a{color:var(--accent);text-decoration:none;}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" class="nav-logo">PipingPro<span>Academy</span></a>
+  <div class="nav-right">
+    <a href="/calculators" class="nav-back">Calculators</a>
+    <a href="/courses" class="nav-back">Courses</a>
+    <span id="memberPill" class="member-pill" style="display:none;">Member</span>
+    <button id="loginBtn" class="login-btn" onclick="openLogin()">Member login</button>
+  </div>
+</nav>
+
+<section class="hero">
+  <p class="eyebrow">AI-Based Software · Zephrum Konsultan</p>
+  <h1>ComplianceIQ <em>Suite</em></h1>
+  <p class="lede">AI-assisted compliance screening for FEED-stage engineering. Each branch reads a deliverable, checks it against verified Saudi Aramco standards data, and produces a cited, editable comment register for engineer disposition — recall by the tool, judgment by you.</p>
+  <p class="basis">Verified data engine · SAES-B-055 · SAES-B-014 · SAEP-141 · standards-cited findings · ZKL register export</p>
+</section>
+
+<div class="grid-wrap">
+  <div class="grid" id="grid"></div>
+</div>
+
+<!-- login modal -->
+<div class="modal-bg" id="loginModal">
+  <div class="modal">
+    <h2>Member login</h2>
+    <p>ComplianceIQ branches are a member tool. Enter your access code, or <a href="/#pricing">view membership</a>.</p>
+    <label for="codeInput">Access code</label>
+    <input id="codeInput" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <div class="err" id="loginErr"></div>
+    <div class="row">
+      <button class="btn btn-ghost" onclick="closeLogin()">Cancel</button>
+      <button class="btn btn-primary" onclick="doLogin()">Sign in</button>
+    </div>
+    <p class="note">$10/month or $100/year · unlimited access to all tools, calculators &amp; courses.</p>
+  </div>
+</div>
+
+<footer>
+  ComplianceIQ is a screening aid, not a substitute for controlled-document review, a SAEP-141 BRA, or Loss Prevention sign-off. ·
+  <a href="/">PipingPro Academy</a> · Zephrum Konsultan Ltd
+</footer>
+
+<script>
+/* ---- branch catalogue ---- */
+const BRANCHES = [
+  { no:"Branch-1", live:true, href:"/complianceiq-plot-plan",
+    title:"Plot Plan Verification",
+    desc:"Reads a plot plan PDF or image, classifies equipment and buildings to SAES-B-055 Figure 1 rows, checks spacing against the encoded matrix, and flags wind, egress, air-intake and BRA-toxic issues.",
+    tag:"SAES-B-055" },
+  { no:"Branch-2", live:false,
+    title:"Support Buildings & EAC",
+    desc:"Building-safety and electrical-area-classification screening against SAES-B-014 and SAES-B-068 — fire separation, blast, gas detection and Zone boundaries.",
+    tag:"SAES-B-014 / B-068" },
+  { no:"Branch-3", live:false,
+    title:"Flare & Relief Screening",
+    desc:"Flare siting, radiation contours and relief-system checks against SAES-F-007 and API STD 521.",
+    tag:"SAES-F-007" },
+  { no:"Branch-4", live:false,
+    title:"Pipeline & Scraper Stations",
+    desc:"Onshore pipeline and scraper-trap layout against SAES-B-064 and SAES-L-420, including the projectile-cone clearance.",
+    tag:"SAES-B-064 / L-420" },
+];
+
+function isMember(){
+  try{
+    if(localStorage.getItem('ppa_admin')==='1'||localStorage.getItem('ppa_member')==='1') return true;
+    if(new URLSearchParams(location.search).get('preview_member')==='1') return true;
+  }catch(e){}
+  return false;
+}
+
+function renderGrid(){
+  const member = isMember();
+  document.getElementById('memberPill').style.display = member ? 'inline-block' : 'none';
+  document.getElementById('loginBtn').style.display = member ? 'none' : 'inline-block';
+  const grid = document.getElementById('grid');
+  grid.innerHTML = BRANCHES.map(b=>{
+    if(b.live){
+      return `<div class="card live" onclick="openBranch('${b.href}')">
+        <div class="card-banner"></div>
+        <div class="card-body">
+          <span class="branch-no">${b.no}</span>
+          <h3>${b.title}</h3>
+          <p>${b.desc}</p>
+          <div class="card-foot">
+            <span class="tag live">${b.tag}</span>
+            <span class="open-link">${member?'Open →':'Member · open →'}</span>
+          </div>
+        </div>
+      </div>`;
+    }
+    return `<div class="card soon">
+      <div class="card-banner"></div>
+      <div class="card-body">
+        <span class="branch-no">${b.no}</span>
+        <h3>${b.title}</h3>
+        <p>${b.desc}</p>
+        <div class="card-foot">
+          <span class="tag soon">${b.tag}</span>
+          <span class="tag soon">Coming soon</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openBranch(href){
+  if(isMember()){ location.href = href; }
+  else { openLogin(); }
+}
+
+/* ---- login (mirrors site convention: ppa_member / ppa_admin) ---- */
+function openLogin(){ document.getElementById('loginModal').classList.add('show'); document.getElementById('codeInput').focus(); }
+function closeLogin(){ document.getElementById('loginModal').classList.remove('show'); document.getElementById('loginErr').textContent=''; }
+function doLogin(){
+  const code = document.getElementById('codeInput').value.trim();
+  // NOTE: replace this client check with your real backend/Memberstack verification.
+  // The codes below mirror the site's existing localStorage flags only as a placeholder.
+  if(code==='ADMIN'){ localStorage.setItem('ppa_admin','1'); finishLogin(); }
+  else if(code && code.length>=4){ localStorage.setItem('ppa_member','1'); finishLogin(); }
+  else { document.getElementById('loginErr').textContent='Enter a valid access code.'; }
+}
+function finishLogin(){ closeLogin(); renderGrid(); }
+
+renderGrid();
+</script>
+</body>
+</html>
