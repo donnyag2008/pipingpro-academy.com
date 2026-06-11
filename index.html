@@ -986,12 +986,14 @@
   <style>
     /* ── MEMBERSHIP SUITES (two-block grid) ── */
     .suite-blocks{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:2rem;margin-top:2.6rem;max-width:900px;}
+    #content .suite-blocks{max-width:1040px;}
     .suite-block{display:flex;flex-direction:column;background:var(--cream);border:1px solid var(--paper-dark);border-radius:16px;overflow:hidden;text-decoration:none;color:inherit;cursor:pointer;transition:transform .32s cubic-bezier(.2,.85,.25,1),box-shadow .32s,border-color .3s;}
     .suite-block:hover{transform:translateY(-7px);box-shadow:0 20px 50px rgba(26,21,16,.16);border-color:var(--gold);}
     .sb-banner{height:172px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.8rem;position:relative;overflow:hidden;}
     .sb-banner::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,.045) 0,rgba(255,255,255,.045) 1px,transparent 1px,transparent 13px);}
     .sb-courses .sb-banner{background:linear-gradient(140deg,#7a3518 0%,#8b3a1a 100%);}
     .sb-calcs .sb-banner{background:linear-gradient(140deg,#1a3a5a 0%,#2a6a8a 100%);}
+    .sb-guides .sb-banner{background:linear-gradient(140deg,#173d31 0%,#2a7558 100%);}
     .sb-banner svg{width:74px;height:74px;opacity:.95;position:relative;transition:transform .35s cubic-bezier(.2,.85,.25,1);}
     .suite-block:hover .sb-banner svg{transform:scale(1.07) rotate(-4deg);}
     .sb-count{font-size:10.5px;font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.62);position:relative;}
@@ -1042,13 +1044,35 @@
             <circle cx="23" cy="50" r="2.4"/><circle cx="32" cy="50" r="2.4"/>
           </g>
         </svg>
-        <span class="sb-count">21 calculators live now &middot; more to come</span>
+        <span class="sb-count">22 calculators live now &middot; more to come</span>
       </div>
       <div class="sb-body">
         <div class="sb-eyebrow">Calculate</div>
         <h3>Calculator Suite</h3>
         <p>Professional ASME, API and DNV tools &mdash; wall thickness, expansion loops, supports, trunnions, pipeline crossings, upheaval buckling and subsea design, with Pipeline Integrity coming soon.</p>
         <span class="sb-go">Enter the Calculator Suite &rarr;</span>
+      </div>
+    </a>
+
+    <a class="suite-block sb-guides" href="guides.html">
+      <div class="sb-banner">
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M32 17 C25 12 14 12 8 15 L8 46 C14 43 25 43 32 48 C39 43 50 43 56 46 L56 15 C50 12 39 12 32 17 Z" stroke="rgba(255,255,255,0.92)" stroke-width="2.6" fill="none" stroke-linejoin="round"/>
+          <line x1="32" y1="17" x2="32" y2="48" stroke="rgba(255,255,255,0.85)" stroke-width="2.2"/>
+          <line x1="14" y1="23" x2="26" y2="25" stroke="rgba(255,255,255,0.5)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="14" y1="29" x2="26" y2="31" stroke="rgba(255,255,255,0.5)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="14" y1="35" x2="23" y2="36.5" stroke="rgba(255,255,255,0.5)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="38" y1="25" x2="50" y2="23" stroke="rgba(255,255,255,0.5)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="38" y1="31" x2="50" y2="29" stroke="rgba(255,255,255,0.5)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="38" y1="37" x2="47" y2="35.5" stroke="rgba(255,255,255,0.5)" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <span class="sb-count">Grounded in ASME &amp; SAES standards</span>
+      </div>
+      <div class="sb-body">
+        <div class="sb-eyebrow">Reference</div>
+        <h3>Technical Guides</h3>
+        <p>Standard-referenced engineering guides &mdash; concise, practical references grounded in ASME B31.3, B31.4 and B31.8 and Saudi Aramco SAES standards, written for working piping and pipeline engineers.</p>
+        <span class="sb-go">Enter the Technical Guides &rarr;</span>
       </div>
     </a>
 
