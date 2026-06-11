@@ -26,6 +26,7 @@
   .nav-links { gap: 0.8rem; }
   .nav-links a[href="#content"],
   .nav-links a[href="#pricing"],
+  .nav-links a[href="#ai-software"],
   .nav-links a[href="#author"] { display: none; }
   .nav-cta { padding: 0.4rem 0.9rem; }   /* a touch tighter */
 }
@@ -921,6 +922,7 @@
     <a href="#content">Content</a>
     <a href="#pricing">Pricing</a>
     <a href="#author">About</a>
+    <a href="#ai-software">AI Software</a>
     <span id="nav-auth" style="display:inline-flex;align-items:center;gap:.6rem;">
       <button class="nav-login-btn" id="nav-login-btn" onclick="openLoginModal()">Login</button>
     </span>
@@ -1019,7 +1021,7 @@
           <line x1="58" y1="25" x2="58" y2="42" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round"/>
           <circle cx="58" cy="44" r="2.6" fill="rgba(255,210,130,0.95)"/>
         </svg>
-        <span class="sb-count">2 courses live &middot; more monthly</span>
+        <span class="sb-count">3 courses live now &middot; more to come</span>
       </div>
       <div class="sb-body">
         <div class="sb-eyebrow">Learn</div>
@@ -1040,7 +1042,7 @@
             <circle cx="23" cy="50" r="2.4"/><circle cx="32" cy="50" r="2.4"/>
           </g>
         </svg>
-        <span class="sb-count">9 calculators live &middot; more monthly</span>
+        <span class="sb-count">21 calculators live now &middot; more to come</span>
       </div>
       <div class="sb-body">
         <div class="sb-eyebrow">Calculate</div>
@@ -1049,6 +1051,68 @@
         <span class="sb-go">Enter the Calculator Suite &rarr;</span>
       </div>
     </a>
+
+  </div>
+</section>
+
+<!-- AI BASED SOFTWARE -->
+<section class="content-section in" id="ai-software">
+  <style>
+    .sb-ai .sb-banner{background:linear-gradient(140deg,#0f3a2e 0%,#1a6b5a 100%);}
+    .sb-aisoon .sb-banner{background:linear-gradient(140deg,#3a342a 0%,#5c5346 100%);}
+    .suite-block.sb-soon{cursor:default;opacity:.74;}
+    .suite-block.sb-soon:hover{transform:none;box-shadow:none;border-color:var(--paper-dark);}
+    .suite-block.sb-soon:hover .sb-banner svg{transform:none;}
+  </style>
+
+  <p class="section-label">Intelligent Engineering Tools</p>
+  <h2>AI Based Software</h2>
+  <p class="section-intro">AI-assisted tools that go beyond calculation — reading drawings, checking layouts against project standards, and turning engineering judgement into repeatable screening. Built on real FEED project data.</p>
+
+  <div class="suite-blocks">
+
+    <a class="suite-block sb-ai" href="complianceiq.html">
+      <div class="sb-banner">
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="7" y="9" width="50" height="38" rx="3" stroke="rgba(255,255,255,0.9)" stroke-width="2.5" fill="none"/>
+          <rect x="13" y="15" width="13" height="9" rx="1.5" fill="rgba(255,255,255,0.5)"/>
+          <rect x="30" y="15" width="10" height="9" rx="1.5" fill="rgba(255,255,255,0.5)"/>
+          <rect x="13" y="28" width="10" height="8" rx="1.5" fill="rgba(255,255,255,0.5)"/>
+          <circle cx="44" cy="40" r="12" fill="rgba(255,210,130,0.95)"/>
+          <path d="M38.5 40 l4 4 l7.5 -8.5" stroke="#0f3a2e" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="sb-count">FEED Plot Plan Compliance AI</span>
+      </div>
+      <div class="sb-body">
+        <div class="sb-eyebrow">Analyse</div>
+        <h3>ComplianceIQ</h3>
+        <p>AI-powered FEED-stage plot plan compliance screening — checks equipment spacing and layout against Saudi Aramco SAES-B-055, SAES-B-064 and SAES-L-420, then generates a structured comment register. Proven on the Al Hada Gas Plant plot plan.</p>
+        <span class="sb-go">Open ComplianceIQ →</span>
+      </div>
+    </a>
+
+    <div class="suite-block sb-soon sb-aisoon">
+      <div class="sb-banner">
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="32" y1="32" x2="14" y2="18" stroke="rgba(255,255,255,0.4)" stroke-width="1.6"/>
+          <line x1="32" y1="32" x2="50" y2="18" stroke="rgba(255,255,255,0.4)" stroke-width="1.6"/>
+          <line x1="32" y1="32" x2="14" y2="46" stroke="rgba(255,255,255,0.4)" stroke-width="1.6"/>
+          <line x1="32" y1="32" x2="50" y2="46" stroke="rgba(255,255,255,0.4)" stroke-width="1.6"/>
+          <circle cx="32" cy="32" r="6.5" fill="rgba(255,255,255,0.9)"/>
+          <circle cx="14" cy="18" r="3.6" fill="rgba(255,255,255,0.6)"/>
+          <circle cx="50" cy="18" r="3.6" fill="rgba(255,255,255,0.6)"/>
+          <circle cx="14" cy="46" r="3.6" fill="rgba(255,255,255,0.6)"/>
+          <circle cx="50" cy="46" r="3.6" fill="rgba(255,255,255,0.6)"/>
+        </svg>
+        <span class="sb-count">Coming Soon</span>
+      </div>
+      <div class="sb-body">
+        <div class="sb-eyebrow">Roadmap</div>
+        <h3>More AI Tools</h3>
+        <p>Further AI-assisted engineering tools are in development — standards-aware design checks, drawing &amp; document review, and MTO intelligence built on the same project-data foundation.</p>
+        <span class="sb-go" style="color:var(--ink-light);">In development</span>
+      </div>
+    </div>
 
   </div>
 </section>
