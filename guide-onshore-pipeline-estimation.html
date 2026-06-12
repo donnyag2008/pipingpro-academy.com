@@ -29,15 +29,9 @@
   --rule:rgba(26,26,24,0.12);
   --gold:#b8860b;--gold-light:#f5e9c8;
   }
-  *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  body{
-    margin:0;background:var(--paper);color:var(--ink);
-    font-family:"DM Sans",system-ui,sans-serif;
-    font-size:18px;line-height:1.7;font-weight:400;
-    -webkit-font-smoothing:antialiased;
-  }
-  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+ *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);font-size:15px;line-height:1.6;min-height:100vh;}
+
 
   /* ---- top nav ---- */
   .topbar{border-bottom:1px solid var(--rule);background:var(--paper);}
