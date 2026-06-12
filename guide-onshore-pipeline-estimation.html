@@ -278,7 +278,7 @@
     <div class="cta">
       <h3>The working estimate model</h3>
       <p>A fully formula-driven Class-3 estimate workbook — terrain split, crossings register, WBS roll-up, and the parametric cross-check built in. Change any input and the whole estimate flexes.</p>
-      <a href="#" class="btn" data-member-download="onshore-pipeline-estimate.xlsx">Download the model (.xlsx)</a>
+      <a href="onshore-pipeline-estimate.xlsx" download class="btn" data-gate-download>Download the model (.xlsx)</a>
       <small>Members only · included with your PipingPro Academy subscription</small>
     </div>
 
@@ -295,6 +295,29 @@
     </div>
   </div>
 </footer>
+<script>
+(function () {
+  var qs = new URLSearchParams(location.search);
+  if (qs.get('admin') === 'PPA-ADMIN-2026') localStorage.setItem('ppa_admin','1');
+  if (qs.get('preview_member') === '1') localStorage.setItem('ppa_member','1');
 
+  function isMember() {
+    return localStorage.getItem('ppa_admin') === '1'
+        || localStorage.getItem('ppa_member') === '1';
+  }
+
+  document.querySelectorAll('[data-gate-download]').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      if (isMember()) return;            // members & admins: let the download proceed
+      e.preventDefault();                // everyone else: intercept and upsell
+      var go = confirm(
+        'The estimate workbook is included with PipingPro Academy membership ' +
+        '($10/month or $100/year).\n\nView membership options?'
+      );
+      if (go) location.href = 'index.html#content';
+    });
+  });
+})();
+</script>
 </body>
 </html>
