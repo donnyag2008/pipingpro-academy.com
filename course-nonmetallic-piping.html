@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Non-Metallic Piping Essentials — PipingPro Academy</title>
+<meta name="description" content="Non-Metallic Piping Essentials — a 5-module course on HDPE and composite pipe for oil & gas: families, the API 15LE pressure-rating method (HDB/DF/HDS/DR/FSF/TSF), reinforced spoolable RTP/TCP, chemical resistance & selection, and design, jointing & installation. By Donny A. Bachtiar."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNiIgZmlsbD0iI0M0NUMyQSIvPjxjaXJjbGUgY3g9IjE2IiBjeT0iMTYiIHI9IjEwIiBmaWxsPSJub25lIiBzdHJva2U9IiNmNWYyZWIiIHN0cm9rZS13aWR0aD0iMy41Ii8+PGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZjVmMmViIiBzdHJva2Utd2lkdGg9IjIiLz48dGV4dCB4PSIxNiIgeT0iMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjkiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjZjVmMmViIj5QUDwvdGV4dD48L3N2Zz4="/>
+<style>
+  :root {
+    --ink: #1a1a18; --ink2: #4a4a44; --ink3: #8a8a80;
+    --paper: #f5f2eb; --paper2: #ede9de; --paper3: #e3dfd2;
+    --accent: #c45c2a; --accent2: #e8a06a; --accent-light: #f7ede3;
+    --teal: #1a6b5a; --teal-light: #e0f0eb;
+    --amber: #b5781a; --amber-light: #faf0dd;
+    --rule: rgba(26,26,24,0.12);
+    --rule2: rgba(26,26,24,0.07);
+    --shadow-sm: 0 2px 8px rgba(26,26,24,0.06);
+    --shadow-md: 0 8px 32px rgba(26,26,24,0.10);
+    --sidebar-w: 312px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', -apple-system, sans-serif;
+    background: var(--paper); color: var(--ink);
+    line-height: 1.68; font-size: 16.5px; -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background-image: radial-gradient(rgba(26,26,24,0.018) 1px, transparent 1px);
+    background-size: 4px 4px;
+  }
+
+  /* ============ TOP BAR ============ */
+  .topbar { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; gap: 16px;
+    padding: 14px 26px; background: rgba(245,242,235,0.86); backdrop-filter: blur(12px); border-bottom: 1px solid var(--rule); }
+  .brand { display: flex; align-items: center; gap: 11px; text-decoration: none; color: var(--ink); }
+  .brand-mark { width: 34px; height: 34px; border-radius: 8px; background: var(--accent); display: grid; place-items: center; flex-shrink: 0; box-shadow: var(--shadow-sm); }
+  .brand-mark svg { width: 22px; height: 22px; }
+  .brand-name { font-family: 'DM Serif Display', serif; font-size: 1.18rem; letter-spacing: -0.01em; line-height: 1; }
+  .brand-sub { font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink3); margin-top: 3px; }
+  .topbar-spacer { flex: 1; }
+  .progress-wrap { display: flex; align-items: center; gap: 11px; min-width: 0; }
+  .progress-label { font-size: 0.72rem; letter-spacing: 0.04em; color: var(--ink3); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .progress-track { width: 120px; height: 5px; border-radius: 3px; background: var(--paper3); overflow: hidden; }
+  .progress-fill { height: 100%; width: 20%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 3px; transition: width .4s ease; }
+  .menu-toggle { display: none; background: none; border: 1px solid var(--rule); border-radius: 8px; padding: 8px 10px; cursor: pointer; color: var(--ink); }
+
+  /* ============ LAYOUT ============ */
+  .layout { display: flex; align-items: flex-start; }
+  .sidebar { position: sticky; top: 63px; align-self: flex-start; width: var(--sidebar-w); flex-shrink: 0;
+    height: calc(100vh - 63px); overflow-y: auto; padding: 26px 18px 60px 26px; border-right: 1px solid var(--rule);
+    background: linear-gradient(180deg, var(--paper2), var(--paper)); }
+  .sidebar::-webkit-scrollbar { width: 8px; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--paper3); border-radius: 4px; }
+  .course-eyebrow { font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  .course-title-sb { font-family: 'DM Serif Display', serif; font-size: 1.42rem; line-height: 1.12; margin: 8px 0 4px; letter-spacing: -0.015em; }
+  .course-byline { font-size: 0.78rem; color: var(--ink3); margin-bottom: 22px; }
+  .nav-mod { margin-bottom: 4px; }
+  .nav-mod-btn { display: flex; align-items: center; gap: 11px; width: 100%; background: none; border: none; cursor: pointer; text-align: left;
+    padding: 11px 12px; border-radius: 9px; color: var(--ink2); font-family: 'DM Sans', sans-serif; font-size: 0.93rem; font-weight: 500; transition: background .18s, color .18s; }
+  .nav-mod-btn:hover { background: var(--paper3); color: var(--ink); }
+  .nav-mod-btn.active { background: var(--ink); color: var(--paper); box-shadow: var(--shadow-sm); }
+  .nav-mod-btn.active .nav-num { background: var(--accent); color: #fff; }
+  .nav-mod-btn.active .nav-mod-sub { color: rgba(245,242,235,0.6); }
+  .nav-num { width: 26px; height: 26px; border-radius: 7px; background: var(--paper3); color: var(--ink2); display: grid; place-items: center;
+    font-size: 0.82rem; font-weight: 700; flex-shrink: 0; font-variant-numeric: tabular-nums; transition: background .18s, color .18s; }
+  .nav-mod-label { display: flex; flex-direction: column; min-width: 0; }
+  .nav-mod-title { line-height: 1.2; }
+  .nav-mod-sub { font-size: 0.68rem; color: var(--ink3); letter-spacing: 0.02em; }
+  .nav-lessons { list-style: none; margin: 2px 0 8px 0; padding-left: 49px; display: none; }
+  .nav-mod.open .nav-lessons { display: block; }
+  .nav-lessons a { display: block; padding: 5px 8px; font-size: 0.8rem; color: var(--ink3); text-decoration: none; border-radius: 6px;
+    border-left: 2px solid var(--rule2); transition: color .15s, border-color .15s, background .15s; }
+  .nav-lessons a:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-light); }
+
+  /* ============ CONTENT ============ */
+  main { flex: 1; min-width: 0; padding: 0 0 80px; }
+  .module { display: none; animation: fade .45s ease; }
+  .module.active { display: block; }
+  @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .content { max-width: 820px; margin: 0 auto; padding: 0 40px; }
+
+  .mod-hero { padding: 56px 0 30px; border-bottom: 1px solid var(--rule); margin-bottom: 38px; position: relative; }
+  .mod-hero-eyebrow { display: inline-flex; align-items: center; gap: 9px; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 16px; }
+  .mod-hero-eyebrow::before { content: ""; width: 28px; height: 2px; background: var(--accent); }
+  .mod-hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2rem, 4.4vw, 3rem); line-height: 1.04; letter-spacing: -0.02em; }
+  .mod-hero .lead { font-size: 1.08rem; color: var(--ink2); margin-top: 18px; max-width: 70ch; }
+  .mod-hero-meta { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 24px; font-size: 0.8rem; color: var(--ink3); }
+  .mod-hero-meta span { display: inline-flex; align-items: center; gap: 7px; }
+  .mod-hero-meta b { color: var(--ink2); font-weight: 600; }
+
+  h2.lesson { font-family: 'DM Serif Display', serif; font-size: 1.74rem; letter-spacing: -0.015em; margin: 52px 0 6px; scroll-margin-top: 80px; line-height: 1.12; }
+  h2.lesson .l-tag { display: block; font-family: 'DM Mono', monospace; font-size: 0.74rem; letter-spacing: 0.1em; color: var(--accent); text-transform: uppercase; margin-bottom: 7px; font-weight: 500; }
+  h3 { font-size: 1.14rem; font-weight: 700; margin: 34px 0 10px; letter-spacing: -0.01em; }
+  h4 { font-size: 1rem; font-weight: 700; margin: 24px 0 6px; color: var(--ink); }
+  p { margin: 13px 0; }
+  ul, ol { margin: 13px 0 13px 4px; padding-left: 24px; }
+  li { margin: 7px 0; }
+  ul.clean { list-style: none; padding-left: 0; }
+  ul.clean > li { position: relative; padding-left: 26px; }
+  ul.clean > li::before { content: ""; position: absolute; left: 4px; top: 12px; width: 7px; height: 7px; border-radius: 2px; background: var(--accent); transform: rotate(45deg); }
+  strong { font-weight: 700; } em { font-style: italic; }
+
+  .objectives { background: var(--paper2); border: 1px solid var(--rule); border-radius: 14px; padding: 26px 30px; margin: 30px 0; }
+  .objectives h4 { margin: 0 0 14px; font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+  .objectives ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  .objectives li { position: relative; padding-left: 30px; margin: 0; font-size: 0.95rem; color: var(--ink2); }
+  .objectives li::before { content: ""; position: absolute; left: 0; top: 4px; width: 17px; height: 17px; background: var(--accent); border-radius: 5px;
+    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='white' d='M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/></svg>") center/14px no-repeat;
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='white' d='M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/></svg>") center/14px no-repeat; }
+
+  .callout { border-radius: 13px; padding: 19px 22px; margin: 24px 0; font-size: 0.95rem; position: relative; }
+  .callout p:first-child { margin-top: 0; } .callout p:last-child { margin-bottom: 0; }
+  .callout .c-label { font-size: 0.7rem; letter-spacing: 0.13em; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 6px; }
+  .author { background: linear-gradient(135deg, var(--paper2), var(--paper3)); border: 1px solid var(--rule); padding-left: 70px; }
+  .author::before { content: "DB"; position: absolute; left: 20px; top: 19px; width: 38px; height: 38px; border-radius: 50%; background: var(--ink); color: var(--paper);
+    display: grid; place-items: center; font-family: 'DM Serif Display', serif; font-size: 0.92rem; }
+  .author .c-label { color: var(--ink3); }
+  .note { background: var(--teal-light); border-left: 4px solid var(--teal); }
+  .note .c-label { color: var(--teal); }
+  .important { background: var(--amber-light); border-left: 4px solid var(--amber); }
+  .important .c-label { color: var(--amber); }
+  .takeaway { background: var(--accent-light); border-left: 4px solid var(--accent); }
+  .takeaway .c-label { color: var(--accent); }
+
+  .formula { background: var(--ink); color: var(--paper); border-radius: 12px; padding: 22px 26px; margin: 22px 0; text-align: center; box-shadow: var(--shadow-sm); }
+  .formula .eq { font-family: 'DM Mono', monospace; font-size: 1.18rem; letter-spacing: 0.01em; }
+  .formula .eq small { color: var(--accent2); }
+  .formula .where { font-family: 'DM Sans', sans-serif; font-size: 0.78rem; color: rgba(245,242,235,0.6); margin-top: 10px; }
+  .formula-name { font-size: 0.72rem; letter-spacing: 0.13em; text-transform: uppercase; color: var(--accent2); margin-bottom: 10px; font-weight: 600; }
+  code.inl { font-family: 'DM Mono', monospace; font-size: 0.88em; background: var(--paper3); padding: 1px 6px; border-radius: 5px; }
+
+  .worked { border: 1px solid var(--rule); border-radius: 14px; margin: 26px 0; overflow: hidden; background: #fff7; }
+  .worked-head { background: var(--ink); color: var(--paper); padding: 13px 22px; font-size: 0.78rem; letter-spacing: 0.13em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 9px; }
+  .worked-head .wx { background: var(--accent); width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center; color: #fff; font-size: 0.8rem; }
+  .worked-body { padding: 20px 24px; }
+  .worked-body .step { font-weight: 700; color: var(--accent); font-size: 0.82rem; letter-spacing: 0.04em; text-transform: uppercase; margin-top: 16px; }
+  .worked-body .calc { font-family: 'DM Mono', monospace; font-size: 0.9rem; background: var(--paper2); border-radius: 8px; padding: 10px 14px; margin: 8px 0; overflow-x: auto; white-space: pre-wrap; }
+  .worked-body .result { font-family: 'DM Mono', monospace; font-weight: 500; color: var(--teal); }
+
+  .tbl-wrap { overflow-x: auto; margin: 22px 0; border-radius: 12px; border: 1px solid var(--rule); -webkit-overflow-scrolling: touch; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.86rem; min-width: 420px; background: #fffdfa; }
+  caption { caption-side: top; text-align: left; font-size: 0.76rem; color: var(--ink3); padding: 0 0 9px 2px; font-style: italic; }
+  thead th { background: var(--ink); color: var(--paper); font-weight: 600; text-align: left; padding: 11px 14px; font-size: 0.78rem; letter-spacing: 0.02em; vertical-align: bottom; }
+  tbody td { padding: 10px 14px; border-bottom: 1px solid var(--rule2); vertical-align: top; }
+  tbody tr:nth-child(even) { background: var(--paper2); }
+  tbody tr:last-child td { border-bottom: none; }
+  .mono { font-family: 'DM Mono', monospace; font-size: 0.92em; }
+
+  .summary-block { background: var(--paper2); border: 1px solid var(--rule); border-radius: 16px; padding: 34px 36px; margin: 50px 0 24px; }
+  .summary-block h2 { font-family: 'DM Serif Display', serif; font-size: 1.5rem; margin: 0 0 6px; letter-spacing: -0.015em; }
+  .summary-block .sum-intro { color: var(--ink2); font-size: 0.95rem; margin-bottom: 18px; }
+  ul.keytakeaways { list-style: none; padding: 0; margin: 0; display: grid; gap: 11px; }
+  ul.keytakeaways li { position: relative; padding-left: 32px; font-size: 0.93rem; margin: 0; }
+  ul.keytakeaways li::before { content: ""; position: absolute; left: 0; top: 3px; width: 19px; height: 19px; border-radius: 6px; background: var(--accent);
+    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='white' d='M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/></svg>") center/15px no-repeat;
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='white' d='M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/></svg>") center/15px no-repeat; }
+
+  .self-assess { border: 1px solid var(--rule); border-radius: 14px; padding: 28px 32px; margin: 28px 0; }
+  .self-assess h3 { margin: 0 0 16px; display: flex; align-items: center; gap: 10px; }
+  .self-assess h3::before { content: "?"; width: 28px; height: 28px; border-radius: 8px; background: var(--teal); color: #fff; display: grid; place-items: center; font-family: 'DM Serif Display', serif; }
+  ol.questions { counter-reset: q; list-style: none; padding: 0; margin: 0; }
+  ol.questions li { counter-increment: q; position: relative; padding: 12px 0 12px 44px; border-bottom: 1px solid var(--rule2); font-size: 0.92rem; }
+  ol.questions li:last-child { border-bottom: none; }
+  ol.questions li::before { content: counter(q); position: absolute; left: 0; top: 11px; width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--accent); color: var(--accent); display: grid; place-items: center; font-weight: 700; font-size: 0.82rem; }
+
+  .mod-foot { max-width: 820px; margin: 56px auto 0; padding: 0 40px; }
+  .mod-nav-row { display: flex; gap: 14px; justify-content: space-between; border-top: 1px solid var(--rule); padding-top: 26px; }
+  .mod-nav-btn { flex: 1; max-width: 340px; text-align: left; background: var(--paper2); border: 1px solid var(--rule); border-radius: 12px; padding: 14px 18px; cursor: pointer;
+    transition: transform .18s, box-shadow .18s, background .18s; font-family: 'DM Sans', sans-serif; color: var(--ink); }
+  .mod-nav-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); background: #fff; }
+  .mod-nav-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
+  .mod-nav-btn .dir { font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink3); }
+  .mod-nav-btn .nm { font-weight: 600; font-size: 0.95rem; margin-top: 3px; }
+  .mod-nav-btn.next { text-align: right; }
+
+  .course-complete { text-align: center; background: var(--ink); color: var(--paper); border-radius: 16px; padding: 36px; margin: 40px auto 0; max-width: 820px; }
+  .course-complete h3 { font-family: 'DM Serif Display', serif; color: var(--accent2); font-size: 1.5rem; margin: 0 0 6px; }
+  .course-complete p { color: rgba(245,242,235,0.7); margin: 6px 0 0; font-size: 0.92rem; }
+
+  footer.site { text-align: center; padding: 40px 20px 50px; border-top: 1px solid var(--rule); margin-top: 40px; color: var(--ink3); font-size: 0.82rem; }
+  footer.site .f-logo { font-family: 'DM Serif Display', serif; color: var(--ink); font-size: 1.05rem; }
+  footer.site a { color: var(--accent); text-decoration: none; }
+  footer.site .f-zk { font-size: 0.74rem; margin-top: 8px; opacity: 0.8; }
+  .scrim { display: none; }
+
+  /* ============ EMBEDDED CALCULATOR (Module 2) ============ */
+  .calc { border: 1px solid var(--accent); border-radius: 14px; overflow: hidden; margin: 26px 0; background: #fff7; }
+  .calc-head { background: var(--accent); color: #fff; padding: 12px 20px; font-family: 'DM Mono', monospace; font-size: 0.74rem; letter-spacing: 0.13em; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
+  .calc-head .tag { opacity: 0.82; }
+  .calc-body { padding: 20px 22px 18px; }
+  .ctrl { margin-bottom: 15px; }
+  .ctrl > label { display: block; font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.06em; color: var(--ink3); text-transform: uppercase; margin-bottom: 7px; }
+  .seg { display: flex; gap: 7px; flex-wrap: wrap; }
+  .seg button { appearance: none; border: 1px solid var(--rule); background: var(--paper2); border-radius: 8px; padding: 8px 13px; font-family: 'DM Mono', monospace; font-size: 0.82rem; cursor: pointer; color: var(--ink); transition: .12s; }
+  .seg button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-light); color: var(--accent); font-weight: 600; }
+  .calc select { font-family: 'DM Mono', monospace; font-size: 0.86rem; padding: 9px 11px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper2); color: var(--ink); width: 100%; }
+  .slide { display: flex; align-items: center; gap: 13px; }
+  .slide input { flex: 1; accent-color: var(--accent); }
+  .slide .end { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--ink3); white-space: nowrap; }
+  .out { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 8px; align-items: center; }
+  .bigP { font-family: 'DM Mono', monospace; font-weight: 500; color: var(--accent); font-size: 2.6rem; line-height: 1; }
+  .bigP small { font-size: 0.95rem; color: var(--ink3); margin-left: 6px; }
+  .barP { font-family: 'DM Mono', monospace; font-size: 0.9rem; color: var(--ink2); margin-top: 4px; }
+  .cformula { font-family: 'DM Mono', monospace; font-size: 0.82rem; color: var(--ink); background: var(--paper2); border: 1px solid var(--rule); border-radius: 8px; padding: 12px 13px; line-height: 1.85; }
+  .cformula .sub { color: var(--accent); font-weight: 600; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 13px; }
+  .pchip { font-family: 'DM Mono', monospace; font-size: 0.72rem; border: 1px solid var(--rule); border-radius: 20px; padding: 3px 11px; color: var(--ink3); }
+  .pchip b { color: var(--accent); font-weight: 600; }
+  .warnote { font-family: 'DM Mono', monospace; font-size: 0.74rem; color: var(--accent); margin-top: 11px; }
+  .cplot { margin-top: 16px; background: var(--paper2); border: 1px solid var(--rule); border-radius: 9px; padding: 12px 12px 8px; }
+  .cplot svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .cplot .gridl { stroke: var(--rule); stroke-width: 1; }
+  .cplot .axl { font-family: 'DM Mono', monospace; font-size: 9px; fill: var(--ink3); }
+  .cplot .pcurve { fill: none; stroke: var(--accent); stroke-width: 2.2; stroke-linejoin: round; }
+  .cplot .mline { stroke: var(--ink); stroke-width: 1; stroke-dasharray: 2 2; }
+  .cplot .mdot { fill: var(--accent); stroke: #fff; stroke-width: 2; }
+  .cplot .cap { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--ink3); text-align: center; margin-top: 6px; }
+  @media (max-width:560px){ .out { grid-template-columns: 1fr; } }
+
+  /* family tree (Module 1) */
+  .treefig { margin: 22px 0; background: #fffdfa; border: 1px solid var(--rule); border-radius: 13px; padding: 18px 14px 10px; }
+  .treefig svg { width: 100%; height: auto; display: block; }
+  .treefig .cap { font-family: 'DM Mono', monospace; font-size: 0.66rem; color: var(--ink3); text-align: center; margin-top: 8px; }
+  .nm-box { fill: var(--paper2); stroke: var(--rule); stroke-width: 1; }
+  .nm-box.hot { fill: var(--accent-light); stroke: var(--accent); }
+  .nm-t { font-family: 'DM Mono', monospace; font-size: 12px; fill: var(--ink); }
+  .nm-t.hot { fill: var(--accent); font-weight: 600; }
+  .nm-leaf { font-family: 'DM Mono', monospace; font-size: 11px; fill: var(--ink3); }
+  .nm-link { stroke: #c9c2b2; stroke-width: 1.3; fill: none; }
+  .nm-link.hot { stroke: var(--accent); }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 940px) {
+    :root { --sidebar-w: 280px; }
+    .sidebar { position: fixed; top: 0; left: 0; height: 100vh; z-index: 200; transform: translateX(-104%); transition: transform .3s ease; box-shadow: var(--shadow-md); width: 300px; padding-top: 22px; }
+    .sidebar.open { transform: none; }
+    .menu-toggle { display: inline-flex; }
+    .scrim.show { display: block; position: fixed; inset: 0; background: rgba(26,26,24,0.4); z-index: 150; }
+    .content, .mod-foot { padding-left: 22px; padding-right: 22px; }
+    .progress-track { width: 80px; }
+  }
+  @media (max-width: 600px) {
+    body { font-size: 16px; }
+    .content, .mod-foot { padding-left: 18px; padding-right: 18px; }
+    .mod-hero { padding-top: 36px; }
+    .brand-sub { display: none; }
+    .mod-nav-row { flex-direction: column; }
+    .mod-nav-btn { max-width: none; }
+    .author { padding-left: 22px; }
+    .author::before { display: none; }
+    .summary-block, .self-assess { padding: 22px; }
+  }
+</style>
+</head>
+
+<script>
+/* ============ MEMBER GATE (PAYWALL) ============
+   Subscribers/admins only. Mirrors isMember() used across the site.
+   Module 1 is free; deeper modules require membership. Honours
+   ?admin=PPA-ADMIN-2026 and ?preview_member=1 for testing. */
+(function(){
+  var ADMIN_KEY = 'PPA-ADMIN-2026';
+  try {
+    var p = new URLSearchParams(window.location.search);
+    if (p.get('admin') === ADMIN_KEY) { localStorage.setItem('ppa_admin','1'); window.history.replaceState({}, '', window.location.pathname); }
+    if (p.get('preview_member') === '1') { sessionStorage.setItem('ppa_member','1'); }
+  } catch(e){}
+  window.PPA_isMember = function(){
+    try {
+      if (localStorage.getItem('ppa_admin') === '1') return true;
+      if (sessionStorage.getItem('ppa_admin') === '1') return true;
+      return localStorage.getItem('ppa_member') === '1' || sessionStorage.getItem('ppa_member') === '1';
+    } catch(e){ return false; }
+  };
+})();
+</script>
+
+<body>
+
+<!-- ============ TOP BAR ============ -->
+<header class="topbar">
+  <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <a class="brand" href="https://pipingpro-academy.com">
+    <span class="brand-mark">
+      <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="10" fill="none" stroke="#f5f2eb" stroke-width="3.2"/><circle cx="16" cy="16" r="4.6" fill="none" stroke="#f5f2eb" stroke-width="2"/></svg>
+    </span>
+    <span>
+      <span class="brand-name">PipingPro Academy</span>
+      <span class="brand-sub">Engineering Education</span>
+    </span>
+  </a>
+  <div class="topbar-spacer"></div>
+  <div class="progress-wrap">
+    <span class="progress-label" id="progLabel">Module 1 of 5</span>
+    <div class="progress-track"><div class="progress-fill" id="progFill"></div></div>
+  </div>
+</header>
+
+<div class="scrim" id="scrim"></div>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="course-eyebrow">Course 4</div>
+    <div class="course-title-sb">Non-Metallic Piping Essentials</div>
+    <div class="course-byline">By Donny A. Bachtiar &middot; 5 Modules</div>
+    <nav id="modnav"></nav>
+  </aside>
+
+  <main id="main">
+
+<!-- ====================== MODULE 1 ====================== -->
+<section class="module" data-mod="1">
+  <div class="content">
+    <div class="mod-hero">
+      <span class="mod-hero-eyebrow">Module 1</span>
+      <h1>Non-Metallics in Oil &amp; Gas</h1>
+      <p class="lead">Before any pressure calculation, two questions decide a non-metallic line: what is it made of, and what kills it. This module places every non-metallic pipe in one family tree and shows where each belongs in an oilfield.</p>
+      <div class="mod-hero-meta"><span><b>4</b> lessons</span><span>API 15LE &middot; API 15S &middot; SAES-L-610</span><span>by <b>Donny A. Bachtiar</b></span></div>
+    </div>
+    <div class="objectives">
+      <h4>What You Will Learn</h4>
+      <ul>
+        <li>Why non-metallic pipe is chosen over carbon steel in oilfield water and gas service</li>
+        <li>How to place any non-metallic pipe correctly within the materials family tree</li>
+        <li>The main oilfield non-metallic options and the duty each one suits</li>
+        <li>Why temperature and chemical compatibility — not corrosion — set the design limits</li>
+      </ul>
+    </div>
+
+<h2 class="lesson" id="m1l1"><span class="l-tag">Section 1.1</span>Why Leave Steel Behind</h2>
+<p>Carbon steel is strong and cheap, but in <strong>produced water, brine, water injection and firewater</strong> it corrodes — and the real expense is everything spent fighting that: internal corrosion allowance, coatings, cathodic protection, inhibitor injection, and a lifetime of inspection. Non-metallic pipe does not corrode electrochemically. There is no rust, no galvanic cell, no CP system, and no sacrificial wall thickness to specify.</p>
+<p>It is also light, which cuts handling and transport, and the reinforced spoolable grades install in long continuous lengths with very few joints. The trade-off is honest: lower strength and a firm temperature ceiling. So the value case is strongest exactly where steel struggles — <strong>low-to-moderate pressure, ambient-to-warm, corrosive water and gas duty.</strong></p>
+<div class="callout author"><span class="c-label">Field note</span><p>On the Fadhili offshore-gas increment study I ran, HDPE and reinforced composite pipe earned their place precisely on this logic — produced water and firewater lines where a corrosion-resistant, fast-to-install, electrically inert material removes a whole maintenance burden that steel would carry for thirty years.</p></div>
+
+<h2 class="lesson" id="m1l2"><span class="l-tag">Section 1.2</span>The Family Tree</h2>
+<p>Every piping material sits somewhere on a single branching map. Metallic splits into ferrous and non-ferrous. Non-metallic splits into <strong>plastic</strong> and non-plastic (concrete, clay, glass — niche in oil and gas). Plastic then divides by how it responds to heat: <strong>thermoplastics</strong> can be re-melted and fused (HDPE, PVC, CPVC, PVDF, PP), while <strong>thermosets</strong> are cured once into a permanent shape and joined by bonding or lamination (GRE/GRP). This course lives in the plastic branch, with the oilfield grades highlighted.</p>
+
+<div class="treefig">
+  <svg viewBox="0 0 700 410" xmlns="http://www.w3.org/2000/svg">
+    <path class="nm-link" d="M350 56 L190 96"/><path class="nm-link hot" d="M350 56 L510 96"/>
+    <path class="nm-link" d="M190 130 L110 168"/><path class="nm-link" d="M190 130 L270 168"/>
+    <path class="nm-link hot" d="M510 130 L470 168"/><path class="nm-link" d="M510 130 L600 168"/>
+    <path class="nm-link hot" d="M470 202 L430 240"/><path class="nm-link hot" d="M470 202 L560 240"/>
+    <path class="nm-link hot" d="M430 274 L430 300"/><path class="nm-link hot" d="M560 274 L560 300"/>
+    <rect class="nm-box" x="290" y="22" width="120" height="34" rx="6"/><text class="nm-t" x="350" y="43" text-anchor="middle">Pipe Materials</text>
+    <rect class="nm-box" x="130" y="96" width="120" height="34" rx="6"/><text class="nm-t" x="190" y="117" text-anchor="middle">Metallic</text>
+    <rect class="nm-box hot" x="450" y="96" width="120" height="34" rx="6"/><text class="nm-t hot" x="510" y="117" text-anchor="middle">Non-Metallic</text>
+    <rect class="nm-box" x="52" y="168" width="116" height="34" rx="6"/><text class="nm-t" x="110" y="189" text-anchor="middle">Ferrous</text>
+    <rect class="nm-box" x="212" y="168" width="116" height="34" rx="6"/><text class="nm-t" x="270" y="189" text-anchor="middle">Non-Ferrous</text>
+    <rect class="nm-box hot" x="412" y="168" width="116" height="34" rx="6"/><text class="nm-t hot" x="470" y="189" text-anchor="middle">Plastic</text>
+    <rect class="nm-box" x="544" y="168" width="124" height="34" rx="6"/><text class="nm-t" x="606" y="189" text-anchor="middle">Non-Plastic</text>
+    <rect class="nm-box hot" x="370" y="240" width="120" height="34" rx="6"/><text class="nm-t hot" x="430" y="261" text-anchor="middle">Thermoplastic</text>
+    <rect class="nm-box hot" x="500" y="240" width="120" height="34" rx="6"/><text class="nm-t hot" x="560" y="261" text-anchor="middle">Thermoset</text>
+    <text class="nm-leaf" x="430" y="316" text-anchor="middle">HDPE · PVC · CPVC</text>
+    <text class="nm-leaf" x="430" y="332" text-anchor="middle">PVDF · PP</text>
+    <text class="nm-leaf" x="560" y="316" text-anchor="middle">GRE / GRP</text>
+    <text class="nm-leaf" x="560" y="332" text-anchor="middle">GRVE</text>
+    <text class="nm-leaf" x="110" y="226" text-anchor="middle">steel · cast iron</text>
+    <text class="nm-leaf" x="270" y="226" text-anchor="middle">Cu · Ni · Al</text>
+    <text class="nm-leaf" x="606" y="226" text-anchor="middle">concrete · glass</text>
+  </svg>
+  <div class="cap">The course covers the highlighted branch — plastic non-metallics</div>
+</div>
+
+<h2 class="lesson" id="m1l3"><span class="l-tag">Section 1.3</span>The Oilfield Toolbox</h2>
+<p>In practice the choice narrows to three options, each grounded in its own family of standards and suited to a different pressure&ndash;service window.</p>
+<ul class="clean">
+  <li><strong>HDPE line pipe (PE100 / PE4710)</strong> — solid-wall thermoplastic; the workhorse for water, brine and low-pressure gas gathering. Sized by SDR, joined by butt or electrofusion, rated from long-term hydrostatic strength. Standards: <span class="mono">API 15LE</span>, AWWA M55, ASTM F2619; Saudi Aramco <span class="mono">SAES-L-610</span>, 01-SAMSS-051.</li>
+  <li><strong>RTP / TCP — reinforced thermoplastic / composite spoolable pipe</strong> — a thermoplastic liner wrapped with fibre or steel-wire reinforcement and an outer jacket; spools onto a reel, installs fast over long runs, reaches far higher pressures. Examples: <em>Flexstrong</em> and <em>SoluForce</em>. Standards: <span class="mono">API 15S</span>, API 15HR.</li>
+  <li><strong>GRE / GRP — glass-reinforced epoxy</strong> — rigid thermoset for firewater, seawater and produced water, especially where higher temperature or stiffness is needed than thermoplastics allow. Adhesive-bonded or laminated. Standards: <span class="mono">ISO 14692</span>, API 15HR.</li>
+</ul>
+
+<h2 class="lesson" id="m1l4"><span class="l-tag">Section 1.4</span>What Actually Sets the Limits</h2>
+<p>This is the mental reset the rest of the course builds on. With steel you guard against wall thinning and pitting. With a non-metallic there is nothing to thin — degradation instead shows as <strong>softening, swelling, or embrittlement</strong>, and the usable envelope is fixed by two things working together.</p>
+<div class="callout takeaway"><span class="c-label">The two governing limits</span><p>First, <strong>temperature</strong>: strength and pressure rating fall steeply as it rises, and most thermoplastics are capped around 60&ndash;82&nbsp;&deg;C for pressure service. Second, <strong>chemical compatibility</strong>, which is itself temperature- and concentration-dependent — a fluid that is harmless cold can attack the same pipe when hot. Get these two right and pressure, jointing and supports all follow.</p></div>
+<p>That is why a non-metallic specification never starts with a wall-thickness sum. It starts with the service fluid and its temperature — and only then turns to rating and design.</p>
+
+    <div class="summary-block">
+      <h2>Module 1 — Summary &amp; Key Takeaways</h2>
+      <p class="sum-intro">Where non-metallics belong, and what governs them.</p>
+      <ul class="keytakeaways">
+        <li>Non-metallics earn their place by removing corrosion cost, not by matching steel's strength.</li>
+        <li>Every non-metallic sits on one family tree; the oilfield grades are plastic — thermoplastic or thermoset.</li>
+        <li>The three practical options are HDPE line pipe, reinforced spoolable RTP/TCP, and rigid GRE/GRP.</li>
+        <li>Design is governed by temperature and chemical compatibility, evaluated together — not by wall loss.</li>
+      </ul>
+    </div>
+    <div class="self-assess"><h3>Self-Assessment Questions</h3>
+      <ol class="questions">
+        <li>Why is no internal corrosion allowance specified for an HDPE line?</li>
+        <li>Where does a glass-reinforced epoxy pipe sit on the materials family tree?</li>
+        <li>Name the three practical non-metallic options for an oilfield and one duty for each.</li>
+        <li>Which two service parameters govern a non-metallic selection, and why not corrosion?</li>
+      </ol>
+    </div>
+  </div>
+  <div class="mod-foot"><div class="mod-nav-row">
+    <button class="mod-nav-btn prev" disabled><span class="dir">← Previous</span><span class="nm">Start of course</span></button>
+    <button class="mod-nav-btn next" data-nav="2"><span class="dir">Next →</span><span class="nm">Module 2 · How They Carry Pressure</span></button>
+  </div></div>
+</section>
+
+<!-- ====================== MODULE 2 ====================== -->
+<section class="module" data-mod="2">
+  <div class="content">
+    <div class="mod-hero">
+      <span class="mod-hero-eyebrow">Module 2</span>
+      <h1>How Non-Metallics Carry Pressure</h1>
+      <p class="lead">A steel line is rated from allowable stress. A polyethylene line is not — it is rated from how long it survives under stress. This module walks the HDPE design chain end to end, then lets you compute and derate a rating live.</p>
+      <div class="mod-hero-meta"><span><b>5</b> lessons</span><span>API 15LE · PPI TR-3/4 · ISO 4427</span><span>live calculator</span></div>
+    </div>
+    <div class="objectives">
+      <h4>What You Will Learn</h4>
+      <ul>
+        <li>Why HDPE is designed from long-term hydrostatic strength, not yield or tensile</li>
+        <li>The chain HDB → design factor → HDS</li>
+        <li>The API 15LE rating equation and the role of DR, FSF and TSF</li>
+        <li>How to compute and derate a PE4710 pressure rating yourself</li>
+        <li>The ASTM/API (HDB/HDS) versus ISO (MRS) design vocabularies</li>
+      </ul>
+    </div>
+
+<h2 class="lesson" id="m2l1"><span class="l-tag">Section 2.1</span>There Is No Allowable Stress</h2>
+<p>A thermoplastic creeps. Hold a steady load on HDPE and it keeps deforming, and eventually ruptures — sooner at higher stress, later at lower. Plotting that stress-versus-time-to-failure relationship and extrapolating it to a long life (typically 50 years) gives the <strong>Hydrostatic Design Basis (HDB)</strong>: the categorised long-term hoop strength of the compound at a reference temperature, established by regression testing per ASTM D2837 and listed by the Plastics Pipe Institute.</p>
+<p>So the starting number is not a yield point off a tensile test — it is a long-term strength read off a rupture curve. That single idea is the reason the rest of the method looks different from steel.</p>
+
+<h2 class="lesson" id="m2l2"><span class="l-tag">Section 2.2</span>From HDB to HDS</h2>
+<p>The HDB is reduced by a <strong>design factor (DF)</strong> — a number below 1.0 that accounts for manufacturing variation, dimensional tolerance and other scatter — to give the <strong>Hydrostatic Design Stress (HDS)</strong>, the stress the wall is actually designed to. For PE2708 and PE4710 the design factor is <code class="inl">0.63</code> at 73&nbsp;&deg;F. It is <em>not</em> a simple safety factor: because time-to-failure follows a power law in stress, a small drop in stress buys a large gain in life.</p>
+<div class="formula"><div class="formula-name">Design stress chain</div><div class="eq">HDS = HDB &times; DF</div><div class="eq">PE4710: &nbsp; 1600 psi &times; 0.63 = <small>1000 psi (6.9 MPa)</small></div><div class="where">That 1000 psi is why it is called PE47<strong>10</strong> — the "10" encodes HDS = 1000 psi at 73&nbsp;&deg;F, as "4" and "7" encode density and slow-crack-growth class.</div></div>
+
+<h2 class="lesson" id="m2l3"><span class="l-tag">Section 2.3</span>The Rating Equation</h2>
+<p>The HDS is a stress; the pipe needs a pressure. The bridge is the <strong>dimension ratio (DR = OD ÷ minimum wall)</strong> — a thinner wall relative to diameter (higher DR) gives a lower rating.</p>
+<div class="formula"><div class="formula-name">API 15LE working-pressure rating</div><div class="eq">P = ( 2 &middot; HDS &middot; FSF &middot; TSF ) &divide; ( DR &minus; 1 )</div><div class="where">P pressure rating &middot; HDS at 73&nbsp;&deg;F &middot; DR dimension ratio &middot; FSF fluid service factor &middot; TSF temperature service factor</div></div>
+<p>Two of those terms are <strong>derating knobs</strong> set by service, both &le; 1.0. The <strong>Fluid Service Factor (FSF)</strong> downrates for the transported medium — 1.0 for produced water, brine and dry gas, but 0.5 once the stream carries &ge; 2&nbsp;% liquid hydrocarbons (crude, multiphase, wet gas). The <strong>Temperature Service Factor (TSF)</strong> downrates as the line runs hotter than the 73&nbsp;&deg;F reference, falling toward ~0.6 by 60&nbsp;&deg;C, above which the standard sends you to its elevated-temperature route.</p>
+
+<h2 class="lesson" id="m2l4"><span class="l-tag">Section 2.4</span>Worked Example &mdash; One Pipe, Three Answers</h2>
+<div class="worked">
+  <div class="worked-head"><span class="wx">f(x)</span> PE4710 produced-water flowline, DR 11</div>
+  <div class="worked-body">
+    <div class="step">Step 1 — design stress</div>
+    <div class="calc">HDB(73&deg;F) = 1600 psi
+HDS = 1600 &times; 0.63 = <span class="result">1000 psi (6.9 MPa)</span></div>
+    <div class="step">Step 2 — base rating (produced water, &le;27&deg;C)</div>
+    <div class="calc">FSF = 1.0,  TSF = 1.0
+P = 2 &times; 1000 &times; 1.0 &times; 1.0 / (11 &minus; 1)
+P = <span class="result">200 psi (&asymp; 13.8 bar)</span></div>
+    <div class="step">Step 3 — warm it to &asymp;38&deg;C → TSF 0.8</div>
+    <div class="calc">P = 2 &times; 1000 &times; 1.0 &times; 0.8 / 10 = <span class="result">160 psi (&asymp; 11.0 bar)</span></div>
+    <div class="step">Step 4 — switch to multiphase hydrocarbon → FSF 0.5</div>
+    <div class="calc">P = 2 &times; 1000 &times; 0.5 &times; 1.0 / 10 = <span class="result">100 psi (&asymp; 6.9 bar) — half, just from the fluid</span></div>
+  </div>
+</div>
+
+<h2 class="lesson" id="m2l5"><span class="l-tag">Section 2.5</span>Try It — Live Rating &amp; Derating</h2>
+<p>Change the grade, wall ratio, fluid and temperature and watch the rating respond. The staircase plot shows how the rating steps down across the temperature bands.</p>
+
+<div class="calc">
+  <div class="calc-head"><span>PE Pressure-Rating Calculator</span><span class="tag">API 15LE method</span></div>
+  <div class="calc-body">
+    <div class="ctrl"><label>Grade</label>
+      <div class="seg" id="grade">
+        <button data-hds="1000" data-hdb="1600" aria-pressed="true">PE4710 · HDS 1000 psi</button>
+        <button data-hds="800" data-hdb="1250" aria-pressed="false">PE2708 · HDS 800 psi</button>
+      </div>
+    </div>
+    <div class="ctrl"><label>Dimension ratio (DR / SDR)</label>
+      <select id="dr"><option>5</option><option>6</option><option>7</option><option>7.3</option><option>9</option><option selected>11</option><option>13.5</option><option>17</option><option>21</option><option>26</option><option>32.5</option></select>
+    </div>
+    <div class="ctrl"><label>Fluid service factor (FSF)</label>
+      <select id="fsf"><option value="1.0">Produced water · brine · non-potable water (1.0)</option><option value="1.0">Dry gas gathering, no liquids (1.0)</option><option value="0.5">Crude · multiphase · wet gas · ≥2% hydrocarbons (0.5)</option></select>
+    </div>
+    <div class="ctrl"><label>Service temperature → TSF</label>
+      <div class="slide"><span class="end">23 °C</span><input type="range" id="temp" min="23" max="60" step="1" value="23"><span class="end">60 °C</span></div>
+    </div>
+    <div class="out">
+      <div>
+        <div class="bigP" id="bigP">200<small>psi</small></div>
+        <div class="barP" id="barP">≈ 13.8 bar</div>
+        <div class="chips" id="chips"></div>
+      </div>
+      <div class="cformula" id="cformula"></div>
+    </div>
+    <div class="warnote" id="warn"></div>
+    <div class="cplot"><div id="chart"></div><div class="cap">Rating vs temperature for the current selection — banded TSF steps</div></div>
+  </div>
+</div>
+
+<div class="callout note"><span class="c-label">Sidebar — two vocabularies, one physics</span><p><strong>ASTM / API (US):</strong> long-term strength is the HDB; design via HDB × DF = HDS, in psi. Grade code carries it (PE4710 → density 4, slow-crack 7, HDS 1000 psi). Used by API 15LE and most Aramco SAES references. &nbsp; <strong>ISO 4427 (international):</strong> long-term strength is the MRS (minimum required strength) in MPa; design stress σ = MRS ÷ C, with C ≥ 1.25 for water; grades PE80 (MRS 8.0) and PE100 (MRS 10.0). Same rupture-curve physics, different label.</p></div>
+
+<div class="callout important"><span class="c-label">Build the habit</span><p>A PE rating is never a single number — it is a number tied to a DR, a fluid and a temperature. Quote any rating without those three and it is meaningless. Always state the basis alongside the value.</p></div>
+
+    <div class="summary-block">
+      <h2>Module 2 — Summary &amp; Key Takeaways</h2>
+      <p class="sum-intro">The HDPE design chain, end to end.</p>
+      <ul class="keytakeaways">
+        <li>HDPE is rated from long-term hydrostatic strength (HDB), not from yield or tensile stress.</li>
+        <li>HDB × DF (0.63) = HDS, the working design stress; for PE4710 that is 1000 psi.</li>
+        <li>Pressure rating = 2·HDS·FSF·TSF ÷ (DR − 1) — geometry, fluid and temperature together.</li>
+        <li>FSF halves the rating for hydrocarbon service; TSF erodes it steadily with temperature.</li>
+        <li>ASTM/API speaks HDB/HDS in psi; ISO speaks MRS in MPa — same physics, different label.</li>
+      </ul>
+    </div>
+    <div class="self-assess"><h3>Self-Assessment Questions</h3>
+      <ol class="questions">
+        <li>Why design from HDB rather than the material's tensile strength?</li>
+        <li>Same DR and temperature, you switch from produced water to wet crude — what happens to the rating, and why?</li>
+        <li>A colleague quotes "PE4710 rated 200 psi." What three things are missing?</li>
+        <li>What is the PE4710 HDS at 73&nbsp;&deg;F, and how is it derived from the HDB?</li>
+      </ol>
+    </div>
+  </div>
+  <div class="mod-foot"><div class="mod-nav-row">
+    <button class="mod-nav-btn prev" data-nav="1"><span class="dir">← Previous</span><span class="nm">Module 1 · Non-Metallics in Oil &amp; Gas</span></button>
+    <button class="mod-nav-btn next" data-nav="3"><span class="dir">Next →</span><span class="nm">Module 3 · Reinforced &amp; Composite Pipe</span></button>
+  </div></div>
+</section>
+
+<!-- ====================== MODULE 3 ====================== -->
+<section class="module" data-mod="3">
+  <div class="content">
+    <div class="mod-hero">
+      <span class="mod-hero-eyebrow">Module 3</span>
+      <h1>Reinforced &amp; Composite Spoolable Pipe</h1>
+      <p class="lead">When plain HDPE cannot reach the pressure, a thermoplastic liner is wrapped with reinforcement and a jacket. The result spools onto a reel, installs fast over long runs and carries far higher pressure — the RTP and TCP that increasingly replace small-bore steel flowlines.</p>
+      <div class="mod-hero-meta"><span><b>4</b> lessons</span><span>API 15S · API 15HR</span><span>RTP &middot; TCP</span></div>
+    </div>
+    <div class="objectives">
+      <h4>What You Will Learn</h4>
+      <ul>
+        <li>Why reinforcement is added, and the three-layer construction of spoolable pipe</li>
+        <li>The difference between RTP, TCP and bonded vs unbonded systems</li>
+        <li>How the design basis shifts to qualified pressure and a burst safety factor (API 15S)</li>
+        <li>Real product envelopes — Flexstrong and SoluForce — and where each fits</li>
+        <li>The spoolable advantages that drive the steel-replacement business case</li>
+      </ul>
+    </div>
+
+<h2 class="lesson" id="m3l1"><span class="l-tag">Section 3.1</span>Why Reinforce — and How It's Built</h2>
+<p>Solid-wall HDPE is limited: to raise its pressure rating you must drop the DR (thicken the wall), which quickly becomes heavy, stiff and uneconomic. Reinforced pipe escapes that trap by letting a strong reinforcement layer carry the hoop load while a thermoplastic liner handles containment and corrosion resistance. The generic build is three layers:</p>
+<ul class="clean">
+  <li><strong>Liner</strong> — a thermoplastic (commonly HDPE) that contains the fluid and resists corrosion and permeation.</li>
+  <li><strong>Reinforcement</strong> — helically wound high-strength fibre (glass or aramid) or steel wire that carries the pressure load.</li>
+  <li><strong>Outer jacket</strong> — a thermoplastic cover protecting the reinforcement from damage and the environment.</li>
+</ul>
+<p>The two families differ in how the layers interact. <strong>RTP (Reinforced Thermoplastic Pipe)</strong> typically uses fibre reinforcement; <strong>TCP (Thermoplastic Composite Pipe)</strong> fully bonds a fibre-reinforced composite into a single fused wall. Steel-wire reinforced grades sit alongside these for the highest pressures. Bonded (fused) walls give the best fatigue and gas-tightness; unbonded (layered) walls are simpler and very flexible.</p>
+
+<h2 class="lesson" id="m3l2"><span class="l-tag">Section 3.2</span>The Design Basis Shifts Again</h2>
+<p>Spoolable pipe is qualified and rated under <strong>API 15S</strong> (spoolable reinforced plastic line pipe) and <strong>API 15HR</strong> (high-pressure fibreglass). Rather than the HDPE DR equation of Module 2, the manufacturer establishes a long-term qualified pressure by regression testing of the composite, and the product is sold against a rated working pressure with a stated <strong>burst safety factor</strong> — commonly in the order of 3:1 — plus a temperature limit and a service (sour/CO₂) qualification.</p>
+<div class="callout note"><span class="c-label">What you specify</span><p>For spoolable pipe you generally select against the manufacturer's qualified envelope — rated pressure, maximum temperature, fluid/sour service and minimum bend radius (reel size) — rather than computing a wall thickness yourself. The diligence is in matching that qualified envelope to your service and confirming the qualification basis.</p></div>
+
+<h2 class="lesson" id="m3l3"><span class="l-tag">Section 3.3</span>Real Product Envelopes</h2>
+<p>Two products illustrate the range an oilfield engineer meets. Specifications below are indicative of the manufacturers' published data and must be confirmed against the current datasheet for any real selection.</p>
+<div class="tbl-wrap"><table>
+  <caption>Indicative spoolable-pipe envelopes — confirm against current manufacturer data</caption>
+  <thead><tr><th>Product</th><th>Construction</th><th>Pressure (indicative)</th><th>Temp</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Flexstrong</strong> (Future Pipe)</td><td>HDPE liner · GF-RTP tape · HDPE jacket</td><td class="mono">to ~1500 psi (≈103 bar)</td><td class="mono">to ~65 °C</td><td>3:1 burst factor; spooled to ~1100 m; water, brine, produced fluids, gas</td></tr>
+    <tr><td><strong>SoluForce</strong> Classic</td><td>HDPE liner · synthetic-fibre · HDPE jacket</td><td class="mono">~113 bar (4") / 90 bar (6")</td><td class="mono">standard</td><td>fully non-metallic; sour service without H₂S / CO₂ restriction</td></tr>
+    <tr><td><strong>SoluForce</strong> Heavy / HT</td><td>steel-wire reinforced; HT variant</td><td class="mono">higher (steel-wire)</td><td class="mono">HT to ~105 °C</td><td>highest-pressure / higher-temperature spoolable option</td></tr>
+  </tbody>
+</table></div>
+
+<h2 class="lesson" id="m3l4"><span class="l-tag">Section 3.4</span>The Spoolable Advantage</h2>
+<p>The reel is the whole point. Long continuous lengths mean very few joints, which is where steel flowlines fail and slow down. The practical wins:</p>
+<ul class="clean">
+  <li><strong>Speed</strong> — kilometres laid per day from a reel, with no field welding or NDE of girth welds.</li>
+  <li><strong>Corrosion-free</strong> — no CP, no internal corrosion allowance, no inhibitor programme.</li>
+  <li><strong>Steel replacement</strong> — the classic use case: re-lining or replacing corroded small-bore steel flowlines in produced-water, water-injection and gas-gathering duty.</li>
+  <li><strong>Sour capability</strong> — the right grades carry sour service without the H₂S/CO₂ limits that constrain steel selection.</li>
+</ul>
+<div class="callout important"><span class="c-label">The constraint</span><p>Spoolable pipe trades pressure-temperature headroom and diameter for these gains. It dominates small-to-medium bore, low-to-moderate pressure, warm-not-hot duty — and gives way to steel or GRE as diameter, pressure or temperature climb.</p></div>
+
+    <div class="summary-block">
+      <h2>Module 3 — Summary &amp; Key Takeaways</h2>
+      <p class="sum-intro">Reinforcement buys pressure that solid-wall HDPE cannot reach.</p>
+      <ul class="keytakeaways">
+        <li>A thermoplastic liner carries corrosion duty while reinforcement carries the hoop load.</li>
+        <li>RTP uses fibre; TCP fully bonds the composite; steel-wire grades reach the highest pressures.</li>
+        <li>Spoolable pipe is rated under API 15S / 15HR against a qualified pressure and burst safety factor.</li>
+        <li>You select against the manufacturer's qualified envelope, not a wall-thickness sum.</li>
+        <li>The business case is speed, corrosion-freedom and steel-flowline replacement in moderate duty.</li>
+      </ul>
+    </div>
+    <div class="self-assess"><h3>Self-Assessment Questions</h3>
+      <ol class="questions">
+        <li>What does each of the three layers in a spoolable pipe do?</li>
+        <li>How does the design basis differ from the solid-wall HDPE method of Module 2?</li>
+        <li>What standard governs spoolable reinforced plastic line pipe, and what is a typical burst safety factor?</li>
+        <li>Give the main service window where spoolable pipe beats both steel and solid HDPE.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="mod-foot"><div class="mod-nav-row">
+    <button class="mod-nav-btn prev" data-nav="2"><span class="dir">← Previous</span><span class="nm">Module 2 · How They Carry Pressure</span></button>
+    <button class="mod-nav-btn next" data-nav="4"><span class="dir">Next →</span><span class="nm">Module 4 · Chemical Resistance &amp; Selection</span></button>
+  </div></div>
+</section>
+
+<!-- ====================== MODULE 4 ====================== -->
+<section class="module" data-mod="4">
+  <div class="content">
+    <div class="mod-hero">
+      <span class="mod-hero-eyebrow">Module 4</span>
+      <h1>Chemical Resistance &amp; Material Selection</h1>
+      <p class="lead">For a non-metallic, chemical compatibility is the real selection driver — and it is never a single yes/no. This module shows how to read a chemical resistance chart correctly, the failure modes that catch designers out, and a clean workflow from service to material.</p>
+      <div class="mod-hero-meta"><span><b>4</b> lessons</span><span>PPI TR-19 · manufacturer charts</span><span>selection workflow</span></div>
+    </div>
+    <div class="objectives">
+      <h4>What You Will Learn</h4>
+      <ul>
+        <li>Why compatibility is temperature- and concentration-dependent, never a flat rating</li>
+        <li>How to read a resistance chart: resistant / conditional / not recommended / no data</li>
+        <li>The non-metallic failure modes — permeation, swelling, ESC, softening</li>
+        <li>How HDPE performs against key oilfield media (methanol, CO₂, H₂S, brine)</li>
+        <li>A repeatable selection workflow from service in to material out</li>
+      </ul>
+    </div>
+
+<h2 class="lesson" id="m4l1"><span class="l-tag">Section 4.1</span>Compatibility Is Not a Single Number</h2>
+<p>Published chemical resistance charts (the most comprehensive being PPI TR-19) list each fluid against each polymer at <strong>several temperatures</strong> — typically 20, 40 and 60&nbsp;&deg;C — precisely because a rating that is fine cold can fail hot. They also depend on concentration. A typical chart rates each combination on a four-level key:</p>
+<div class="tbl-wrap"><table>
+  <caption>Typical chemical-resistance rating key (after PPI / manufacturer charts)</caption>
+  <thead><tr><th>Symbol</th><th>Meaning</th><th>Design implication</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">+</td><td>Resistant</td><td>Suitable at that temperature/concentration</td></tr>
+    <tr><td class="mono">0</td><td>Conditionally resistant</td><td>Limited — reduced life, qualify carefully</td></tr>
+    <tr><td class="mono">&minus;</td><td>Not recommended</td><td>Avoid — expect attack</td></tr>
+    <tr><td class="mono">(blank)</td><td>No data</td><td>Unknown — test or consult manufacturer</td></tr>
+  </tbody>
+</table></div>
+<div class="callout important"><span class="c-label">The hot-fluid trap</span><p>Always read the chart at your <em>design temperature</em>, not at ambient. A "+" at 20&nbsp;&deg;C that becomes "0" or "−" at 60&nbsp;&deg;C is the single most common way a non-metallic selection goes wrong.</p></div>
+
+<h2 class="lesson" id="m4l2"><span class="l-tag">Section 4.2</span>How Non-Metallics Actually Fail Chemically</h2>
+<p>Unlike steel, chemical attack on a plastic does not thin the wall. It changes the material:</p>
+<ul class="clean">
+  <li><strong>Permeation</strong> — small molecules (hydrocarbons, gases) diffuse through the wall; relevant to liners and to gas-tightness.</li>
+  <li><strong>Swelling / softening</strong> — absorbed fluid plasticises the polymer, dropping strength and stiffness.</li>
+  <li><strong>Environmental stress cracking (ESC)</strong> — combined stress and a specific chemical cause cracking below the normal strength; a classic polyolefin failure mode.</li>
+  <li><strong>Embrittlement</strong> — oxidation or chemical change makes the material brittle over time.</li>
+</ul>
+<p>This is why charts are explicitly guidelines only — most are developed from short (e.g. 48-hour) coupon immersion tests, and long-term, stressed, in-service behaviour can differ. Engineering judgement and, for critical duty, project-specific testing remain essential.</p>
+
+<h2 class="lesson" id="m4l3"><span class="l-tag">Section 4.3</span>HDPE Against Oilfield Media</h2>
+<p>For the water and gas duty where HDPE is chosen, its resistance is broad. From published charts and field experience, PE is rated resistant to many key oilfield fluids:</p>
+<ul class="clean">
+  <li><strong>Produced water, brine and salts</strong> — resistant; the core use case.</li>
+  <li><strong>Methanol</strong> — resistant across concentrations; relevant to hydrate management.</li>
+  <li><strong>Carbon dioxide (anhydrous)</strong> — resistant.</li>
+  <li><strong>Hydrogen sulphide (aqueous and technically pure)</strong> — resistant; part of why non-metallics suit sour duty.</li>
+  <li><strong>Hydrocarbons / crude</strong> — the weak point: permeation and swelling make plain HDPE unsuitable for hydrocarbon service, which is exactly why the FSF drops to 0.5 and why composite liners or different polymers are used.</li>
+</ul>
+
+<h2 class="lesson" id="m4l4"><span class="l-tag">Section 4.4</span>A Selection Workflow</h2>
+<p>Put the two governing limits and the chart together into a repeatable sequence:</p>
+<div class="callout takeaway"><span class="c-label">Service in → material out</span><p><strong>1.</strong> Define the service fluid, concentration and design temperature. <strong>2.</strong> Check chemical compatibility <em>at that temperature</em> on a reputable chart. <strong>3.</strong> Confirm the temperature is within the material's pressure-service limit. <strong>4.</strong> Establish the required pressure rating (HDPE method, or a qualified spoolable envelope). <strong>5.</strong> Check secondary factors — permeation, ESC, UV, external loads. <strong>6.</strong> For critical or borderline duty, confirm with the manufacturer and/or project testing.</p></div>
+
+    <div class="summary-block">
+      <h2>Module 4 — Summary &amp; Key Takeaways</h2>
+      <p class="sum-intro">Selecting on chemistry, the right way.</p>
+      <ul class="keytakeaways">
+        <li>Chemical compatibility is temperature- and concentration-dependent — always read at design temperature.</li>
+        <li>Charts use a four-level key (resistant / conditional / not recommended / no data) and are guidelines only.</li>
+        <li>Non-metallics fail by permeation, swelling, ESC and embrittlement — not wall loss.</li>
+        <li>HDPE resists brine, methanol, CO₂ and H₂S well but is unsuitable for hydrocarbon service.</li>
+        <li>A disciplined service-to-material workflow prevents the common hot-fluid selection error.</li>
+      </ul>
+    </div>
+    <div class="self-assess"><h3>Self-Assessment Questions</h3>
+      <ol class="questions">
+        <li>Why do resistance charts list multiple temperature columns for each fluid?</li>
+        <li>What do the symbols +, 0 and − mean on a typical chart?</li>
+        <li>Name three ways a plastic pipe fails chemically that do not involve wall loss.</li>
+        <li>Why is plain HDPE unsuitable for crude service despite resisting brine and H₂S?</li>
+      </ol>
+    </div>
+  </div>
+  <div class="mod-foot"><div class="mod-nav-row">
+    <button class="mod-nav-btn prev" data-nav="3"><span class="dir">← Previous</span><span class="nm">Module 3 · Reinforced &amp; Composite Pipe</span></button>
+    <button class="mod-nav-btn next" data-nav="5"><span class="dir">Next →</span><span class="nm">Module 5 · Design, Jointing &amp; Installation</span></button>
+  </div></div>
+</section>
+
+<!-- ====================== MODULE 5 ====================== -->
+<section class="module" data-mod="5">
+  <div class="content">
+    <div class="mod-hero">
+      <span class="mod-hero-eyebrow">Module 5</span>
+      <h1>Design, Jointing &amp; Installation</h1>
+      <p class="lead">The properties that make non-metallics attractive — low stiffness, high expansion, viscoelastic creep — also make them behave unlike steel in the field. This final module covers the design consequences, how the pipe is joined, and the buried-line checks that keep it safe.</p>
+      <div class="mod-hero-meta"><span><b>4</b> lessons</span><span>ASME B31.3 Ch.VII · API 15LE Annex C</span><span>fusion · buckling</span></div>
+    </div>
+    <div class="objectives">
+      <h4>What You Will Learn</h4>
+      <ul>
+        <li>Viscoelasticity, creep and stress relaxation, and the 50-year design-life convention</li>
+        <li>Why low modulus and high thermal expansion dominate support and expansion design</li>
+        <li>The jointing methods — butt fusion, electrofusion, solvent cement, bonding, swage</li>
+        <li>External collapse / buckling of buried and submerged lines</li>
+        <li>The standards map and the installation considerations that matter</li>
+      </ul>
+    </div>
+
+<h2 class="lesson" id="m5l1"><span class="l-tag">Section 5.1</span>Viscoelasticity, Creep &amp; the 50-Year Life</h2>
+<p>A thermoplastic is part-elastic, part-viscous. Under sustained load it deforms immediately (elastic) and then keeps deforming slowly over time (<strong>creep</strong>); under sustained strain its stress slowly decays (<strong>stress relaxation</strong>). The practical consequence is that the effective modulus depends on how long the load is applied — short-term values are far higher than long-term. This is exactly why design uses a long-term (50-year) basis, and why a single creep event such as a hung weight will keep sagging if not removed.</p>
+<div class="callout note"><span class="c-label">Upside of viscoelasticity</span><p>The same time-dependence gives polyethylene excellent resilience to short, sharp loads — water hammer and surge are absorbed far better than by rigid steel. Resistance and weakness come from the same property.</p></div>
+
+<h2 class="lesson" id="m5l2"><span class="l-tag">Section 5.2</span>Low Modulus, High Expansion</h2>
+<p>Two numbers dominate the stress engineer's view of a plastic line. Its modulus of elasticity is roughly <strong>1/300th of steel</strong>, and its coefficient of thermal expansion is far higher — for PE about <code class="inl">1.2 × 10⁻⁴ in/in/°F</code>, several times that of steel.</p>
+<ul class="clean">
+  <li><strong>Support spacing</strong> is governed by deflection (sag), not stress — aboveground plastic lines need far more frequent support than steel.</li>
+  <li><strong>Thermal movement</strong> is large; an unrestrained line expands and contracts considerably with temperature, so the layout must accommodate or restrain it.</li>
+  <li><strong>Thrust restraint</strong> is essential — the low modulus and high expansion mean joints must take longitudinal thrust, so fused, flanged or mechanically restrained joints are required (plain push-fit will pull out).</li>
+</ul>
+
+<h2 class="lesson" id="m5l3"><span class="l-tag">Section 5.3</span>Jointing Methods</h2>
+<p>How a non-metallic is joined follows directly from whether it is thermoplastic or thermoset:</p>
+<ul class="clean">
+  <li><strong>Butt fusion</strong> — square, heat and press two thermoplastic pipe ends; the primary HDPE field joint, full-pressure and homogeneous.</li>
+  <li><strong>Electrofusion</strong> — a fitting with an embedded heating coil fuses the joint; ideal for tie-ins and repairs.</li>
+  <li><strong>Solvent cement</strong> — for PVC/CPVC; the cement chemically welds the socket.</li>
+  <li><strong>Adhesive bonding / lamination</strong> — for thermoset GRE (taper/taper or laminated); cannot be re-melted.</li>
+  <li><strong>Swage &amp; flanged end-fittings</strong> — for spoolable RTP/TCP, transitioning to standard flanges (often in 316SS, galvanised or carbon steel) for connection to the rest of the system.</li>
+</ul>
+<div class="callout important"><span class="c-label">Qualification &amp; NDE</span><p>Fusion joints depend on operator technique, so jointer qualification and procedure control matter as much as the pipe itself — and conventional NDE is limited on fused plastic, so quality is built in through procedure and visual/destructive checks rather than radiography.</p></div>
+
+<h2 class="lesson" id="m5l4"><span class="l-tag">Section 5.4</span>External Collapse, Codes &amp; Installation</h2>
+<p>One failure mode unique to thin-wall non-metallics is <strong>external collapse</strong> — where external pressure (vacuum, submergence, or groundwater on an empty line) exceeds the pipe's buckling resistance. For an unconstrained round pipe this is governed by stiffness, not strength, and estimated from the modulus and DR (API 15LE Annex C gives the relation, with a safety factor of ~2 typical). Properly buried pipe is supported by the soil and far more resistant.</p>
+<p>The governing standards bring it together: <span class="mono">API 15LE</span> and <span class="mono">API 15S</span> for the pipe, <span class="mono">ASME B31.3 Chapter VII</span> for nonmetallic in-plant piping, <span class="mono">ASME B31.8</span> for gas service, Aramco <span class="mono">SAES-L-610</span> for non-metallic in-plant piping, and AWWA M55 / the PPI Handbook for installation. Installation watch-items: UV protection during storage (carbon-black grades for long outdoor exposure), correct trench bedding, and fatigue/surge analysis where pumping causes recurring pressure cycles.</p>
+
+    <div class="summary-block">
+      <h2>Module 5 — Summary &amp; Key Takeaways</h2>
+      <p class="sum-intro">Behaving unlike steel — by design.</p>
+      <ul class="keytakeaways">
+        <li>Viscoelastic creep and stress relaxation underpin the 50-year design-life basis.</li>
+        <li>Low modulus drives deflection-governed support spacing; high expansion drives thermal design.</li>
+        <li>Thrust-restraining joints (fusion, flange, mechanical) are mandatory — never plain push-fit.</li>
+        <li>External collapse of thin-wall pipe is a stiffness problem, worst on empty/submerged lines.</li>
+        <li>API 15LE/15S, ASME B31.3 Ch.VII and SAES-L-610 are the governing references.</li>
+      </ul>
+    </div>
+    <div class="self-assess"><h3>Self-Assessment Questions</h3>
+      <ol class="questions">
+        <li>Why does HDPE design use a 50-year long-term basis rather than short-term properties?</li>
+        <li>How do low modulus and high thermal expansion each change the design versus steel?</li>
+        <li>Why must non-metallic joints restrain longitudinal thrust, and which methods do this?</li>
+        <li>What governs external collapse of a buried plastic line, and when is it worst?</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="course-complete">
+    <h3>Course 4 — All 5 Modules Complete</h3>
+    <p>You've completed Non-Metallic Piping Essentials: the families and selection logic, the HDPE pressure-rating method, reinforced spoolable pipe, chemical resistance, and design, jointing &amp; installation.</p>
+    <p style="margin-top:14px;">Next: take the <strong style="color:var(--paper)">Final Assessment</strong> below to earn your certificate.</p>
+  </div>
+
+  <div class="final-cta" style="max-width:820px;margin:24px auto 0;padding:0 40px;text-align:center;">
+    <a href="Non-Metallic-Piping-Final-Quiz.html"
+       style="display:inline-flex;align-items:center;gap:10px;background:var(--accent);color:#fff;text-decoration:none;font-weight:600;border-radius:11px;padding:14px 28px;">
+      Take the Final Assessment &rarr;
+    </a>
+    <p style="color:var(--ink3);font-size:0.86rem;margin-top:10px;">20 questions &middot; 80% pass mark &middot; earn your certificate</p>
+  </div>
+
+  <div class="mod-foot"><div class="mod-nav-row">
+    <button class="mod-nav-btn prev" data-nav="4"><span class="dir">← Previous</span><span class="nm">Module 4 · Chemical Resistance &amp; Selection</span></button>
+    <button class="mod-nav-btn next" data-nav="1"><span class="dir">↺ Restart</span><span class="nm">Back to Module 1</span></button>
+  </div></div>
+</section>
+
+  </main>
+</div>
+
+<footer class="site">
+  <div class="f-logo">PipingPro Academy</div>
+  <div style="margin-top:6px;"><a href="https://pipingpro-academy.com">pipingpro-academy.com</a> &middot; Course 4: Non-Metallic Piping Essentials</div>
+  <div class="f-zk">A product of <a href="https://zephrum-konsultan.co.uk">Zephrum Konsultan Limited</a> &middot; Engineering &amp; AI</div>
+  <div style="margin-top:10px;font-size:0.7rem;color:var(--ink3);max-width:60ch;margin-left:auto;margin-right:auto;">Methods, equations and published figures are taught from API 15LE, API 15S, AWWA M55, PPI TR-3/4/19, ASME B31.3 Ch.VII and SAES-L-610; no source tables or text are reproduced. Indicative product and rating values must be verified against current datasheets and code editions before design use.</div>
+</footer>
+
+<script>
+  const MODULES = [
+    { n: 1, title: "Non-Metallics in O&G", sub: "Families & selection logic", lessons: [
+      ["m1l1","1.1 — Why Leave Steel Behind"],
+      ["m1l2","1.2 — The Family Tree"],
+      ["m1l3","1.3 — The Oilfield Toolbox"],
+      ["m1l4","1.4 — What Sets the Limits"]
+    ]},
+    { n: 2, title: "How They Carry Pressure", sub: "HDB / DF / HDS / rating", lessons: [
+      ["m2l1","2.1 — There Is No Allowable Stress"],
+      ["m2l2","2.2 — From HDB to HDS"],
+      ["m2l3","2.3 — The Rating Equation"],
+      ["m2l4","2.4 — Worked Example"],
+      ["m2l5","2.5 — Try It (Calculator)"]
+    ]},
+    { n: 3, title: "Reinforced & Composite Pipe", sub: "RTP / TCP, API 15S", lessons: [
+      ["m3l1","3.1 — Why Reinforce & How"],
+      ["m3l2","3.2 — Design Basis Shifts"],
+      ["m3l3","3.3 — Real Product Envelopes"],
+      ["m3l4","3.4 — The Spoolable Advantage"]
+    ]},
+    { n: 4, title: "Chemical Resistance", sub: "Compatibility & selection", lessons: [
+      ["m4l1","4.1 — Not a Single Number"],
+      ["m4l2","4.2 — How They Fail Chemically"],
+      ["m4l3","4.3 — HDPE vs Oilfield Media"],
+      ["m4l4","4.4 — A Selection Workflow"]
+    ]},
+    { n: 5, title: "Design & Installation", sub: "Creep, jointing, buckling", lessons: [
+      ["m5l1","5.1 — Viscoelasticity & Creep"],
+      ["m5l2","5.2 — Low Modulus, High Expansion"],
+      ["m5l3","5.3 — Jointing Methods"],
+      ["m5l4","5.4 — Collapse, Codes & Install"]
+    ]}
+  ];
+
+  const modnav = document.getElementById('modnav');
+  MODULES.forEach(m => {
+    const wrap = document.createElement('div');
+    wrap.className = 'nav-mod';
+    wrap.dataset.mod = m.n;
+    wrap.innerHTML =
+      '<button class="nav-mod-btn" data-goto="' + m.n + '">' +
+        '<span class="nav-num">' + m.n + '</span>' +
+        '<span class="nav-mod-label"><span class="nav-mod-title">' + m.title + '</span>' +
+        '<span class="nav-mod-sub">' + m.sub + '</span></span>' +
+      '</button>' +
+      '<ul class="nav-lessons">' +
+        m.lessons.map(l => '<li><a href="#' + l[0] + '">' + l[1] + '</a></li>').join('') +
+      '</ul>';
+    modnav.appendChild(wrap);
+  });
+
+  const sidebar = document.getElementById('sidebar');
+  const scrim = document.getElementById('scrim');
+  const progFill = document.getElementById('progFill');
+  const progLabel = document.getElementById('progLabel');
+
+  /* Module 1 free; modules 2–5 require membership */
+  function gateModule(n){
+    if (n === 1) return 1;
+    if (window.PPA_isMember && window.PPA_isMember()) return n;
+    window.location.href = 'courses.html';
+    return 1;
+  }
+
+  function showModule(n) {
+    n = gateModule(n);
+    document.querySelectorAll('.module').forEach(el => el.classList.toggle('active', el.dataset.mod == n));
+    document.querySelectorAll('.nav-mod-btn').forEach(b => b.classList.toggle('active', b.dataset.goto == n));
+    document.querySelectorAll('.nav-mod').forEach(w => w.classList.toggle('open', w.dataset.mod == n));
+    progFill.style.width = (n / MODULES.length * 100) + '%';
+    progLabel.textContent = 'Module ' + n + ' of ' + MODULES.length;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    history.replaceState(null, '', '#module-' + n);
+    closeSidebar();
+  }
+
+  document.addEventListener('click', (e) => {
+    const goBtn = e.target.closest('[data-goto]');
+    if (goBtn) { showModule(+goBtn.dataset.goto); return; }
+    const navBtn = e.target.closest('[data-nav]');
+    if (navBtn) { showModule(+navBtn.dataset.nav); return; }
+    const lessonLink = e.target.closest('.nav-lessons a');
+    if (lessonLink) { setTimeout(closeSidebar, 50); }
+  });
+
+  function openSidebar() { sidebar.classList.add('open'); scrim.classList.add('show'); }
+  function closeSidebar() { sidebar.classList.remove('open'); scrim.classList.remove('show'); }
+  document.getElementById('menuToggle').addEventListener('click', () => {
+    sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+  });
+  scrim.addEventListener('click', closeSidebar);
+
+  const hashMatch = location.hash.match(/module-(\d)/);
+  showModule(hashMatch ? +hashMatch[1] : 1);
+
+  /* ============ EMBEDDED PE RATING CALCULATOR (Module 2) ============ */
+  (function(){
+    const cToF = c => c*9/5+32;
+    const tsf = c => { const f=cToF(c);
+      if(f<=80)return 1.0; if(f<=90)return 0.9; if(f<=110)return 0.8; if(f<=130)return 0.7; return 0.6; };
+    let HDS=1000, HDB=1600;
+    const $=s=>document.querySelector(s);
+    const drEl=$('#dr'), fsfEl=$('#fsf'), tEl=$('#temp');
+    if(!drEl) return;
+
+    document.querySelectorAll('#grade button').forEach(b=>b.onclick=()=>{
+      document.querySelectorAll('#grade button').forEach(x=>x.setAttribute('aria-pressed', x===b));
+      HDS=+b.dataset.hds; HDB=+b.dataset.hdb; render();
+    });
+    [drEl,fsfEl,tEl].forEach(el=>el.oninput=render);
+
+    function rating(c){ const DR=+drEl.value, FSF=+fsfEl.value; return 2*HDS*FSF*tsf(c)/(DR-1); }
+
+    function chart(){
+      const W=560,H=190,L=40,R=10,T=12,B=28,pw=W-L-R,ph=H-T-B;
+      const DR=+drEl.value, FSF=+fsfEl.value;
+      const pMax=2*HDS*FSF*1.0/(DR-1);
+      const yMax=Math.max(50,Math.ceil(pMax/50)*50);
+      const xT=c=>L+(c-23)/(60-23)*pw, xY=p=>T+(1-p/yMax)*ph;
+      let pts='';for(let i=0;i<=74;i++){const c=23+(60-23)*i/74; pts+=(i?'L':'M')+xT(c).toFixed(1)+' '+xY(rating(c)).toFixed(1)+' ';}
+      let g='';for(let p=0;p<=yMax;p+=yMax/4){const y=xY(p);
+        g+='<line class="gridl" x1="'+L+'" y1="'+y+'" x2="'+(W-R)+'" y2="'+y+'"/><text class="axl" x="'+(L-5)+'" y="'+(y+3)+'" text-anchor="end">'+Math.round(p)+'</text>';}
+      for(let c=23;c<=60;c+=Math.round((60-23)/4)){g+='<text class="axl" x="'+xT(c)+'" y="'+(H-16)+'" text-anchor="middle">'+c+'</text>';}
+      const cc=+tEl.value;
+      const mk='<line class="mline" x1="'+xT(cc)+'" y1="'+T+'" x2="'+xT(cc)+'" y2="'+(H-B)+'"/><circle class="mdot" cx="'+xT(cc)+'" cy="'+xY(rating(cc))+'" r="4"/>';
+      $('#chart').innerHTML='<svg viewBox="0 0 '+W+' '+H+'">'+g+'<path class="pcurve" d="'+pts+'"/>'+mk+
+        '<text class="axl" x="'+(L-5)+'" y="'+(T-2)+'" text-anchor="end">psi</text><text class="axl" x="'+(W-R)+'" y="'+(H-16)+'" text-anchor="end">°C</text></svg>';
+    }
+
+    function render(){
+      const DR=+drEl.value, FSF=+fsfEl.value, c=+tEl.value, F=tsf(c), P=rating(c);
+      $('#bigP').innerHTML=Math.round(P)+'<small>psi</small>';
+      $('#barP').textContent='≈ '+(P*0.0689476).toFixed(1)+' bar';
+      $('#cformula').innerHTML='P = 2 · HDS · FSF · TSF ÷ (DR − 1)<br>&nbsp;&nbsp;= 2 · <span class="sub">'+HDS+'</span> · <span class="sub">'+FSF+'</span> · <span class="sub">'+F+'</span> ÷ (<span class="sub">'+DR+'</span> − 1)<br>&nbsp;&nbsp;= <span class="sub">'+Math.round(P)+' psi</span>';
+      $('#chips').innerHTML='<span class="pchip">HDS <b>'+HDS+'</b> psi</span><span class="pchip">FSF <b>'+FSF+'</b></span><span class="pchip">TSF <b>'+F+'</b></span><span class="pchip">DR <b>'+DR+'</b></span>';
+      $('#warn').textContent = c>=60 ? '△ At 60 °C you are at the limit of the standard TSF table — above this, the elevated-temperature route (manufacturer HDB at temperature) applies.' : '';
+      chart();
+    }
+    render();
+  })();
+</script>
+</body>
+</html>

@@ -67,7 +67,7 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 @media(min-width:1080px){.course-grid{grid-template-columns:repeat(3,minmax(0,1fr));max-width:1140px;}}
 @media(max-width:680px){.course-grid{grid-template-columns:1fr;max-width:400px;}}
 .course-card{border-radius:16px;overflow:hidden;cursor:pointer;position:relative;border:1px solid var(--rule);background:#fff;display:flex;flex-direction:column;opacity:0;animation:rise .5s forwards;transition:transform .28s cubic-bezier(.2,.8,.3,1),box-shadow .28s;}
-.course-card:nth-child(1){animation-delay:.05s}.course-card:nth-child(2){animation-delay:.13s}.course-card:nth-child(3){animation-delay:.21s}.course-card:nth-child(4){animation-delay:.29s}
+.course-card:nth-child(1){animation-delay:.05s}.course-card:nth-child(2){animation-delay:.13s}.course-card:nth-child(3){animation-delay:.21s}.course-card:nth-child(4){animation-delay:.29s}.course-card:nth-child(5){animation-delay:.37s}
 .course-card:hover{transform:scale(1.1);z-index:10;box-shadow:0 18px 48px rgba(26,21,16,.17);}
 @keyframes rise{from{opacity:0;}to{opacity:1;}}
 
@@ -77,6 +77,7 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .bg-navy{background:linear-gradient(140deg,#1a2a5a 0%,#2d4a8a 100%);}
 .bg-bronze{background:linear-gradient(140deg,#6b3d1a 0%,#4a2508 100%);}
 .bg-steel{background:linear-gradient(140deg,#1a3a5a 0%,#2a6a8a 100%);}
+.bg-teal{background:linear-gradient(140deg,#1a6b5a 0%,#124d40 100%);}
 .course-svg{width:66px;height:66px;opacity:.92;position:relative;}
 .course-count{font-size:10px;font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.6);position:relative;}
 .course-badge{position:absolute;top:12px;right:12px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:20px;font-family:var(--sans);}
@@ -199,7 +200,7 @@ footer a{color:var(--gold-bright);text-decoration:none;}
   <div class="hero-inner">
     <div class="hero-eyebrow">Course Library · PipingPro Academy</div>
     <h1>Structured <em>Courses</em></h1>
-    <p>The courses that take you from first principles to confident, on-the-job application — piping fundamentals, stress analysis and pipeline engineering. Each course ends with a graded quiz and a shareable completion certificate.</p>
+    <p>Video courses that take you from first principles to confident, on-the-job application — piping fundamentals, stress analysis and pipeline engineering. Each course ends with a graded quiz and a shareable completion certificate.</p>
   </div>
 </div>
 
@@ -221,7 +222,7 @@ footer a{color:var(--gold-bright);text-decoration:none;}
 <div class="main">
   <div class="intro">
     <h2>Select a Course</h2>
-    <p>Three courses live now, with one more in production. Open a course to see its full curriculum, work through the modules in order, then pass the quiz to generate your certificate.</p>
+    <p>Four courses live now, with one more in production. Open a course to see its full curriculum, work through the modules in order, then pass the quiz to generate your certificate.</p>
     <div class="member-note">👑 All courses are included in your membership</div>
   </div>
 
@@ -291,7 +292,26 @@ footer a{color:var(--gold-bright);text-decoration:none;}
       </div>
     </div>
 
-    <!-- Course 4 — Coming Soon -->
+    <!-- Course 4 — Non-Metallic Piping Essentials -->
+    <div class="course-card" id="card-nonmetallic" onclick="openCourse('nonmetallic')">
+      <div class="course-banner bg-teal">
+        <span class="course-badge badge-unlocked" id="badge-nonmetallic">✦ Module 1 Free</span>
+        <svg class="course-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="32" cy="32" r="21" stroke="rgba(255,255,255,0.9)" stroke-width="3"/>
+          <circle cx="32" cy="32" r="14" stroke="rgba(255,210,130,0.95)" stroke-width="2.6" stroke-dasharray="3.4 3.4"/>
+          <circle cx="32" cy="32" r="7" stroke="rgba(255,255,255,0.85)" stroke-width="2.4"/>
+        </svg>
+        <span class="course-count">5 modules · 1 quiz · certificate</span>
+      </div>
+      <div class="course-body">
+        <div class="course-name">Non-Metallic Piping Essentials</div>
+        <div class="course-sub">Course 04 · Non-Metallic · API 15LE / 15S</div>
+        <div class="course-desc">HDPE and composite pipe for oil &amp; gas — families &amp; selection, the API 15LE pressure-rating method, reinforced spoolable RTP/TCP, chemical resistance, and design, jointing &amp; installation.</div>
+        <button class="suite-btn open" id="btn-nonmetallic">Start Module 1 — Free →</button>
+      </div>
+    </div>
+
+    <!-- Course 5 — Coming Soon -->
     <div class="course-card soon" id="card-dynamic-stress" onclick="openSoonModal('dynamic-stress')">
       <div class="course-banner bg-steel">
         <span class="course-badge badge-soon">Coming Soon</span>
@@ -305,7 +325,7 @@ footer a{color:var(--gold-bright);text-decoration:none;}
       </div>
       <div class="course-body">
         <div class="course-name">Dynamic Stress Analysis</div>
-        <div class="course-sub">Course 04 · Dynamic · Coming soon</div>
+        <div class="course-sub">Course 05 · Dynamic · Coming soon</div>
         <div class="course-desc">Theory and application of dynamic analysis — harmonic, response spectrum and time-history methods for surge, vibration and seismic loading.</div>
         <button class="suite-btn soon">Coming Soon</button>
       </div>
@@ -389,9 +409,6 @@ footer a{color:var(--gold-bright);text-decoration:none;}
 <footer>
   <div class="fl">Piping<span>Pro</span> Academy</div>
   <div>Professional piping &amp; pipeline engineering knowledge. · <a href="index.html">Home</a></div>
-
- 
-<script src="/counter.js"></script>
 </footer>
 
 <script>
@@ -420,7 +437,6 @@ const COURSES = {
     kicker: 'Course 02 · Intermediate',
     bg: 'bg-navy',
     file: 'course-static-stress.html',
-    freeModule: 'static-stress-module-1.html',
     desc: 'Theory first, software second. Understand the loads, stress categories and code rules that drive a stress analysis, then work through pressure design, dynamic loads, nozzle movements and the full step-by-step CAESAR II workflow — from blank sheet to code-compliant report.',
     meta: ['5 modules', '1 quiz', 'CAESAR II', 'ASME B31.3'],
     modules: [
@@ -438,7 +454,6 @@ const COURSES = {
     kicker: 'Course 03 · Pipeline',
     bg: 'bg-bronze',
     file: 'Fundamental-of-Pipeline-Engineering.html',
-    freeModule: 'pipeline-engineering-module-1.html',
     desc: 'The transition from plant piping to onshore pipeline engineering. Flow assurance and route selection, wall thickness to ASME B31.8 / B31.4 / ISO 13623, the restrained-pipeline stress check, buried-pipe design, and integrity — fracture control, coating and upheaval buckling.',
     meta: ['5 modules', '1 quiz', 'Self-paced', 'Certificate'],
     modules: [
@@ -450,6 +465,24 @@ const COURSES = {
       { t: 'Final Quiz — graded assessment + certificate', quiz: true }
     ],
     icon: '<svg viewBox="0 0 62 62" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="6" y1="34" x2="56" y2="34" stroke="rgba(255,255,255,0.85)" stroke-width="7" stroke-linecap="round"/><rect x="6" y="27" width="50" height="14" rx="7" stroke="rgba(255,255,255,0.22)" stroke-width="1.5" fill="none"/><path d="M22 34 l7 -4.5 v9 z" fill="rgba(255,210,130,0.9)"/><path d="M38 34 l7 -4.5 v9 z" fill="rgba(255,210,130,0.7)"/><line x1="48" y1="24" x2="48" y2="44" stroke="rgba(255,255,255,0.55)" stroke-width="2.2"/><line x1="43" y1="24" x2="53" y2="24" stroke="rgba(255,255,255,0.55)" stroke-width="2.2"/></svg>'
+  },
+  'nonmetallic': {
+    name: 'Non-Metallic Piping Essentials',
+    kicker: 'Course 04 · Non-Metallic',
+    bg: 'bg-teal',
+    file: 'course-nonmetallic-piping.html',
+    freeModule: 'course-nonmetallic-piping.html',
+    desc: 'HDPE and composite pipe for the oilfield. Why non-metallics win on corrosion, the API 15LE pressure-rating method end to end (with a live calculator), reinforced spoolable RTP/TCP, chemical resistance & selection, and the design, jointing and installation that make plastics behave unlike steel.',
+    meta: ['5 modules', '1 quiz', 'HDPE & Composite', 'Certificate'],
+    modules: [
+      { t: 'Non-Metallics in Oil & Gas — families, the toolbox & what sets the limits' },
+      { t: 'How They Carry Pressure — HDB / DF / HDS / DR / FSF / TSF, with live calculator' },
+      { t: 'Reinforced & Composite Spoolable Pipe — RTP / TCP, API 15S' },
+      { t: 'Chemical Resistance & Material Selection — compatibility & workflow' },
+      { t: 'Design, Jointing & Installation — creep, supports, fusion & collapse' },
+      { t: 'Final Quiz — graded assessment + certificate', quiz: true }
+    ],
+    icon: '<svg viewBox="0 0 62 62" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="31" cy="31" r="20" stroke="rgba(255,255,255,0.9)" stroke-width="2.8"/><circle cx="31" cy="31" r="13.5" stroke="rgba(255,210,130,0.95)" stroke-width="2.4" stroke-dasharray="3.2 3.2"/><circle cx="31" cy="31" r="6.5" stroke="rgba(255,255,255,0.85)" stroke-width="2.2"/></svg>'
   }
 };
 
