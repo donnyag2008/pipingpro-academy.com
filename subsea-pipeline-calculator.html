@@ -200,83 +200,146 @@ body{ background:#faf6ef; color:#1a1510; }
 </nav>
 <div class="ppa-hero">
   <div class="ppa-hero-eyebrow">Members · Engineering Calculator Suite</div>
-  <h1>Subsea Pipeline <em>Calculator</em></h1>
-  <p>Pressure containment, collapse, propagating buckling, on-bottom stability &amp; free-span per DNV-ST-F101</p>
+  <h1>Subsea Pipeline <em>Mechanical Design</em></h1>
+  <p>Pressure containment, combined equivalent stress &amp; elastic bend radius, upheaval buckling, local collapse, propagating buckle and on-bottom stability — per ISO 13623:2017, DNV-ST-F101 and OTC 6335 (Palmer).</p>
 </div>
 
-
-
-
-
-
-
+<!-- ══ MODULE TAB BAR ══ -->
+<div class="calc-tabs" style="max-width:1040px;margin:0 auto;border-radius:8px 8px 0 0;">
+  <button class="calc-tab active" onclick="switchTab('wt')">1 · Wall Thickness</button>
+  <button class="calc-tab" onclick="switchTab('cs')">2 · Combined Stress &amp; Bend Radius</button>
+  <button class="calc-tab" onclick="switchTab('ub')">3 · Upheaval Buckling</button>
+  <button class="calc-tab" onclick="switchTab('lb')">Local Collapse</button>
+  <button class="calc-tab" onclick="switchTab('bp')">Buckle Propagation</button>
+  <button class="calc-tab" onclick="switchTab('obs')">On-Bottom Stability</button>
+  <button class="calc-tab" onclick="switchTab('theory')">📚 Theory</button>
+</div>
 
 <div class="layout">
-  
-
   <main class="main">
+
+    <!-- preset loader -->
+    <div style="display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;background:#fff;border:1px solid var(--rule);border-radius:8px;padding:.7rem 1rem;margin-bottom:1.4rem;">
+      <span style="font-size:12px;font-weight:600;color:var(--ink2);text-transform:uppercase;letter-spacing:.04em;">Load worked example</span>
+      <select onchange="loadPreset(this.value)" style="height:34px;padding:0 10px;background:#fff;border:1px solid var(--rule);border-radius:6px;color:var(--ink);font-size:13px;font-family:var(--sans);">
+        <option value="">— Select a case —</option>
+        <option value="wpcpf">18″ Liquid WP→CPF · buried (Shell Albania FFD CA1)</option>
+        <option value="fso">12″ FSO connection · 60 m water depth</option>
+        <option value="spm">24″ SPM connection · 35 m water depth</option>
+      </select>
+      <span style="font-size:11px;color:var(--ink3);font-family:var(--mono);">Reference: Appendix-B1 &amp; C1 — 18″ WP-1+2+3 to CPF</span>
+    </div>
 
     <!-- TAB 1: Wall Thickness -->
     <div id="tab-wt" class="panel active">
       <div class="panel-title">Wall Thickness Design</div>
-      <div class="panel-sub">Pressure containment per ISO 13623:2017 Cl. 6.4.1.1</div>
+      <div class="panel-sub">Pressure containment per ISO 13623:2017 Cl. 6.4.1.1 / DNV-ST-F101</div>
       <div class="std-tags"><span class="std-tag">ISO 13623:2017</span><span class="std-tag">DNV-ST-F101</span></div>
       <div class="formula-card">
         <div class="formula-title">Design equations</div>
         t = Do · (Pid − Pod) / [2·σhp + (Pid − Pod)]<br>
-        σhp = SMYS · fh · ft<br>
-        tnom ≥ t + A &nbsp;&nbsp;(A = corrosion + mill tolerance)
+        σhp = SMYS · fh · ft &nbsp;&nbsp;(fh = 0.77 general route, ISO 13623 Table&nbsp;2)<br>
+        tnom ≥ t + CA + mill tolerance &nbsp;&nbsp;|&nbsp;&nbsp; check D/t ≤ 60 (DEP 31.40.00.10)
       </div>
       <div class="form-grid">
-        <div class="field"><label>Outside Diameter Do (mm)</label><input id="wt_do" type="number" value="323.85"><small>12" = 323.85 mm</small></div>
+        <div class="field"><label>Outside Diameter Do (mm)</label><input id="wt_do" type="number" value="457.2"><small>18″ = 457.2 mm</small></div>
         <div class="field"><label>SMYS (MPa)</label><input id="wt_smys" type="number" value="415"><small>API 5L X60 = 415 MPa</small></div>
-        <div class="field"><label>Internal Design Pressure Pid (MPa)</label><input id="wt_pid" type="number" value="10.0"></div>
-        <div class="field"><label>External Hydrostatic Pressure Pod (MPa)</label><input id="wt_pod" type="number" value="0.603"></div>
-        <div class="field"><label>Hoop Design Factor fh</label><input id="wt_fh" type="number" value="0.77" step="0.01"><small>0.77 general route (ISO 13623)</small></div>
+        <div class="field"><label>Internal Design Pressure Pid (MPa)</label><input id="wt_pid" type="number" value="15.0"></div>
+        <div class="field"><label>External Hydrostatic Pressure Pod (MPa)</label><input id="wt_pod" type="number" value="0"></div>
+        <div class="field"><label>Hoop Design Factor fh</label><input id="wt_fh" type="number" value="0.77" step="0.01"><small>0.77 general route</small></div>
         <div class="field"><label>Temp Derating Factor ft</label><input id="wt_ft" type="number" value="1.0" step="0.01"></div>
-        <div class="field"><label>Corrosion Allowance (mm)</label><input id="wt_ca" type="number" value="3.0"></div>
-        <div class="field"><label>Mill Tolerance (mm)</label><input id="wt_tol" type="number" value="0.5"></div>
+        <div class="field"><label>Corrosion Allowance (mm)</label><input id="wt_ca" type="number" value="0"></div>
+        <div class="field"><label>Mill Tolerance (mm)</label><input id="wt_tol" type="number" value="0"></div>
       </div>
-      <button class="calc-btn" onclick="calcWT()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg>
-        Calculate
-      </button>
+      <button class="calc-btn" onclick="calcWT()">Calculate</button>
       <div id="wt_result"></div>
-      <div style="text-align:center;margin:1.1rem 0"><button onclick="ppaReportSubsea()" style="background:#8b3a1a;color:#fff;border:none;padding:.8rem 1.8rem;font-size:.95rem;font-weight:700;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif">⬇ Download PDF Report</button></div>
+      <div style="text-align:center;margin:1.1rem 0"><button onclick="ppaReportSubsea()" style="background:#8b3a1a;color:#fff;border:none;padding:.8rem 1.8rem;font-size:.95rem;font-weight:700;border-radius:4px;cursor:pointer;font-family:'DM Sans',sans-serif">⬇ Download PDF Report</button></div>
     </div>
 
-    <!-- TAB 2: On-Bottom Stability -->
-    <div id="tab-obs" class="panel">
-      <div class="panel-title">On-Bottom Stability</div>
-      <div class="panel-sub">Vertical stability check per DNV-RP-F109:2021</div>
-      <div class="std-tags"><span class="std-tag">DNV-RP-F109:2021</span></div>
+    <!-- TAB 2: Combined Stress & Elastic Bend Radius -->
+    <div id="tab-cs" class="panel">
+      <div class="panel-title">Combined Equivalent Stress &amp; Elastic Bend Radius</div>
+      <div class="panel-sub">Fully-restrained biaxial (Von Mises) check per ISO 13623:2017 Cl. 6.4.1.2 — Appendix B1 method</div>
+      <div class="std-tags"><span class="std-tag">ISO 13623:2017</span><span class="std-tag">Von Mises</span></div>
+      <div class="formula-card">
+        <div class="formula-title">Design equations (restrained pipeline)</div>
+        σhp = (Pid − Pod)·(Do − t)/(2t) &nbsp;&nbsp;|&nbsp;&nbsp; σL = µ·σhp &nbsp;(longitudinal pressure)<br>
+        σEA = E·α·(Tc − T) &nbsp;(thermal) &nbsp;|&nbsp;&nbsp; σT = σL + σEA &nbsp;(total longitudinal)<br>
+        σeq = √(σhp² − σhp·σT + σT²) ≤ feq·ft·SMYS<br>
+        Sb1 = feq·ft·SMYS − σeq &nbsp;|&nbsp;&nbsp; R<sub>cur</sub> = E·Do / (2·Sb1)
+      </div>
+      <div class="form-grid">
+        <div class="field"><label>Outside Diameter Do (mm)</label><input id="cs_do" type="number" value="457.2"></div>
+        <div class="field"><label>Selected Wall Thickness t (mm)</label><input id="cs_t" type="number" value="11.91"></div>
+        <div class="field"><label>Corrosion Allowance CA (mm)</label><input id="cs_ca" type="number" value="0"><small>corroded case uses t − CA</small></div>
+        <div class="field"><label>Internal Design Pressure Pid (MPa)</label><input id="cs_pid" type="number" value="15.0"></div>
+        <div class="field"><label>External Pressure Pod (MPa)</label><input id="cs_pod" type="number" value="0"></div>
+        <div class="field"><label>SMYS (MPa)</label><input id="cs_smys" type="number" value="415"></div>
+        <div class="field"><label>Equivalent Stress Factor feq</label>
+          <select id="cs_feq">
+            <option value="0.90">0.90 — Functional + Environmental</option>
+            <option value="1.00">1.00 — Construction / Accidental</option>
+          </select>
+        </div>
+        <div class="field"><label>Temp Derating Factor ft</label><input id="cs_ft" type="number" value="1.0" step="0.01"></div>
+        <div class="field"><label>Poisson's Ratio µ</label><input id="cs_v" type="number" value="0.3" step="0.01"></div>
+        <div class="field"><label>Young's Modulus E (MPa)</label><input id="cs_e" type="number" value="203000"></div>
+        <div class="field"><label>Thermal Exp. Coeff α (1/°C)</label><input id="cs_a" type="number" value="0.0000117" step="0.0000001"></div>
+        <div class="field"><label>Installation Temp Tc (°C)</label><input id="cs_tc" type="number" value="25"></div>
+        <div class="field"><label>Design / Operating Temp T (°C)</label><input id="cs_t2" type="number" value="85"></div>
+      </div>
+      <button class="calc-btn" onclick="calcCS()">Check Combined Stress</button>
+      <div id="cs_result"></div>
+      <div style="text-align:center;margin:1.1rem 0"><button onclick="ppaReportSubsea()" style="background:#8b3a1a;color:#fff;border:none;padding:.8rem 1.8rem;font-size:.95rem;font-weight:700;border-radius:4px;cursor:pointer;font-family:'DM Sans',sans-serif">⬇ Download PDF Report</button></div>
+    </div>
+
+    <!-- TAB 3: Upheaval Buckling (OTC 6335) -->
+    <div id="tab-ub" class="panel">
+      <div class="panel-title">Upheaval Buckling Analysis</div>
+      <div class="panel-sub">Buried pipeline download / uplift-resistance check per OTC 6335 (Palmer, 1990) — Appendix C1 method</div>
+      <div class="std-tags"><span class="std-tag">OTC 6335</span><span class="std-tag">Palmer</span><span class="std-tag">Buried</span></div>
       <div class="formula-card">
         <div class="formula-title">Design equations</div>
-        γw · b / ws ≤ 1.0 &nbsp;&nbsp;(γw = 1.1)<br>
-        b = ρw · g · π · D² / 4 &nbsp;&nbsp;(buoyancy per unit length)<br>
-        ws = pipe submerged weight per unit length
+        Tel = (Pi·Ai − µ·σh·As) + E·α·As·(T2 − T1) &nbsp;(effective expansion load)<br>
+        Wr = [1.16 − 4.76·√(EI·Wte/δ)/Tel] · Tel · √(δ·Wte/EI) &nbsp;(OTC 6335 Eq.12)<br>
+        q = H·D·ρb·g·(1 + f·H/D) &nbsp;(uplift resistance, OTC 6335 Eq.13)<br>
+        Stable when total download Q = Wto + q ≥ Wr (download required)
+      </div>
+      <div style="background:var(--accent-light,#f7ede3);border:1px solid rgba(196,92,42,.2);border-left:3px solid var(--accent,#8b3a1a);border-radius:0 8px 8px 0;padding:.8rem 1rem;font-size:12px;color:var(--ink2,#4a3f30);margin-bottom:1.5rem;line-height:1.7;">
+        This module uses the simplified <strong>OTC 6335 (Palmer)</strong> download / uplift-resistance method as issued in Appendix C1 — effective force via exact Poisson term (µ·σh·As) and soil uplift from backfill mass density. For a fuller screen — DNV-RP-F110 (Peters) allowable-imperfection, Schaminée / Pedersen peak uplift, Cambridge mobilisation and the tri-linear soil model — use the dedicated <a href="upheaval-buckling-calculator.html" style="color:var(--accent,#8b3a1a);font-weight:600;">Upheaval Buckling Calculator</a> in the suite.
       </div>
       <div class="form-grid">
-        <div class="field"><label>Pipe OD bare (mm)</label><input id="obs_od" type="number" value="323.85"></div>
-        <div class="field"><label>Steel Wall Thickness (mm)</label><input id="obs_wt" type="number" value="8.38"></div>
-        <div class="field"><label>FBE Coating Thickness (mm)</label><input id="obs_tfbe" type="number" value="0.5"></div>
-        <div class="field"><label>Concrete Coating Thickness (mm)</label><input id="obs_tcc" type="number" value="25.4"></div>
-        <div class="field"><label>Concrete Coating Density (kg/m³)</label><input id="obs_rcc" type="number" value="3040"></div>
-        <div class="field"><label>Content Density (kg/m³)</label><input id="obs_rc" type="number" value="850"><small>Crude oil ≈ 850</small></div>
-        <div class="field"><label>Water Density ρw (kg/m³)</label><input id="obs_rw" type="number" value="1025"></div>
-        <div class="field"><label>Safety Factor γw</label><input id="obs_gw" type="number" value="1.1" step="0.05"></div>
+        <div class="field"><label>Outside Diameter D (mm)</label><input id="ub_d" type="number" value="457.2"></div>
+        <div class="field"><label>Selected Wall Thickness (mm)</label><input id="ub_tsel" type="number" value="14.91"></div>
+        <div class="field"><label>Corrosion Allowance CA (mm)</label><input id="ub_ca" type="number" value="0"></div>
+        <div class="field"><label>SMYS (MPa)</label><input id="ub_smys" type="number" value="415"></div>
+        <div class="field"><label>Design Pressure Pi (MPa)</label><input id="ub_pi" type="number" value="15"></div>
+        <div class="field"><label>Installation Temp T1 (°C)</label><input id="ub_t1" type="number" value="25"></div>
+        <div class="field"><label>Design Temp T2 (°C)</label><input id="ub_t2" type="number" value="85"></div>
+        <div class="field"><label>Effective Depth of Cover H (m)</label><input id="ub_h" type="number" value="0.8" step="0.05"></div>
+        <div class="field"><label>Imperfection Height δ (mm)</label><input id="ub_delta" type="number" value="300"></div>
+        <div class="field"><label>External Coating Thickness t₁ (mm)</label><input id="ub_tcoat" type="number" value="3"></div>
+        <div class="field"><label>Coating Density ρ_fbe (kg/m³)</label><input id="ub_rfbe" type="number" value="950"></div>
+        <div class="field"><label>Contents Density ρ_cont (kg/m³)</label><input id="ub_rcont" type="number" value="1025.5"></div>
+        <div class="field"><label>Steel Density ρs (kg/m³)</label><input id="ub_rs" type="number" value="7850"></div>
+        <div class="field"><label>Young's Modulus E (MPa)</label><input id="ub_e" type="number" value="203000"></div>
+        <div class="field"><label>Thermal Exp. Coeff α (1/°C)</label><input id="ub_a" type="number" value="0.0000117" step="0.0000001"></div>
+        <div class="field"><label>Poisson's Ratio µ</label><input id="ub_v" type="number" value="0.3" step="0.01"></div>
+        <div class="field"><label>Backfill ρ — uncompacted (kg/m³)</label><input id="ub_rbuc" type="number" value="1850"></div>
+        <div class="field"><label>Backfill ρ — compacted (kg/m³)</label><input id="ub_rbc" type="number" value="1850"></div>
+        <div class="field"><label>Uplift coeff f — uncompacted</label><input id="ub_fuc" type="number" value="0.1" step="0.05"></div>
+        <div class="field"><label>Uplift coeff f — compacted</label><input id="ub_fc" type="number" value="0.5" step="0.05"></div>
+        <div class="field"><label>Equivalent Stress Factor feq</label><input id="ub_feq" type="number" value="0.9" step="0.01"></div>
       </div>
-      <button class="calc-btn" onclick="calcOBS()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg>
-        Check Stability
-      </button>
-      <div id="obs_result"></div>
+      <button class="calc-btn" onclick="calcUB()">Run Upheaval Buckling Analysis</button>
+      <div id="ub_result"></div>
+      <div style="text-align:center;margin:1.1rem 0"><button onclick="ppaReportSubsea()" style="background:#8b3a1a;color:#fff;border:none;padding:.8rem 1.8rem;font-size:.95rem;font-weight:700;border-radius:4px;cursor:pointer;font-family:'DM Sans',sans-serif">⬇ Download PDF Report</button></div>
     </div>
 
-    <!-- TAB 3: Local Buckling -->
+    <!-- TAB 4: Local Buckling / Collapse -->
     <div id="tab-lb" class="panel">
       <div class="panel-title">Local Buckling / Collapse Check</div>
-      <div class="panel-sub">External pressure collapse per DNV-ST-F101:2021 Sec. 5</div>
+      <div class="panel-sub">External pressure collapse per DNV-ST-F101:2021 Sec. 5 (for unburied / as-laid pipe)</div>
       <div class="std-tags"><span class="std-tag">DNV-ST-F101:2021</span></div>
       <div class="formula-card">
         <div class="formula-title">Design equations</div>
@@ -285,328 +348,128 @@ body{ background:#faf6ef; color:#1a1510; }
         Pel = 2E·(t/D)³/(1−ν²) &nbsp;&nbsp;|&nbsp;&nbsp; Pp = fy·αfab·2t/D
       </div>
       <div class="form-grid">
-        <div class="field"><label>Outside Diameter D (mm)</label><input id="lb_d" type="number" value="323.85"></div>
-        <div class="field"><label>Wall Thickness t (mm)</label><input id="lb_t" type="number" value="8.38"></div>
-        <div class="field"><label>Water Depth h (m)</label><input id="lb_h" type="number" value="60"></div>
+        <div class="field"><label>Outside Diameter D (mm)</label><input id="lb_d" type="number" value="457.2"></div>
+        <div class="field"><label>Wall Thickness t (mm)</label><input id="lb_t" type="number" value="14.91"></div>
+        <div class="field"><label>Water Depth h (m)</label><input id="lb_h" type="number" value="35"></div>
         <div class="field"><label>SMYS (MPa)</label><input id="lb_fy" type="number" value="415"></div>
-        <div class="field"><label>Young's Modulus E (MPa)</label><input id="lb_e" type="number" value="200000"></div>
+        <div class="field"><label>Young's Modulus E (MPa)</label><input id="lb_e" type="number" value="203000"></div>
         <div class="field"><label>Poisson's Ratio ν</label><input id="lb_v" type="number" value="0.3" step="0.01"></div>
         <div class="field"><label>Fabrication Factor αfab</label>
           <select id="lb_fab">
+            <option value="0.85">0.85 — UOE / SAWL</option>
             <option value="1.0">1.0 — Seamless (SMLS)</option>
-            <option value="0.85">0.85 — UOE / SAW</option>
           </select>
         </div>
         <div class="field"><label>Material Strength Factor αu</label><input id="lb_au" type="number" value="0.96" step="0.01"></div>
         <div class="field"><label>Fab Thickness Tolerance tfab (mm)</label><input id="lb_tfab" type="number" value="1.0"><small>SMLS = 1.0 mm, ERW = 0.93 mm</small></div>
         <div class="field"><label>Ovality f0</label><input id="lb_f0" type="number" value="0.015" step="0.001"></div>
         <div class="field"><label>Material Resistance Factor γm</label><input id="lb_gm" type="number" value="1.15" step="0.01"></div>
-        <div class="field"><label>Safety Class Factor γsc</label><input id="lb_gsc" type="number" value="1.138" step="0.001"><small>Medium safety class</small></div>
+        <div class="field"><label>Safety Class Factor γsc</label><input id="lb_gsc" type="number" value="1.04" step="0.001"><small>Low safety class</small></div>
       </div>
-      <button class="calc-btn" onclick="calcLB()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg>
-        Check Local Buckling
-      </button>
+      <button class="calc-btn" onclick="calcLB()">Check Local Buckling</button>
       <div id="lb_result"></div>
     </div>
 
-    <!-- TAB 4: Buckle Propagation -->
+    <!-- TAB 5: Buckle Propagation -->
     <div id="tab-bp" class="panel">
       <div class="panel-title">Buckle Propagation Check</div>
-      <div class="panel-sub">Propagating buckle criterion per DNV-ST-F101:2021</div>
+      <div class="panel-sub">Propagating buckle criterion per DNV-ST-F101:2021 (for unburied / as-laid pipe)</div>
       <div class="std-tags"><span class="std-tag">DNV-ST-F101:2021</span></div>
       <div class="formula-card">
         <div class="formula-title">Design equations</div>
-        Ppr = 35 · fy · αfab · (t/D)^2.5 &nbsp;&nbsp;[valid for D/t &lt; 45]<br>
-        Check: Pe &lt; Ppr / (γm · γsc)<br>
-        Pe = ρw · g · h
+        Ppr = 35 · fy · αfab · (t/D)^2.5 &nbsp;&nbsp;[valid for 15 &lt; D/t &lt; 45]<br>
+        Check: Pe &lt; Ppr / (γm · γsc) &nbsp;&nbsp;|&nbsp;&nbsp; Pe = ρw · g · h
       </div>
       <div class="form-grid">
-        <div class="field"><label>Outside Diameter D (mm)</label><input id="bp_d" type="number" value="323.85"></div>
-        <div class="field"><label>Wall Thickness t (mm)</label><input id="bp_t" type="number" value="8.38"></div>
-        <div class="field"><label>Water Depth h (m)</label><input id="bp_h" type="number" value="60"></div>
+        <div class="field"><label>Outside Diameter D (mm)</label><input id="bp_d" type="number" value="457.2"></div>
+        <div class="field"><label>Wall Thickness t (mm)</label><input id="bp_t" type="number" value="14.91"></div>
+        <div class="field"><label>Water Depth h (m)</label><input id="bp_h" type="number" value="35"></div>
         <div class="field"><label>Char. Yield Stress fy (MPa)</label><input id="bp_fy" type="number" value="398.4"><small>SMYS × αu</small></div>
         <div class="field"><label>Fabrication Factor αfab</label>
           <select id="bp_fab">
+            <option value="0.85">0.85 — UOE / SAWL</option>
             <option value="1.0">1.0 — Seamless</option>
-            <option value="0.85">0.85 — UOE / SAW</option>
           </select>
         </div>
         <div class="field"><label>Material Resistance Factor γm</label><input id="bp_gm" type="number" value="1.15" step="0.01"></div>
-        <div class="field"><label>Safety Class Factor γsc</label><input id="bp_gsc" type="number" value="1.138" step="0.001"></div>
+        <div class="field"><label>Safety Class Factor γsc</label><input id="bp_gsc" type="number" value="1.04" step="0.001"></div>
         <div class="field"><label>Water Density ρw (kg/m³)</label><input id="bp_rw" type="number" value="1025"></div>
       </div>
-      <button class="calc-btn" onclick="calcBP()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg>
-        Check Propagation
-      </button>
+      <button class="calc-btn" onclick="calcBP()">Check Propagation</button>
       <div id="bp_result"></div>
     </div>
 
-    <!-- TAB 5: Combined Stress -->
-    <div id="tab-cs" class="panel">
-      <div class="panel-title">Combined Stress — Von Mises</div>
-      <div class="panel-sub">Biaxial stress check per ISO 13623:2017 Sec. 6</div>
-      <div class="std-tags"><span class="std-tag">ISO 13623:2017</span></div>
+    <!-- TAB 6: On-Bottom Stability -->
+    <div id="tab-obs" class="panel">
+      <div class="panel-title">On-Bottom Stability</div>
+      <div class="panel-sub">Vertical stability check per DNV-RP-F109 (for unburied / as-laid pipe)</div>
+      <div class="std-tags"><span class="std-tag">DNV-RP-F109</span></div>
       <div class="formula-card">
         <div class="formula-title">Design equations</div>
-        σhp = (Pid − Pod) · (Do − t) / (2t)<br>
-        σL = ν·σhp − E·α·ΔT &nbsp;&nbsp;(fully restrained pipeline)<br>
-        σeq = √(σhp² − σhp·σL + σL²) ≤ feq·ft·SMYS
+        γw · b / ws ≤ 1.0 &nbsp;&nbsp;(γw = 1.1)<br>
+        b = ρw · g · π · D² / 4 &nbsp;&nbsp;(buoyancy per unit length)<br>
+        ws = pipe submerged weight per unit length
       </div>
       <div class="form-grid">
-        <div class="field"><label>Outside Diameter Do (mm)</label><input id="cs_do" type="number" value="323.85"></div>
-        <div class="field"><label>Wall Thickness t (mm)</label><input id="cs_t" type="number" value="8.38"></div>
-        <div class="field"><label>Internal Pressure Pid (MPa)</label><input id="cs_pid" type="number" value="10.0"></div>
-        <div class="field"><label>External Pressure Pod (MPa)</label><input id="cs_pod" type="number" value="0.603"></div>
-        <div class="field"><label>SMYS (MPa)</label><input id="cs_smys" type="number" value="415"></div>
-        <div class="field"><label>Equivalent Stress Factor feq</label>
-          <select id="cs_feq">
-            <option value="0.90">0.90 — Functional + Environmental</option>
-            <option value="1.00">1.00 — Construction / Accidental</option>
-          </select>
-        </div>
-        <div class="field"><label>Poisson's Ratio ν</label><input id="cs_v" type="number" value="0.3" step="0.01"></div>
-        <div class="field"><label>Young's Modulus E (MPa)</label><input id="cs_e" type="number" value="200000"></div>
-        <div class="field"><label>Thermal Exp. Coeff α (1/°C)</label><input id="cs_a" type="number" value="0.0000117" step="0.0000001"></div>
-        <div class="field"><label>ΔT — Installation to Operating (°C)</label><input id="cs_dt" type="number" value="40"><small>Toper − Tinstall</small></div>
-        <div class="field"><label>Temp Derating Factor ft</label><input id="cs_ft" type="number" value="1.0" step="0.01"></div>
+        <div class="field"><label>Pipe OD bare (mm)</label><input id="obs_od" type="number" value="457.2"></div>
+        <div class="field"><label>Steel Wall Thickness (mm)</label><input id="obs_wt" type="number" value="14.91"></div>
+        <div class="field"><label>FBE Coating Thickness (mm)</label><input id="obs_tfbe" type="number" value="3"></div>
+        <div class="field"><label>Concrete Coating Thickness (mm)</label><input id="obs_tcc" type="number" value="0"></div>
+        <div class="field"><label>Concrete Coating Density (kg/m³)</label><input id="obs_rcc" type="number" value="3040"></div>
+        <div class="field"><label>Content Density (kg/m³)</label><input id="obs_rc" type="number" value="1025.5"><small>Crude oil ≈ 850</small></div>
+        <div class="field"><label>Water Density ρw (kg/m³)</label><input id="obs_rw" type="number" value="1025"></div>
+        <div class="field"><label>Safety Factor γw</label><input id="obs_gw" type="number" value="1.1" step="0.05"></div>
       </div>
-      <button class="calc-btn" onclick="calcCS()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg>
-        Check Combined Stress
-      </button>
-      <div id="cs_result"></div>
+      <button class="calc-btn" onclick="calcOBS()">Check Stability</button>
+      <div id="obs_result"></div>
+    </div>
+
+    <!-- THEORY TAB -->
+    <div id="tab-theory" class="panel">
+      <div style="background:var(--accent-light,#f7ede3);border:1px solid rgba(196,92,42,.2);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--accent,#8b3a1a);margin-bottom:1.2rem;line-height:1.7;">
+        📚 Theory, formulae and code references for this calculator. Methodology aligned with the FEED-stage mechanical design of the 18″ liquid pipeline (WP-1+WP-2+WP-3 to CPF). For worked examples, see the <strong>PipingPro Academy</strong> courses.
+      </div>
+      <div class="ref-section">
+        <div class="ref-title">Design Basis</div>
+        <div class="ref-formula">
+          <b>Pressure containment (ISO 13623):</b> t = Do·(Pid−Pod)/[2·SMYS·fh·ft + (Pid−Pod)]<br>
+          <b>Hoop stress:</b> σhp = (Pid−Pod)·(Do−t)/(2t)<br>
+          <b>Longitudinal (restrained):</b> σL = µ·σhp ; σEA = E·α·(Tc−T) ; σT = σL + σEA<br>
+          <b>Von Mises equivalent:</b> σeq = √(σhp² − σhp·σT + σT²) ≤ feq·ft·SMYS<br>
+          <b>Elastic bend radius:</b> Sb1 = feq·ft·SMYS − σeq ; R<sub>cur</sub> = E·Do/(2·Sb1)<br>
+          <b>Upheaval download (OTC 6335 Eq.12):</b> Wr = [1.16 − 4.76·√(EI·Wte/δ)/Tel]·Tel·√(δ·Wte/EI)<br>
+          <b>Uplift resistance (OTC 6335 Eq.13):</b> q = H·D·ρb·g·(1 + f·H/D)<br>
+          <b>External collapse (DNV-ST-F101):</b> (Pe − Pmin) ≤ Pc / (γm·γsc)<br>
+          <b>Propagating buckle:</b> Ppr = 35·fy·αfab·(t/D)^2.5
+        </div>
+      </div>
+      <div class="ref-section">
+        <div class="ref-title">Reference Standards</div>
+        <div class="ref-table-wrap"><table class="ref-table">
+          <tr><th>Standard</th><th>Application</th></tr>
+          <tr><td>ISO 13623:2017</td><td>Pipeline transportation systems — wall thickness &amp; combined stress</td></tr>
+          <tr><td>DNV-ST-F101</td><td>Submarine Pipeline Systems — collapse, propagation, resistance factors</td></tr>
+          <tr><td>DNV-RP-F109</td><td>On-Bottom Stability Design of Submarine Pipelines</td></tr>
+          <tr><td>OTC 6335</td><td>Palmer (1990) — design against upheaval buckling of buried pipelines</td></tr>
+          <tr><td>DEP 31.40.00.10-Gen</td><td>Shell pipeline engineering — D/t ≤ 60 limit</td></tr>
+        </table></div>
+      </div>
+      <div class="ref-section">
+        <div class="ref-title">Material &amp; Safety Factors (Low safety class, X60)</div>
+        <div class="ref-table-wrap"><table class="ref-table">
+          <tr><th>Factor</th><th>Symbol</th><th>Value</th></tr>
+          <tr><td>Material resistance factor</td><td>γm</td><td>1.15</td></tr>
+          <tr><td>Safety class factor — collapse / local buckling</td><td>γsc</td><td>1.04</td></tr>
+          <tr><td>Safety class factor — pressure containment</td><td>γsc</td><td>1.138</td></tr>
+          <tr><td>Material strength factor</td><td>αU</td><td>0.96</td></tr>
+          <tr><td>Max fabrication factor (UOE / SAWL)</td><td>αfab</td><td>0.85</td></tr>
+          <tr><td>Fabrication factor (SMLS)</td><td>αfab</td><td>1.0</td></tr>
+        </table></div>
+      </div>
     </div>
 
   </main>
 </div>
-
-<script>
-function switchTab(id) {
-  var tabs = ['wt','obs','lb','bp','cs','theory'];
-  tabs.forEach(function(t) {
-    document.getElementById('tab-' + t).classList.remove('active');
-  });
-  document.getElementById('tab-' + id).classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(function(btn) {
-    btn.classList.remove('active');
-    if (btn.getAttribute('onclick') === "switchTab('" + id + "')") {
-      btn.classList.add('active');
-    }
-  });
-}
-
-function loadPreset(opt) {
-  if (opt === 'fso') {
-    // 12" FSO - 60m water depth
-    setVal('wt_do',323.85); setVal('wt_smys',415); setVal('wt_pid',10.0); setVal('wt_pod',0.603);
-    setVal('wt_fh',0.77); setVal('wt_ft',1.0); setVal('wt_ca',3.0); setVal('wt_tol',0.5);
-    setVal('obs_od',323.85); setVal('obs_wt',8.38); setVal('obs_tfbe',0.5); setVal('obs_tcc',25.4);
-    setVal('obs_rcc',3040); setVal('obs_rc',850); setVal('obs_rw',1025); setVal('obs_gw',1.1);
-    setVal('lb_d',323.85); setVal('lb_t',8.38); setVal('lb_h',60); setVal('lb_fy',415);
-    setVal('lb_e',200000); setVal('lb_v',0.3); setVal('lb_au',0.96); setVal('lb_tfab',1.0);
-    setVal('lb_f0',0.015); setVal('lb_gm',1.15); setVal('lb_gsc',1.138);
-    document.getElementById('lb_fab').value = '1.0';
-    setVal('bp_d',323.85); setVal('bp_t',8.38); setVal('bp_h',60); setVal('bp_fy',398.4);
-    setVal('bp_gm',1.15); setVal('bp_gsc',1.138); setVal('bp_rw',1025);
-    document.getElementById('bp_fab').value = '1.0';
-    setVal('cs_do',323.85); setVal('cs_t',8.38); setVal('cs_pid',10.0); setVal('cs_pod',0.603);
-    setVal('cs_smys',415); setVal('cs_v',0.3); setVal('cs_e',200000);
-    setVal('cs_a',0.0000117); setVal('cs_dt',40); setVal('cs_ft',1.0);
-  } else {
-    // 24" SPM - 35m water depth
-    setVal('wt_do',609.6); setVal('wt_smys',415); setVal('wt_pid',8.0); setVal('wt_pod',0.352);
-    setVal('wt_fh',0.77); setVal('wt_ft',1.0); setVal('wt_ca',3.0); setVal('wt_tol',0.5);
-    setVal('obs_od',609.6); setVal('obs_wt',9.52); setVal('obs_tfbe',0.5); setVal('obs_tcc',25.4);
-    setVal('obs_rcc',3040); setVal('obs_rc',850); setVal('obs_rw',1025); setVal('obs_gw',1.1);
-    setVal('lb_d',609.6); setVal('lb_t',9.52); setVal('lb_h',35); setVal('lb_fy',415);
-    setVal('lb_e',200000); setVal('lb_v',0.3); setVal('lb_au',0.96); setVal('lb_tfab',0.93);
-    setVal('lb_f0',0.015); setVal('lb_gm',1.15); setVal('lb_gsc',1.138);
-    document.getElementById('lb_fab').value = '0.85';
-    setVal('bp_d',609.6); setVal('bp_t',9.52); setVal('bp_h',35); setVal('bp_fy',398.4);
-    setVal('bp_gm',1.15); setVal('bp_gsc',1.138); setVal('bp_rw',1025);
-    document.getElementById('bp_fab').value = '0.85';
-    setVal('cs_do',609.6); setVal('cs_t',9.52); setVal('cs_pid',8.0); setVal('cs_pod',0.352);
-    setVal('cs_smys',415); setVal('cs_v',0.3); setVal('cs_e',200000);
-    setVal('cs_a',0.0000117); setVal('cs_dt',35); setVal('cs_ft',1.0);
-  }
-}
-
-function setVal(id, val) {
-  var el = document.getElementById(id);
-  if (el) el.value = val;
-}
-
-function v(id) { return parseFloat(document.getElementById(id).value) || 0; }
-
-function makeTable(rows) {
-  var html = '<div class="results-title">Results</div><div class="result-table">';
-  rows.forEach(function(r) {
-    var badge = r.badge ? '<span class="status-badge ' + r.badge.cls + '">' + r.badge.txt + '</span>' : '';
-    html += '<div class="result-row"><span class="r-label">' + r.label + '</span><span class="r-val">' + r.val + '</span>' + badge + '</div>';
-  });
-  html += '</div>';
-  return html;
-}
-
-function makeBar(ratio, label) {
-  var pct = Math.min(ratio * 100, 100).toFixed(1);
-  var col = ratio < 0.75 ? '#3fb950' : ratio < 0.9 ? '#d29922' : '#f85149';
-  return '<div class="util-wrap"><span class="util-label">' + label + '</span>' +
-    '<div class="util-bar"><div class="util-fill" style="width:' + pct + '%;background:' + col + '"></div></div>' +
-    '<span class="util-pct" style="color:' + col + '">' + (ratio * 100).toFixed(1) + '%</span></div>';
-}
-
-function calcWT() {
-  var Do = v('wt_do'), smys = v('wt_smys'), Pid = v('wt_pid'), Pod = v('wt_pod');
-  var fh = v('wt_fh'), ft = v('wt_ft'), ca = v('wt_ca'), tol = v('wt_tol');
-  var shp = smys * fh * ft;
-  var tCalc = Do * (Pid - Pod) / (2 * shp + (Pid - Pod));
-  var tnom = tCalc + ca + tol;
-  document.getElementById('wt_result').innerHTML = makeTable([
-    { label: 'Max allowable hoop stress σhp', val: shp.toFixed(2) + ' MPa' },
-    { label: 'Pressure design thickness t', val: tCalc.toFixed(2) + ' mm' },
-    { label: 'Total allowance A (corrosion + mill)', val: (ca + tol).toFixed(2) + ' mm' },
-    { label: 'Required nominal wall thickness tnom', val: tnom.toFixed(2) + ' mm', badge: { cls: 's-info', txt: 'Minimum Required' } }
-  ]);
-  window.PPA_REPORT={
-    docType:'Subsea Pipeline — Wall Thickness', codeNote:'DNV-ST-F101 / ISO 13623',
-    sections:[
-      {title:'Pressure Containment Basis', badge:'DNV-ST-F101', type:'table', head:['Parameter','Value','Unit'], rows:[
-        ['Outside diameter Do',Do.toFixed(1),'mm'],['SMYS',smys.toFixed(0),'MPa'],
-        ['Internal design pressure Pid',Pid.toFixed(2),'MPa'],['External pressure Pod',Pod.toFixed(2),'MPa'],
-        ['Hoop usage factor fh',fh.toFixed(3),'—'],['Temperature derating ft',ft.toFixed(3),'—'],
-        ['Corrosion allowance',ca.toFixed(2),'mm'],['Mill tolerance',tol.toFixed(2),'mm']
-      ]},
-      {title:'Results', type:'table', head:['Result','Value','Unit'], rows:[
-        ['Max allowable hoop stress σhp',shp.toFixed(2),'MPa'],
-        ['Pressure design thickness t',tCalc.toFixed(2),'mm'],
-        ['Total allowance A',(ca+tol).toFixed(2),'mm'],
-        ['Required nominal wall tnom',tnom.toFixed(2),'mm']
-      ]}
-    ],
-    verdict:{status:'pass',text:'Minimum required nominal wall thickness tnom = '+tnom.toFixed(2)+' mm — select next standard schedule ≥ this value'}
-  };
-}
-
-function calcOBS() {
-  var od = v('obs_od') / 1000, wt = v('obs_wt') / 1000, tfbe = v('obs_tfbe') / 1000;
-  var tcc = v('obs_tcc') / 1000, rcc = v('obs_rcc'), rc = v('obs_rc');
-  var rw = v('obs_rw'), gw = v('obs_gw');
-  var g = 9.807, rSteel = 7850, rFBE = 1200;
-  var D_total = od + 2 * tfbe + 2 * tcc;
-  var A_steel = Math.PI / 4 * (od * od - (od - 2 * wt) * (od - 2 * wt));
-  var A_fbe = Math.PI / 4 * ((od + 2 * tfbe) * (od + 2 * tfbe) - od * od);
-  var A_cc = Math.PI / 4 * ((od + 2 * tfbe + 2 * tcc) * (od + 2 * tfbe + 2 * tcc) - (od + 2 * tfbe) * (od + 2 * tfbe));
-  var A_int = Math.PI / 4 * (od - 2 * wt) * (od - 2 * wt);
-  var b = rw * g * Math.PI * D_total * D_total / 4;
-  var w_steel = rSteel * g * A_steel;
-  var w_fbe = rFBE * g * A_fbe;
-  var w_cc = rcc * g * A_cc;
-  var w_cont = rc * g * A_int;
-  var ws = w_steel + w_fbe + w_cc + w_cont - b;
-  var ratio = gw * b / ws;
-  var ok = ratio <= 1.0;
-  document.getElementById('obs_result').innerHTML = makeTable([
-    { label: 'Buoyancy per unit length b', val: b.toFixed(1) + ' N/m' },
-    { label: 'Steel pipe weight (in air)', val: w_steel.toFixed(1) + ' N/m' },
-    { label: 'Concrete coating weight', val: w_cc.toFixed(1) + ' N/m' },
-    { label: 'Content weight', val: w_cont.toFixed(1) + ' N/m' },
-    { label: 'Net submerged weight ws', val: ws.toFixed(1) + ' N/m' },
-    { label: 'Stability ratio γw·b / ws', val: ratio.toFixed(4), badge: { cls: ok ? 's-pass' : 's-fail', txt: ok ? 'PASS' : 'FAIL' } }
-  ]) + makeBar(ratio, 'Utilisation (limit = 1.0)');
-}
-
-function solveCubicPc(Pel, Pp, f0, D, t1) {
-  var b = -Pel;
-  var c1 = -(Pp * Pp) + Pp * Pel * f0 * (D / t1);
-  var d = Pel * Pp * Pp;
-  var u = (1 / 3) * (-(b * b) / 3 + c1);
-  var vv = (1 / 2) * ((2 / 27) * b * b * b - (1 / 3) * b * c1 + d);
-  var disc = u * u * u + vv * vv;
-  var y;
-  if (disc >= 0) {
-    var sq = Math.sqrt(disc);
-    y = Math.cbrt(-vv + sq) + Math.cbrt(-vv - sq);
-  } else {
-    var phi1 = Math.acos(-vv / Math.sqrt(-u * u * u));
-    y = -2 * Math.sqrt(-u) * Math.cos(Math.PI / 3 + phi1 / 3);
-  }
-  return y - b / 3;
-}
-
-function calcLB() {
-  var D = v('lb_d') / 1000, t = v('lb_t') / 1000, h = v('lb_h');
-  var fy_nom = v('lb_fy'), E = v('lb_e') * 1e6, nu = v('lb_v');
-  var afab = parseFloat(document.getElementById('lb_fab').value);
-  var au = v('lb_au'), tfab = v('lb_tfab') / 1000, f0 = v('lb_f0');
-  var gm = v('lb_gm'), gsc = v('lb_gsc');
-  var rw = 1025, g = 9.807;
-  var fy = fy_nom * au * 1e6;
-  var t1 = t - tfab;
-  var Pe = rw * g * h;
-  var Pel = 2 * E * Math.pow(t1 / D, 3) / (1 - nu * nu);
-  var Pp = fy * afab * (2 * t1 / D);
-  var Pc = solveCubicPc(Pel, Pp, f0, D, t1);
-  var allowable = Pc / (gm * gsc);
-  var demand = Pe;
-  var ratio = demand / allowable;
-  var ok = ratio <= 1.0;
-  document.getElementById('lb_result').innerHTML = makeTable([
-    { label: 'Characteristic yield stress fy', val: (fy / 1e6).toFixed(2) + ' MPa' },
-    { label: 'Characteristic wall thickness t1', val: (t1 * 1000).toFixed(3) + ' mm' },
-    { label: 'External pressure Pe', val: (Pe / 1e6).toFixed(4) + ' MPa' },
-    { label: 'Elastic collapse pressure Pel', val: (Pel / 1e6).toFixed(4) + ' MPa' },
-    { label: 'Plastic collapse pressure Pp', val: (Pp / 1e6).toFixed(3) + ' MPa' },
-    { label: 'Characteristic collapse pressure Pc', val: (Pc / 1e6).toFixed(3) + ' MPa' },
-    { label: 'Allowable Pc / (γm·γsc)', val: (allowable / 1e6).toFixed(3) + ' MPa' },
-    { label: 'Utilisation Pe / Allowable', val: ratio.toFixed(4), badge: { cls: ok ? 's-pass' : 's-fail', txt: ok ? 'PASS' : 'FAIL' } }
-  ]) + makeBar(ratio, 'Utilisation (limit = 1.0)');
-}
-
-function calcBP() {
-  var D = v('bp_d') / 1000, t = v('bp_t') / 1000, h = v('bp_h');
-  var fy = v('bp_fy') * 1e6, afab = parseFloat(document.getElementById('bp_fab').value);
-  var gm = v('bp_gm'), gsc = v('bp_gsc'), rw = v('bp_rw');
-  var g = 9.807;
-  var Dt = D / t;
-  var Pe = rw * g * h;
-  var Ppr = 35 * fy * afab * Math.pow(t / D, 2.5);
-  var allowable = Ppr / (gm * gsc);
-  var ratio = Pe / allowable;
-  var ok = ratio <= 1.0 && Dt < 45;
-  document.getElementById('bp_result').innerHTML = makeTable([
-    { label: 'D/t ratio', val: Dt.toFixed(2), badge: { cls: Dt < 45 ? 's-pass' : 's-warn', txt: Dt < 45 ? '< 45 — OK' : '≥ 45 — formula limit!' } },
-    { label: 'External pressure Pe', val: (Pe / 1e6).toFixed(4) + ' MPa' },
-    { label: 'Propagating buckle pressure Ppr', val: (Ppr / 1e6).toFixed(3) + ' MPa' },
-    { label: 'Allowable Ppr / (γm·γsc)', val: (allowable / 1e6).toFixed(3) + ' MPa' },
-    { label: 'Utilisation Pe / Allowable', val: ratio.toFixed(4), badge: { cls: ok ? 's-pass' : 's-fail', txt: ok ? 'PASS' : 'FAIL — install buckle arrestors' } }
-  ]) + makeBar(ratio, 'Utilisation (limit = 1.0)');
-}
-
-function calcCS() {
-  var Do = v('cs_do'), t = v('cs_t'), Pid = v('cs_pid'), Pod = v('cs_pod');
-  var smys = v('cs_smys'), feq = parseFloat(document.getElementById('cs_feq').value);
-  var nu = v('cs_v'), E = v('cs_e'), alpha = v('cs_a'), dT = v('cs_dt'), ft = v('cs_ft');
-  var shp = (Pid - Pod) * (Do - t) / (2 * t);
-  var sEA = E * alpha * dT;
-  var sL = nu * shp - sEA;
-  var seq = Math.sqrt(shp * shp - shp * sL + sL * sL);
-  var allow = feq * ft * smys;
-  var ratio = seq / allow;
-  var ok = ratio <= 1.0;
-  document.getElementById('cs_result').innerHTML = makeTable([
-    { label: 'Hoop stress σhp', val: shp.toFixed(2) + ' MPa' },
-    { label: 'Thermal stress component E·α·ΔT', val: sEA.toFixed(2) + ' MPa' },
-    { label: 'Longitudinal stress σL', val: sL.toFixed(2) + ' MPa' + (sL < 0 ? ' (compressive)' : ' (tensile)') },
-    { label: 'Von Mises equivalent stress σeq', val: seq.toFixed(2) + ' MPa' },
-    { label: 'Allowable stress feq·ft·SMYS', val: allow.toFixed(2) + ' MPa' },
-    { label: 'Stress ratio σeq / allowable', val: ratio.toFixed(4) + ' (' + (ratio * 100).toFixed(1) + '%)', badge: { cls: ok ? 's-pass' : 's-fail', txt: ok ? 'PASS' : 'FAIL' } }
-  ]) + makeBar(ratio, 'Stress utilisation');
-}
-</script>
-
 
 <footer class="ppa-footer">
   <div class="ppa-footer-logo">Piping<span>Pro</span> Academy</div>
@@ -614,65 +477,347 @@ function calcCS() {
   <p style="margin-top:.3rem">© 2026 Zephrum Konsultan Limited. All rights reserved. &nbsp;·&nbsp; <a href="calculators.html">Calculator Suite</a></p>
 </footer>
 
-
-
-<!-- ══ THEORY & REFERENCE PANEL ══ -->
-<div class="panel" id="panel-theory">
-
-<div class="calc-tabs">
-  <button class="calc-tab active" onclick="showCalcTab('calculator')">⚙ Calculator</button>
-  <button class="calc-tab" onclick="showCalcTab('theory')">📚 Theory &amp; Reference</button>
-</div>
-
-<div class="calc-panel active" id="calctab-calculator">
-
-</div><!-- /calctab-calculator -->
-
-<!-- ══ THEORY & REFERENCE PANEL ══ -->
-<div class="calc-panel" id="calctab-theory">
-<div style="max-width:920px;margin:0 auto;padding:2rem 1.5rem;">
-  <div style="background:var(--accent-light,#f7ede3);border:1px solid rgba(196,92,42,.2);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--accent,#8b3a1a);margin-bottom:1.2rem;line-height:1.7;">
-    📚 Theory, formulae and code references for this calculator. For full course content and worked examples, visit <strong>PipingPro Academy</strong> courses.
-  </div>
-  
-    <div class="ref-section">
-      <div class="ref-title">Design Criteria — DNV-ST-F101</div>
-      <div class="ref-formula">
-        <b>Pressure containment:</b> t<sub>1</sub> = p<sub>d</sub> × D / (2 × f<sub>y</sub> × α<sub>U</sub> × γ<sub>m</sub> × γ<sub>SC</sub> + p<sub>d</sub>)<br/>
-        <b>External collapse:</b> (p<sub>e</sub> − p<sub>i</sub>) ≤ p<sub>c</sub>(t) / (γ<sub>m</sub> × γ<sub>SC</sub>)<br/>
-        <b>Propagating buckle pressure:</b> p<sub>pr</sub> = 35 × f<sub>y</sub> × (t/D)^2.5<br/>
-        <b>On-bottom stability:</b> F<sub>D</sub> + F<sub>I</sub> ≤ μ × (W<sub>s</sub> − F<sub>L</sub>)<br/>
-        <b>Free span natural frequency:</b> f<sub>n</sub> = (π/2L²) × √(EI/m<sub>e</sub>)
-      </div>
-    </div>
-    <div class="ref-section">
-      <div class="ref-title">Reference Standards</div>
-      <div class="ref-table-wrap"><table class="ref-table">
-        <tr><th>Standard</th><th>Application</th></tr>
-        <tr><td>DNV-ST-F101</td><td>Submarine Pipeline Systems — primary design standard</td></tr>
-        <tr><td>DNV-RP-F105</td><td>Free Spanning Pipelines — VIV and fatigue</td></tr>
-        <tr><td>DNV-RP-F109</td><td>On-Bottom Stability Design of Submarine Pipelines</td></tr>
-        <tr><td>ASME B31.8</td><td>Gas transmission — material and code compliance</td></tr>
-      </table></div>
-    </div>
-</div>
-</div>
-</div><!-- /calctab-theory -->
-<!-- ══ END THEORY PANEL ══ -->
 <script>
-/* ── THEORY TAB SWITCHING ── */
-function showCalcTab(name){
-  ['calculator','theory'].forEach(function(t){
-    var btn = document.querySelector('.calc-tab[onclick*="' + t + '"]');
-    var panel = document.getElementById('calctab-' + t);
-    if(btn) btn.classList.toggle('active', t===name);
-    if(panel) panel.classList.toggle('active', t===name);
+/* ── TAB SWITCHING ── */
+function switchTab(id){
+  ['wt','cs','ub','lb','bp','obs','theory'].forEach(function(t){
+    var p=document.getElementById('tab-'+t); if(p) p.classList.remove('active');
   });
+  var sel=document.getElementById('tab-'+id); if(sel) sel.classList.add('active');
+  document.querySelectorAll('.calc-tab').forEach(function(btn){
+    btn.classList.toggle('active', btn.getAttribute('onclick')==="switchTab('"+id+"')");
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function setVal(id,val){ var el=document.getElementById(id); if(el) el.value=val; }
+function v(id){ return parseFloat(document.getElementById(id).value)||0; }
+
+function loadPreset(opt){
+  if(opt==='wpcpf'){
+    setVal('wt_do',457.2); setVal('wt_smys',415); setVal('wt_pid',15); setVal('wt_pod',0);
+    setVal('wt_fh',0.77); setVal('wt_ft',1.0); setVal('wt_ca',0); setVal('wt_tol',0);
+    setVal('cs_do',457.2); setVal('cs_t',11.91); setVal('cs_ca',0); setVal('cs_pid',15); setVal('cs_pod',0);
+    setVal('cs_smys',415); setVal('cs_ft',1.0); setVal('cs_v',0.3); setVal('cs_e',203000);
+    setVal('cs_a',0.0000117); setVal('cs_tc',25); setVal('cs_t2',85);
+    document.getElementById('cs_feq').value='0.90';
+    setVal('ub_d',457.2); setVal('ub_tsel',14.91); setVal('ub_ca',0); setVal('ub_smys',415); setVal('ub_pi',15);
+    setVal('ub_t1',25); setVal('ub_t2',85); setVal('ub_h',0.8); setVal('ub_delta',300);
+    setVal('ub_tcoat',3); setVal('ub_rfbe',950); setVal('ub_rcont',1025.5); setVal('ub_rs',7850);
+    setVal('ub_e',203000); setVal('ub_a',0.0000117); setVal('ub_v',0.3);
+    setVal('ub_rbuc',1850); setVal('ub_rbc',1850); setVal('ub_fuc',0.1); setVal('ub_fc',0.5); setVal('ub_feq',0.9);
+    setVal('lb_d',457.2); setVal('lb_t',14.91); setVal('lb_h',35); setVal('lb_fy',415); setVal('lb_e',203000);
+    setVal('lb_v',0.3); setVal('lb_au',0.96); setVal('lb_tfab',1.0); setVal('lb_f0',0.015);
+    setVal('lb_gm',1.15); setVal('lb_gsc',1.04); document.getElementById('lb_fab').value='0.85';
+    setVal('bp_d',457.2); setVal('bp_t',14.91); setVal('bp_h',35); setVal('bp_fy',398.4);
+    setVal('bp_gm',1.15); setVal('bp_gsc',1.04); setVal('bp_rw',1025); document.getElementById('bp_fab').value='0.85';
+    setVal('obs_od',457.2); setVal('obs_wt',14.91); setVal('obs_tfbe',3); setVal('obs_tcc',0);
+    setVal('obs_rcc',3040); setVal('obs_rc',1025.5); setVal('obs_rw',1025); setVal('obs_gw',1.1);
+  } else if(opt==='fso'){
+    setVal('wt_do',323.85); setVal('wt_smys',415); setVal('wt_pid',10.0); setVal('wt_pod',0.603);
+    setVal('wt_fh',0.77); setVal('wt_ft',1.0); setVal('wt_ca',3.0); setVal('wt_tol',0.5);
+    setVal('cs_do',323.85); setVal('cs_t',8.38); setVal('cs_ca',3); setVal('cs_pid',10.0); setVal('cs_pod',0.603);
+    setVal('cs_smys',415); setVal('cs_ft',1.0); setVal('cs_v',0.3); setVal('cs_e',207000);
+    setVal('cs_a',0.0000117); setVal('cs_tc',25); setVal('cs_t2',85);
+    document.getElementById('cs_feq').value='0.90';
+    setVal('ub_d',323.85); setVal('ub_tsel',8.38); setVal('ub_ca',0); setVal('ub_smys',415); setVal('ub_pi',10);
+    setVal('ub_t1',25); setVal('ub_t2',85); setVal('ub_h',1.0); setVal('ub_delta',300);
+    setVal('ub_tcoat',0.5); setVal('ub_rfbe',1200); setVal('ub_rcont',850); setVal('ub_rs',7850);
+    setVal('ub_e',207000); setVal('ub_a',0.0000117); setVal('ub_v',0.3);
+    setVal('ub_rbuc',1850); setVal('ub_rbc',1850); setVal('ub_fuc',0.1); setVal('ub_fc',0.5); setVal('ub_feq',0.9);
+    setVal('lb_d',323.85); setVal('lb_t',8.38); setVal('lb_h',60); setVal('lb_fy',415); setVal('lb_e',207000);
+    setVal('lb_v',0.3); setVal('lb_au',0.96); setVal('lb_tfab',1.0); setVal('lb_f0',0.015);
+    setVal('lb_gm',1.15); setVal('lb_gsc',1.04); document.getElementById('lb_fab').value='1.0';
+    setVal('bp_d',323.85); setVal('bp_t',8.38); setVal('bp_h',60); setVal('bp_fy',398.4);
+    setVal('bp_gm',1.15); setVal('bp_gsc',1.04); setVal('bp_rw',1025); document.getElementById('bp_fab').value='1.0';
+    setVal('obs_od',323.85); setVal('obs_wt',8.38); setVal('obs_tfbe',0.5); setVal('obs_tcc',25.4);
+    setVal('obs_rcc',3040); setVal('obs_rc',850); setVal('obs_rw',1025); setVal('obs_gw',1.1);
+  } else if(opt==='spm'){
+    setVal('wt_do',609.6); setVal('wt_smys',415); setVal('wt_pid',8.0); setVal('wt_pod',0.352);
+    setVal('wt_fh',0.77); setVal('wt_ft',1.0); setVal('wt_ca',3.0); setVal('wt_tol',0.5);
+    setVal('cs_do',609.6); setVal('cs_t',12.70); setVal('cs_ca',3); setVal('cs_pid',8.0); setVal('cs_pod',0.352);
+    setVal('cs_smys',415); setVal('cs_ft',1.0); setVal('cs_v',0.3); setVal('cs_e',207000);
+    setVal('cs_a',0.0000117); setVal('cs_tc',25); setVal('cs_t2',85);
+    document.getElementById('cs_feq').value='0.90';
+    setVal('ub_d',609.6); setVal('ub_tsel',12.70); setVal('ub_ca',0); setVal('ub_smys',415); setVal('ub_pi',8);
+    setVal('ub_t1',25); setVal('ub_t2',85); setVal('ub_h',1.0); setVal('ub_delta',300);
+    setVal('ub_tcoat',0.5); setVal('ub_rfbe',1200); setVal('ub_rcont',850); setVal('ub_rs',7850);
+    setVal('ub_e',207000); setVal('ub_a',0.0000117); setVal('ub_v',0.3);
+    setVal('ub_rbuc',1850); setVal('ub_rbc',1850); setVal('ub_fuc',0.1); setVal('ub_fc',0.5); setVal('ub_feq',0.9);
+    setVal('lb_d',609.6); setVal('lb_t',12.70); setVal('lb_h',35); setVal('lb_fy',415); setVal('lb_e',207000);
+    setVal('lb_v',0.3); setVal('lb_au',0.96); setVal('lb_tfab',0.93); setVal('lb_f0',0.015);
+    setVal('lb_gm',1.15); setVal('lb_gsc',1.04); document.getElementById('lb_fab').value='0.85';
+    setVal('bp_d',609.6); setVal('bp_t',12.70); setVal('bp_h',35); setVal('bp_fy',398.4);
+    setVal('bp_gm',1.15); setVal('bp_gsc',1.04); setVal('bp_rw',1025); document.getElementById('bp_fab').value='0.85';
+    setVal('obs_od',609.6); setVal('obs_wt',12.70); setVal('obs_tfbe',0.5); setVal('obs_tcc',25.4);
+    setVal('obs_rcc',3040); setVal('obs_rc',850); setVal('obs_rw',1025); setVal('obs_gw',1.1);
+  }
+}
+
+function makeTable(rows){
+  var html='<div class="results-title">Results</div><div class="result-table">';
+  rows.forEach(function(r){
+    var badge=r.badge?'<span class="status-badge '+r.badge.cls+'">'+r.badge.txt+'</span>':'';
+    html+='<div class="result-row"><span class="r-label">'+r.label+'</span><span class="r-val">'+r.val+'</span>'+badge+'</div>';
+  });
+  return html+'</div>';
+}
+function makeBar(ratio,label){
+  var pct=Math.min(ratio*100,100).toFixed(1);
+  var col=ratio<0.75?'#1a6b5a':ratio<0.9?'#b8860b':'#8b3a1a';
+  return '<div class="util-wrap"><span class="util-label">'+label+'</span>'+
+    '<div class="util-bar"><div class="util-fill" style="width:'+pct+'%;background:'+col+'"></div></div>'+
+    '<span class="util-pct" style="color:'+col+'">'+(ratio*100).toFixed(1)+'%</span></div>';
+}
+
+/* ── 1 · WALL THICKNESS ── */
+function calcWT(){
+  var Do=v('wt_do'),smys=v('wt_smys'),Pid=v('wt_pid'),Pod=v('wt_pod');
+  var fh=v('wt_fh'),ft=v('wt_ft'),ca=v('wt_ca'),tol=v('wt_tol');
+  var shp=smys*fh*ft;
+  var tCalc=Do*(Pid-Pod)/(2*shp+(Pid-Pod));
+  var tnom=tCalc+ca+tol;
+  var dt=Do/tnom, dtOk=dt<=60;
+  document.getElementById('wt_result').innerHTML=makeTable([
+    {label:'Max allowable hoop stress σhp = SMYS·fh·ft',val:shp.toFixed(2)+' MPa'},
+    {label:'Pressure design thickness t',val:tCalc.toFixed(2)+' mm'},
+    {label:'Total allowance (CA + mill)',val:(ca+tol).toFixed(2)+' mm'},
+    {label:'Required nominal wall thickness tnom',val:tnom.toFixed(2)+' mm',badge:{cls:'s-info',txt:'Min. required'}},
+    {label:'D/t ratio (≤ 60, DEP 31.40.00.10)',val:dt.toFixed(1),badge:{cls:dtOk?'s-pass':'s-fail',txt:dtOk?'OK':'EXCEEDS 60'}}
+  ]);
+  window.PPA_REPORT={
+    docType:'Subsea Pipeline — Wall Thickness',codeNote:'ISO 13623:2017 / DNV-ST-F101',
+    sections:[
+      {title:'Pressure Containment Basis',badge:'ISO 13623:2017',type:'table',head:['Parameter','Value','Unit'],rows:[
+        ['Outside diameter Do',Do.toFixed(1),'mm'],['SMYS',smys.toFixed(0),'MPa'],
+        ['Internal design pressure Pid',Pid.toFixed(2),'MPa'],['External pressure Pod',Pod.toFixed(2),'MPa'],
+        ['Hoop design factor fh',fh.toFixed(3),'—'],['Temperature derating ft',ft.toFixed(3),'—'],
+        ['Corrosion allowance',ca.toFixed(2),'mm'],['Mill tolerance',tol.toFixed(2),'mm']
+      ]},
+      {title:'Results',type:'table',head:['Result','Value','Unit'],rows:[
+        ['Max allowable hoop stress σhp',shp.toFixed(2),'MPa'],
+        ['Pressure design thickness t',tCalc.toFixed(2),'mm'],
+        ['Required nominal wall tnom',tnom.toFixed(2),'mm'],
+        ['D/t ratio',dt.toFixed(1),'—']
+      ]}
+    ],
+    verdict:{status:dtOk?'pass':'warn',text:'Minimum required nominal wall thickness tnom = '+tnom.toFixed(2)+' mm — select next standard schedule ≥ this value. D/t = '+dt.toFixed(1)+(dtOk?' ≤ 60 OK.':' exceeds the DEP 60 limit.')}
+  };
+}
+
+/* ── 2 · COMBINED STRESS & ELASTIC BEND RADIUS ── */
+function calcCS(){
+  var Do=v('cs_do'),t=v('cs_t'),ca=v('cs_ca'),Pid=v('cs_pid'),Pod=v('cs_pod');
+  var smys=v('cs_smys'),feq=parseFloat(document.getElementById('cs_feq').value),ft=v('cs_ft');
+  var mu=v('cs_v'),E=v('cs_e'),al=v('cs_a'),Tc=v('cs_tc'),T=v('cs_t2');
+  var allow=feq*ft*smys;
+  function caseCalc(te){
+    var shp=(Pid-Pod)*(Do-te)/(2*te);
+    var sL=mu*shp;
+    var sEA=E*al*(Tc-T);
+    var sT=sL+sEA;
+    var seq=Math.sqrt(shp*shp-shp*sT+sT*sT);
+    var Sb1=allow-seq;
+    var Rcur=(E*Do)/(2*Sb1)/1000;
+    return {shp:shp,sL:sL,sEA:sEA,sT:sT,seq:seq,util:seq/allow,Sb1:Sb1,Rcur:Rcur,ok:seq<=allow};
+  }
+  var un=caseCalc(t);
+  var co=caseCalc(t-ca);
+  var rows=[
+    {label:'Allowable equivalent stress feq·ft·SMYS',val:allow.toFixed(2)+' MPa'},
+    {label:'Hoop / circumferential stress σhp',val:un.shp.toFixed(2)+' MPa'},
+    {label:'Longitudinal pressure stress σL = µ·σhp',val:un.sL.toFixed(2)+' MPa'},
+    {label:'Longitudinal thermal stress σEA = E·α·(Tc−T)',val:un.sEA.toFixed(2)+' MPa'},
+    {label:'Total longitudinal stress σT',val:un.sT.toFixed(2)+' MPa'+(un.sT<0?' (compressive)':' (tensile)')},
+    {label:'Von Mises equivalent stress σeq',val:un.seq.toFixed(2)+' MPa'},
+    {label:'Utilisation σeq / allowable'+(ca>0?' (uncorroded)':''),val:(un.util*100).toFixed(1)+'%',badge:{cls:un.ok?'s-pass':'s-fail',txt:un.ok?'PASS':'FAIL'}}
+  ];
+  if(ca>0){
+    rows.push({label:'Von Mises σeq (corroded, t−CA)',val:co.seq.toFixed(2)+' MPa'});
+    rows.push({label:'Utilisation (corroded)',val:(co.util*100).toFixed(1)+'%',badge:{cls:co.ok?'s-pass':'s-fail',txt:co.ok?'PASS':'FAIL'}});
+  }
+  var gov=ca>0?co:un;
+  rows.push({label:'Stress margin for bending Sb1',val:gov.Sb1.toFixed(2)+' MPa'});
+  rows.push({label:'Min. elastic bend radius Rcur',val:gov.Rcur.toFixed(1)+' m',badge:{cls:'s-info',txt:'Von Mises'}});
+  document.getElementById('cs_result').innerHTML=makeTable(rows)+makeBar(gov.util,'Stress utilisation (limit = 1.0)');
+  window.PPA_REPORT={
+    docType:'Subsea Pipeline — Combined Equivalent Stress & Elastic Bend Radius',codeNote:'ISO 13623:2017 Cl. 6.4.1.2',
+    sections:[
+      {title:'Input Data',badge:'ISO 13623:2017',type:'table',head:['Parameter','Value','Unit'],rows:[
+        ['Outside diameter Do',Do.toFixed(1),'mm'],['Selected wall thickness t',t.toFixed(2),'mm'],
+        ['Corrosion allowance CA',ca.toFixed(2),'mm'],['Internal pressure Pid',Pid.toFixed(2),'MPa'],
+        ['External pressure Pod',Pod.toFixed(2),'MPa'],['SMYS',smys.toFixed(0),'MPa'],
+        ['Equivalent stress factor feq',feq.toFixed(2),'—'],['Young\u2019s modulus E',E.toFixed(0),'MPa'],
+        ['Thermal coeff α',al.toExponential(2),'1/°C'],['Install temp Tc',Tc.toFixed(0),'°C'],['Design temp T',T.toFixed(0),'°C']
+      ]},
+      {title:'Combined Stress Results (governing case)',type:'table',head:['Result','Value','Unit'],rows:[
+        ['Hoop stress σhp',gov.shp.toFixed(2),'MPa'],['Longitudinal pressure σL',gov.sL.toFixed(2),'MPa'],
+        ['Thermal stress σEA',gov.sEA.toFixed(2),'MPa'],['Total longitudinal σT',gov.sT.toFixed(2),'MPa'],
+        ['Von Mises σeq',gov.seq.toFixed(2),'MPa'],['Allowable feq·ft·SMYS',allow.toFixed(2),'MPa'],
+        ['Utilisation',(gov.util*100).toFixed(1),'%']
+      ]},
+      {title:'Elastic Bend Radius',type:'table',head:['Result','Value','Unit'],rows:[
+        ['Stress margin for bending Sb1',gov.Sb1.toFixed(2),'MPa'],
+        ['Minimum elastic bend radius Rcur',gov.Rcur.toFixed(1),'m']
+      ]}
+    ],
+    verdict:{status:gov.ok?'pass':'fail',text:'Von Mises equivalent stress = '+gov.seq.toFixed(1)+' MPa vs allowable '+allow.toFixed(1)+' MPa ('+(gov.util*100).toFixed(1)+'%) — '+(gov.ok?'PASS':'FAIL')+'. Minimum elastic bend radius = '+gov.Rcur.toFixed(1)+' m.'}
+  };
+}
+
+/* ── 3 · UPHEAVAL BUCKLING (OTC 6335) ── */
+function calcUB(){
+  var g=9.80665;
+  var D=v('ub_d'),tsel=v('ub_tsel'),ca=v('ub_ca'),smys=v('ub_smys'),Pi=v('ub_pi');
+  var T1=v('ub_t1'),T2=v('ub_t2'),H=v('ub_h'),delta=v('ub_delta');
+  var t1=v('ub_tcoat'),rfbe=v('ub_rfbe'),rcont=v('ub_rcont'),rs=v('ub_rs');
+  var E=v('ub_e'),al=v('ub_a'),mu=v('ub_v');
+  var rbuc=v('ub_rbuc'),rbc=v('ub_rbc'),fuc=v('ub_fuc'),fc=v('ub_fc'),feq=v('ub_feq');
+  var t=tsel-ca;
+  var d=D-2*t;
+  var As=Math.PI/4*(D*D-d*d);
+  var Ai=Math.PI/4*d*d;
+  var I=Math.PI/64*(Math.pow(D,4)-Math.pow(d,4));
+  var EI=I*E/1e6;
+  var OD=D+2*t1;
+  var Sa=feq*smys;
+  var Shn=Pi*D/(2*t);
+  var Wfbe=(Math.PI/4*(Math.pow(D+2*t1,2)-D*D)*rfbe/1e6)*g;
+  var W=(As*rs/1e6)*g;
+  var Wte=W+Wfbe;
+  var Wto=Wte+(Math.PI/4*Math.pow(d/1000,2)*(rcont*g));
+  var Pl=Pi*Ai;
+  var Pel=mu*Shn*As;
+  var Tl=(al*As*(E/1000)*(T2-T1))*1000;
+  var Tel=(Pl-Pel)+Tl;
+  var dm=delta/1000;
+  var Wr=(1.16-4.76*(Math.sqrt(EI*Wte/dm)/Tel))*Tel*Math.sqrt(dm*Wte/EI);
+  var qun=H*(OD/1000)*(rbuc*g)*(1+(fuc*H)/(OD/1000));
+  var Qun=Wto+qun;
+  var qco=H*(OD/1000)*(rbc*g)*(1+(fc*H)/(OD/1000));
+  var Qco=Wto+qco;
+  var rUn=Wr/Qun, rCo=Wr/Qco;
+  var okUn=Qun>=Wr, okCo=Qco>=Wr, hoopOk=Shn<=Sa;
+  document.getElementById('ub_result').innerHTML=makeTable([
+    {label:'Steel area As',val:As.toFixed(0)+' mm²'},
+    {label:'Moment of inertia I',val:(I/1e6).toFixed(1)+' ×10⁶ mm⁴'},
+    {label:'Flexural rigidity EI',val:(EI/1e6).toFixed(2)+' ×10⁶ N·m²'},
+    {label:'Tensile hoop stress σh = Pi·D/2t',val:Shn.toFixed(1)+' MPa',badge:{cls:hoopOk?'s-pass':'s-fail',txt:hoopOk?'≤ Sa='+Sa.toFixed(0):'> Sa'}},
+    {label:'Empty pipe weight Wte',val:Wte.toFixed(1)+' N/m'},
+    {label:'Operating weight Wto',val:Wto.toFixed(1)+' N/m'},
+    {label:'Total effective expansion load Tel',val:(Tel/1000).toFixed(1)+' kN'},
+    {label:'Download required Wr (OTC 6335)',val:Wr.toFixed(1)+' N/m',badge:{cls:'s-info',txt:'Eq. 12'}},
+    {label:'Uncompacted: total download Q',val:Qun.toFixed(1)+' N/m',badge:{cls:okUn?'s-pass':'s-fail',txt:okUn?'NO PROPENSITY':'BUCKLES'}},
+    {label:'Compacted: total download Q',val:Qco.toFixed(1)+' N/m',badge:{cls:okCo?'s-pass':'s-fail',txt:okCo?'NO PROPENSITY':'BUCKLES'}}
+  ])+makeBar(rUn,'Uncompacted utilisation Wr/Q')+makeBar(rCo,'Compacted utilisation Wr/Q');
+  window.PPA_REPORT={
+    docType:'Subsea Pipeline — Upheaval Buckling Analysis',codeNote:'OTC 6335 (Palmer, 1990)',
+    sections:[
+      {title:'Input Data',badge:'OTC 6335',type:'table',head:['Parameter','Value','Unit'],rows:[
+        ['Outside diameter D',D.toFixed(1),'mm'],['Wall thickness (sel − CA) t',t.toFixed(2),'mm'],
+        ['Design pressure Pi',Pi.toFixed(1),'MPa'],['Install / design temp',T1.toFixed(0)+' / '+T2.toFixed(0),'°C'],
+        ['Depth of cover H',H.toFixed(2),'m'],['Imperfection height δ',delta.toFixed(0),'mm'],
+        ['Coating thickness / density',t1.toFixed(1)+' / '+rfbe.toFixed(0),'mm / kg/m³'],
+        ['Contents density',rcont.toFixed(1),'kg/m³']
+      ]},
+      {title:'Section Properties & Loads',type:'table',head:['Result','Value','Unit'],rows:[
+        ['Steel area As',As.toFixed(0),'mm²'],['Internal area Ai',Ai.toFixed(0),'mm²'],
+        ['Moment of inertia I',(I/1e6).toFixed(1),'×10⁶ mm⁴'],['Flexural rigidity EI',(EI/1e6).toFixed(2),'×10⁶ N·m²'],
+        ['Empty weight Wte',Wte.toFixed(1),'N/m'],['Operating weight Wto',Wto.toFixed(1),'N/m'],
+        ['Pressure load Pl',(Pl/1000).toFixed(1),'kN'],['Poisson load Pel',(Pel/1000).toFixed(1),'kN'],
+        ['Thermal load Tl',(Tl/1000).toFixed(1),'kN'],['Total expansion load Tel',(Tel/1000).toFixed(1),'kN']
+      ]},
+      {title:'Upheaval Buckling Check',type:'table',head:['Result','Value','Unit'],rows:[
+        ['Download required Wr',Wr.toFixed(1),'N/m'],
+        ['Uncompacted uplift resistance q',qun.toFixed(1),'N/m'],['Uncompacted total download Q',Qun.toFixed(1),'N/m'],
+        ['Compacted uplift resistance q',qco.toFixed(1),'N/m'],['Compacted total download Q',Qco.toFixed(1),'N/m']
+      ]}
+    ],
+    verdict:{status:(okUn&&okCo)?'pass':(okCo?'warn':'fail'),text:'Download required Wr = '+Wr.toFixed(1)+' N/m. Available download Q = '+Qun.toFixed(0)+' N/m (uncompacted) / '+Qco.toFixed(0)+' N/m (compacted). '+((okUn&&okCo)?'Pipeline has no propensity for upheaval buckling at H = '+H.toFixed(2)+' m cover.':(okCo?'Adequate only with compacted backfill — increase cover.':'Insufficient cover — increase depth or download.'))}
+  };
+}
+
+/* ── 4 · LOCAL BUCKLING / COLLAPSE ── */
+function solveCubicPc(Pel,Pp,f0,D,t1){
+  var b=-Pel;
+  var c1=-(Pp*Pp)+Pp*Pel*f0*(D/t1);
+  var d=Pel*Pp*Pp;
+  var u=(1/3)*(-(b*b)/3+c1);
+  var vv=(1/2)*((2/27)*b*b*b-(1/3)*b*c1+d);
+  var disc=u*u*u+vv*vv,y;
+  if(disc>=0){var sq=Math.sqrt(disc);y=Math.cbrt(-vv+sq)+Math.cbrt(-vv-sq);}
+  else{var phi1=Math.acos(-vv/Math.sqrt(-u*u*u));y=-2*Math.sqrt(-u)*Math.cos(Math.PI/3+phi1/3);}
+  return y-b/3;
+}
+function calcLB(){
+  var D=v('lb_d')/1000,t=v('lb_t')/1000,h=v('lb_h');
+  var fy_nom=v('lb_fy'),E=v('lb_e')*1e6,nu=v('lb_v');
+  var afab=parseFloat(document.getElementById('lb_fab').value);
+  var au=v('lb_au'),tfab=v('lb_tfab')/1000,f0=v('lb_f0');
+  var gm=v('lb_gm'),gsc=v('lb_gsc');
+  var rw=1025,g=9.80665;
+  var fy=fy_nom*au*1e6,t1=t-tfab;
+  var Pe=rw*g*h;
+  var Pel=2*E*Math.pow(t1/D,3)/(1-nu*nu);
+  var Pp=fy*afab*(2*t1/D);
+  var Pc=solveCubicPc(Pel,Pp,f0,D,t1);
+  var allowable=Pc/(gm*gsc),ratio=Pe/allowable,ok=ratio<=1.0;
+  document.getElementById('lb_result').innerHTML=makeTable([
+    {label:'Characteristic yield stress fy',val:(fy/1e6).toFixed(2)+' MPa'},
+    {label:'Characteristic wall thickness t1',val:(t1*1000).toFixed(3)+' mm'},
+    {label:'External pressure Pe',val:(Pe/1e6).toFixed(4)+' MPa'},
+    {label:'Elastic collapse pressure Pel',val:(Pel/1e6).toFixed(4)+' MPa'},
+    {label:'Plastic collapse pressure Pp',val:(Pp/1e6).toFixed(3)+' MPa'},
+    {label:'Characteristic collapse pressure Pc',val:(Pc/1e6).toFixed(3)+' MPa'},
+    {label:'Allowable Pc / (γm·γsc)',val:(allowable/1e6).toFixed(3)+' MPa'},
+    {label:'Utilisation Pe / Allowable',val:(ratio*100).toFixed(1)+'%',badge:{cls:ok?'s-pass':'s-fail',txt:ok?'PASS':'FAIL'}}
+  ])+makeBar(ratio,'Utilisation (limit = 1.0)');
+}
+
+/* ── 5 · BUCKLE PROPAGATION ── */
+function calcBP(){
+  var D=v('bp_d')/1000,t=v('bp_t')/1000,h=v('bp_h');
+  var fy=v('bp_fy')*1e6,afab=parseFloat(document.getElementById('bp_fab').value);
+  var gm=v('bp_gm'),gsc=v('bp_gsc'),rw=v('bp_rw'),g=9.80665;
+  var Dt=D/t,Pe=rw*g*h;
+  var Ppr=35*fy*afab*Math.pow(t/D,2.5);
+  var allowable=Ppr/(gm*gsc),ratio=Pe/allowable,ok=ratio<=1.0&&Dt<45;
+  document.getElementById('bp_result').innerHTML=makeTable([
+    {label:'D/t ratio',val:Dt.toFixed(2),badge:{cls:Dt<45?'s-pass':'s-warn',txt:Dt<45?'< 45 — OK':'≥ 45 — formula limit!'}},
+    {label:'External pressure Pe',val:(Pe/1e6).toFixed(4)+' MPa'},
+    {label:'Propagating buckle pressure Ppr',val:(Ppr/1e6).toFixed(3)+' MPa'},
+    {label:'Allowable Ppr / (γm·γsc)',val:(allowable/1e6).toFixed(3)+' MPa'},
+    {label:'Utilisation Pe / Allowable',val:(ratio*100).toFixed(1)+'%',badge:{cls:ok?'s-pass':'s-fail',txt:ok?'PASS':'FAIL — buckle arrestors'}}
+  ])+makeBar(ratio,'Utilisation (limit = 1.0)');
+}
+
+/* ── 6 · ON-BOTTOM STABILITY ── */
+function calcOBS(){
+  var od=v('obs_od')/1000,wt=v('obs_wt')/1000,tfbe=v('obs_tfbe')/1000;
+  var tcc=v('obs_tcc')/1000,rcc=v('obs_rcc'),rc=v('obs_rc');
+  var rw=v('obs_rw'),gw=v('obs_gw');
+  var g=9.80665,rSteel=7850,rFBE=1200;
+  var D_total=od+2*tfbe+2*tcc;
+  var A_steel=Math.PI/4*(od*od-(od-2*wt)*(od-2*wt));
+  var A_fbe=Math.PI/4*((od+2*tfbe)*(od+2*tfbe)-od*od);
+  var A_cc=Math.PI/4*((od+2*tfbe+2*tcc)*(od+2*tfbe+2*tcc)-(od+2*tfbe)*(od+2*tfbe));
+  var A_int=Math.PI/4*(od-2*wt)*(od-2*wt);
+  var b=rw*g*Math.PI*D_total*D_total/4;
+  var w_steel=rSteel*g*A_steel,w_fbe=rFBE*g*A_fbe,w_cc=rcc*g*A_cc,w_cont=rc*g*A_int;
+  var ws=w_steel+w_fbe+w_cc+w_cont-b;
+  var ratio=gw*b/ws,ok=ratio<=1.0;
+  document.getElementById('obs_result').innerHTML=makeTable([
+    {label:'Buoyancy per unit length b',val:b.toFixed(1)+' N/m'},
+    {label:'Steel pipe weight (in air)',val:w_steel.toFixed(1)+' N/m'},
+    {label:'Concrete coating weight',val:w_cc.toFixed(1)+' N/m'},
+    {label:'Content weight',val:w_cont.toFixed(1)+' N/m'},
+    {label:'Net submerged weight ws',val:ws.toFixed(1)+' N/m'},
+    {label:'Stability ratio γw·b / ws',val:ratio.toFixed(4),badge:{cls:ok?'s-pass':'s-fail',txt:ok?'PASS':'FAIL'}}
+  ])+makeBar(ratio,'Utilisation (limit = 1.0)');
 }
 </script>
-
 <script>
-function ppaReportSubsea(){ if(!window.PPA_REPORT){alert("Run the Wall Thickness calculation first");return;} ppaOpenReport(); }
+function ppaReportSubsea(){ if(!window.PPA_REPORT){alert("Run a calculation first");return;} ppaOpenReport(); }
 </script>
 <!-- ════════ PipingPro Shared Report Engine v1.0 ════════
      Inject before </body>. Each calculator sets window.PPA_REPORT = {...} on
@@ -799,6 +944,5 @@ table.d tr:nth-child(even) td{background:#faf6ef}
 }
 </script>
 <!-- ════════ end Shared Report Engine ════════ -->
-
 </body>
 </html>
