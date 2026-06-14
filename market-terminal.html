@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Market Terminal — TSLA · NVDA · SPY · AMD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A1E36; --panel:#102A47; --panel-2:#0D2440; --raised:#15304F;
+    --line:rgba(255,255,255,0.08); --line-strong:rgba(255,255,255,0.14);
+    --text:#EAF1F8; --muted:#8BA0B8; --faint:#5E7491;
+    --teal:#2E9CC0; --teal-dim:#1C7293; --amber:#E0962F; --amber-dim:#C9802B;
+    --green:#43C08A; --green-bg:rgba(67,192,138,0.12);
+    --red:#E5705F; --red-bg:rgba(229,112,95,0.12);
+    --blue:#5BA7E0; --blue-bg:rgba(91,167,224,0.12);
+    --display:'Space Grotesk',sans-serif; --body:'Inter',sans-serif; --mono:'IBM Plex Mono',monospace;
+    --r:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(46,156,192,0.10), transparent 60%),
+      radial-gradient(900px 500px at -10% 10%, rgba(224,150,47,0.06), transparent 55%),
+      var(--bg);
+    color:var(--text); font-family:var(--body);
+    -webkit-font-smoothing:antialiased; line-height:1.5;
+    min-height:100vh; padding:0 0 64px;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+
+  /* ---- top bar ---- */
+  .topbar{
+    display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+    padding:20px 0 18px; border-bottom:1px solid var(--line); margin-bottom:26px;
+  }
+  .brand{display:flex;align-items:baseline;gap:10px}
+  .brand .mark{font-family:var(--display);font-weight:700;font-size:19px;letter-spacing:-0.01em}
+  .brand .mark .dot{color:var(--amber)}
+  .brand .sub{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.14em}
+  .topbar .spacer{flex:1}
+  .asof{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+  .asof b{color:var(--teal);font-weight:500}
+  .meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+  .status{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11.5px}
+  .status .led{width:8px;height:8px;border-radius:50%;background:var(--faint);flex-shrink:0}
+  .status.live{color:var(--green)} .status.live .led{background:var(--green);animation:pulse 2.2s infinite}
+  .status.closed{color:var(--amber)} .status.closed .led{background:var(--amber)}
+  .status.err{color:var(--red)} .status.err .led{background:var(--red)}
+  .status.snap{color:var(--muted)} .status.snap .led{background:var(--faint)}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(67,192,138,.5)}70%{box-shadow:0 0 0 7px rgba(67,192,138,0)}100%{box-shadow:0 0 0 0 rgba(67,192,138,0)}}
+  @media(prefers-reduced-motion:reduce){.status.live .led{animation:none}}
+
+  /* ---- ticker switcher ---- */
+  .switch{display:flex;gap:6px;background:var(--panel-2);border:1px solid var(--line);padding:5px;border-radius:12px}
+  .switch button{
+    font-family:var(--display);font-weight:600;font-size:13.5px;letter-spacing:0.02em;
+    color:var(--muted);background:transparent;border:0;cursor:pointer;
+    padding:7px 14px;border-radius:8px;transition:.18s;
+  }
+  .switch button:hover{color:var(--text)}
+  .switch button.on{background:var(--teal);color:#04223a;box-shadow:0 2px 12px rgba(46,156,192,.3)}
+  .switch button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+
+  /* ---- hero ---- */
+  .hero{display:flex;align-items:flex-end;gap:26px;flex-wrap:wrap;margin-bottom:8px}
+  .hero .id .tk{font-family:var(--display);font-size:15px;font-weight:600;color:var(--teal);letter-spacing:0.06em}
+  .hero .id .nm{font-size:13px;color:var(--muted)}
+  .hero .px{display:flex;align-items:baseline;gap:14px;margin-top:2px}
+  .hero .price{font-family:var(--display);font-size:46px;font-weight:600;letter-spacing:-0.02em;line-height:1}
+  .hero .chg{font-family:var(--mono);font-size:15px;font-weight:500;padding:3px 0}
+  .up{color:var(--green)} .down{color:var(--red)}
+  .hero .spacer{flex:1}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .chip{font-family:var(--mono);font-size:11.5px;color:var(--muted);background:var(--panel-2);border:1px solid var(--line);padding:5px 11px;border-radius:20px;white-space:nowrap}
+  .chip b{color:var(--text);font-weight:500}
+  .verdict{font-family:var(--display);font-weight:600;font-size:12px;letter-spacing:0.02em;padding:6px 13px;border-radius:20px}
+  .v-bull{color:var(--green);background:var(--green-bg)}
+  .v-neutral{color:var(--amber);background:rgba(224,150,47,0.13)}
+  .v-info{color:var(--blue);background:var(--blue-bg)}
+
+  /* ---- 52wk range bar ---- */
+  .rangebar{margin:22px 0 30px}
+  .rangebar .track{position:relative;height:6px;border-radius:6px;background:linear-gradient(90deg,var(--teal-dim),var(--amber-dim));opacity:.85}
+  .rangebar .dot{position:absolute;top:50%;width:14px;height:14px;border-radius:50%;background:var(--text);border:3px solid var(--bg);transform:translate(-50%,-50%);box-shadow:0 0 0 1px var(--line-strong)}
+  .rangebar .ends{display:flex;justify-content:space-between;margin-top:9px;font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+  .rangebar .ends .lab{display:block;font-family:var(--body);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--faint);margin-bottom:1px}
+
+  /* ---- panel grid ---- */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+  .panel{background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--line);border-radius:var(--r);padding:18px 20px}
+  .panel.span{grid-column:1/-1}
+  .panel h3{font-family:var(--display);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:var(--teal);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .panel h3 .tag{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--faint);text-transform:none}
+
+  .rows{display:flex;flex-direction:column;gap:1px}
+  .row{display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--line)}
+  .row:last-child{border-bottom:0}
+  .row .k{font-size:12.5px;color:var(--muted)}
+  .row .v{font-family:var(--mono);font-size:13.5px;font-weight:500;color:var(--text)}
+  .row .v.sm{font-size:12px}
+
+  /* ---- analyst target bar ---- */
+  .tgt{margin-top:6px}
+  .tgt .scale{position:relative;height:34px;margin:18px 0 6px}
+  .tgt .base{position:absolute;top:16px;left:0;right:0;height:3px;background:var(--line-strong);border-radius:3px}
+  .tgt .fill{position:absolute;top:16px;height:3px;background:var(--teal);border-radius:3px}
+  .tgt .mk{position:absolute;top:7px;width:2px;height:21px;background:var(--muted)}
+  .tgt .mk.price{background:var(--text);width:3px;height:25px;top:5px}
+  .tgt .mk.avg{background:var(--amber);width:3px;height:25px;top:5px}
+  .tgt .cap{position:absolute;font-family:var(--mono);font-size:10.5px;white-space:nowrap;transform:translateX(-50%)}
+  .tgt .cap.top{top:-14px} .tgt .cap.bot{top:30px}
+  .tgt .legend{display:flex;gap:16px;font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:10px}
+  .tgt .legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:middle}
+
+  /* ---- level ladder (signature) ---- */
+  .ladder{margin-top:4px}
+  .ladder .scale{position:relative;height:128px;margin:8px 0 2px}
+  .ladder .lvl{position:absolute;left:0;right:120px;display:flex;align-items:center;gap:0;height:0}
+  .ladder .lvl .line{flex:1;border-top:1.5px dashed var(--lc,var(--muted));opacity:.7}
+  .ladder .lvl .px{position:absolute;left:0;font-family:var(--mono);font-size:11px;color:var(--text);background:var(--panel);padding:0 6px;transform:translateY(-50%)}
+  .ladder .lvl .lab{position:absolute;right:-124px;width:118px;font-size:11px;color:var(--muted);transform:translateY(-50%);line-height:1.25}
+  .ladder .lvl.now .line{border-top:2.5px solid var(--text);opacity:1}
+  .ladder .lvl.now .px{color:#04223a;background:var(--text);font-weight:600;border-radius:4px}
+  .ladder .lvl.now .lab{color:var(--text);font-weight:600}
+
+  .miniband{display:flex;gap:14px;margin-top:14px;flex-wrap:wrap}
+  .miniband .b{flex:1;min-width:90px;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+  .miniband .b .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--faint)}
+  .miniband .b .v{font-family:var(--mono);font-size:16px;font-weight:600;margin-top:3px}
+
+  /* ---- empty state ---- */
+  .empty{text-align:left;padding:6px 0 2px}
+  .empty p{font-size:12.5px;color:var(--muted);margin-bottom:12px;max-width:42ch}
+  .empty .fields{display:flex;flex-wrap:wrap;gap:7px}
+  .empty .f{font-family:var(--mono);font-size:11px;color:var(--faint);border:1px dashed var(--line-strong);border-radius:7px;padding:4px 9px}
+  .empty a{color:var(--teal);text-decoration:none;font-weight:500}
+  .empty a:hover{text-decoration:underline}
+
+  /* ---- read / bottom line ---- */
+  .read{font-size:14px;line-height:1.65;color:#D3E0EC}
+  .read strong{color:var(--text);font-weight:600}
+
+  /* ---- sector mini (SPY) ---- */
+  .sectors{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+  .sectors .s{display:flex;align-items:center;gap:10px;font-size:12px}
+  .sectors .s .nm{width:130px;color:var(--muted)}
+  .sectors .s .bar{flex:1;height:7px;background:var(--panel-2);border-radius:5px;overflow:hidden}
+  .sectors .s .bar i{display:block;height:100%;background:var(--teal);border-radius:5px}
+  .sectors .s .pc{font-family:var(--mono);font-size:11.5px;width:46px;text-align:right;color:var(--text)}
+
+  /* ---- footer / details ---- */
+  .foot{margin-top:30px;border-top:1px solid var(--line);padding-top:18px}
+  .disc{font-size:11.5px;color:var(--faint);line-height:1.6;max-width:78ch}
+  details{margin-top:14px;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:0 16px}
+  summary{cursor:pointer;padding:13px 0;font-family:var(--display);font-weight:600;font-size:13px;color:var(--teal);list-style:none}
+  summary::-webkit-details-marker{display:none}
+  summary::before{content:"+ ";color:var(--amber)}
+  details[open] summary::before{content:"– "}
+  details .body{padding:2px 0 16px;font-size:12.5px;color:var(--muted);line-height:1.65}
+  details .body ol{margin:8px 0 8px 18px} details .body li{margin-bottom:6px}
+  details code,pre{font-family:var(--mono);font-size:11.5px}
+  pre{background:#071629;border:1px solid var(--line);border-radius:9px;padding:13px;overflow:auto;color:#BDD3E6;margin-top:8px}
+  details .body a{color:var(--teal)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand">
+      <span class="mark">Market<span class="dot">·</span>Terminal</span>
+      <span class="sub">data view</span>
+    </div>
+    <div class="spacer"></div>
+    <div class="switch" id="switch" role="tablist" aria-label="Select ticker"></div>
+    <div class="meta">
+      <div class="status snap" id="status" aria-live="polite"><span class="led"></span><span id="status-txt">—</span></div>
+      <div class="asof">fundamentals · <b id="asof">—</b></div>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="id">
+      <div class="tk" id="h-tk">—</div>
+      <div class="nm" id="h-nm">—</div>
+      <div class="px">
+        <span class="price" id="h-price">—</span>
+        <span class="chg" id="h-chg">—</span>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="chips" id="h-chips"></div>
+  </div>
+
+  <div class="rangebar">
+    <div class="track"><div class="dot" id="rb-dot"></div></div>
+    <div class="ends">
+      <span><span class="lab">52-wk low</span><span id="rb-lo">—</span></span>
+      <span style="text-align:right"><span class="lab">52-wk high</span><span id="rb-hi">—</span></span>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="panel" id="p-snapshot">
+      <h3>Snapshot</h3>
+      <div class="rows" id="snap-rows"></div>
+    </div>
+
+    <div class="panel" id="p-analyst">
+      <h3>Valuation &amp; analysts <span class="tag" id="an-tag"></span></h3>
+      <div id="an-body"></div>
+    </div>
+
+    <div class="panel span" id="p-tech">
+      <h3>Technical &amp; options layer <span class="tag" id="tech-tag"></span></h3>
+      <div id="tech-body"></div>
+    </div>
+
+    <div class="panel span" id="p-read">
+      <h3>The read</h3>
+      <p class="read" id="read-body">—</p>
+    </div>
+  </div>
+
+  <div class="foot">
+    <p class="disc" id="disc">
+      Informational only — not financial advice. Figures are a manually-entered snapshot, not a live feed,
+      and individual analyst targets carry different dates. Prices marked “≈” are approximate. Verify against your broker before acting.
+    </p>
+
+    <details>
+      <summary>Connect a live data feed</summary>
+      <div class="body">
+        <p>Right now the numbers below are baked in as a dated snapshot so the page works offline. To make the dropdown pull live quotes, point each ticker at a data API and replace the values in the <code>DATA</code> object. Browser CORS and API keys mean you’ll want a small proxy — which you already have available on Cloudflare Pages Functions.</p>
+        <ol>
+          <li>Pick a provider with a free tier (e.g. Finnhub, Twelve Data, Financial Modeling Prep, Alpha Vantage). Quotes are easy; analyst targets and options open interest need a provider that exposes them (FMP / Tradier for OI).</li>
+          <li>Add a Pages Function at <code>/functions/quote.js</code> that holds the key server-side and forwards the request — keeps your key out of the browser and sidesteps CORS.</li>
+          <li>Fetch on dropdown change and merge into the ticker’s data object, then re-render.</li>
+        </ol>
+        <pre>// /functions/quote.js  (Cloudflare Pages Function)
+export async function onRequest({ request, env }) {
+  const t = new URL(request.url).searchParams.get("t");
+  const r = await fetch(
+    `https://finnhub.io/api/v1/quote?symbol=${t}&token=${env.FINNHUB_KEY}`
+  );
+  return new Response(await r.text(), {
+    headers: { "content-type": "application/json" }
+  });
+}
+
+// in this page:
+async function loadLive(ticker){
+  const q = await (await fetch(`/quote?t=${ticker}`)).json();
+  DATA[ticker].price     = q.c;            // current
+  DATA[ticker].change    = q.c - q.pc;     // vs prev close
+  DATA[ticker].changePct = ((q.c - q.pc)/q.pc*100);
+  render(ticker);
+}</pre>
+        <p>Open interest / gamma walls (the NVDA layer) aren’t in most free feeds — those come from an options-data provider or by parsing your IBKR chain export. Until wired, the other tickers show that layer as an empty state.</p>
+      </div>
+    </details>
+  </div>
+
+</div>
+
+<script>
+const DATA = {
+  TSLA:{
+    name:"Tesla, Inc.", exch:"NASDAQ", asOf:"12 Jun 2026",
+    price:400.77, change:17.66, changePct:4.61, approx:false,
+    marketCap:"$1.51T", w52lo:288.77, w52hi:498.83,
+    pe:"365×", ps:"≈11×", vol:"49.6M (avg 47.6M)",
+    nextEarnings:"29 Jul 2026",
+    catalyst:"SpaceX IPO & merger speculation; Q2 deliveries; Robotaxi rollout",
+    rating:"Hold", ratingClass:"v-neutral", analysts:"27–47 (mixed)",
+    tgtLo:null, tgtAvg:415, tgtHi:600, upside:3.5,
+    verdict:"Hold · fully valued",
+    tech:null,
+    read:"Trading right around the analysts' average target (~$415) on a <strong>Hold</strong> consensus — limited implied upside from here. A high-beta, headline-driven name: the recent pop is SpaceX-IPO sentiment, not fundamentals. Next hard catalyst is Q2 deliveries into the 29 Jul print."
+  },
+  NVDA:{
+    name:"NVIDIA Corporation", exch:"NASDAQ", asOf:"12 Jun 2026",
+    price:205.19, change:0.32, changePct:0.16, approx:false,
+    marketCap:"$4.95T", w52lo:140.86, w52hi:236.54,
+    pe:"31×", ps:"≈20×", vol:"105.4M",
+    nextEarnings:"late Aug 2026",
+    catalyst:"AI data-centre demand; Blackwell sold out → Rubin next; quad-witching 18 Jun",
+    rating:"Strong Buy", ratingClass:"v-bull", analysts:"62",
+    tgtLo:180, tgtAvg:298, tgtHi:500, upside:45,
+    verdict:"Bullish lean · range-bound",
+    tech:{
+      scaleMin:184, scaleMax:224,
+      rsi:"45.9 · neutral", dma50:"≈$206", ema20:"≈$211",
+      pc:"0.71 · call-heavy", iv:"36.7% (IV rank 25)",
+      levels:[
+        {v:220, lab:"Call wall · 513K OI", c:"#E5705F"},
+        {v:211, lab:"Resistance", c:"#E5705F"},
+        {v:205.19, lab:"Price · put wall · 50-DMA", now:true},
+        {v:199.5, lab:"Support · held 3×", c:"#43C08A"},
+        {v:196, lab:"Zero-gamma flip", c:"#E0962F"},
+        {v:185, lab:"Max pain", c:"#8BA0B8"}
+      ]
+    },
+    read:"Bullish on the <strong>12-month view</strong> — Strong Buy, ~$298 consensus (+45%), 65% revenue growth — but <strong>range-bound and dealer-pinned near term</strong>. Four independent reads (analyst targets, the 50-day line, the spinning-top candle, RSI, and the OI walls) all converge on the same map: floor at $199.5–205, lid at $211–220, trapdoor at $196. Direction up, timing not yet."
+  },
+  SPY:{
+    name:"SPDR S&P 500 ETF Trust", exch:"NYSE Arca", asOf:"12 Jun 2026",
+    price:737.76, change:12.32, changePct:1.70, approx:false,
+    marketCap:"$690B AUM", w52lo:508.46, w52hi:737.76,
+    pe:"26.4×", ps:"Exp 0.09% · Yld ~1.1%", vol:"≈88M avg",
+    nextEarnings:"n/a — index fund",
+    catalyst:"Macro: Iran peace-deal optimism; hot May PPI (+6.5% YoY); Fed path",
+    isETF:true,
+    rating:"ETF", ratingClass:"v-info", analysts:"—",
+    sectors:[["Technology",34.1],["Financials",12.3],["Comm. services",10.8],["Consumer cyclical",9.8],["Healthcare",9.3]],
+    verdict:"At all-time highs",
+    tech:null,
+    read:"The market itself — at/near <strong>all-time highs</strong> on geopolitical relief. Broad large-cap exposure that's <strong>34% tech-weighted</strong>, so it largely moves with NVDA, AMD and the other megacaps rather than independently of them. Watch ~$733 as near-term support into the 18 Jun quad-witching."
+  },
+  AMD:{
+    name:"Advanced Micro Devices", exch:"NASDAQ", asOf:"12 Jun 2026",
+    price:515, change:38, changePct:7.97, approx:true,
+    marketCap:"$834B", w52lo:120, w52hi:546.44,
+    pe:"—", ps:"7.9×", vol:"elevated",
+    nextEarnings:"4 Aug 2026",
+    catalyst:"Meta MI450 GPU deal; data-centre share gains vs NVDA & Intel",
+    rating:"Strong Buy", ratingClass:"v-bull", analysts:"33+",
+    tgtLo:248, tgtAvg:560, tgtHi:665, upside:9,
+    verdict:"Strong Buy · high momentum",
+    tech:null,
+    read:"<strong>Strong Buy</strong> with fresh upgrades — Citi to Buy at $575, BofA $560, Barclays $665 high. Cheaper than NVDA on sales (P/S ≈8× vs ≈20×), which is the bull case. The flip side: <strong>+324% over the past year</strong> means high momentum and high volatility — the kind of mover where position sizing matters most. (Price ≈ derived from market cap.)"
+  }
+};
+const ORDER = ["TSLA","NVDA","SPY","AMD"];
+
+/* ============================================================
+   LIVE DATA CONFIG
+   - When deployed on Cloudflare Pages, leave `endpoint` as "/quote"
+     and add the Pages Function (quote.js) with your FINNHUB_KEY.
+   - For a quick LOCAL test only, paste a key into `directKey`
+     (note: that exposes the key in the browser — don't ship it).
+   - Leave both blank to keep the page as a static snapshot.
+   ============================================================ */
+const CONFIG = {
+  endpoint: "/quote",     // Cloudflare Pages Function path (recommended)
+  directKey: "",          // local test only: a Finnhub API key
+  refreshMs: 60000,       // poll cadence; data is 15-min delayed so 60s is ample
+  marketHoursOnly: true   // pause polling outside US market hours
+};
+let active = "NVDA";
+let timer = null;
+const liveConfigured = () => !!(CONFIG.directKey || CONFIG.endpoint);
+
+function etParts(){
+  const p = new Intl.DateTimeFormat("en-US",{timeZone:"America/New_York",weekday:"short",hour:"2-digit",minute:"2-digit",hour12:false}).formatToParts(new Date());
+  const g = t => p.find(x=>x.type===t).value;
+  return { wd:g("weekday"), min:(+g("hour"))*60 + (+g("minute")) };
+}
+function marketOpen(){
+  const {wd,min} = etParts();
+  return !["Sat","Sun"].includes(wd) && min>=570 && min<960;   // 9:30–16:00 ET (holidays not handled)
+}
+const nowET = () => new Intl.DateTimeFormat("en-US",{timeZone:"America/New_York",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false}).format(new Date());
+
+function setStatus(kind,text){ $("#status").className="status "+kind; $("#status-txt").textContent=text; }
+
+async function fetchQuote(t){
+  let url;
+  if(CONFIG.directKey)      url = `https://finnhub.io/api/v1/quote?symbol=${t}&token=${CONFIG.directKey}`;
+  else if(CONFIG.endpoint)  url = `${CONFIG.endpoint}?t=${t}`;
+  else return null;
+  const r = await fetch(url,{cache:"no-store"});
+  if(!r.ok) throw new Error("http "+r.status);
+  const q = await r.json();
+  if(typeof q.c !== "number" || q.c === 0) throw new Error("no quote");
+  return q;   // Finnhub shape: {c,d,dp,h,l,o,pc,t}
+}
+
+async function refresh(){
+  if(!liveConfigured()){ setStatus("snap","snapshot · feed not connected"); return; }
+  if(CONFIG.marketHoursOnly && !marketOpen()){ setStatus("closed","market closed · last close shown"); return; }
+  try{
+    const t = active, q = await fetchQuote(t), d = DATA[t];
+    d.price = q.c; d.change = q.d; d.changePct = q.dp; d.approx = false;
+    render(t, true);
+    setStatus("live",`live · 15-min delayed · ${nowET()} ET`);
+  }catch(e){
+    setStatus("err","feed error · showing snapshot");
+  }
+}
+
+function startLive(){
+  if(timer) clearInterval(timer);
+  timer = setInterval(()=>{ if(!document.hidden) refresh(); }, CONFIG.refreshMs);
+}
+document.addEventListener("visibilitychange",()=>{ if(!document.hidden && liveConfigured()) refresh(); });
+
+const $ = s => document.querySelector(s);
+const fmt = n => (typeof n==="number" ? n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}) : n);
+const fmt0 = n => (typeof n==="number" ? Math.round(n).toLocaleString("en-US") : n);
+
+function buildSwitch(active){
+  const el = $("#switch"); el.innerHTML="";
+  ORDER.forEach(t=>{
+    const b=document.createElement("button");
+    b.textContent=t; b.setAttribute("role","tab");
+    b.className = t===active ? "on":"";
+    b.setAttribute("aria-selected", t===active);
+    b.onclick=()=>render(t);
+    el.appendChild(b);
+  });
+}
+
+function render(t, fromLive=false){
+  active = t;
+  const d = DATA[t];
+  buildSwitch(t);
+  $("#asof").textContent = d.asOf;
+
+  // hero
+  $("#h-tk").textContent = t + " · " + d.exch;
+  $("#h-nm").textContent = d.name;
+  $("#h-price").textContent = (d.approx?"≈$":"$") + fmt(d.price);
+  const up = d.changePct >= 0;
+  $("#h-chg").className = "chg " + (up?"up":"down");
+  $("#h-chg").textContent = (up?"▲ +":"▼ ") + fmt(d.change) + "  (" + (up?"+":"") + d.changePct.toFixed(2) + "%)";
+
+  // chips
+  const chips = [
+    `<span class="chip">Mkt cap <b>${d.marketCap}</b></span>`,
+    `<span class="chip">${d.isETF?"P/E":"P/E"} <b>${d.pe}</b></span>`,
+    `<span class="verdict ${d.ratingClass}">${d.verdict}</span>`
+  ];
+  $("#h-chips").innerHTML = chips.join("");
+
+  // 52wk range bar
+  const lo=d.w52lo, hi=d.w52hi;
+  let pos = ((d.price-lo)/(hi-lo))*100; pos=Math.max(2,Math.min(98,pos));
+  $("#rb-dot").style.left = pos+"%";
+  $("#rb-lo").textContent = "$"+fmt(lo);
+  $("#rb-hi").textContent = "$"+fmt(hi);
+
+  // snapshot
+  $("#snap-rows").innerHTML = [
+    ["Market cap / AUM", d.marketCap],
+    ["52-week range", "$"+fmt0(d.w52lo)+" – $"+fmt0(d.w52hi)],
+    [d.isETF?"Expense / yield":"Price / sales", d.ps],
+    ["Volume", d.vol],
+    ["Next earnings", d.nextEarnings],
+    ["In focus", d.catalyst]
+  ].map(([k,v])=>`<div class="row"><span class="k">${k}</span><span class="v ${v&&v.length>22?'sm':''}">${v}</span></div>`).join("");
+
+  // analyst / valuation
+  renderAnalyst(d);
+
+  // technical layer
+  renderTech(t,d);
+
+  // read
+  $("#read-body").innerHTML = d.read;
+
+  // fetch a fresh quote when the user switches ticker (not on a live re-render)
+  if(!fromLive && liveConfigured()) refresh();
+}
+
+function renderAnalyst(d){
+  $("#an-tag").textContent = d.isETF ? "index fund" : d.analysts+" analysts";
+  if(d.isETF){
+    let html = `<div class="rows">
+      <div class="row"><span class="k">Structure</span><span class="v sm">Tracks S&amp;P 500 (500 large-caps)</span></div>
+      <div class="row"><span class="k">P/E (index)</span><span class="v">${d.pe}</span></div>
+      <div class="row"><span class="k">Expense / yield</span><span class="v sm">${d.ps}</span></div>
+    </div>
+    <div style="margin-top:14px;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--faint)">Top sector weights</div>
+    <div class="sectors">`;
+    d.sectors.forEach(([n,p])=>{
+      html += `<div class="s"><span class="nm">${n}</span><span class="bar"><i style="width:${p*2.6}%"></i></span><span class="pc">${p}%</span></div>`;
+    });
+    html += `</div>`;
+    $("#an-body").innerHTML = html;
+    return;
+  }
+
+  // price-vs-target bar
+  const lo = d.tgtLo!=null ? d.tgtLo : Math.min(d.price, d.tgtAvg)*0.9;
+  const hi = d.tgtHi!=null ? d.tgtHi : d.tgtAvg*1.05;
+  const span = hi-lo;
+  const pPx = ((d.price-lo)/span)*100;
+  const pAvg= ((d.tgtAvg-lo)/span)*100;
+  const clamp=x=>Math.max(3,Math.min(97,x));
+  const fillL = Math.min(pPx,pAvg), fillW=Math.abs(pAvg-pPx);
+
+  let caps = `
+    <span class="mk price" style="left:${clamp(pPx)}%"></span>
+    <span class="cap top" style="left:${clamp(pPx)}%;color:var(--text)">$${fmt0(d.price)}</span>
+    <span class="mk avg" style="left:${clamp(pAvg)}%"></span>
+    <span class="cap bot" style="left:${clamp(pAvg)}%;color:var(--amber)">avg $${fmt0(d.tgtAvg)}</span>`;
+  if(d.tgtHi!=null) caps += `<span class="mk" style="left:97%"></span><span class="cap bot" style="left:97%;color:var(--muted)">$${fmt0(d.tgtHi)}</span>`;
+  if(d.tgtLo!=null) caps += `<span class="mk" style="left:3%"></span><span class="cap bot" style="left:3%;color:var(--muted)">$${fmt0(d.tgtLo)}</span>`;
+
+  $("#an-body").innerHTML = `
+    <div class="rows">
+      <div class="row"><span class="k">Consensus rating</span><span class="v"><span class="verdict ${d.ratingClass}" style="font-size:11px;padding:3px 9px">${d.rating}</span></span></div>
+      <div class="row"><span class="k">Average target</span><span class="v">$${fmt0(d.tgtAvg)}</span></div>
+      <div class="row"><span class="k">Implied vs price</span><span class="v ${d.upside>=0?'up':'down'}">${d.upside>=0?'+':''}${d.upside}%</span></div>
+      <div class="row"><span class="k">Target range</span><span class="v sm">$${fmt0(d.tgtLo||lo)} – $${fmt0(d.tgtHi)}</span></div>
+    </div>
+    <div class="tgt"><div class="scale">
+      <div class="base"></div><div class="fill" style="left:${clamp(fillL)}%;width:${fillW}%"></div>
+      ${caps}
+    </div>
+    <div class="legend"><span><i style="background:var(--text)"></i>price</span><span><i style="background:var(--amber)"></i>avg target</span></div>
+    </div>`;
+}
+
+function renderTech(t,d){
+  $("#tech-tag").textContent = d.tech ? "OI as of 12 Jun" : "not loaded";
+  if(!d.tech){
+    $("#tech-body").innerHTML = `<div class="empty">
+      <p>The technical and options-positioning layer isn't loaded for <b style="color:var(--text)">${t}</b>. These fields populate from a live feed — see <a href="#" onclick="document.querySelector('details').open=true;return false;">Connect a live data feed</a> below.</p>
+      <div class="fields">
+        <span class="f">RSI-14</span><span class="f">50-day MA</span><span class="f">20-day EMA</span>
+        <span class="f">support / resistance</span><span class="f">put-call ratio</span>
+        <span class="f">IV</span><span class="f">call wall</span><span class="f">put wall</span><span class="f">zero-gamma</span><span class="f">max pain</span>
+      </div>
+    </div>`;
+    return;
+  }
+  const T=d.tech, min=T.scaleMin, max=T.scaleMax, span=max-min;
+  const y = v => 100 - ((v-min)/span)*100;  // % from top
+  let lvls = T.levels.map(L=>{
+    const top = y(L.v);
+    return `<div class="lvl ${L.now?'now':''}" style="top:${top}%;--lc:${L.c||'var(--muted)'}">
+      <span class="px">$${L.v}</span><span class="line"></span><span class="lab">${L.lab}</span>
+    </div>`;
+  }).join("");
+
+  $("#tech-body").innerHTML = `
+    <div style="display:grid;grid-template-columns:1.15fr 1fr;gap:24px" class="techgrid">
+      <div class="ladder"><div class="scale">${lvls}</div></div>
+      <div>
+        <div class="rows">
+          <div class="row"><span class="k">RSI (14)</span><span class="v sm">${T.rsi}</span></div>
+          <div class="row"><span class="k">50-day MA</span><span class="v">${T.dma50}</span></div>
+          <div class="row"><span class="k">20-day EMA</span><span class="v">${T.ema20}</span></div>
+          <div class="row"><span class="k">Put / call OI</span><span class="v sm">${T.pc}</span></div>
+          <div class="row"><span class="k">Implied vol</span><span class="v sm">${T.iv}</span></div>
+        </div>
+        <div class="miniband">
+          <div class="b"><div class="k">Floor</div><div class="v" style="color:var(--green)">$199.5</div></div>
+          <div class="b"><div class="k">Lid</div><div class="v" style="color:var(--red)">$211</div></div>
+          <div class="b"><div class="k">Trapdoor</div><div class="v" style="color:var(--amber)">$196</div></div>
+        </div>
+      </div>
+    </div>`;
+}
+
+// responsive: stack ladder on small screens
+const mq = window.matchMedia("(max-width:680px)");
+function applyMq(){ document.querySelectorAll('.techgrid').forEach(g=>{ g.style.gridTemplateColumns = mq.matches?'1fr':'1.15fr 1fr'; }); }
+mq.addEventListener?.("change", applyMq);
+
+render("NVDA");
+applyMq();
+startLive();
+</script>
+</body>
+</html>
