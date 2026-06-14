@@ -1,12 +1,13 @@
-// functions/quote.js
+// functions/api/quote.js
 // Cloudflare Pages Function — proxies a Finnhub quote so your API key
 // stays server-side and the browser avoids CORS issues.
 //
 // SETUP
-// 1. Put this file at:  /functions/quote.js  in your Pages project repo.
+// 1. Put this file at:  /functions/api/quote.js  (alongside your other api routes).
+//    It will be served at:  /api/quote
 // 2. In the Cloudflare dashboard: Pages → your project → Settings →
 //    Environment variables → add  FINNHUB_KEY = <your key>  (mark it encrypted).
-// 3. Deploy. The page calls /quote?t=NVDA and gets back Finnhub's JSON.
+// 3. Deploy. The page calls /api/quote?t=NVDA and gets back Finnhub's JSON.
 //
 // Free Finnhub tier: ~60 calls/min, US quotes 15-min delayed — fine for a
 // 4-ticker page polling once a minute.
