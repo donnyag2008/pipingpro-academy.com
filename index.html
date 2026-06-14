@@ -1143,6 +1143,65 @@
 
   </div>
 </section>
+<!-- ============================================================
+     MARKET TERMINAL — homepage section
+     Paste this whole block into index.html immediately AFTER the
+     AI Software section's closing tag:
+
+         </section>            <-- end of  id="ai-software"
+         <!-- paste here -->
+         <section class="audience-section" id="audience">
+
+     The section is hidden by default and reveals itself only when
+     you're logged in as admin (localStorage 'ppa_admin' === '1').
+     To make it public, delete the inline  style="display:none"
+     and the small <script> at the bottom of this block.
+     ============================================================ -->
+
+<section class="content-section" id="market-terminal" style="display:none">
+  <style>
+    .sb-mkt .sb-banner{background:linear-gradient(140deg,#0a1e36 0%,#1c7293 100%);}
+    #market-terminal .mkt-flag{display:inline-block;font-size:.7rem;font-weight:600;letter-spacing:.06em;
+      text-transform:uppercase;color:var(--gold);background:var(--gold-pale);
+      border:1px solid var(--gold);border-radius:20px;padding:.25rem .7rem;margin-left:.6rem;vertical-align:middle;}
+  </style>
+
+  <p class="section-label">Private Tool</p>
+  <h2>Market Terminal <span class="mkt-flag">Admin only</span></h2>
+  <p class="section-intro">A personal data view for US equities — live (15-minute delayed) price, valuation, analyst targets, and options open-interest levels across selected tickers. Not part of the membership; visible to you only.</p>
+
+  <div class="suite-blocks">
+    <a class="suite-block sb-mkt" href="market-terminal.html">
+      <div class="sb-banner">
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polyline points="9,44 22,30 33,38 55,14" stroke="rgba(255,255,255,0.9)" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="55" cy="14" r="3.4" fill="rgba(255,210,130,0.95)"/>
+          <line x1="9" y1="52" x2="55" y2="52" stroke="rgba(255,255,255,0.4)" stroke-width="1.6"/>
+          <line x1="9" y1="14" x2="9" y2="52" stroke="rgba(255,255,255,0.4)" stroke-width="1.6"/>
+        </svg>
+        <span class="sb-count">TSLA · NVDA · SPY · AMD</span>
+      </div>
+      <div class="sb-body">
+        <div class="sb-eyebrow">Markets</div>
+        <h3>Market Terminal</h3>
+        <p>Price, 52-week range, analyst targets and the options open-interest level map — switchable across four tickers. Quotes refresh on a live (delayed) feed; the deeper options layer updates daily.</p>
+        <span class="sb-go">Open Terminal →</span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<script>
+  /* reveal the Market Terminal section only for admin */
+  (function () {
+    var admin = localStorage.getItem('ppa_admin') === '1'
+             || sessionStorage.getItem('ppa_admin') === '1';
+    if (admin) {
+      var s = document.getElementById('market-terminal');
+      if (s) s.style.display = '';
+    }
+  })();
+</script>
 
 <!-- FOR WHO -->
 <section class="audience-section" id="audience">
