@@ -166,10 +166,45 @@
   details code,pre{font-family:var(--mono);font-size:11.5px}
   pre{background:#071629;border:1px solid var(--line);border-radius:9px;padding:13px;overflow:auto;color:#BDD3E6;margin-top:8px}
   details .body a{color:var(--teal)}
+
+  /* ---- access gate ---- */
+  #gate{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:1.2rem;
+    background:radial-gradient(900px 500px at 70% -10%,rgba(46,156,192,.12),transparent 60%),var(--bg)}
+  #gate[hidden]{display:none}
+  .gate-card{width:100%;max-width:360px;text-align:center;background:linear-gradient(180deg,var(--panel),var(--panel-2));
+    border:1px solid var(--line);border-radius:18px;padding:34px 30px 28px}
+  .gate-lock{font-size:30px;margin-bottom:10px}
+  .gate-title{font-family:var(--display);font-size:20px;font-weight:600;letter-spacing:-0.01em}
+  .gate-msg{font-size:12.5px;color:var(--muted);line-height:1.6;margin:8px auto 20px;max-width:30ch}
+  .gate-input{width:100%;padding:11px 13px;background:var(--panel-2);border:1px solid var(--line-strong);border-radius:9px;
+    color:var(--text);font-family:var(--mono);font-size:13px;outline:none;transition:border-color .18s}
+  .gate-input:focus{border-color:var(--teal)}
+  .gate-err{font-size:11.5px;color:var(--red);margin-top:9px;display:none}
+  .gate-err.show{display:block}
+  .gate-btn{width:100%;margin-top:14px;padding:11px;background:var(--teal);color:#04223a;font-family:var(--display);
+    font-weight:600;font-size:13.5px;border:0;border-radius:9px;cursor:pointer;transition:.18s}
+  .gate-btn:hover{background:#3FB0D4}
+  .gate-btn:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  .gate-back{display:inline-block;margin-top:16px;font-size:11.5px;color:var(--muted);text-decoration:none}
+  .gate-back:hover{color:var(--teal)}
 </style>
 </head>
 <body>
-<div class="wrap">
+
+<!-- ACCESS GATE -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-lock">🔒</div>
+    <div class="gate-title">Market Terminal</div>
+    <p class="gate-msg">A private tool — restricted access. Enter your access key, or open from the member area.</p>
+    <input class="gate-input" id="gate-key" type="password" placeholder="Access key" autocomplete="off" aria-label="Access key">
+    <div class="gate-err" id="gate-err">That key isn't right.</div>
+    <button class="gate-btn" id="gate-btn">Unlock</button>
+    <a class="gate-back" href="/">← Back to PipingPro Academy</a>
+  </div>
+</div>
+
+<div class="wrap" id="app" hidden>
 
   <div class="topbar">
     <div class="brand">
@@ -347,7 +382,7 @@ const ORDER = ["TSLA","NVDA","SPY","AMD"];
    - Leave both blank to keep the page as a static snapshot.
    ============================================================ */
 const CONFIG = {
-  endpoint: "/quote",     // Cloudflare Pages Function path (recommended)
+  endpoint: "/api/quote",  // Cloudflare Pages Function at functions/api/quote.js
   directKey: "",          // local test only: a Finnhub API key
   refreshMs: 60000,       // poll cadence; data is 15-min delayed so 60s is ample
   marketHoursOnly: true   // pause polling outside US market hours
@@ -565,9 +600,33 @@ const mq = window.matchMedia("(max-width:680px)");
 function applyMq(){ document.querySelectorAll('.techgrid').forEach(g=>{ g.style.gridTemplateColumns = mq.matches?'1fr':'1.15fr 1fr'; }); }
 mq.addEventListener?.("change", applyMq);
 
-render("NVDA");
-applyMq();
-startLive();
+// ---- access gate ----
+const ADMIN_KEY = "PPA-ADMIN-2026";   // same key as the main PipingPro site
+(function(){
+  const p = new URLSearchParams(location.search);
+  if(p.get("admin") === ADMIN_KEY){ localStorage.setItem("ppa_admin","1"); history.replaceState({},"",location.pathname); }
+})();
+function hasAccess(){
+  return localStorage.getItem("ppa_admin")==="1" || sessionStorage.getItem("ppa_admin")==="1";
+  // To also let paying members in, append:  || localStorage.getItem("ppa_member")==="1"
+}
+let appStarted = false;
+function initApp(){
+  if(appStarted) return; appStarted = true;
+  document.getElementById("gate").hidden = true;
+  document.getElementById("app").hidden = false;
+  render("NVDA"); applyMq(); startLive();
+}
+function tryUnlock(){
+  const v = document.getElementById("gate-key").value.trim();
+  if(v === ADMIN_KEY){ localStorage.setItem("ppa_admin","1"); initApp(); }
+  else document.getElementById("gate-err").classList.add("show");
+}
+document.getElementById("gate-btn").addEventListener("click", tryUnlock);
+document.getElementById("gate-key").addEventListener("keydown", e=>{ if(e.key==="Enter") tryUnlock(); });
+
+if(hasAccess()) initApp();
+else setTimeout(()=>document.getElementById("gate-key")?.focus(), 150);
 </script>
 </body>
 </html>
