@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Do a Subsea Pipeline Mechanical Design Analysis | PipingPro Academy</title>
+<meta name="description" content="A practical, code-traceable workflow for subsea pipeline mechanical design: wall thickness, combined Von Mises stress, elastic bend radius, on-bottom stability, local collapse, propagating buckle and upheaval buckling — to ISO 13623, DNV-ST-F101, DNV-RP-F109 and OTC 6335, with a fully worked 18-inch example.">
+<link rel="canonical" href="https://pipingpro-academy.com/subsea-pipeline-mechanical-design-analysis.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to Do a Subsea Pipeline Mechanical Design Analysis">
+<meta property="og:description" content="A code-traceable workflow for subsea pipeline mechanical design — wall thickness, combined stress, elastic bend radius, collapse, propagation and upheaval buckling — with a fully worked 18-inch example.">
+<meta property="og:site_name" content="PipingPro Academy">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#faf6ef; --surface:#f3ede2; --surface2:#e8dfd0;
+  --ink:#1a1510; --ink2:#4a3f30; --ink3:#6b5d49;
+  --accent:#8b3a1a; --gold:#b8860b; --gold-deep:#d4a017;
+  --accent-light:#f6e6df; --gold-light:#f5e9c8;
+  --rule:#c8b89a; --rule-soft:#e3d9c8;
+  --pass:#1a6b5a; --pass-bg:#e7f1ee;
+  --serif:'DM Serif Display',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.7;-webkit-font-smoothing:antialiased;}
+
+/* ---- nav ---- */
+.ppa-nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;height:60px;padding:0 5%;background:var(--ink);border-bottom:2px solid var(--gold);}
+.ppa-nav-logo{font-family:var(--serif);font-size:1.15rem;color:var(--gold-deep);letter-spacing:.02em;text-decoration:none;}
+.ppa-nav-logo span{color:var(--gold);}
+.ppa-nav-back{color:#ccc;font-family:var(--sans);font-size:.82rem;font-weight:500;letter-spacing:.05em;text-transform:uppercase;text-decoration:none;}
+.ppa-nav-back:hover{color:var(--gold-deep);}
+
+/* ---- hero ---- */
+.hero{max-width:780px;margin:0 auto;padding:3rem 1.5rem 1.5rem;}
+.hero .eyebrow{font-family:var(--mono);font-size:.72rem;font-weight:500;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);margin-bottom:.8rem;}
+.hero h1{font-family:var(--serif);font-weight:400;font-size:2.7rem;line-height:1.12;color:var(--ink);margin:0 0 1rem;}
+.hero h1 em{font-style:normal;color:var(--accent);}
+.hero .lead{font-size:1.15rem;line-height:1.6;color:var(--ink2);margin:0 0 1.4rem;}
+.hero .meta{display:flex;flex-wrap:wrap;gap:1.2rem;align-items:center;font-size:.82rem;color:var(--ink3);font-family:var(--mono);border-top:1px solid var(--rule-soft);border-bottom:1px solid var(--rule-soft);padding:.7rem 0;}
+.hero .meta .std{color:var(--accent);font-weight:500;}
+
+/* ---- layout ---- */
+.wrap{max-width:780px;margin:0 auto;padding:0 1.5rem 4rem;}
+article h2{font-family:var(--serif);font-weight:400;font-size:1.7rem;color:var(--ink);margin:2.6rem 0 .9rem;padding-bottom:.4rem;border-bottom:2px solid var(--accent);}
+article h2 .num{color:var(--gold);font-size:1.1rem;font-family:var(--mono);margin-right:.5rem;vertical-align:.1em;}
+article h3{font-family:var(--sans);font-weight:700;font-size:1.12rem;color:var(--accent);margin:1.8rem 0 .6rem;letter-spacing:.01em;}
+article p{margin:0 0 1.1rem;}
+article strong{color:var(--ink);font-weight:600;}
+.lead-in{font-size:1.05rem;color:var(--ink2);}
+
+/* lists */
+article ol,article ul{margin:0 0 1.2rem;padding-left:1.4rem;}
+article li{margin-bottom:.45rem;}
+article ol{counter-reset:step;list-style:none;padding-left:0;}
+article ol.steps li{counter-increment:step;position:relative;padding-left:2.4rem;margin-bottom:.7rem;}
+article ol.steps li::before{content:counter(step);position:absolute;left:0;top:.05rem;width:1.7rem;height:1.7rem;background:var(--accent);color:#fff;font-family:var(--mono);font-size:.8rem;font-weight:500;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+
+/* equation block */
+.eq{font-family:var(--mono);font-size:1rem;color:var(--ink);background:var(--surface);border-left:4px solid var(--gold);border-radius:0 6px 6px 0;padding:.9rem 1.2rem;margin:1rem 0 1.3rem;overflow-x:auto;line-height:2;}
+.eq .v{font-style:italic;color:var(--accent);}
+.eq + .eq{margin-top:-.6rem;}
+
+/* tables */
+.tbl-wrap{overflow-x:auto;margin:1.1rem 0 1.4rem;}
+table{border-collapse:collapse;width:100%;font-size:.9rem;}
+caption{caption-side:top;text-align:left;font-family:var(--mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin-bottom:.5rem;}
+th{background:var(--ink);color:var(--paper);font-family:var(--sans);font-weight:600;text-align:left;padding:.6rem .8rem;font-size:.82rem;}
+td{padding:.55rem .8rem;border-bottom:1px solid var(--rule-soft);color:var(--ink2);vertical-align:top;}
+tbody tr:nth-child(even){background:rgba(232,223,208,.4);}
+td.r{text-align:right;font-family:var(--mono);}
+td .ok{color:var(--pass);font-weight:600;}
+
+/* callouts */
+.callout{border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.3rem 0;font-size:.95rem;line-height:1.6;}
+.callout .ctitle{font-family:var(--mono);font-size:.7rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem;}
+.callout p{margin:0;}
+.callout.result{background:var(--pass-bg);border-left:4px solid var(--pass);}
+.callout.result .ctitle{color:var(--pass);}
+.callout.note{background:var(--gold-light);border-left:4px solid var(--gold);}
+.callout.note .ctitle{color:#8a6608;}
+.callout.info{background:var(--accent-light);border-left:4px solid var(--accent);}
+.callout.info .ctitle{color:var(--accent);}
+
+/* TOC */
+.toc{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:1.2rem 1.4rem;margin:1.5rem 0 2rem;}
+.toc .toc-title{font-family:var(--mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:.7rem;}
+.toc ol{counter-reset:toc;list-style:none;padding:0;margin:0;columns:2;column-gap:2rem;}
+.toc li{counter-increment:toc;margin-bottom:.35rem;font-size:.9rem;break-inside:avoid;}
+.toc a{color:var(--ink2);text-decoration:none;}
+.toc a::before{content:counter(toc) ". ";color:var(--gold);font-family:var(--mono);font-size:.8rem;}
+.toc a:hover{color:var(--accent);}
+
+.cta{display:block;background:var(--accent);color:#fff;text-decoration:none;border-radius:8px;padding:1.3rem 1.5rem;margin:2rem 0;transition:background .15s;}
+.cta:hover{background:#722f15;}
+.cta .ct-eyebrow{font-family:var(--mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold-light);margin-bottom:.3rem;}
+.cta .ct-title{font-family:var(--serif);font-size:1.3rem;line-height:1.2;margin-bottom:.3rem;}
+.cta .ct-sub{font-size:.9rem;color:rgba(255,255,255,.85);}
+
+.endnote{font-size:.8rem;color:var(--ink3);font-style:italic;border-top:1px solid var(--rule-soft);padding-top:1rem;margin-top:2.5rem;}
+
+/* footer */
+.ppa-footer{background:var(--ink);color:rgba(245,242,235,0.5);text-align:center;padding:2rem;font-size:13px;margin-top:3rem;}
+.ppa-footer a{color:var(--gold);text-decoration:none;}
+.ppa-footer-logo{font-family:var(--serif);font-size:1.1rem;color:var(--paper);margin-bottom:.4rem;}
+.ppa-footer-logo span{color:var(--accent);}
+
+@media(max-width:640px){
+  .hero h1{font-size:2rem;}
+  body{font-size:16px;}
+  .toc ol{columns:1;}
+}
+</style>
+</head>
+<body>
+
+<nav class="ppa-nav">
+  <a href="index.html" class="ppa-nav-logo">Piping<span>Pro</span> Academy</a>
+  <a href="guides.html" class="ppa-nav-back">← All Guides</a>
+</nav>
+
+<header class="hero">
+  <div class="eyebrow">Technical Guide · Subsea Engineering</div>
+  <h1>How to Do a Subsea Pipeline <em>Mechanical Design Analysis</em></h1>
+  <p class="lead">A practical, code-traceable workflow for wall thickness, combined stress, elastic bend radius, on-bottom stability, collapse, propagation and upheaval buckling — demonstrated end to end on a real 18-inch buried export line.</p>
+  <div class="meta">
+    <span>PipingPro Academy</span>
+    <span>~16 min read</span>
+    <span class="std">ISO 13623 · DNV-ST-F101 · DNV-RP-F109 · OTC 6335</span>
+  </div>
+</header>
+
+<div class="wrap">
+<article>
+
+<p class="lead-in">A subsea pipeline must be shown to survive every phase of its life — installation, hydrotest, operation and shutdown — against a defined set of limit states. This guide sets out the complete mechanical design workflow, explains <em>why</em> each check is performed, gives the governing equations from the recognised codes, and demonstrates every step with figures reproduced exactly from a real 18-inch liquid line running from the well-pad manifolds (WP-1, WP-2, WP-3) to a Central Processing Facility (CPF).</p>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#s1">Introduction &amp; scope</a></li>
+    <li><a href="#s2">Codes &amp; design basis</a></li>
+    <li><a href="#s3">Design &amp; input data</a></li>
+    <li><a href="#s4">Wall thickness</a></li>
+    <li><a href="#s5">Combined equivalent stress</a></li>
+    <li><a href="#s6">Elastic bend radius</a></li>
+    <li><a href="#s7">On-bottom stability</a></li>
+    <li><a href="#s8">Local buckling / collapse</a></li>
+    <li><a href="#s9">Propagating buckle</a></li>
+    <li><a href="#s10">Upheaval buckling</a></li>
+    <li><a href="#s11">Workflow summary</a></li>
+    <li><a href="#s12">Automating the analysis</a></li>
+  </ol>
+</nav>
+
+<h2 id="s1"><span class="num">1</span>Introduction and scope</h2>
+<p>The objective is not only to arrive at a set of numbers, but to leave you able to defend each result against the standard it derives from. A subsea pipeline mechanical design analysis assembles the following checks:</p>
+<ol class="steps">
+  <li><strong>Wall thickness</strong> for pressure containment (bursting), to ISO 13623:2017 and DNV-ST-F101.</li>
+  <li><strong>Combined (equivalent) stress</strong> in the fully restrained condition, using the Von Mises criterion to ISO 13623:2017.</li>
+  <li><strong>Minimum elastic bend radius</strong> derived from the available stress margin.</li>
+  <li><strong>On-bottom stability</strong> of the as-laid line, to DNV-RP-F109.</li>
+  <li><strong>Local buckling / external-pressure collapse</strong>, to DNV-ST-F101.</li>
+  <li><strong>Propagating buckle</strong> resistance and buckle-arrestor spacing, to DNV-ST-F101.</li>
+  <li><strong>Upheaval buckling</strong> of the buried line, by the simplified Palmer method of OTC 6335.</li>
+</ol>
+<p>The first three checks govern the pressure-containing wall and the routing of a restrained line. On-bottom stability, collapse and propagation govern an unburied or as-laid pipe. Upheaval buckling governs a trenched-and-buried pipe operating hot. The worked line here is buried, so wall thickness, combined stress and upheaval buckling are the controlling deliverables.</p>
+<div class="callout info">
+  <div class="ctitle">Design philosophy</div>
+  <p>ISO 13623 applies an allowable-stress approach (a usage factor on yield). DNV-ST-F101 applies a limit-state, load-and-resistance-factored approach (partial safety factors γ<sub>m</sub> and γ<sub>SC</sub>). Both coexist in a typical subsea scope: the line-pipe wall and combined stress are taken to ISO 13623, while collapse and propagation — which depend on water depth — are taken to DNV-ST-F101. They are complementary, not interchangeable.</p>
+</div>
+
+<h2 id="s2"><span class="num">2</span>Codes, standards and design basis</h2>
+<p>The analysis is performed to the latest editions of the following documents.</p>
+<div class="tbl-wrap"><table>
+  <thead><tr><th>Standard</th><th>Application in this workflow</th></tr></thead>
+  <tbody>
+    <tr><td><strong>ISO 13623:2017</strong></td><td>Pipeline transportation systems. Governs wall thickness (Cl. 6.4.1.1) and combined equivalent stress (Cl. 6.4.1.2).</td></tr>
+    <tr><td><strong>DNV-ST-F101</strong></td><td>Submarine pipeline systems. Governs external-pressure collapse, propagating buckle, and the partial safety factors.</td></tr>
+    <tr><td><strong>DNV-RP-F109</strong></td><td>On-bottom stability design of submarine pipelines.</td></tr>
+    <tr><td><strong>OTC 6335</strong> (Palmer, 1990)</td><td>Design of submarine pipelines against upheaval buckling — the buried-line download / uplift-resistance check.</td></tr>
+    <tr><td><strong>DEP 31.40.00.10-Gen</strong></td><td>Shell pipeline engineering DEP. Imposes the limit D/t ≤ 60.</td></tr>
+  </tbody>
+</table></div>
+<p>The line is designed for Location Class 1 and Low Safety Class. ISO 13623 Table 2 sets the hoop design factor f<sub>h</sub> = 0.77 for the general route. The partial safety and material factors used throughout are:</p>
+<div class="tbl-wrap"><table>
+  <thead><tr><th>Factor</th><th>Symbol</th><th>Value</th></tr></thead>
+  <tbody>
+    <tr><td>Material resistance factor</td><td class="r">γ<sub>m</sub></td><td class="r">1.15</td></tr>
+    <tr><td>Safety-class factor — collapse / local buckling</td><td class="r">γ<sub>SC</sub></td><td class="r">1.04</td></tr>
+    <tr><td>Safety-class factor — pressure containment</td><td class="r">γ<sub>SC</sub></td><td class="r">1.138</td></tr>
+    <tr><td>Material strength factor</td><td class="r">α<sub>U</sub></td><td class="r">0.96</td></tr>
+    <tr><td>Maximum fabrication factor (UOE / SAWL)</td><td class="r">α<sub>fab</sub></td><td class="r">0.85</td></tr>
+    <tr><td>Fabrication factor (seamless, SMLS)</td><td class="r">α<sub>fab</sub></td><td class="r">1.00</td></tr>
+    <tr><td>Hoop design factor (general route)</td><td class="r">f<sub>h</sub></td><td class="r">0.77</td></tr>
+    <tr><td>Equivalent-stress factor (functional + environmental)</td><td class="r">f<sub>eq</sub></td><td class="r">0.90</td></tr>
+  </tbody>
+</table></div>
+
+<h2 id="s3"><span class="num">3</span>Design and input data</h2>
+<p>The worked example is the 18-inch buried liquid line — API 5L X60 carbon steel, buried under the seabed from landfall to the pipeline-end terminal.</p>
+<div class="tbl-wrap"><table>
+  <thead><tr><th>Parameter</th><th>Symbol</th><th>Value</th><th>Unit</th></tr></thead>
+  <tbody>
+    <tr><td>Outside diameter</td><td class="r">D<sub>o</sub></td><td class="r">457.2</td><td>mm (18″)</td></tr>
+    <tr><td>Specified minimum yield strength</td><td class="r">SMYS</td><td class="r">415</td><td>MPa</td></tr>
+    <tr><td>Internal design pressure</td><td class="r">P<sub>id</sub></td><td class="r">15.0</td><td>MPa</td></tr>
+    <tr><td>External (hydrostatic) pressure</td><td class="r">P<sub>od</sub></td><td class="r">0</td><td>MPa</td></tr>
+    <tr><td>Installation temperature</td><td class="r">T<sub>c</sub></td><td class="r">25</td><td>°C</td></tr>
+    <tr><td>Design / operating temperature</td><td class="r">T</td><td class="r">85</td><td>°C</td></tr>
+    <tr><td>Young's modulus</td><td class="r">E</td><td class="r">203,000</td><td>MPa</td></tr>
+    <tr><td>Thermal expansion coefficient</td><td class="r">α</td><td class="r">1.17 × 10⁻⁵</td><td>1/°C</td></tr>
+    <tr><td>Poisson's ratio</td><td class="r">μ</td><td class="r">0.30</td><td>—</td></tr>
+    <tr><td>Depth of cover (top of pipe)</td><td class="r">H</td><td class="r">0.8</td><td>m</td></tr>
+  </tbody>
+</table></div>
+<p>The same project also carries a 12-inch FSO-connection line (60 m water depth) and a 24-inch SPM-connection line (35 m water depth), both API 5L X60. These illustrate how the unburied checks scale with water depth; the methodology applies to all three.</p>
+<div class="callout note">
+  <div class="ctitle">On selected wall thickness</div>
+  <p>The pressure-containment calculation sets the minimum wall; you then select the next standard schedule. For this line the combined-stress check uses t = 11.91 mm and the upheaval-buckling check uses the as-selected t = 14.91 mm. The worked examples retain each value so the figures reconcile exactly with the issued calculations.</p>
+</div>
+
+<h2 id="s4"><span class="num">4</span>Step 1 — Wall thickness for pressure containment</h2>
+<p>Wall thickness is the foundation of the whole analysis. The wall must avoid three distinct failures: bursting (pressure containment), local buckling (collapse under external pressure), and propagating buckling. Pressure containment is sized first; collapse and propagation are then verified, and buckle arrestors are added rather than thickening the wall, because using propagation to set the wall is uneconomic.</p>
+<h3>Governing equations</h3>
+<p>The hoop stress from pressure containment (ISO 13623:2017 Cl. 6.4.1.1) and the pressure design thickness are:</p>
+<div class="eq"><span class="v">σ</span><sub>hp</sub> = SMYS · f<sub>h</sub> · f<sub>t</sub></div>
+<div class="eq">t = D<sub>o</sub> (P<sub>id</sub> − P<sub>od</sub>) / [ 2·<span class="v">σ</span><sub>hp</sub> + (P<sub>id</sub> − P<sub>od</sub>) ]</div>
+<p>The nominal wall is the pressure thickness plus corrosion allowance and mill tolerance, and the diameter-to-thickness ratio is checked against the DEP limit:</p>
+<div class="eq">t<sub>nom</sub> ≥ t + CA + mill tolerance &nbsp;&nbsp;|&nbsp;&nbsp; D / t ≤ 60</div>
+<h3>Worked example — 18″ line</h3>
+<p>Substituting SMYS = 415 MPa, f<sub>h</sub> = 0.77, f<sub>t</sub> = 1.0, P<sub>id</sub> = 15 MPa, P<sub>od</sub> = 0:</p>
+<div class="tbl-wrap"><table>
+  <thead><tr><th>Quantity</th><th>Computation</th><th>Result</th></tr></thead>
+  <tbody>
+    <tr><td>Allowable hoop stress σ<sub>hp</sub></td><td>415 × 0.77 × 1.0</td><td class="r">319.6 MPa</td></tr>
+    <tr><td>Pressure design thickness t</td><td>457.2 × 15 / (2×319.6 + 15)</td><td class="r">10.49 mm</td></tr>
+    <tr><td>Selected nominal wall t<sub>nom</sub></td><td>next schedule ≥ t + CA</td><td class="r">11.91 mm</td></tr>
+    <tr><td>D/t ratio</td><td>457.2 / 11.91</td><td class="r"><span class="ok">38.4 ≤ 60 ✓</span></td></tr>
+  </tbody>
+</table></div>
+<div class="callout result">
+  <div class="ctitle">Result</div>
+  <p>Minimum pressure-containment thickness is 10.49 mm. The next standard schedule gives t<sub>nom</sub> = 11.91 mm, and D/t = 38.4 satisfies the DEP limit of 60. This selected wall is carried into the combined-stress check.</p>
+</div>
+
+<h2 id="s5"><span class="num">5</span>Step 2 — Combined equivalent stress</h2>
+<p>A buried (or otherwise axially restrained) pipe cannot expand freely when pressurised and heated, so it develops a longitudinal stress that combines with the hoop stress. The Von Mises equivalent stress captures this interaction and is compared with an allowable derived from yield.</p>
+<h3>Governing equations</h3>
+<p>The hoop stress, the two longitudinal components, and their sum:</p>
+<div class="eq"><span class="v">σ</span><sub>hp</sub> = (P<sub>id</sub> − P<sub>od</sub>)(D<sub>o</sub> − t) / (2t)</div>
+<div class="eq"><span class="v">σ</span><sub>L</sub> = μ · <span class="v">σ</span><sub>hp</sub> &nbsp;&nbsp;|&nbsp;&nbsp; <span class="v">σ</span><sub>EA</sub> = E · α · (T<sub>c</sub> − T) &nbsp;&nbsp;|&nbsp;&nbsp; <span class="v">σ</span><sub>T</sub> = <span class="v">σ</span><sub>L</sub> + <span class="v">σ</span><sub>EA</sub></div>
+<p>The Von Mises combined equivalent stress (ISO 13623:2017 Cl. 6.4.1.2; torsion neglected for a buried line) must not exceed the allowable:</p>
+<div class="eq"><span class="v">σ</span><sub>eq</sub> = √( <span class="v">σ</span><sub>hp</sub>² − <span class="v">σ</span><sub>hp</sub>·<span class="v">σ</span><sub>T</sub> + <span class="v">σ</span><sub>T</sub>² ) ≤ f<sub>eq</sub> · f<sub>t</sub> · SMYS</div>
+<p>The thermal term σ<sub>EA</sub> is negative (compressive) because operating temperature exceeds installation temperature; the pressure term σ<sub>L</sub> is tensile. f<sub>eq</sub> = 0.90 for the functional-plus-environmental combination. For the corroded case the wall is taken as t − CA.</p>
+<h3>Worked example — 18″ line</h3>
+<p>Using D<sub>o</sub> = 457.2 mm, t = 11.91 mm, P<sub>id</sub> = 15 MPa, μ = 0.30, E = 203,000 MPa, α = 1.17×10⁻⁵/°C, (T<sub>c</sub> − T) = −60 °C, f<sub>eq</sub> = 0.90:</p>
+<div class="tbl-wrap"><table>
+  <thead><tr><th>Quantity</th><th>Computation</th><th>Result</th></tr></thead>
+  <tbody>
+    <tr><td>Hoop stress σ<sub>hp</sub></td><td>15 × (457.2−11.91) / (2×11.91)</td><td class="r">280.41 MPa</td></tr>
+    <tr><td>Longitudinal pressure σ<sub>L</sub></td><td>0.30 × 280.41</td><td class="r">84.12 MPa</td></tr>
+    <tr><td>Longitudinal thermal σ<sub>EA</sub></td><td>203000 × 1.17e-5 × (−60)</td><td class="r">−142.51 MPa</td></tr>
+    <tr><td>Total longitudinal σ<sub>T</sub></td><td>84.12 + (−142.51)</td><td class="r">−58.38 MPa</td></tr>
+    <tr><td>Von Mises σ<sub>eq</sub></td><td>√(280.41² − 280.41×(−58.38) + 58.38²)</td><td class="r">313.70 MPa</td></tr>
+    <tr><td>Allowable f<sub>eq</sub>·f<sub>t</sub>·SMYS</td><td>0.90 × 1.0 × 415</td><td class="r">373.50 MPa</td></tr>
+    <tr><td>Utilisation</td><td>313.70 / 373.50</td><td class="r"><span class="ok">84.0 % ✓</span></td></tr>
+  </tbody>
+</table></div>
+<div class="callout result">
+  <div class="ctitle">Result</div>
+  <p>The Von Mises equivalent stress is 313.70 MPa against an allowable of 373.50 MPa — a utilisation of 84.0 %. The restrained line PASSES. The remaining 16 % margin is what makes elastic bends possible, and is used directly in Step 3.</p>
+</div>
+
+<h2 id="s6"><span class="num">6</span>Step 3 — Minimum elastic bend radius</h2>
+<p>Where the route changes direction and space allows, the pipeline is routed by elastic bending rather than fittings. The bend adds a bending stress that must fit inside the stress margin left over from the combined-stress check, so the minimum radius comes directly from that margin.</p>
+<h3>Governing equations</h3>
+<div class="eq">S<sub>b1</sub> = f<sub>eq</sub> · f<sub>t</sub> · SMYS − <span class="v">σ</span><sub>eq</sub></div>
+<div class="eq">R<sub>cur</sub> = E · D<sub>o</sub> / (2 · S<sub>b1</sub>)</div>
+<p>where S<sub>b1</sub> is the maximum stress available for bending (MPa) and R<sub>cur</sub> the minimum elastic bend radius (m, with E in MPa and D<sub>o</sub> in mm). A smaller margin forces a larger — gentler — minimum radius.</p>
+<h3>Worked example — 18″ line</h3>
+<div class="tbl-wrap"><table>
+  <thead><tr><th>Quantity</th><th>Computation</th><th>Result</th></tr></thead>
+  <tbody>
+    <tr><td>Stress margin for bending S<sub>b1</sub></td><td>373.50 − 313.70</td><td class="r">59.80 MPa</td></tr>
+    <tr><td>Minimum elastic bend radius R<sub>cur</sub></td><td>203000 × 457.2 / (2 × 59.80) / 1000</td><td class="r">776.0 m</td></tr>
+  </tbody>
+</table></div>
+<div class="callout result">
+  <div class="ctitle">Result</div>
+  <p>The line can be elastically bent to a minimum radius of 776 m without exceeding the Von Mises allowable. Any field bend tighter than this needs a fitting or a re-check of the combined stress with the bending term included.</p>
+</div>
+
+<h2 id="s7"><span class="num">7</span>Step 4 — On-bottom stability (as-laid line)</h2>
+<p>Before a line is trenched or buried it rests on the seabed, where it must not float or be displaced. To DNV-RP-F109, vertical stability requires the submerged weight to exceed the buoyancy with a margin:</p>
+<div class="eq"><span class="v">γ</span><sub>w</sub> · b / w<sub>s</sub> ≤ 1.0 &nbsp;&nbsp;|&nbsp;&nbsp; b = <span class="v">ρ</span><sub>w</sub> · g · π · D² / 4</div>
+<p>where γ<sub>w</sub> is the stability safety factor (1.1 if a low probability of negative buoyancy is not demonstrated), b the buoyancy per unit length, w<sub>s</sub> the submerged weight per unit length, D the outside diameter including coatings, and ρ<sub>w</sub> the seawater density (1025 kg/m³). Where the bare-steel line is too light, submerged weight is added through a concrete weight coating until the criterion is met — and that weight then contributes to the upheaval-buckling resistance once the line is buried.</p>
+
+<h2 id="s8"><span class="num">8</span>Step 5 — Local buckling / external-pressure collapse</h2>
+<p>In deeper water the external hydrostatic pressure can collapse the pipe at its weakest (most ovalised) cross-section. To DNV-ST-F101 the net external pressure must stay below the characteristic collapse pressure reduced by the partial safety factors:</p>
+<div class="eq">P<sub>e</sub> − P<sub>min</sub> ≤ P<sub>c</sub> / (<span class="v">γ</span><sub>m</sub> · <span class="v">γ</span><sub>SC</sub>)</div>
+<p>The characteristic collapse pressure P<sub>c</sub> is the root of the DNV collapse cubic, which couples elastic and plastic collapse with the initial ovality:</p>
+<div class="eq">[P<sub>c</sub> − P<sub>el</sub>]·[P<sub>c</sub>² − P<sub>p</sub>²] = P<sub>c</sub> · P<sub>el</sub> · P<sub>p</sub> · f<sub>0</sub> · D/t</div>
+<div class="eq">P<sub>el</sub> = 2E (t<sub>1</sub>/D)³ / (1 − ν²) &nbsp;&nbsp;|&nbsp;&nbsp; P<sub>p</sub> = f<sub>y</sub> · α<sub>fab</sub> · 2t<sub>1</sub>/D</div>
+<p>where P<sub>el</sub> is the elastic collapse pressure, P<sub>p</sub> the plastic collapse pressure, f<sub>0</sub> the initial ovality (1.5 % here), α<sub>fab</sub> the fabrication factor (0.85 UOE), and t<sub>1</sub> = t − t<sub>fab</sub> the characteristic wall thickness using the fabrication tolerance (≈ 1.0 mm). P<sub>min</sub> is the minimum internal pressure that can be sustained — usually zero for an as-laid (empty) line. The collapse requirement can drive a thicker wall in deep water, so it is run at the maximum installation/empty water depth.</p>
+
+<h2 id="s9"><span class="num">9</span>Step 6 — Propagating buckle and arrestors</h2>
+<p>If a local buckle or dent initiates, it can run — propagate — along the line under external pressure, since the pressure needed to propagate a buckle is only 15–20 % of that needed to initiate collapse. The propagating-buckle check to DNV-ST-F101 is:</p>
+<div class="eq">P<sub>e</sub> ≤ P<sub>pr</sub> / (<span class="v">γ</span><sub>m</sub> · <span class="v">γ</span><sub>SC</sub>) &nbsp;&nbsp;|&nbsp;&nbsp; P<sub>pr</sub> = 35 · f<sub>y</sub> · α<sub>fab</sub> · (t/D)<sup>2.5</sup></div>
+<p>Designing the full wall to resist propagation is uncommonly expensive and over-conservative. The economic solution is to accept that a buckle could propagate and to limit how far it travels by installing buckle arrestors at intervals along the line. The arrestor raises the local bending stiffness so a running buckle is stopped (the cross-over pressure P<sub>x</sub>), and its required length follows from the propagating capacity of the adjacent pipe and of an infinite arrestor — keeping any single event to one joint between arrestors.</p>
+
+<h2 id="s10"><span class="num">10</span>Step 7 — Upheaval buckling (buried line)</h2>
+<p>Once the line is trenched and buried, the failure mode of concern changes. A buried pipe operating hot and pressurised cannot expand axially, so it builds up a large compressive driving force. At an over-bend (a vertical imperfection left by the trench profile) that force tends to lift the pipe upward against its own weight, its bending stiffness and the resistance of the soil cover. If the available download is too small, the pipe breaks cover — an upheaval buckle. The simplified Palmer method of OTC 6335 confirms the depth of cover is adequate.</p>
+<h3>The driving force and section properties</h3>
+<p>The effective expansion (driving) load combines the pressure end-load, the tensile Poisson component and the compressive thermal-restraint component:</p>
+<div class="eq">A<sub>s</sub> = π/4 (D² − d²) &nbsp;|&nbsp; A<sub>i</sub> = π/4 · d² &nbsp;|&nbsp; I = π/64 (D⁴ − d⁴) &nbsp;|&nbsp; EI = E·I</div>
+<div class="eq">T<sub>el</sub> = (P<sub>i</sub>·A<sub>i</sub> − μ·<span class="v">σ</span><sub>h</sub>·A<sub>s</sub>) + α·E·A<sub>s</sub>·(T<sub>2</sub> − T<sub>1</sub>)</div>
+<p>where d = D − 2t is the bore, A<sub>s</sub> the steel area, A<sub>i</sub> the bore area, σ<sub>h</sub> = P<sub>i</sub>·D/2t the hoop stress, and EI the flexural rigidity.</p>
+<h3>Download required and uplift resistance</h3>
+<p>The download per unit length required to prevent upheaval (OTC 6335, Eq. 12) is a function of the driving force, the imperfection height δ and the flexural rigidity:</p>
+<div class="eq">W<sub>r</sub> = [ 1.16 − 4.76·√(EI·W<sub>te</sub>/δ) / T<sub>el</sub> ] · T<sub>el</sub> · √(δ·W<sub>te</sub>/EI)</div>
+<p>The soil provides uplift resistance per unit length (OTC 6335, Eq. 13), evaluated for both uncompacted and compacted backfill:</p>
+<div class="eq">q = H · D · <span class="v">ρ</span><sub>b</sub> · g · ( 1 + f·H/D )</div>
+<p>where W<sub>te</sub> is the empty-pipe weight, δ the imperfection height (mm), H the depth of cover, D the diameter over coatings, ρ<sub>b</sub> the backfill density, and f the uplift coefficient (0.1 uncompacted, 0.5 compacted). The line is stable when the total available download Q = W<sub>to</sub> + q exceeds the required download W<sub>r</sub>.</p>
+<h3>Worked example — 18″ line</h3>
+<p>With D = 457.2 mm, t = 14.91 mm, P<sub>i</sub> = 15 MPa, (T<sub>2</sub>−T<sub>1</sub>) = 60 °C, H = 0.8 m, δ = 300 mm, 3 mm FBE coating, contents 1025.5 kg/m³ and backfill 1850 kg/m³ (g = 9.80665 m/s²):</p>
+<div class="tbl-wrap"><table>
+  <thead><tr><th>Quantity</th><th>Symbol</th><th>Result</th></tr></thead>
+  <tbody>
+    <tr><td>Steel area</td><td class="r">A<sub>s</sub></td><td class="r">20,717 mm²</td></tr>
+    <tr><td>Flexural rigidity</td><td class="r">EI</td><td class="r">103.0 ×10⁶ N·m²</td></tr>
+    <tr><td>Empty-pipe weight</td><td class="r">W<sub>te</sub></td><td class="r">1,635 N/m</td></tr>
+    <tr><td>Operating weight</td><td class="r">W<sub>to</sub></td><td class="r">3,078 N/m</td></tr>
+    <tr><td>Total effective expansion load</td><td class="r">T<sub>el</sub></td><td class="r">3,674.8 kN</td></tr>
+    <tr><td>Download required (Eq. 12)</td><td class="r">W<sub>r</sub></td><td class="r">1,521.3 N/m</td></tr>
+    <tr><td>Total download — uncompacted</td><td class="r">Q</td><td class="r"><span class="ok">10,962 N/m ✓</span></td></tr>
+    <tr><td>Total download — compacted</td><td class="r">Q</td><td class="r"><span class="ok">15,606 N/m ✓</span></td></tr>
+  </tbody>
+</table></div>
+<div class="callout result">
+  <div class="ctitle">Result</div>
+  <p>The required download to prevent upheaval is 1,521 N/m. The available download — operating weight plus soil uplift resistance — is 10,962 N/m (uncompacted) and 15,606 N/m (compacted), both far in excess of the requirement. At 0.8 m of cover the line has no propensity for upheaval buckling.</p>
+</div>
+<div class="callout note">
+  <div class="ctitle">Method note</div>
+  <p>This is the simplified Palmer (OTC 6335) screen using the exact Poisson term and backfill mass density. A fuller treatment — DNV-RP-F110 (Peters) allowable-imperfection, Schaminée / Pedersen peak uplift, the Cambridge mobilisation data and the tri-linear soil model — is warranted where the simplified screen is marginal.</p>
+</div>
+
+<h2 id="s11"><span class="num">11</span>Putting it together — the analysis workflow</h2>
+<p>The seven steps form a single dependent chain. Wall thickness is sized first; the selected wall feeds the combined-stress check; the stress margin from that check sets the elastic bend radius. In parallel, the as-laid line is verified for on-bottom stability, collapse and propagation against water depth; and the buried line is verified for upheaval buckling against depth of cover.</p>
+<div class="tbl-wrap"><table>
+  <thead><tr><th>Step</th><th>Check</th><th>Standard</th><th>Worked result</th></tr></thead>
+  <tbody>
+    <tr><td class="r">1</td><td>Wall thickness</td><td>ISO 13623 / F101</td><td>t<sub>nom</sub> = 11.91 mm; D/t = 38.4 ✓</td></tr>
+    <tr><td class="r">2</td><td>Combined stress</td><td>ISO 13623 Von Mises</td><td>84.0 % utilisation ✓</td></tr>
+    <tr><td class="r">3</td><td>Elastic bend radius</td><td>ISO 13623 (Von Mises)</td><td>R<sub>cur</sub> = 776 m</td></tr>
+    <tr><td class="r">4</td><td>On-bottom stability</td><td>DNV-RP-F109</td><td>add concrete weight if light</td></tr>
+    <tr><td class="r">5</td><td>Local collapse</td><td>DNV-ST-F101</td><td>verify at max water depth</td></tr>
+    <tr><td class="r">6</td><td>Propagating buckle</td><td>DNV-ST-F101</td><td>arrestors set spacing</td></tr>
+    <tr><td class="r">7</td><td>Upheaval buckling</td><td>OTC 6335 (Palmer)</td><td>no propensity at 0.8 m cover ✓</td></tr>
+  </tbody>
+</table></div>
+<p>A check that fails does not necessarily mean a thicker wall. On-bottom stability is solved with weight coating; propagation with arrestors; upheaval with more cover. Reserving wall thickness for pressure containment, collapse and combined stress keeps the design economic.</p>
+
+<h2 id="s12"><span class="num">12</span>Automating the analysis</h2>
+<p>Every equation in this guide is implemented — with the worked figures reproduced exactly — in the PipingPro Academy Subsea Pipeline Calculator. It carries one tab per step and exports a code-referenced PDF report for each. A companion Upheaval Buckling Calculator adds the fuller DNV-RP-F110 (Peters), Schaminée / Pedersen, Cambridge and tri-linear treatments for cases where the simplified screen is marginal. Used together, the guide explains the <em>why</em> and the calculator delivers the auditable numbers.</p>
+
+<a class="cta" href="subsea-pipeline-calculator.html">
+  <div class="ct-eyebrow">Members · Calculator Suite</div>
+  <div class="ct-title">Open the Subsea Pipeline Calculator →</div>
+  <div class="ct-sub">Run every check in this guide — wall thickness, combined stress, elastic bend radius, collapse, propagation, on-bottom stability and upheaval buckling — with PDF reports.</div>
+</a>
+
+<p class="endnote">Prepared as technical training material by PipingPro Academy. Verify against current code editions and project-specific data before design use. References: ISO 13623:2017; DNV-ST-F101; DNV-RP-F109; DNV-RP-F110; Palmer, A.C. et al. (1990), OTC 6335; Shell DEP 31.40.00.10-Gen.</p>
+
+</article>
+</div>
+
+<footer class="ppa-footer">
+  <div class="ppa-footer-logo">Piping<span>Pro</span> Academy</div>
+  <p>PipingPro Academy is a trademark of <strong style="color:var(--gold);">Zephrum Konsultan Limited</strong>, registered in England &amp; Wales. Co. No. 13537626.</p>
+  <p style="margin-top:.3rem">© 2026 Zephrum Konsultan Limited. All rights reserved. &nbsp;·&nbsp; <a href="calculators.html">Calculator Suite</a> &nbsp;·&nbsp; <a href="guides.html">Guides</a></p>
+</footer>
+
+</body>
+</html>
