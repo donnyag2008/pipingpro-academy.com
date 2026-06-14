@@ -398,6 +398,34 @@ body{ background:#faf6ef; color:#1a1510; }
 </style>
 <!-- ===== end PipingPro Brand Bridge ===== -->
 
+<!-- ===== Lay-up / Plug / Register components (additive) ===== -->
+<style id="pp-tplus">
+.lz-flag{display:flex;gap:10px;align-items:flex-start;padding:11px 13px;border-radius:6px;margin:8px 0;font-size:12.5px;line-height:1.55;border:1px solid;}
+.lz-flag .lz-ic{font-family:var(--mono);font-weight:600;flex-shrink:0;}
+.lz-ok{background:var(--pass-bg);border-color:var(--pass-bd);color:#13503f;}
+.lz-warn{background:var(--warn-bg);border-color:var(--warn-bd);color:#6b4e1f;}
+.lz-stop{background:var(--red-bg);border-color:var(--red-bd);color:var(--red);}
+.lz-info{background:var(--accent-light);border-color:var(--accent-border);color:var(--accent);}
+.lz-flag b{color:var(--ink);}
+.pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;margin:3px 3px 0 0;}
+.pill-rec{background:var(--pass-bg);color:#13503f;}
+.pill-acc{background:var(--accent-light);color:var(--accent);}
+.pill-pro{background:var(--red-bg);color:var(--red);}
+.tplus-hint{font-size:11px;color:var(--ink3);margin-top:8px;line-height:1.55;}
+.reg-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+.reg-btn{padding:7px 13px;border-radius:6px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:12.5px;font-weight:600;font-family:var(--sans);color:var(--ink);}
+.reg-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent);}
+.reg-btn.gold{background:var(--gold);color:#fff;border-color:var(--gold);}
+.reg-btn.danger{background:var(--red-bg);color:var(--red);border-color:var(--red-bd);}
+table.reg{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px;}
+table.reg th,table.reg td{border:1px solid var(--border);padding:6px 8px;text-align:left;white-space:nowrap;}
+table.reg th{background:var(--paper2);color:var(--ink);font-size:10px;text-transform:uppercase;letter-spacing:.04em;}
+table.reg td.n{text-align:right;font-family:var(--mono);}
+.reg-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:4px 0 4px;}
+.reg-x{cursor:pointer;color:var(--red);font-weight:700;}
+</style>
+<!-- ===== end components ===== -->
+
 </head>
 <body>
 <nav class="ppa-nav">
@@ -419,6 +447,7 @@ body{ background:#faf6ef; color:#1a1510; }
 
 <div class="calc-tabs">
   <button class="calc-tab active" onclick="showCalcTab('calculator')">⚙ Calculator</button>
+  <button class="calc-tab" onclick="showCalcTab('register')">🗂 Test-Package Register</button>
   <button class="calc-tab" onclick="showCalcTab('theory')">📚 Theory &amp; Reference</button>
 </div>
 
@@ -612,6 +641,82 @@ body{ background:#faf6ef; color:#1a1510; }
       Volume = π/4 · ID² · L with a 3% fittings/manifold allowance (ID = OD − 2·wall).
       Test window = fill + 30&nbsp;min pressurise &amp; examine + hold + drain. Drying / lay-up time is additional — see Theory tab for SAES-A-007 water-contact limits.
     </p>
+  </div>
+
+  <!-- SAES-A-007 Lay-up & Water Treatment -->
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">🧫</span>SAES-A-007 Lay-up &amp; Water Treatment <span style="font-size:11px;font-weight:400;color:#b8a890;margin-left:6px;">Rev. Oct 2025 · threshold logic</span></div>
+    <div class="fg4">
+      <div class="field">
+        <label>Material Category</label>
+        <select id="l-cat" onchange="renderLayup()"></select>
+      </div>
+      <div class="field">
+        <label>Asset Type</label>
+        <select id="l-asset" onchange="renderLayup()">
+          <option value="piping">Plant piping</option>
+          <option value="vessel">Pressure vessel</option>
+          <option value="hx">Heat exchanger / fin-fan</option>
+          <option value="tank">Tank</option>
+          <option value="pipeline">Pipeline</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Water Contact (days)</label>
+        <input type="number" id="l-contact" value="1" min="0" max="365" step="0.5" oninput="renderLayup()">
+        <span class="tplus-hint" id="l-window-hint"></span>
+      </div>
+      <div class="field">
+        <label>Test → Start-up (days)</label>
+        <input type="number" id="l-startup" value="30" min="0" max="3650" step="1" oninput="renderLayup()">
+      </div>
+    </div>
+    <div class="fg4 gap">
+      <div class="field">
+        <label>Source Water</label>
+        <select id="l-treated" onchange="renderLayup()">
+          <option value="yes">Treated (scavenger/biocide)</option>
+          <option value="no">Untreated</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Sour Service (H₂S)</label>
+        <select id="l-sour" onchange="renderLayup()"><option value="no">No</option><option value="yes">Yes</option></select>
+      </div>
+      <div class="field">
+        <label>Freezing Risk</label>
+        <select id="l-freeze" onchange="renderLayup()"><option value="no">No</option><option value="yes">Yes</option></select>
+      </div>
+      <div class="field">
+        <label>Special Service</label>
+        <select id="l-special" onchange="renderLayup()"><option value="no">No</option><option value="yes">O₂ / sales gas / NGL</option></select>
+      </div>
+    </div>
+    <div id="layup-result" style="margin-top:1rem;"></div>
+    <p class="tplus-hint">Encodes SAES-A-007 (Rev. 14 Oct 2025) Tables 1–4 threshold values. Confirm against the controlled standard before issue.</p>
+  </div>
+
+  <!-- Isolation-Plug Time Saving -->
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">🔩</span>Isolation-Plug Time Saving <span style="font-size:11px;font-weight:400;color:#b8a890;margin-left:6px;">vs welded heads / spades</span></div>
+    <div class="fg3">
+      <div class="field"><label>Test-head fab + fit (h)</label><input type="number" id="c-fab" value="6" step="0.5" oninput="renderPlug()"></div>
+      <div class="field"><label>Boundary weld (h)</label><input type="number" id="c-weld" value="4" step="0.5" oninput="renderPlug()"></div>
+      <div class="field"><label>NDE before test (h)</label><input type="number" id="c-nde1" value="3" step="0.5" oninput="renderPlug()"></div>
+      <div class="field"><label>Cut-out after test (h)</label><input type="number" id="c-cut" value="3" step="0.5" oninput="renderPlug()"></div>
+      <div class="field"><label>Golden weld (h)</label><input type="number" id="c-gold" value="6" step="0.5" oninput="renderPlug()"></div>
+      <div class="field"><label>NDE golden weld (h)</label><input type="number" id="c-nde2" value="4" step="0.5" oninput="renderPlug()"></div>
+    </div>
+    <div class="fg4 gap">
+      <div class="field"><label>Plug: set (h)</label><input type="number" id="p-set" value="2" step="0.5" oninput="renderPlug()"></div>
+      <div class="field"><label>Plug: remove (h)</label><input type="number" id="p-rem" value="1.5" step="0.5" oninput="renderPlug()"></div>
+      <div class="field"><label>Plug rating (barg)</label><input type="number" id="p-rating" value="100" step="1" oninput="renderPlug()"></div>
+      <div class="field"><label>No. of boundaries</label><input type="number" id="x-bound" value="4" min="1" step="1" oninput="renderPlug()"></div>
+    </div>
+    <div class="fg2 gap">
+      <div class="field"><label>Crew cost (optional, /h)</label><input type="number" id="x-rate" value="0" step="1" oninput="renderPlug()"></div>
+    </div>
+    <div id="plug-result" style="margin-top:1rem;"></div>
   </div>
 
   <!-- Scope -->
@@ -1047,8 +1152,195 @@ function generatePack() {
   }, 60);
 }
 
+/* ===== Test-Pack Plus: lay-up engine, plug model, register ===== */
+var CATS_T = {
+ "I":{label:"I — Carbon / galvanized / low-alloy steel", cl:null, o2:20},
+ "IIA":{label:"II(A) — Austenitic SS, PREN ≤ 30", cl:50, o2:20},
+ "IIB":{label:"II(B) — Duplex / 904L / 825, 30<PREN≤40", cl:500, o2:20},
+ "IIC":{label:"II(C) — Super-duplex / 6Mo / 625, PREN>40", cl:null, o2:null},
+ "IID":{label:"II(D) — Copper alloy (Cu>30%)", cl:null, o2:null},
+ "IIE":{label:"II(E) — Titanium alloy", cl:null, o2:null},
+ "IIIA":{label:"III(A) — Internally coated", cl:null, o2:null},
+ "IIIB":{label:"III(B) — Non-metallic / lined", cl:null, o2:null}
+};
+var LAYUP_T = {
+ "I":{dry:"Acceptable",wet:"Acceptable",inert:"Acceptable",ambient:"Acceptable"},
+ "IIA":{dry:"Recommended",wet:"Acceptable",inert:"Prohibited",ambient:"Prohibited"},
+ "IIB":{dry:"Recommended",wet:"Acceptable",inert:"Prohibited",ambient:"Prohibited"},
+ "IIC":{dry:"Acceptable",wet:"Acceptable",inert:"Acceptable",ambient:"Recommended"},
+ "IID":{dry:"Acceptable",wet:"Acceptable",inert:"Acceptable",ambient:"Recommended"},
+ "IIE":{dry:"Acceptable",wet:"Acceptable",inert:"Acceptable",ambient:"Recommended"},
+ "IIIA":{dry:"Acceptable",wet:"Acceptable",inert:"Acceptable",ambient:"Recommended"},
+ "IIIB":{dry:"Acceptable",wet:"Acceptable",inert:"Acceptable",ambient:"Recommended"}
+};
+function contactLimit_T(c,a){ if(a==="tank")return 90; if(a==="hx")return (c==="IIA"||c==="IIB")?3:14; return (c==="IIA"||c==="IIB")?3:30; }
+function noLayupInterval_T(c,a){ if(a==="tank")return 90; if(a==="hx")return 14; return (c==="IIA"||c==="IIB")?14:30; }
+function escT(s){return String(s==null?"":s).replace(/[&<>"]/g,function(ch){return{"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[ch];});}
+function fmtT(x,d){ if(!isFinite(x))return"–"; return Number(x).toLocaleString('en-GB',{maximumFractionDigits:d===undefined?2:d}); }
+function gv(id){ var v=parseFloat(document.getElementById(id).value); return isNaN(v)?0:v; }
+
+function fillCatSelectT(id){
+  var s=document.getElementById(id); if(!s)return; s.innerHTML="";
+  Object.keys(CATS_T).forEach(function(k){var o=document.createElement("option");o.value=k;o.textContent=CATS_T[k].label;s.appendChild(o);});
+}
+
+function renderLayup(){
+  var box=document.getElementById('layup-result'); if(!box)return;
+  var cat=document.getElementById('l-cat').value, asset=document.getElementById('l-asset').value;
+  var contact=gv('l-contact'), startup=gv('l-startup');
+  var treated=document.getElementById('l-treated').value==="yes";
+  var sour=document.getElementById('l-sour').value==="yes",
+      freeze=document.getElementById('l-freeze').value==="yes",
+      special=document.getElementById('l-special').value==="yes";
+  var c=CATS_T[cat], lim=contactLimit_T(cat,asset), interval=noLayupInterval_T(cat,asset);
+  var isPipe=(asset==="pipeline"); var o=[];
+
+  var clTxt=c.cl===null?"No chloride restriction":("Chloride ≤ "+c.cl+" ppm");
+  var o2Txt=c.o2===null?"No dissolved-O₂ restriction":("Dissolved O₂ ≤ "+c.o2+" ppb");
+  o.push('<div class="lz-flag lz-info"><span class="lz-ic">≋</span><div><b>Water quality (Table 1):</b> '+clTxt+' · '+o2Txt+' · pH 6–9 · TSS ≤ 50 ppm.</div></div>');
+
+  var chem=["oxygen scavenger (residual &gt; 20 ppm, dissolved O₂ &lt; 20 ppb)"];
+  var needBio = isPipe || (contact>lim);
+  if(needBio && !isPipe) chem.push("biocide");
+  var chemMsg = isPipe
+    ? "<b>Pipeline:</b> scavenger + biocide + corrosion inhibitor are always required, regardless of contact time."
+    : "<b>Chemical treatment:</b> "+chem.join(", ")+(needBio?" — biocide triggered: planned contact exceeds the Table 2 limit.":".");
+  o.push('<div class="lz-flag lz-warn"><span class="lz-ic">⚗</span><div>'+chemMsg+'</div></div>');
+
+  if(isPipe){
+    o.push('<div class="lz-flag lz-info"><span class="lz-ic">⏱</span><div><b>Contact-time limit:</b> pipelines are always chemically treated — minimise contact and dewater promptly.</div></div>');
+  } else if(contact<=lim){
+    o.push('<div class="lz-flag lz-ok"><span class="lz-ic">✓</span><div><b>Contact time OK.</b> '+fmtT(contact,1)+' d ≤ '+lim+' d limit for this category/asset (Table 2).</div></div>');
+  } else if(treated){
+    o.push('<div class="lz-flag lz-warn"><span class="lz-ic">!</span><div><b>Contact time exceeds '+lim+' d</b> — permitted only with treated water (biocide added). Keep monitoring residuals.</div></div>');
+  } else {
+    o.push('<div class="lz-flag lz-stop"><span class="lz-ic">✕</span><div><b>Contact time '+fmtT(contact,1)+' d exceeds the '+lim+' d limit with untreated water.</b> Drain immediately and dry the system to a −1 °C (30 °F) dew point.</div></div>');
+  }
+
+  if(startup<=interval){
+    o.push('<div class="lz-flag lz-ok"><span class="lz-ic">✓</span><div><b>No lay-up required</b> if start-up is within '+interval+' days of the test (Table 3). Planned gap '+fmtT(startup,0)+' d.</div></div>');
+  } else {
+    var m=LAYUP_T[cat];
+    var rec=Object.keys(m).filter(function(k){return m[k]==="Recommended";});
+    var recName=rec.length?rec[0]:((cat==="IIA"||cat==="IIB")?"dry":"per Table 4");
+    var pills=["dry","wet","inert","ambient"].map(function(k){
+      var st=m[k], cls=st==="Recommended"?"pill-rec":(st==="Prohibited"?"pill-pro":"pill-acc");
+      return '<span class="pill '+cls+'">'+k+': '+st+'</span>';}).join(" ");
+    o.push('<div class="lz-flag lz-stop"><span class="lz-ic">▣</span><div><b>Lay-up REQUIRED</b> — start-up gap '+fmtT(startup,0)+' d exceeds the '+interval+' d interval. Recommended method: <b>'+recName.toUpperCase()+'</b>.<div style="margin-top:6px">'+pills+'</div></div></div>');
+  }
+
+  if(cat==="IIA"||cat==="IIB") o.push('<div class="lz-flag lz-warn"><span class="lz-ic">△</span><div>Category II(A/B): inert and ambient lay-up prohibited — dry preferred, wet only if drying is not feasible. Do not test or lay-up together with Category I.</div></div>');
+  if(cat==="IID") o.push('<div class="lz-flag lz-warn"><span class="lz-ic">△</span><div>Category II(D) copper alloy: must not be tested or laid-up with other categories (Cu cross-contamination).</div></div>');
+  if(cat==="IIE") o.push('<div class="lz-flag lz-warn"><span class="lz-ic">△</span><div>Category II(E) titanium: test and lay-up in isolation (embrittlement risk).</div></div>');
+  if(special) o.push('<div class="lz-flag lz-stop"><span class="lz-ic">✕</span><div>Special service (O₂ / sales gas / processed NGL): ambient lay-up prohibited — use dry or inert.</div></div>');
+  else if(cat==="I" && isPipe) o.push('<div class="lz-flag lz-warn"><span class="lz-ic">△</span><div>Category I pipeline: ambient lay-up prohibited — use inert, or wet only if drying is not feasible.</div></div>');
+  if(sour) o.push('<div class="lz-flag lz-warn"><span class="lz-ic">△</span><div>Sour service: disposal water with H₂S &gt; 1 ppm only for revalidation of existing assets with MCSD/LP/EP approval and ≤ 14 d contact. Temporary fittings must meet NACE MR0175 hardness.</div></div>');
+  if(freeze) o.push('<div class="lz-flag lz-info"><span class="lz-ic">❄</span><div>Freezing risk: water/methanol or water/glycol permitted; test fluid flash point must exceed 54 °C (129 °F).</div></div>');
+
+  box.innerHTML=o.join("");
+}
+
+function renderPlug(){
+  var box=document.getElementById('plug-result'); if(!box)return;
+  var conv=gv('c-fab')+gv('c-weld')+gv('c-nde1')+gv('c-cut')+gv('c-gold')+gv('c-nde2');
+  var plug=gv('p-set')+gv('p-rem');
+  var n=gv('x-bound'); var savePer=conv-plug; var total=savePer*n;
+  var rate=gv('x-rate'); var rating=gv('p-rating');
+  var testP=Math.round(getBasePressure()*getTestFactor()*10)/10;
+  var costMsg = rate>0 ? (" · ≈ "+fmtT(total*rate,0)+" cost units") : "";
+  var h='<div class="pres-display" style="grid-template-columns:repeat(3,1fr);">'+
+    '<div class="pd-block highlight"><div class="pd-val">'+fmtT(savePer,1)+'</div><div class="pd-unit">h</div><div class="pd-label">Saving / boundary</div></div>'+
+    '<div class="pd-block"><div class="pd-val">'+fmtT(total,1)+'</div><div class="pd-unit">'+fmtT(total/24,2)+' days'+costMsg+'</div><div class="pd-label">Total saving</div></div>'+
+    '<div class="pd-block"><div class="pd-val">'+fmtT(n,0)+'</div><div class="pd-unit">one per boundary</div><div class="pd-label">Golden welds eliminated</div></div>'+
+   '</div>';
+  if(savePer<=0) h+='<div class="lz-flag lz-warn"><span class="lz-ic">!</span><div>With these durations the plug method is not faster — check inputs.</div></div>';
+  if(rating<testP) h+='<div class="lz-flag lz-stop"><span class="lz-ic">✕</span><div><b>Plug rating '+fmtT(rating,0)+' barg is below the test pressure '+fmtT(testP,1)+' barg.</b> Select a higher-rated plug and enforce a personnel exclusion zone.</div></div>';
+  else h+='<div class="lz-flag lz-info"><span class="lz-ic">i</span><div>Plug rating '+fmtT(rating,0)+' barg ≥ test pressure '+fmtT(testP,1)+' barg. Still enforce an exclusion zone — a plug is a pressure boundary.</div></div>';
+  box.innerHTML=h;
+}
+
+/* ----- register ----- */
+var RKEY_T="ppa_testpack_register_v1";
+function loadReg_T(){try{return JSON.parse(localStorage.getItem(RKEY_T)||"[]");}catch(e){return[];}}
+function saveReg_T(a){try{localStorage.setItem(RKEY_T,JSON.stringify(a));}catch(e){}}
+function regRender(){
+  var rows=loadReg_T(), body=document.getElementById('r-body'); if(!body)return; body.innerHTML="";
+  rows.forEach(function(r,i){
+    var tr=document.createElement("tr");
+    tr.innerHTML="<td>"+escT(r.line)+"</td><td>"+escT(r.pkg)+"</td><td>"+escT(r.pid)+"</td><td>"+escT(r.iso)+
+      "</td><td>"+escT(r.sys)+"</td><td>"+escT(r.area)+"</td><td>"+escT(r.cat)+"</td><td>"+escT(r.med)+
+      "</td><td class='n'>"+escT(r.tp)+"</td><td>"+escT(r.status)+
+      "</td><td class='reg-x' data-i='"+i+"'>✕</td>";
+    body.appendChild(tr);
+  });
+  body.querySelectorAll(".reg-x").forEach(function(b){b.onclick=function(){var a=loadReg_T();a.splice(+b.dataset.i,1);saveReg_T(a);regRender();};});
+  var pkgs={},sys={};
+  rows.forEach(function(r){if(r.pkg)pkgs[r.pkg]=1; sys[r.sys||"(none)"]=1;});
+  var s=document.getElementById('r-summary');
+  s.innerHTML='<div class="pd-block"><div class="pd-val">'+rows.length+'</div><div class="pd-label">Lines</div></div>'+
+    '<div class="pd-block"><div class="pd-val">'+Object.keys(pkgs).length+'</div><div class="pd-label">Test packages</div></div>'+
+    '<div class="pd-block"><div class="pd-val">'+Object.keys(sys).length+'</div><div class="pd-label">Systems</div></div>';
+}
+function regAdd(){
+  var line=document.getElementById('r-line').value.trim(); if(!line){document.getElementById('r-line').focus();return;}
+  var a=loadReg_T();
+  a.push({line:line,pkg:document.getElementById('r-pkg').value.trim(),pid:document.getElementById('r-pid').value.trim(),
+    iso:document.getElementById('r-iso').value.trim(),sys:document.getElementById('r-sys').value.trim(),
+    area:document.getElementById('r-area').value.trim(),cat:document.getElementById('r-cat').value,
+    med:document.getElementById('r-med').value,tp:document.getElementById('r-tp').value,status:document.getElementById('r-status').value});
+  saveReg_T(a);regRender();
+  ['r-line','r-pid','r-iso'].forEach(function(id){document.getElementById(id).value="";});document.getElementById('r-line').focus();
+}
+function regPull(){
+  var testP=Math.round(getBasePressure()*getTestFactor()*10)/10;
+  var med = testType==='pneumo'?'Pneumatic':(testType==='leak'?'Leak':'Hydro');
+  document.getElementById('r-line').value=document.getElementById('line-no').value||"";
+  document.getElementById('r-pid').value=document.getElementById('pid-ref').value||"";
+  document.getElementById('r-tp').value=testP||"";
+  document.getElementById('r-med').value=med;
+  document.getElementById('r-cat').value=document.getElementById('l-cat').value;
+}
+function regClearForm(){['r-line','r-pkg','r-pid','r-iso','r-sys','r-area','r-tp'].forEach(function(id){document.getElementById(id).value="";});}
+function regWipe(){if(confirm("Wipe the entire register in this browser?")){saveReg_T([]);regRender();}}
+function regExport(){
+  var a=loadReg_T(),cols=["line","pkg","pid","iso","sys","area","cat","med","tp","status"];
+  var head=["Line No","Test Pack","P&ID","Iso","System","Area","Material Cat","Medium","Test P (barg)","Status"];
+  var csv=[head.join(",")].concat(a.map(function(r){return cols.map(function(k){
+    var v=(r[k]==null?"":String(r[k]));return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}).join(",");})).join("\n");
+  var blob=new Blob([csv],{type:"text/csv"}),u=URL.createObjectURL(blob),x=document.createElement("a");
+  x.href=u;x.download="test_package_register.csv";x.click();URL.revokeObjectURL(u);
+}
+function parseCsvLine_T(line){var out=[],cur="",q=false;for(var i=0;i<line.length;i++){var ch=line[i];
+  if(q){if(ch==='"'){if(line[i+1]==='"'){cur+='"';i++;}else q=false;}else cur+=ch;}
+  else{if(ch===','){out.push(cur);cur="";}else if(ch==='"'){q=true;}else cur+=ch;}}out.push(cur);return out;}
+function regImport(e){
+  var f=e.target.files[0];if(!f)return;var rd=new FileReader();
+  rd.onload=function(){
+    var lines=rd.result.split(/\r?\n/).filter(function(l){return l.trim();});
+    if(lines.length<2){alert("CSV appears empty.");return;}
+    var cols=["line","pkg","pid","iso","sys","area","cat","med","tp","status"];var a=loadReg_T();
+    for(var i=1;i<lines.length;i++){var cells=parseCsvLine_T(lines[i]);if(!cells[0])continue;
+      var ob={};cols.forEach(function(k,j){ob[k]=cells[j]!=null?cells[j]:"";});a.push(ob);}
+    saveReg_T(a);regRender();e.target.value="";
+  };rd.readAsText(f);
+}
+
+/* ----- hook contact-window hint + auto-render into updateCalc ----- */
+function updatePlus(){
+  var hint=document.getElementById('l-window-hint');
+  if(hint){ var v=computeVolumes(getHoldMins()); hint.textContent = v?('active test window ≈ '+fmtT(v.windowMin/1440,2)+' d — add drying/standby'):''; }
+  renderLayup(); renderPlug();
+}
+var __origUpdateCalc_T = updateCalc;
+updateCalc = function(){ __origUpdateCalc_T(); updatePlus(); };
+
 // Init
+fillCatSelectT('l-cat');
 updateCalc();
+document.addEventListener('DOMContentLoaded', function(){
+  fillCatSelectT('r-cat');
+  regRender();
+});
 </script>
 <footer class="ppa-footer">
   <div class="ppa-footer-logo">Piping<span>Pro</span> Academy</div>
@@ -1056,6 +1348,45 @@ updateCalc();
   <p style="margin-top:.3rem">© 2026 Zephrum Konsultan Limited. All rights reserved. &nbsp;·&nbsp; <a href="calculators.html">Calculator Suite</a></p>
 </footer>
 </div><!-- /calctab-calculator -->
+
+<!-- ══ TEST-PACKAGE REGISTER PANEL ══ -->
+<div class="calc-panel" id="calctab-register">
+<div class="main">
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">🗂</span>Test-Package Register</div>
+    <p style="font-size:12.5px;color:var(--ink3);margin:-.4rem 0 1rem;line-height:1.6;">The backbone for auto-routing isometrics &amp; P&amp;IDs later. Keyed on line number. Saved in this browser; export to CSV to share or back up.</p>
+    <div class="fg4">
+      <div class="field"><label>Line Number</label><input type="text" id="r-line" placeholder='6"-P-1201-A1A'></div>
+      <div class="field"><label>Test Pack No.</label><input type="text" id="r-pkg" placeholder="TP-001"></div>
+      <div class="field"><label>P&amp;ID No.</label><input type="text" id="r-pid" placeholder="PID-1201"></div>
+      <div class="field"><label>Isometric No.</label><input type="text" id="r-iso" placeholder="ISO-1201-001"></div>
+    </div>
+    <div class="fg4 gap">
+      <div class="field"><label>System</label><input type="text" id="r-sys" placeholder="Lean Amine"></div>
+      <div class="field"><label>Area / Unit</label><input type="text" id="r-area" placeholder="AGRU"></div>
+      <div class="field"><label>Material Cat.</label><select id="r-cat"></select></div>
+      <div class="field"><label>Medium</label><select id="r-med"><option>Hydro</option><option>Pneumatic</option><option>Leak</option></select></div>
+    </div>
+    <div class="fg4 gap">
+      <div class="field"><label>Test P (barg)</label><input type="number" id="r-tp" step="0.1"></div>
+      <div class="field"><label>Status</label><select id="r-status"><option>Planned</option><option>Released</option><option>Tested</option><option>Reinstated</option></select></div>
+    </div>
+    <div class="reg-actions">
+      <button class="reg-btn primary" onclick="regAdd()">+ Add line</button>
+      <button class="reg-btn" onclick="regPull()">⤓ Pull from calculator</button>
+      <button class="reg-btn" onclick="regClearForm()">Clear form</button>
+      <button class="reg-btn gold" onclick="regExport()">Export CSV</button>
+      <label class="reg-btn" style="margin:0">Import CSV<input id="r-import" type="file" accept=".csv" style="display:none" onchange="regImport(event)"></label>
+      <button class="reg-btn danger" onclick="regWipe()">Wipe register</button>
+    </div>
+    <div class="reg-sum" id="r-summary"></div>
+    <div style="overflow:auto"><table class="reg" id="r-tbl">
+      <thead><tr><th>Line No.</th><th>Pack</th><th>P&amp;ID</th><th>Iso</th><th>System</th><th>Area</th><th>Cat</th><th>Medium</th><th>Test P</th><th>Status</th><th></th></tr></thead>
+      <tbody id="r-body"></tbody>
+    </table></div>
+  </div>
+</div>
+</div><!-- /calctab-register -->
 
 <!-- ══ THEORY & REFERENCE PANEL ══ -->
 <div class="calc-panel" id="calctab-theory">
@@ -1175,7 +1506,7 @@ updateCalc();
 <script>
 /* ── THEORY TAB SWITCHING ── */
 function showCalcTab(name){
-  ['calculator','theory'].forEach(function(t){
+  ['calculator','register','theory'].forEach(function(t){
     var btn = document.querySelector('.calc-tab[onclick*="' + t + '"]');
     var panel = document.getElementById('calctab-' + t);
     if(btn) btn.classList.toggle('active', t===name);
