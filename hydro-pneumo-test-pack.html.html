@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hydro / Pneumo Test Pack Generator — PipingPro Academy</title>
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --ink:#1c1917;--ink2:#57534e;--ink3:#a8a29e;
+  --paper:#f5f4f0;--paper2:#edeae2;--paper3:#e3dfd5;
+  --steel:#2d3748;--steel2:#1a202c;--steel3:#4a5568;
+  --teal:#0d9488;--teal2:#0f766e;--teal-bg:rgba(13,148,136,0.08);--teal-bd:rgba(13,148,136,0.25);
+  --blue:#1d4ed8;--blue-bg:rgba(29,78,216,0.08);--blue-bd:rgba(29,78,216,0.2);
+  --red:#8b3a1a;--red-bg:rgba(220,38,38,0.08);--red-bd:rgba(220,38,38,0.25);
+  --amber:#b8860b;--amber-bg:rgba(217,119,6,0.08);--amber-bd:rgba(217,119,6,0.25);
+  --pass:#065f46;--pass-bg:#d1fae5;--pass-bd:#6ee7b7;
+  --serif:'DM Serif Display',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'DM Mono',monospace;
+}
+
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);min-height:100vh;padding:0 0 4rem;}
+
+/* Top bar */
+.topbar{
+  background:var(--steel2);color:#e2e8f0;
+  padding:.6rem 2rem;font-size:11px;
+  display:flex;align-items:center;justify-content:space-between;
+  letter-spacing:.05em;
+}
+.topbar-left{display:flex;align-items:center;gap:8px;font-family:var(--mono);}
+.topbar-dot{width:7px;height:7px;border-radius:50%;background:#10b981;}
+.topbar-right{font-size:10px;color:#718096;}
+
+/* Hero */
+.hero{
+  background:var(--steel2);
+  color:#e2e8f0;
+  padding:2.5rem 2rem 2rem;
+  border-bottom:3px solid var(--teal);
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 50px),
+             repeating-linear-gradient(0deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 50px);
+}
+.hero-inner{position:relative;max-width:820px;margin:0 auto;}
+.hero-eyebrow{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal2);margin-bottom:.7rem;font-family:var(--mono);}
+.hero h1{font-family:var(--serif);font-size:clamp(1.6rem,4vw,2.4rem);line-height:1.1;margin-bottom:.6rem;color:#f1f5f9;}
+.hero p{font-size:13px;color:#c8b89a;max-width:520px;line-height:1.7;}
+.hero-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:.9rem;}
+.hero-tag{font-size:10.5px;font-family:var(--mono);padding:3px 10px;border-radius:4px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:#c8b89a;}
+
+/* Main layout */
+.main{max-width:820px;margin:0 auto;padding:2rem 1.5rem;}
+
+/* Cards */
+.card{
+  background:#fff;
+  border:1px solid rgba(26,32,44,0.1);
+  border-radius:12px;
+  box-shadow:0 2px 12px rgba(26,32,44,0.06);
+  padding:1.5rem;
+  margin-bottom:1.25rem;
+  animation:fadeUp .4s ease both;
+}
+.card:nth-child(2){animation-delay:.06s;}
+.card:nth-child(3){animation-delay:.12s;}
+.card:nth-child(4){animation-delay:.18s;}
+
+.ctitle{
+  font-family:var(--serif);font-size:1.05rem;color:var(--ink);
+  margin-bottom:1rem;padding-bottom:.65rem;
+  border-bottom:2px solid var(--paper2);
+  display:flex;align-items:center;gap:8px;
+}
+.ctitle-icon{font-size:1rem;}
+
+/* Test type toggle */
+.test-toggle{display:flex;gap:0;border-radius:8px;overflow:hidden;border:1.5px solid var(--paper3);margin-bottom:1.25rem;}
+.tt-btn{
+  flex:1;padding:10px;text-align:center;cursor:pointer;
+  font-size:13px;font-weight:600;font-family:var(--sans);
+  background:#fff;color:var(--ink3);border:none;
+  transition:all .2s;
+}
+.tt-btn.active-hydro{background:var(--teal);color:#fff;}
+.tt-btn.active-pneumo{background:#1d4ed8;color:#fff;}
+.tt-btn:not(.active-hydro):not(.active-pneumo):hover{background:var(--paper2);}
+
+/* Pneumo warning */
+.pneumo-warn{
+  display:none;
+  background:var(--red-bg);border:1.5px solid var(--red-bd);
+  border-radius:8px;padding:12px 14px;margin-bottom:1rem;
+  font-size:12.5px;color:#7f1d1d;line-height:1.6;
+}
+.pneumo-warn.show{display:flex;gap:10px;align-items:flex-start;}
+.pneumo-warn-icon{font-size:1.4rem;flex-shrink:0;}
+
+/* Form */
+.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fg4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;}
+@media(max-width:600px){.fg3,.fg4{grid-template-columns:1fr 1fr;}.fg2{grid-template-columns:1fr;}}
+.field{display:flex;flex-direction:column;}
+.gap{margin-top:12px;}
+label{font-size:10.5px;font-weight:700;color:#7a7068;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;}
+select,input[type=number],input[type=text]{
+  width:100%;padding:9px 12px;border:1.5px solid #d4cfc5;
+  border-radius:7px;background:#fffef9;font-family:var(--sans);
+  font-size:13.5px;color:var(--ink);outline:none;
+  transition:border-color .2s,box-shadow .2s;
+  -webkit-appearance:none;appearance:none;
+}
+select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%230d9488' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;
+  background-color:#fffef9;
+}
+select:focus,input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,148,136,.12);}
+
+/* Calculated pressure display */
+.pres-display{
+  background:linear-gradient(135deg,var(--steel2),var(--steel));
+  border-radius:10px;padding:1.1rem 1.3rem;
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;
+  margin-top:12px;
+}
+.pd-block{text-align:center;}
+.pd-val{font-family:var(--serif);font-size:1.6rem;color:#f1f5f9;line-height:1;}
+.pd-unit{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.07em;margin-top:2px;}
+.pd-label{font-size:10px;color:#c8b89a;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-top:4px;}
+.pd-block.highlight .pd-val{color:#5eead4;}
+
+/* Button */
+.btn{
+  display:block;width:100%;padding:13px;margin-top:1.25rem;
+  border:none;border-radius:8px;font-family:var(--sans);
+  font-size:14.5px;font-weight:700;cursor:pointer;
+  letter-spacing:.03em;transition:all .2s;
+}
+.btn-hydro{background:linear-gradient(135deg,var(--teal2),var(--teal));color:#fff;box-shadow:0 4px 14px rgba(13,148,136,.3);}
+.btn-hydro:hover{background:linear-gradient(135deg,#0f766e,#0d9488);transform:translateY(-1px);}
+.btn-pneumo{background:linear-gradient(135deg,#1e3a8a,#1d4ed8);color:#fff;box-shadow:0 4px 14px rgba(29,78,216,.3);}
+.btn-pneumo:hover{background:linear-gradient(135deg,#1e3a8a,#2563eb);transform:translateY(-1px);}
+
+/* ── TEST PACK OUTPUT ── */
+.test-pack{display:none;animation:fadeUp .5s ease both;}
+.test-pack.show{display:block;}
+
+/* Pack header */
+.pack-header{
+  background:var(--steel2);color:#f1f5f9;
+  border-radius:12px;padding:1.5rem;
+  margin-bottom:1.25rem;
+  display:flex;justify-content:space-between;align-items:flex-start;
+  flex-wrap:wrap;gap:1rem;
+}
+.pack-header-left .pack-title{font-family:var(--serif);font-size:1.4rem;color:#f1f5f9;margin-bottom:.3rem;}
+.pack-header-left .pack-ref{font-family:var(--mono);font-size:11px;color:#64748b;}
+.pack-status{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;
+  letter-spacing:.04em;text-transform:uppercase;
+}
+.ps-hydro{background:rgba(13,148,136,.2);color:#5eead4;border:1px solid rgba(13,148,136,.3);}
+.ps-pneumo{background:rgba(29,78,216,.2);color:#93c5fd;border:1px solid rgba(29,78,216,.3);}
+
+/* Pack meta grid */
+.pack-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem;}
+@media(max-width:500px){.pack-meta{grid-template-columns:1fr 1fr;}}
+.meta-block{
+  background:#fff;border:1px solid var(--paper3);
+  border-radius:8px;padding:10px 12px;
+}
+.meta-val{font-family:var(--mono);font-size:1.05rem;color:var(--ink);font-weight:600;}
+.meta-label{font-size:10px;color:var(--ink3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-top:3px;}
+
+/* Checklist */
+.checklist-card{background:#fff;border:1px solid var(--paper3);border-radius:12px;overflow:hidden;margin-bottom:1.25rem;box-shadow:0 2px 12px rgba(26,32,44,.05);}
+.cl-section-header{
+  padding:10px 16px;font-size:10.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.09em;
+  display:flex;align-items:center;gap:7px;
+}
+.cls-pre{background:var(--teal-bg);border-bottom:1px solid var(--teal-bd);color:var(--teal2);}
+.cls-dur{background:var(--blue-bg);border-bottom:1px solid var(--blue-bd);color:#1d4ed8;}
+.cls-post{background:var(--amber-bg);border-bottom:1px solid var(--amber-bd);color:#6e2e14;}
+.cls-safety{background:var(--red-bg);border-bottom:1px solid var(--red-bd);color:#991b1b;}
+
+.cl-item{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:11px 16px;border-bottom:1px solid var(--paper2);
+  font-size:13px;color:var(--ink2);line-height:1.55;
+}
+.cl-item:last-child{border-bottom:none;}
+.cl-item:hover{background:var(--paper);}
+.cl-check{
+  width:18px;height:18px;min-width:18px;
+  border:2px solid #c4c0b8;border-radius:4px;
+  margin-top:1px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .15s;
+}
+.cl-check:hover{border-color:var(--teal);}
+.cl-check.checked{background:var(--teal);border-color:var(--teal);}
+.cl-check.checked::after{content:'✓';color:#fff;font-size:11px;font-weight:700;}
+.cl-text strong{color:var(--ink);}
+.cl-tag{
+  display:inline-block;font-size:10px;font-family:var(--mono);
+  padding:1px 6px;border-radius:3px;margin-left:5px;
+  background:var(--paper2);color:var(--ink3);
+}
+
+/* Pressure trace table */
+.ptable{width:100%;border-collapse:collapse;font-size:12.5px;}
+.ptable th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);padding:8px 12px;text-align:left;border-bottom:2px solid var(--paper2);}
+.ptable td{padding:9px 12px;border-bottom:1px solid var(--paper2);color:var(--ink2);}
+.ptable tr:last-child td{border-bottom:none;}
+.ptable tr:hover td{background:var(--paper);}
+.ptable td:first-child{font-family:var(--mono);font-weight:600;color:var(--teal2);}
+
+/* Safety advisory */
+.safety-box{
+  background:var(--red-bg);border:1.5px solid var(--red-bd);
+  border-radius:10px;padding:1rem 1.2rem;margin-bottom:1.25rem;
+}
+.safety-title{font-weight:700;color:#991b1b;font-size:13px;margin-bottom:.5rem;display:flex;align-items:center;gap:6px;}
+.safety-list{list-style:none;display:flex;flex-direction:column;gap:4px;}
+.safety-list li{font-size:12.5px;color:#7f1d1d;padding-left:1rem;position:relative;line-height:1.5;}
+.safety-list li::before{content:'→';position:absolute;left:0;color:#8b3a1a;font-size:11px;}
+
+/* Print button */
+.print-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:12px;border-radius:8px;
+  border:2px solid var(--teal);background:transparent;
+  color:var(--teal2);font-family:var(--sans);font-size:14px;
+  font-weight:600;cursor:pointer;transition:all .2s;margin-bottom:1.25rem;
+}
+.print-btn:hover{background:var(--teal);color:#fff;}
+
+/* PDF section */
+.pdf-section{text-align:center;padding:1.5rem 1rem 2rem;border-top:1px solid var(--paper3);margin-top:1rem;}
+.pdf-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:var(--teal2);color:#fff;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;font-family:var(--sans);}
+.pdf-btn:hover{background:var(--teal);}
+
+footer{background:var(--steel2);color:rgba(245,242,235,.4);text-align:center;padding:2rem;font-size:13px;}
+.fl{font-family:var(--serif);font-size:1.1rem;color:rgba(245,242,235,.7);margin-bottom:.4rem;}
+.fl span{color:var(--teal2);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+@media print{
+  .topbar,.hero,.card:not(.print-keep),.btn,.print-btn,.pdf-section,footer{display:none!important;}
+  .test-pack{display:block!important;}
+  body{padding:0;background:#fff;}
+  .pack-header{background:#1a202c!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+}
+
+/* ─── THEORY & REFERENCE TAB ─── */
+.ref-section{background:#fff;border:1px solid var(--rule, rgba(26,26,24,0.12));border-radius:12px;padding:1.4rem 1.6rem;margin-bottom:1.1rem;}
+.ref-title{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3,#8a8a80);margin-bottom:.9rem;padding-bottom:.4rem;border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));}
+.ref-formula{background:var(--paper2,#ede9de);border-left:3px solid var(--accent,#8b3a1a);border-radius:0 8px 8px 0;padding:1rem 1.2rem;font-size:13px;color:var(--ink2,#4a4a44);line-height:2;margin-bottom:.8rem;font-family:monospace;}
+.ref-formula b{font-family:monospace;color:var(--ink,#1a1510);}
+.ref-note{background:var(--teal-light,#e7f1ee);border:1px solid rgba(26,107,90,.15);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--teal,#1a6b5a);line-height:1.7;margin-top:.5rem;}
+.ref-warn{background:var(--warn-light,#f5e9c8);border:1px solid var(--warn-border,#b8860b);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:#6e2e14;line-height:1.7;margin-top:.5rem;}
+.ref-prose{font-size:13px;color:var(--ink2,#4a4a44);line-height:1.75;margin-bottom:.6rem;}
+.ref-prose strong{color:var(--ink,#1a1510);}
+.ref-table-wrap{overflow-x:auto;margin-top:.5rem;}
+.ref-table{width:100%;border-collapse:collapse;font-size:12px;}
+.ref-table th{background:var(--paper3,#e3dfd2);padding:7px 10px;text-align:left;font-weight:600;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2,#4a4a44);border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));}
+.ref-table td{padding:6px 10px;border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));color:var(--ink,#1a1510);vertical-align:top;}
+.ref-table td:first-child{font-weight:600;font-family:monospace;font-size:11px;white-space:nowrap;}
+.ref-table tr:last-child td{border-bottom:none;}
+
+
+/* ─── THEORY TAB NAV ─── */
+.calc-tabs{display:flex;background:var(--paper2,#ede9de);border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));overflow-x:auto;margin-bottom:0;}
+.calc-tab{padding:.85rem 1.5rem;font-size:13px;font-weight:500;color:var(--ink3,#8a8a80);border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;font-family:'DM Sans',sans-serif;transition:color .2s,border-color .2s;white-space:nowrap;}
+.calc-tab.active{color:var(--accent,#8b3a1a);border-bottom-color:var(--accent,#8b3a1a);}
+.calc-tab:hover:not(.active){color:var(--ink,#1a1510);}
+.calc-panel{display:none;}
+.calc-panel.active{display:block;}
+
+</style>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style id="ppa-shared">
+:root{
+  --ink:#1a1510;--ink2:#4a4a44;--ink3:#8a8a80;
+  --paper:#f5f2eb;--paper2:#ede9de;--paper3:#e3dfd2;
+  --accent:#8b3a1a;--accent2:#d4a017;--accent-light:#f7ede3;
+  --teal:#1a6b5a;--teal-light:#e7f1ee;
+  --rule:rgba(26,26,24,0.12);
+  --gold:#b8860b;--gold-light:#f5e9c8;
+  --font:'DM Sans',sans-serif;
+  --serif:'DM Serif Display',serif;
+  --mono:'DM Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:15px;line-height:1.6;min-height:100vh;}
+/* ── NAV ── */
+.ppa-nav{background:rgba(245,242,235,0.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--rule);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:200;}
+.ppa-nav-logo{font-family:var(--serif);font-size:17px;color:var(--ink);text-decoration:none;}
+.ppa-nav-logo span{color:var(--accent);}
+.ppa-nav-back{font-size:13px;color:var(--ink2);text-decoration:none;display:flex;align-items:center;gap:5px;}
+.ppa-nav-back:hover{color:var(--accent);}
+/* ── HERO ── */
+.ppa-hero{background:var(--ink);color:var(--paper);padding:2.8rem 2rem 2.4rem;text-align:center;border-bottom:3px solid var(--accent);position:relative;overflow:hidden;}
+.ppa-hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 60px),repeating-linear-gradient(0deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 60px);}
+.ppa-hero-eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);margin-bottom:.7rem;font-family:var(--mono);position:relative;}
+.ppa-hero h1{font-family:var(--serif);font-size:clamp(1.7rem,4vw,2.6rem);line-height:1.1;margin-bottom:.7rem;position:relative;}
+.ppa-hero p{font-size:14px;color:rgba(245,242,235,0.6);max-width:540px;margin:0 auto;position:relative;}
+/* ── SHARED CARD ── */
+.ppa-card{background:#fff;border:1px solid var(--rule);border-radius:12px;padding:1.8rem 2rem;margin-bottom:1.4rem;}
+.ppa-card-title{font-family:var(--serif);font-size:1.15rem;color:var(--ink);margin-bottom:.25rem;}
+.ppa-card-sub{font-size:12px;color:var(--ink3);margin-bottom:1.2rem;}
+/* ── FOOTER ── */
+.ppa-footer{background:var(--ink);color:rgba(245,242,235,0.5);text-align:center;padding:2rem;font-size:13px;margin-top:3rem;}
+.ppa-footer a{color:var(--accent2);text-decoration:none;}
+.ppa-footer-logo{font-family:var(--serif);font-size:1.1rem;color:var(--paper);margin-bottom:.4rem;}
+.ppa-footer-logo span{color:var(--accent);}
+</style>
+<!-- ===== PipingPro Brand Bridge v1.0 — injected before </head> ===== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style id="pp-brand-bridge">
+/* Redefines every token name used across the suite to the PipingPro brand.
+   Placed last in <head> so it overrides each file's own :root. No markup/JS touched. */
+:root{
+  /* surfaces */
+  --bg:#faf6ef; --cream:#faf6ef;
+  --paper:#f3ede2; --surface:#f3ede2; --paper2:#f3ede2; --bg2:#f3ede2;
+  --paper3:#e8dfd0; --bg3:#e8dfd0;
+  /* text */
+  --ink:#1a1510; --text:#1a1510;
+  --ink2:#4a3f30; --text-2:#4a3f30; --muted:#4a3f30;
+  --ink3:#6b5d49; --text-3:#6b5d49; --muted2:#6b5d49;
+  /* primary accent = rust (legible on light & as button bg) */
+  --accent:#8b3a1a; --accent2:#b8860b;
+  --accent-light:#f6e6df; --accent-border:#c8b89a;
+  --teal:#8b3a1a; --teal2:#8b3a1a; --teal-light:#f6e6df;
+  --blue:#8b3a1a; --purple:#8b3a1a;
+  /* gilt accents */
+  --gold:#b8860b; --gold2:#b8860b; --gold-light:#f5e9c8; --orange:#b8860b; --yellow:#b8860b;
+  /* rules / borders */
+  --rule:#c8b89a; --border:#c8b89a; --border2:#c8b89a; --border-strong:#b8a87f;
+  /* fonts */
+  --serif:'DM Serif Display',Georgia,serif;
+  --font:'DM Sans',system-ui,sans-serif; --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  /* geometry */
+  --radius:4px; --radius-lg:6px;
+  /* states */
+  --pass:#1a6b5a; --success:#1a6b5a; --green:#1a6b5a;
+  --pass-bg:#e7f1ee; --success-light:#e7f1ee; --pass-bd:#1a6b5a;
+  --fail:#8b3a1a; --danger:#8b3a1a; --red:#8b3a1a;
+  --fail-bg:#f6e6df; --danger-light:#f6e6df; --red-bg:#f6e6df;
+  --danger-border:#8b3a1a; --fail-bd:#8b3a1a;
+  --warn:#b8860b; --warn-light:#f5e9c8; --warn-bg:#f5e9c8;
+  --warn-border:#b8860b; --warn-bd:#b8860b;
+  --info:#1a6b5a; --info-light:#e7f1ee; --info-border:#1a6b5a;
+}
+/* Enforce brand fonts even where files hardcoded font-family (not via token) */
+body, p, div, span, td, th, li, label, input, select, textarea, button{
+  font-family:'DM Sans',system-ui,sans-serif;
+}
+h1,h2,h3,h4,h5,.calc-card-name,.card-title{ font-family:'DM Serif Display',Georgia,serif; }
+code,pre,.mono,[class*="mono"]{ font-family:'IBM Plex Mono',ui-monospace,monospace; }
+body{ background:#faf6ef; color:#1a1510; }
+
+/* ---- Canonical header: overrides each file's own .ppa-nav / .ppa-hero rules ---- */
+.ppa-nav{
+  position:sticky; top:0; z-index:100; display:flex; align-items:center; justify-content:space-between;
+  height:60px; padding:0 5%; margin:0; background:#1a1510; border-bottom:2px solid #b8860b;
+}
+.ppa-nav-logo{ font-family:'DM Serif Display',Georgia,serif; font-size:1.15rem; color:#d4a017 !important; letter-spacing:.02em; text-decoration:none; }
+.ppa-nav-logo span{ color:#b8860b; }
+.ppa-nav-back{ color:#ccc !important; font-family:'DM Sans',sans-serif; font-size:.82rem; font-weight:500; letter-spacing:.05em; text-transform:uppercase; text-decoration:none; }
+.ppa-nav-back:hover{ color:#d4a017 !important; }
+.ppa-hero{
+  max-width:1040px; margin:0 auto; padding:2.2rem 5% 1.5rem; background:transparent; border:none; text-align:left;
+}
+.ppa-hero-eyebrow{
+  font-family:'IBM Plex Mono',ui-monospace,monospace; font-size:.72rem; font-weight:500;
+  text-transform:uppercase; letter-spacing:.12em; color:#b8860b; margin:0 0 .5rem; display:block; background:none; padding:0; border:none;
+}
+.ppa-hero h1{ font-family:'DM Serif Display',Georgia,serif; font-weight:400; font-size:2rem; line-height:1.15; color:#1a1510; margin:0 0 .55rem; }
+.ppa-hero h1 em{ font-style:normal; color:#8b3a1a; }
+.ppa-hero p{ font-family:'DM Sans',sans-serif; font-size:.95rem; line-height:1.6; color:#4a3f30; max-width:66ch; margin:0; }
+</style>
+<!-- ===== end PipingPro Brand Bridge ===== -->
+
+<!-- ===== Lay-up / Plug / Register components (additive) ===== -->
+<style id="pp-tplus">
+.lz-flag{display:flex;gap:10px;align-items:flex-start;padding:11px 13px;border-radius:6px;margin:8px 0;font-size:12.5px;line-height:1.55;border:1px solid;}
+.lz-flag .lz-ic{font-family:var(--mono);font-weight:600;flex-shrink:0;}
+.lz-ok{background:var(--pass-bg);border-color:var(--pass-bd);color:#13503f;}
+.lz-warn{background:var(--warn-bg);border-color:var(--warn-bd);color:#6b4e1f;}
+.lz-stop{background:var(--red-bg);border-color:var(--red-bd);color:var(--red);}
+.lz-info{background:var(--accent-light);border-color:var(--accent-border);color:var(--accent);}
+.lz-flag b{color:var(--ink);}
+.pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;margin:3px 3px 0 0;}
+.pill-rec{background:var(--pass-bg);color:#13503f;}
+.pill-acc{background:var(--accent-light);color:var(--accent);}
+.pill-pro{background:var(--red-bg);color:var(--red);}
+.tplus-hint{font-size:11px;color:var(--ink3);margin-top:8px;line-height:1.55;}
+.reg-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+.reg-btn{padding:7px 13px;border-radius:6px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:12.5px;font-weight:600;font-family:var(--sans);color:var(--ink);}
+.reg-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent);}
+.reg-btn.gold{background:var(--gold);color:#fff;border-color:var(--gold);}
+.reg-btn.danger{background:var(--red-bg);color:var(--red);border-color:var(--red-bd);}
+table.reg{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px;}
+table.reg th,table.reg td{border:1px solid var(--border);padding:6px 8px;text-align:left;white-space:nowrap;}
+table.reg th{background:var(--paper2);color:var(--ink);font-size:10px;text-transform:uppercase;letter-spacing:.04em;}
+table.reg td.n{text-align:right;font-family:var(--mono);}
+.reg-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:4px 0 4px;}
+.reg-x{cursor:pointer;color:var(--red);font-weight:700;}
+</style>
+<!-- ===== end components ===== -->
+
+</head>
+<body>
+<nav class="ppa-nav">
+  <a href="index.html" class="ppa-nav-logo">Piping<span>Pro</span> Academy</a>
+  <a href="calculators.html" class="ppa-nav-back">← Back to Calculators</a>
+</nav>
+<div class="ppa-hero">
+  <div class="ppa-hero-eyebrow">Members · Engineering Calculator Suite</div>
+  <h1>Hydro / Pneumo <em>Test Pack Generator</em></h1>
+  <p>Test pressure calculation, hold times &amp; documentation per ASME B31.3 &amp; Saudi Aramco SAES-A-004</p>
+</div>
+
+
+<div class="topbar">
+  <div class="topbar-left"><span class="topbar-dot"></span>PipingPro Academy · Calculator Suite</div>
+  <div class="topbar-right">ASME B31.3 · B31.4 · B31.8 · SAES-A-004 / A-007</div>
+</div>
+
+
+<div class="calc-tabs">
+  <button class="calc-tab active" onclick="showCalcTab('calculator')">⚙ Calculator</button>
+  <button class="calc-tab" onclick="showCalcTab('register')">🗂 Test-Package Register</button>
+  <button class="calc-tab" onclick="showCalcTab('theory')">📚 Theory &amp; Reference</button>
+</div>
+
+<div class="calc-panel active" id="calctab-calculator">
+<div class="main">
+
+  <!-- Test Type -->
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">🧪</span>Test Type Selection</div>
+
+    <div class="test-toggle">
+      <button class="tt-btn active-hydro" id="btn-hydro" onclick="setTestType('hydro')">💧 Hydrostatic Test</button>
+      <button class="tt-btn" id="btn-pneumo" onclick="setTestType('pneumo')">💨 Pneumatic Test</button>
+      <button class="tt-btn" id="btn-leak" onclick="setTestType('leak')">🔍 Initial Service Leak Test</button>
+    </div>
+
+    <div class="pneumo-warn" id="pneumo-warn">
+      <div class="pneumo-warn-icon">⚠️</div>
+      <div><strong>Pneumatic Test — Elevated Risk.</strong> Pneumatic testing stores far more energy than hydrostatic. Per ASME B31.3 Cl. 345.5 and SAES-A-004 §5.8, water shall be the primary medium and all alternatives evaluated first; pneumatic testing needs a written hazard analysis (ASME PCC-2 / GI 0002.102), Inspection Dept approval via CRM, and a stored-energy check ≤ 271 MJ (200×10⁶ ft·lb). Clear all personnel from the test area during pressurisation. Test pressure is limited to 1.1× design (vs 1.5× for hydrotest).</div>
+    </div>
+  </div>
+
+  <!-- Line Details -->
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">🔧</span>Line Details</div>
+    <div class="fg3">
+      <div class="field">
+        <label>Line Number / Tag</label>
+        <input type="text" id="line-no" placeholder="e.g. 6&quot;-PL-1001-A1A">
+      </div>
+      <div class="field">
+        <label>P&amp;ID Reference</label>
+        <input type="text" id="pid-ref" placeholder="e.g. DWG-2001-P001">
+      </div>
+      <div class="field">
+        <label>Pipe Class</label>
+        <input type="text" id="pipe-class" placeholder="e.g. A1A, CS150">
+      </div>
+    </div>
+    <div class="fg3 gap">
+      <div class="field">
+        <label>Design Code</label>
+        <select id="design-code" onchange="updateCalc()">
+          <option value="b313">ASME B31.3 (Process)</option>
+          <option value="b314">ASME B31.4 (Liquid Pipeline)</option>
+          <option value="b318">ASME B31.8 (Gas Pipeline)</option>
+          <option value="b311">ASME B31.1 (Power Piping)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Pipe Size (NPS)</label>
+        <select id="nps" onchange="onNpsChange()">
+          <option value="21.3" data-nps='½"'>½"</option>
+          <option value="26.7" data-nps='¾"'>¾"</option>
+          <option value="33.4" data-nps='1"'>1"</option>
+          <option value="48.3" data-nps='1½"'>1½"</option>
+          <option value="60.3" data-nps='2"'>2"</option>
+          <option value="88.9" data-nps='3"'>3"</option>
+          <option value="114.3" data-nps='4"'>4"</option>
+          <option value="168.3" data-nps='6"' selected>6"</option>
+          <option value="219.1" data-nps='8"'>8"</option>
+          <option value="273.0" data-nps='10"'>10"</option>
+          <option value="323.8" data-nps='12"'>12"</option>
+          <option value="406.4" data-nps='16"'>16"</option>
+          <option value="457.0" data-nps='18"'>18"</option>
+          <option value="508.0" data-nps='20"'>20"</option>
+          <option value="610.0" data-nps='24"'>24"</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Flange Rating</label>
+        <select id="flange-rating">
+          <option>Class 150</option><option>Class 300</option><option>Class 600</option>
+          <option>Class 900</option><option>Class 1500</option><option>Class 2500</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pressure & Temperature -->
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">📊</span>Design Conditions</div>
+    <div class="fg4">
+      <div class="field">
+        <label>Design Pressure (barg)</label>
+        <input type="number" id="design-p" value="35" min="0" max="700" step="0.1" oninput="updateCalc()">
+      </div>
+      <div class="field">
+        <label>Design Temp (°C)</label>
+        <input type="number" id="design-t" value="120" min="-196" max="600" step="1">
+      </div>
+      <div class="field">
+        <label>Test Temp (°C)</label>
+        <input type="number" id="test-t" value="20" min="-10" max="100" step="1">
+      </div>
+      <div class="field">
+        <label>MAWP (barg) <span style="font-weight:400;color:#b8a890;text-transform:none;letter-spacing:0;">if different</span></label>
+        <input type="number" id="mawp" placeholder="= Design P" min="0" max="700" step="0.1" oninput="updateCalc()">
+      </div>
+    </div>
+
+    <!-- Calculated pressures -->
+    <div class="pres-display" id="pres-display">
+      <div class="pd-block highlight">
+        <div class="pd-val" id="pd-test-p">52.5</div>
+        <div class="pd-unit">barg</div>
+        <div class="pd-label">Test Pressure</div>
+      </div>
+      <div class="pd-block">
+        <div class="pd-val" id="pd-min-p">35.0</div>
+        <div class="pd-unit">barg</div>
+        <div class="pd-label">Min Test P</div>
+      </div>
+      <div class="pd-block">
+        <div class="pd-val" id="pd-gauge">0–100</div>
+        <div class="pd-unit">barg range</div>
+        <div class="pd-label">Gauge Range</div>
+      </div>
+    </div>
+
+    <div class="fg2 gap">
+      <div class="field">
+        <label>Test Medium</label>
+        <select id="test-medium">
+          <option value="water">Potable / Treated Water</option>
+          <option value="glycol">Water-Glycol Mix</option>
+          <option value="nitrogen">Nitrogen (N₂)</option>
+          <option value="air">Compressed Air</option>
+          <option value="process">Process Fluid (initial service)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Hold Time Required</label>
+        <select id="hold-time" onchange="updateCalc()">
+          <option value="10">10 minutes (minimum per B31.3)</option>
+          <option value="30" selected>30 minutes (standard practice)</option>
+          <option value="60">1 hour (primed/painted joints — SAES-A-004 App. D)</option>
+          <option value="120">2 hours</option>
+          <option value="240">4 hours</option>
+          <option value="custom">Custom</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Volumes & Durations -->
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">💧</span>Volumes &amp; Durations <span style="font-size:11px;font-weight:400;color:#b8a890;margin-left:6px;">test-pack water &amp; time estimate</span></div>
+    <div class="fg4">
+      <div class="field">
+        <label>Line Length (m)</label>
+        <input type="number" id="line-length" value="100" min="0" max="100000" step="1" oninput="updateCalc()">
+      </div>
+      <div class="field">
+        <label>Wall Thickness (mm) <span style="font-weight:400;color:#b8a890;text-transform:none;letter-spacing:0;">STD auto</span></label>
+        <input type="number" id="wall-t" value="7.11" min="0.5" max="120" step="0.01" oninput="updateCalc()">
+      </div>
+      <div class="field">
+        <label>Pump Fill Rate (m³/h)</label>
+        <input type="number" id="fill-rate" value="20" min="0.1" max="2000" step="0.5" oninput="updateCalc()">
+      </div>
+      <div class="field">
+        <label>Drain Rate (m³/h)</label>
+        <input type="number" id="drain-rate" value="30" min="0.1" max="2000" step="0.5" oninput="updateCalc()">
+      </div>
+    </div>
+
+    <div class="pres-display" id="vol-display" style="grid-template-columns:repeat(4,1fr);">
+      <div class="pd-block highlight">
+        <div class="pd-val" id="pd-vol">1,921</div>
+        <div class="pd-unit">litres</div>
+        <div class="pd-label">Water Volume</div>
+      </div>
+      <div class="pd-block">
+        <div class="pd-val" id="pd-fill">6m</div>
+        <div class="pd-unit">approx</div>
+        <div class="pd-label">Fill Time</div>
+      </div>
+      <div class="pd-block">
+        <div class="pd-val" id="pd-drain">4m</div>
+        <div class="pd-unit">approx</div>
+        <div class="pd-label">Drain Time</div>
+      </div>
+      <div class="pd-block">
+        <div class="pd-val" id="pd-window">~70m</div>
+        <div class="pd-unit">fill→drain</div>
+        <div class="pd-label">Test Window</div>
+      </div>
+    </div>
+    <p style="font-size:11px;color:var(--ink3);margin-top:10px;line-height:1.6;">
+      Volume = π/4 · ID² · L with a 3% fittings/manifold allowance (ID = OD − 2·wall).
+      Test window = fill + 30&nbsp;min pressurise &amp; examine + hold + drain. Drying / lay-up time is additional — see Theory tab for SAES-A-007 water-contact limits.
+    </p>
+  </div>
+
+  <!-- SAES-A-007 Lay-up & Water Treatment -->
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">🧫</span>SAES-A-007 Lay-up &amp; Water Treatment <span style="font-size:11px;font-weight:400;color:#b8a890;margin-left:6px;">Rev. Oct 2025 · threshold logic</span></div>
+    <div class="fg4">
+      <div class="field">
+        <label>Material Category</label>
+        <select id="l-cat" onchange="renderLayup()"></select>
+      </div>
+      <div class="field">
+        <label>Asset Type</label>
+        <select id="l-asset" onchange="renderLayup()">
+          <option value="piping">Plant piping</option>
+          <option value="vessel">Pressure vessel</option>
+          <option value="hx">Heat exchanger / fin-fan</option>
+          <option value="tank">Tank</option>
+          <option value="pipeline">Pipeline</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Water Contact (days)</label>
+        <input type="number" id="l-contact" value="1" min="0" max="365" step="0.5" oninput="renderLayup()">
+        <span class="tplus-hint" id="l-window-hint"></span>
+      </div>
+      <div class="field">
+        <label>Test → Start-up (days)</label>
+        <input type="number" id="l-startup" value="30" min="0" max="3650" step="1" oninput="renderLayup()">
+      </div>
+    </div>
+    <div class="fg4 gap">
+      <div class="field">
+        <label>Source Water</label>
+        <select id="l-treated" onchange="renderLayup()">
+          <option value="yes">Treated (scavenger/biocide)</option>
+          <option value="no">Untreated</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Sour Service (H₂S)</label>
+        <select id="l-sour" onchange="renderLayup()"><option value="no">No</option><option value="yes">Yes</option></select>
+      </div>
+      <div class="field">
+        <label>Freezing Risk</label>
+        <select id="l-freeze" onchange="renderLayup()"><option value="no">No</option><option value="yes">Yes</option></select>
+      </div>
+      <div class="field">
+        <label>Special Service</label>
+        <select id="l-special" onchange="renderLayup()"><option value="no">No</option><option value="yes">O₂ / sales gas / NGL</option></select>
+      </div>
+    </div>
+    <div id="layup-result" style="margin-top:1rem;"></div>
+    <p class="tplus-hint">Encodes SAES-A-007 (Rev. 14 Oct 2025) Tables 1–4 threshold values. Confirm against the controlled standard before issue.</p>
+  </div>
+
+  <!-- Isolation-Plug Time Saving -->
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">🔩</span>Isolation-Plug Time Saving <span style="font-size:11px;font-weight:400;color:#b8a890;margin-left:6px;">vs welded heads / spades</span></div>
+    <div class="fg3">
+      <div class="field"><label>Test-head fab + fit (h)</label><input type="number" id="c-fab" value="6" step="0.5" oninput="renderPlug()"></div>
+      <div class="field"><label>Boundary weld (h)</label><input type="number" id="c-weld" value="4" step="0.5" oninput="renderPlug()"></div>
+      <div class="field"><label>NDE before test (h)</label><input type="number" id="c-nde1" value="3" step="0.5" oninput="renderPlug()"></div>
+      <div class="field"><label>Cut-out after test (h)</label><input type="number" id="c-cut" value="3" step="0.5" oninput="renderPlug()"></div>
+      <div class="field"><label>Golden weld (h)</label><input type="number" id="c-gold" value="6" step="0.5" oninput="renderPlug()"></div>
+      <div class="field"><label>NDE golden weld (h)</label><input type="number" id="c-nde2" value="4" step="0.5" oninput="renderPlug()"></div>
+    </div>
+    <div class="fg4 gap">
+      <div class="field"><label>Plug: set (h)</label><input type="number" id="p-set" value="2" step="0.5" oninput="renderPlug()"></div>
+      <div class="field"><label>Plug: remove (h)</label><input type="number" id="p-rem" value="1.5" step="0.5" oninput="renderPlug()"></div>
+      <div class="field"><label>Plug rating (barg)</label><input type="number" id="p-rating" value="100" step="1" oninput="renderPlug()"></div>
+      <div class="field"><label>No. of boundaries</label><input type="number" id="x-bound" value="4" min="1" step="1" oninput="renderPlug()"></div>
+    </div>
+    <div class="fg2 gap">
+      <div class="field"><label>Crew cost (optional, /h)</label><input type="number" id="x-rate" value="0" step="1" oninput="renderPlug()"></div>
+    </div>
+    <div id="plug-result" style="margin-top:1rem;"></div>
+  </div>
+
+  <!-- Scope -->
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">📋</span>Test Scope & Exclusions</div>
+    <div class="fg2">
+      <div class="field">
+        <label>Isolation Method</label>
+        <select id="isolation" onchange="updateCalc()">
+          <option value="blind">Blind / paddle / spectacle blinds (§5.12.1)</option>
+          <option value="blockvalve">Closed block valves (§5.12.2 / 5.12.3)</option>
+          <option value="plug">Isolation / test plugs (§5.12.4)</option>
+          <option value="dummyspool">Dummy spools (replace in-line equip.)</option>
+          <option value="testcap">Welded test caps</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Test Preparation By</label>
+        <input type="text" id="prepared-by" placeholder="Name / Company">
+      </div>
+    </div>
+    <div class="fg2 gap">
+      <div class="field">
+        <label>Witnessed By</label>
+        <input type="text" id="witnessed-by" placeholder="Inspector / Client rep">
+      </div>
+      <div class="field">
+        <label>Test Date</label>
+        <input type="text" id="test-date" placeholder="DD-MMM-YYYY">
+      </div>
+    </div>
+
+    <button class="btn btn-hydro" id="gen-btn" onclick="generatePack()">Generate Test Pack →</button>
+  </div>
+
+  <!-- ── TEST PACK OUTPUT ── -->
+  <div class="test-pack" id="test-pack">
+
+    <button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+
+    <!-- Pack Header -->
+    <div class="pack-header">
+      <div class="pack-header-left">
+        <div class="pack-title" id="tp-title">Hydrostatic Test Pack</div>
+        <div class="pack-ref" id="tp-ref">Line: — · P&amp;ID: —</div>
+        <div class="pack-ref" style="margin-top:3px;" id="tp-date">Generated: —</div>
+      </div>
+      <div>
+        <div class="pack-status" id="tp-status">💧 HYDROSTATIC</div>
+      </div>
+    </div>
+
+    <!-- Meta -->
+    <div class="pack-meta" id="tp-meta"></div>
+
+    <!-- Safety Advisory (pneumo only) -->
+    <div class="safety-box" id="tp-safety" style="display:none;">
+      <div class="safety-title">🚨 Pneumatic Test Safety Requirements</div>
+      <ul class="safety-list" id="tp-safety-list"></ul>
+    </div>
+
+    <!-- Pressure Trace -->
+    <div class="card print-keep">
+      <div class="ctitle"><span class="ctitle-icon">📈</span>Pressurisation Sequence</div>
+      <table class="ptable">
+        <thead><tr><th>Step</th><th>Action</th><th>Target Pressure</th><th>Hold Time</th><th>Action Required</th></tr></thead>
+        <tbody id="tp-ptable"></tbody>
+      </table>
+    </div>
+
+    <!-- Pre-test Checklist -->
+    <div class="checklist-card print-keep">
+      <div class="cl-section-header cls-pre">📋 &nbsp;Pre-Test Preparation Checklist</div>
+      <div id="cl-pre"></div>
+      <div class="cl-section-header cls-dur">🔍 &nbsp;During Test — Inspection Points</div>
+      <div id="cl-dur"></div>
+      <div class="cl-section-header cls-post">✅ &nbsp;Post-Test Actions</div>
+      <div id="cl-post"></div>
+      <div class="cl-section-header cls-safety">⚠️ &nbsp;Safety Requirements</div>
+      <div id="cl-safety"></div>
+    </div>
+
+    <!-- Signature block -->
+    <div class="card print-keep">
+      <div class="ctitle"><span class="ctitle-icon">✍️</span>Test Record &amp; Sign-off</div>
+      <table class="ptable">
+        <thead><tr><th>Role</th><th>Name</th><th>Signature</th><th>Date / Time</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td>Test Engineer</td><td id="sig-prep">—</td><td style="min-width:120px;"></td><td style="min-width:100px;"></td><td>PASS / FAIL</td></tr>
+          <tr><td>Inspector / Witness</td><td id="sig-wit">—</td><td></td><td></td><td>PASS / FAIL</td></tr>
+          <tr><td>Client Representative</td><td>_______________</td><td></td><td></td><td>PASS / FAIL</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:1rem;font-size:11.5px;color:var(--ink3);line-height:1.7;">
+        Test pressure maintained for the required hold period with no visible leaks, pressure drop, or structural distress. All test exclusions confirmed blind/isolated. Gauges calibrated (within 30 days) and within range. Test medium disposed of per environmental requirements (SAEP-327). Record on SATR-A-2001 (or project-established report); retain a minimum of 5 years.
+      </div>
+    </div>
+
+  </div><!-- /test-pack -->
+
+  <!-- PDF -->
+  <div class="pdf-section">
+    <p style="font-size:12px;color:var(--ink3);margin-bottom:.8rem;">Reference documentation for this calculator</p>
+    <a href="pdf/pressure-testing-guide.pdf" target="_blank" class="pdf-btn">
+      📄 Download PDF Guide — Hydrostatic &amp; Pneumatic Testing per ASME B31.3
+    </a>
+    <p style="font-size:11px;color:var(--ink3);margin-top:.6rem;">Covers test pressure calculations, hold times, gauge selection, exclusions, and B31.3 code requirements.</p>
+  </div>
+
+</div><!-- /main -->
+
+
+
+<script>
+var testType = 'hydro';
+
+function setTestType(t) {
+  testType = t;
+  ['hydro','pneumo','leak'].forEach(x => {
+    const b = document.getElementById('btn-'+x);
+    b.className = 'tt-btn' + (x===t ? (x==='pneumo'?' active-pneumo':' active-hydro') : '');
+  });
+  document.getElementById('pneumo-warn').classList.toggle('show', t==='pneumo');
+  const gb = document.getElementById('gen-btn');
+  gb.className = 'btn ' + (t==='pneumo' ? 'btn-pneumo' : 'btn-hydro');
+  updateCalc();
+}
+
+function getBasePressure() {
+  const dp = parseFloat(document.getElementById('design-p').value) || 0;
+  const mawp = parseFloat(document.getElementById('mawp').value) || dp;
+  return Math.max(dp, mawp);
+}
+
+function getTestFactor() {
+  const code = document.getElementById('design-code').value;
+  if (testType === 'pneumo') return 1.1;
+  if (testType === 'leak')   return 1.0;
+  // Hydro factors
+  if (code === 'b313') return 1.5;
+  if (code === 'b314') return 1.25;
+  if (code === 'b318') return 1.25;
+  if (code === 'b311') return 1.5;
+  return 1.5;
+}
+
+function getGaugeRange(testP) {
+  // SAES-A-004 §5.11.6: dial range approximately 2x test pressure,
+  // and in no case less than 1.5x nor more than 4x test pressure.
+  const ranges = [10,16,25,40,60,100,160,250,400,600,1000,1600];
+  const lo = testP * 1.5, hi = testP * 4, target = testP * 2;
+  const valid = ranges.filter(r => r >= lo && r <= hi);
+  if (valid.length) {
+    return valid.reduce((a,b) => Math.abs(b-target) < Math.abs(a-target) ? b : a);
+  }
+  for (const r of ranges) if (r >= lo) return r;
+  return ranges[ranges.length-1];
+}
+
+// STD wall thickness (mm) per B36.10M, keyed by OD (mm) — used to auto-fill on NPS change
+var STD_WALL = {
+  "21.3":2.77,"26.7":2.87,"33.4":3.38,"48.3":3.68,"60.3":3.91,
+  "88.9":5.49,"114.3":6.02,"168.3":7.11,"219.1":8.18,"273.0":9.27,
+  "323.8":9.53,"406.4":9.53,"457.0":9.53,"508.0":9.53,"610.0":9.53
+};
+
+function onNpsChange() {
+  const od = document.getElementById('nps').value;
+  const w  = STD_WALL[od];
+  if (w !== undefined) document.getElementById('wall-t').value = w;
+  updateCalc();
+}
+
+function fmtDur(mins) {
+  if (!isFinite(mins) || mins <= 0) return '—';
+  const m = Math.round(mins);
+  if (m < 60) return m + 'm';
+  const h = Math.floor(m/60), r = m%60;
+  return r ? `${h}h ${r}m` : `${h}h`;
+}
+
+// Returns {volL, volM3, fillMin, drainMin, windowMin} or null if inputs incomplete
+function computeVolumes(holdMins) {
+  const od = parseFloat(document.getElementById('nps').value) || 0;
+  const t  = parseFloat(document.getElementById('wall-t').value) || 0;
+  const L  = parseFloat(document.getElementById('line-length').value) || 0;
+  const fillRate  = parseFloat(document.getElementById('fill-rate').value) || 0;
+  const drainRate = parseFloat(document.getElementById('drain-rate').value) || 0;
+  const id = od - 2*t;
+  if (id <= 0 || L <= 0) return null;
+  const areaM2 = Math.PI/4 * Math.pow(id/1000, 2);
+  const volM3  = areaM2 * L * 1.03;   // 3% fittings/manifold allowance
+  const volL   = volM3 * 1000;
+  const fillMin  = fillRate  > 0 ? (volM3/fillRate)*60  : NaN;
+  const drainMin = drainRate > 0 ? (volM3/drainRate)*60 : NaN;
+  const windowMin = (isFinite(fillMin)?fillMin:0) + 30 + (holdMins||0) + (isFinite(drainMin)?drainMin:0);
+  return {volL, volM3, fillMin, drainMin, windowMin};
+}
+
+function getHoldMins() {
+  const hs = document.getElementById('hold-time').value;
+  return hs === 'custom' ? 30 : parseInt(hs);
+}
+
+function updateCalc() {
+  const base = getBasePressure();
+  const factor = getTestFactor();
+  const testP = Math.round(base * factor * 10) / 10;
+  const gaugeRange = getGaugeRange(testP);
+
+  document.getElementById('pd-test-p').textContent = testP.toFixed(1);
+  document.getElementById('pd-min-p').textContent  = base.toFixed(1);
+  document.getElementById('pd-gauge').textContent  = `0–${gaugeRange}`;
+
+  // Volumes & durations
+  const v = computeVolumes(getHoldMins());
+  if (v) {
+    document.getElementById('pd-vol').textContent    = Math.round(v.volL).toLocaleString('en-GB');
+    document.getElementById('pd-fill').textContent   = fmtDur(v.fillMin);
+    document.getElementById('pd-drain').textContent  = fmtDur(v.drainMin);
+    document.getElementById('pd-window').textContent = '~' + fmtDur(v.windowMin);
+  } else {
+    document.getElementById('pd-vol').textContent = '—';
+    document.getElementById('pd-fill').textContent = '—';
+    document.getElementById('pd-drain').textContent = '—';
+    document.getElementById('pd-window').textContent = '—';
+  }
+}
+
+function clItem(text, tag) {
+  return `<div class="cl-item">
+    <div class="cl-check" onclick="this.classList.toggle('checked')"></div>
+    <div class="cl-text">${text}${tag?`<span class="cl-tag">${tag}</span>`:''}</div>
+  </div>`;
+}
+
+function generatePack() {
+  const lineNo    = document.getElementById('line-no').value || '—';
+  const pidRef    = document.getElementById('pid-ref').value || '—';
+  const pipeClass = document.getElementById('pipe-class').value || '—';
+  const code      = document.getElementById('design-code').value;
+  const codeLabel = document.getElementById('design-code').options[document.getElementById('design-code').selectedIndex].text;
+  const npsSelEl  = document.getElementById('nps');
+  const nps       = npsSelEl.options[npsSelEl.selectedIndex].text;
+  const flangeRat = document.getElementById('flange-rating').value;
+  const designP   = parseFloat(document.getElementById('design-p').value) || 0;
+  const designT   = document.getElementById('design-t').value;
+  const testT     = document.getElementById('test-t').value;
+  const mawpRaw   = parseFloat(document.getElementById('mawp').value) || designP;
+  const medium    = document.getElementById('test-medium').options[document.getElementById('test-medium').selectedIndex].text;
+  const medVal    = document.getElementById('test-medium').value;
+  const holdSel   = document.getElementById('hold-time').value;
+  const holdMins  = holdSel === 'custom' ? 30 : parseInt(holdSel);
+  const isoSel    = document.getElementById('isolation');
+  const isoVal    = isoSel.value;
+  const isolation = isoSel.options[isoSel.selectedIndex].text;
+  const prepBy    = document.getElementById('prepared-by').value || '_______________';
+  const witBy     = document.getElementById('witnessed-by').value || '_______________';
+  const testDate  = document.getElementById('test-date').value || '_______________';
+
+  const base   = Math.max(designP, mawpRaw);
+  const factor = getTestFactor();
+  const testP  = Math.round(base * factor * 10) / 10;
+  const gaugeRange = getGaugeRange(testP);
+  const isPneumo   = testType === 'pneumo';
+  const isLeak     = testType === 'leak';
+  const isPlug     = isoVal === 'plug';
+  const isCap      = isoVal === 'testcap';
+
+  const typeLabel = isPneumo ? 'PNEUMATIC' : isLeak ? 'INITIAL SERVICE LEAK' : 'HYDROSTATIC';
+  const typeIcon  = isPneumo ? '💨' : isLeak ? '🔍' : '💧';
+
+  // Pack header
+  document.getElementById('tp-title').textContent = `${isPneumo?'Pneumatic':isLeak?'Initial Service Leak':'Hydrostatic'} Test Pack`;
+  document.getElementById('tp-ref').textContent   = `Line: ${lineNo}  ·  P&ID: ${pidRef}  ·  Pipe Class: ${pipeClass}`;
+  document.getElementById('tp-date').textContent  = `Generated: ${new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}  ·  Prepared by: ${prepBy}`;
+  document.getElementById('tp-status').textContent = `${typeIcon} ${typeLabel}`;
+  document.getElementById('tp-status').className  = `pack-status ${isPneumo?'ps-pneumo':'ps-hydro'}`;
+  document.getElementById('sig-prep').textContent = prepBy;
+  document.getElementById('sig-wit').textContent  = witBy;
+
+  // Meta blocks
+  const vol = computeVolumes(holdMins);
+  const metaItems = [
+    {label:'Test Pressure',  val:`${testP.toFixed(1)} barg`},
+    {label:'Hold Time',      val:`${holdMins} min`},
+    {label:'Test Medium',    val:medium.split('(')[0].trim()},
+    {label:'Design Code',    val:codeLabel.split(' ')[0]+' '+codeLabel.split(' ')[1]},
+    {label:'NPS / Rating',   val:`${nps} / ${flangeRat}`},
+    {label:'Design P / T',   val:`${designP} barg / ${designT}°C`},
+    {label:'Gauge Range',    val:`0–${gaugeRange} barg`},
+    {label:'Isolation',      val:isolation.split('(')[0].trim()},
+  ];
+  if (vol) {
+    metaItems.push(
+      {label:'Water Volume', val:`${Math.round(vol.volL).toLocaleString('en-GB')} L`},
+      {label:'Fill Time',    val:fmtDur(vol.fillMin)},
+      {label:'Drain Time',   val:fmtDur(vol.drainMin)},
+      {label:'Test Window',  val:'~'+fmtDur(vol.windowMin)},
+    );
+  }
+  document.getElementById('tp-meta').innerHTML = metaItems
+    .map(m => `<div class="meta-block"><div class="meta-val">${m.val}</div><div class="meta-label">${m.label}</div></div>`).join('');
+
+  // Safety box (pneumo only)
+  const safetyBox = document.getElementById('tp-safety');
+  if (isPneumo) {
+    safetyBox.style.display = 'block';
+    document.getElementById('tp-safety-list').innerHTML = [
+      'Written hazard analysis per ASME PCC-2 &amp; GI 0002.102, reviewed by Area Loss Prevention (SAES-A-004 §5.8.1)',
+      'Inspection Dept / IEU approval secured via CRM before commencement (§5.8.2)',
+      'Preliminary leak test at 170 kPa (25 psi) per ASME Sec V Art. 10 before step pressurisation (§5.8.4)',
+      'Stored energy verified ≤ 271 MJ (200×10⁶ ft·lb); above this needs Director-level approval (§5.8.3)',
+      'Exclusion zone established per ASME PCC-2 Art. 501 safe-distance calc — all non-essential personnel vacate',
+      'Pressure-test relief valve set 5% above test pressure (10% if &lt; 85% SMYS) and car-sealed (§5.9.1)',
+      'Steps ≤ 1/10 of test pressure after reaching 50%, with ≥ 10-min holds at each step',
+      `Max test pressure ${testP.toFixed(1)} barg (1.1× design); all field welds 100% NDE, A/B welders (§5.3)`,
+      'Test medium: nitrogen preferred over compressed air; air prohibited in un-cleaned hydrocarbon systems',
+    ].map(s => `<li>${s}</li>`).join('');
+  } else {
+    safetyBox.style.display = 'none';
+  }
+
+  const fillTxt   = vol ? `Fill at lowest point; all high-point vents open. ~${Math.round(vol.volL).toLocaleString('en-GB')} L, est. ${fmtDur(vol.fillMin)} (§6.1.1).`
+                        : 'Fill at lowest point; all high-point vents open. Verify complete filling (§6.1.1).';
+  const drainTxt  = vol ? `Drain downstream of check valves, vents open (est. ${fmtDur(vol.drainMin)}). Lay-up per SAES-A-007 / SAEP-43.`
+                        : 'Drain downstream of check valves, vents open. Lay-up per SAES-A-007 / SAEP-43.';
+
+  // Pressurisation table
+  const prelim = Math.min(testP*0.5, designP*0.5);
+  const steps = isPneumo ? [
+    {step:'1', action:'Preliminary leak test (ASME V Art. 10)',  pTarget:`25 psi (170 kPa)`, hold:'—', action2:'Confirm gross tightness before stepping up. ASME Sec V Art. 10.'},
+    {step:'2', action:'Pressurise to 50% test pressure',  pTarget:`${(testP*0.5).toFixed(1)} barg (50% Pt)`, hold:'10 min', action2:'Preliminary check — examine joints. Steps ≤ 1/10 Pt thereafter.'},
+    {step:'3', action:'Step up to full test pressure',  pTarget:`${testP.toFixed(1)} barg (100% Pt)`, hold:`${holdMins} min`, action2:'Hold and monitor gauge. No visible pressure drop permitted.'},
+    {step:'4', action:'Reduce to design pressure for leak inspection', pTarget:`${designP.toFixed(1)} barg (Pd)`, hold:'As required', action2:'Bubble test — examine all joints, fittings, and welds (uncoated).'},
+    {step:'5', action:'Depressurise safely', pTarget:'0 barg', hold:'—', action2:'Vent slowly in controlled manner. Dispose of test medium per procedure.'},
+  ] : [
+    {step:'1', action:'Fill with test medium — purge all air', pTarget:'Fill pressure only', hold:vol?fmtDur(vol.fillMin):'Until vented', action2:fillTxt},
+    {step:'2', action:'Preliminary check', pTarget:`${prelim.toFixed(1)} barg (≤50% Pt or 25 psi)`, hold:'—', action2:'Examine joints at lesser of ½ Pt or 25 psi, then step up (§6.1.5).'},
+    {step:'3', action:'Pressurise to test pressure', pTarget:`${testP.toFixed(1)} barg`, hold:`${holdMins} min`, action2:'No one approaches for first 10 min; pump isolated. Hold and monitor.'},
+    {step:'4', action:'Reduce to design pressure', pTarget:`${designP.toFixed(1)} barg`, hold:'As required', action2:'Examine all joints and welds for leakage before acceptance (§6.1.5).'},
+    {step:'5', action:'Drain, dry / lay-up', pTarget:'0 barg', hold:vol?fmtDur(vol.drainMin):'—', action2:drainTxt},
+  ];
+
+  document.getElementById('tp-ptable').innerHTML = steps.map(s =>
+    `<tr><td>${s.step}</td><td>${s.action}</td><td><strong>${s.pTarget}</strong></td><td>${s.hold}</td><td>${s.action2}</td></tr>`
+  ).join('');
+
+  // Checklists
+  const prePneumo = isPneumo ? [
+    clItem('<strong>Pneumatic Test Checklist (Appendix A)</strong> completed and submitted for approval', 'SAES-A-004 App.A'),
+    clItem('Written hazard analysis approved; Inspection Dept approval via CRM secured', '§5.8.1/5.8.2'),
+    clItem('Stored-energy calculation ≤ <strong>271 MJ</strong> attached (or Director approval if exceeded)', '§5.8.3'),
+    clItem('Pressure-relief valve set <strong>5% above test pressure</strong> (10% if &lt; 85% SMYS), tested &amp; car-sealed', '§5.9.1'),
+    clItem('Safe-distance / exclusion zone established per ASME PCC-2 Art. 501'),
+  ] : [];
+
+  // Isolation-plug-specific items (SAES-A-004 §5.12.4)
+  const preIsoPlug = isPlug ? [
+    clItem('<strong>Isolation / test plug rated ≥ test pressure</strong> — verified against vendor data sheet', '§5.12.4'),
+    clItem('Vendor operating instructions for install, operation &amp; safety <strong>on site and followed</strong>', '§5.12.4'),
+    clItem('Plug grippers / seals inspected; correct orientation — <strong>self-energising against test pressure</strong>'),
+    clItem('Plug stored &amp; maintained per vendor recommendation; serial / ID recorded', 'traceability'),
+    clItem('No weld-on / cut-off end caps required — <strong>no PWHT or re-bevel</strong> (schedule saving)', 'time saving'),
+  ] : [];
+
+  const preBlind = (isoVal==='blind') ? [
+    clItem('Blind / paddle / spectacle blinds <strong>same class rating</strong> (or calc to same code), tagged &amp; tracked', '§5.12.1'),
+    clItem('Fabricated test blinds stamped with pressure rating — <strong>single use only</strong>'),
+  ] : [];
+
+  const preBlockValve = (isoVal==='blockvalve') ? [
+    clItem('Differential across valve seat <strong>≤ seat test pressure</strong>; both sides protected by relief valves', '§5.12.2/5.12.3'),
+    clItem('Provisions to prevent overpressure of the non-tested side from valve pass-by'),
+  ] : [];
+
+  const preDummy = (isoVal==='dummyspool') ? [
+    clItem('Dummy spools (replacing in-line valves / venturis) <strong>same or higher rating</strong>, tagged &amp; tracked', '§5.14.1'),
+  ] : [];
+
+  const preCap = isCap ? [
+    clItem('Welded test caps — confirm PWHT &amp; re-bevel scope after removal (consider isolation plugs to avoid)', 'schedule'),
+  ] : [];
+
+  document.getElementById('cl-pre').innerHTML = [
+    clItem(`<strong>Isolation confirmed</strong> — test limits isolated per ${isolation.split('(')[0].trim()}`),
+    ...preIsoPlug, ...preBlind, ...preBlockValve, ...preDummy, ...preCap,
+    clItem('All instruments, gauges, and in-line equipment <strong>excluded or rated for test pressure</strong>', '§5.11.4/App.E'),
+    clItem(`Calibrated test gauges installed (within 30 days) — range <strong>0–${gaugeRange} barg</strong>, min two gauges`, '§5.11.6'),
+    clItem(`Test medium quality verified per SAES-A-007: <strong>${medium.split('(')[0].trim()}</strong>`, medVal==='water'?'O₂≤20ppb · pH 6–9':''),
+    clItem(`High-point vents identified and <strong>open during filling</strong>; fill at lowest point — ${nps} line`, '§6.1.1'),
+    clItem('Low-point drains identified and <strong>closed before pressurisation</strong>; check-valve flappers removed'),
+    clItem('All welding, heat treatment, and NDE <strong>completed and signed off</strong>'),
+    clItem('Test boundary marked up on P&ID / isometric — <strong>agreed with Inspection / client</strong>'),
+    ...prePneumo,
+    clItem(`Test temperature recorded: ${testT}°C — freeze protection applied if ambient may drop below 0°C`),
+  ].join('');
+
+  document.getElementById('cl-dur').innerHTML = [
+    clItem(`No personnel approach for first <strong>10 minutes</strong> after test pressure reached; pump isolated &amp; disconnected`, '§6.1.3'),
+    clItem(`Monitor pressure gauge throughout hold period of <strong>${holdMins} minutes</strong>`),
+    clItem('Reduce to <strong>design pressure</strong> before examining — walk all welds, flanges, fittings, valves', '§6.1.5'),
+    clItem('Apply leak-detection fluid to <strong>threaded connections and instrument taps</strong>'),
+    clItem('Record <strong>start / end pressures &amp; temperature</strong> — any drop requires engineering evaluation (metal-temp effect) before acceptance', '§5.11.6'),
+    isPneumo ? clItem('<strong>Do not approach pressurised test boundary</strong> — inspect from safe distance / after reduction') : '',
+  ].filter(Boolean).join('');
+
+  document.getElementById('cl-post').innerHTML = [
+    clItem(`Depressurise <strong>slowly and in a controlled manner</strong> to 0 barg; drain downstream of check valves, vents open`),
+    clItem(`Drain all test medium — <strong>dispose per SAEP-327</strong> (wastewater management)`),
+    !isPneumo ? clItem('Dewater, dry &amp; <strong>lay-up per SAES-A-007 / SAEP-43</strong> if start-up exceeds allowable interval') : '',
+    clItem('Test-only vents &amp; drains <strong>plugged, seal-welded and PT examined</strong>', '§7.3'),
+    clItem('Remove all temporary blinds / plugs / spools — <strong>verify count matches installed</strong>; reinstate components'),
+    clItem('<strong>Complete and sign test record</strong> on SATR-A-2001 (or project report) — retain ≥ 5 years', '§6.2'),
+    clItem(`Issue <strong>test certificate</strong> referencing line number: ${lineNo}`),
+  ].filter(Boolean).join('');
+
+  document.getElementById('cl-safety').innerHTML = [
+    clItem(`Test pressure <strong>${testP.toFixed(1)} barg</strong> — verify all components rated ≥ this pressure`),
+    clItem('No personnel standing over or adjacent to flanged / blinded joints during pressurisation'),
+    clItem('GI 0002.102 “Pressure Testing Safely” checklist completed; work permit (GI 2.100) in place', 'GI 0002.102'),
+    clItem(`${isPneumo?'Nitrogen / compressor':'Pump'} operator briefed on <strong>emergency depressurisation</strong>; bleed valve accessible`),
+    clItem('Hot work and other concurrent activities <strong>suspended</strong> within exclusion zone'),
+    clItem(`Plant operations informed — area <strong>under pressure test</strong> notification &amp; barriers posted`),
+  ].join('');
+
+  // Show
+  const pack = document.getElementById('test-pack');
+  pack.classList.remove('show');
+  setTimeout(() => {
+    pack.classList.add('show');
+    pack.scrollIntoView({behavior:'smooth',block:'start'});
+  }, 60);
+}
+
+/* ===== Test-Pack Plus: lay-up engine, plug model, register ===== */
+var CATS_T = {
+ "I":{label:"I — Carbon / galvanized / low-alloy steel", cl:null, o2:20},
+ "IIA":{label:"II(A) — Austenitic SS, PREN ≤ 30", cl:50, o2:20},
+ "IIB":{label:"II(B) — Duplex / 904L / 825, 30<PREN≤40", cl:500, o2:20},
+ "IIC":{label:"II(C) — Super-duplex / 6Mo / 625, PREN>40", cl:null, o2:null},
+ "IID":{label:"II(D) — Copper alloy (Cu>30%)", cl:null, o2:null},
+ "IIE":{label:"II(E) — Titanium alloy", cl:null, o2:null},
+ "IIIA":{label:"III(A) — Internally coated", cl:null, o2:null},
+ "IIIB":{label:"III(B) — Non-metallic / lined", cl:null, o2:null}
+};
+var LAYUP_T = {
+ "I":{dry:"Acceptable",wet:"Acceptable",inert:"Acceptable",ambient:"Acceptable"},
+ "IIA":{dry:"Recommended",wet:"Acceptable",inert:"Prohibited",ambient:"Prohibited"},
+ "IIB":{dry:"Recommended",wet:"Acceptable",inert:"Prohibited",ambient:"Prohibited"},
+ "IIC":{dry:"Acceptable",wet:"Acceptable",inert:"Acceptable",ambient:"Recommended"},
+ "IID":{dry:"Acceptable",wet:"Acceptable",inert:"Acceptable",ambient:"Recommended"},
+ "IIE":{dry:"Acceptable",wet:"Acceptable",inert:"Acceptable",ambient:"Recommended"},
+ "IIIA":{dry:"Acceptable",wet:"Acceptable",inert:"Acceptable",ambient:"Recommended"},
+ "IIIB":{dry:"Acceptable",wet:"Acceptable",inert:"Acceptable",ambient:"Recommended"}
+};
+function contactLimit_T(c,a){ if(a==="tank")return 90; if(a==="hx")return (c==="IIA"||c==="IIB")?3:14; return (c==="IIA"||c==="IIB")?3:30; }
+function noLayupInterval_T(c,a){ if(a==="tank")return 90; if(a==="hx")return 14; return (c==="IIA"||c==="IIB")?14:30; }
+function escT(s){return String(s==null?"":s).replace(/[&<>"]/g,function(ch){return{"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[ch];});}
+function fmtT(x,d){ if(!isFinite(x))return"–"; return Number(x).toLocaleString('en-GB',{maximumFractionDigits:d===undefined?2:d}); }
+function gv(id){ var v=parseFloat(document.getElementById(id).value); return isNaN(v)?0:v; }
+
+function fillCatSelectT(id){
+  var s=document.getElementById(id); if(!s)return; s.innerHTML="";
+  Object.keys(CATS_T).forEach(function(k){var o=document.createElement("option");o.value=k;o.textContent=CATS_T[k].label;s.appendChild(o);});
+}
+
+function renderLayup(){
+  var box=document.getElementById('layup-result'); if(!box)return;
+  var cat=document.getElementById('l-cat').value, asset=document.getElementById('l-asset').value;
+  var contact=gv('l-contact'), startup=gv('l-startup');
+  var treated=document.getElementById('l-treated').value==="yes";
+  var sour=document.getElementById('l-sour').value==="yes",
+      freeze=document.getElementById('l-freeze').value==="yes",
+      special=document.getElementById('l-special').value==="yes";
+  var c=CATS_T[cat], lim=contactLimit_T(cat,asset), interval=noLayupInterval_T(cat,asset);
+  var isPipe=(asset==="pipeline"); var o=[];
+
+  var clTxt=c.cl===null?"No chloride restriction":("Chloride ≤ "+c.cl+" ppm");
+  var o2Txt=c.o2===null?"No dissolved-O₂ restriction":("Dissolved O₂ ≤ "+c.o2+" ppb");
+  o.push('<div class="lz-flag lz-info"><span class="lz-ic">≋</span><div><b>Water quality (Table 1):</b> '+clTxt+' · '+o2Txt+' · pH 6–9 · TSS ≤ 50 ppm.</div></div>');
+
+  var chem=["oxygen scavenger (residual &gt; 20 ppm, dissolved O₂ &lt; 20 ppb)"];
+  var needBio = isPipe || (contact>lim);
+  if(needBio && !isPipe) chem.push("biocide");
+  var chemMsg = isPipe
+    ? "<b>Pipeline:</b> scavenger + biocide + corrosion inhibitor are always required, regardless of contact time."
+    : "<b>Chemical treatment:</b> "+chem.join(", ")+(needBio?" — biocide triggered: planned contact exceeds the Table 2 limit.":".");
+  o.push('<div class="lz-flag lz-warn"><span class="lz-ic">⚗</span><div>'+chemMsg+'</div></div>');
+
+  if(isPipe){
+    o.push('<div class="lz-flag lz-info"><span class="lz-ic">⏱</span><div><b>Contact-time limit:</b> pipelines are always chemically treated — minimise contact and dewater promptly.</div></div>');
+  } else if(contact<=lim){
+    o.push('<div class="lz-flag lz-ok"><span class="lz-ic">✓</span><div><b>Contact time OK.</b> '+fmtT(contact,1)+' d ≤ '+lim+' d limit for this category/asset (Table 2).</div></div>');
+  } else if(treated){
+    o.push('<div class="lz-flag lz-warn"><span class="lz-ic">!</span><div><b>Contact time exceeds '+lim+' d</b> — permitted only with treated water (biocide added). Keep monitoring residuals.</div></div>');
+  } else {
+    o.push('<div class="lz-flag lz-stop"><span class="lz-ic">✕</span><div><b>Contact time '+fmtT(contact,1)+' d exceeds the '+lim+' d limit with untreated water.</b> Drain immediately and dry the system to a −1 °C (30 °F) dew point.</div></div>');
+  }
+
+  if(startup<=interval){
+    o.push('<div class="lz-flag lz-ok"><span class="lz-ic">✓</span><div><b>No lay-up required</b> if start-up is within '+interval+' days of the test (Table 3). Planned gap '+fmtT(startup,0)+' d.</div></div>');
+  } else {
+    var m=LAYUP_T[cat];
+    var rec=Object.keys(m).filter(function(k){return m[k]==="Recommended";});
+    var recName=rec.length?rec[0]:((cat==="IIA"||cat==="IIB")?"dry":"per Table 4");
+    var pills=["dry","wet","inert","ambient"].map(function(k){
+      var st=m[k], cls=st==="Recommended"?"pill-rec":(st==="Prohibited"?"pill-pro":"pill-acc");
+      return '<span class="pill '+cls+'">'+k+': '+st+'</span>';}).join(" ");
+    o.push('<div class="lz-flag lz-stop"><span class="lz-ic">▣</span><div><b>Lay-up REQUIRED</b> — start-up gap '+fmtT(startup,0)+' d exceeds the '+interval+' d interval. Recommended method: <b>'+recName.toUpperCase()+'</b>.<div style="margin-top:6px">'+pills+'</div></div></div>');
+  }
+
+  if(cat==="IIA"||cat==="IIB") o.push('<div class="lz-flag lz-warn"><span class="lz-ic">△</span><div>Category II(A/B): inert and ambient lay-up prohibited — dry preferred, wet only if drying is not feasible. Do not test or lay-up together with Category I.</div></div>');
+  if(cat==="IID") o.push('<div class="lz-flag lz-warn"><span class="lz-ic">△</span><div>Category II(D) copper alloy: must not be tested or laid-up with other categories (Cu cross-contamination).</div></div>');
+  if(cat==="IIE") o.push('<div class="lz-flag lz-warn"><span class="lz-ic">△</span><div>Category II(E) titanium: test and lay-up in isolation (embrittlement risk).</div></div>');
+  if(special) o.push('<div class="lz-flag lz-stop"><span class="lz-ic">✕</span><div>Special service (O₂ / sales gas / processed NGL): ambient lay-up prohibited — use dry or inert.</div></div>');
+  else if(cat==="I" && isPipe) o.push('<div class="lz-flag lz-warn"><span class="lz-ic">△</span><div>Category I pipeline: ambient lay-up prohibited — use inert, or wet only if drying is not feasible.</div></div>');
+  if(sour) o.push('<div class="lz-flag lz-warn"><span class="lz-ic">△</span><div>Sour service: disposal water with H₂S &gt; 1 ppm only for revalidation of existing assets with MCSD/LP/EP approval and ≤ 14 d contact. Temporary fittings must meet NACE MR0175 hardness.</div></div>');
+  if(freeze) o.push('<div class="lz-flag lz-info"><span class="lz-ic">❄</span><div>Freezing risk: water/methanol or water/glycol permitted; test fluid flash point must exceed 54 °C (129 °F).</div></div>');
+
+  box.innerHTML=o.join("");
+}
+
+function renderPlug(){
+  var box=document.getElementById('plug-result'); if(!box)return;
+  var conv=gv('c-fab')+gv('c-weld')+gv('c-nde1')+gv('c-cut')+gv('c-gold')+gv('c-nde2');
+  var plug=gv('p-set')+gv('p-rem');
+  var n=gv('x-bound'); var savePer=conv-plug; var total=savePer*n;
+  var rate=gv('x-rate'); var rating=gv('p-rating');
+  var testP=Math.round(getBasePressure()*getTestFactor()*10)/10;
+  var costMsg = rate>0 ? (" · ≈ "+fmtT(total*rate,0)+" cost units") : "";
+  var h='<div class="pres-display" style="grid-template-columns:repeat(3,1fr);">'+
+    '<div class="pd-block highlight"><div class="pd-val">'+fmtT(savePer,1)+'</div><div class="pd-unit">h</div><div class="pd-label">Saving / boundary</div></div>'+
+    '<div class="pd-block"><div class="pd-val">'+fmtT(total,1)+'</div><div class="pd-unit">'+fmtT(total/24,2)+' days'+costMsg+'</div><div class="pd-label">Total saving</div></div>'+
+    '<div class="pd-block"><div class="pd-val">'+fmtT(n,0)+'</div><div class="pd-unit">one per boundary</div><div class="pd-label">Golden welds eliminated</div></div>'+
+   '</div>';
+  if(savePer<=0) h+='<div class="lz-flag lz-warn"><span class="lz-ic">!</span><div>With these durations the plug method is not faster — check inputs.</div></div>';
+  if(rating<testP) h+='<div class="lz-flag lz-stop"><span class="lz-ic">✕</span><div><b>Plug rating '+fmtT(rating,0)+' barg is below the test pressure '+fmtT(testP,1)+' barg.</b> Select a higher-rated plug and enforce a personnel exclusion zone.</div></div>';
+  else h+='<div class="lz-flag lz-info"><span class="lz-ic">i</span><div>Plug rating '+fmtT(rating,0)+' barg ≥ test pressure '+fmtT(testP,1)+' barg. Still enforce an exclusion zone — a plug is a pressure boundary.</div></div>';
+  box.innerHTML=h;
+}
+
+/* ----- register ----- */
+var RKEY_T="ppa_testpack_register_v1";
+function loadReg_T(){try{return JSON.parse(localStorage.getItem(RKEY_T)||"[]");}catch(e){return[];}}
+function saveReg_T(a){try{localStorage.setItem(RKEY_T,JSON.stringify(a));}catch(e){}}
+function regRender(){
+  var rows=loadReg_T(), body=document.getElementById('r-body'); if(!body)return; body.innerHTML="";
+  rows.forEach(function(r,i){
+    var tr=document.createElement("tr");
+    tr.innerHTML="<td>"+escT(r.line)+"</td><td>"+escT(r.pkg)+"</td><td>"+escT(r.pid)+"</td><td>"+escT(r.iso)+
+      "</td><td>"+escT(r.sys)+"</td><td>"+escT(r.area)+"</td><td>"+escT(r.cat)+"</td><td>"+escT(r.med)+
+      "</td><td class='n'>"+escT(r.tp)+"</td><td>"+escT(r.status)+
+      "</td><td class='reg-x' data-i='"+i+"'>✕</td>";
+    body.appendChild(tr);
+  });
+  body.querySelectorAll(".reg-x").forEach(function(b){b.onclick=function(){var a=loadReg_T();a.splice(+b.dataset.i,1);saveReg_T(a);regRender();};});
+  var pkgs={},sys={};
+  rows.forEach(function(r){if(r.pkg)pkgs[r.pkg]=1; sys[r.sys||"(none)"]=1;});
+  var s=document.getElementById('r-summary');
+  s.innerHTML='<div class="pd-block"><div class="pd-val">'+rows.length+'</div><div class="pd-label">Lines</div></div>'+
+    '<div class="pd-block"><div class="pd-val">'+Object.keys(pkgs).length+'</div><div class="pd-label">Test packages</div></div>'+
+    '<div class="pd-block"><div class="pd-val">'+Object.keys(sys).length+'</div><div class="pd-label">Systems</div></div>';
+}
+function regAdd(){
+  var line=document.getElementById('r-line').value.trim(); if(!line){document.getElementById('r-line').focus();return;}
+  var a=loadReg_T();
+  a.push({line:line,pkg:document.getElementById('r-pkg').value.trim(),pid:document.getElementById('r-pid').value.trim(),
+    iso:document.getElementById('r-iso').value.trim(),sys:document.getElementById('r-sys').value.trim(),
+    area:document.getElementById('r-area').value.trim(),cat:document.getElementById('r-cat').value,
+    med:document.getElementById('r-med').value,tp:document.getElementById('r-tp').value,status:document.getElementById('r-status').value});
+  saveReg_T(a);regRender();
+  ['r-line','r-pid','r-iso'].forEach(function(id){document.getElementById(id).value="";});document.getElementById('r-line').focus();
+}
+function regPull(){
+  var testP=Math.round(getBasePressure()*getTestFactor()*10)/10;
+  var med = testType==='pneumo'?'Pneumatic':(testType==='leak'?'Leak':'Hydro');
+  document.getElementById('r-line').value=document.getElementById('line-no').value||"";
+  document.getElementById('r-pid').value=document.getElementById('pid-ref').value||"";
+  document.getElementById('r-tp').value=testP||"";
+  document.getElementById('r-med').value=med;
+  document.getElementById('r-cat').value=document.getElementById('l-cat').value;
+}
+function regClearForm(){['r-line','r-pkg','r-pid','r-iso','r-sys','r-area','r-tp'].forEach(function(id){document.getElementById(id).value="";});}
+function regWipe(){if(confirm("Wipe the entire register in this browser?")){saveReg_T([]);regRender();}}
+function regExport(){
+  var a=loadReg_T(),cols=["line","pkg","pid","iso","sys","area","cat","med","tp","status"];
+  var head=["Line No","Test Pack","P&ID","Iso","System","Area","Material Cat","Medium","Test P (barg)","Status"];
+  var csv=[head.join(",")].concat(a.map(function(r){return cols.map(function(k){
+    var v=(r[k]==null?"":String(r[k]));return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}).join(",");})).join("\n");
+  var blob=new Blob([csv],{type:"text/csv"}),u=URL.createObjectURL(blob),x=document.createElement("a");
+  x.href=u;x.download="test_package_register.csv";x.click();URL.revokeObjectURL(u);
+}
+function parseCsvLine_T(line){var out=[],cur="",q=false;for(var i=0;i<line.length;i++){var ch=line[i];
+  if(q){if(ch==='"'){if(line[i+1]==='"'){cur+='"';i++;}else q=false;}else cur+=ch;}
+  else{if(ch===','){out.push(cur);cur="";}else if(ch==='"'){q=true;}else cur+=ch;}}out.push(cur);return out;}
+function regImport(e){
+  var f=e.target.files[0];if(!f)return;var rd=new FileReader();
+  rd.onload=function(){
+    var lines=rd.result.split(/\r?\n/).filter(function(l){return l.trim();});
+    if(lines.length<2){alert("CSV appears empty.");return;}
+    var cols=["line","pkg","pid","iso","sys","area","cat","med","tp","status"];var a=loadReg_T();
+    for(var i=1;i<lines.length;i++){var cells=parseCsvLine_T(lines[i]);if(!cells[0])continue;
+      var ob={};cols.forEach(function(k,j){ob[k]=cells[j]!=null?cells[j]:"";});a.push(ob);}
+    saveReg_T(a);regRender();e.target.value="";
+  };rd.readAsText(f);
+}
+
+/* ----- hook contact-window hint + auto-render into updateCalc ----- */
+function updatePlus(){
+  var hint=document.getElementById('l-window-hint');
+  if(hint){ var v=computeVolumes(getHoldMins()); hint.textContent = v?('active test window ≈ '+fmtT(v.windowMin/1440,2)+' d — add drying/standby'):''; }
+  renderLayup(); renderPlug();
+}
+var __origUpdateCalc_T = updateCalc;
+updateCalc = function(){ __origUpdateCalc_T(); updatePlus(); };
+
+// Init
+fillCatSelectT('l-cat');
+updateCalc();
+document.addEventListener('DOMContentLoaded', function(){
+  fillCatSelectT('r-cat');
+  regRender();
+});
+</script>
+<footer class="ppa-footer">
+  <div class="ppa-footer-logo">Piping<span>Pro</span> Academy</div>
+  <p>PipingPro Academy is a trademark of <strong style="color:var(--accent2);">Zephrum Konsultan Limited</strong>, registered in England &amp; Wales. Co. No. 13537626.</p>
+  <p style="margin-top:.3rem">© 2026 Zephrum Konsultan Limited. All rights reserved. &nbsp;·&nbsp; <a href="calculators.html">Calculator Suite</a></p>
+</footer>
+</div><!-- /calctab-calculator -->
+
+<!-- ══ TEST-PACKAGE REGISTER PANEL ══ -->
+<div class="calc-panel" id="calctab-register">
+<div class="main">
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">🗂</span>Test-Package Register</div>
+    <p style="font-size:12.5px;color:var(--ink3);margin:-.4rem 0 1rem;line-height:1.6;">The backbone for auto-routing isometrics &amp; P&amp;IDs later. Keyed on line number. Saved in this browser; export to CSV to share or back up.</p>
+    <div class="fg4">
+      <div class="field"><label>Line Number</label><input type="text" id="r-line" placeholder='6"-P-1201-A1A'></div>
+      <div class="field"><label>Test Pack No.</label><input type="text" id="r-pkg" placeholder="TP-001"></div>
+      <div class="field"><label>P&amp;ID No.</label><input type="text" id="r-pid" placeholder="PID-1201"></div>
+      <div class="field"><label>Isometric No.</label><input type="text" id="r-iso" placeholder="ISO-1201-001"></div>
+    </div>
+    <div class="fg4 gap">
+      <div class="field"><label>System</label><input type="text" id="r-sys" placeholder="Lean Amine"></div>
+      <div class="field"><label>Area / Unit</label><input type="text" id="r-area" placeholder="AGRU"></div>
+      <div class="field"><label>Material Cat.</label><select id="r-cat"></select></div>
+      <div class="field"><label>Medium</label><select id="r-med"><option>Hydro</option><option>Pneumatic</option><option>Leak</option></select></div>
+    </div>
+    <div class="fg4 gap">
+      <div class="field"><label>Test P (barg)</label><input type="number" id="r-tp" step="0.1"></div>
+      <div class="field"><label>Status</label><select id="r-status"><option>Planned</option><option>Released</option><option>Tested</option><option>Reinstated</option></select></div>
+    </div>
+    <div class="reg-actions">
+      <button class="reg-btn primary" onclick="regAdd()">+ Add line</button>
+      <button class="reg-btn" onclick="regPull()">⤓ Pull from calculator</button>
+      <button class="reg-btn" onclick="regClearForm()">Clear form</button>
+      <button class="reg-btn gold" onclick="regExport()">Export CSV</button>
+      <label class="reg-btn" style="margin:0">Import CSV<input id="r-import" type="file" accept=".csv" style="display:none" onchange="regImport(event)"></label>
+      <button class="reg-btn danger" onclick="regWipe()">Wipe register</button>
+    </div>
+    <div class="reg-sum" id="r-summary"></div>
+    <div style="overflow:auto"><table class="reg" id="r-tbl">
+      <thead><tr><th>Line No.</th><th>Pack</th><th>P&amp;ID</th><th>Iso</th><th>System</th><th>Area</th><th>Cat</th><th>Medium</th><th>Test P</th><th>Status</th><th></th></tr></thead>
+      <tbody id="r-body"></tbody>
+    </table></div>
+  </div>
+</div>
+</div><!-- /calctab-register -->
+
+<!-- ══ THEORY & REFERENCE PANEL ══ -->
+<div class="calc-panel" id="calctab-theory">
+<div style="max-width:920px;margin:0 auto;padding:2rem 1.5rem;">
+  <div style="background:var(--accent-light,#f7ede3);border:1px solid rgba(196,92,42,.2);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--accent,#8b3a1a);margin-bottom:1.2rem;line-height:1.7;">
+    📚 Theory, formulae and code references for this calculator, aligned to ASME B31.3 and the current Saudi Aramco standards (SAES-A-004 Rev. Jul 2025, SAES-A-007 &amp; SAEP-43 Rev. Oct 2025). For full course content and worked examples, visit <strong>PipingPro Academy</strong> courses.
+  </div>
+
+    <div class="ref-section">
+      <div class="ref-title">Test Pressure Formulae — ASME B31.3</div>
+      <div class="ref-formula">
+        <b>Hydrostatic test pressure:</b> P<sub>T</sub> = 1.5 × P<sub>design</sub> × S<sub>T</sub>/S<sub>h</sub> &nbsp;[barg]<br/>
+        S<sub>T</sub> = allowable stress at test temperature<br/>
+        S<sub>h</sub> = allowable stress at design temperature<br/><br/>
+        <b>Pneumatic test pressure:</b> P<sub>T</sub> = 1.1 × P<sub>design</sub> × S<sub>T</sub>/S<sub>h</sub><br/>
+        <b>B31.4 / B31.8 (pipelines):</b> P<sub>T</sub> = 1.25 × P<sub>design</sub> (typical)<br/><br/>
+        <b>Minimum hold time:</b> 10 minutes (B31.3 345.2.2) — then reduce to design pressure for inspection
+      </div>
+      <div class="ref-note">Per SAES-A-004 §5.4 the required test pressure must be achieved at the <strong>lowest point</strong> of the system; account for the static head of the test liquid when checking the highest-rated and lowest-rated components.</div>
+    </div>
+
+    <div class="ref-section">
+      <div class="ref-title">Hold Times — and the "1-hour" myth</div>
+      <div class="ref-prose">General hold times for Aramco plant piping &amp; pipelines are governed by <strong>SAES-L-150</strong> and SAES-A-004 Appendix F, not a single blanket figure. The widely-repeated "30 min → 1 hour" change is a misreading.</div>
+      <div class="ref-table-wrap"><table class="ref-table">
+        <tr><th>Case</th><th>Hold</th><th>Source</th></tr>
+        <tr><td>Hydro — general</td><td>Per SAES-L-150 / App. F; field practice 30–60 min before walk-down</td><td>SAES-A-004 App. F</td></tr>
+        <tr><td>Hydro — externally primed/painted joints</td><td><strong>1 hour or 2× required hold, whichever greater</strong></td><td>SAES-A-004 App. D(3)</td></tr>
+        <tr><td>Pneumatic — step holds</td><td>≥ 10 min at each step</td><td>App. A(10/24)</td></tr>
+        <tr><td>Pneumatic — final hold</td><td>30 min</td><td>App. A(10)</td></tr>
+      </table></div>
+      <div class="ref-warn">So the 1-hour minimum applies <strong>specifically</strong> to hydrotesting with externally primed/painted joints (and only when the service is not lethal / Category M). Don't apply it as a universal rule.</div>
+    </div>
+
+    <div class="ref-section">
+      <div class="ref-title">Isolation of Test Sections — SAES-A-004 §5.12</div>
+      <div class="ref-table-wrap"><table class="ref-table">
+        <tr><th>Method</th><th>Requirement</th><th>Clause</th></tr>
+        <tr><td>Blinds (blind flange / paddle / spectacle)</td><td>Same class rating, or fabricated to same code &amp; calculated; stamped, tagged, tracked; fabricated blinds single-use</td><td>§5.12.1</td></tr>
+        <tr><td>Closed block valves</td><td>Only where blinding impractical; Δp ≤ seat test pressure; both sides protected by relief valves; prevent overpressure of untested side</td><td>§5.12.2 / 5.12.3</td></tr>
+        <tr><td>Isolation / test plugs</td><td><strong>NEW (Jul 2025):</strong> permitted where flange connections impractical; plug must withstand test pressure; follow vendor operating &amp; storage instructions</td><td>§5.12.4</td></tr>
+        <tr><td>Dummy spools</td><td>Replace in-line equipment (valves, venturis); same or higher rating; tagged &amp; tracked</td><td>§5.14.1</td></tr>
+        <tr><td>Gaskets</td><td>Rated to test pressure; compatible with facing/rating/bolting; validated to mfr spec</td><td>§5.12.5</td></tr>
+      </table></div>
+    </div>
+
+    <div class="ref-section">
+      <div class="ref-title">Faster Testing — Isolation / Test Plugs</div>
+      <div class="ref-prose">Conventional open-ended pipe testing means welding on end caps, testing, then cutting them off and re-bevelling — with PWHT on alloy/CS. Mechanical <strong>test/isolation plugs</strong> grip and seal the bore instead, and are now explicitly sanctioned by SAES-A-004 §5.12.4. Vendor figures cite reductions on the order of 80–85% versus welded end-cap procedures, with the grip self-energising as test pressure rises.</div>
+      <div class="ref-table-wrap"><table class="ref-table">
+        <tr><th>Vendor / tool</th><th>Use</th><th>Note</th></tr>
+        <tr><td>Curtiss-Wright EST (GripTight)</td><td>Open-end pipe &amp; elbow test plugs; flange-weld test plug</td><td>Flange test plug cited in ASME PCC-2 Art. 501; tests the flange-to-pipe weld in isolation (axial + hoop)</td></tr>
+        <tr><td>STATS Group (pipe end plugs)</td><td>Open-end strength/leak test; tie-in isolation</td><td>ME presence; double-block-and-bleed plugs allow hot work + tie-in test in one</td></tr>
+        <tr><td>Reverse-integrity gasket</td><td>Local flange tightness in lieu of pre-start-up leak test</td><td>SAES-A-004 §8: water / non-sour liquid HC only; not where NDT-in-lieu welds used</td></tr>
+      </table></div>
+      <div class="ref-warn">Plugs are an Inspection-witnessed item: confirm pressure rating ≥ test pressure, follow vendor operating instructions, and tag/track per §5.12.4. They reduce schedule, not the duty of care.</div>
+    </div>
+
+    <div class="ref-section">
+      <div class="ref-title">NDT in Lieu of Pressure Test — Closure Joints</div>
+      <div class="ref-prose">Where both hydro and pneumatic testing are impracticable, or for <strong>closure (golden) joints</strong> whose individual components were already pressure-tested during fabrication, NDT may substitute for the pressure test (SAES-A-004 §5.15, Appendix H). Approval is required before welding. Typical conditions in Appendix H: skilled welders (&lt; 5% rejection), approved WPS, 100% RT of butt welds plus 100% PAUT of all welds, and visual inspection of each pass.</div>
+      <div class="ref-note">B31.3 para 345.9 is the parent code provision for closure-weld exemption; SAES-A-004 §5.15.2 is how Aramco accepts it. For Category D fluid service, an initial service leak test per B31.3 345.7 may be used in lieu of the hydrotest (App. F item 9).</div>
+    </div>
+
+    <div class="ref-section">
+      <div class="ref-title">Pre-Start-up Leak Test &amp; Service Test — §8</div>
+      <div class="ref-prose">A pre-start-up leak test with inert gas at maximum operating pressure (then a service test at normal operating pressure) is required during commissioning for systems that are: <strong>Class 600 and above</strong>, in <strong>hydrogen service</strong>, or in <strong>sour service with H₂S &gt; 0.1 mol% (1000 ppm)</strong>. Liquid (B31.4) and water lines are exempt from the inert-gas leak test (service test only) — except sour service above the H₂S threshold.</div>
+    </div>
+
+    <div class="ref-section">
+      <div class="ref-title">Water Quality, Contact Time &amp; Lay-up — SAES-A-007 / SAEP-43</div>
+      <div class="ref-prose">The real schedule driver on Aramco jobs is often water chemistry and lay-up, not the pressure hold. Treated water needs O₂ scavenger to keep <strong>dissolved O₂ ≤ 20 ppb</strong> with <strong>residual scavenger ≥ 20 ppm</strong>, pH 6–9, TSS ≤ 50 ppm; flushing within 7 days of test.</div>
+      <div class="ref-table-wrap"><table class="ref-table">
+        <tr><th>Asset</th><th>Max water contact (Cat I, II-CDE, III)</th><th>Cat II-A&amp;B (e.g. 304/316, duplex)</th></tr>
+        <tr><td>Plant piping &amp; pressure vessels</td><td>30 days</td><td>3 days</td></tr>
+        <tr><td>Heat exchangers &amp; fin-fans</td><td>14 days</td><td>3 days</td></tr>
+        <tr><td>Tanks</td><td>90 days</td><td>90 days</td></tr>
+      </table></div>
+      <div class="ref-prose" style="margin-top:.8rem;">If start-up will not occur within the allowable interval (SAES-A-007 Table 3: 30 d piping/PV Cat I; 14 d for Cat II-A&amp;B and all exchangers; 90 d tanks), the system must be laid up. SAEP-43 defines four methods — <strong>wet</strong> (O₂ ≤ 20 ppb, scavenger ≥ 20 ppm, biocide, 15–30 psig positive pressure), <strong>dry</strong> (dewater → dry to dew point ≤ −1 °C / 30 °F), <strong>inert gas</strong> (displace under N₂ positive pressure), and <strong>ambient</strong>. Hot dry air as pressurisation medium is prohibited for Cat II-A&amp;B materials and for sales-gas / NGL / sour pipelines.</div>
+      <div class="ref-warn">Valves with stainless-steel trim containing &lt; 15% Cr must be removed before hydrotest (or specially dried with VCI per SAEP-43 §8.3.10/8.3.11). Mixing material categories in one test loop is restricted — e.g. Cat I must not be tested with Cat II-A&amp;B.</div>
+    </div>
+
+    <div class="ref-section">
+      <div class="ref-title">Pneumatic Test Limits — SAES-A-004 §5.8</div>
+      <div class="ref-prose">Water is the primary medium; pneumatic is only permitted after evaluating alternatives and obtaining approval, when hydro would damage linings/insulation, contaminate moisture-sensitive equipment, need significant support modification, or risk brittle fracture.</div>
+      <div class="ref-table-wrap"><table class="ref-table">
+        <tr><th>Item</th><th>Requirement</th></tr>
+        <tr><td>Preliminary leak test</td><td>170 kPa (25 psi) per ASME Sec V Art. 10 (§5.8.4)</td></tr>
+        <tr><td>Stored energy</td><td>≤ 271 MJ (200×10⁶ ft·lb); above → Director-level approval (§5.8.3)</td></tr>
+        <tr><td>Step increase</td><td>≤ 1/10 of test pressure after 50%, ≥ 10-min holds</td></tr>
+        <tr><td>Relief valve</td><td>5% above test pressure (10% if &lt; 85% SMYS) (§5.9.1)</td></tr>
+        <tr><td>Welding/NDE</td><td>All field welds 100% NDE; A/B welders (§5.3)</td></tr>
+        <tr><td>Safe distance</td><td>Per ASME PCC-2 Art. 501 Mandatory App. III</td></tr>
+      </table></div>
+    </div>
+
+    <div class="ref-section">
+      <div class="ref-title">Reference Standards</div>
+      <div class="ref-table-wrap"><table class="ref-table">
+        <tr><th>Standard</th><th>Application</th></tr>
+        <tr><td>ASME B31.3 345.4 / 345.5</td><td>Hydrostatic / pneumatic leak test requirements</td></tr>
+        <tr><td>ASME B31.3 345.2.2 / 345.7 / 345.9</td><td>Hold time; initial service leak test; closure-weld NDT alternative</td></tr>
+        <tr><td>SAES-A-004</td><td>General Requirements for Pressure Testing (Aramco)</td></tr>
+        <tr><td>SAES-A-007</td><td>Hydrostatic Testing Fluids &amp; Lay-up Requirements</td></tr>
+        <tr><td>SAES-A-008</td><td>Chemical Cleaning Requirements (pre-commissioning, amine/glycol/sales gas)</td></tr>
+        <tr><td>SAES-L-150</td><td>Pressure Testing of Plant Piping &amp; Pipelines (test P &amp; hold)</td></tr>
+        <tr><td>SAEP-43</td><td>Lay-up and Preservation Methods</td></tr>
+        <tr><td>SAEP-327</td><td>Management of hydrotest / flushing / dewatering wastewater</td></tr>
+        <tr><td>GI 0002.102</td><td>Pressure Testing Safely</td></tr>
+        <tr><td>ASME PCC-2 Art. 501</td><td>Pneumatic test risk / safe distance; flange-weld test plug basis</td></tr>
+      </table></div>
+    </div>
+</div>
+</div>
+</div><!-- /calctab-theory -->
+<!-- ══ END THEORY PANEL ══ -->
+<script>
+/* ── THEORY TAB SWITCHING ── */
+function showCalcTab(name){
+  ['calculator','register','theory'].forEach(function(t){
+    var btn = document.querySelector('.calc-tab[onclick*="' + t + '"]');
+    var panel = document.getElementById('calctab-' + t);
+    if(btn) btn.classList.toggle('active', t===name);
+    if(panel) panel.classList.toggle('active', t===name);
+  });
+}
+</script>
+</body>
+</html>
