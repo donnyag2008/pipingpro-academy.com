@@ -1,7 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+
+  <link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<!-- ░░░ Slug: guide-onshore-pipeline-estimation.html — keep title/canonical/OG URLs matching this filename ░░░ -->
+<title>Onshore Pipeline Cost Estimation: A Practical Method — PipingPro Academy</title>
+<meta name="description" content="How to build a defensible onshore pipeline cost estimate — AACE class, a complete WBS, the terrain and crossing swing factors, and the parametric cross-check that catches what you missed."/>
+<link rel="canonical" href="https://pipingpro-academy.com/guide-onshore-pipeline-estimation.html"/>
+<meta property="og:type" content="article"/>
+<meta property="og:title" content="Onshore Pipeline Cost Estimation: A Practical Method"/>
+<meta property="og:description" content="A field-tested approach to estimating onshore pipelines — set the class, build the WBS, factor terrain and crossings, then cross-check against cost per inch-km."/>
+<meta property="og:url" content="https://pipingpro-academy.com/guide-onshore-pipeline-estimation.html"/>
+<meta property="og:site_name" content="PipingPro Academy"/>
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Onshore Pipeline Cost Estimation: A Practical Method"/>
+<meta name="twitter:description" content="Set the class, build the WBS, factor terrain and crossings, then cross-check against cost per inch-km."/>
+
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+
+<style>
+  :root{
+    --paper:#FBF6EC;        /* warm paper */
+    --paper-2:#F3EADB;      /* slightly deeper panel */
+    --ink:#22201C;          /* near-black warm ink */
+    --ink-soft:#5A5347;     /* muted body */
+    --navy:#173A57;         /* PipingPro navy */
+    --navy-deep:#0E2A41;
+    --copper:#B9762B;       /* accent */
+    --rule:#E0D5C2;         /* hairline */
+    --maxw:760px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:"DM Sans",system-ui,sans-serif;
+    font-size:18px;line-height:1.7;font-weight:400;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+
+  /* ---- top nav ---- */
+  .topbar{border-bottom:1px solid var(--rule);background:var(--paper);}
+  .topbar .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;}
+  .brand{font-family:"DM Serif Display",serif;font-size:20px;color:var(--navy);text-decoration:none;letter-spacing:.2px;}
+  .nav-back{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--copper);text-decoration:none;letter-spacing:.3px;}
+  .nav-back:hover{text-decoration:underline;}
+
+  /* ---- hero ---- */
+/* ---- hero ---- */
+.hero{background:var(--ink);color:var(--paper);padding:3.4rem 2rem 3rem;text-align:center;border-bottom:3px solid var(--copper);position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 60px),repeating-linear-gradient(0deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 60px);}
+.hero .wrap{position:relative;}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--copper);margin-bottom:1rem;}
+.hero h1{font-family:"DM Serif Display",serif;font-weight:400;font-size:clamp(28px,4.6vw,42px);line-height:1.12;margin-bottom:1rem;color:var(--paper);}
+.dek{font-size:1.05rem;color:rgba(251,246,236,0.82);line-height:1.6;max-width:60ch;margin:0 auto;}
+.meta{margin-top:1.6rem;font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.05em;color:rgba(251,246,236,0.6);display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap;}
+.meta span{position:relative;}
+.meta span+span::before{content:'·';position:absolute;left:-.6rem;color:#d4a017;}
+  /* ---- article body ---- */
+  article{padding:46px 0 20px;}
+  article p{margin:0 0 22px;}
+  h2{font-family:"DM Serif Display",serif;font-weight:400;font-size:30px;line-height:1.15;
+    color:var(--navy-deep);margin:52px 0 8px;letter-spacing:-.3px;}
+  h2 .num{font-family:"IBM Plex Mono",monospace;font-size:14px;font-weight:600;color:var(--copper);
+    display:block;letter-spacing:2px;margin-bottom:6px;}
+  h3{font-family:"DM Sans",sans-serif;font-weight:700;font-size:19px;color:var(--navy);
+    margin:30px 0 6px;}
+  a{color:var(--copper);}
+  strong{font-weight:700;color:var(--ink);}
+  ul,ol{margin:0 0 22px;padding-left:22px;}
+  li{margin:0 0 9px;}
+  .lead{font-size:20px;color:var(--ink);}
+
+  /* ---- callout ---- */
+  .callout{background:var(--paper-2);border-left:3px solid var(--copper);
+    border-radius:0 6px 6px 0;padding:18px 22px;margin:28px 0;font-size:17px;}
+  .callout .tag{font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:600;
+    letter-spacing:2px;text-transform:uppercase;color:var(--copper);display:block;margin-bottom:6px;}
+
+  /* ---- formula ---- */
+  .formula{font-family:"IBM Plex Mono",monospace;background:var(--navy-deep);color:#F3EADB;
+    border-radius:8px;padding:18px 20px;margin:24px 0;font-size:15px;line-height:1.7;overflow-x:auto;}
+  .formula .c{color:#E6A85C;}
+  .formula small{display:block;color:#9FB4C4;font-size:12.5px;margin-top:10px;letter-spacing:.2px;}
+
+  /* ---- table ---- */
+  .tbl-wrap{overflow-x:auto;margin:26px 0;}
+  table{border-collapse:collapse;width:100%;font-size:15px;}
+  caption{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:1px;
+    text-transform:uppercase;color:var(--ink-soft);text-align:left;margin-bottom:10px;}
+  th,td{text-align:left;padding:10px 13px;border-bottom:1px solid var(--rule);vertical-align:top;}
+  thead th{background:var(--navy);color:#F8F2E6;font-family:"DM Sans";font-weight:700;
+    font-size:13px;letter-spacing:.3px;border-bottom:none;}
+  tbody tr:nth-child(even){background:var(--paper-2);}
+  td.mono,th.mono{font-family:"IBM Plex Mono",monospace;font-size:13.5px;white-space:nowrap;}
+
+  /* ---- checklist ---- */
+  .check{list-style:none;padding:0;margin:22px 0;}
+  .check li{position:relative;padding-left:30px;margin-bottom:11px;}
+  .check li::before{content:"☑";position:absolute;left:0;top:-1px;color:var(--copper);font-size:17px;}
+
+  /* ---- download CTA ---- */
+  .cta{background:var(--navy-deep);color:#F3EADB;border-radius:12px;
+    padding:34px 30px;margin:54px 0 20px;text-align:center;}
+  .cta h3{font-family:"DM Serif Display",serif;font-weight:400;color:#FBF6EC;
+    font-size:25px;margin:0 0 10px;}
+  .cta p{color:#C7D2DC;font-size:16px;margin:0 0 22px;max-width:48ch;margin-left:auto;margin-right:auto;}
+  .btn{display:inline-block;background:var(--copper);color:#fff;text-decoration:none;
+    font-family:"IBM Plex Mono",monospace;font-size:14px;font-weight:600;letter-spacing:.5px;
+    padding:13px 26px;border-radius:8px;transition:transform .15s ease,background .15s ease;}
+  .btn:hover{background:#a3651f;transform:translateY(-1px);}
+  .cta small{display:block;color:#8FA6B6;font-size:12px;margin-top:14px;font-family:"IBM Plex Mono",monospace;}
+
+  /* ---- footer ---- */
+  footer{border-top:1px solid var(--rule);padding:34px 0 60px;margin-top:30px;}
+  .author{font-size:15px;color:var(--ink-soft);}
+  .author strong{color:var(--navy);}
+  .foot-links{font-family:"IBM Plex Mono",monospace;font-size:13px;margin-top:14px;}
+  .foot-links a{margin-right:16px;text-decoration:none;}
+
+  @media (max-width:560px){
+    body{font-size:17px;}
+    .dek{font-size:19px;}
+    h2{font-size:25px;}
+    header.hero{padding:42px 0 30px;}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <a href="index.html" class="brand">PipingPro&nbsp;Academy</a>
+    <a href="guides.html" class="nav-back">← All guides</a>
+  </div>
+</div>
+  
+  
+  <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI for Engineering: Real Change or Just Cosmetic? — PipingPro Academy</title>
 <meta name="description" content="Adoption of AI in engineering is accelerating, but measurable value is rarer than the marketing suggests. A piping engineer's view on telling the real from the cosmetic.">
