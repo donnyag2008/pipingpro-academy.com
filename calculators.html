@@ -3,7 +3,7 @@
 <head>
   <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">finit
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Engineering Calculators — PipingPro Academy</title>
@@ -1217,13 +1217,14 @@ function initCards(){
       btn.textContent = 'Open Calculator →';
       btn.className = 'card-btn btn-open';
       btn.style.cssText = 'background:var(--accent);color:#fff;display:block;text-align:center;padding:9px;border-radius:8px;font-size:12px;font-weight:600;border:none;cursor:pointer;width:100%;font-family:var(--font, "DM Sans",sans-serif);text-decoration:none;';
-    } else {
-      badge.textContent = '👑 Members';
-      badge.style.background = 'rgba(184,134,11,.82)';
+    }} else {
+      const tier = STUDENT.has(id) ? 'Student' : 'Professional';
+      badge.textContent = tier;
+      badge.style.background = STUDENT.has(id) ? 'rgba(26,107,90,.82)' : 'rgba(184,134,11,.82)';
       badge.style.color = '#fff';
-      btn.textContent = '👑 Members Only';
+      btn.textContent = '🔒 ' + tier;
       btn.className = 'card-btn btn-locked';
-    }
+        }
   });
 }
 document.addEventListener('DOMContentLoaded', ()=>{
