@@ -1217,7 +1217,7 @@ function initCards(){
       btn.textContent = 'Open Calculator →';
       btn.className = 'card-btn btn-open';
       btn.style.cssText = 'background:var(--accent);color:#fff;display:block;text-align:center;padding:9px;border-radius:8px;font-size:12px;font-weight:600;border:none;cursor:pointer;width:100%;font-family:var(--font, "DM Sans",sans-serif);text-decoration:none;';
-    }} else {
+    } else {
       const tier = STUDENT.has(id) ? 'Student' : 'Professional';
       badge.textContent = tier;
       badge.style.background = STUDENT.has(id) ? 'rgba(26,107,90,.82)' : 'rgba(184,134,11,.82)';
