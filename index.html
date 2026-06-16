@@ -1450,224 +1450,204 @@
     }
   })();
 
-// ── MEMBERSTACK PLAN DETECTION ───────────────────────────────
-  const MS_STUDENT_PLAN = 'pln_student-plan-l416c0pbs';
-  const MS_PRO_PLAN     = 'pln_REPLACE_WITH_PROFESSIONAL_ID';   // ← paste Professional plan ID
+<script>
+// ════════════════════════════════════════════════════════════════
+//  PPA AUTH + MEMBERSTACK PLAN DETECTION  (single source of truth on window)
+//  NOTE: ADMIN_KEY is declared in the admin-bypass block ABOVE this script.
+// ════════════════════════════════════════════════════════════════
 
-  let MS_MEMBER = null;   // raw member object (or null)
-  let MS_PLAN   = null;   // 'professional' | 'student' | null
-  let MS_READY  = false;
+const ADMIN_EMAIL = 'admin@pipingpro-academy.com';
 
-  async function msLoadMember(){
-    try{
-      const ms = window.$memberstackDom;
-      if(ms && ms.getCurrentMember){
-        const res = await ms.getCurrentMember();
-        MS_MEMBER = (res && res.data) ? res.data : (res || null);
-        MS_PLAN = null;
-        if(MS_MEMBER && Array.isArray(MS_MEMBER.planConnections)){
-          console.log('[PPA] planConnections:', MS_MEMBER.planConnections); // verify structure
-          const active = MS_MEMBER.planConnections.filter(p =>
-            p.active || p.status === 'ACTIVE' || p.status === 'TRIALING');
-          const ids = active.map(p => p.planId || p.plan || (p.plan && p.plan.id));
-          if(ids.includes(MS_PRO_PLAN))          MS_PLAN = 'professional';
-          else if(ids.includes(MS_STUDENT_PLAN)) MS_PLAN = 'student';
-        }
+// Memberstack plan IDs (confirmed via getApp)
+const MS_STUDENT_PLAN = 'pln_student-plan-l416c0pbs';
+const MS_PRO_PLAN     = 'pln_professional-n2is0jc4';
+
+// Shared state — every function reads/writes the SAME window slot
+window.MS_MEMBER = null;
+window.MS_PLAN   = null;   // 'professional' | 'student' | null
+window.MS_READY  = false;
+
+async function msLoadMember(){
+  try{
+    const ms = window.$memberstackDom;
+    if (ms && ms.getCurrentMember){
+      const res = await ms.getCurrentMember();
+      const member = (res && res.data) ? res.data : (res || null);
+      window.MS_MEMBER = member;
+      window.MS_PLAN = null;
+      if (member && Array.isArray(member.planConnections)){
+        console.log('[PPA] planConnections:', member.planConnections);
+        const active = member.planConnections.filter(p =>
+          p.active || p.status === 'ACTIVE' || p.status === 'TRIALING');
+        const ids = active.map(p => p.planId);
+        if (ids.includes(MS_PRO_PLAN))          window.MS_PLAN = 'professional';
+        else if (ids.includes(MS_STUDENT_PLAN)) window.MS_PLAN = 'student';
       }
-    }catch(e){ console.warn('Memberstack load error', e); }
-    finally{ MS_READY = true; }
-  }
-
-
-  
-  // ── MEMBER CHECK (Memberstack integration point) ─────────────
-  function isMember() {
-    if(localStorage.getItem('ppa_admin')==='1') return true;
-    if(sessionStorage.getItem('ppa_admin')==='1') return true;
-    // return window.$memberstackDom?.getMemberCookie() != null;
-    return localStorage.getItem('ppa_member')==='1' || sessionStorage.getItem('ppa_member')==='1';
-  }
-
-  // ── APPLY MEMBER VIEW ON LOAD ─────────────────────────────────
- function isMember(){
-    if(localStorage.getItem('ppa_admin')==='1') return true;
-    return MS_PLAN === 'professional' || MS_PLAN === 'student';
-  }
-  function memberPlan(){
-    if(localStorage.getItem('ppa_admin')==='1') return 'professional';
-    return MS_PLAN;
-  }
-
-  document.addEventListener('DOMContentLoaded', applyMemberView);
-
-// ── APPLY MEMBER VIEW ON LOAD ─────────────────────────────────
-  function applyMemberView(){
-    if(!isMember()) return;
-    const isAdmin = localStorage.getItem('ppa_admin')==='1';
-    ['pw','wt','el','pc','ub','df','sp'].forEach(id=>{
-      const lock=document.getElementById('card-lock-'+id);
-      if(lock) lock.style.display='none';
-      const badge=document.getElementById('badge-'+id);
-      if(badge){
-        badge.textContent = isAdmin ? '🛡️ Admin' : '✓ Member';
-        badge.className='calc-badge badge-unlocked';
-      }
-      const btn=document.getElementById('btn-'+id);
-      if(btn){ btn.textContent='Open Calculator →'; btn.className='cbtn cbtn-pro'; }
-    });
-  }
-  
-  function openCalcModal(id) {
-    const c = CALCS[id];
-    const member = isMember();
-    const free = c.tier === 'free';
-    const canOpen = free || member;
-
-    const img = document.getElementById('calc-modal-img');
-    img.className = 'calc-modal-img ' + c.bg;
-    img.innerHTML = SVGS[id];
-
-    const badge = document.getElementById('calc-modal-badge');
-    if (free) {
-      badge.textContent = '✓ Free';
-      badge.style.cssText = 'background:#e0f0eb;color:#1a6b5a;';
-    } else if (member) {
-      badge.textContent = '✓ Member Access';
-      badge.style.cssText = 'background:#e0f0eb;color:#1a6b5a;';
-    } else {
-      badge.textContent = '🔒 Members Only';
-      badge.style.cssText = 'background:var(--gold-pale);color:var(--gold);';
     }
+  } catch(e){ console.warn('Memberstack load error', e); }
+  finally { window.MS_READY = true; }
+}
 
-    document.getElementById('calc-modal-name').textContent = c.name;
-    document.getElementById('calc-modal-desc').textContent = c.desc;
-    document.getElementById('calc-modal-tags').innerHTML = c.tags.map(t => `<span class="ctag">${t}</span>`).join('');
-    document.getElementById('calc-modal-what-list').innerHTML = c.what.map(w => `<li>${w}</li>`).join('');
+function isMember(){
+  if (localStorage.getItem('ppa_admin') === '1') return true;
+  return window.MS_PLAN === 'professional' || window.MS_PLAN === 'student';
+}
+function memberPlan(){
+  if (localStorage.getItem('ppa_admin') === '1') return 'professional';
+  return window.MS_PLAN || null;
+}
 
-    const actions = document.getElementById('calc-modal-actions');
-    if (canOpen) {
-      actions.innerHTML = `<a href="${c.file}" class="calc-modal-btn calc-modal-btn-open">Open Calculator →</a>`;
-    } else {
-      actions.innerHTML = `<span class="calc-modal-btn calc-modal-btn-lock">🔒 Members Only</span>`;
+// Unlock homepage calculator cards for members
+function applyMemberView(){
+  if (!isMember()) return;
+  const isAdmin = localStorage.getItem('ppa_admin') === '1';
+  ['pw','wt','el','pc','ub','df','sp'].forEach(id => {
+    const lock = document.getElementById('card-lock-'+id);
+    if (lock) lock.style.display = 'none';
+    const badge = document.getElementById('badge-'+id);
+    if (badge){
+      badge.textContent = isAdmin ? '🛡️ Admin' : '✓ Member';
+      badge.className = 'calc-badge badge-unlocked';
     }
-
-    document.getElementById('calc-modal-hint').style.display = canOpen ? 'none' : 'block';
-    document.getElementById('calc-modal-bg').classList.add('show');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeCalcModal() {
-    document.getElementById('calc-modal-bg').classList.remove('show');
-    document.body.style.overflow = '';
-  }
-
-  function closeCalcModalBg(e) {
-    if (e.target === document.getElementById('calc-modal-bg')) closeCalcModal();
-  }
-
-  // ── LOGIN MODAL LOGIC ─────────────────────────────────────────
-  const ADMIN_EMAIL='admin@pipingpro-academy.com';
-
-  function openLoginModal(){
-    const loggedIn=isMember();
-    document.getElementById('lmodal-form-view').style.display=loggedIn?'none':'block';
-    document.getElementById('lmodal-member-view').style.display=loggedIn?'block':'none';
-    document.getElementById('lmodal-err').style.display='none';
-    if(loggedIn){
-      const admin=localStorage.getItem('ppa_admin')==='1';
-      document.getElementById('lmodal-avatar').textContent   = admin ? '🛡️' : '✓';
-      document.getElementById('lmodal-welcome').textContent  = admin ? 'Admin Access Active' : 'Subscriber Access Active';
-      document.getElementById('lmodal-email-display').textContent = admin
-        ? ADMIN_EMAIL
-        : (localStorage.getItem('ppa_member_email') || 'Active subscription');
-    } else {
-      document.getElementById('lmodal-email').value='';
-      document.getElementById('lmodal-password').value='';
-    }
-    document.getElementById('lmodal-bg').classList.add('show');
-    document.body.style.overflow='hidden';
-    if(!loggedIn) setTimeout(()=>document.getElementById('lmodal-email').focus(),200);
-  }
-
-  function closeLModal(){
-    document.getElementById('lmodal-bg').classList.remove('show');
-    document.body.style.overflow='';
-  }
-
-  function closeLModalBg(e){
-    if(e.target===document.getElementById('lmodal-bg')) closeLModal();
-  }
-
-  function updateNavBtn(){
-    const el=document.getElementById('nav-auth');
-    if(!el) return;
-    const admin=localStorage.getItem('ppa_admin')==='1';
-    const join=document.getElementById('nav-join');
-    if(join) join.style.display = isMember() ? 'none' : '';
-    if(admin){
-      el.innerHTML='<span class="nav-badge nav-badge-admin">🛡️ Admin</span>'
-        +'<button class="nav-login-btn logged-in" onclick="doLogout()">Logout</button>';
-    } else if(isMember()){
-      el.innerHTML='<span class="nav-badge nav-badge-sub">✓ Subscriber</span>'
-        +'<button class="nav-login-btn logged-in" onclick="doLogout()">Logout</button>';
-    } else {
-      el.innerHTML='<button class="nav-login-btn" id="nav-login-btn" onclick="openLoginModal()">Login</button>';
-    }
-  }
-
-  // Flip to false (or delete the fallback block) once Memberstack is live.
-  function doLogin(){
-    const email=document.getElementById('lmodal-email').value.trim();
-    const password=document.getElementById('lmodal-password').value.trim();
-    const err=document.getElementById('lmodal-err');
-    err.style.display='none';
-
-    // Admin bypass (your own access)
-    if(email===ADMIN_EMAIL && password===ADMIN_KEY){
-      localStorage.setItem('ppa_admin','1');
-      closeLModal(); location.reload(); return;
-    }
-
-    const ms=window.$memberstackDom;
-    if(!ms || !ms.loginMemberEmailPassword){
-      err.textContent='Login is temporarily unavailable. Please try again shortly.';
-      err.style.display='block'; return;
-    }
-    ms.loginMemberEmailPassword({email,password})
-      .then(()=>{ closeLModal(); location.reload(); })
-      .catch(()=>{ err.textContent='Incorrect email or password. Please try again.'; err.style.display='block'; });
-  }
-
-  function doLogout(){
-    localStorage.removeItem('ppa_admin');
-    const ms=window.$memberstackDom;
-    const done=()=>{ location.href=location.pathname; };
-    if(ms && ms.logout){ ms.logout().then(done).catch(done); } else done();
-  }
-
-  document.addEventListener('keydown', e => {
-    if(e.key==='Escape'){ closeCalcModal(); closeLModal(); }
-    if(e.ctrlKey && e.shiftKey && e.key==='A') openLoginModal();
+    const btn = document.getElementById('btn-'+id);
+    if (btn){ btn.textContent = 'Open Calculator →'; btn.className = 'cbtn cbtn-pro'; }
   });
+}
 
-  // Enter key submits login form
-  document.addEventListener('keydown', e => {
-    if(e.key==='Enter' && document.getElementById('lmodal-bg').classList.contains('show')){
-      doLogin();
-    }
-  });
+// ── CALCULATOR PREVIEW MODAL (unchanged) ──────────────────────
+function openCalcModal(id){
+  const c = CALCS[id];
+  const member = isMember();
+  const free = c.tier === 'free';
+  const canOpen = free || member;
 
-  document.addEventListener('DOMContentLoaded', async function(){
-    await msLoadMember();
-    applyMemberView();
-    updateNavBtn();
-  });
+  const img = document.getElementById('calc-modal-img');
+  img.className = 'calc-modal-img ' + c.bg;
+  img.innerHTML = SVGS[id];
 
- document.addEventListener('DOMContentLoaded', async function(){
-    await msLoadMember();
-    applyMemberView();
-    updateNavBtn();
-  });
+  const badge = document.getElementById('calc-modal-badge');
+  if (free){
+    badge.textContent = '✓ Free';
+    badge.style.cssText = 'background:#e0f0eb;color:#1a6b5a;';
+  } else if (member){
+    badge.textContent = '✓ Member Access';
+    badge.style.cssText = 'background:#e0f0eb;color:#1a6b5a;';
+  } else {
+    badge.textContent = '🔒 Members Only';
+    badge.style.cssText = 'background:var(--gold-pale);color:var(--gold);';
+  }
+
+  document.getElementById('calc-modal-name').textContent = c.name;
+  document.getElementById('calc-modal-desc').textContent = c.desc;
+  document.getElementById('calc-modal-tags').innerHTML = c.tags.map(t => `<span class="ctag">${t}</span>`).join('');
+  document.getElementById('calc-modal-what-list').innerHTML = c.what.map(w => `<li>${w}</li>`).join('');
+
+  const actions = document.getElementById('calc-modal-actions');
+  actions.innerHTML = canOpen
+    ? `<a href="${c.file}" class="calc-modal-btn calc-modal-btn-open">Open Calculator →</a>`
+    : `<span class="calc-modal-btn calc-modal-btn-lock">🔒 Members Only</span>`;
+
+  document.getElementById('calc-modal-hint').style.display = canOpen ? 'none' : 'block';
+  document.getElementById('calc-modal-bg').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeCalcModal(){
+  document.getElementById('calc-modal-bg').classList.remove('show');
+  document.body.style.overflow = '';
+}
+function closeCalcModalBg(e){
+  if (e.target === document.getElementById('calc-modal-bg')) closeCalcModal();
+}
+
+// ── LOGIN MODAL ───────────────────────────────────────────────
+function openLoginModal(){
+  const loggedIn = isMember();
+  document.getElementById('lmodal-form-view').style.display   = loggedIn ? 'none' : 'block';
+  document.getElementById('lmodal-member-view').style.display = loggedIn ? 'block' : 'none';
+  document.getElementById('lmodal-err').style.display = 'none';
+  if (loggedIn){
+    const admin = localStorage.getItem('ppa_admin') === '1';
+    const email = (window.MS_MEMBER && window.MS_MEMBER.auth && window.MS_MEMBER.auth.email) || 'Active subscription';
+    document.getElementById('lmodal-avatar').textContent  = admin ? '🛡️' : '✓';
+    document.getElementById('lmodal-welcome').textContent = admin ? 'Admin Access Active'
+      : (memberPlan() === 'student' ? 'Student Access Active' : 'Professional Access Active');
+    document.getElementById('lmodal-email-display').textContent = admin ? ADMIN_EMAIL : email;
+  } else {
+    document.getElementById('lmodal-email').value = '';
+    document.getElementById('lmodal-password').value = '';
+  }
+  document.getElementById('lmodal-bg').classList.add('show');
+  document.body.style.overflow = 'hidden';
+  if (!loggedIn) setTimeout(() => document.getElementById('lmodal-email').focus(), 200);
+}
+function closeLModal(){
+  document.getElementById('lmodal-bg').classList.remove('show');
+  document.body.style.overflow = '';
+}
+function closeLModalBg(e){
+  if (e.target === document.getElementById('lmodal-bg')) closeLModal();
+}
+
+function updateNavBtn(){
+  const el = document.getElementById('nav-auth');
+  if (!el) return;
+  const admin = localStorage.getItem('ppa_admin') === '1';
+  const join = document.getElementById('nav-join');
+  if (join) join.style.display = isMember() ? 'none' : '';
+  if (admin){
+    el.innerHTML = '<span class="nav-badge nav-badge-admin">🛡️ Admin</span>'
+      + '<button class="nav-login-btn logged-in" onclick="doLogout()">Logout</button>';
+  } else if (isMember()){
+    el.innerHTML = '<span class="nav-badge nav-badge-sub">✓ Subscriber</span>'
+      + '<button class="nav-login-btn logged-in" onclick="doLogout()">Logout</button>';
+  } else {
+    el.innerHTML = '<button class="nav-login-btn" id="nav-login-btn" onclick="openLoginModal()">Login</button>';
+  }
+}
+
+function doLogin(){
+  const email    = document.getElementById('lmodal-email').value.trim();
+  const password = document.getElementById('lmodal-password').value.trim();
+  const err      = document.getElementById('lmodal-err');
+  err.style.display = 'none';
+
+  if (email === ADMIN_EMAIL && password === ADMIN_KEY){
+    localStorage.setItem('ppa_admin','1');
+    closeLModal(); location.reload(); return;
+  }
+
+  const ms = window.$memberstackDom;
+  if (!ms || !ms.loginMemberEmailPassword){
+    err.textContent = 'Login is temporarily unavailable. Please try again shortly.';
+    err.style.display = 'block'; return;
+  }
+  ms.loginMemberEmailPassword({ email, password })
+    .then(() => { closeLModal(); location.reload(); })
+    .catch(() => { err.textContent = 'Incorrect email or password. Please try again.'; err.style.display = 'block'; });
+}
+
+function doLogout(){
+  localStorage.removeItem('ppa_admin');
+  const ms = window.$memberstackDom;
+  const done = () => { location.href = location.pathname; };
+  if (ms && ms.logout){ ms.logout().then(done).catch(done); } else done();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape'){ if (typeof closeCalcModal === 'function') closeCalcModal(); closeLModal(); }
+  if (e.ctrlKey && e.shiftKey && e.key === 'A') openLoginModal();
+});
+document.addEventListener('keydown', e => {
+  const bg = document.getElementById('lmodal-bg');
+  if (e.key === 'Enter' && bg && bg.classList.contains('show')) doLogin();
+});
+
+// ── SINGLE LOADER: fetch member FIRST, then paint UI ──────────
+document.addEventListener('DOMContentLoaded', async function(){
+  await msLoadMember();
+  applyMemberView();
+  updateNavBtn();
+});
 </script>
 
 <!-- TEMP TEST BUTTON — remove before launch -->
