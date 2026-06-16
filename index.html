@@ -1500,6 +1500,23 @@
 
   document.addEventListener('DOMContentLoaded', applyMemberView);
 
+// ── APPLY MEMBER VIEW ON LOAD ─────────────────────────────────
+  function applyMemberView(){
+    if(!isMember()) return;
+    const isAdmin = localStorage.getItem('ppa_admin')==='1';
+    ['pw','wt','el','pc','ub','df','sp'].forEach(id=>{
+      const lock=document.getElementById('card-lock-'+id);
+      if(lock) lock.style.display='none';
+      const badge=document.getElementById('badge-'+id);
+      if(badge){
+        badge.textContent = isAdmin ? '🛡️ Admin' : '✓ Member';
+        badge.className='calc-badge badge-unlocked';
+      }
+      const btn=document.getElementById('btn-'+id);
+      if(btn){ btn.textContent='Open Calculator →'; btn.className='cbtn cbtn-pro'; }
+    });
+  }
+  
   function openCalcModal(id) {
     const c = CALCS[id];
     const member = isMember();
