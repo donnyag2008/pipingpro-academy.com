@@ -7,6 +7,8 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<!-- Memberstack -->
+<script data-memberstack-app="app_cmq9fsibv00720sujaqjm734o" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
 <title>Courses — PipingPro Academy</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -474,7 +476,6 @@ const COURSES = {
     kicker: 'Course 04 · Non-Metallic',
     bg: 'bg-teal',
     file: 'course-nonmetallic-piping.html',
-    
     desc: 'HDPE and composite pipe for the oilfield. Why non-metallics win on corrosion, the API 15LE pressure-rating method end to end (with a live calculator), reinforced spoolable RTP/TCP, chemical resistance & selection, and the design, jointing and installation that make plastics behave unlike steel.',
     meta: ['5 modules', '1 quiz', 'HDPE & Composite', 'Certificate'],
     modules: [
@@ -504,10 +505,38 @@ const ADMIN_EMAIL = 'admin@pipingpro-academy.com';
   }
 })();
 
+// ─── MEMBERSTACK PLAN DETECTION (single source of truth on window) ───
+const MS_STUDENT_PLAN = 'pln_student-plan-l416c0pbs';
+const MS_PRO_PLAN     = 'pln_professional-n2is0jc4';
+
+window.MS_MEMBER = null;
+window.MS_PLAN   = null;   // 'professional' | 'student' | null
+window.MS_READY  = false;
+
+async function msLoadMember(){
+  try{
+    const ms = window.$memberstackDom;
+    if(ms && ms.getCurrentMember){
+      const res = await ms.getCurrentMember();
+      const member = (res && res.data) ? res.data : (res || null);
+      window.MS_MEMBER = member;
+      window.MS_PLAN = null;
+      if(member && Array.isArray(member.planConnections)){
+        console.log('[PPA] planConnections:', member.planConnections);
+        const active = member.planConnections.filter(p =>
+          p.active || p.status === 'ACTIVE' || p.status === 'TRIALING');
+        const ids = active.map(p => p.planId);
+        if(ids.includes(MS_PRO_PLAN))          window.MS_PLAN = 'professional';
+        else if(ids.includes(MS_STUDENT_PLAN)) window.MS_PLAN = 'student';
+      }
+    }
+  }catch(e){ console.warn('Memberstack load error', e); }
+  finally{ window.MS_READY = true; }
+}
+
 function isMember(){
   if(localStorage.getItem('ppa_admin')==='1') return true;
-  if(sessionStorage.getItem('ppa_admin')==='1') return true;
-  return localStorage.getItem('ppa_member')==='1' || sessionStorage.getItem('ppa_member')==='1';
+  return window.MS_PLAN === 'professional' || window.MS_PLAN === 'student';
 }
 
 // ─── CARD STATE ──────────────────────────────────────────────
@@ -648,8 +677,6 @@ function updateNavBtn(){
     el.innerHTML = '<button class="login-btn" id="nav-login-btn" onclick="openLoginModal()">Login</button>';
   }
 }
-// Flip to false (or delete the fallback block) once Memberstack is live.
-const ALLOW_DEV_LOGIN = true;
 function doLogin(){
   const email = document.getElementById('lmodal-email').value.trim();
   const password = document.getElementById('lmodal-password').value.trim();
@@ -657,27 +684,20 @@ function doLogin(){
   err.style.display = 'none';
   if(email === ADMIN_EMAIL && password === ADMIN_KEY){
     localStorage.setItem('ppa_admin','1');
-    initCards(); updateNavBtn(); closeLModal();
+    closeLModal(); location.reload();
     return;
   }
-  // Subscriber via Memberstack once integrated:
-  if(window.$memberstackDom && window.$memberstackDom.loginMemberEmailPassword){
-    window.$memberstackDom.loginMemberEmailPassword({email,password}).then(function(){
-      localStorage.setItem('ppa_member','1');
-      localStorage.setItem('ppa_member_email',email);
-      initCards(); updateNavBtn(); closeLModal();
-    }).catch(function(){ err.style.display='block'; });
-    return;
+  const ms = window.$memberstackDom;
+  if(!ms || !ms.loginMemberEmailPassword){
+    err.textContent = 'Login is temporarily unavailable. Please try again shortly.';
+    err.style.display = 'block'; return;
   }
-  // Dev fallback — client-side only, NOT secure. For testing the
-  // subscriber state before Memberstack is wired up.
-  if(ALLOW_DEV_LOGIN && email && password){
-    localStorage.setItem('ppa_member','1');
-    localStorage.setItem('ppa_member_email',email);
-    initCards(); updateNavBtn(); closeLModal();
-    return;
-  }
-  err.style.display = 'block';
+  ms.loginMemberEmailPassword({email,password}).then(function(){
+    closeLModal(); location.reload();
+  }).catch(function(){
+    err.textContent = 'Incorrect email or password. Please try again.';
+    err.style.display = 'block';
+  });
 }
 function doLogout(){
   localStorage.removeItem('ppa_admin');
@@ -686,7 +706,9 @@ function doLogout(){
   sessionStorage.removeItem('ppa_admin');
   sessionStorage.removeItem('ppa_member');
   closeLModal();
-  location.reload();
+  const ms = window.$memberstackDom;
+  const done = function(){ location.reload(); };
+  if(ms && ms.logout){ ms.logout().then(done).catch(done); } else done();
 }
 
 document.addEventListener('keydown', function(e){
@@ -695,7 +717,8 @@ document.addEventListener('keydown', function(e){
   if(e.key === 'Enter' && document.getElementById('lmodal-bg').classList.contains('show')) doLogin();
 });
 
-document.addEventListener('DOMContentLoaded', function(){
+document.addEventListener('DOMContentLoaded', async function(){
+  await msLoadMember();
   initCards();
   updateNavBtn();
 });
