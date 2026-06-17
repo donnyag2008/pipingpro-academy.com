@@ -3,9 +3,11 @@
 <head>
   <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">finit
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<!-- Memberstack -->
+<script data-memberstack-app="app_cmq9fsibv00720sujaqjm734o" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
 <title>Engineering Calculators — PipingPro Academy</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
@@ -1037,6 +1039,7 @@ const SVGS = {
 
 // ─── ADMIN BYPASS ─────────────────────────────────────────────
 const ADMIN_KEY='PPA-ADMIN-2026';
+const ADMIN_EMAIL='admin@pipingpro-academy.com';
 (function(){
   var p=new URLSearchParams(window.location.search);
   if(p.get('admin')===ADMIN_KEY){
@@ -1045,15 +1048,59 @@ const ADMIN_KEY='PPA-ADMIN-2026';
   }
 })();
 
-// ─── MEMBER CHECK (Memberstack integration point) ─────────────
-function isMember(){
-  if(localStorage.getItem('ppa_admin')==='1') return true;
-  // Replace with Memberstack's member check once integrated:
-  // return window.$memberstackDom?.getMemberCookie() != null;
-  return localStorage.getItem('ppa_member')==='1';
+// ─── MEMBERSTACK PLAN DETECTION (single source of truth on window) ───
+const MS_STUDENT_PLAN = 'pln_student-plan-l416c0pbs';
+const MS_PRO_PLAN     = 'pln_professional-n2is0jc4';
+
+window.MS_MEMBER = null;
+window.MS_PLAN   = null;   // 'professional' | 'student' | null
+window.MS_READY  = false;
+
+async function msLoadMember(){
+  try{
+    const ms = window.$memberstackDom;
+    if(ms && ms.getCurrentMember){
+      const res = await ms.getCurrentMember();
+      const member = (res && res.data) ? res.data : (res || null);
+      window.MS_MEMBER = member;
+      window.MS_PLAN = null;
+      if(member && Array.isArray(member.planConnections)){
+        console.log('[PPA] planConnections:', member.planConnections);
+        const active = member.planConnections.filter(p =>
+          p.active || p.status === 'ACTIVE' || p.status === 'TRIALING');
+        const ids = active.map(p => p.planId);
+        if(ids.includes(MS_PRO_PLAN))          window.MS_PLAN = 'professional';
+        else if(ids.includes(MS_STUDENT_PLAN)) window.MS_PLAN = 'student';
+      }
+    }
+  }catch(e){ console.warn('Memberstack load error', e); }
+  finally{ window.MS_READY = true; }
 }
 
+// ─── MEMBER CHECK ─────────────────────────────────────────────
 function isAdmin(){ return localStorage.getItem('ppa_admin')==='1'; }
+
+function memberPlan(){
+  if(isAdmin()) return 'professional';
+  return window.MS_PLAN || null;
+}
+
+function isMember(){
+  const p = memberPlan();
+  return p === 'professional' || p === 'student';
+}
+
+// Can the current user OPEN this specific calculator?
+//   FREE set        → everyone
+//   STUDENT set     → student plan, professional, admin
+//   everything else → professional + admin only
+function canOpen(id){
+  if(FREE.has(id)) return true;
+  const plan = memberPlan();
+  if(plan === 'professional') return true;
+  if(plan === 'student')      return STUDENT.has(id);
+  return false;
+}
 
 // ─── NAV AUTH STATE — Login / Admin / Subscriber + Logout ─────
 function refreshNavAuth(){
@@ -1101,40 +1148,29 @@ function closeLModalBg(e){
   if(e.target===document.getElementById('lmodal-bg')) closeLModal();
 }
 
-// ─── SUBSCRIBER LOGIN (Memberstack integration point) ─────────
-// Flip to false (or delete the fallback block) once Memberstack is live.
-const ALLOW_DEV_LOGIN = true;
+// ─── SUBSCRIBER LOGIN (Memberstack) ───────────────────────────
 async function doLogin(){
   const email=(document.getElementById('lmodal-email').value||'').trim();
   const pw=(document.getElementById('lmodal-password').value||'').trim();
   const err=document.getElementById('lmodal-err');
+  if(err) err.style.display='none';
 
-  // Preferred path — authenticate via Memberstack once integrated:
-  if(window.$memberstackDom?.loginMemberEmailPassword){
-    try{
-      await window.$memberstackDom.loginMemberEmailPassword({email,password:pw});
-      localStorage.setItem('ppa_member','1');
-      localStorage.setItem('ppa_member_email',email);
-      closeLModal(); refreshNavAuth(); initCards();
-    }catch(_){
-      if(err){err.textContent='Incorrect email or password. Please try again.';err.style.display='block';}
-    }
-    return;
+  // Admin bypass (your own access)
+  if(email===ADMIN_EMAIL && pw===ADMIN_KEY){
+    localStorage.setItem('ppa_admin','1');
+    closeLModal(); window.location.reload(); return;
   }
 
-  // Dev fallback — client-side only, NOT secure. For testing the
-  // subscriber state before Memberstack is wired up.
-  if(ALLOW_DEV_LOGIN){
-    if(email && pw){
-      localStorage.setItem('ppa_member','1');
-      localStorage.setItem('ppa_member_email',email);
-      closeLModal(); refreshNavAuth(); initCards();
-    } else if(err){
-      err.textContent='Please enter your email and password.';err.style.display='block';
-    }
-  } else if(err){
-    err.textContent='Subscriber sign-in is handled through your membership account.';
-    err.style.display='block';
+  const ms=window.$memberstackDom;
+  if(!ms || !ms.loginMemberEmailPassword){
+    if(err){err.textContent='Login is temporarily unavailable. Please try again shortly.';err.style.display='block';}
+    return;
+  }
+  try{
+    await ms.loginMemberEmailPassword({email,password:pw});
+    closeLModal(); window.location.reload();
+  }catch(_){
+    if(err){err.textContent='Incorrect email or password. Please try again.';err.style.display='block';}
   }
 }
 
@@ -1144,7 +1180,9 @@ function doLogout(){
   localStorage.removeItem('ppa_member_email');
   closeLModal();
   // clean reload re-locks the grid and resets the nav button
-  window.location.href=window.location.pathname;
+  const ms=window.$memberstackDom;
+  const done=()=>{ window.location.href=window.location.pathname; };
+  if(ms && ms.logout){ ms.logout().then(done).catch(done); } else done();
 }
 
 // ─── MODAL ────────────────────────────────────────────────────
@@ -1159,8 +1197,8 @@ function openModal(id){
     return;
   }
 
-  // Members go straight to the calculator — no popup
-  if(isMember()){
+  // Users with access to THIS calc go straight in — no popup
+  if(canOpen(id)){
     // Remember which suite we're in — set both suite name AND a one-shot return flag
     sessionStorage.setItem('ppa_last_suite', window._activeSuite || '');
     sessionStorage.setItem('ppa_returning', '1');
@@ -1231,7 +1269,7 @@ function initCards(){
       btn.style.cssText = 'background:var(--accent);color:#fff;display:block;text-align:center;padding:9px;border-radius:8px;font-size:12px;font-weight:600;border:none;cursor:pointer;width:100%;font-family:var(--font, "DM Sans",sans-serif);text-decoration:none;';
       return;
     }
-    if(member){
+    if(canOpen(id)){
       badge.textContent = '✓ Member';
       badge.style.background = 'rgba(26,107,90,.85)';
       badge.style.color = '#fff';
@@ -1248,7 +1286,8 @@ function initCards(){
         }
   });
 }
-document.addEventListener('DOMContentLoaded', ()=>{
+document.addEventListener('DOMContentLoaded', async ()=>{
+  await msLoadMember();
   refreshNavAuth();
   initCards();
   // Restore suite only if user navigated BACK from a calculator (one-shot flag)
@@ -1293,9 +1332,10 @@ function initPipelineBadges(){
     const badge = document.getElementById('badge-'+id);
     const btn   = document.getElementById('btn-'+id);
     if(!badge || !btn) return;
-    if(member){
-      badge.textContent = '✓ Member';
-      badge.style.background = 'rgba(26,107,90,.85)';
+    const realId = (id==='wt-pl') ? 'wt' : id;
+    if(canOpen(realId)){
+      badge.textContent = (realId==='wt') ? '✦ Free' : '✓ Member';
+      badge.style.background = (realId==='wt') ? 'rgba(196,92,42,.9)' : 'rgba(26,107,90,.85)';
       badge.style.color = '#fff';
       btn.textContent = 'Open Calculator →';
       btn.className = 'card-btn btn-open';
@@ -1305,10 +1345,11 @@ function initPipelineBadges(){
         btn.onclick = ()=>openModal('wt');
       }
     } else {
-      badge.textContent = '👑 Members';
-      badge.style.background = 'rgba(184,134,11,.82)';
+      const tier = STUDENT.has(realId) ? 'Student' : 'Professional';
+      badge.textContent = tier;
+      badge.style.background = STUDENT.has(realId) ? 'rgba(26,107,90,.82)' : 'rgba(184,134,11,.82)';
       badge.style.color = '#fff';
-      btn.textContent = '👑 Members Only';
+      btn.textContent = '🔒 ' + tier;
       btn.className = 'card-btn btn-locked';
     }
   });
