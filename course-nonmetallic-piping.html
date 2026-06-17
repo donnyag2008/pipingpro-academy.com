@@ -6,6 +6,40 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <!-- Memberstack -->
+<script data-memberstack-app="app_cmq9fsibv00720sujaqjm734o" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
+
+<!-- PPA COURSE GATE (any paid plan = access) -->
+<script>
+(function(){
+  var STUDENT_PLAN = 'pln_student-plan-l416c0pbs';
+  var PRO_PLAN     = 'pln_professional-n2is0jc4';
+  var REDIRECT     = '/courses.html';   // where non-members get sent
+
+  if(localStorage.getItem('ppa_admin') === '1') return; // admin bypass
+
+  function hasPaidPlan(member){
+    if(!member || !Array.isArray(member.planConnections)) return false;
+    return member.planConnections.some(function(p){
+      var live = p.active || p.status === 'ACTIVE' || p.status === 'TRIALING';
+      return live && (p.planId === STUDENT_PLAN || p.planId === PRO_PLAN);
+    });
+  }
+  function gate(){
+    var ms = window.$memberstackDom;
+    if(!ms || !ms.getCurrentMember){ location.replace(REDIRECT); return; }
+    ms.getCurrentMember().then(function(r){
+      var member = (r && r.data) ? r.data : null;
+      if(!hasPaidPlan(member)){ location.replace(REDIRECT); }
+    }).catch(function(){ location.replace(REDIRECT); });
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', gate);
+  } else { gate(); }
+})();
+</script>
+  
 <title>Non-Metallic Piping Essentials — PipingPro Academy</title>
 <meta name="description" content="Non-Metallic Piping Essentials — a 5-module course on HDPE and composite pipe for oil & gas: families, the API 15LE pressure-rating method (HDB/DF/HDS/DR/FSF/TSF), reinforced spoolable RTP/TCP, chemical resistance & selection, and design, jointing & installation. By Donny A. Bachtiar."/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
