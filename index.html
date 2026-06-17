@@ -1223,42 +1223,139 @@
 </section>
 
 <!-- PRICING -->
+<!-- PRICING -->
 <section class="pricing-section" id="pricing">
+  <style>
+    .billing-toggle{display:inline-flex;background:var(--cream);border:1px solid var(--rule);border-radius:30px;padding:4px;margin:0 0 2.4rem;gap:4px;}
+    .bt-opt{border:none;background:transparent;color:var(--ink-light);font-family:'DM Sans',sans-serif;font-weight:700;font-size:.82rem;letter-spacing:.03em;padding:.5rem 1.2rem;border-radius:24px;cursor:pointer;transition:background .2s,color .2s;}
+    .bt-opt.active{background:var(--gold);color:var(--ink);}
+    .bt-opt small{font-weight:600;opacity:.8;}
+    .geo-note{font-size:.72rem;color:#aaa;margin-top:.4rem;}
+    .plan-cta{font-family:'DM Sans',sans-serif;}
+  </style>
+
   <p class="section-label">Membership Plans</p>
-  <h2>Simple, Flat-Rate Access</h2>
-  <p class="section-intro">One subscription unlocks every course, every calculator, and every technical guide. New content included as it is published. <strong>Start with a 7-day free trial — no charge until day 8.</strong></p>
+  <h2>Choose Your Access</h2>
+  <p class="section-intro">Free calculators stay free — no account needed. For the full library, pick the plan that fits. Cancel anytime; access runs to the end of your paid period.</p>
+
+  <div class="billing-toggle" role="tablist" aria-label="Professional billing period">
+    <button id="bt-monthly" class="bt-opt active" onclick="ppaSetBilling('monthly')">Monthly</button>
+    <button id="bt-annual" class="bt-opt" onclick="ppaSetBilling('annual')">Annual <small>· 2 months free</small></button>
+  </div>
+
   <div class="pricing-grid">
+
+    <!-- STUDENT -->
     <div class="pricing-card">
-      <div class="plan-name">Monthly</div>
-      <div class="plan-price"><sup>$</sup>10</div>
-      <div class="plan-period">per month, billed monthly</div>
+      <div class="plan-name">Student</div>
+      <div class="plan-price"><sup>$</sup>20</div>
+      <div class="plan-period">per year · billed annually</div>
       <ul class="plan-features">
-        <li>7-day free trial included</li>
-        <li>Full course library access</li>
-        <li>All engineering calculators</li>
-        <li>All technical PDF guides</li>
-        <li>New content as published</li>
+        <li>All courses &amp; completion certificates</li>
+        <li>Student calculator set — Flange &amp; Valve Weight, Pipe Support Span, Expansion Loop</li>
+        <li>Engineering ebook included</li>
+        <li>New course content as published</li>
       </ul>
-      <a href="#" class="plan-cta">Start Free Trial</a>
-      <p class="plan-note">Cancel anytime — no charge during trial</p>
+      <button class="plan-cta" onclick="ppaCheckout('prc_student-annual-8v16d0ptx')">Get Student Access</button>
+      <p class="plan-note">Valid student status required</p>
     </div>
+
+    <!-- PROFESSIONAL -->
     <div class="pricing-card featured-plan">
-      <div class="best-value">Best Value — Save $20</div>
-      <div class="plan-name">Annual</div>
-      <div class="plan-price"><sup>$</sup>100</div>
-      <div class="plan-period">per year — equivalent to $8.33/month</div>
+      <div class="best-value">Full Access</div>
+      <div class="plan-name">Professional</div>
+      <div class="plan-price"><sup>$</sup><span id="pro-price">12</span></div>
+      <div class="plan-period" id="pro-period">per month</div>
       <ul class="plan-features">
-        <li>7-day free trial included</li>
-        <li>Full course library access</li>
-        <li>All engineering calculators</li>
+        <li>Everything in Student</li>
+        <li>All engineering calculators (20+)</li>
         <li>All technical PDF guides</li>
-        <li>New content as published</li>
+        <li>New tools &amp; content as published</li>
       </ul>
-      <a href="#" class="plan-cta">Start Free Trial</a>
-      <p class="plan-note" style="color:#666;">Two months free vs monthly</p>
+      <button class="plan-cta" id="pro-cta" onclick="ppaBuyPro()">Get Professional Access</button>
+      <p class="plan-note" id="pro-note">Full access · cancel anytime</p>
+      <p class="geo-note" id="geo-note">Pricing shown for your region.</p>
     </div>
+
   </div>
 </section>
+
+<script>
+/* ── PRICING: geo-band detection + billing toggle + Memberstack checkout ── */
+(function(){
+  // Professional price IDs by band + billing interval (USD)
+  const BANDS = {
+    headline:{ label:'',         monthly:{id:'prc_pro-headline-monthly-cl9e0opd', amt:12}, annual:{id:'prc_pro-headline-annual-95iw0jen', amt:120} },
+    mid:     { label:'regional', monthly:{id:'prc_pro-mid-monthly-hd16n0pay',     amt:4},  annual:{id:'prc_pro-mid-annual-p99h0o63',      amt:39}  },
+    lower:   { label:'regional', monthly:{id:'prc_pro-lower-monthly-8tiz0jxn',    amt:3},  annual:{id:'prc_pro-lower-annual-f6j00j4i',    amt:30}  }
+  };
+  const MID_COUNTRIES   = ['IN','ID'];                 // India, Indonesia
+  const LOWER_COUNTRIES = ['EG','MA','DZ','TN'];       // Egypt, Morocco, Algeria, Tunisia
+
+  var band = 'headline';      // default; unmapped countries stay headline
+  var billing = 'monthly';
+
+  function paint(){
+    var b = BANDS[band][billing];
+    var priceEl  = document.getElementById('pro-price');
+    var periodEl = document.getElementById('pro-period');
+    var geoEl    = document.getElementById('geo-note');
+    if(priceEl)  priceEl.textContent = b.amt;
+    if(periodEl) periodEl.textContent = (billing === 'monthly') ? 'per month' : 'per year';
+    if(geoEl)    geoEl.textContent = (band === 'headline')
+      ? 'Pricing shown for your region.'
+      : 'Regional pricing applied for your country.';
+  }
+
+  // expose toggle + buy handlers
+  window.ppaSetBilling = function(mode){
+    billing = mode;
+    var m = document.getElementById('bt-monthly');
+    var a = document.getElementById('bt-annual');
+    if(m) m.classList.toggle('active', mode === 'monthly');
+    if(a) a.classList.toggle('active', mode === 'annual');
+    paint();
+  };
+
+  window.ppaBuyPro = function(){
+    var b = BANDS[band][billing];
+    ppaCheckout(b.id);
+  };
+
+  // Programmatic Memberstack checkout — signs the visitor up first if needed
+  window.ppaCheckout = async function(priceId){
+    var ms = window.$memberstackDom;
+    if(!ms){ console.warn('Memberstack not ready'); return; }
+    var member = null;
+    try { var r = await ms.getCurrentMember(); member = r && r.data ? r.data : null; } catch(e){}
+    if(!member){
+      try { await ms.openModal('SIGNUP'); } catch(e){}
+      try { var r2 = await ms.getCurrentMember(); member = r2 && r2.data ? r2.data : null; } catch(e){}
+    }
+    if(!member){ return; } // visitor cancelled signup
+    try{
+      await ms.purchasePlansWithCheckout({
+        priceId: priceId,
+        successUrl: window.location.origin + '/calculators.html',
+        cancelUrl: window.location.href
+      });
+    }catch(e){ console.error('PPA checkout error', e); }
+  };
+
+  // Geo-detect via Cloudflare (site is on Cloudflare Pages)
+  fetch('/cdn-cgi/trace').then(function(r){ return r.text(); }).then(function(t){
+    var m = t.match(/loc=([A-Z]{2})/);
+    var cc = m ? m[1] : '';
+    if(MID_COUNTRIES.indexOf(cc) !== -1)       band = 'mid';
+    else if(LOWER_COUNTRIES.indexOf(cc) !== -1) band = 'lower';
+    else                                        band = 'headline';
+    paint();
+  }).catch(function(){ band = 'headline'; paint(); });
+
+  paint(); // initial paint with default before geo resolves
+})();
+</script>
+
 
 <!-- AUTHOR -->
 <section class="author-section" id="author">
