@@ -265,17 +265,17 @@ body{ background:#faf6ef; color:#1a1510; }
   </div>
 
   <div class="card">
-    <div class="card-title">Pipe Inputs</div>
+    <div class="card-title">Pipe Schedule — Add Each Size</div>
     <div class="formula">
       <div class="formula-title">External surface area of pipe</div>
-      <code>A = π × OD × L</code><br/>
-      <code>Paint volume = A × DFT / (coverage efficiency × 1000)</code><br/>
-      <code>DFT = Dry Film Thickness (µm) &nbsp;|&nbsp; Theoretical coverage ≈ 1600 × (volume solids %) / DFT (m²/L)</code>
+      <code>A = π × OD × L × fittings factor</code><br/>
+      <code>Paint volume = A / practical coverage&nbsp;(per coat)</code><br/>
+      <code>Theoretical coverage = 1000 × volume solids (fraction) / DFT (µm) → m²/L</code>
     </div>
-    <div class="grid3">
+    <div class="grid4">
       <div class="field">
         <label>Pipe Outside Diameter (mm)</label>
-        <select id="p-od" onchange="syncPaintOD();calcPaint()">
+        <select id="p-od" onchange="syncPaintOD()">
           <option value="60.3">2" (60.3 OD)</option>
           <option value="88.9">3" (88.9 OD)</option>
           <option value="114.3" selected>4" (114.3 OD)</option>
@@ -293,17 +293,32 @@ body{ background:#faf6ef; color:#1a1510; }
       </div>
       <div class="field" id="p-od-custom-wrap" style="display:none;">
         <label>Custom OD (mm)</label>
-        <input type="number" id="p-od-custom" value="114.3" step="0.1" oninput="calcPaint()"/>
+        <input type="number" id="p-od-custom" value="114.3" step="0.1"/>
       </div>
       <div class="field">
-        <label>Total Pipe Length (m)</label>
-        <input type="number" id="p-len" value="100" step="1" oninput="calcPaint()"/>
+        <label>Length for this size (m)</label>
+        <input type="number" id="p-len" value="100" step="1"/>
         <span class="hint">All spools of this size combined</span>
       </div>
       <div class="field">
-        <label>Number of Pipe Sizes / Runs</label>
-        <span class="hint" style="margin-top:4px;">Use MTO tab for multi-size projects</span>
+        <label>Fittings Area Factor</label>
+        <select id="p-fittings">
+          <option value="1.05">+5% (straight runs, few fittings)</option>
+          <option value="1.10">+10% (moderate fittings)</option>
+          <option value="1.20" selected>+20% (many elbows/flanges)</option>
+          <option value="1.30">+30% (dense fittings — headers)</option>
+        </select>
       </div>
+    </div>
+    <button onclick="addPaintLine()" style="margin-top:.9rem;padding:9px 22px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);">+ Add size to schedule</button>
+
+    <div id="p-lines-wrap" style="margin-top:1.2rem;display:none;">
+      <table class="mto-table">
+        <thead>
+          <tr><th>#</th><th>NB</th><th>OD (mm)</th><th>Length (m)</th><th>Fittings</th><th>Surface Area (m²)</th><th></th></tr>
+        </thead>
+        <tbody id="p-lines-tbody"></tbody>
+      </table>
     </div>
   </div>
 
@@ -331,12 +346,18 @@ body{ background:#faf6ef; color:#1a1510; }
         <span class="hint">Epoxy typically 60–70%</span>
       </div>
     </div>
-    <div class="grid3" style="margin-top:.8rem;">
+    <div class="grid2" style="margin-top:.8rem;">
       <div class="field">
         <label>Application Efficiency (%)</label>
         <input type="number" id="p-eff" value="70" min="10" max="100" oninput="calcPaint()"/>
         <span class="hint">Spray ~65–75%, brush ~80–85%</span>
       </div>
+      <div class="field">
+        <label>Wastage / Overspray Factor (%)</label>
+        <input type="number" id="p-waste" value="15" min="0" max="50" oninput="calcPaint()"/>
+        <span class="hint">10–20% typical; applied to whole job</span>
+      </div>
+    </div>
       <div class="field">
         <label>Wastage / Overspray Factor (%)</label>
         <input type="number" id="p-waste" value="15" min="0" max="50" oninput="calcPaint()"/>
@@ -907,24 +928,74 @@ function selectPaintType(type){
   calcPaint();
 }
 
-/* ── PAINT CALC ── */
+/* ── PAINT SCHEDULE (multi-size) ── */
+var paintLines=[];
+var OD_NB={60.3:'2"',88.9:'3"',114.3:'4"',168.3:'6"',219.1:'8"',273.1:'10"',323.9:'12"',355.6:'14"',406.4:'16"',457.2:'18"',508:'20"',609.6:'24"'};
+function odToNB(od){ return OD_NB[od]||'custom'; }
+
 function syncPaintOD(){
   var wrap=document.getElementById('p-od-custom-wrap');
   wrap.style.display=document.getElementById('p-od').value==='custom'?'flex':'none';
 }
-function calcPaint(){
-  var od=getOD('p-od','p-od-custom')/1000; /* metres */
+
+function addPaintLine(){
+  var od=getOD('p-od','p-od-custom');
   var len=gv('p-len');
+  var fittings=parseFloat(document.getElementById('p-fittings').value)||1.2;
+  if(od<=0){ alert('Select a valid pipe OD.'); return; }
+  if(len<=0){ alert('Enter a length greater than zero for this size.'); return; }
+  paintLines.push({od:od,len:len,fittings:fittings});
+  renderPaintLines();
+  calcPaint();
+}
+
+function removePaintLine(idx){
+  paintLines.splice(idx,1);
+  renderPaintLines();
+  calcPaint();
+}
+
+function renderPaintLines(){
+  var tbody=document.getElementById('p-lines-tbody');
+  var wrap=document.getElementById('p-lines-wrap');
+  if(!tbody) return;
+  tbody.innerHTML='';
+  if(paintLines.length===0){ if(wrap) wrap.style.display='none'; return; }
+  if(wrap) wrap.style.display='block';
+  var totLen=0, totArea=0;
+  paintLines.forEach(function(l,i){
+    var area=Math.PI*(l.od/1000)*l.len*l.fittings;
+    totLen+=l.len; totArea+=area;
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td>'+(i+1)+'</td>'
+      +'<td>'+odToNB(l.od)+'</td>'
+      +'<td>'+l.od.toFixed(1)+'</td>'
+      +'<td>'+l.len.toFixed(1)+'</td>'
+      +'<td>×'+l.fittings.toFixed(2)+'</td>'
+      +'<td>'+area.toFixed(1)+'</td>'
+      +'<td><button onclick="removePaintLine('+i+')" style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:13px;">✕</button></td>';
+    tbody.appendChild(tr);
+  });
+  var tr=document.createElement('tr');
+  tr.className='subtotal-row';
+  tr.innerHTML='<td colspan="3">TOTAL ('+paintLines.length+' size'+(paintLines.length>1?'s':'')+')</td>'
+    +'<td>'+totLen.toFixed(1)+'</td><td>—</td><td>'+totArea.toFixed(1)+'</td><td></td>';
+  tbody.appendChild(tr);
+}
+
+function calcPaint(){
   var dft1=gv('p-dft1'), dft2=gv('p-dft2'), dft3=gv('p-dft3');
   var solids=gv('p-solids')/100;
   var eff=gv('p-eff')/100;
   var waste=1+gv('p-waste')/100;
-  var fittings=parseFloat(document.getElementById('p-fittings').value)||1.2;
 
-  var area=Math.PI*od*len; /* m² bare pipe */
-  var areaFitted=area*fittings;
+  /* sum surface area across all scheduled sizes */
+  var bareArea=0, areaFitted=0;
+  paintLines.forEach(function(l){
+    bareArea   += Math.PI*(l.od/1000)*l.len;
+    areaFitted += Math.PI*(l.od/1000)*l.len*l.fittings;
+  });
 
-  /* Theoretical coverage for one coat = 1000 × solids / DFT (m²/L) using avg DFT */
   var avgDFT=(dft1+dft2+dft3)/3||dft1;
   var covTh=(1000*solids)/avgDFT;
   var covPr=covTh*eff;
@@ -946,7 +1017,7 @@ function calcPaint(){
     if(c.dft<=0) return;
     var cov=(1000*solids)/c.dft;
     var covP=cov*eff;
-    var net=areaFitted/covP;
+    var net=covP>0?areaFitted/covP:0;
     var gross=net*waste;
     var drums=Math.ceil(gross/20);
     totalNet+=net; totalGross+=gross;
@@ -954,7 +1025,6 @@ function calcPaint(){
     tr.innerHTML='<td>'+c.name+'</td><td>'+c.dft+'</td><td>'+net.toFixed(1)+'</td><td>'+gross.toFixed(1)+'</td><td>'+drums+'</td>';
     tbody.appendChild(tr);
   });
-  /* totals row */
   if(totalNet>0){
     var tr=document.createElement('tr');
     tr.className='total-row';
@@ -963,28 +1033,44 @@ function calcPaint(){
   }
 
   var note=document.getElementById('p-note');
-  if(note) note.textContent='Total pipe surface area (incl. fittings factor): '+areaFitted.toFixed(1)+' m². Total paint required (all coats, incl. wastage): '+totalGross.toFixed(1)+' litres = '+Math.ceil(totalGross/20)+' × 20L drums.';
+  if(note){
+    if(paintLines.length===0){
+      note.textContent='Add at least one pipe size to the schedule above to calculate paint quantities.';
+    } else {
+      note.textContent=paintLines.length+' pipe size'+(paintLines.length>1?'s':'')+' in schedule · total surface area (incl. fittings): '+areaFitted.toFixed(1)+' m². Total paint required (all coats, incl. wastage): '+totalGross.toFixed(1)+' litres = '+Math.ceil(totalGross/20)+' × 20L drums.';
+    }
+  }
 
+  /* report */
   var rptRows=[];
   coats.forEach(function(c){ if(c.dft<=0) return;
-    var cov=(1000*solids)/c.dft, covP=cov*eff, net=areaFitted/covP, gross=net*waste;
+    var cov=(1000*solids)/c.dft, covP=cov*eff, net=covP>0?areaFitted/covP:0, gross=net*waste;
     rptRows.push([c.name, c.dft+' µm', net.toFixed(1)+' L', gross.toFixed(1)+' L', Math.ceil(gross/20)]);
   });
   rptRows.push(['TOTAL','—', totalNet.toFixed(1)+' L', totalGross.toFixed(1)+' L', Math.ceil(totalGross/20)]);
+
+  var schedRows=paintLines.map(function(l,i){
+    var a=Math.PI*(l.od/1000)*l.len*l.fittings;
+    return [(i+1), odToNB(l.od)+' ('+l.od.toFixed(1)+')', l.len.toFixed(1)+' m', '×'+l.fittings.toFixed(2), a.toFixed(1)+' m²'];
+  });
+  schedRows.push(['—','TOTAL', paintLines.reduce(function(s,l){return s+l.len;},0).toFixed(1)+' m','—', areaFitted.toFixed(1)+' m²']);
+
   window.PPA_REPORT={
     docType:'External Paint MTO', codeNote:'estimation only — verify with paint TDS',
     sections:[
+      {title:'Pipe Schedule', type:'table', head:['#','Size (OD mm)','Length','Fittings','Area'], rows:schedRows},
       {title:'Coating Basis', type:'table', head:['Parameter','Value','Unit'], rows:[
-        ['Pipe OD',(od*1000).toFixed(1),'mm'],['Length',len.toFixed(1),'m'],
-        ['Bare surface area',area.toFixed(1),'m²'],['Fittings factor','×'+fittings.toFixed(2),'—'],
-        ['Area incl. fittings',areaFitted.toFixed(1),'m²'],['Volume solids',(solids*100).toFixed(0),'%'],
-        ['Transfer efficiency',(eff*100).toFixed(0),'%'],['Wastage','+'+((waste-1)*100).toFixed(0),'%']
+        ['Number of sizes',paintLines.length,'—'],
+        ['Bare surface area',bareArea.toFixed(1),'m²'],
+        ['Area incl. fittings',areaFitted.toFixed(1),'m²'],
+        ['Volume solids',(solids*100).toFixed(0),'%'],
+        ['Transfer efficiency',(eff*100).toFixed(0),'%'],
+        ['Wastage','+'+((waste-1)*100).toFixed(0),'%']
       ]},
       {title:'Paint Take-Off by Coat', type:'table', head:['Coat','DFT','Net','Gross (incl. waste)','20 L drums'], rows:rptRows}
     ]
   };
 }
-
 /* ── INSULATION TYPE SELECTION ── */
 var selectedInsulType='minwool';
 var insulProps={
@@ -1189,10 +1275,11 @@ function renderMTO(){
 /* ── INIT ── */
 syncPaintOD();
 syncInsulOD();
+paintLines=[{od:114.3,len:100,fittings:1.20}];  /* seed one line */
+renderPaintLines();
 calcPaint();
 autoInsulThk();
 calcInsul();
-</script>
 
 
 
