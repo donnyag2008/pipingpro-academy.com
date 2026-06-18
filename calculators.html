@@ -456,6 +456,31 @@ body{ background:#faf6ef; color:#1a1510; }
         </svg>
         <span class="card-badge badge-member" id="badge-wt">👑 Members</span>
       </div>
+
+<div class="calc-card" onclick="openModal('uc')">
+      <div class="card-img" style="background:linear-gradient(135deg,#33384a 0%,#5a6480 100%)">
+        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="18" y1="34" x2="64" y2="34" stroke="rgba(255,255,255,0.9)" stroke-width="3" stroke-linecap="round"/>
+          <polygon points="67,34 58,29 58,39" fill="rgba(255,255,255,0.9)"/>
+          <line x1="72" y1="56" x2="26" y2="56" stroke="rgba(255,255,255,0.6)" stroke-width="3" stroke-linecap="round"/>
+          <polygon points="23,56 32,51 32,61" fill="rgba(255,255,255,0.6)"/>
+          <text x="14" y="26" font-size="12" fill="rgba(255,210,130,0.95)" font-family="monospace">in</text>
+          <text x="60" y="78" font-size="12" fill="rgba(255,255,255,0.55)" font-family="monospace">mm</text>
+        </svg>
+        <span class="card-badge badge-member" id="badge-uc">Student</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Unit Converter</div>
+        <div class="card-desc">Engineering &amp; process unit conversions across 17 quantities — pressure, stress, both flow types, viscosity, torque and more. One value shown in every unit at once, with exact SI factors. Ad-free.</div>
+        <div class="card-tags"><span class="tag">Pressure / Flow</span><span class="tag">Viscosity</span><span class="tag">SI &amp; ASME</span></div>
+        <div class="card-action"><span class="card-btn btn-locked" id="btn-uc">🔒 Student</span></div>
+      </div>
+    </div>
+
+
+
+
+      
       <div class="card-body">
         <div class="card-name">Pipe Wall Thickness</div>
         <div class="card-desc">Minimum wall thickness per ASME B31.3, B31.4, B31.8 with mill tolerance, corrosion allowance, and schedule selection.</div>
@@ -997,6 +1022,12 @@ const CALCS = {
   sv:{name:'Sectional Volume Calculator',desc:'Volume of a trench, excavation or irregular prism from cross-sectional areas taken at stations along its length. Average end-area and prismoidal (Simpson\u2019s) methods side by side, with a trapezoidal trench-geometry area helper, metric/imperial units, swell/bulking factor and cubic-yard output.',tags:['End-Area','Prismoidal','Earthworks'],what:['Average end-area volume (\u03a3 (A\u2081+A\u2082)/2\u00b7L)','Prismoidal (Simpson\u2019s) volume','Trapezoidal trench area helper','Metric / imperial units','Swell / bulking \u2192 loose volume','Cubic yards + CSV / PDF export'],file:'sectional-volume-calculator.html',bg:'bg-sv',svgId:'sv'},
   pe:{name:'Piping Work Estimator',desc:'Equipment-factored FEED / conceptual estimate of bulk piping material, deliverables and engineering man-hours for a gas plant or GOSP. Major-equipment count drives line count, then tonnage, valves, fittings, supports, welds, isometrics, spools and discipline man-hours — every norm editable for calibration. Accuracy classed per AACE 18R-97.',tags:['AACE 18R-97','FEED Estimate','Gas Plant / GOSP','Man-Hours'],what:['Bulk pipe length &amp; tonnage','Valves, flanges, fittings, supports &amp; welds','Isometric, spool &amp; line-list counts','Stress-analysis package count','Piping engineering man-hours + FTE','AACE Class 4/5 accuracy banding'],file:'piping-work-estimator.html',bg:'bg-purple',svgId:'pe'}
   ,scl:{name:'Stress Critical Line Selector',desc:'Classifies process lines into C1/C2/C3/NC for the level of flexibility / stress analysis required — the twelve-criterion EPC Line Designation Table screen, with the size-vs-temperature Criticality Requirement Chart. Single-line and full batch LDT modes.',tags:['Stress LDT','Criticality','B31.3'],what:['Final class C1 / C2 / C3 / NC','12-criterion screening breakdown','Governing-criterion readout','Criticality Requirement Chart zone','Batch LDT processing + CSV export','PDF report'],file:'stress-critical-line-selector.html',bg:'bg-steelblue',svgId:'scl'}
+ ,uc:{name:'Unit Converter',desc:'Engineering & process unit conversions across 17 quantities — pressure, stress, both flow types (volume & mass), viscosity (cP / cSt), torque, density, energy and power. Type one value and read it in every unit of that quantity at once. Exact SI / ASME factors, no ads, no tracking.',tags:['Pressure / Flow','Viscosity','SI & ASME'],what:['17 quantity categories','One value → every unit at once','Exact SI definitions (psi, bar, kg/cm²…)','Oilfield units (bbl/day, US gpm, cfm)','cP / cSt viscosity, lbf·ft torque','4 / 6 / 8 / full sig-fig control','Copy result + PDF conversion sheet'],file:'unit-converter.html',bg:'bg-steelblue',svgId:'uc'}
+
+
+
+
+  
 };
 
 // ─── COMING SOON (rolling monthly release) ───────────────────
@@ -1006,7 +1037,8 @@ const COMING_SOON = new Set([]);
 const FREE = new Set(['pw','wt']);
 
   // ─── STUDENT ( for student with proof of Studnet ID only) ───
-const STUDENT = new Set(['vw', 'ps', 'el' ]);
+ const STUDENT = new Set(['vw', 'ps', 'el', 'uc']);
+
   
 // ─── SVG BANK ────────────────────────────────────────────────
 const SVGS = {
@@ -1032,6 +1064,9 @@ const SVGS = {
   di:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="8" y1="48" x2="40" y2="48" stroke="rgba(255,255,255,0.85)" stroke-width="9" stroke-linecap="round"/><line x1="50" y1="48" x2="82" y2="48" stroke="rgba(255,255,255,0.85)" stroke-width="9" stroke-linecap="round"/><path d="M45 39 l-3 4 l3 4 l-3 4" stroke="rgba(255,200,120,0.95)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="18" y1="36" x2="18" y2="60" stroke="rgba(255,255,255,0.55)" stroke-width="1.4"/><polygon points="18,34 15,41 21,41" fill="rgba(255,255,255,0.55)"/><polygon points="18,62 15,55 21,55" fill="rgba(255,255,255,0.55)"/><text x="50" y="26" text-anchor="middle" font-size="13" fill="rgba(255,255,255,0.9)" font-family="monospace">Ø×N</text></svg>`,
   sv:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="6" y1="28" x2="84" y2="28" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><path d="M22 28 L34 64 L56 64 L68 28" stroke="rgba(255,255,255,0.9)" stroke-width="3" fill="rgba(255,255,255,0.10)" stroke-linejoin="round"/><line x1="45" y1="31" x2="45" y2="61" stroke="rgba(255,220,120,0.9)" stroke-width="1.6"/><polygon points="45,28 42,35 48,35" fill="rgba(255,220,120,0.9)"/><polygon points="45,64 42,57 48,57" fill="rgba(255,220,120,0.9)"/><line x1="34" y1="71" x2="56" y2="71" stroke="rgba(255,255,255,0.55)" stroke-width="1.3"/><polygon points="34,71 40,68 40,74" fill="rgba(255,255,255,0.55)"/><polygon points="56,71 50,68 50,74" fill="rgba(255,255,255,0.55)"/><text x="45" y="22" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.85)" font-family="monospace">A·L</text></svg>`
   ,scl:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="68" x2="80" y2="68" stroke="rgba(255,255,255,0.8)" stroke-width="6" stroke-linecap="round"/><polyline points="14,54 32,54 32,40 52,40 52,26 78,26" stroke="rgba(255,255,255,0.9)" stroke-width="2.5" fill="none" stroke-linejoin="round"/><circle cx="44" cy="46" r="5" fill="rgba(255,200,120,0.95)"/><line x1="14" y1="22" x2="14" y2="60" stroke="rgba(255,255,255,0.4)" stroke-width="1.4"/><polygon points="14,20 11,27 17,27" fill="rgba(255,255,255,0.4)"/></svg>`
+,uc:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="18" y1="34" x2="64" y2="34" stroke="rgba(255,255,255,0.9)" stroke-width="3" stroke-linecap="round"/><polygon points="67,34 58,29 58,39" fill="rgba(255,255,255,0.9)"/><line x1="72" y1="56" x2="26" y2="56" stroke="rgba(255,255,255,0.6)" stroke-width="3" stroke-linecap="round"/><polygon points="23,56 32,51 32,61" fill="rgba(255,255,255,0.6)"/><text x="14" y="26" font-size="12" fill="rgba(255,210,130,0.95)" font-family="monospace">in</text><text x="60" y="78" font-size="12" fill="rgba(255,255,255,0.55)" font-family="monospace">mm</text></svg>`
+
+
 };
 
 // ─── ADMIN BYPASS ─────────────────────────────────────────────
