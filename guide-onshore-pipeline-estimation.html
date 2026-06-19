@@ -314,8 +314,7 @@
       if (isMember()) return;            // members & admins: let the download proceed
       e.preventDefault();                // everyone else: intercept and upsell
       var go = confirm(
-        'The estimate workbook is included with PipingPro Academy membership ' +
-        '($10/month or $100/year).\n\nView membership options?'
+        'The estimate workbook is included with PipingPro Academy membership '.\n\nView membership options?'
       );
       if (go) location.href = 'index.html#content';
     });
