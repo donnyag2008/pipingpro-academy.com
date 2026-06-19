@@ -465,6 +465,44 @@ body{ background:#faf6ef; color:#1a1510; }
       </div>
     </div>
 
+   <div class="calc-card" onclick="openModal('lb')">
+      <div class="card-img bg-plum">
+        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M26 16 V58 H68" stroke="rgba(255,255,255,0.9)" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+          <rect x="20" y="10" width="12" height="8" rx="1" fill="rgba(255,255,255,0.6)"/>
+          <rect x="66" y="52" width="8" height="12" rx="1" fill="rgba(255,255,255,0.6)"/>
+          <path d="M26 58 Q40 64 54 58" stroke="rgba(255,220,120,0.9)" stroke-width="1.8" fill="none" stroke-dasharray="3 2"/>
+          <line x1="26" y1="58" x2="26" y2="44" stroke="rgba(255,200,120,0.9)" stroke-width="2" stroke-linecap="round"/>
+          <polygon points="26,42 23,49 29,49" fill="rgba(255,200,120,0.9)"/>
+        </svg>
+        <span class="card-badge badge-member" id="badge-lb" style="background:rgba(196,92,42,.9);color:#fff;">✦ Free</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">L-Bend Two-Anchor Stress</div>
+        <div class="card-desc">Thermal flexibility of an L-shaped run fixed at both ends — displacement stress range, stress ratio, longitudinal &amp; vertical elbow movement, and the force &amp; moment at each anchor, by full frame flexibility.</div>
+        <div class="card-tags"><span class="tag">ASME B31.3</span><span class="tag">§302.3.5 / §319</span><span class="tag">Flexibility</span></div>
+        <div class="card-action"><span class="card-btn btn-open" id="btn-lb">Open Calculator →</span></div>
+      </div>
+    </div> 
+    
+    
+    <div class="calc-card" onclick="openModal('uc')">
+      <div class="card-img bg-forest">
+        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="14" y="22" width="26" height="18" rx="3" stroke="rgba(255,255,255,0.85)" stroke-width="2.5" fill="none"/>
+          <rect x="50" y="50" width="26" height="18" rx="3" stroke="rgba(255,255,255,0.85)" stroke-width="2.5" fill="none"/>
+          <path d="M44 31 H62 M58 27 L62 31 L58 35" stroke="rgba(255,220,120,0.95)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M46 59 H28 M32 55 L28 59 L32 63" stroke="rgba(255,220,120,0.95)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="card-badge badge-member" id="badge-uc" style="background:rgba(196,92,42,.9);color:#fff;">✦ Free</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Engineering Unit Converter</div>
+        <div class="card-desc">Fast unit conversions for piping &amp; process work — pressure, temperature, length, flow and density, with SI ⇄ US / Imperial switching.</div>
+        <div class="card-tags"><span class="tag">Unit Conversion</span><span class="tag">SI ⇄ US</span><span class="tag">Process</span></div>
+        <div class="card-action"><span class="card-btn btn-open" id="btn-uc">Open Converter →</span></div>
+      </div>
+    </div>
     <div class="calc-card" onclick="openModal('vw')">
       <div class="card-img bg-steelblue">
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -962,9 +1000,11 @@ body{ background:#faf6ef; color:#1a1510; }
 const CALCS = {
   pw:{name:'Pipe Weight & Section Properties',desc:'Pipe weight per foot, fluid weight, ID, metal area, moment of inertia, section modulus, and radius of gyration per ASME B36.10 (carbon steel) and B36.19 (stainless steel) — Nayyar 7th Ed.',tags:['ASME B36.10','ASME B36.19','Nayyar 7th Ed.'],what:['Pipe weight per foot (lb/ft)','Fluid weight per foot','Total weight per metre','Inside diameter (ID)','Moment of inertia (I)','Section modulus (Z)','Radius of gyration (r)'],file:'pipe-weight-calculator.html',bg:'bg-teal',svgId:'pw'},
   wt:{name:'Pipe Wall Thickness',desc:'Minimum wall thickness per ASME B31.3, B31.4, B31.8 with mill tolerance, corrosion allowance, and schedule selection guidance.',tags:['ASME B31.3','B31.4','B31.8'],what:['Minimum wall thickness (t_min)','Corrosion-adjusted thickness','Mill-tolerance-adjusted wall','Schedule adequacy check','Design pressure back-calculation'],file:'pipe-wall-thickness-calculator.html',bg:'bg-accent',svgId:'wt'},
+  uc:{name:'Engineering Unit Converter',desc:'Fast unit conversions for piping and process work — pressure, temperature, length, flow, density and more, with SI ⇄ US / Imperial switching.',tags:['Unit Conversion','SI ⇄ US','Process'],what:['Pressure (bar, psi, kPa, MPa, kg/cm²)','Temperature (°C, °F, K)','Length & diameter','Flow rate (volumetric & mass)','Density & viscosity','SI ⇄ US / Imperial'],file:'unit-converter.html',bg:'bg-forest',svgId:'uc'},
   vw:{name:'Flange & Valve Weight',desc:'Dry weights for material take-off, lifting and support estimating. Weld-neck, slip-on and blind flange weights computed from ASME B16.5 dimensional geometry across Classes 150–2500, plus gate, globe and swing-check valve weights from vendor catalogue data with flanged / butt-weld selection.',tags:['ASME B16.5','Valve MTO','Class 150–2500'],what:['Weld-neck / slip-on / blind flange weight','All ASME B16.5 classes (150–2500)','Gate / globe / check valve weight','Flanged (W1) or butt-weld (W2) ends','Combined flange + valve total','kg / lb toggle + PDF report'],file:'flange-valve-weight-calculator.html',bg:'bg-steelblue',svgId:'vw'},
   fx:{name:'Flexibility Screening (B31.3)',desc:'Determines whether a two-anchor piping system needs a formal flexibility analysis, using the ASME B31.3 §319.4.1(c) empirical check, eq. (16). Built-in eligibility gate enforces the two-anchor / no-intermediate-restraint / uniform-size conditions, and flags geometries where the empirical relation can be unconservative.',tags:['ASME B31.3','§319.4.1','Eq. (16)'],what:['§319.4.1(c) eligibility gate','D·y/(L−U)² ≤ K₁ empirical check','y &amp; U from layout or direct input','K₁ from S_A and E_a','Unconservative-geometry flags','PASS = no formal analysis required'],file:'flexibility-screening-calculator.html',bg:'bg-olive',svgId:'fx'},
   el:{name:'Expansion Loop Calculator',desc:'Loop leg sizing, thermal expansion, guided cantilever bending stress, allowable stress check, and pipe reaction forces per ASME B31.3.',tags:['ASME B31.3','Thermal Expansion'],what:['Thermal expansion (ΔL)','Loop leg length (H & W)','Guided cantilever bending stress','Allowable stress check','Pipe reaction forces'],file:'expansion-loop-calculator.html',bg:'bg-navy',svgId:'el'},
+  lb:{name:'L-Bend Two-Anchor Stress',desc:'Thermal flexibility of an L-shaped pipe run fixed at both ends — displacement stress range, stress ratio, longitudinal & vertical elbow movement, and the force & moment at each anchor, solved as a full planar-frame flexibility problem.',tags:['ASME B31.3','§302.3.5 / §319','Flexibility'],what:['Displacement stress range S_E vs allowable S_A','Stress ratio with PASS / EXCEEDS verdict','Longitudinal & vertical elbow movement','Force & moment at each anchor','Step-by-step worked calculation','PDF report'],file:'l-bend-two-anchor-stress-calculator.html',bg:'bg-plum',svgId:'lb'},
   pc:{name:'Pipeline Crossing Calculator',desc:'Road and railway crossing stress analysis per API RP 1102 — soil load, traffic load, combined stress, and casing pipe adequacy.',tags:['API RP 1102','Road','Rail'],what:['Soil dead load stress','Surface live load stress','Internal pressure hoop stress','Combined longitudinal stress','Equivalent stress (von Mises)','Casing pipe adequacy check'],file:'pipeline-crossing-calculator.html',bg:'bg-slate',svgId:'pc'},
   ub:{name:'Upheaval Buckling Calculator',desc:'Buried pipeline stability — driving force, soil resistance, and required cover depth per DNV-RP-F110.',tags:['DNV-RP-F110','Buried Pipeline'],what:['Effective axial compressive force','Thermal + pressure driving force','Soil passive resistance','Required soil cover depth','Imperfection amplitude sensitivity'],file:'upheaval-buckling-calculator.html',bg:'bg-olive',svgId:'ub'},
   df:{name:'Ductile Fracture Propagation',desc:'Battelle Two-Curve Method (BTCM) for gas transmission pipeline fracture arrest per SAES-L-131, API 5L Annex G, and ASME B31.8.',tags:['BTCM','SAES-L-131','API 5L Annex G'],what:['Decompression wave speed','Fracture propagation speed','Arrest toughness (Charpy CVN)','BCL formula (lean gas)','BTCM graphical method'],file:'ductile-fracture-calculator.html',bg:'bg-maroon',svgId:'df'},
@@ -987,10 +1027,13 @@ const CALCS = {
 const COMING_SOON = new Set([]);
 
 // ─── FREE (public, no login — the "try before you subscribe" tools) ───
-const FREE = new Set(['pw','wt']);
+const FREE = new Set(['pw','wt','lb','uc']);
 
 // ─── SVG BANK ────────────────────────────────────────────────
 const SVGS = {
+  const SVGS = {
+  lb:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M26 16 V58 H68" stroke="rgba(255,255,255,0.9)" stroke-width="4.5" fill="none" stroke-linecap="round"/><rect x="20" y="10" width="12" height="8" rx="1" fill="rgba(255,255,255,0.6)"/><rect x="66" y="52" width="8" height="12" rx="1" fill="rgba(255,255,255,0.6)"/><path d="M26 58 Q40 64 54 58" stroke="rgba(255,220,120,0.9)" stroke-width="1.8" fill="none" stroke-dasharray="3 2"/><line x1="26" y1="58" x2="26" y2="44" stroke="rgba(255,200,120,0.9)" stroke-width="2" stroke-linecap="round"/><polygon points="26,42 23,49 29,49" fill="rgba(255,200,120,0.9)"/></svg>`,
+  uc:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="14" y="22" width="26" height="18" rx="3" stroke="rgba(255,255,255,0.85)" stroke-width="2.5" fill="none"/><rect x="50" y="50" width="26" height="18" rx="3" stroke="rgba(255,255,255,0.85)" stroke-width="2.5" fill="none"/><path d="M44 31 H62 M58 27 L62 31 L58 35" stroke="rgba(255,220,120,0.95)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M46 59 H28 M32 55 L28 59 L32 63" stroke="rgba(255,220,120,0.95)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
   pw:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="45" cy="45" r="30" stroke="rgba(255,255,255,0.7)" stroke-width="3" fill="none"/><circle cx="45" cy="45" r="20" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none"/><line x1="45" y1="20" x2="45" y2="70" stroke="rgba(255,255,255,0.9)" stroke-width="2.5"/><polygon points="45,72 41,64 49,64" fill="rgba(255,255,255,0.9)"/><line x1="15" y1="45" x2="75" y2="45" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-dasharray="4 3"/></svg>`,
   wt:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="45" cy="45" r="28" stroke="rgba(255,255,255,0.8)" stroke-width="7" fill="none"/><line x1="45" y1="17" x2="45" y2="10" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/><line x1="45" y1="73" x2="45" y2="80" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/><line x1="40" y1="10" x2="50" y2="10" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/><line x1="40" y1="80" x2="50" y2="80" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/><line x1="75" y1="45" x2="62" y2="45" stroke="rgba(255,255,255,0.7)" stroke-width="2"/><polygon points="63,45 70,41 70,49" fill="rgba(255,255,255,0.7)"/></svg>`,
   vw:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="30" cy="45" rx="16" ry="7" stroke="rgba(255,255,255,0.8)" stroke-width="2.5" fill="none"/><line x1="20" y1="38" x2="20" y2="52" stroke="rgba(255,255,255,0.55)" stroke-width="5" stroke-linecap="round"/><line x1="40" y1="38" x2="40" y2="52" stroke="rgba(255,255,255,0.55)" stroke-width="5" stroke-linecap="round"/><line x1="40" y1="45" x2="58" y2="45" stroke="rgba(255,255,255,0.7)" stroke-width="3.5"/><rect x="58" y="34" width="16" height="22" rx="2" stroke="rgba(255,255,255,0.8)" stroke-width="2.5" fill="none"/><line x1="66" y1="34" x2="66" y2="24" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round"/><line x1="60" y1="24" x2="72" y2="24" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round"/></svg>`,
