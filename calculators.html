@@ -442,13 +442,16 @@ body{ background:#faf6ef; color:#1a1510; }
         <div class="card-action"><span class="card-btn btn-open" id="btn-pw">Open Calculator →</span></div>
       </div>
     </div>
-<div class="calc-card" onclick="openModal('lb')">
-  <div class="card-img bg-navy"></div>
-  <span class="badge" id="badge-lb">Free</span>
-  <h3 class="calc-card-name">L-Bend Two-Anchor Stress</h3>
-  <p>Thermal flexibility of an L-run anchored both ends — stress range, elbow movement, anchor loads.</p>
-  <button id="btn-lb">Open</button>
-</div>
+
+    <div class="card-body">
+       <div class="card-name">L-Bend Two-Anchor Stress</div>
+      <div class="card-desc">Thermal flexibility of an L-run anchored both ends — stress range, elbow movement, anchor loads.</div>
+     <div class="card-tags"><span class="tag">ASME B31.3</span><span class="tag">Simple  Flexibility Calculation.</span></div>
+       <div class="card-action"><span class="card-btn btn-open" id="btn-pw">Open Calculator →</span></div>
+      </div>
+     
+    
+    
     <div class="calc-card" onclick="openModal('wt')">
       <div class="card-img bg-accent">
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -462,6 +465,9 @@ body{ background:#faf6ef; color:#1a1510; }
         </svg>
         <span class="card-badge badge-member" id="badge-wt">👑 Members</span>
       </div>
+
+
+      
       <div class="card-body">
         <div class="card-name">Pipe Wall Thickness</div>
         <div class="card-desc">Minimum wall thickness per ASME B31.3, B31.4, B31.8 with mill tolerance, corrosion allowance, and schedule selection.</div>
