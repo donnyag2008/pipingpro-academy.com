@@ -480,6 +480,8 @@ table.reg td.n{text-align:right;font-family:var(--mono);}
 </style>
 <!-- ===== end components ===== -->
 
+<!-- SheetJS for in-browser LDT (.xlsm/.xlsx/.csv) parsing — FEED Import tab -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 <nav class="ppa-nav">
@@ -501,6 +503,7 @@ table.reg td.n{text-align:right;font-family:var(--mono);}
 
 <div class="calc-tabs">
   <button class="calc-tab active" onclick="showCalcTab('calculator')">⚙ Calculator</button>
+  <button class="calc-tab" onclick="showCalcTab('feed')">📥 LDT Import → FEED Scope</button>
   <button class="calc-tab" onclick="showCalcTab('register')">🗂 Test-Package Register</button>
   <button class="calc-tab" onclick="showCalcTab('theory')">📚 Theory &amp; Reference</button>
 </div>
@@ -1442,6 +1445,85 @@ document.addEventListener('DOMContentLoaded', function(){
 </div>
 </div><!-- /calctab-register -->
 
+<!-- ══ LDT IMPORT → FEED SCOPE PANEL ══ -->
+<style id="pp-feed-css">
+.feed-disc{background:var(--warn-bg);border:1px solid var(--warn-bd);border-left:4px solid var(--amber);border-radius:8px;padding:11px 14px;font-size:12px;line-height:1.6;color:#6b4e1f;margin-bottom:1rem;}
+.feed-disc b{color:#5a3e12;}
+.feed-drop{border:2px dashed #c8b89a;border-radius:10px;padding:1.8rem 1.2rem;text-align:center;background:#fffef9;cursor:pointer;transition:border-color .2s,background .2s;}
+.feed-drop:hover{border-color:var(--accent);background:#fdf8f3;}
+.feed-drop .fd-ic{font-size:1.7rem;}
+.feed-drop .fd-t{font-family:var(--serif);font-size:1rem;color:var(--ink);margin-top:.3rem;}
+.feed-drop .fd-s{font-size:11.5px;color:var(--ink3);margin-top:.25rem;}
+.feed-scope{background:linear-gradient(135deg,var(--steel2),var(--steel));border-radius:10px;padding:1.2rem 1.3rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:14px;margin:4px 0 2px;}
+.feed-note{font-size:11px;color:var(--ink3);margin-top:8px;line-height:1.55;}
+.feed-mtag{display:inline-block;padding:1px 7px;border-radius:4px;font-size:10px;font-weight:700;}
+.fm-hyd{background:var(--blue-bg);color:var(--blue);}
+.fm-pne{background:var(--amber-bg);color:var(--amber);}
+.fm-leak{background:var(--teal-bg);color:var(--teal2);}
+.feed-warn-cell{color:var(--accent);font-weight:600;}
+.map-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 14px;}
+@media(max-width:600px){.map-grid{grid-template-columns:1fr 1fr;}}
+.feed-pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;background:var(--accent-light);color:var(--accent);margin-left:6px;}
+</style>
+<div class="calc-panel" id="calctab-feed">
+<div class="main">
+
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">📥</span>LDT Import — FEED Test-Parameter Generator<span class="feed-pill">V1 · FEED</span></div>
+    <div class="feed-disc">
+      <b>FEED mode.</b> A FEED Line Designation Table carries design basis only — no test pressure, no medium, no test-package assignment.
+      This tool <b>derives</b> what design data allows (test pressure per ASME B31.3 §345.4.2 / SAES-A-004) and <b>defaults</b> medium to hydrostatic.
+      Output is <b>preliminary — design basis subject to change before IFC</b>, and is not an issued test-package register. Package boundaries are an engineering decision off the P&amp;IDs (EPC / detailed design → V2).
+    </div>
+    <label class="feed-drop" for="feed-file">
+      <div class="fd-ic">📄</div>
+      <div class="fd-t">Drop or choose your LDT</div>
+      <div class="fd-s">.xlsm · .xlsx · .csv — SmartPlant / SPI exports and generic line lists</div>
+      <input id="feed-file" type="file" accept=".xlsm,.xlsx,.xls,.csv" style="display:none" onchange="feedOnFile(event)">
+    </label>
+    <div id="feed-fileinfo" class="feed-note"></div>
+  </div>
+
+  <div class="card" id="feed-map-card" style="display:none">
+    <div class="ctitle"><span class="ctitle-icon">🧭</span>Column Mapping</div>
+    <div class="fg4">
+      <div class="field"><label>Sheet</label><select id="feed-sheet" onchange="feedReadSheet()"></select></div>
+      <div class="field"><label>Preset</label><select id="feed-preset" onchange="feedApplyPreset()"><option value="spi">SmartPlant / SPI (auto)</option><option value="generic">Generic / manual</option></select></div>
+      <div class="field"><label>Header row</label><input type="number" id="feed-hrow" value="4" min="1" onchange="feedBuildMapUI()"></div>
+      <div class="field"><label>Data starts at row</label><input type="number" id="feed-drow" value="6" min="1"></div>
+    </div>
+    <div class="map-grid gap" id="feed-mapfields"></div>
+    <div class="ctitle gap" style="font-size:.85rem;margin-top:1.3rem;"><span class="ctitle-icon">⚙</span>Test-Pressure Basis</div>
+    <div class="fg4">
+      <div class="field"><label>Design-P unit (in LDT)</label><select id="feed-punit"><option value="psig">PSIG</option><option value="barg">barg</option><option value="kpag">kPag</option><option value="mpag">MPag</option></select></div>
+      <div class="field"><label>Test factor</label><select id="feed-factor"><option value="1.5">1.5 — Hydro (B31.3 §345.4.2)</option><option value="1.1">1.1 — Pneumatic (§345.5)</option></select></div>
+      <div class="field"><label>Hot/cold stress ratio S<sub>c</sub>/S<sub>h</sub></label><input type="number" id="feed-ratio" value="1.00" step="0.01" min="1"></div>
+      <div class="field"><label>Default medium</label><select id="feed-medium"><option>Hydro</option><option>Pneumatic</option><option>Leak</option></select></div>
+    </div>
+    <div class="feed-note">Ratio defaults to 1.00 (carbon steel ≤ 400 °F). For hot lines, set S<sub>c</sub>/S<sub>h</sub> from the material allowable-stress table; the tool applies P<sub>T</sub> = factor × P<sub>design</sub> × ratio.</div>
+    <div class="reg-actions">
+      <button class="reg-btn primary" onclick="feedGenerate()">▶ Generate FEED schedule</button>
+    </div>
+  </div>
+
+  <div class="card" id="feed-out-card" style="display:none">
+    <div class="ctitle"><span class="ctitle-icon">📊</span>FEED Hydrotest Scope <span style="font-size:11px;font-weight:400;color:var(--ink3);margin-left:8px;">preliminary — design basis subject to change</span></div>
+    <div class="feed-scope" id="feed-scope"></div>
+    <div class="feed-note" id="feed-scope-note"></div>
+    <div class="reg-actions">
+      <button class="reg-btn" onclick="feedSuggestPkgs()">🔗 Suggest preliminary packages (From/To)</button>
+      <button class="reg-btn gold" onclick="feedExport()">Export CSV</button>
+      <button class="reg-btn" onclick="window.print()">Print / Save PDF</button>
+    </div>
+    <div style="overflow:auto"><table class="reg" id="feed-tbl">
+      <thead><tr><th>Line Tag</th><th>Pkg (prelim)</th><th>Service</th><th>Spec</th><th>Ph</th><th>Design T</th><th>Design P</th><th>Test P (barg)</th><th>Test P (psig)</th><th>Medium</th></tr></thead>
+      <tbody id="feed-body"></tbody>
+    </table></div>
+  </div>
+
+</div>
+</div><!-- /calctab-feed -->
+
 <!-- ══ THEORY & REFERENCE PANEL ══ -->
 <div class="calc-panel" id="calctab-theory">
 <div style="max-width:920px;margin:0 auto;padding:2rem 1.5rem;">
@@ -1560,12 +1642,180 @@ document.addEventListener('DOMContentLoaded', function(){
 <script>
 /* ── THEORY TAB SWITCHING ── */
 function showCalcTab(name){
-  ['calculator','register','theory'].forEach(function(t){
+  ['calculator','feed','register','theory'].forEach(function(t){
     var btn = document.querySelector('.calc-tab[onclick*="' + t + '"]');
     var panel = document.getElementById('calctab-' + t);
     if(btn) btn.classList.toggle('active', t===name);
     if(panel) panel.classList.toggle('active', t===name);
   });
+}
+</script>
+<script>
+/* ════ LDT IMPORT → FEED SCOPE ENGINE (V1) ════ */
+var feedWB=null, feedAOA=[], feedRecs=[];
+var FEED_FIELDS=[
+  {k:'tag',   l:'Line Tag (if pre-assembled)'},
+  {k:'lineno',l:'Line No.'},
+  {k:'size',  l:'Size (NPS)'},
+  {k:'service',l:'Service'},
+  {k:'spec',  l:'Piping Spec'},
+  {k:'sched', l:'Schedule'},
+  {k:'insul', l:'Insulation'},
+  {k:'frm',   l:'From'},
+  {k:'to',    l:'To'},
+  {k:'dT',    l:'Design Temp'},
+  {k:'dP',    l:'Design Press'},
+  {k:'phase', l:'Phase'},
+  {k:'pid',   l:'P&ID No.'},
+  {k:'length',l:'Length (ft)'}
+];
+/* SmartPlant / SPI preset — column letters from the banner layout */
+var FEED_SPI={tag:'',lineno:'B',size:'H',service:'AB',spec:'M',sched:'Q',insul:'U',
+  frm:'AO',to:'AZ',dT:'BK',dP:'BN',phase:'BQ',pid:'GE',length:'DJ'};
+
+function colToIdx(L){ if(!L) return -1; L=String(L).toUpperCase().replace(/[^A-Z]/g,''); var n=0; for(var i=0;i<L.length;i++) n=n*26+(L.charCodeAt(i)-64); return n-1; }
+function idxToCol(i){ var s=''; i++; while(i>0){ var m=(i-1)%26; s=String.fromCharCode(65+m)+s; i=Math.floor((i-1)/26);} return s; }
+function escF(v){ return v==null?'':String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function pToBarg(v,u){ var x=parseFloat(v); if(isNaN(x)) return null; return u==='barg'?x : u==='psig'?x*0.0689476 : u==='kpag'?x*0.01 : u==='mpag'?x*10 : x; }
+
+function feedOnFile(e){
+  var f=e.target.files[0]; if(!f) return;
+  document.getElementById('feed-fileinfo').textContent='Reading '+f.name+' …';
+  var rd=new FileReader();
+  rd.onload=function(){
+    try{
+      feedWB=XLSX.read(new Uint8Array(rd.result),{type:'array'});
+    }catch(err){ document.getElementById('feed-fileinfo').textContent='Could not read file: '+err.message; return; }
+    var sel=document.getElementById('feed-sheet'); sel.innerHTML='';
+    feedWB.SheetNames.forEach(function(n){ var o=document.createElement('option'); o.value=n; o.textContent=n; sel.appendChild(o); });
+    var guess=feedWB.SheetNames.find(function(n){ return /line\s*list/i.test(n); });
+    if(guess) sel.value=guess;
+    document.getElementById('feed-fileinfo').textContent=f.name+' · '+feedWB.SheetNames.length+' sheet(s)';
+    document.getElementById('feed-map-card').style.display='';
+    feedReadSheet();
+  };
+  rd.readAsArrayBuffer(f);
+}
+function feedReadSheet(){
+  var name=document.getElementById('feed-sheet').value, ws=feedWB.Sheets[name];
+  feedAOA=XLSX.utils.sheet_to_json(ws,{header:1,defval:null,raw:false,blankrows:true});
+  feedApplyPreset();
+}
+function feedApplyPreset(){
+  var p=document.getElementById('feed-preset').value;
+  if(p==='spi'){ document.getElementById('feed-hrow').value=4; document.getElementById('feed-drow').value=6; }
+  feedBuildMapUI();
+}
+function feedBuildMapUI(){
+  var preset=document.getElementById('feed-preset').value;
+  var hrow=parseInt(document.getElementById('feed-hrow').value,10)-1;
+  var header=feedAOA[hrow]||[];
+  var ncol=feedAOA.reduce(function(m,r){ return Math.max(m, r?r.length:0); },header.length);
+  function optsFor(selKey){
+    var html='<option value="">— none —</option>';
+    for(var c=0;c<ncol;c++){ var t=header[c]?(' · '+String(header[c]).replace(/\s+/g,' ').trim().slice(0,28)):''; html+='<option value="'+idxToCol(c)+'">'+idxToCol(c)+t+'</option>'; }
+    return html;
+  }
+  var wrap=document.getElementById('feed-mapfields'); wrap.innerHTML='';
+  FEED_FIELDS.forEach(function(f){
+    var div=document.createElement('div'); div.className='field';
+    var pre=(preset==='spi'?FEED_SPI[f.k]:'')||'';
+    div.innerHTML='<label>'+f.l+'</label><select id="fm-'+f.k+'">'+optsFor(f.k)+'</select>';
+    wrap.appendChild(div);
+    if(pre) div.querySelector('select').value=pre;
+  });
+}
+function fmGet(rec,row,key){ var L=document.getElementById('fm-'+key).value; if(!L) return null; var i=colToIdx(L); var v=row[i]; return (v===''||v==null)?null:v; }
+
+function feedGenerate(){
+  if(!feedAOA.length){ return; }
+  var drow=parseInt(document.getElementById('feed-drow').value,10)-1;
+  var punit=document.getElementById('feed-punit').value;
+  var factor=parseFloat(document.getElementById('feed-factor').value);
+  var ratio=parseFloat(document.getElementById('feed-ratio').value)||1;
+  var defMed=document.getElementById('feed-medium').value;
+  feedRecs=[];
+  for(var r=drow;r<feedAOA.length;r++){
+    var row=feedAOA[r]||[];
+    var lineno=fmGet(null,row,'lineno'), tagDirect=fmGet(null,row,'tag');
+    if(!tagDirect && (lineno==null)) continue;            // skip blank rows
+    var size=fmGet(null,row,'size'), service=fmGet(null,row,'service'), spec=fmGet(null,row,'spec');
+    var tag=tagDirect;
+    if(!tag){ tag=(size!=null&&service!=null&&lineno!=null&&spec!=null)?(size+'"-'+service+'-'+String(lineno).trim()+'-'+spec):(lineno!=null?String(lineno):'(unnamed)'); }
+    var dP=fmGet(null,row,'dP'), dT=fmGet(null,row,'dT');
+    var dPbarg=pToBarg(dP,punit);
+    var tpBarg = dPbarg!=null ? Math.round(factor*dPbarg*ratio*10)/10 : null;
+    var tpPsig = tpBarg!=null ? Math.round(tpBarg/0.0689476*10)/10 : null;
+    feedRecs.push({
+      tag:tag, lineno:lineno, size:size, service:service, spec:spec,
+      sched:fmGet(null,row,'sched'), insul:fmGet(null,row,'insul'),
+      frm:fmGet(null,row,'frm'), to:fmGet(null,row,'to'),
+      phase:fmGet(null,row,'phase'), pid:fmGet(null,row,'pid'), length:fmGet(null,row,'length'),
+      dT:dT, dP:dP, dPunit:punit, testBarg:tpBarg, testPsig:tpPsig, medium:defMed, pkg:''
+    });
+  }
+  feedRender();
+  document.getElementById('feed-out-card').style.display = feedRecs.length?'':'none';
+}
+function medTag(m){ var c=m==='Pneumatic'?'fm-pne':(m==='Leak'?'fm-leak':'fm-hyd'); return '<span class="feed-mtag '+c+'">'+escF(m)+'</span>'; }
+function feedRender(){
+  var b=document.getElementById('feed-body'); b.innerHTML='';
+  feedRecs.forEach(function(x){
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td>'+escF(x.tag)+'</td><td>'+escF(x.pkg)+'</td><td>'+escF(x.service)+'</td><td>'+escF(x.spec)+
+      '</td><td>'+escF(x.phase)+'</td><td>'+escF(x.dT)+'</td><td>'+escF(x.dP)+' '+escF(x.dPunit)+
+      '</td><td class="n">'+(x.testBarg==null?'<span class="feed-warn-cell">no design P</span>':x.testBarg)+
+      '</td><td class="n">'+(x.testPsig==null?'—':x.testPsig)+'</td><td>'+medTag(x.medium)+'</td>';
+    b.appendChild(tr);
+  });
+  // scope rollup
+  var tps={}, grps={}, withLen=0, volM3=0;
+  feedRecs.forEach(function(x){
+    if(x.testBarg!=null) tps[x.testBarg]=1;
+    grps[(x.service||'?')+'|'+(x.spec||'?')+'|'+x.testBarg]=1;
+    var Lft=parseFloat(x.length), nps=parseFloat(x.size);
+    if(!isNaN(Lft)&&!isNaN(nps)){ withLen++; var rM=nps*0.0254/2; volM3+=Math.PI*rM*rM*Lft*0.3048; }
+  });
+  var tpList=Object.keys(tps).map(Number).sort(function(a,b){return a-b;});
+  function tile(v,l){ return '<div class="pd-block"><div class="pd-val">'+v+'</div><div class="pd-label">'+l+'</div></div>'; }
+  document.getElementById('feed-scope').innerHTML=
+    tile(feedRecs.length,'Lines')+
+    tile(tpList.length,'Test pressures')+
+    tile(Object.keys(grps).length,'Prelim groups')+
+    tile(withLen?(Math.round(volM3*10)/10+' m³'):'n/a','Fill volume (approx)');
+  document.getElementById('feed-scope-note').innerHTML=
+    'Test pressures: '+(tpList.length?tpList.join(', ')+' barg':'—')+
+    '. Default medium: '+document.getElementById('feed-medium').value+' (pneumatic = engineer override). '+
+    (withLen? (withLen+' / '+feedRecs.length+' lines have length — fill volume is approximate (nominal bore, schedule ignored).')
+            : 'No length data in this LDT — fill volume not computable at FEED.')+
+    ' Preliminary grouping is for estimating only and must be verified against the P&ID isolation scheme.';
+}
+function feedSuggestPkgs(){
+  // connectivity-aware draft: union lines that are connected AND share spec AND share test pressure
+  var byTag={}; feedRecs.forEach(function(x){ byTag[x.tag]=x; });
+  var parent={}; feedRecs.forEach(function(x){ parent[x.tag]=x.tag; });
+  function find(a){ while(parent[a]!==a){ parent[a]=parent[parent[a]]; a=parent[a]; } return a; }
+  function uni(a,b){ parent[find(a)]=find(b); }
+  feedRecs.forEach(function(x){
+    [x.frm,x.to].forEach(function(nb){
+      if(nb && byTag[nb]){ var y=byTag[nb];
+        if(x.spec===y.spec && x.testBarg===y.testBarg && x.testBarg!=null) uni(x.tag,y.tag);
+      }
+    });
+  });
+  var comp={}, n=0;
+  feedRecs.forEach(function(x){ var root=find(x.tag); if(!(root in comp)){ comp[root]='PKG-PRELIM-'+String(++n).padStart(3,'0'); } });
+  feedRecs.forEach(function(x){ x.pkg=comp[find(x.tag)]; });
+  feedRender();
+  document.getElementById('feed-scope-note').innerHTML='🔗 <b>'+n+' preliminary packages</b> proposed by walking From/To and cutting at spec breaks and design-pressure changes. '+
+    '<span style="color:var(--accent);font-weight:600;">Unconfirmed — verify every boundary against the P&ID isolation scheme.</span> This is not an issued test-package register.';
+}
+function feedExport(){
+  var cols=['tag','pkg','service','spec','phase','dT','dP','dPunit','testBarg','testPsig','medium','pid','frm','to','sched','insul','length'];
+  var head=['Line Tag','Pkg (prelim)','Service','Spec','Phase','Design T','Design P','P unit','Test P barg','Test P psig','Medium','P&ID','From','To','Sched','Insulation','Length'];
+  var csv=[head.join(',')].concat(feedRecs.map(function(r){ return cols.map(function(k){ var v=(r[k]==null?'':String(r[k])); return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; }).join(','); })).join('\n');
+  var blob=new Blob([csv],{type:'text/csv'}),u=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=u; a.download='feed_test_parameter_schedule.csv'; a.click(); URL.revokeObjectURL(u);
 }
 </script>
 </body>
