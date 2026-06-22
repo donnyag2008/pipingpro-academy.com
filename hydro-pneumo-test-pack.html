@@ -1782,12 +1782,12 @@ function feedRender(){
     tile(feedRecs.length,'Lines')+
     tile(tpList.length,'Test pressures')+
     tile(Object.keys(grps).length,'Prelim groups')+
-    tile(withLen?(Math.round(volM3*10)/10+' m³'):'n/a','Fill volume (approx)');
+    tile(withLen?('≈ '+Math.round(volM3*10)/10+' m³'):'n/a','Plant water · indicative');
   document.getElementById('feed-scope-note').innerHTML=
     'Test pressures: '+(tpList.length?tpList.join(', ')+' barg':'—')+
     '. Default medium: '+document.getElementById('feed-medium').value+' (pneumatic = engineer override). '+
-    (withLen? (withLen+' / '+feedRecs.length+' lines have length — fill volume is approximate (nominal bore, schedule ignored).')
-            : 'No length data in this LDT — fill volume not computable at FEED.')+
+    (withLen? ('Plant-level water total is indicative only — sum over '+withLen+' / '+feedRecs.length+' lines that carry length, nominal bore, schedule ignored. <b>Not a per-package volume</b> (per-pack volume/time/gauges is detailed-design work once boundaries and lengths exist).')
+            : 'No length data in this FEED LDT — water volume is not a FEED deliverable and is not computed (per-package volume is detailed-design work).')+
     ' Preliminary grouping is for estimating only and must be verified against the P&ID isolation scheme.';
 }
 function feedSuggestPkgs(){
