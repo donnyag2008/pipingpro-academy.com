@@ -1464,6 +1464,8 @@ document.addEventListener('DOMContentLoaded', function(){
 .map-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 14px;}
 @media(max-width:600px){.map-grid{grid-template-columns:1fr 1fr;}}
 .feed-pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;background:var(--accent-light);color:var(--accent);margin-left:6px;}
+#feed-tbl th:first-child,#feed-tbl td:first-child{white-space:normal;overflow-wrap:anywhere;word-break:break-word;max-width:150px;font-family:var(--mono);font-size:11px;line-height:1.35;}
+#feed-tbl th,#feed-tbl td{vertical-align:top;}
 </style>
 <div class="calc-panel" id="calctab-feed">
 <div class="main">
