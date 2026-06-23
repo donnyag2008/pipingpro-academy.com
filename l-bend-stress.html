@@ -35,7 +35,7 @@
   function gate(){
     var ms = window.$memberstackDom;
     if(!ms || !ms.getCurrentMember){ location.replace(GRID); return; }
-    ms.getCurrentMember().then(function(r){ var member=(r&&r.data)?r.data:null; if(!canOpen(plan(member))){ location.replace(GRID); } }).catch(function(){ location.replace(GRID); });
+    ms.getCurrentMember().then(function(r){ var member=(r&&r.)?r.:null; if(!canOpen(plan(member))){ location.replace(GRID); } }).catch(function(){ location.replace(GRID); });
   }
   if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', gate); } else { gate(); }
 })();
@@ -420,6 +420,7 @@ body{ background:#faf6ef; color:#1a1510; }
   Engineering Calculator Suite · For educational &amp; preliminary screening use
    <script src="/counter.js"></script>
 </div>
+  <script>
 /* ===================== DATA ===================== */
 const PIPE = {
   '1"'  :{od:33.4 ,s:{40:3.38 ,80:4.55 ,160:6.35 }},
