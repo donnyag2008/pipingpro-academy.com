@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script data-memberstack-app="app_cmq9fsibv00720sujaqjm734o" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
-  <script src="/ppa-tier.js"></script>
+  
   <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -15,17 +14,20 @@
 <!-- PPA ACCESS GATE -->
 <script>
 (function(){
-  // ── set THIS to the calculator's id (see calculators.html CALCS table) ──
-  var THIS_CALC = 'uc';
+  // ── set THIS to the calculator's id (see table below) ──
+  var THIS_CALC = 'pc';
 
   var FREE    = ['pw','wt'];
-  var STUDENT = ['vw','ps','el','uc'];
+  var STUDENT = ['vw','ps','el'];
   var STUDENT_PLAN = 'pln_student-plan-l416c0pbs';
   var PRO_PLAN     = 'pln_professional-n2is0jc4';
   var GRID = '/calculators.html';
 
-  if(FREE.indexOf(THIS_CALC) !== -1) return;            // free calcs: no gate
-  if(localStorage.getItem('ppa_admin') === '1') return; // admin bypass
+  // Free calcs: no gate at all
+  if(FREE.indexOf(THIS_CALC) !== -1) return;
+
+  // Admin bypass
+  if(localStorage.getItem('ppa_admin') === '1') return;
 
   function plan(member){
     if(!member || !Array.isArray(member.planConnections)) return null;
@@ -42,6 +44,7 @@
     if(p === 'student') return STUDENT.indexOf(THIS_CALC) !== -1;
     return false;
   }
+
   function gate(){
     var ms = window.$memberstackDom;
     if(!ms || !ms.getCurrentMember){ location.replace(GRID); return; }
@@ -50,6 +53,8 @@
       if(!canOpen(plan(member))){ location.replace(GRID); }
     }).catch(function(){ location.replace(GRID); });
   }
+
+  // run as early as possible
   if(document.readyState === 'loading'){
     document.addEventListener('DOMContentLoaded', gate);
   } else { gate(); }
