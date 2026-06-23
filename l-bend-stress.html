@@ -545,6 +545,28 @@ function render(r){
   el('verdictPill').className='pill '+(pass?'pass':'fail');
   el('verdictPill').textContent=pass?'PASS':'EXCEEDS';
   el('verdictText').textContent=pass?'Within ASME B31.3 allowable displacement stress range':'Exceeds allowable — increase flexibility (longer legs, loop, or expansion device)';
+ // ── Low-temperature range flag ──────────────────────────────────
+  // α and S_c are tabulated from ~+20 °C (−45 °C for A333). Below the
+  // lowest tabulated point interp() clamps (holds flat), so warn the user.
+  const _m = MAT[el('mat').value];
+  const _aMin = _m.a[0][0], _sMin = _m.S[0][0];
+  const _tLow = Math.min(r.Top, r.Tin);            // r.Top / r.Tin are in °C
+  const _below = _tLow < Math.min(_aMin, _sMin);
+  const _warn = el('cryoNote');
+  if(_warn){
+    _warn.style.display = _below ? 'block' : 'none';
+    if(_below){
+      const _tShow = U==='US' ? cToF(_tLow).toFixed(0)+' °F' : _tLow.toFixed(0)+' °C';
+      const _clamp = Math.min(_aMin,_sMin);
+      const _clampShow = U==='US' ? cToF(_clamp).toFixed(0)+' °F' : _clamp+' °C';
+      _warn.innerHTML =
+        '<strong>Below tabulated range.</strong> At '+_tShow+', the thermal '+
+        'coefficient α and cold allowable S<sub>c</sub> are held at their lowest '+
+        'tabulated values ('+_clampShow+'), not extrapolated. Computed movements are '+
+        'therefore slightly conservative; verify α and S<sub>c</sub> against ASME B31.3 '+
+        'Chapter IX / Appendix C for the specific material and grade before design use.';
+    }
+  }
   el('hSE').textContent=fStress(r.SE);
   el('hSA').textContent=fStress(r.SA);
   el('hLoc').textContent=r.loc;
