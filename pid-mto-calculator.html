@@ -1,50 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script data-memberstack-app="app_cmq9fsibv00720sujaqjm734o" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
-  <script src="/ppa-tier.js"></script>
+ 
   <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Memberstack -->
+ <!-- Memberstack -->
 <script data-memberstack-app="app_cmq9fsibv00720sujaqjm734o" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
-
+<!-- Tier library — single source of truth -->
+<script src="/ppa-tier.js"></script>
 <!-- PPA ACCESS GATE -->
 <script>
 (function(){
-  // ── set THIS to the calculator's id (see table below) ──
-  var THIS_CALC = 'pm';
-
-  var FREE    = ['pw','wt'];
-  var STUDENT = ['vw','ps','el'];
-  var STUDENT_PLAN = 'pln_student-plan-l416c0pbs';
-  var PRO_PLAN     = 'pln_professional-n2is0jc4';
+  var THIS_CALC = 'lb';            // ← the ONLY thing that changes per page
   var GRID = '/calculators.html';
-
-  // Free calcs: no gate at all
-  if(FREE.indexOf(THIS_CALC) !== -1) return;
-
-  // Admin bypass
-  if(localStorage.getItem('ppa_admin') === '1') return;
-
-  function plan(member){
-    if(!member || !Array.isArray(member.planConnections)) return null;
-    var active = member.planConnections.filter(function(p){
-      return p.active || p.status === 'ACTIVE' || p.status === 'TRIALING';
-    });
-    var ids = active.map(function(p){ return p.planId; });
-    if(ids.indexOf(PRO_PLAN) !== -1) return 'professional';
-    if(ids.indexOf(STUDENT_PLAN) !== -1) return 'student';
-    return null;
+  function gate(){
+    if(localStorage.getItem('ppa_admin') === '1') return;            // admin
+    if(!window.PPATIER) return;                                      // lib missing → don't trap users
+    if(window.PPATIER.requiredTier(THIS_CALC) === 'free') return;    // free calcs never gated
+    window.PPATIER.resolveTier().then(function(){
+      if(!window.PPATIER.hasAccess(THIS_CALC)) location.replace(GRID);
+    }).catch(function(){ /* leave page as-is on error */ });
   }
-  function canOpen(p){
-    if(p === 'professional') return true;
-    if(p === 'student') return STUDENT.indexOf(THIS_CALC) !== -1;
-    return false;
-  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', gate);
+  else gate();
+})();
+</script>
 
   function gate(){
     var ms = window.$memberstackDom;
