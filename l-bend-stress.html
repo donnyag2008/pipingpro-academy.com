@@ -16,8 +16,8 @@
 <script>
 (function(){
   var THIS_CALC = 'lb';                 // L-Bend Two-Anchor Stress (FREE)
-  var FREE    = ['pw','wt'];
-  var STUDENT = ['vw','ps','el','lb'];
+  var FREE    = ['pw','wt','lb',uc'];
+  var STUDENT = ['vw','ps','el'];
   var STUDENT_PLAN = 'pln_student-plan-l416c0pbs';
   var PRO_PLAN     = 'pln_professional-n2is0jc4';
   var GRID = '/calculators.html';
@@ -35,7 +35,7 @@
   function gate(){
     var ms = window.$memberstackDom;
     if(!ms || !ms.getCurrentMember){ location.replace(GRID); return; }
-    ms.getCurrentMember().then(function(r){ var member=(r&&r.)?r.:null; if(!canOpen(plan(member))){ location.replace(GRID); } }).catch(function(){ location.replace(GRID); });
+   ms.getCurrentMember().then(function(r){ var member=(r&&r.data)?r.data:null; if(!canOpen(plan(member))){ location.replace(GRID); } }).catch(function(){ location.replace(GRID); });
   }
   if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', gate); } else { gate(); }
 })();
