@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script data-memberstack-app="app_cmq9fsibv00720sujaqjm734o" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
-  <script src="/ppa-tier.js"></script>
+ 
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -11,33 +10,23 @@
 
 <!-- Memberstack -->
 <script data-memberstack-app="app_cmq9fsibv00720sujaqjm734o" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
-
+<!-- Tier library — single source of truth -->
+<script src="/ppa-tier.js"></script>
 <!-- PPA ACCESS GATE -->
 <script>
 (function(){
-  var THIS_CALC = 'lb';                 // L-Bend Two-Anchor Stress (FREE)
-  var FREE    = ['pw','wt','lb',uc'];
-  var STUDENT = ['vw','ps','el'];
-  var STUDENT_PLAN = 'pln_student-plan-l416c0pbs';
-  var PRO_PLAN     = 'pln_professional-n2is0jc4';
+  var THIS_CALC = 'lb';            // ← the ONLY thing that changes per page
   var GRID = '/calculators.html';
-  if(FREE.indexOf(THIS_CALC) !== -1) return;
-  if(localStorage.getItem('ppa_admin') === '1') return;
-  function plan(member){
-    if(!member || !Array.isArray(member.planConnections)) return null;
-    var active = member.planConnections.filter(function(p){ return p.active || p.status === 'ACTIVE' || p.status === 'TRIALING'; });
-    var ids = active.map(function(p){ return p.planId; });
-    if(ids.indexOf(PRO_PLAN) !== -1) return 'professional';
-    if(ids.indexOf(STUDENT_PLAN) !== -1) return 'student';
-    return null;
-  }
-  function canOpen(p){ if(p==='professional') return true; if(p==='student') return STUDENT.indexOf(THIS_CALC)!==-1; return false; }
   function gate(){
-    var ms = window.$memberstackDom;
-    if(!ms || !ms.getCurrentMember){ location.replace(GRID); return; }
-   ms.getCurrentMember().then(function(r){ var member=(r&&r.data)?r.data:null; if(!canOpen(plan(member))){ location.replace(GRID); } }).catch(function(){ location.replace(GRID); });
+    if(localStorage.getItem('ppa_admin') === '1') return;            // admin
+    if(!window.PPATIER) return;                                      // lib missing → don't trap users
+    if(window.PPATIER.requiredTier(THIS_CALC) === 'free') return;    // free calcs never gated
+    window.PPATIER.resolveTier().then(function(){
+      if(!window.PPATIER.hasAccess(THIS_CALC)) location.replace(GRID);
+    }).catch(function(){ /* leave page as-is on error */ });
   }
-  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', gate); } else { gate(); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', gate);
+  else gate();
 })();
 </script>
 
@@ -547,28 +536,40 @@ function render(r){
   el('verdictPill').className='pill '+(pass?'pass':'fail');
   el('verdictPill').textContent=pass?'PASS':'EXCEEDS';
   el('verdictText').textContent=pass?'Within ASME B31.3 allowable displacement stress range':'Exceeds allowable — increase flexibility (longer legs, loop, or expansion device)';
- // ── Low-temperature range flag ──────────────────────────────────
-  // α and S_c are tabulated from ~+20 °C (−45 °C for A333). Below the
-  // lowest tabulated point interp() clamps (holds flat), so warn the user.
-  const _m = MAT[el('mat').value];
-  const _aMin = _m.a[0][0], _sMin = _m.S[0][0];
-  const _tLow = Math.min(r.Top, r.Tin);            // r.Top / r.Tin are in °C
-  const _below = _tLow < Math.min(_aMin, _sMin);
-  const _warn = el('cryoNote');
-  if(_warn){
-    _warn.style.display = _below ? 'block' : 'none';
-    if(_below){
-      const _tShow = U==='US' ? cToF(_tLow).toFixed(0)+' °F' : _tLow.toFixed(0)+' °C';
-      const _clamp = Math.min(_aMin,_sMin);
-      const _clampShow = U==='US' ? cToF(_clamp).toFixed(0)+' °F' : _clamp+' °C';
-      _warn.innerHTML =
-        '<strong>Below tabulated range.</strong> At '+_tShow+', the thermal '+
-        'coefficient α and cold allowable S<sub>c</sub> are held at their lowest '+
-        'tabulated values ('+_clampShow+'), not extrapolated. Computed movements are '+
-        'therefore slightly conservative; verify α and S<sub>c</sub> against ASME B31.3 '+
-        'Chapter IX / Appendix C for the specific material and grade before design use.';
+ // ── Low-temperature material & data check (B31.3 §323.2.2 / Table A-1) ──
+  (function(){
+    var warn = el('cryoNote'); if(!warn) return;
+    var matName = el('mat').value, m = MAT[matName];
+    var tLow = Math.min(r.Top, r.Tin);                 // °C
+    var isCarbon = /A106|A53|P11/.test(matName);       // CS & low-alloy
+    var tabMin = Math.min(m.a[0][0], m.S[0][0]);
+    var CS_MDMT = -29;                                 // CS limit without impact testing
+    var show = false, danger = false, html = '';
+    if(isCarbon && tLow < CS_MDMT){
+      show = true; danger = true;
+      html = '<strong>Material not permitted at this temperature.</strong> Carbon and low-alloy '
+        + 'steels (A106 / A53 / P11) are subject to brittle fracture below their minimum design '
+        + 'metal temperature (≈ −29 °C without impact testing, ASME B31.3 §323.2.2). Low-temperature '
+        + 'and cryogenic service requires an impact-tested grade — A333 Gr 6 (to ≈ −46 °C), '
+        + 'A333 Gr 8 / 9% Ni, or austenitic stainless (304 / 304L / 316 / 316L). The stress result '
+        + 'below is not a valid basis for material selection here.';
+    } else if(tLow < tabMin){
+      show = true;
+      var tShow = U==='US' ? cToF(tLow).toFixed(0)+' °F' : tLow.toFixed(0)+' °C';
+      var clampShow = U==='US' ? cToF(tabMin).toFixed(0)+' °F' : tabMin+' °C';
+      html = '<strong>Below tabulated range.</strong> At '+tShow+', α and cold allowable '
+        + 'S<sub>c</sub> are held at their lowest tabulated values ('+clampShow+'), not extrapolated '
+        + '— results are slightly conservative. Verify α, S<sub>c</sub> and the material minimum '
+        + 'design metal temperature against ASME B31.3 Chapter IX / Appendix C before design use.';
     }
-  }
+    warn.style.display = show ? 'block' : 'none';
+    if(show){
+      warn.style.background  = danger ? 'var(--danger-light)'  : 'var(--warn-light)';
+      warn.style.borderColor = danger ? 'var(--danger-border)' : 'var(--warn-border)';
+      warn.style.color       = danger ? 'var(--danger)'        : 'var(--warn)';
+      warn.innerHTML = html;
+    }
+  })();
   el('hSE').textContent=fStress(r.SE);
   el('hSA').textContent=fStress(r.SA);
   el('hLoc').textContent=r.loc;
