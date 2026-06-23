@@ -6,7 +6,7 @@
    Professional calculator.
 
    CHANGES FROM v1.0
-   • Access now keys on window.PPA.hasAccess(THIS_CALC), i.e. the
+   • Access now keys on window.PPATIER.hasAccess(THIS_CALC), i.e. the
      member's plan vs the tier THIS calculator requires.
    • Fails CLOSED if the tier library or page id is missing.
    • Removed the ?preview_member=1 and ?admin=... URL bypasses
@@ -34,7 +34,7 @@
     if (localStorage.getItem('ppa_admin') === '1') return true;
 
     var id  = window.THIS_CALC;
-    var PPA = window.PPA;
+    var PPA = window.PPATIER;
 
     // Fail closed: if we can't determine the page's required tier or
     // the resolver isn't loaded, deny rather than leak.
@@ -104,8 +104,8 @@
 
   // Refresh the cached tier from Memberstack on load, then install.
   function boot() {
-    if (window.PPA && typeof window.PPA.resolveTier === 'function') {
-      window.PPA.resolveTier().finally(installGate);
+    if (window.PPATIER && typeof window.PPATIER.resolveTier === 'function') {
+      window.PPATIER.resolveTier().finally(installGate);
     } else {
       installGate(); // fails closed inside allowed() if PPA missing
     }

@@ -36,15 +36,18 @@
   // Anything NOT listed defaults to 'professional'.
   // Keep this list as the ONE place access policy lives.
   var CALC_TIER = {
-    // Free — open to everyone, no login
+    // Free — open to everyone, no login.
+    // MUST match the FREE set in calculators.html. Keep both in sync.
     pw: 'free',
     wt: 'free',
-    // Student tier (and above)
+    lb: 'free',
+    uc: 'free',
+    // Student tier (and above) — CONFIRM this list is what you intend.
     vw: 'student',
     ps: 'student',
-    el: 'student',
-    uc: 'student'
-    // everything else → professional (default)
+    el: 'student'
+    // everything else (fx, fl, pe, di, sv, ss, tr, pc, ub, df, sp, hp, nl, pm, vf, ci)
+    // → professional (the default for anything not listed)
   };
 
   function requiredTier(id) {
@@ -91,12 +94,12 @@
   }
 
   // Expose
-  window.PPA = window.PPA || {};
-  window.PPA.PLAN_TIER    = PLAN_TIER;
-  window.PPA.RANK         = RANK;
-  window.PPA.CALC_TIER    = CALC_TIER;
-  window.PPA.requiredTier = requiredTier;
-  window.PPA.resolveTier  = resolveTier;
-  window.PPA.memberTier   = memberTier;
-  window.PPA.hasAccess    = hasAccess;
+  window.PPATIER = window.PPATIER || {};
+  window.PPATIER.PLAN_TIER    = PLAN_TIER;
+  window.PPATIER.RANK         = RANK;
+  window.PPATIER.CALC_TIER    = CALC_TIER;
+  window.PPATIER.requiredTier = requiredTier;
+  window.PPATIER.resolveTier  = resolveTier;
+  window.PPATIER.memberTier   = memberTier;
+  window.PPATIER.hasAccess    = hasAccess;
 })();
