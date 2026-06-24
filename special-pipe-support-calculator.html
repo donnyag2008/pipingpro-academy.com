@@ -8,58 +8,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
- <!-- Memberstack -->
+<!-- Memberstack -->
 <script data-memberstack-app="app_cmq9fsibv00720sujaqjm734o" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
 <script src="/ppa-tier.js"></script>
 <!-- PPA ACCESS GATE -->
 <script>
 (function(){
-  // ── set THIS to the calculator's id (see table below) ──
-  var THIS_CALC = 'ss';
-
-   var FREE    = ['pw','wt','uc'];
-  var STUDENT = ['vw','ps','el','lb'];
-  var STUDENT_PLAN = 'pln_student-plan-l416c0pbs';
-  var PRO_PLAN     = 'pln_professional-n2is0jc4';
-  var GRID = '/calculators.html';
-
-  // Free calcs: no gate at all
-  if(FREE.indexOf(THIS_CALC) !== -1) return;
-
-  // Admin bypass
-  if(localStorage.getItem('ppa_admin') === '1') return;
-
-  function plan(member){
-    if(!member || !Array.isArray(member.planConnections)) return null;
-    var active = member.planConnections.filter(function(p){
-      return p.active || p.status === 'ACTIVE' || p.status === 'TRIALING';
-    });
-    var ids = active.map(function(p){ return p.planId; });
-    if(ids.indexOf(PRO_PLAN) !== -1) return 'professional';
-    if(ids.indexOf(STUDENT_PLAN) !== -1) return 'student';
-    return null;
-  }
-  function canOpen(p){
-    if(p === 'professional') return true;
-    if(p === 'student') return STUDENT.indexOf(THIS_CALC) !== -1;
-    return false;
-  }
-
+  var THIS_CALC = 'ss';                       // ← change per page
+  var UPGRADE = '/membership-plan.html';      // non-members land here
   function gate(){
-    var ms = window.$memberstackDom;
-    if(!ms || !ms.getCurrentMember){ location.replace(GRID); return; }
-    ms.getCurrentMember().then(function(r){
-      var member = (r && r.data) ? r.data : null;
-      if(!canOpen(plan(member))){ location.replace(GRID); }
-    }).catch(function(){ location.replace(GRID); });
+    if(localStorage.getItem('ppa_admin') === '1') return;
+    if(!window.PPATIER) return;
+    if(window.PPATIER.requiredTier(THIS_CALC) === 'free') return;
+    window.PPATIER.resolveTier().then(function(){
+      if(!window.PPATIER.hasAccess(THIS_CALC)) location.replace(UPGRADE);
+    }).catch(function(){ /* leave page as-is on error */ });
   }
-
-  // run as early as possible
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', gate);
-  } else { gate(); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', gate);
+  else gate();
 })();
 </script>
+  
 <title>Special Pipe Support Calculator</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
