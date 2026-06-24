@@ -578,7 +578,7 @@ function render(r){
     var show = false, danger = false, html = '';
     if(isCarbon && tLow < CS_MDMT){
       show = true; danger = true;
-      html = '<strong>Material not permitted at this temperature.</strong> Carbon and low-alloy '
+      html = '<strong style="color:#ff0000">Material not permitted at this temperature.</strong> Carbon and low-alloy '
         + 'steels (A106 / A53 / P11) are subject to brittle fracture below their minimum design '
         + 'metal temperature (≈ −29 °C without impact testing, ASME B31.3 §323.2.2). Low-temperature '
         + 'and cryogenic service requires an impact-tested grade — A333 Gr 6 (to ≈ −46 °C), '
@@ -793,6 +793,37 @@ function ppaGenerateReport(){
   const html=`<!DOCTYPE html><html><head><meta charset="utf-8"/>
 <title>${R.docType||'Calculation'} Report — ${m.project||'PipingPro'}</title>
 <style>
+.cryo-warning{
+  border:1px solid #c0392b;
+  background:#fdecea;
+  color:#a02216;
+  border-radius:8px;
+  padding:.7rem .9rem;
+  margin:.75rem 0;
+  font-weight:600;
+  font-family:'DM Sans',sans-serif;
+  display:flex;
+  gap:.55rem;
+  align-items:flex-start;
+}
+.cryo-warning .ico{font-size:1.1rem;line-height:1.3}
+
+/* Option A — tasteful slow pulse (recommended) */
+.cryo-warning.pulse{ animation:cryoPulse 1.6s ease-in-out infinite; }
+@keyframes cryoPulse{
+  0%,100%{ box-shadow:0 0 0 0 rgba(192,57,43,0); }
+  50%   { box-shadow:0 0 0 4px rgba(192,57,43,.25); }
+}
+
+/* Option B — actual flash (the word blinks) */
+.cryo-warning .flash{ color:#c0392b; animation:cryoBlink 1s steps(1) infinite; }
+@keyframes cryoBlink{ 50%{ opacity:.25; } }
+
+/* Accessibility: respect users who disable motion */
+@media (prefers-reduced-motion: reduce){
+  .cryo-warning.pulse{ animation:none; }
+  .cryo-warning .flash{ animation:none; }
+}
 @page{margin:18mm 16mm}*{box-sizing:border-box}
 body{font-family:'Helvetica Neue',Arial,sans-serif;font-size:10.5pt;color:#1a1510;margin:0;line-height:1.5}
 .sheet{max-width:780px;margin:0 auto}
