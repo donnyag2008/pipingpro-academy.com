@@ -426,8 +426,7 @@ body{ background:#faf6ef; color:#1a1510; }
  
   <div class="main">
   <div class="grid" id="grid-piping">
-
-    <div class="calc-card" onclick="openModal('pw')">
+  <div class="calc-card" onclick="openModal('pw')">
       <div class="card-img bg-teal">
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
           <circle cx="45" cy="45" r="30" stroke="rgba(255,255,255,0.7)" stroke-width="3" fill="none"/>
@@ -438,7 +437,8 @@ body{ background:#faf6ef; color:#1a1510; }
         </svg>
         <span class="card-badge badge-member" id="badge-pw" style="background:rgba(196,92,42,.9);color:#fff;">✦ Free</span>
       </div>
-      <div class="card-body">
+     
+    <div class="card-body">
         <div class="card-name">Pipe Weight &amp; Section Properties</div>
         <div class="card-desc">Pipe weight per foot, fluid weight, moment of inertia, section modulus, and flow area per ASME B36.10.</div>
         <div class="card-tags"><span class="tag">ASME B36.10</span><span class="tag">Nayyar 7th Ed.</span></div>
@@ -457,17 +457,18 @@ body{ background:#faf6ef; color:#1a1510; }
           <line x1="75" y1="45" x2="62" y2="45" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
           <polygon points="63,45 70,41 70,49" fill="rgba(255,255,255,0.7)"/>
         </svg>
-        <span class="card-badge badge-member" id="badge-wt">👑 Members</span>
+        <span class="card-badge badge-member" id="badge-wt" style="background:rgba(196,92,42,.9);color:#fff;">✦ Free</span>
       </div>
+      
       <div class="card-body">
         <div class="card-name">Pipe Wall Thickness</div>
         <div class="card-desc">Minimum wall thickness per ASME B31.3, B31.4, B31.8 with mill tolerance, corrosion allowance, and schedule selection.</div>
         <div class="card-tags"><span class="tag">ASME B31.3</span><span class="tag">B31.4</span><span class="tag">B31.8</span></div>
-        <div class="card-action"><span class="card-btn btn-locked" id="btn-wt">👑 Members Only</span></div>
+        <div class="card-action"><span class="card-btn btn-open" id="btn-wt">Open calculator</span></div>
       </div>
     </div>
-
-   <div class="calc-card" onclick="openModal('lb')">
+    
+   <div class="calc-card" onclick="openModal('uc')">
       <div class="card-img bg-plum">
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M26 16 V58 H68" stroke="rgba(255,255,255,0.9)" stroke-width="4.5" fill="none" stroke-linecap="round"/>
@@ -477,17 +478,17 @@ body{ background:#faf6ef; color:#1a1510; }
           <line x1="26" y1="58" x2="26" y2="44" stroke="rgba(255,200,120,0.9)" stroke-width="2" stroke-linecap="round"/>
           <polygon points="26,42 23,49 29,49" fill="rgba(255,200,120,0.9)"/>
         </svg>
-        <span class="card-badge badge-member" id="badge-lb" style="background:rgba(196,92,42,.9);color:#fff;">✦ Free</span>
+        <span class="card-badge badge-member" id="badge-uc" style="background:rgba(196,92,42,.9);color:#fff;">✦ Free</span>
       </div>
 
-<div class="card-body">
+    <div class="card-body">
         <div class="card-name">Engineering Unit Converter</div>
         <div class="card-desc">Fast unit conversions for piping &amp; process work — pressure, temperature, length, flow and density, with SI ⇄ US / Imperial switching.</div>
         <div class="card-tags"><span class="tag">Unit Conversion</span><span class="tag">SI ⇄ US</span><span class="tag">Process</span></div>
         <div class="card-action"><span class="card-btn btn-open" id="btn-uc">Open Converter →</span></div>
       </div>
     </div>
-    <div class="calc-card" onclick="openModal('vw')">
+    <div class="calc-card" onclick="openModal('lb')">
       <div class="card-img bg-steelblue">
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
           <ellipse cx="30" cy="45" rx="16" ry="7" stroke="rgba(255,255,255,0.8)" stroke-width="2.5" fill="none"/>
@@ -499,21 +500,17 @@ body{ background:#faf6ef; color:#1a1510; }
           <line x1="60" y1="24" x2="72" y2="24" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round"/>
           <line x1="58" y1="62" x2="74" y2="62" stroke="rgba(255,255,255,0.35)" stroke-width="2"/>
         </svg>
-        <span class="card-badge badge-member" id="badge-vw">👑 Members</span>
-      </div>
-
-
-
-     
-      <div class="card-body">
+        <span class="card-badge badge-member" id="badge-lb" style="background:rgba(86,114,168,.9);color:#fff;">🎓 Student</span>
+        </div>
+   <div class="card-body">
         <div class="card-name">L-Bend Two-Anchor Stress</div>
         <div class="card-desc">Thermal flexibility of an L-shaped run fixed at both ends — displacement stress range, stress ratio, longitudinal &amp; vertical elbow movement, and the force &amp; moment at each anchor, by full frame flexibility.</div>
         <div class="card-tags"><span class="tag">ASME B31.3</span><span class="tag">§302.3.5 / §319</span><span class="tag">Flexibility</span></div>
         <div class="card-action"><span class="card-btn btn-open" id="btn-lb">Open Calculator →</span></div>
       </div>
     </div> 
-     
-    <div class="calc-card" onclick="openModal('uc')">
+    
+    <div class="calc-card" onclick="openModal('vw')">
       <div class="card-img bg-forest">
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect x="14" y="22" width="26" height="18" rx="3" stroke="rgba(255,255,255,0.85)" stroke-width="2.5" fill="none"/>
@@ -521,18 +518,16 @@ body{ background:#faf6ef; color:#1a1510; }
           <path d="M44 31 H62 M58 27 L62 31 L58 35" stroke="rgba(255,220,120,0.95)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
           <path d="M46 59 H28 M32 55 L28 59 L32 63" stroke="rgba(255,220,120,0.95)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        <span class="card-badge badge-member" id="badge-uc" style="background:rgba(196,92,42,.9);color:#fff;">✦ Free</span>
+        <span class="card-badge badge-member" id="badge-vw" style="background:rgba(86,114,168,.9);color:#fff;">🎓 Student</span>
       </div>
-    
-      
-      <div class="card-body">
+     <div class="card-body">
         <div class="card-name">Flange &amp; Valve Weight</div>
         <div class="card-desc">Dry weights for MTO, lifting &amp; support estimating — weld-neck, slip-on &amp; blind flanges computed from ASME B16.5 (Classes 150–2500), plus gate, globe &amp; check valve weights (flanged / butt-weld).</div>
         <div class="card-tags"><span class="tag">ASME B16.5</span><span class="tag">Valve MTO</span><span class="tag">Class 150–2500</span></div>
         <div class="card-action"><span class="card-btn btn-locked" id="btn-vw">👑 Members Only</span></div>
       </div>
     </div>
-
+    
     <div class="calc-card" onclick="openModal('fx')">
       <div class="card-img bg-olive">
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
