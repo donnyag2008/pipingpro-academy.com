@@ -557,6 +557,29 @@ body{ background:#faf6ef; color:#1a1510; }
         </svg>
         <span class="card-badge badge-member" id="badge-el">👑 Members</span>
       </div>
+
+<div class="calc-card" onclick="openModal('scl')">
+  <div class="card-img bg-steelgrey">
+    <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="18" y1="20" x2="18" y2="68" stroke="rgba(255,255,255,0.45)" stroke-width="1.5"/>
+      <line x1="18" y1="68" x2="74" y2="68" stroke="rgba(255,255,255,0.45)" stroke-width="1.5"/>
+      <path d="M18 34 H40 V48 H58 V60 H74" stroke="rgba(255,255,255,0.85)" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
+      <path d="M18 24 H30 V40 H50 V54 H74" stroke="rgba(255,220,120,0.85)" stroke-width="2" fill="none" stroke-linejoin="round" stroke-dasharray="4 2"/>
+      <circle cx="56" cy="30" r="4" fill="rgba(255,255,255,0.95)" stroke="rgba(178,31,45,0.9)" stroke-width="2"/>
+      <text x="44" y="18" font-size="9" fill="rgba(255,255,255,0.9)" font-family="monospace">C1·C2·C3</text>
+    </svg>
+    <span class="card-badge badge-member" id="badge-scl">👑 Members</span>
+  </div>
+  <div class="card-body">
+    <div class="card-name">Stress Critical Line Selector</div>
+    <div class="card-desc">Classifies process lines into C1 / C2 / C3 / NC for the level of flexibility analysis required — the twelve-criterion LDT screen plus the size-vs-temperature Criticality Requirement Chart. Single-line and full batch LDT modes.</div>
+    <div class="card-tags"><span class="tag">LDT Screening</span><span class="tag">C1/C2/C3/NC</span><span class="tag">Criticality Chart</span></div>
+    <div class="card-action"><span class="card-btn btn-locked" id="btn-scl">👑 Members Only</span></div>
+  </div>
+</div>
+
+
+      
       <div class="card-body">
         <div class="card-name">Expansion Loop Calculator</div>
         <div class="card-desc">Loop leg sizing, thermal expansion, guided cantilever bending stress, and allowable stress check per ASME B31.3.</div>
@@ -1002,6 +1025,7 @@ const CALCS = {
   uc:{name:'Engineering Unit Converter',desc:'Fast unit conversions for piping and process work — pressure, temperature, length, flow, density and more, with SI ⇄ US / Imperial switching.',tags:['Unit Conversion','SI ⇄ US','Process'],what:['Pressure (bar, psi, kPa, MPa, kg/cm²)','Temperature (°C, °F, K)','Length & diameter','Flow rate (volumetric & mass)','Density & viscosity','SI ⇄ US / Imperial'],file:'unit-converter.html',bg:'bg-forest',svgId:'uc'},
   vw:{name:'Flange & Valve Weight',desc:'Dry weights for material take-off, lifting and support estimating. Weld-neck, slip-on and blind flange weights computed from ASME B16.5 dimensional geometry across Classes 150–2500, plus gate, globe and swing-check valve weights from vendor catalogue data with flanged / butt-weld selection.',tags:['ASME B16.5','Valve MTO','Class 150–2500'],what:['Weld-neck / slip-on / blind flange weight','All ASME B16.5 classes (150–2500)','Gate / globe / check valve weight','Flanged (W1) or butt-weld (W2) ends','Combined flange + valve total','kg / lb toggle + PDF report'],file:'flange-valve-weight-calculator.html',bg:'bg-steelblue',svgId:'vw'},
   fx:{name:'Flexibility Screening (B31.3)',desc:'Determines whether a two-anchor piping system needs a formal flexibility analysis, using the ASME B31.3 §319.4.1(c) empirical check, eq. (16). Built-in eligibility gate enforces the two-anchor / no-intermediate-restraint / uniform-size conditions, and flags geometries where the empirical relation can be unconservative.',tags:['ASME B31.3','§319.4.1','Eq. (16)'],what:['§319.4.1(c) eligibility gate','D·y/(L−U)² ≤ K₁ empirical check','y &amp; U from layout or direct input','K₁ from S_A and E_a','Unconservative-geometry flags','PASS = no formal analysis required'],file:'flexibility-screening-calculator.html',bg:'bg-olive',svgId:'fx'},
+  scl:{name:'Stress Critical Line Selector',desc:'Classifies process lines into C1 / C2 / C3 / NC for the level of flexibility / stress analysis required — the twelve-criterion EPC Line Designation Table screen with the size-vs-temperature Criticality Requirement Chart. Single line and full batch LDT modes.',tags:['LDT Screening','C1/C2/C3/NC','Criticality Chart'],what:['Twelve-criterion LDT screen','C1 / C2 / C3 / NC classification','Governing-criterion breakdown','Size-vs-temperature Criticality Chart','Single line & batch LDT modes','CSV + PDF report'],file:'stress-critical-line-selector.html',bg:'bg-steelgrey',svgId:'scl'},
   el:{name:'Expansion Loop Calculator',desc:'Loop leg sizing, thermal expansion, guided cantilever bending stress, allowable stress check, and pipe reaction forces per ASME B31.3.',tags:['ASME B31.3','Thermal Expansion'],what:['Thermal expansion (ΔL)','Loop leg length (H & W)','Guided cantilever bending stress','Allowable stress check','Pipe reaction forces'],file:'expansion-loop-calculator.html',bg:'bg-navy',svgId:'el'},
   lb:{name:'L-Bend Two-Anchor Stress',desc:'Thermal flexibility of an L-shaped pipe run fixed at both ends — displacement stress range, stress ratio, longitudinal & vertical elbow movement, and the force & moment at each anchor, solved as a full planar-frame flexibility problem.',tags:['ASME B31.3','§302.3.5 / §319','Flexibility'],what:['Displacement stress range S_E vs allowable S_A','Stress ratio with PASS / EXCEEDS verdict','Longitudinal & vertical elbow movement','Force & moment at each anchor','Step-by-step worked calculation','PDF report'],file:'l-bend-stress.html',bg:'bg-plum',svgId:'lb'},
   pc:{name:'Pipeline Crossing Calculator',desc:'Road and railway crossing stress analysis per API RP 1102 — soil load, traffic load, combined stress, and casing pipe adequacy.',tags:['API RP 1102','Road','Rail'],what:['Soil dead load stress','Surface live load stress','Internal pressure hoop stress','Combined longitudinal stress','Equivalent stress (von Mises)','Casing pipe adequacy check'],file:'pipeline-crossing-calculator.html',bg:'bg-slate',svgId:'pc'},
