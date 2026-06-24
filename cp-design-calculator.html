@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cathodic Protection Design Calculator (SAES-X-400) — PipingPro Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --rust:#8b3a1a; --gold:#b8860b; --paper:#f5efe3; --paper-2:#efe7d6;
+    --ink:#2b2218; --ink-soft:#5c5040; --line:#d8cdb8; --card:#fffdf8;
+    --ok:#3a6b35; --ok-bg:#e8f0e2; --warn:#9a5a12; --warn-bg:#f6ecd8;
+    --iccp:#1f5066; --iccp-bg:#e2eef2; --sacp:#5a3d8a; --sacp-bg:#ece6f5;
+    --fail:#8a2a22; --fail-bg:#f4e2df;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"DM Sans",system-ui,sans-serif;line-height:1.5;padding:0 0 64px}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+  header{border-bottom:2px solid var(--rust);padding:28px 0 18px;margin-bottom:8px}
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--rust)}
+  h1{font-family:"DM Serif Display",serif;font-weight:400;font-size:clamp(26px,4vw,40px);
+    margin:6px 0 4px;line-height:1.05}
+  .sub{color:var(--ink-soft);font-size:15px;max-width:70ch}
+  .banner{background:var(--warn-bg);border:1px solid #e3ca92;border-left:4px solid var(--gold);
+    border-radius:6px;padding:12px 14px;margin:16px 0;font-size:13.5px;color:#6c4a10}
+  .banner b{color:var(--warn)}
+  .banner.scope{background:var(--iccp-bg);border-color:#a9cdda;border-left-color:var(--iccp);color:#15414f}
+  .banner.scope b{color:var(--iccp)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+  @media(max-width:880px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 18px 20px}
+  .card h2{font-family:"DM Serif Display",serif;font-weight:400;font-size:20px;margin:0 0 2px}
+  .card .h-note{font-size:12.5px;color:var(--ink-soft);margin:0 0 14px}
+  .modes{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px}
+  .mode{font-family:"IBM Plex Mono",monospace;font-size:12px;border:1px solid var(--line);
+    background:var(--paper-2);color:var(--ink-soft);padding:8px 12px;border-radius:20px;cursor:pointer;transition:.15s}
+  .mode:hover{border-color:var(--rust)}
+  .mode.on{background:var(--rust);color:#fff;border-color:var(--rust)}
+  .field{margin:11px 0}
+  .field label{display:block;font-size:13px;font-weight:500;margin-bottom:4px}
+  .field .unit{color:var(--ink-soft);font-weight:400;font-family:"IBM Plex Mono",monospace;font-size:11px}
+  .field input,.field select{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:7px;
+    background:#fff;font-family:"IBM Plex Mono",monospace;font-size:14px;color:var(--ink)}
+  .field input:focus,.field select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px #b8860b22}
+  .check{display:flex;align-items:center;gap:9px;margin:11px 0;font-size:13.5px;font-weight:500}
+  .check input{width:18px;height:18px;accent-color:var(--rust)}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .seclabel{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--rust);margin:18px 0 2px;border-top:1px dashed var(--line);padding-top:12px}
+  .clause{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--ink-soft);font-weight:400}
+  button.run{margin-top:18px;width:100%;background:var(--rust);color:#fff;border:none;border-radius:8px;
+    padding:13px;font-family:"DM Sans",sans-serif;font-weight:700;font-size:15px;cursor:pointer}
+  button.run:hover{background:#73300f}
+  .verdict{border-radius:10px;padding:16px 18px;margin-top:6px;border:1px solid}
+  .verdict.sacp{background:var(--sacp-bg);border-color:#c9b8e6}
+  .verdict.iccp{background:var(--iccp-bg);border-color:#a9cdda}
+  .verdict .vlabel{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+  .verdict.sacp .vlabel{color:var(--sacp)} .verdict.iccp .vlabel{color:var(--iccp)}
+  .verdict .vbig{font-family:"DM Serif Display",serif;font-size:22px;margin:3px 0 6px}
+  .verdict .vwhy{font-size:13.5px;color:var(--ink-soft)} .verdict .vwhy li{margin:3px 0}
+  .results .block{margin-top:16px}
+  .results .block h3{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.13em;text-transform:uppercase;
+    color:var(--ink-soft);margin:0 0 8px;border-bottom:1px solid var(--line);padding-bottom:5px;display:flex;justify-content:space-between}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  td{padding:6px 2px;border-bottom:1px solid #ece3cf}
+  td.k{color:var(--ink-soft)} td.v{text-align:right;font-family:"IBM Plex Mono",monospace;font-weight:500}
+  td.v .u{color:var(--ink-soft);font-weight:400;font-size:11px}
+  .pass{color:var(--ok)} .fail{color:var(--fail);font-weight:700}
+  .govern{background:var(--paper-2);border-radius:6px;padding:8px 10px;font-size:12.5px;margin-top:8px;color:var(--ink-soft)}
+  .govern b{color:var(--ink)}
+  .chk{border-radius:6px;padding:8px 10px;font-size:12.5px;margin-top:8px}
+  .chk.ok{background:var(--ok-bg)} .chk.bad{background:var(--fail-bg)}
+  .muted{color:var(--ink-soft);font-size:12.5px;margin-top:10px}
+  .placeholder-empty{color:var(--ink-soft);font-size:14px;padding:30px 4px;text-align:center}
+  footer{margin-top:30px;font-size:12px;color:var(--ink-soft);border-top:1px solid var(--line);padding-top:14px}
+  .pill{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:10.5px;padding:2px 8px;border-radius:10px;
+    background:var(--paper-2);color:var(--ink-soft);margin-left:6px;vertical-align:middle}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">PipingPro Academy · CP Design · SAES-X-400 (Rev. May 2023)</div>
+    <h1>Cathodic Protection Sizing</h1>
+    <p class="sub">Buried-pipeline CP sizing aligned to SAES-X-400. The tool applies the standard's selection rule (ICCP is the default; galvanic standalone is the narrow exception), Table 4 current densities, Table 7 galvanic consumption rates, and the §7.5 circuit-resistance check.</p>
+  </header>
+
+  <div class="banner scope" id="scopeBanner">
+    <b>Scope:</b> SAES-X-400 governs buried pipelines outside plant facilities. Plant external surfaces and buried plant piping fall under SAES-X-600; marine/immersed under X-300; well casings under X-700. The non-pipeline modes below use the same engine but are <b>outside X-400</b> — confirm densities/criteria against the applicable standard.
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Inputs</h2>
+      <p class="h-note">Pipeline mode is X-400-compliant. Other modes are flagged as out-of-scope.</p>
+
+      <div class="modes" id="modes">
+        <div class="mode on" data-mode="pipe">Buried pipeline</div>
+        <div class="mode" data-mode="tank">Tank bottom</div>
+        <div class="mode" data-mode="immersed">Internal immersed</div>
+        <div class="mode" data-mode="generic">Generic structure</div>
+      </div>
+
+      <div class="seclabel">Geometry</div>
+      <div id="geo"></div>
+
+      <div class="seclabel">Environment <span class="clause">§6.2 · Table 4</span></div>
+      <div class="field">
+        <label>Soil condition (sets design resistivity)</label>
+        <select id="soil">
+          <option value="10000">Normally dry — 10,000 Ω·cm</option>
+          <option value="3000" selected>Damp backfill sand — 3,000 Ω·cm</option>
+          <option value="300">Wet / Sabkha — 300 Ω·cm</option>
+          <option value="custom">Custom (field-measured)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Design resistivity ρ <span class="unit">Ω·cm</span></label>
+        <input id="rho" type="number" value="3000" step="any">
+      </div>
+      <div class="field">
+        <label>Surface / coating class (design current density)</label>
+        <select id="icd">
+          <option value="0.10" selected>Coated pipeline — 0.10 mA/m²</option>
+          <option value="0.20">Coated, fenced area / Wadi / Sabkha — 0.20 mA/m²</option>
+          <option value="20.0">Bare (not coated) — 20.0 mA/m²</option>
+        </select>
+      </div>
+      <div class="check"><input type="checkbox" id="srb"><label for="srb" style="margin:0;font-weight:500">Anaerobic / SRB soil (criterion +100 mV) <span class="clause">Table 4 Note 2</span></label></div>
+      <div class="check"><input type="checkbox" id="isolated"><label for="isolated" style="margin:0;font-weight:500">Reliably electrically isolated from all other buried metal <span class="clause">§6.5</span></label></div>
+
+      <div class="seclabel">Galvanic anode <span class="clause">Table 7 · §7.2.2</span></div>
+      <div class="field">
+        <label>Anode material</label>
+        <select id="ganode">
+          <option value="mg" data-cr="10.95" data-ocp="1.70" data-dv="0.85">Magnesium — CR 10.95 kg/A·yr, −1700 mV</option>
+          <option value="zn" data-cr="11.80" data-ocp="1.10" data-dv="0.25">Zinc — CR 11.8 kg/A·yr, −1100 mV</option>
+        </select>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Driving voltage ΔV <span class="unit">V</span></label><input id="dv" type="number" value="0.85" step="any"></div>
+        <div class="field"><label>Utilisation factor u</label><input id="util" type="number" value="0.85" step="any"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Anode mass (each) <span class="unit">kg</span></label><input id="amass" type="number" value="27" step="any"></div>
+        <div class="field"><label>Galvanic design life <span class="unit">yr</span></label><input id="glife" type="number" value="15" step="any"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Anode length Lₐ <span class="unit">mm</span></label><input id="alen" type="number" value="1500" step="any"></div>
+        <div class="field"><label>Backfill column dia. <span class="unit">mm</span></label><input id="adia" type="number" value="200" step="any"></div>
+      </div>
+
+      <div class="seclabel">ICCP <span class="clause">§7.2.1 · §7.4 · §7.5 · Tables 5,6,8</span></div>
+      <div class="field">
+        <label>Impressed-current anode (Table 6)</label>
+        <select id="ianode">
+          <option value="ta2" data-nom="2.63" data-max="4.0" data-wt="20.9" data-cr="0.45">TA-2 HSCI — 2.63 A nom, 4.0 A max</option>
+          <option value="ta4" data-nom="4.45" data-max="7.0" data-wt="38.6" data-cr="0.45" selected>TA-4 HSCI — 4.45 A nom, 7.0 A max</option>
+          <option value="ta5" data-nom="5.67" data-max="10.0" data-wt="79.4" data-cr="0.45">TA-5A HSCI — 5.67 A nom, 10.0 A max</option>
+          <option value="mmo" data-nom="6.5" data-max="9.2" data-wt="0" data-cr="0">Tubular MMO 25 mm — 6.5 A nom, 9.2 A max</option>
+        </select>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Design surplus <span class="clause">§7.4</span></label><input id="surplus" type="number" value="0.30" step="any"></div>
+        <div class="field"><label>ICCP anode-bed life <span class="unit">yr</span></label><input id="ilife" type="number" value="25" step="any"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Cable resistance <span class="unit">Ω</span></label><input id="rcable" type="number" value="0.30" step="any"></div>
+        <div class="field"><label>Pipe-to-earth R <span class="unit">Ω §7.5.4d</span></label><input id="rstruct" type="number" value="0.055" step="any"></div>
+      </div>
+
+      <div class="seclabel">Power source <span class="clause">§8.2</span></div>
+      <div class="check"><input type="checkbox" id="acNear" checked><label for="acNear" style="margin:0;font-weight:500">AC power available within 1.5 km of CP station <span class="clause">§8.2.5</span></label></div>
+      <div class="field">
+        <label>If no AC — economic screen <span class="clause">§8.2.4</span></label>
+        <select id="econ">
+          <option value="pv" selected>PV favourable vs conventional</option>
+          <option value="conv">Conventional favourable / PV uneconomic</option>
+        </select>
+      </div>
+
+      <div class="seclabel">Attenuation / station spacing <span class="clause">ISO 15589-1 Annex E · Table 1</span></div>
+      <div class="row2">
+        <div class="field"><label>Wall thickness t <span class="unit">mm</span></label><input id="wt" type="number" value="7.1" step="any"></div>
+        <div class="field"><label>Route length <span class="unit">km</span></label><input id="route" type="number" value="50" step="any"></div>
+      </div>
+      <div class="field">
+        <label>Coating quality / soil (specific coating R)</label>
+        <select id="cqual">
+          <option value="30000">Excellent — Dunes — 3×10⁴ Ω·m²</option>
+          <option value="10000">Excellent — Damp sand — 1×10⁴ Ω·m²</option>
+          <option value="5000" selected>Good — Damp sand — 5×10³ Ω·m²</option>
+          <option value="1500">Fair — Sabkha — 1.5×10³ Ω·m²</option>
+          <option value="500">Poor — Sabkha — 500 Ω·m²</option>
+          <option value="10">Bare — Sabkha — 10 Ω·m²</option>
+        </select>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Native potential <span class="unit">−mV §6.2</span></label><input id="enat" type="number" value="600" step="any"></div>
+        <div class="field"><label>Max drain (off) <span class="unit">−mV §6.2</span></label><input id="edrain" type="number" value="1150" step="any"></div>
+      </div>
+
+      <button class="run" id="run">Calculate</button>
+    </div>
+
+    <div class="card results" id="resultsCard">
+      <h2>Result</h2>
+      <p class="h-note">System selection, sizing, and the §7.5 circuit-resistance check.</p>
+      <div id="results"><div class="placeholder-empty">Enter inputs and press <b>Calculate</b>.</div></div>
+    </div>
+  </div>
+
+  <footer>
+    Design parameters drawn from SAES-X-400 (Rev. 02 May 2023): current densities (Table 4), galvanic consumption rates (Table 7), ICCP anode data (Tables 5–6), rectifier ratings (Table 8), and the §7.5 operating-resistance method (Rop ≤ 0.7·Rrated, 2.0 V back-emf). Attenuation (ISO 15589-1 Annex E / Table 1) and AC interference (§6.15) are not modelled here. Verify all values against the controlled copy of the standard. CRA/duplex lines require less-negative criteria per ISO 15589.
+    <span class="pill">PPA · CP v2 · X-400</span>
+  </footer>
+</div>
+
+<script>
+const GEO = {
+  pipe:    `<div class="row2"><div class="field"><label>Outside diameter <span class="unit">mm</span></label><input id="g1" type="number" value="168.3" step="any"></div><div class="field"><label>Length <span class="unit">m</span></label><input id="g2" type="number" value="5000" step="any"></div></div>`,
+  tank:    `<div class="field"><label>Tank bottom diameter <span class="unit">m</span></label><input id="g1" type="number" value="30" step="any"></div><p class="muted">Note: tank bottoms are governed by SAES-X-600, not X-400.</p>`,
+  immersed:`<div class="field"><label>Wetted (immersed) surface area <span class="unit">m²</span></label><input id="g1" type="number" value="60" step="any"></div><p class="muted">Note: immersed surfaces are governed by SAES-X-300/600, not X-400.</p>`,
+  generic: `<div class="field"><label>Surface area to protect <span class="unit">m²</span></label><input id="g1" type="number" value="50" step="any"></div>`
+};
+let mode="pipe";
+function renderGeo(){ document.getElementById("geo").innerHTML = GEO[mode]; }
+document.getElementById("modes").addEventListener("click",e=>{
+  const m=e.target.closest(".mode"); if(!m) return;
+  document.querySelectorAll(".mode").forEach(x=>x.classList.remove("on"));
+  m.classList.add("on"); mode=m.dataset.mode; renderGeo();
+});
+renderGeo();
+
+document.getElementById("soil").addEventListener("change",e=>{
+  if(e.target.value!=="custom") document.getElementById("rho").value=e.target.value;
+});
+document.getElementById("ganode").addEventListener("change",e=>{
+  const o=e.target.selectedOptions[0]; document.getElementById("dv").value=o.dataset.dv;
+});
+
+const val=id=>parseFloat(document.getElementById(id).value);
+const ceil=x=>Math.ceil(x-1e-9);
+function fmt(x,d=2){ if(!isFinite(x)) return "—"; if(Math.abs(x)>=1000) return x.toLocaleString(undefined,{maximumFractionDigits:0}); return x.toFixed(d); }
+
+const RECT_A=[25,35,50,75,100,150];
+const RECT_V=[30,50,100];
+
+function calc(){
+  let A;
+  if(mode==="pipe"){ const D=val("g1")/1000, L=val("g2"); A=Math.PI*D*L; }
+  else if(mode==="tank"){ const D=val("g1"); A=Math.PI*D*D/4; }
+  else { A=val("g1"); }
+
+  const rho_cm=val("rho"), rho=rho_cm/100;
+  const icd=parseFloat(document.getElementById("icd").value); // mA/m2
+  const Ireq=A*icd/1000;                                      // A (design current requirement)
+  const srb=document.getElementById("srb").checked;
+  const isolated=document.getElementById("isolated").checked;
+
+  // ---- selection rule (§6.5 / §7.2.2) ----
+  const galvanicEligible = isolated && Ireq < 2.0;
+  // galvanic life check done below; decision text built in render
+
+  // ---- galvanic path (Table 7) ----
+  const La=val("alen")/1000, da=val("adia")/1000;
+  const Ra=(rho/(2*Math.PI*La))*(Math.log(4*La/da)-1);
+  const dv=val("dv");
+  const Ia=dv/Ra;
+  const Ncur=ceil(Ireq/Ia);
+  const cr_g=parseFloat(document.getElementById("ganode").selectedOptions[0].dataset.cr);
+  const u=val("util"), glife=val("glife"), m1=val("amass");
+  const Mreq=(cr_g*Ireq*glife)/u;          // kg total (consumption-rate model)
+  const Nmass=ceil(Mreq/m1);
+  const Ngal=Math.max(Ncur,Nmass);
+  const govGal = Ncur>=Nmass ? "current output" : "mass / 15-yr life";
+
+  // ---- ICCP path ----
+  const surplus=val("surplus");
+  const Idesign=Ireq*(1+surplus);          // §7.4
+  const io=document.getElementById("ianode").selectedOptions[0];
+  const nom=parseFloat(io.dataset.nom), maxc=parseFloat(io.dataset.max);
+  const wt=parseFloat(io.dataset.wt), cr_i=parseFloat(io.dataset.cr);
+  const Nrate=ceil(Idesign/nom);
+  // anode-bed mass life check (HSCI); MMO -> rating-based (cr=0)
+  const ilife=val("ilife");
+  let Nlife=Nrate, massNote="";
+  if(cr_i>0){ const Mbed=ilife*cr_i*Idesign; Nlife=ceil(Mbed/wt); massNote=`Bed mass ${fmt(Mbed,0)} kg ÷ ${wt} kg`; }
+  else { massNote="MMO — 25-yr life by rating"; }
+  const Nanode=Math.max(Nrate,Nlife);
+
+  // groundbed resistance (parallel single-anode Dwight, first-pass)
+  const Rbed=Ra/Math.max(Nanode,1);
+  const Rcable=val("rcable"), Rstruct=val("rstruct");
+
+  // rectifier selection (Table 8)
+  let Asel=RECT_A.find(a=>a>=Idesign) || 150;
+  // ensure >=20% surplus over requirement
+  while(((Asel-Ireq)/Ireq)<0.20 && RECT_A.indexOf(Asel)<RECT_A.length-1){ Asel=RECT_A[RECT_A.indexOf(Asel)+1]; }
+  const Remf=2.0/Asel;
+  const Rtotal=Rbed+Rcable+Rstruct;        // operating R excl. back-emf
+  const Rop=Rtotal+Remf;                   // operating circuit resistance §7.5.4
+  const Vneed=Idesign*Rtotal+2.0;          // DC volts needed incl. 2.0V back-emf
+  let Vsel=RECT_V.find(v=>v>=Vneed) || 100;
+  const Rrated=Vsel/Asel;
+  const Rmax=0.7*(Rrated-Remf)-Rcable-Rstruct;   // max allowable bed R §7.5 note
+  const passRes = Rop<=0.7*Rrated;
+  const passBed = Rbed<=Rmax;
+  const passMax = maxc>=(Idesign/Nanode);        // per-anode current <= max commission
+
+  // ---- power source resolution (§8.2) ----
+  const acNear=document.getElementById("acNear").checked;
+  const econPV=document.getElementById("econ").value==="pv";
+  const pvImpractical = rho_cm>10000;            // §8.2.3 high-resistivity caveat
+  let pwr, pwrSpec, pwrWhy;
+  if(acNear){
+    pwr="Transformer / Rectifier (T/R)"; pwrSpec="17-SAMSS-004";
+    pwrWhy="AC available within 1.5 km — rectifier is the preferred source (§8.2.5).";
+  } else if(econPV && !pvImpractical){
+    pwr="Solar Photovoltaic (PV)"; pwrSpec="17-SAMSS-012";
+    pwrWhy="No AC within 1.5 km; PV selected on economic evaluation (§8.2.4).";
+  } else {
+    pwr="Conventional (extend AC / engine-driven supply)"; pwrSpec="17-SAMSS-004";
+    pwrWhy = pvImpractical
+      ? "No AC within 1.5 km, but soil resistivity > 10,000 Ω·cm makes PV impractical (§8.2.3) — use conventional power."
+      : "No AC within 1.5 km and PV not economic (§8.2.4) — conventional power.";
+  }
+
+  // ---- attenuation / station spacing (ISO 15589-1 Annex E, pipeline only) ----
+  let att=null;
+  if(mode==="pipe"){
+    const D=val("g1")/1000, t=val("wt")/1000;
+    const rho_st=1.7e-7;                          // carbon steel ~0.17 µΩ·m
+    const Am=Math.PI*t*(D-t);                      // wall metal area m²
+    const rs=rho_st/Am;                            // longitudinal R Ω/m
+    const rc=parseFloat(document.getElementById("cqual").value);  // Ω·m² (Table 1)
+    const g=(Math.PI*D)/rc;                        // leakage conductance S/m
+    const alpha=Math.sqrt(rs*g);                   // 1/m
+    const Zc=Math.sqrt(rs/g);                      // Ω
+    const Enat=val("enat"), Edrain=val("edrain"), Ereq=(srb?950:850); // mV
+    const dE0=(Edrain-Enat)/1000, dEr=(Ereq-Enat)/1000;         // V
+    const xmax=(1/alpha)*Math.log(dE0/dEr);        // m, each side of drain
+    const S=2*xmax;                                // m, station spacing
+    const I0=2*dE0/Zc;                             // A drained per station
+    const Nsta=ceil((val("route")*1000)/S);
+    att={alpha:alpha*1000, Zc, xmax:xmax/1000, S:S/1000, I0, Nsta, ok:dE0>dEr};
+  }
+
+  return {A,Ireq,Idesign,srb,isolated,galvanicEligible,
+    Ra,Ia,Ncur,Mreq,Nmass,Ngal,govGal,glife,
+    nom,maxc,Nrate,Nlife,Nanode,massNote,Rbed,Rop,Rmax,Vsel,Asel,Rrated,Remf,passRes,passBed,passMax,io,
+    pwr,pwrSpec,pwrWhy,pvImpractical,att};
+}
+
+function render(){
+  const r=calc();
+  const offCrit = r.srb ? 950 : 850;
+
+  // verdict
+  let v;
+  if(r.galvanicEligible){
+    v=`<div class="verdict sacp"><div class="vlabel">System per §6.5 / §7.2.2</div>
+       <div class="vbig">Galvanic standalone — eligible</div>
+       <div class="vwhy">Section is electrically isolated and draws &lt; 2 A, so galvanic anodes (life ≥ 15 yr) may be used instead of ICCP. Confirm the 15-yr life check below holds.</div></div>`;
+  } else {
+    const reasons=[];
+    if(!r.isolated) reasons.push("Not confirmed electrically isolated from other buried metal (§6.5).");
+    if(r.Ireq>=2.0) reasons.push(`Current requirement ${fmt(r.Ireq,3)} A ≥ 2 A galvanic-standalone limit (§6.5).`);
+    v=`<div class="verdict iccp"><div class="vlabel">System per §6.5</div>
+       <div class="vbig">ICCP — mandatory</div>
+       <ul class="vwhy">${reasons.map(x=>`<li>${x}</li>`).join("")}<li>Energise within 30 days of burial; galvanic anodes are supplemental only (Table 3 locations).</li></ul></div>`;
+  }
+
+  const demand=`<div class="block"><h3><span>Demand</span><span class="clause">Table 4</span></h3><table>
+    <tr><td class="k">Protected area</td><td class="v">${fmt(r.A)} <span class="u">m²</span></td></tr>
+    <tr><td class="k">Current requirement</td><td class="v">${fmt(r.Ireq,3)} <span class="u">A</span></td></tr>
+    <tr><td class="k">ICCP design current (+${fmt(val("surplus")*100,0)}%)</td><td class="v">${fmt(r.Idesign,3)} <span class="u">A</span></td></tr>
+  </table></div>`;
+
+  let detail;
+  if(r.galvanicEligible){
+    const lifeOK = r.Ngal===r.Ncur || true; // mass already sized to glife
+    detail=`<div class="block"><h3><span>Galvanic sizing</span><span class="clause">Table 7</span></h3><table>
+      <tr><td class="k">Anode resistance Rₐ (Dwight)</td><td class="v">${fmt(r.Ra,2)} <span class="u">Ω</span></td></tr>
+      <tr><td class="k">Output per anode</td><td class="v">${fmt(r.Ia,3)} <span class="u">A</span></td></tr>
+      <tr><td class="k">N by current</td><td class="v">${r.Ncur}</td></tr>
+      <tr><td class="k">Total anode mass (${fmt(r.glife,0)}-yr, u=${fmt(val("util"),2)})</td><td class="v">${fmt(r.Mreq,0)} <span class="u">kg</span></td></tr>
+      <tr><td class="k">N by mass / life</td><td class="v">${r.Nmass}</td></tr>
+      <tr><td class="k"><b>Governing anode count</b></td><td class="v"><b>${r.Ngal}</b></td></tr>
+    </table><div class="govern">Governed by <b>${r.govGal}</b>. Galvanic life ≥ 15 yr required (§7.2.2).</div></div>`;
+  } else {
+    detail=`<div class="block"><h3><span>ICCP sizing</span><span class="clause">Tables 6,8 · §7.4,7.5</span></h3><table>
+      <tr><td class="k">Anodes by current (${fmt(r.nom,2)} A nom)</td><td class="v">${r.Nrate}</td></tr>
+      <tr><td class="k">Anodes by ${val("ilife")}-yr bed life</td><td class="v">${r.Nlife}</td></tr>
+      <tr><td class="k"><b>Anode count</b></td><td class="v"><b>${r.Nanode}</b></td></tr>
+      <tr><td class="k">Per-anode current vs ${fmt(r.maxc,1)} A max</td><td class="v ${r.passMax?'pass':'fail'}">${fmt(r.Idesign/r.Nanode,2)} A ${r.passMax?'✓':'✗'}</td></tr>
+      <tr><td class="k">Selected rectifier (Table 8)</td><td class="v">${r.Vsel} V / ${r.Asel} A</td></tr>
+      <tr><td class="k">Power source</td><td class="v">${r.pwr.split(' ')[0]}</td></tr>
+      <tr><td class="k">Groundbed R (approx)</td><td class="v">${fmt(r.Rbed,3)} <span class="u">Ω</span></td></tr>
+    </table><div class="govern">${r.massNote}.</div>
+    <div class="chk ${r.passRes?'ok':'bad'}">§7.5.5 — Rop ${fmt(r.Rop,3)} Ω ${r.passRes?'≤':'>'} 0.7·Rrated ${fmt(0.7*r.Rrated,3)} Ω &nbsp;<b class="${r.passRes?'pass':'fail'}">${r.passRes?'PASS':'FAIL'}</b></div>
+    <div class="chk ${r.passBed?'ok':'bad'}">Max allowable bed R ${fmt(r.Rmax,3)} Ω vs actual ${fmt(r.Rbed,3)} Ω &nbsp;<b class="${r.passBed?'pass':'fail'}">${r.passBed?'PASS':'FAIL'}</b></div>
+    ${(!r.passRes||!r.passBed)?'<div class="muted">Reduce bed resistance (more anodes / lower-resistivity bed / deep bed) or step up the rectifier voltage.</div>':''}
+    <div class="block" style="margin-top:14px"><h3><span>Power source</span><span class="clause">§8.2</span></h3><table>
+      <tr><td class="k">Selected supply</td><td class="v">${r.pwr}</td></tr>
+      <tr><td class="k">Material spec</td><td class="v">${r.pwrSpec}</td></tr>
+    </table><div class="govern">${r.pwrWhy} Site on all-weather marl road, away from dune encroachment, with RMU per 17-SAMSS-018 (§8.2.1–8.2.2).</div></div></div>`;
+  }
+
+  const crit=`<div class="block"><h3><span>Criteria</span><span class="clause">Table 4</span></h3><table>
+    <tr><td class="k">Min instant-off potential</td><td class="v">−${offCrit} <span class="u">mV CSE</span></td></tr>
+    <tr><td class="k">Min "on" (coated)</td><td class="v">−1200 <span class="u">mV</span></td></tr>
+    <tr><td class="k">Max potential</td><td class="v">−2.5 <span class="u">V</span></td></tr>
+  </table><div class="govern">${r.srb?'SRB soil: +100 mV applied. ':''}CRA / duplex lines require <b>less-negative</b> criteria and a hydrogen-embrittlement ceiling per ISO 15589 — not buried-CS values.</div></div>`;
+
+  let atten="";
+  if(r.att){
+    const a=r.att;
+    atten=`<div class="block"><h3><span>Station spacing (attenuation)</span><span class="clause">ISO 15589-1 Annex E</span></h3><table>
+      <tr><td class="k">Attenuation constant α</td><td class="v">${fmt(a.alpha,4)} <span class="u">1/km</span></td></tr>
+      <tr><td class="k">Characteristic resistance Z꜀</td><td class="v">${fmt(a.Zc,3)} <span class="u">Ω</span></td></tr>
+      <tr><td class="k">Protected length each side</td><td class="v">${fmt(a.xmax,1)} <span class="u">km</span></td></tr>
+      <tr><td class="k"><b>Max CP-station spacing</b></td><td class="v"><b>${fmt(a.S,1)} <span class="u">km</span></b></td></tr>
+      <tr><td class="k">Drain current per station</td><td class="v">${fmt(a.I0,2)} <span class="u">A</span></td></tr>
+      <tr><td class="k">Stations over ${fmt(val("route"),0)} km route</td><td class="v">${a.Nsta}</td></tr>
+    </table><div class="govern">Simplified single-drain model (conservative): each station sized for its own drain current — not the whole-line current. Confirm against Table 2 corridor spans; superposition / full Annex E cosh model extends spacing.</div></div>`;
+  } else {
+    atten=`<div class="block"><h3><span>Station spacing</span><span class="clause">Annex E</span></h3><div class="govern">Attenuation/spacing applies to the buried-pipeline mode only.</div></div>`;
+  }
+
+  document.getElementById("results").innerHTML = v + demand + detail + crit + atten;
+}
+document.getElementById("run").addEventListener("click", render);
+</script>
+</body>
+</html>
