@@ -69,7 +69,7 @@
           'The calculation is free to use. Project-ready PDF reports are included with a ' +
           '<strong style="color:#1a1510">PipingPro Academy Professional plan</strong> — along with ' +
           'every calculator and course.</p>' +
-          '<a href="/index.html#pricing" ' +
+          '<a href="/membership-plan.html" ' +
           'style="display:block;background:#8b3a1a;color:#fff;text-decoration:none;' +
           'font-weight:600;font-size:13px;padding:11px;border-radius:8px;margin-bottom:.5rem">' +
           'See plans &amp; upgrade →</a>' +
