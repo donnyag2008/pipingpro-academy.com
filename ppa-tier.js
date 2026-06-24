@@ -40,12 +40,12 @@
     // MUST match the FREE set in calculators.html. Keep both in sync.
     pw: 'free',
     wt: 'free',
-    lb: 'free',
     uc: 'free',
     // Student tier (and above) — CONFIRM this list is what you intend.
     vw: 'student',
     ps: 'student',
-    el: 'student'
+    el: 'student',
+    lb: 'student',
     // everything else (fx, fl, pe, di, sv, ss, tr, pc, ub, df, sp, hp, nl, pm, vf, ci)
     // → professional (the default for anything not listed)
   };
