@@ -547,6 +547,31 @@ body{ background:#faf6ef; color:#1a1510; }
       </div>
     </div>
 
+<div class="calc-card" onclick="openModal('cp')">
+  <div class="card-img bg-rust">
+    <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="10" y1="62" x2="80" y2="62" stroke="rgba(255,255,255,0.85)" stroke-width="4" stroke-linecap="round"/>
+      <line x1="25" y1="26" x2="65" y2="26" stroke="rgba(255,255,255,0.85)" stroke-width="4" stroke-linecap="round"/>
+      <line x1="45" y1="26" x2="45" y2="16" stroke="rgba(255,255,255,0.85)" stroke-width="3" stroke-linecap="round"/>
+      <line x1="33" y1="32" x2="33" y2="54" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+      <polygon points="33,57 30,50 36,50" fill="rgba(255,255,255,0.6)"/>
+      <line x1="45" y1="32" x2="45" y2="54" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+      <polygon points="45,57 42,50 48,50" fill="rgba(255,255,255,0.6)"/>
+      <line x1="57" y1="32" x2="57" y2="54" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+      <polygon points="57,57 54,50 60,50" fill="rgba(255,255,255,0.6)"/>
+    </svg>
+    <span class="card-badge badge-member" id="badge-cp">👑 Members</span>
+  </div>
+  <div class="card-body">
+    <div class="card-name">Cathodic Protection Design Calculator</div>
+    <div class="card-desc">Buried-pipeline CP design to SAES-X-400 — ICCP/galvanic selection, anode &amp; rectifier sizing, power source, and CP-station spacing.</div>
+    <div class="card-tags"><span class="tag">SAES-X-400</span><span class="tag">Corrosion</span></div>
+    <div class="card-action"><span class="card-btn btn-locked" id="btn-cp">👑 Members Only</span></div>
+  </div>
+</div>
+
+
+    
     <div class="calc-card" onclick="openModal('el')">
       <div class="card-img bg-navy">
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1045,6 +1070,7 @@ const CALCS = {
   ps:{name:'Pipe Support Span Calculator',desc:'Maximum allowable span between supports — stress method, deflection method & natural frequency check per M.W. Kellogg / ASME B31.3. Includes layout reduction factors for L-bend and Z-bend configurations.',tags:['M.W. Kellogg','ASME B31.3','Span / Deflection'],what:['Max span — stress method','Max span — deflection method','Governing span (lesser of two)','Layout factor for L/Z-bend','Natural frequency check (4 & 8 cps targets)'],file:'pipe-support-span-calculator.html',bg:'bg-navy',svgId:'ps'},
   di:{name:'Dia-Inch & Change-Order Estimator',desc:'Weld diameter-inch take-off split between pipe rack and equipment area, converted to welding man-hours and labour cost. Built as an independent Owner\u2019s Engineer check on a contractor\u2019s change-order claim — Dia-Inch = \u03a3 (NPS \u00d7 welds), with zone-specific productivity rates and an all-in cost/hour.',tags:['Dia-Inch','Welding MTO','Change Order'],what:['Total Dia-Inch (\u03a3 NPS \u00d7 welds)','Pipe-rack vs equipment-area split','Welding man-hours by zone','Labour cost (USD / SAR / GBP / EUR)','Breakdown by size & location','CSV export'],file:'dia-inch-calculator.html',bg:'bg-diainch',svgId:'di'},
   sv:{name:'Sectional Volume Calculator',desc:'Volume of a trench, excavation or irregular prism from cross-sectional areas taken at stations along its length. Average end-area and prismoidal (Simpson\u2019s) methods side by side, with a trapezoidal trench-geometry area helper, metric/imperial units, swell/bulking factor and cubic-yard output.',tags:['End-Area','Prismoidal','Earthworks'],what:['Average end-area volume (\u03a3 (A\u2081+A\u2082)/2\u00b7L)','Prismoidal (Simpson\u2019s) volume','Trapezoidal trench area helper','Metric / imperial units','Swell / bulking \u2192 loose volume','Cubic yards + CSV / PDF export'],file:'sectional-volume-calculator.html',bg:'bg-sv',svgId:'sv'},
+  cp:{name:'Cathodic Protection Design Calculator',desc:'Buried-pipeline CP design to SAES-X-400 — ICCP/galvanic selection, anode & rectifier sizing, power source, and CP-station spacing per ISO 15589-1.',tags:['SAES-X-400','Cathodic Protection'],what:['ICCP / galvanic selection (§6.5)','Anode count & rectifier sizing','Circuit-resistance check (Rₒₚ ≤ 0.7 Rᵣₐₜₑ𝒹)','Power source (rectifier / PV)','CP-station spacing (attenuation)'],file:'cp-design-calculator.html',bg:'bg-rust',svgId:'cp'},
   pe:{name:'Piping Work Estimator',desc:'Equipment-factored FEED / conceptual estimate of bulk piping material, deliverables and engineering man-hours for a gas plant or GOSP. Major-equipment count drives line count, then tonnage, valves, fittings, supports, welds, isometrics, spools and discipline man-hours — every norm editable for calibration. Accuracy classed per AACE 18R-97.',tags:['AACE 18R-97','FEED Estimate','Gas Plant / GOSP','Man-Hours'],what:['Bulk pipe length &amp; tonnage','Valves, flanges, fittings, supports &amp; welds','Isometric, spool &amp; line-list counts','Stress-analysis package count','Piping engineering man-hours + FTE','AACE Class 4/5 accuracy banding'],file:'piping-work-estimator.html',bg:'bg-purple',svgId:'pe'}
 };
 
