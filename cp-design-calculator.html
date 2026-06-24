@@ -3,7 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cathodic Protection Design Calculator (SAES-X-400) — PipingPro Academy</title>
+
+ 
+<!-- Memberstack -->
+<script data-memberstack-app="app_cmq9fsibv00720sujaqjm734o" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
+<script src="/ppa-tier.js"></script>
+<!-- PPA ACCESS GATE -->
+<script>
+(function(){
+  var THIS_CALC = 'cp';                       // ← change per page
+  var UPGRADE = '/membership-plan.html';      // non-members land here
+  function gate(){
+    if(localStorage.getItem('ppa_admin') === '1') return;
+    if(!window.PPATIER) return;
+    if(window.PPATIER.requiredTier(THIS_CALC) === 'free') return;
+    window.PPATIER.resolveTier().then(function(){
+      if(!window.PPATIER.hasAccess(THIS_CALC)) location.replace(UPGRADE);
+    }).catch(function(){ /* leave page as-is on error */ });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', gate);
+  else gate();
+})();
+</script>
+
+  
+  
+  <title>Cathodic Protection Design Calculator (SAES-X-400) — PipingPro Academy</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
