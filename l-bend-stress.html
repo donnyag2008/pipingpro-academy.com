@@ -578,7 +578,7 @@ function render(r){
     var show = false, danger = false, html = '';
     if(isCarbon && tLow < CS_MDMT){
       show = true; danger = true;
-      html = '<strong style="color:#ff0000">Material not permitted at this temperature.</strong> Carbon and low-alloy '
+      html = '<strong style="color:#ff0000;text-transform:uppercase">Material not permitted at this temperature.</strong> Carbon and low-alloy '
         + 'steels (A106 / A53 / P11) are subject to brittle fracture below their minimum design '
         + 'metal temperature (≈ −29 °C without impact testing, ASME B31.3 §323.2.2). Low-temperature '
         + 'and cryogenic service requires an impact-tested grade — A333 Gr 6 (to ≈ −46 °C), '
