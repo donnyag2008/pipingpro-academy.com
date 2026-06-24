@@ -15,14 +15,14 @@
 <!-- PPA ACCESS GATE -->
 <script>
 (function(){
-  var THIS_CALC = 'di';            // Dia-Inch Estimator (Professional)
-  var GRID = '/calculators.html';
+  var THIS_CALC = 'di';                       // ← change per page
+  var UPGRADE = '/membership-plan.html';      // non-members land here
   function gate(){
     if(localStorage.getItem('ppa_admin') === '1') return;
     if(!window.PPATIER) return;
     if(window.PPATIER.requiredTier(THIS_CALC) === 'free') return;
     window.PPATIER.resolveTier().then(function(){
-      if(!window.PPATIER.hasAccess(THIS_CALC)) location.replace(GRID);
+      if(!window.PPATIER.hasAccess(THIS_CALC)) location.replace(UPGRADE);
     }).catch(function(){ /* leave page as-is on error */ });
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', gate);
