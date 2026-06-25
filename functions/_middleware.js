@@ -84,6 +84,15 @@ const MS_BASE = 'https://admin.memberstack.com';
 
 // ── HELPERS ─────────────────────────────────────────────────────────────
 
+// Cloudflare Pages serves CLEAN (extensionless) URLs: /x.html 308-redirects
+// to /x. Normalize so /x, /x.html and /x/ all resolve to the same rule.
+function normalize(pathname) {
+  let p = pathname;
+  if (p.length > 1 && p.endsWith('/')) p = p.slice(0, -1);
+  if (p.endsWith('.html')) p = p.slice(0, -5);
+  return p || '/';
+}
+
 function readCookie(request, name) {
   const header = request.headers.get('Cookie') || '';
   for (const part of header.split(';')) {
@@ -130,7 +139,8 @@ export async function onRequest(context) {
   const { request, env, next } = context;
   const url = new URL(request.url);
 
-  const rule = PROTECTED.find((r) => url.pathname === r.path);
+  const reqPath = normalize(url.pathname);
+  const rule = PROTECTED.find((r) => normalize(r.path) === reqPath);
   if (!rule) return next(); // public path → straight through
 
   const token = readCookie(request, '_ms-mid');
@@ -161,7 +171,7 @@ export async function onRequest(context) {
   }
 
   return Response.redirect(
-    `${url.origin}/membership-plan.html?gate=${rule.minTier.toLowerCase()}`,
+    `${url.origin}/membership-plan?gate=${rule.minTier.toLowerCase()}`,
     302
   );
 }
