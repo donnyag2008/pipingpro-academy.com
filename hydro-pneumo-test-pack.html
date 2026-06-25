@@ -15,25 +15,51 @@
 <script>
 (function(){
   var THIS_CALC = 'hp';                       // ← change per page
-  var UPGRADE = '/membership-plan.html';      // non-members land here
-  // ?admin=1 sets the admin flag (persists); ?admin=0 clears it (test as a normal user)
-  try{
-    var qs = new URLSearchParams(location.search);
-    if(qs.has('admin')){
-      if(qs.get('admin') === '0'){ localStorage.removeItem('ppa_admin'); }
-      else { localStorage.setItem('ppa_admin','1'); }
+  var UPGRADE   = '/membership-plan.html';    // non-members land here
+
+  // Admin is decided by the logged-in Memberstack member (not a browser flag).
+  var ADMIN_PLAN_IDS   = ['pln_admin-vzd0rgr'];   // ← your only edit
+  var ADMIN_PERMISSION = 'admin';
+
+  function memberIsAdmin(m){
+    if(!m) return false;
+    var cf = m.customFields || {};
+    if(cf.admin === 'true' || cf.admin === true || cf.role === 'admin') return true;
+    if((m.permissions || []).indexOf(ADMIN_PERMISSION) !== -1) return true;
+    var pc = m.planConnections || [];
+    for(var i=0;i<pc.length;i++){
+      if(pc[i] && pc[i].status === 'ACTIVE' && ADMIN_PLAN_IDS.indexOf(pc[i].planId) !== -1) return true;
     }
-  }catch(e){}
-  function isAdmin(){
-    try{ var v = localStorage.getItem('ppa_admin'); return v === '1' || v === 'true'; }
-    catch(e){ return false; }
+    return false;
   }
+
+  function whenMS(cb, tries){                  // wait for Memberstack to attach (~4s max)
+    tries = (tries==null) ? 40 : tries;
+    if(window.$memberstackDom) return cb(window.$memberstackDom);
+    if(tries<=0) return cb(null);
+    setTimeout(function(){ whenMS(cb, tries-1); }, 100);
+  }
+  function getMember(){
+    return new Promise(function(resolve){
+      whenMS(function(ms){
+        if(!ms || typeof ms.getCurrentMember !== 'function') return resolve(null);
+        ms.getCurrentMember().then(function(res){ resolve(res ? res.data : null); })
+                             .catch(function(){ resolve(null); });
+      });
+    });
+  }
+
+  // Emergency local override — uncomment ONLY if locked out before the admin plan is set:
+  // function localOverride(){ try{ return localStorage.getItem('ppa_admin')==='1'; }catch(e){ return false; } }
+
   function gate(){
-    if(isAdmin()) return;                     // admin always bypasses the paywall
-    if(!window.PPATIER) return;
-    if(window.PPATIER.requiredTier(THIS_CALC) === 'free') return;
-    window.PPATIER.resolveTier().then(function(){
-      if(!isAdmin() && !window.PPATIER.hasAccess(THIS_CALC)) location.replace(UPGRADE);
+    getMember().then(function(member){
+      if(memberIsAdmin(member)) return;        // admin → full access, no redirect
+      if(!window.PPATIER) return;
+      if(window.PPATIER.requiredTier(THIS_CALC) === 'free') return;
+      return window.PPATIER.resolveTier().then(function(){
+        if(!memberIsAdmin(member) && !window.PPATIER.hasAccess(THIS_CALC)) location.replace(UPGRADE);
+      });
     }).catch(function(){ /* leave page as-is on error */ });
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', gate);
