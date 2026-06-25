@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ============================================================
+       PPA SEO  — edit title/description, set the canonical URL,
+       and add this page to sitemap.xml + the guides index.
+       ============================================================ -->
+  <title>Designing a Cathodic Protection System for a Buried Pipeline | PipingPro Academy</title>
+  <meta name="description" content="A practical engineering workflow for designing cathodic protection on buried onshore steel pipelines — design basis, protection criteria, current demand, sacrificial vs ICCP, anode sizing, attenuation, interference, and monitoring." />
+  <link rel="canonical" href="https://pipingpro-academy.com/guide-cp-buried-pipeline.html" />
+  <meta property="og:title" content="Designing a Cathodic Protection System for a Buried Pipeline" />
+  <meta property="og:description" content="A practical CP design workflow for buried onshore pipelines." />
+  <meta property="og:type" content="article" />
+
+  <!-- Fonts: PPA house style -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,400..600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- KaTeX for equation rendering -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" integrity="anonymous" crossorigin="anonymous" />
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root {
+      --rust:        #8b3a1a;
+      --rust-deep:   #6e2d13;
+      --gold:        #b8860b;
+      --paper:       #f6f1e7;
+      --paper-card:  #fbf8f1;
+      --ink:         #2b2620;
+      --ink-soft:    #5c5247;
+      --rule:        #e0d7c5;
+      --maxw:        760px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "DM Sans", system-ui, sans-serif;
+      font-size: 18px;
+      line-height: 1.65;
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+
+    /* ---- Article header ---- */
+    header.guide-head { padding: 64px 0 40px; border-bottom: 1px solid var(--rule); }
+
+    .eyebrow {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12.5px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--rust);
+      margin: 0 0 18px;
+    }
+
+    h1 {
+      font-family: "DM Serif Display", serif;
+      font-weight: 400;
+      font-size: clamp(34px, 6vw, 52px);
+      line-height: 1.08;
+      letter-spacing: -0.01em;
+      margin: 0 0 20px;
+      color: var(--ink);
+    }
+
+    .standfirst {
+      font-size: 19px;
+      color: var(--ink-soft);
+      font-style: italic;
+      margin: 0;
+      max-width: 60ch;
+    }
+
+    /* ---- Body type ---- */
+    main { padding: 8px 0 48px; }
+
+    h2 {
+      font-family: "DM Serif Display", serif;
+      font-weight: 400;
+      font-size: clamp(25px, 4vw, 32px);
+      line-height: 1.15;
+      margin: 56px 0 4px;
+      color: var(--rust-deep);
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+    }
+    h2 .num {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 0.04em;
+    }
+    h2 + p, h2 + ul { margin-top: 14px; }
+
+    h3 {
+      font-family: "DM Sans", sans-serif;
+      font-weight: 600;
+      font-size: 19px;
+      margin: 32px 0 0;
+      color: var(--ink);
+    }
+
+    p { margin: 16px 0; }
+
+    a { color: var(--rust); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+    a:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 2px; }
+
+    ul { margin: 16px 0; padding-left: 0; list-style: none; }
+    ul li { position: relative; padding-left: 22px; margin: 10px 0; }
+    ul li::before {
+      content: "";
+      position: absolute; left: 2px; top: 11px;
+      width: 7px; height: 7px;
+      background: var(--gold);
+      transform: rotate(45deg);
+    }
+
+    strong { font-weight: 600; color: var(--ink); }
+
+    code, .mono {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.88em;
+      background: rgba(139, 58, 26, 0.07);
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+
+    /* ---- Equation block ---- */
+    .eqn {
+      background: var(--paper-card);
+      border-left: 3px solid var(--rust);
+      border-radius: 0 6px 6px 0;
+      padding: 20px 24px;
+      margin: 24px 0;
+      overflow-x: auto;
+    }
+    .eqn .eqn-label {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 11.5px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin: 0 0 10px;
+    }
+    .eqn .katex-display { margin: 0; }
+    .eqn .where {
+      font-size: 15px;
+      color: var(--ink-soft);
+      margin: 12px 0 0;
+      line-height: 1.55;
+    }
+
+    /* ---- Callout: design trap ---- */
+    .trap {
+      background: rgba(139, 58, 26, 0.05);
+      border: 1px solid var(--rule);
+      border-top: 3px solid var(--gold);
+      border-radius: 4px;
+      padding: 18px 22px;
+      margin: 24px 0;
+    }
+    .trap .trap-tag {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--rust);
+      margin: 0 0 8px;
+    }
+    .trap p { margin: 0; font-size: 16.5px; }
+
+    /* ---- Table ---- */
+    .table-scroll { overflow-x: auto; margin: 24px 0; }
+    table { border-collapse: collapse; width: 100%; font-size: 16px; min-width: 520px; }
+    caption {
+      caption-side: top;
+      text-align: left;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 11.5px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      padding-bottom: 10px;
+    }
+    th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+    thead th { font-weight: 600; color: var(--rust-deep); border-bottom: 2px solid var(--rust); }
+    tbody th { font-weight: 600; color: var(--ink); white-space: nowrap; }
+
+    /* ---- Standards / disclaimer ---- */
+    .standards { background: var(--paper-card); border: 1px solid var(--rule); border-radius: 6px; padding: 6px 26px 22px; margin: 32px 0; }
+
+    .disclaimer {
+      border-top: 1px solid var(--rule);
+      margin-top: 48px;
+      padding-top: 24px;
+      font-size: 15px;
+      color: var(--ink-soft);
+      font-style: italic;
+    }
+
+    hr.sep { border: 0; border-top: 1px solid var(--rule); margin: 0; }
+
+    /* ---- Placeholder chrome (replace with PPA nav/footer) ---- */
+    .ppa-placeholder {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      color: var(--ink-soft);
+      background: rgba(184, 134, 11, 0.08);
+      border: 1px dashed var(--gold);
+      border-radius: 4px;
+      padding: 10px 16px;
+      margin: 0;
+      text-align: center;
+    }
+
+    @media (max-width: 560px) {
+      body { font-size: 17px; }
+      header.guide-head { padding: 44px 0 32px; }
+      h2 { gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       PPA NAV — replace this block with your standard site header
+       / navigation include.
+       ============================================================ -->
+  <p class="ppa-placeholder">&lt;!-- PPA site nav goes here --&gt;</p>
+
+  <header class="guide-head">
+    <div class="wrap">
+      <p class="eyebrow">Technical Guide · Corrosion &amp; Integrity</p>
+      <h1>Designing a Cathodic Protection System for a Buried Pipeline</h1>
+      <p class="standfirst">A practical design workflow for onshore buried steel pipelines — from design basis through anode sizing, attenuation, and monitoring. Methodology is standard-agnostic; verify the current revision of every standard cited against your project's design basis.</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+
+      <h2><span class="num">01</span> Where CP fits</h2>
+      <p>A buried steel pipeline is protected by two lines of defence working together: the <strong>coating</strong> (the primary barrier) and <strong>cathodic protection</strong> (the backstop that mops up corrosion at coating holidays and defects). Neither is sufficient alone. A perfect coating is impossible to install and impossible to keep perfect over a design life; CP exists to protect the small fraction of steel the coating inevitably exposes. This is why CP current demand is driven almost entirely by <strong>coating quality and its degradation over time</strong>, not by the bare surface area of the pipe.</p>
+      <p>CP works by shifting the steel's potential negative enough that the anodic (metal-dissolving) reaction is suppressed and the surface behaves cathodically. You deliver that shift either by sacrificing a more-active metal (galvanic anodes) or by forcing current from an external power source (impressed current).</p>
+
+      <h2><span class="num">02</span> Design basis — gather before you calculate</h2>
+      <p>CP design is only as good as its inputs. Before any number is produced, assemble:</p>
+      <ul>
+        <li><strong>Pipe data</strong> — outside diameter, wall thickness, total length, longitudinal electrical resistance per unit length.</li>
+        <li><strong>Coating type and specified breakdown</strong> — FBE, 3LPE, coal-tar, etc. Initial and aged breakdown factors dominate current demand. A 3LPE line and a coal-tar line of identical geometry can differ in current demand by an order of magnitude.</li>
+        <li><strong>Soil resistivity profile</strong> — measured along the route (Wenner four-pin), ideally seasonally. The single most important environmental parameter: it sets anode-to-earth resistance, groundbed feasibility, and corrosivity. Low-resistivity soils (&lt;10&nbsp;Ω·m) are aggressive and favour ICCP; high-resistivity soils may make galvanic systems impractical.</li>
+        <li><strong>Design life</strong> — typically 25–40 years. Drives anode mass.</li>
+        <li><strong>Foreign structures and interference sources</strong> — parallel/crossing pipelines, HVAC powerlines (AC interference), DC traction (stray current), shared rights-of-way.</li>
+        <li><strong>Electrical continuity</strong> — confirm the line is electrically continuous and isolated at terminals via monolithic isolation joints, so protection current stays on the structure being protected.</li>
+      </ul>
+
+      <h2><span class="num">03</span> Protection criteria</h2>
+      <p>The design target is a recognised protection criterion measured against a reference electrode (copper/copper-sulphate, CSE, for buried onshore). The common criteria:</p>
+      <ul>
+        <li><strong>−850&nbsp;mV (CSE) with the protection current applied</strong>, corrected for IR drop, or</li>
+        <li><strong>−850&nbsp;mV (CSE) "instant-off"</strong> — the polarised potential, measured immediately after interrupting current to eliminate IR drop, or</li>
+        <li><strong>100&nbsp;mV of cathodic polarisation</strong> — the shift between native and polarised potential.</li>
+      </ul>
+      <p>The IR-drop issue is the recurring trap: an "on" potential reading includes the ohmic voltage drop through the soil and overstates how protected the steel actually is. Instant-off and coupon techniques exist precisely to separate true polarisation from IR drop. In high-resistivity soil or near a groundbed, the IR component can be large.</p>
+      <div class="trap">
+        <p class="trap-tag">Design trap — overprotection</p>
+        <p>Potentials more negative than roughly −1.1 to −1.2&nbsp;V (CSE) risk cathodic disbondment of the coating and hydrogen-related issues on higher-strength steels. CP is a window, not "more is better."</p>
+      </div>
+
+      <h2><span class="num">04</span> Current demand</h2>
+      <p>Protection current demand is:</p>
+      <div class="eqn">
+        <p class="eqn-label">Current demand</p>
+        <div data-eqn>$$ I = A \times i \times f_c $$</div>
+        <p class="where">where <strong>A</strong> = total external surface area (π × OD × length), <strong>i</strong> = protection current density for the soil (current per unit <em>bare</em> area to meet criteria), <strong>f<sub>c</sub></strong> = coating breakdown factor (fraction of surface effectively bare).</p>
+      </div>
+      <p>The coating breakdown factor is where the design lives. It is modelled as growing over life, commonly linearly:</p>
+      <div class="eqn">
+        <p class="eqn-label">Coating breakdown over life</p>
+        <div data-eqn>$$ f_c(t) = a + b\,t $$</div>
+        <p class="where">with <strong>a</strong> an initial defect allowance and <strong>b</strong> an annual degradation rate set by coating type and soil.</p>
+      </div>
+      <p>You evaluate current demand at three points: <strong>initial</strong> (sets the rating to achieve early polarisation), <strong>mean</strong> (sizes total anode mass — charge over life), and <strong>final / end-of-life</strong> (highest f<sub>c</sub>, sets the current the system must still deliver in its worst year).</p>
+      <div class="trap">
+        <p class="trap-tag">Design trap — under-sizing</p>
+        <p>Size <em>current capacity</em> on the final demand and <em>anode consumable mass</em> on the mean demand integrated over life. Designing only to initial demand is the classic error — the system passes commissioning and starves a decade later.</p>
+      </div>
+
+      <h2><span class="num">05</span> Sacrificial vs impressed current</h2>
+      <div class="table-scroll">
+        <table>
+          <caption>Galvanic vs ICCP selection</caption>
+          <thead>
+            <tr><th scope="col">Factor</th><th scope="col">Galvanic anodes</th><th scope="col">ICCP</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Current source</th><td>Anode self-potential (fixed, ~0.85&nbsp;V net driving voltage for Mg)</td><td>External T/R — adjustable, high driving voltage</td></tr>
+            <tr><th scope="row">Soil resistivity</th><td>Best in low resistivity (&lt;~30–50&nbsp;Ω·m)</td><td>Works across a wide range, incl. high resistivity</td></tr>
+            <tr><th scope="row">Current output</th><td>Low per anode</td><td>High; one station protects many km</td></tr>
+            <tr><th scope="row">Power / maintenance</th><td>None; no external power</td><td>Needs AC power, monitoring, maintenance</td></tr>
+            <tr><th scope="row">Interference risk</th><td>Low</td><td>Can cause interference on foreign structures</td></tr>
+            <tr><th scope="row">Typical use</th><td>Short lines, well-coated lines, no power, congested areas</td><td>Long cross-country transmission lines</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>A short, well-coated buried line in moderate soil with no available power is a natural galvanic candidate. A long cross-country transmission line is almost always ICCP, often as a small number of stations covering long sections by attenuation.</p>
+
+      <h2><span class="num">06</span> Galvanic anode design</h2>
+      <p><strong>Anode-to-earth resistance</strong> governs how much current a single anode can push. For a single vertical anode, Dwight's equation:</p>
+      <div class="eqn">
+        <p class="eqn-label">Dwight — single vertical anode resistance</p>
+        <div data-eqn>$$ R = \frac{\rho}{2\pi L}\left[\ln\!\frac{4L}{d} - 1\right] $$</div>
+        <p class="where">ρ = soil resistivity, L = anode length, d = effective diameter <em>including the backfill column</em> for packaged anodes — the low-resistivity gypsum/bentonite backfill is what makes a packaged Mg anode work. For multiple anodes use parallel-anode treatments (McCoy) with a spacing factor; anodes too close interfere and their combined resistance exceeds the simple parallel value.</p>
+      </div>
+      <p><strong>Anode current output</strong> is driving voltage over circuit resistance:</p>
+      <div class="eqn">
+        <p class="eqn-label">Anode output</p>
+        <div data-eqn>$$ I_a = \frac{E_{\text{anode(oc)}} - E_{\text{pipe(pol)}}}{R_{\text{anode}} + R_{\text{pipe}} + R_{\text{cable}}} $$</div>
+        <p class="where">For magnesium, open-circuit ≈ −1.5 to −1.75&nbsp;V (CSE) against a polarised pipe at −0.85&nbsp;V — a net driving voltage well under 1&nbsp;V. That small driving voltage is exactly why galvanic systems need low soil resistivity to deliver useful current.</p>
+      </div>
+      <p><strong>Anode mass for life</strong>, from Faraday's law expressed via capacity:</p>
+      <div class="eqn">
+        <p class="eqn-label">Anode life</p>
+        <div data-eqn>$$ \text{Life (yr)} = \frac{\text{Capacity} \times \text{Mass} \times \text{Utilisation}}{I \times 8760} $$</div>
+        <p class="where">Capacity (A·h/kg): practical Mg ≈ 500–550, Zn ≈ 780 (use practical, efficiency-included values, not theoretical). Utilisation ≈ 0.85–0.90 — the anode loses contact before it is fully consumed. 8760 = hours/year.</p>
+      </div>
+      <p>Material choice: <strong>magnesium</strong> for higher driving voltage in higher-resistivity soil; <strong>zinc</strong> where soils are very low resistivity / saline or where Mg would over-drive. The two outputs you size against — <em>enough anodes for current</em> (final-year demand ÷ per-anode output) and <em>enough mass for life</em> (mean demand over design life) — must <strong>both</strong> be satisfied. Take the governing case.</p>
+
+      <h2><span class="num">07</span> ICCP design</h2>
+      <p><strong>Transformer-rectifier sizing.</strong> Current rating from the final-year demand plus a design margin (commonly 1.5–2×) for future coating degradation. Voltage rating from circuit resistance:</p>
+      <div class="eqn">
+        <p class="eqn-label">T/R voltage</p>
+        <div data-eqn>$$ V = I \times \left(R_{\text{groundbed}} + R_{\text{pipe}} + R_{\text{cable}} + \text{back-EMF}\right) $$</div>
+        <p class="where">Groundbed resistance usually dominates, so that is where the design effort goes.</p>
+      </div>
+      <p><strong>Groundbed type:</strong></p>
+      <ul>
+        <li><strong>Remote (surface) bed</strong> — anodes at a distance so the pipe sits in "remote earth"; simple, but footprint and interference need managing.</li>
+        <li><strong>Distributed bed</strong> — many small anodes close to the line; good for congested areas and tight potential control, lower interference.</li>
+        <li><strong>Deep-well bed</strong> — vertical borehole reaching low-resistivity strata; minimal surface footprint and low interference, ideal where surface soil is high-resistivity (resistance via Sunde's equation).</li>
+      </ul>
+      <p><strong>Anode material:</strong> mixed-metal-oxide (MMO) titanium is the modern default — low consumption rate, high current density, long life. Graphite and high-silicon cast iron (HSCI) are older alternatives. ICCP anode life is set by consumption rate (kg/A·yr), not self-potential.</p>
+      <div class="trap">
+        <p class="trap-tag">Design trap — cable integrity</p>
+        <p>Anode lead and header cables must be fully insulated and kept intact: any cable defect in the anodic field corrodes catastrophically and fast. Cable failure, not anode consumption, is the usual ICCP killer.</p>
+      </div>
+
+      <h2><span class="num">08</span> Attenuation — the long-line problem</h2>
+      <p>On a long pipeline, protection potential is most negative at the drain point and decays with distance, because the pipe steel has longitudinal resistance and the coating leaks current to earth along the way:</p>
+      <div class="eqn">
+        <p class="eqn-label">Potential attenuation along the line</p>
+        <div data-eqn>$$ \Delta E(x) = \Delta E_0\, e^{-\alpha x}, \qquad \alpha = \sqrt{\frac{r_L}{R_c}} $$</div>
+        <p class="where">r<sub>L</sub> = longitudinal pipe resistance per unit length, R<sub>c</sub> = coating (leakage) resistance per unit length. A well-coated line has high R<sub>c</sub>, small α, slow attenuation — so one station protects a long section.</p>
+      </div>
+      <p>This ties <strong>coating quality directly to station count and spacing</strong>: every CP economic argument for better coating runs through α. Set drain-point potential negative enough that the most-distant point still meets criteria, but keep the drain point inside the overprotection limit. That bracket sizes your station spacing.</p>
+
+      <h2><span class="num">09</span> Interference and interaction</h2>
+      <p>A buried line rarely exists alone. Manage:</p>
+      <ul>
+        <li><strong>DC stray current</strong> (foreign ICCP, DC traction) — current entering the pipe and discharging elsewhere causes severe localised corrosion at the discharge point. Mitigate with bonds, drainage, or coordinated CP between owners.</li>
+        <li><strong>AC interference</strong> from parallel HVAC powerlines — induces AC causing AC corrosion and a personnel touch-voltage hazard. Mitigate with gradient-control mats and decoupling devices (DC-decoupling, AC-grounding) per the relevant AC-interference standard.</li>
+        <li><strong>Foreign-structure interaction</strong> — your CP can throw foreign structures into corrosion and vice versa. Resolve with bonds, test-station coordination, and interaction testing at commissioning.</li>
+        <li><strong>Isolation joints</strong> at terminals/stations to confine current to the intended structure; verify they are not shorted.</li>
+      </ul>
+
+      <h2><span class="num">10</span> Monitoring and commissioning</h2>
+      <p>Designed-in monitoring is part of the deliverable, not an afterthought:</p>
+      <ul>
+        <li><strong>Test stations</strong> at regular intervals and at all crossings, casings, isolation joints, and bonds.</li>
+        <li><strong>Coupons and permanent reference electrodes</strong> for IR-free instant-off measurement and coupon current density.</li>
+        <li><strong>ER probes</strong> for direct corrosion-rate trending.</li>
+        <li><strong>Interrupters</strong> to enable instant-off surveys across the system.</li>
+        <li>Commissioning includes the <strong>CIPS</strong> (close-interval potential survey) baseline and DCVG/ACVG coating-defect surveys, then periodic re-survey through life.</li>
+      </ul>
+      <p>This monitoring layer is also where an indirect / online monitoring concept (SCADA-fed potential trending, coupon-data fusion) plugs in — CP test-station and coupon data are a natural input to a pipeline integrity intelligence layer.</p>
+
+      <div class="standards">
+        <h2 style="margin-top:28px;"><span class="num">REF</span> Standards map</h2>
+        <p>Confirm the current revision of each against your project's specification:</p>
+        <ul>
+          <li><strong>ISO 15589-1</strong> — CP of onshore pipelines (core international design standard).</li>
+          <li><strong>NACE / AMPP SP0169</strong> — control of external corrosion on buried/submerged metallic systems.</li>
+          <li><strong>NACE / AMPP SP0286</strong> — interference (stray current) and related practices.</li>
+          <li><strong>SAES-X-400 / SAES-X-600</strong> (Saudi Aramco) — CP design and materials, where applicable.</li>
+          <li>Coating-breakdown and current-density figures should come from the <strong>project design basis</strong>, not generic tables, wherever measured soil and coating data exist.</li>
+        </ul>
+      </div>
+
+      <p class="disclaimer">Design intent and worked numbers must be produced and signed by a qualified, certified CP engineer. This guide is methodology for engineering understanding — it is not a substitute for a stamped CP design.</p>
+
+    </div>
+  </main>
+
+  <hr class="sep" />
+  <!-- ============================================================
+       PPA FOOTER — replace with your standard site footer include.
+       PPA SCRIPTS — guides are the FREE/open SEO funnel, so no tier
+       gate is needed here. If you do wire it in, add ppa-tier.js /
+       ppa-report-gate.js below as on the calculator pages.
+       ============================================================ -->
+  <p class="ppa-placeholder">&lt;!-- PPA site footer + script includes go here --&gt;</p>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      if (window.renderMathInElement) {
+        document.querySelectorAll("[data-eqn]").forEach(function (el) {
+          renderMathInElement(el, {
+            delimiters: [
+              { left: "$$", right: "$$", display: true },
+              { left: "$", right: "$", display: false }
+            ],
+            throwOnError: false
+          });
+        });
+      }
+    });
+  </script>
+</body>
+</html>
