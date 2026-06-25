@@ -1,0 +1,86 @@
+<!-- ════════════════════════════════════════════════════════════════
+     PipingPro Academy — CANONICAL ACCESS GATE (Block A)
+     Paste this into the <head> of EVERY paid calculator page,
+     replacing whatever gate is currently there.
+
+     CHANGE ONE THING per page:  var THIS_CALC = '...'
+     (set it to that page's calcId — see the list at the bottom)
+
+     Load order matters and is already correct below:
+        1. Memberstack   2. /ppa-tier.js   3. this gate (uses PPATIER)
+     ════════════════════════════════════════════════════════════════ -->
+
+<!-- Memberstack -->
+<script data-memberstack-app="app_cmq9fsibv00720sujaqjm734o" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
+<script src="/ppa-tier.js"></script>
+<!-- PPA ACCESS GATE (canonical Block A) -->
+<script>
+(function(){
+  var THIS_CALC = 'hp';                       // ← CHANGE PER PAGE
+  var UPGRADE   = '/membership-plan.html';    // non-members land here
+
+  var ADMIN_PLAN_IDS   = ['pln_admin-vzd0rgr'];
+  var ADMIN_PERMISSION = 'admin';
+  var EMERGENCY_LOCAL_ADMIN = false;          // MUST be false in production
+
+  function memberIsAdmin(m){
+    if(!m) return false;
+    var cf = m.customFields || {};
+    if(cf.admin === 'true' || cf.admin === true || cf.role === 'admin') return true;
+    var perms = m.permissions || [];
+    if(perms.indexOf(ADMIN_PERMISSION) !== -1) return true;
+    var pc = m.planConnections || [];
+    for(var i=0;i<pc.length;i++){
+      if(pc[i] && ADMIN_PLAN_IDS.indexOf(pc[i].planId) !== -1){
+        var st = (pc[i].status || '').toString().toUpperCase();
+        if(st !== 'CANCELED' && st !== 'CANCELLED' && st !== 'EXPIRED' && st !== 'INACTIVE') return true;
+      }
+    }
+    return false;
+  }
+
+  function whenMS(cb, tries){
+    tries = (tries==null) ? 40 : tries;
+    var ms = window.$memberstackDom;
+    if(ms) return cb(ms);
+    if(tries<=0) return cb(null);
+    setTimeout(function(){ whenMS(cb, tries-1); }, 100);
+  }
+  function getMember(){
+    return new Promise(function(resolve){
+      whenMS(function(ms){
+        if(!ms || typeof ms.getCurrentMember !== 'function') return resolve(null);
+        ms.getCurrentMember().then(function(res){ resolve(res ? res.data : null); })
+                             .catch(function(){ resolve(null); });
+      });
+    });
+  }
+
+  function gate(){
+    if(EMERGENCY_LOCAL_ADMIN){
+      try{ if(localStorage.getItem('ppa_admin') === '1') return; }catch(e){}
+    }
+    getMember().then(function(member){
+      if(memberIsAdmin(member)) return;                          // admin → full access
+      if(!window.PPATIER) return;
+      if(window.PPATIER.requiredTier(THIS_CALC) === 'free') return;
+      return window.PPATIER.resolveTier().then(function(){
+        if(!memberIsAdmin(member) && !window.PPATIER.hasAccess(THIS_CALC)) location.replace(UPGRADE);
+      });
+    }).catch(function(){ /* leave page as-is on error */ });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', gate);
+  else gate();
+})();
+</script>
+
+<!-- ────────────────────────────────────────────────────────────────
+     THIS_CALC values, per ppa-tier.js (the gate self-skips 'free'):
+
+     PROFESSIONAL (default): fx fl pe di sv ss tr pc ub df sp hp nl pm vf ci scl
+     STUDENT:                vw ps el lb
+     FREE (gate auto-skips): pw wt uc
+
+     Setting THIS_CALC wrong only changes WHICH tier is required, not
+     whether the gate runs — so double-check each page's id on paste.
+     ──────────────────────────────────────────────────────────────── -->
