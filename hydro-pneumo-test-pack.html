@@ -292,6 +292,14 @@ footer{background:var(--steel2);color:rgba(245,242,235,.4);text-align:center;pad
 .ref-title{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3,#8a8a80);margin-bottom:.9rem;padding-bottom:.4rem;border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));}
 .ref-formula{background:var(--paper2,#ede9de);border-left:3px solid var(--accent,#8b3a1a);border-radius:0 8px 8px 0;padding:1rem 1.2rem;font-size:13px;color:var(--ink2,#4a4a44);line-height:2;margin-bottom:.8rem;font-family:monospace;}
 .ref-formula b{font-family:monospace;color:var(--ink,#1a1510);}
+/* Aligned formula rows: label column + equation column line up cleanly */
+.fx-grid{display:grid;grid-template-columns:max-content 1fr;column-gap:14px;row-gap:8px;align-items:baseline;}
+.fx-lbl{font-family:var(--sans,'DM Sans',sans-serif);font-weight:600;color:var(--ink,#1a1510);white-space:nowrap;}
+.fx-eq{font-family:monospace;color:var(--ink2,#4a4a44);}
+.fx-eq .u{color:var(--ink3,#8a8a80);}
+.fx-where{grid-column:1 / -1;font-family:monospace;font-size:12px;color:var(--ink3,#8a8a80);line-height:1.7;margin-top:2px;}
+.fx-rule{grid-column:1 / -1;border-top:1px dashed var(--rule,rgba(26,26,24,.18));margin:4px 0;}
+@media(max-width:520px){.fx-grid{grid-template-columns:1fr;row-gap:3px;}.fx-lbl{margin-top:6px;}}
 .ref-note{background:var(--teal-light,#e7f1ee);border:1px solid rgba(26,107,90,.15);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--teal,#1a6b5a);line-height:1.7;margin-top:.5rem;}
 .ref-warn{background:var(--warn-light,#f5e9c8);border:1px solid var(--warn-border,#b8860b);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:#6e2e14;line-height:1.7;margin-top:.5rem;}
 .ref-prose{font-size:13px;color:var(--ink2,#4a4a44);line-height:1.75;margin-bottom:.6rem;}
@@ -619,10 +627,10 @@ table.reg td.n{text-align:right;font-family:var(--mono);}
     </div>
   </div>
 
-  <!-- Volumes & Durations -->
+  <!-- Test-Pack Medium Volume -->
   <div class="card">
-    <div class="ctitle"><span class="ctitle-icon">💧</span>Volumes &amp; Durations <span style="font-size:11px;font-weight:400;color:#b8a890;margin-left:6px;">test-pack water &amp; time estimate</span></div>
-    <div class="fg4">
+    <div class="ctitle"><span class="ctitle-icon">💧</span><span id="vol-card-title">Test-Pack Water Volume</span> <span id="vol-card-sub" style="font-size:11px;font-weight:400;color:#b8a890;margin-left:6px;">hydrostatic fill estimate</span></div>
+    <div class="fg2">
       <div class="field">
         <label>Line Length (m)</label>
         <input type="number" id="line-length" value="100" min="0" max="100000" step="1" oninput="updateCalc()">
@@ -631,41 +639,43 @@ table.reg td.n{text-align:right;font-family:var(--mono);}
         <label>Wall Thickness (mm) <span style="font-weight:400;color:#b8a890;text-transform:none;letter-spacing:0;">STD auto</span></label>
         <input type="number" id="wall-t" value="7.11" min="0.5" max="120" step="0.01" oninput="updateCalc()">
       </div>
-      <div class="field">
-        <label>Pump Fill Rate (m³/h)</label>
-        <input type="number" id="fill-rate" value="20" min="0.1" max="2000" step="0.5" oninput="updateCalc()">
-      </div>
-      <div class="field">
-        <label>Drain Rate (m³/h)</label>
-        <input type="number" id="drain-rate" value="30" min="0.1" max="2000" step="0.5" oninput="updateCalc()">
-      </div>
     </div>
 
-    <div class="pres-display" id="vol-display" style="grid-template-columns:repeat(4,1fr);">
-      <div class="pd-block highlight">
+    <div class="pres-display" id="vol-display" style="grid-template-columns:1fr;">
+      <!-- Hydro / Leak: liquid fill -->
+      <div class="pd-block highlight" id="vt-water">
         <div class="pd-val" id="pd-vol">1,921</div>
         <div class="pd-unit">litres</div>
         <div class="pd-label">Water Volume</div>
       </div>
-      <div class="pd-block">
-        <div class="pd-val" id="pd-fill">6m</div>
-        <div class="pd-unit">approx</div>
-        <div class="pd-label">Fill Time</div>
+      <!-- Pneumatic: free gas at standard conditions -->
+      <div class="pd-block highlight" id="vt-gasfree" style="display:none;">
+        <div class="pd-val" id="pd-gasfree">—</div>
+        <div class="pd-unit">Nm³ @ STP</div>
+        <div class="pd-label">Free Gas Volume</div>
       </div>
-      <div class="pd-block">
-        <div class="pd-val" id="pd-drain">4m</div>
-        <div class="pd-unit">approx</div>
-        <div class="pd-label">Drain Time</div>
+      <!-- Pneumatic: contained (geometric) volume -->
+      <div class="pd-block" id="vt-contained" style="display:none;">
+        <div class="pd-val" id="pd-contained">—</div>
+        <div class="pd-unit">litres</div>
+        <div class="pd-label">Contained Volume</div>
       </div>
-      <div class="pd-block">
-        <div class="pd-val" id="pd-window">~70m</div>
-        <div class="pd-unit">fill→drain</div>
-        <div class="pd-label">Test Window</div>
+      <!-- Pneumatic: stored energy -->
+      <div class="pd-block" id="vt-energy" style="display:none;">
+        <div class="pd-val" id="pd-energy">—</div>
+        <div class="pd-unit">MJ</div>
+        <div class="pd-label">Stored Energy</div>
+      </div>
+      <!-- Pneumatic: safe distance / exclusion zone -->
+      <div class="pd-block" id="vt-distance" style="display:none;">
+        <div class="pd-val" id="pd-distance">—</div>
+        <div class="pd-unit">metres</div>
+        <div class="pd-label">Safe Distance</div>
       </div>
     </div>
-    <p style="font-size:11px;color:var(--ink3);margin-top:10px;line-height:1.6;">
+    <p style="font-size:11px;color:var(--ink3);margin-top:10px;line-height:1.6;" id="vol-card-note">
       Volume = π/4 · ID² · L with a 3% fittings/manifold allowance (ID = OD − 2·wall).
-      Test window = fill + 30&nbsp;min pressurise &amp; examine + hold + drain. Drying / lay-up time is additional — see Theory tab for SAES-A-007 water-contact limits.
+      Fill / drain / hold timing is execution-planning detail — see the generated Test Pack and the Theory tab for SAES-A-007 water-contact limits.
     </p>
   </div>
 
@@ -929,8 +939,9 @@ function computeVolumes(holdMins) {
   const od = parseFloat(document.getElementById('nps').value) || 0;
   const t  = parseFloat(document.getElementById('wall-t').value) || 0;
   const L  = parseFloat(document.getElementById('line-length').value) || 0;
-  const fillRate  = parseFloat(document.getElementById('fill-rate').value) || 0;
-  const drainRate = parseFloat(document.getElementById('drain-rate').value) || 0;
+  var frEl = document.getElementById('fill-rate'), drEl = document.getElementById('drain-rate');
+  const fillRate  = frEl ? (parseFloat(frEl.value) || 0) : 20;   // default 20 m³/h (rate inputs removed from UI)
+  const drainRate = drEl ? (parseFloat(drEl.value) || 0) : 30;   // default 30 m³/h
   const id = od - 2*t;
   if (id <= 0 || L <= 0) return null;
   const areaM2 = Math.PI/4 * Math.pow(id/1000, 2);
@@ -957,19 +968,62 @@ function updateCalc() {
   document.getElementById('pd-min-p').textContent  = base.toFixed(1);
   document.getElementById('pd-gauge').textContent  = `0–${gaugeRange}`;
 
-  // Volumes & durations
+  // Test-pack medium volume — water for hydro/leak, gas for pneumatic
   const v = computeVolumes(getHoldMins());
+  const isPneumoVol = (testType === 'pneumo');
+
+  document.getElementById('vol-card-title').textContent = isPneumoVol ? 'Test-Pack Gas Volume' : 'Test-Pack Water Volume';
+  document.getElementById('vol-card-sub').textContent   = isPneumoVol ? 'pneumatic medium — free air estimate' : 'hydrostatic fill estimate';
+  document.getElementById('vt-water').style.display      = isPneumoVol ? 'none' : '';
+  document.getElementById('vt-gasfree').style.display    = isPneumoVol ? '' : 'none';
+  document.getElementById('vt-contained').style.display  = isPneumoVol ? '' : 'none';
+  document.getElementById('vt-energy').style.display     = isPneumoVol ? '' : 'none';
+  document.getElementById('vt-distance').style.display   = isPneumoVol ? '' : 'none';
+  document.getElementById('vol-display').style.gridTemplateColumns = isPneumoVol ? 'repeat(4,minmax(0,1fr))' : '1fr';
+
+  var energyNote = '';
   if (v) {
-    document.getElementById('pd-vol').textContent    = Math.round(v.volL).toLocaleString('en-GB');
-    document.getElementById('pd-fill').textContent   = fmtDur(v.fillMin);
-    document.getElementById('pd-drain').textContent  = fmtDur(v.drainMin);
-    document.getElementById('pd-window').textContent = '~' + fmtDur(v.windowMin);
+    document.getElementById('pd-vol').textContent       = Math.round(v.volL).toLocaleString('en-GB');
+    document.getElementById('pd-contained').textContent = Math.round(v.volL).toLocaleString('en-GB');
+    const ATM = 1.013;                                   // bar absolute
+    const freeM3 = v.volM3 * (testP + ATM) / ATM;        // Boyle's law, isothermal
+    document.getElementById('pd-gasfree').textContent   = freeM3.toLocaleString('en-GB', {maximumFractionDigits: 1});
+
+    // Stored energy — ASME PCC-2 Eq. II-2:  E = [1/(k-1)]·Pt·V·[1-(Pa/Pt)^((k-1)/k)]  (= 2.5·Pt·V·[...] for air)
+    const k    = 1.4;                                    // air / N2
+    const Pt   = (testP + ATM) * 1e5;                    // Pa, absolute test pressure
+    const Pa   = ATM * 1e5;                              // Pa, absolute atmospheric
+    const E_J  = (1/(k-1)) * Pt * v.volM3 * (1 - Math.pow(Pa/Pt, (k-1)/k));
+    const E_MJ = E_J / 1e6;
+    document.getElementById('pd-energy').textContent = E_MJ.toLocaleString('en-GB', {maximumFractionDigits: E_MJ < 10 ? 1 : 0});
+
+    // Safe distance — ASME PCC-2 App. 501-III: greater of tiered (a) and scaled (b)
+    const tntKg = E_J / 4266920;                         // PCC-2 Eq. II-3
+    const Rscaled = 20;                                  // m/kg^(1/3), default App. 501-III-1
+    const Rscale = Rscaled * Math.cbrt(tntKg);           // (b) blast-scaled distance
+    let Rtier;                                           // (a) tiered minimum
+    if (E_J <= 135.5e6)      Rtier = 30;
+    else if (E_J <= 271e6)   Rtier = 60;
+    else                     Rtier = 0;                  // >271 MJ: tier (a) does not apply
+    const Rsafe = Math.max(Rtier, Rscale);
+    document.getElementById('pd-distance').textContent = Math.ceil(Rsafe);
+
+    if (E_MJ > 271) {
+      energyNote = ' <span style="color:var(--red,#8b3a1a);font-weight:600;">Stored energy ' + Math.round(E_MJ) + ' MJ (&asymp; ' + tntKg.toFixed(0) + ' kg TNT) EXCEEDS the 271 MJ limit — subdivide the system or apply mitigation (PCC-2 §501-6.2 / SAES-A-004 §5.8.3). Min. distance ' + Math.ceil(Rsafe) + ' m (scaled, App. 501-III-1(b)).</span>';
+    } else {
+      energyNote = ' <span style="color:var(--teal,#1a6b5a);font-weight:600;">Stored energy ' + (E_MJ<10?E_MJ.toFixed(1):Math.round(E_MJ)) + ' MJ (&asymp; ' + tntKg.toFixed(1) + ' kg TNT) — within the 271 MJ limit. Min. exclusion-zone radius ' + Math.ceil(Rsafe) + ' m (PCC-2 App. 501-III).</span>';
+    }
   } else {
     document.getElementById('pd-vol').textContent = '—';
-    document.getElementById('pd-fill').textContent = '—';
-    document.getElementById('pd-drain').textContent = '—';
-    document.getElementById('pd-window').textContent = '—';
+    document.getElementById('pd-contained').textContent = '—';
+    document.getElementById('pd-gasfree').textContent = '—';
+    document.getElementById('pd-energy').textContent = '—';
+    document.getElementById('pd-distance').textContent = '—';
   }
+
+  document.getElementById('vol-card-note').innerHTML = isPneumoVol
+    ? 'Contained volume = π/4 · ID² · L (+3% fittings). Free gas = contained × (P<sub>test,abs</sub> / P<sub>atm</sub>), Boyle&rsquo;s law. Stored energy per ASME PCC-2 Eq. II-2: E = [1/(k&minus;1)]·P<sub>t</sub>·V·[1&minus;(P<sub>a</sub>/P<sub>t</sub>)<sup>(k&minus;1)/k</sup>], k = 1.4. Safe distance = greater of the tiered minimum (30 m ≤ 135.5 MJ; 60 m ≤ 271 MJ) and the blast-scaled R = 20·(kg TNT)<sup>1/3</sup> (App. 501-III). Full line volume used (conservative); PCC-2 permits capping piping at 8 pipe-diameters per single failure. Fragment-throw distances (Table 501-III-2-1) may govern and are not shown.' + energyNote
+    : 'Volume = π/4 · ID² · L with a 3% fittings/manifold allowance (ID = OD − 2·wall). Fill / drain / hold timing is execution-planning detail — see the generated Test Pack and the Theory tab for SAES-A-007 water-contact limits.';
 }
 
 function clItem(text, tag) {
@@ -1505,14 +1559,40 @@ document.addEventListener('DOMContentLoaded', function(){
     <div class="ref-section">
       <div class="ref-title">Test Pressure Formulae — ASME B31.3</div>
       <div class="ref-formula">
-        <b>Hydrostatic test pressure:</b> P<sub>T</sub> = 1.5 × P<sub>design</sub> × S<sub>T</sub>/S<sub>h</sub> &nbsp;[barg]<br/>
-        S<sub>T</sub> = allowable stress at test temperature<br/>
-        S<sub>h</sub> = allowable stress at design temperature<br/><br/>
-        <b>Pneumatic test pressure:</b> P<sub>T</sub> = 1.1 × P<sub>design</sub> × S<sub>T</sub>/S<sub>h</sub><br/>
-        <b>B31.4 / B31.8 (pipelines):</b> P<sub>T</sub> = 1.25 × P<sub>design</sub> (typical)<br/><br/>
-        <b>Minimum hold time:</b> 10 minutes (B31.3 345.2.2) — then reduce to design pressure for inspection
+        <div class="fx-grid">
+          <div class="fx-lbl">Hydrostatic test pressure</div>
+          <div class="fx-eq">P<sub>T</sub> = 1.5 &times; P<sub>design</sub> &times; (S<sub>T</sub>/S<sub>h</sub>) <span class="u">[barg]</span></div>
+
+          <div class="fx-lbl">Pneumatic test pressure</div>
+          <div class="fx-eq">P<sub>T</sub> = 1.1 &times; P<sub>design</sub> <span class="u">[barg]</span></div>
+
+          <div class="fx-lbl">B31.4 / B31.8 (pipelines)</div>
+          <div class="fx-eq">P<sub>T</sub> = 1.25 &times; P<sub>design</sub> <span class="u">[barg, typical]</span></div>
+
+          <div class="fx-rule"></div>
+          <div class="fx-where">
+            S<sub>T</sub> = allowable stress at test temperature<br/>
+            S<sub>h</sub> = allowable stress at design temperature<br/>
+            (S<sub>T</sub>/S<sub>h</sub>) capped at 6.5 — B31.3 &sect;345.4.2; ratio applies to the <b>hydrostatic</b> case only<br/>
+            Min. hold time 10 min (&sect;345.2.2), then reduce to design pressure for inspection
+          </div>
+        </div>
       </div>
+      <div class="ref-warn"><strong>Pneumatic upper bound (B31.3 &sect;345.5.4):</strong> P<sub>T</sub> shall not be less than 1.1&times; design, and shall not exceed the lesser of (a) 1.33&times; design, or (b) the pressure producing a stress &gt; 90% SMYS at test temperature. No S<sub>T</sub>/S<sub>h</sub> term applies to pneumatic piping (that term belongs to hydrotest, &sect;345.4.2, and to ASME VIII Div.1 vessels, UG-100).</div>
       <div class="ref-note">Per SAES-A-004 §5.4 the required test pressure must be achieved at the <strong>lowest point</strong> of the system; account for the static head of the test liquid when checking the highest-rated and lowest-rated components.</div>
+    </div>
+
+    <div class="ref-section">
+      <div class="ref-title">ISO / EN Standards Governing Pneumatic Test</div>
+      <div class="ref-prose">There is no single ISO standard dedicated to pneumatic testing with its own unique formula — the international framework works in layers. For process/plant piping the ISO code is a <strong>wrapper that adopts ASME B31.3</strong>, while the European code (EN 13480-5) is the most prescriptive equivalent and carries its own test-pressure rule.</div>
+      <div class="ref-table-wrap"><table class="ref-table">
+        <tr><th>Standard</th><th>Scope</th><th>Pneumatic test pressure</th></tr>
+        <tr><td>ISO 15649</td><td>Petroleum &amp; natural gas — plant piping. Adopts ASME B31.3 as its technical basis incl. inspection &amp; testing.</td><td>Per B31.3 §345.5.4 → P<sub>T</sub> = 1.1 &times; P<sub>design</sub>; ≤ lesser of 1.33&times; or 90% SMYS</td></tr>
+        <tr><td>EN 13480-5</td><td>Metallic industrial piping — Part 5: Inspection &amp; Testing (European code, PED route).</td><td>Pneumatic = <strong>1.1 &times; PS</strong> (max allowable pressure), then dropped to PS for inspection. Metal temp ≥ 25&deg;C above brittle-fracture temp; enhanced NDT per Table 9.3.3-1</td></tr>
+        <tr><td>ISO 13623</td><td>Petroleum &amp; natural gas — Pipeline transportation systems (cross-country pipelines).</td><td>Strength test ≥ 1.25 &times; MAOP; hydrostatic preferred — gas/pneumatic only under restricted, risk-assessed conditions</td></tr>
+        <tr><td>ASME VIII Div.1 (UG-100)</td><td>Cross-reference — pressure <em>vessels</em>, not piping.</td><td>P<sub>T</sub> = 1.1 &times; MAWP &times; LSR (the only place the stress-ratio term legitimately appears for pneumatic)</td></tr>
+      </table></div>
+      <div class="ref-note"><strong>Bottom line for B31.3 / ISO 15649 piping:</strong> the pneumatic test pressure is a flat 1.1 &times; design pressure — no S<sub>T</sub>/S<sub>h</sub> ratio. EN 13480-5 uses the same 1.1 multiplier on PS. The stress-ratio multiplier is a Section VIII vessel concept and should not migrate onto piping.</div>
     </div>
 
     <div class="ref-section">
