@@ -11,17 +11,69 @@
 <!-- Memberstack -->
 <script data-memberstack-app="app_cmq9fsibv00720sujaqjm734o" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
 <script src="/ppa-tier.js"></script>
-<!-- PPA ACCESS GATE -->
+<!-- PPA ACCESS GATE (canonical Block A) -->
 <script>
 (function(){
   var THIS_CALC = 'vw';                       // ← change per page
-  var UPGRADE = '/membership-plan.html';      // non-members land here
+  var UPGRADE   = '/membership-plan.html';    // non-members land here
+
+  /* Admin is decided by the logged-in Memberstack member — not a browser flag.
+     Grant admin by ANY ONE of these (set whichever you use; leave the others):
+       • membership of an Admin plan  → put its id in ADMIN_PLAN_IDS
+       • a Memberstack permission     → ADMIN_PERMISSION (attached to a plan)
+       • a custom field  admin = true → set on the member in the dashboard      */
+  var ADMIN_PLAN_IDS   = ['pln_admin-vzd0rgr'];
+  var ADMIN_PERMISSION = 'admin';
+  var EMERGENCY_LOCAL_ADMIN = false;   // ← set true for LOCAL testing only; MUST be false in production
+
+  function memberIsAdmin(m){
+    if(!m) return false;
+    var cf = m.customFields || {};
+    if(cf.admin === 'true' || cf.admin === true || cf.role === 'admin') return true;
+    var perms = m.permissions || [];
+    if(perms.indexOf(ADMIN_PERMISSION) !== -1) return true;
+    var pc = m.planConnections || [];
+    for(var i=0;i<pc.length;i++){
+      if(pc[i] && ADMIN_PLAN_IDS.indexOf(pc[i].planId) !== -1){
+        var st = (pc[i].status || '').toString().toUpperCase();
+        if(st !== 'CANCELED' && st !== 'CANCELLED' && st !== 'EXPIRED' && st !== 'INACTIVE') return true;
+      }
+    }
+    return false;
+  }
+
+  function whenMS(cb, tries){                  // wait for Memberstack to attach (~4 s max)
+    tries = (tries==null) ? 40 : tries;
+    var ms = window.$memberstackDom;
+    if(ms) return cb(ms);
+    if(tries<=0) return cb(null);
+    setTimeout(function(){ whenMS(cb, tries-1); }, 100);
+  }
+  function getMember(){
+    return new Promise(function(resolve){
+      whenMS(function(ms){
+        if(!ms || typeof ms.getCurrentMember !== 'function') return resolve(null);
+        ms.getCurrentMember().then(function(res){ resolve(res ? res.data : null); })
+                             .catch(function(){ resolve(null); });
+      });
+    });
+  }
+
+  /* Emergency local override — keep commented; uncomment only if you lock yourself
+     out before the Memberstack admin marker is set:
+     // if(localStorage.getItem('ppa_admin') === '1') return; */
+
   function gate(){
-    if(localStorage.getItem('ppa_admin') === '1') return;
-    if(!window.PPATIER) return;
-    if(window.PPATIER.requiredTier(THIS_CALC) === 'free') return;
-    window.PPATIER.resolveTier().then(function(){
-      if(!window.PPATIER.hasAccess(THIS_CALC)) location.replace(UPGRADE);
+    if(EMERGENCY_LOCAL_ADMIN){
+      try{ if(localStorage.getItem('ppa_admin') === '1') return; }catch(e){}
+    }
+    getMember().then(function(member){
+      if(memberIsAdmin(member)) return;        // admin → full access, no redirect
+      if(!window.PPATIER) return;
+      if(window.PPATIER.requiredTier(THIS_CALC) === 'free') return;
+      return window.PPATIER.resolveTier().then(function(){
+        if(!memberIsAdmin(member) && !window.PPATIER.hasAccess(THIS_CALC)) location.replace(UPGRADE);
+      });
     }).catch(function(){ /* leave page as-is on error */ });
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', gate);
