@@ -2,64 +2,61 @@
  * functions/_middleware.js
  * PipingPro Academy — server-side tier gate (Cloudflare Pages Function)
  *
- * WHY THIS EXISTS
- *   The old gate trusted a client-side localStorage flag (ppa_member='1'),
- *   so any logged-in account on ANY tier got full access. This moves the
- *   decision server-side: the browser can lie, this can't.
+ * ⚠ STATUS: SERVER GATING IS CURRENTLY DISABLED (GATING_ENABLED = false).
  *
- * HOW IT WORKS
- *   1. Only paths in PROTECTED are intercepted. Everything else — anonymous
- *      SEO traffic, FREE calculators, the free Module-1 course preview,
- *      index/guides/pricing — passes straight through untouched. This is
- *      why we do NOT use Cloudflare Access: it would wall the whole site.
- *   2. For a protected path, read the Memberstack JWT from the _ms-mid
- *      cookie, verify it (proves it's real + unexpired), then fetch the
- *      live member to read planConnections. Grant only if tier >= minTier.
- *   3. A card-required trial reports status TRIALING, counted as entitled
- *      alongside ACTIVE — that's the trial gate working.
+ * WHY DISABLED
+ *   Memberstack DOM v2 stores the session token in localStorage, NOT in a
+ *   cookie. This middleware can only read cookies (the browser never sends
+ *   localStorage to the server). With no `_ms-mid` cookie present, every
+ *   request — admin AND paying Student/Professional customers — resolved to
+ *   FREE and got 302'd to /membership-plan, i.e. the gate turned away 100%
+ *   of paying users. Verified: the Application → Cookies table for the
+ *   domain is empty.
  *
- * SETUP
- *   - File path:  functions/_middleware.js   (repo root /functions)
- *   - Pages env secret: MEMBERSTACK_SECRET_KEY
- *       sk_sb_...   for the first test loop (card 4242, no real charge)
- *       sk_live_... for production cutover
- *   - Plan IDs below confirmed against ppa-tier.js (student + professional).
+ *   So gating now runs CLIENT-SIDE via the canonical Block A on each page
+ *   (ppa-tier.js + getCurrentMember + resolveTier + hasAccess). That gate
+ *   reads the real localStorage session and works. Anonymous SEO traffic
+ *   and FREE pages are unaffected.
  *
- * REPORT GATING
- *   The PDF report is generated CLIENT-SIDE (jsPDF / browser print) — there
- *   is no server endpoint to gate. It's covered indirectly: a non-member
- *   never receives the calculator PAGE, so there's no page from which to
- *   produce a report. ppa-report-gate.js stays as belt-and-suspenders.
+ * TO RE-ENABLE SERVER-SIDE GATING (the proper long-term hardening)
+ *   1. Make Memberstack issue a SERVER-READABLE cookie carrying the token
+ *      (a Memberstack config/setup step, or a small client snippet that
+ *      mirrors the localStorage token into a cookie). Confirm the cookie
+ *      name against current Memberstack docs — it may not be `_ms-mid`.
+ *   2. Set `_ms-mid` (or the real cookie name) in COOKIE_NAME below.
+ *   3. Ensure Pages env secret MEMBERSTACK_SECRET_KEY is set and is the
+ *      LIVE key (sk_live_…) on the production domain.
+ *   4. Flip GATING_ENABLED = true and deploy.
+ *   5. Test with a REAL paying member (not just admin) before trusting it.
+ *
+ *   The PLAN_TIER map below has been corrected to include the admin plan
+ *   (it was missing — another reason the admin specifically was denied),
+ *   so re-enabling is just the cookie work + the flag.
  */
 
-// ── CONFIG ──────────────────────────────────────────────────────────────
+// ── MASTER SWITCH ─────────────────────────────────────────────────────────
+const GATING_ENABLED = false;   // ← false = pass everything through (client gate active)
+const COOKIE_NAME     = '_ms-mid';
 
+// ── CONFIG ──────────────────────────────────────────────────────────────
 const PLAN_TIER = {
   'pln_student-plan-l416c0pbs': 'STUDENT',
-  'pln_professional-n2is0jc4':  'PROFESSIONAL', // trial prices live under this plan
+  'pln_professional-n2is0jc4':  'PROFESSIONAL',
+  'pln_admin-vzd0rgr':          'PROFESSIONAL', // ← admin → full access (mirrors ppa-tier.js v1.1)
 };
 
-const TIER_RANK      = { FREE: 0, STUDENT: 1, PROFESSIONAL: 2 };
-const ACTIVE_STATUSES = new Set(['ACTIVE', 'TRIALING']); // TRIALING = trial working
+const TIER_RANK       = { FREE: 0, STUDENT: 1, PROFESSIONAL: 2 };
+const ACTIVE_STATUSES = new Set(['ACTIVE', 'TRIALING']);
 
-// Protected pages. Each rule is an EXACT pathname (no prefix shadowing).
-// minTier = the LOWEST tier allowed in. Anything not listed is public.
-// Mirror this against CALC_TIER in ppa-tier.js whenever policy changes.
 const PROTECTED = [
-  // ── STUDENT-and-up calculators (vw / ps / el / lb) ──
   { path: '/flange-valve-weight-calculator.html', minTier: 'STUDENT' }, // vw
   { path: '/pipe-support-span-calculator.html',   minTier: 'STUDENT' }, // ps
   { path: '/expansion-loop-calculator.html',      minTier: 'STUDENT' }, // el
   { path: '/l-bend-stress.html',                  minTier: 'STUDENT' }, // lb
-
-  // ── STUDENT-and-up course content (paid modules) ──
-  // Free preview piping-fundamentals-module-1.html is NOT listed → stays public.
   { path: '/course-piping-fundamentals.html',        minTier: 'STUDENT' },
   { path: '/course-static-stress.html',              minTier: 'STUDENT' },
-  { path: '/Fundamental-of-Pipeline-Engineering.html', minTier: 'STUDENT' }, // note caps
+  { path: '/Fundamental-of-Pipeline-Engineering.html', minTier: 'STUDENT' },
   { path: '/course-nonmetallic-piping.html',         minTier: 'STUDENT' },
-
-  // ── PROFESSIONAL-only calculators (everything not FREE or STUDENT) ──
   { path: '/flexibility-screening-calculator.html',    minTier: 'PROFESSIONAL' }, // fx
   { path: '/stress-critical-line-selector.html',       minTier: 'PROFESSIONAL' }, // scl
   { path: '/pipeline-crossing-calculator.html',        minTier: 'PROFESSIONAL' }, // pc
@@ -76,16 +73,13 @@ const PROTECTED = [
   { path: '/pipe-coating-insulation-calculator.html',  minTier: 'PROFESSIONAL' }, // ci
   { path: '/dia-inch-calculator.html',                 minTier: 'PROFESSIONAL' }, // di
   { path: '/piping-work-estimator.html',               minTier: 'PROFESSIONAL' }, // pe
-  { path: '/sectional-volume-calculator.html',         minTier: 'PROFESSIONAL' }, // sv  ⚠ "free" label is stale; gate follows CALC_TIER default
-  { path: '/cp-design-calculator.html',                minTier: 'PROFESSIONAL' }, // cp  ⚠ confirm still live; guide page may be STUDENT instead
+  { path: '/sectional-volume-calculator.html',         minTier: 'PROFESSIONAL' }, // sv
+  { path: '/cp-design-calculator.html',                minTier: 'PROFESSIONAL' }, // cp
 ];
 
 const MS_BASE = 'https://admin.memberstack.com';
 
 // ── HELPERS ─────────────────────────────────────────────────────────────
-
-// Cloudflare Pages serves CLEAN (extensionless) URLs: /x.html 308-redirects
-// to /x. Normalize so /x, /x.html and /x/ all resolve to the same rule.
 function normalize(pathname) {
   let p = pathname;
   if (p.length > 1 && p.endsWith('/')) p = p.slice(0, -1);
@@ -105,10 +99,8 @@ function readCookie(request, name) {
   return null;
 }
 
-// Verify JWT, then fetch the live member (verify-token does NOT return plans).
 async function fetchMember(token, secretKey) {
   const headers = { 'X-API-KEY': secretKey, 'Content-Type': 'application/json' };
-
   const v = await fetch(`${MS_BASE}/members/verify-token`, {
     method: 'POST', headers, body: JSON.stringify({ token }),
   });
@@ -116,7 +108,6 @@ async function fetchMember(token, secretKey) {
   const vData = await v.json();
   const memberId = vData?.data?.id;
   if (!memberId) return null;
-
   const m = await fetch(`${MS_BASE}/members/${memberId}`, { headers });
   if (!m.ok) return null;
   const mData = await m.json();
@@ -134,29 +125,30 @@ function resolveTier(member) {
 }
 
 // ── ENTRY POINT ─────────────────────────────────────────────────────────
-
 export async function onRequest(context) {
   const { request, env, next } = context;
-  const url = new URL(request.url);
 
+  // Gating disabled → everything passes through; client Block A gates instead.
+  if (!GATING_ENABLED) return next();
+
+  const url = new URL(request.url);
   const reqPath = normalize(url.pathname);
   const rule = PROTECTED.find((r) => normalize(r.path) === reqPath);
-  if (!rule) return next(); // public path → straight through
+  if (!rule) return next();
 
-  const token = readCookie(request, '_ms-mid');
+  const token = readCookie(request, COOKIE_NAME);
   let tier = 'FREE';
   if (token && env.MEMBERSTACK_SECRET_KEY) {
     try {
       const member = await fetchMember(token, env.MEMBERSTACK_SECRET_KEY);
       if (member) tier = resolveTier(member);
     } catch (_) {
-      tier = 'FREE'; // fail CLOSED on a protected path
+      tier = 'FREE';
     }
   }
 
   if (TIER_RANK[tier] >= TIER_RANK[rule.minTier]) return next();
 
-  // Deny: 403 JSON for fetch/API, 302 to pricing for page navigations.
   const accept = request.headers.get('Accept') || '';
   const wantsJson =
     url.pathname.startsWith('/api/') ||
