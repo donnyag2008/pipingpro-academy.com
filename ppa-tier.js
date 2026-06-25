@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════════
-   PipingPro Academy — Tier Resolver v1.0  (ppa-tier.js)
+   PipingPro Academy — Tier Resolver v1.1  (ppa-tier.js)
    ────────────────────────────────────────────────────────────────
    Single source of truth for "which plan does this member hold" and
    "is this member allowed to open calculator X."
@@ -15,19 +15,20 @@
    gate logic, on calculators.html AND every individual calc page:
        <script src="/ppa-tier.js"></script>
 
-   ⚠ VERIFY BEFORE PRODUCTION
-   The planConnections field names below (planId / status) must match
-   what your Memberstack version actually returns. Run
-   `await window.$memberstackDom.getCurrentMember()` as a real
-   Professional member and confirm before trusting this gate.
+   v1.1 — Admin plan (pln_admin-vzd0rgr) now maps to 'professional',
+          so an admin member is granted full access everywhere through
+          the normal tier path (no per-page admin hacks needed).
    ════════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
 
   // ── Memberstack plan IDs → tier name ─────────────────────────────
+  // Admin is just a member on the free Admin plan; mapping it to
+  // 'professional' grants access to every calculator via hasAccess().
   var PLAN_TIER = {
     'pln_student-plan-l416c0pbs': 'student',
-    'pln_professional-n2is0jc4' : 'professional'
+    'pln_professional-n2is0jc4' : 'professional',
+    'pln_admin-vzd0rgr'         : 'professional'   // ← Admin plan → full access
   };
 
   var RANK = { free: 0, student: 1, professional: 2 };
@@ -68,7 +69,6 @@
         var conns = (res && res.data && res.data.planConnections) || [];
         var best  = 'free';
         conns.forEach(function (c) {
-          // ⚠ field names to verify against your Memberstack response:
           var active = c.active === true
                     || c.status === 'ACTIVE'
                     || c.status === 'TRIALING';        // trial users MUST pass
