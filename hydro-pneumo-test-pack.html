@@ -11,17 +11,29 @@
 <!-- Memberstack -->
 <script data-memberstack-app="app_cmq9fsibv00720sujaqjm734o" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
 <script src="/ppa-tier.js"></script>
-<!-- PPA ACCESS GATE -->
+<!-- PPA ACCESS GATE (canonical Block A) -->
 <script>
 (function(){
   var THIS_CALC = 'hp';                       // ← change per page
   var UPGRADE = '/membership-plan.html';      // non-members land here
+  // ?admin=1 sets the admin flag (persists); ?admin=0 clears it (test as a normal user)
+  try{
+    var qs = new URLSearchParams(location.search);
+    if(qs.has('admin')){
+      if(qs.get('admin') === '0'){ localStorage.removeItem('ppa_admin'); }
+      else { localStorage.setItem('ppa_admin','1'); }
+    }
+  }catch(e){}
+  function isAdmin(){
+    try{ var v = localStorage.getItem('ppa_admin'); return v === '1' || v === 'true'; }
+    catch(e){ return false; }
+  }
   function gate(){
-    if(localStorage.getItem('ppa_admin') === '1') return;
+    if(isAdmin()) return;                     // admin always bypasses the paywall
     if(!window.PPATIER) return;
     if(window.PPATIER.requiredTier(THIS_CALC) === 'free') return;
     window.PPATIER.resolveTier().then(function(){
-      if(!window.PPATIER.hasAccess(THIS_CALC)) location.replace(UPGRADE);
+      if(!isAdmin() && !window.PPATIER.hasAccess(THIS_CALC)) location.replace(UPGRADE);
     }).catch(function(){ /* leave page as-is on error */ });
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', gate);
