@@ -24,6 +24,7 @@
        • a custom field  admin = true → set on the member in the dashboard      */
   var ADMIN_PLAN_IDS   = ['pln_admin-vzd0rgr'];
   var ADMIN_PERMISSION = 'admin';
+  var EMERGENCY_LOCAL_ADMIN = false;   // ← set true for LOCAL testing only; MUST be false in production
 
   function memberIsAdmin(m){
     if(!m) return false;
@@ -33,7 +34,10 @@
     if(perms.indexOf(ADMIN_PERMISSION) !== -1) return true;
     var pc = m.planConnections || [];
     for(var i=0;i<pc.length;i++){
-      if(pc[i] && pc[i].status === 'ACTIVE' && ADMIN_PLAN_IDS.indexOf(pc[i].planId) !== -1) return true;
+      if(pc[i] && ADMIN_PLAN_IDS.indexOf(pc[i].planId) !== -1){
+        var st = (pc[i].status || '').toString().toUpperCase();
+        if(st !== 'CANCELED' && st !== 'CANCELLED' && st !== 'EXPIRED' && st !== 'INACTIVE') return true;
+      }
     }
     return false;
   }
@@ -60,6 +64,9 @@
      // if(localStorage.getItem('ppa_admin') === '1') return; */
 
   function gate(){
+    if(EMERGENCY_LOCAL_ADMIN){
+      try{ if(localStorage.getItem('ppa_admin') === '1') return; }catch(e){}
+    }
     getMember().then(function(member){
       if(memberIsAdmin(member)) return;        // admin → full access, no redirect
       if(!window.PPATIER) return;
