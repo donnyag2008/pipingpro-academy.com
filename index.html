@@ -1561,7 +1561,7 @@ const ADMIN_EMAIL = 'admin@pipingpro-academy.com';
 // Memberstack plan IDs (confirmed via getApp)
 const MS_STUDENT_PLAN = 'pln_student-plan-l416c0pbs';
 const MS_PRO_PLAN     = 'pln_professional-n2is0jc4';
-
+const MS_ADMIN_PLAN   = 'pln_admin-vzd0rgr';
 // Shared state — every function reads/writes the SAME window slot
 window.MS_MEMBER = null;
 window.MS_PLAN   = null;   // 'professional' | 'student' | null
@@ -1580,7 +1580,7 @@ async function msLoadMember(){
         const active = member.planConnections.filter(p =>
           p.active || p.status === 'ACTIVE' || p.status === 'TRIALING');
         const ids = active.map(p => p.planId);
-        if (ids.includes(MS_PRO_PLAN))          window.MS_PLAN = 'professional';
+        if (ids.includes(MS_PRO_PLAN) || ids.includes(MS_ADMIN_PLAN)) window.MS_PLAN = 'professional';
         else if (ids.includes(MS_STUDENT_PLAN)) window.MS_PLAN = 'student';
       }
     }
