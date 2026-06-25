@@ -17,15 +17,20 @@
   var THIS_CALC = 'hp';                       // ← change per page
   var UPGRADE   = '/membership-plan.html';    // non-members land here
 
-  // Admin is decided by the logged-in Memberstack member (not a browser flag).
-  var ADMIN_PLAN_IDS   = ['pln_admin-vzd0rgr'];   // ← your only edit
+  /* Admin is decided by the logged-in Memberstack member — not a browser flag.
+     Grant admin by ANY ONE of these (set whichever you use; leave the others):
+       • membership of an Admin plan  → put its id in ADMIN_PLAN_IDS
+       • a Memberstack permission     → ADMIN_PERMISSION (attached to a plan)
+       • a custom field  admin = true → set on the member in the dashboard      */
+  var ADMIN_PLAN_IDS   = ['pln_admin-vzd0rgr'];
   var ADMIN_PERMISSION = 'admin';
 
   function memberIsAdmin(m){
     if(!m) return false;
     var cf = m.customFields || {};
     if(cf.admin === 'true' || cf.admin === true || cf.role === 'admin') return true;
-    if((m.permissions || []).indexOf(ADMIN_PERMISSION) !== -1) return true;
+    var perms = m.permissions || [];
+    if(perms.indexOf(ADMIN_PERMISSION) !== -1) return true;
     var pc = m.planConnections || [];
     for(var i=0;i<pc.length;i++){
       if(pc[i] && pc[i].status === 'ACTIVE' && ADMIN_PLAN_IDS.indexOf(pc[i].planId) !== -1) return true;
@@ -33,9 +38,10 @@
     return false;
   }
 
-  function whenMS(cb, tries){                  // wait for Memberstack to attach (~4s max)
+  function whenMS(cb, tries){                  // wait for Memberstack to attach (~4 s max)
     tries = (tries==null) ? 40 : tries;
-    if(window.$memberstackDom) return cb(window.$memberstackDom);
+    var ms = window.$memberstackDom;
+    if(ms) return cb(ms);
     if(tries<=0) return cb(null);
     setTimeout(function(){ whenMS(cb, tries-1); }, 100);
   }
@@ -49,8 +55,9 @@
     });
   }
 
-  // Emergency local override — uncomment ONLY if locked out before the admin plan is set:
-  // function localOverride(){ try{ return localStorage.getItem('ppa_admin')==='1'; }catch(e){ return false; } }
+  /* Emergency local override — keep commented; uncomment only if you lock yourself
+     out before the Memberstack admin marker is set:
+     // if(localStorage.getItem('ppa_admin') === '1') return; */
 
   function gate(){
     getMember().then(function(member){
