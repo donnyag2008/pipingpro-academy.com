@@ -778,6 +778,25 @@
 <script>
   // Free preview: only Module 1 is present on this page. Modules 2–5 are locked teasers.
   const MEMBERSHIP_URL = 'https://pipingpro-academy.com/membership';
+  const FULL_COURSE_URL = 'https://pipingpro-academy.com/course-piping-fundamentals.html';
+const STUDENT_PLAN = 'pln_student-plan-l416c0pbs';
+const PRO_PLAN     = 'pln_professional-n2is0jc4';
+
+let memberHasAccess = false;
+(function checkMember(){
+  if (localStorage.getItem('ppa_admin') === '1') { memberHasAccess = true; return; }
+  var ms = window.$memberstackDom;
+  if (!ms || !ms.getCurrentMember) return;
+  ms.getCurrentMember().then(function(r){
+    var member = (r && r.data) ? r.data : null;
+    if (member && Array.isArray(member.planConnections)) {
+      memberHasAccess = member.planConnections.some(function(p){
+        var live = p.active || p.status === 'ACTIVE' || p.status === 'TRIALING';
+        return live && (p.planId === STUDENT_PLAN || p.planId === PRO_PLAN);
+      });
+    }
+  }).catch(function(){});
+})();
   const MODULES = [
     { n:1, title:"Pipe Properties", sub:"Materials, sizes &amp; formulas", free:true, lessons:[
       ["m1l1","1.1 — Pipe Material Classification"],
