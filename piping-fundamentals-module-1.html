@@ -783,7 +783,7 @@
   const FULL_COURSE_URL = 'https://pipingpro-academy.com/course-piping-fundamentals.html';
 const STUDENT_PLAN = 'pln_student-plan-l416c0pbs';
 const PRO_PLAN     = 'pln_professional-n2is0jc4';
-
+const ADMIN_PLAN   = 'pln_admin-vzd0rgr';
 let memberHasAccess = false;
 (function checkMember(){
   if (localStorage.getItem('ppa_admin') === '1') { memberHasAccess = true; return; }
@@ -794,7 +794,7 @@ let memberHasAccess = false;
     if (member && Array.isArray(member.planConnections)) {
       memberHasAccess = member.planConnections.some(function(p){
         var live = p.active || p.status === 'ACTIVE' || p.status === 'TRIALING';
-        return live && (p.planId === STUDENT_PLAN || p.planId === PRO_PLAN);
+        return live && (p.planId === STUDENT_PLAN || p.planId === PRO_PLAN || p.planId === ADMIN_PLAN);
       });
     }
   }).catch(function(){});
