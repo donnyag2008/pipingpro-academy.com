@@ -10,19 +10,19 @@
   <!-- Memberstack -->
 <script data-memberstack-app="app_cmq9fsibv00720sujaqjm734o" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
 
-<!-- PPA COURSE GATE (any paid plan = access) -->
+<!-- PPA COURSE GATE — unified (whole course = any paid plan, incl. admin) -->
 <script>
 (function(){
   var STUDENT_PLAN = 'pln_student-plan-l416c0pbs';
-var PRO_PLAN     = 'pln_professional-n2is0jc4';
-var ADMIN_PLAN   = 'pln_admin-vzd0rgr';
-  if(localStorage.getItem('ppa_admin') === '1') return; // admin bypass
-
+  var PRO_PLAN     = 'pln_professional-n2is0jc4';
+  var ADMIN_PLAN   = 'pln_admin-vzd0rgr';
+  var REDIRECT     = '/membership-plan';   // where non-members are sent
+  if (localStorage.getItem('ppa_admin') === '1') return; // devtools admin bypass
   function hasPaidPlan(member){
     if(!member || !Array.isArray(member.planConnections)) return false;
     return member.planConnections.some(function(p){
       var live = p.active || p.status === 'ACTIVE' || p.status === 'TRIALING';
-      return live && (p.planId === STUDENT_PLAN || p.planId === PRO_PLAN);
+      return live && (p.planId === STUDENT_PLAN || p.planId === PRO_PLAN || p.planId === ADMIN_PLAN);
     });
   }
   function gate(){
@@ -295,27 +295,7 @@ var ADMIN_PLAN   = 'pln_admin-vzd0rgr';
 </style>
 </head>
 
-<script>
-/* ============ MEMBER GATE (PAYWALL) ============
-   Subscribers/admins only. Mirrors isMember() used across the site.
-   Module 1 is free; deeper modules require membership. Honours
-   ?admin=PPA-ADMIN-2026 and ?preview_member=1 for testing. */
-(function(){
-  var ADMIN_KEY = 'PPA-ADMIN-2026';
-  try {
-    var p = new URLSearchParams(window.location.search);
-    if (p.get('admin') === ADMIN_KEY) { localStorage.setItem('ppa_admin','1'); window.history.replaceState({}, '', window.location.pathname); }
-    if (p.get('preview_member') === '1') { sessionStorage.setItem('ppa_member','1'); }
-  } catch(e){}
-  window.PPA_isMember = function(){
-    try {
-      if (localStorage.getItem('ppa_admin') === '1') return true;
-      if (sessionStorage.getItem('ppa_admin') === '1') return true;
-      return localStorage.getItem('ppa_member') === '1' || sessionStorage.getItem('ppa_member') === '1';
-    } catch(e){ return false; }
-  };
-})();
-</script>
+
 
 <body>
 
@@ -879,13 +859,8 @@ P = <span class="result">200 psi (&asymp; 13.8 bar)</span></div>
   const progFill = document.getElementById('progFill');
   const progLabel = document.getElementById('progLabel');
 
-  /* Module 1 free; modules 2–5 require membership */
-  function gateModule(n){
-    if (n === 1) return 1;
-    if (window.PPA_isMember && window.PPA_isMember()) return n;
-    window.location.href = 'courses.html';
-    return 1;
-  }
+  /* whole course gated by Block A; per-module pass-through */
+  function gateModule(n){ return n; }
 
   function showModule(n) {
     n = gateModule(n);
