@@ -10,6 +10,62 @@
 
 <!-- Memberstack -->
 <script data-memberstack-app="app_cmq9fsibv00720sujaqjm734o" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
+
+<!-- PPA ADMIN REDIRECT GUARD — must load BEFORE ppa-tier.js. Cancels any redirect
+     to membership-plan for an admin member, no matter which script triggers it. -->
+<script>
+(function(){
+  var ADMIN_PLAN_IDS = ['pln_admin-vzd0rgr'];   // your Memberstack Admin plan id(s)
+  var UPGRADE_MATCH  = 'membership-plan';        // redirects containing this are held for admins
+  var decided = false, isAdmin = false, held = null;
+
+  function wrap(orig){
+    return function(u){
+      if(typeof u === 'string' && u.indexOf(UPGRADE_MATCH) !== -1){
+        if(decided){ if(!isAdmin) return orig.call(location, u); return; }  // admin → swallow
+        held = function(){ return orig.call(location, u); };               // hold until we know
+        return;
+      }
+      return orig.call(location, u);
+    };
+  }
+  try{
+    location.replace = wrap(location.replace.bind(location));
+    location.assign  = wrap(location.assign.bind(location));
+  }catch(e){}
+
+  function decide(admin){
+    decided = true; isAdmin = admin;
+    if(!admin && held){ var f = held; held = null; f(); }   // not admin → run the held redirect
+  }
+  function memberIsAdmin(m){
+    if(!m) return false;
+    var cf = m.customFields || {};
+    if(cf.admin === 'true' || cf.admin === true || cf.role === 'admin') return true;
+    if((m.permissions || []).indexOf('admin') !== -1) return true;
+    var pc = m.planConnections || [];
+    for(var i=0;i<pc.length;i++){
+      if(pc[i] && ADMIN_PLAN_IDS.indexOf(pc[i].planId) !== -1){
+        var st = (pc[i].status || '').toString().toUpperCase();
+        if(st !== 'CANCELED' && st !== 'CANCELLED' && st !== 'EXPIRED' && st !== 'INACTIVE') return true;
+      }
+    }
+    return false;
+  }
+  function check(tries){
+    tries = (tries==null) ? 50 : tries;
+    var ms = window.$memberstackDom;
+    if(!ms || typeof ms.getCurrentMember !== 'function'){
+      if(tries<=0) return decide(false);
+      return setTimeout(function(){ check(tries-1); }, 100);
+    }
+    ms.getCurrentMember().then(function(r){ decide(memberIsAdmin(r ? r.data : null)); })
+                         .catch(function(){ decide(false); });
+  }
+  check();
+})();
+</script>
+
 <script src="/ppa-tier.js"></script>
 <!-- PPA ACCESS GATE (canonical Block A) -->
 <script>
@@ -732,7 +788,7 @@ table.reg td.n{text-align:right;font-family:var(--mono);}
   </div>
 
   <!-- SAES-A-007 Lay-up & Water Treatment -->
-  <div class="card">
+  <div class="card" id="card-layup">
     <div class="ctitle"><span class="ctitle-icon">🧫</span>SAES-A-007 Lay-up &amp; Water Treatment <span style="font-size:11px;font-weight:400;color:#b8a890;margin-left:6px;">Rev. Oct 2025 · threshold logic</span></div>
     <div class="fg4">
       <div class="field">
@@ -785,7 +841,7 @@ table.reg td.n{text-align:right;font-family:var(--mono);}
   </div>
 
   <!-- Isolation-Plug Time Saving -->
-  <div class="card">
+  <div class="card" id="card-plug">
     <div class="ctitle"><span class="ctitle-icon">🔩</span>Isolation-Plug Time Saving <span style="font-size:11px;font-weight:400;color:#b8a890;margin-left:6px;">vs welded heads / spades</span></div>
     <div class="fg3">
       <div class="field"><label>Test-head fab + fit (h)</label><input type="number" id="c-fab" value="6" step="0.5" oninput="renderPlug()"></div>
@@ -805,6 +861,49 @@ table.reg td.n{text-align:right;font-family:var(--mono);}
       <div class="field"><label>Crew cost (optional, /h)</label><input type="number" id="x-rate" value="0" step="1" oninput="renderPlug()"></div>
     </div>
     <div id="plug-result" style="margin-top:1rem;"></div>
+  </div>
+
+  <!-- Pneumatic Depressurisation & Reinstatement (pneumatic only) -->
+  <div class="card" id="card-depress" style="display:none;">
+    <div class="ctitle"><span class="ctitle-icon">💨</span>Pneumatic Depressurisation &amp; Reinstatement <span style="font-size:11px;font-weight:400;color:#b8a890;margin-left:6px;">controlled gas release · return to service</span></div>
+    <div class="fg3">
+      <div class="field">
+        <label>Max depress. rate (barg/min)</label>
+        <input type="number" id="d-rate" value="1" min="0.05" max="20" step="0.05" oninput="renderDepress()">
+        <span class="tplus-hint">throttled bleed — limits Joule–Thomson cooling &amp; seat damage</span>
+      </div>
+      <div class="field">
+        <label>Purge volume changes</label>
+        <input type="number" id="d-purge" value="5" min="1" max="20" step="0.5" oninput="renderDepress()">
+        <span class="tplus-hint">N₂ dilution to reach O₂ ≥ 19.5 %</span>
+      </div>
+      <div class="field">
+        <label>Mechanical reinstatement (h)</label>
+        <input type="number" id="d-mech" value="4" min="0" max="100" step="0.5" oninput="renderDepress()">
+        <span class="tplus-hint">blinds/plugs out, PSVs &amp; instruments back</span>
+      </div>
+    </div>
+
+    <div class="pres-display" id="depress-display" style="grid-template-columns:repeat(3,minmax(0,1fr));">
+      <div class="pd-block highlight">
+        <div class="pd-val" id="pd-depress-time">—</div>
+        <div class="pd-unit">controlled bleed</div>
+        <div class="pd-label">Depressurise time</div>
+      </div>
+      <div class="pd-block">
+        <div class="pd-val" id="pd-purge-vol">—</div>
+        <div class="pd-unit" id="pd-purge-unit">Nm³ vent gas</div>
+        <div class="pd-label" id="pd-purge-label">Vent / purge gas</div>
+      </div>
+      <div class="pd-block">
+        <div class="pd-val" id="pd-reinstate">—</div>
+        <div class="pd-unit">depress → ready</div>
+        <div class="pd-label">Return to service</div>
+      </div>
+    </div>
+
+    <div id="depress-result" style="margin-top:1rem;"></div>
+    <p style="font-size:11px;color:var(--ink3);margin-top:10px;line-height:1.6;" id="depress-note"></p>
   </div>
 
   <!-- Scope -->
@@ -1024,6 +1123,15 @@ function updateCalc() {
   const v = computeVolumes(getHoldMins());
   const isPneumoVol = (testType === 'pneumo');
 
+  // Pneumatic tab: drop the water-only cards, surface the gas-release card instead
+  const layupCard   = document.getElementById('card-layup');
+  const plugCard    = document.getElementById('card-plug');
+  const depressCard = document.getElementById('card-depress');
+  if (layupCard)   layupCard.style.display   = isPneumoVol ? 'none' : '';
+  if (plugCard)    plugCard.style.display    = isPneumoVol ? 'none' : '';
+  if (depressCard) depressCard.style.display = isPneumoVol ? '' : 'none';
+  if (isPneumoVol) renderDepress();
+
   document.getElementById('vol-card-title').textContent = isPneumoVol ? 'Test-Pack Gas Volume' : 'Test-Pack Water Volume';
   document.getElementById('vol-card-sub').textContent   = isPneumoVol ? 'pneumatic medium — free air estimate' : 'hydrostatic fill estimate';
   document.getElementById('vt-water').style.display      = isPneumoVol ? 'none' : '';
@@ -1076,6 +1184,73 @@ function updateCalc() {
   document.getElementById('vol-card-note').innerHTML = isPneumoVol
     ? 'Contained volume = π/4 · ID² · L (+3% fittings). Free gas = contained × (P<sub>test,abs</sub> / P<sub>atm</sub>), Boyle&rsquo;s law. Stored energy per ASME PCC-2 Eq. II-2: E = [1/(k&minus;1)]·P<sub>t</sub>·V·[1&minus;(P<sub>a</sub>/P<sub>t</sub>)<sup>(k&minus;1)/k</sup>], k = 1.4. Safe distance = greater of the tiered minimum (30 m ≤ 135.5 MJ; 60 m ≤ 271 MJ) and the blast-scaled R = 20·(kg TNT)<sup>1/3</sup> (App. 501-III). Full line volume used (conservative); PCC-2 permits capping piping at 8 pipe-diameters per single failure. Fragment-throw distances (Table 501-III-2-1) may govern and are not shown.' + energyNote
     : 'Volume = π/4 · ID² · L with a 3% fittings/manifold allowance (ID = OD − 2·wall). Fill / drain / hold timing is execution-planning detail — see the generated Test Pack and the Theory tab for SAES-A-007 water-contact limits.';
+}
+
+function renderDepress() {
+  const card = document.getElementById('card-depress');
+  if (!card) return;
+
+  const base  = getBasePressure();
+  const testP = Math.round(base * getTestFactor() * 10) / 10;   // barg
+  const v     = computeVolumes(getHoldMins());                  // {volM3, volL, ...} or null
+  const rate  = parseFloat(document.getElementById('d-rate').value)  || 1;
+  const chg   = parseFloat(document.getElementById('d-purge').value) || 0;
+  const mech  = parseFloat(document.getElementById('d-mech').value)  || 0;
+  const medium = document.getElementById('test-medium').value;
+  const isN2   = (medium === 'nitrogen');
+
+  // Controlled depressurisation (first-order linear bleed): testP barg → 0 at the chosen rate
+  const depressMin = rate > 0 ? testP / rate : NaN;
+
+  // Vent / purge gas — geometric contained volume; for N2 multiply by the dilution changes
+  let purgeVal = null, purgeUnit = 'Nm³ vent gas', purgeLabel = 'Vent / purge gas';
+  if (v) {
+    if (isN2) { purgeVal = v.volM3 * chg; purgeUnit = 'm³ purge';  purgeLabel = 'N₂ purge volume'; }
+    else      { purgeVal = v.volM3;       purgeUnit = 'm³ vented'; purgeLabel = 'Vented gas vol.'; }
+  }
+
+  // Return-to-service window: depressurise + (N2 purge/verify allowance) + mechanical reinstatement
+  const reinstateMin = (isFinite(depressMin) ? depressMin : 0) + (isN2 ? 30 : 0) + mech * 60;
+
+  document.getElementById('pd-depress-time').textContent = fmtDur(depressMin);
+  document.getElementById('pd-purge-vol').textContent    = purgeVal == null ? '—'
+        : purgeVal.toLocaleString('en-GB', {maximumFractionDigits: 1});
+  document.getElementById('pd-purge-unit').textContent   = purgeUnit;
+  document.getElementById('pd-purge-label').textContent  = purgeLabel;
+  document.getElementById('pd-reinstate').textContent    = reinstateMin > 0 ? fmtDur(reinstateMin) : '—';
+
+  // ── Guidance flags ──
+  const o = [];
+
+  // 1. How to release the gas
+  o.push('<div class="lz-flag lz-info"><span class="lz-ic">▼</span><div><b>Release the gas — controlled, never sudden.</b> '
+    + 'Bleed down through a throttled vent/needle valve to a safe discharge point (vent stack or remote area, well clear of personnel and ignition sources). '
+    + 'Hold the exclusion zone from the Gas-Volume card until the gauge reads <b>0 barg</b> and the system is positively isolated. '
+    + 'Limit the rate — rapid release causes Joule–Thomson auto-refrigeration at the vent: icing, possible low-temperature embrittlement of valve internals, and seat/disc damage.</div></div>');
+
+  // 2. The duration
+  o.push('<div class="lz-flag lz-info"><span class="lz-ic">⏱</span><div><b>Duration.</b> '
+    + 'At a controlled ' + rate.toLocaleString('en-GB', {maximumFractionDigits: 2}) + ' barg/min, a ' + testP.toFixed(1) + ' barg charge bleeds down in &asymp; <b>' + fmtDur(depressMin) + '</b> (first-order linear estimate). '
+    + 'Large-bore or cold systems where JT cooling governs need a proper blowdown / depressurisation study (API 521) rather than this linear figure.</div></div>');
+
+  // 3. Asphyxiation / atmosphere (medium-dependent)
+  if (isN2) {
+    o.push('<div class="lz-flag lz-warn"><span class="lz-ic">△</span><div><b>Nitrogen — asphyxiation hazard.</b> '
+      + 'After depressurising, purge/ventilate (&asymp; ' + (v ? (v.volM3 * chg).toLocaleString('en-GB', {maximumFractionDigits: 1}) + ' m³ over ' + chg : chg) + ' volume changes) and <b>verify O₂ ≥ 19.5 %</b> with a calibrated monitor before breaking any flange, opening the system, or any entry. Treat the boundary as an inert-gas confined space until cleared.</div></div>');
+  } else {
+    o.push('<div class="lz-flag lz-ok"><span class="lz-ic">✓</span><div><b>Compressed air — no asphyxiation concern,</b> but still depressurise fully to 0 barg and confirm isolation before opening. (Air is prohibited in un-cleaned hydrocarbon systems — see the safety panel.)</div></div>');
+  }
+
+  // 4. Reinstatement
+  o.push('<div class="lz-flag lz-ok"><span class="lz-ic">↺</span><div><b>Reinstate / return to service.</b> '
+    + 'A pneumatic test leaves the system <b>dry</b> — there is no dewatering, drying or SAES-A-007 water-contact clock to manage. '
+    + 'Once depressurised to 0 barg' + (isN2 ? ', purged and O₂-verified' : ' and isolation confirmed') + ': remove all temporary blinds / plugs / test caps (verify count matches installed), reinstate in-line equipment, re-fit relief valves and reconnect instruments, then update the line for service. '
+    + 'Indicative window from end-of-hold to ready &asymp; <b>' + fmtDur(reinstateMin) + '</b> (depressurise' + (isN2 ? ' + purge/verify' : '') + ' + ' + mech + ' h mechanical).</div></div>');
+
+  document.getElementById('depress-result').innerHTML = o.join('');
+  document.getElementById('depress-note').innerHTML =
+    'Depressurise time = test pressure ÷ chosen bleed rate (controlled linear assumption). Purge volume = contained geometric volume' + (isN2 ? ' × dilution changes' : '') + '. '
+    + 'Return-to-service is an execution-planning estimate, not a code requirement — confirm the depressurisation rate, vent routing and atmosphere-verification against the project test procedure and ASME PCC-2 / SAES-A-004.';
 }
 
 function clItem(text, tag) {
