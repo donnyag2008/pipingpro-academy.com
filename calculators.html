@@ -21,18 +21,20 @@
 body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);font-size:15px;line-height:1.6;min-height:100vh;}
 
 /* ─── NAV ─── */
-nav{background:rgba(245,242,235,0.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--rule);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:200;}
-.nav-logo{font-family:'DM Serif Display',serif;font-size:17px;color:var(--ink);text-decoration:none;}
-.nav-logo span{color:var(--accent);}
-.nav-back{font-size:13px;color:var(--ink2);text-decoration:none;display:flex;align-items:center;gap:5px;}
-.nav-back:hover{color:var(--accent);}
+nav{background:#1a1510;border-bottom:2px solid #b8860b;padding:0 5%;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:200;}
+.nav-logo{font-family:'DM Serif Display',serif;font-size:1.15rem;color:#d4a017;letter-spacing:.02em;text-decoration:none;}
+.nav-logo span{color:#b8860b;}
+.nav-back{font-size:.82rem;font-weight:500;letter-spacing:.05em;text-transform:uppercase;color:#ccc;text-decoration:none;display:flex;align-items:center;gap:5px;transition:color .2s;}
+.nav-back:hover{color:#d4a017;}
 
 /* ─── HERO ─── */
-.hero{background:var(--ink);color:var(--paper);padding:3.5rem 2rem 3rem;text-align:center;border-bottom:3px solid var(--accent);position:relative;overflow:hidden;}
+.hero{background:var(--ink);color:var(--paper);padding:2.4rem 5% 2rem;border-bottom:3px solid var(--accent);position:relative;overflow:hidden;}
+.hero-inner{position:relative;max-width:900px;margin:0 auto;}
 .hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 60px),repeating-linear-gradient(0deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 60px);}
-.hero-eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);margin-bottom:.9rem;font-family:'DM Mono',monospace;position:relative;}
-.hero h1{font-family:'DM Serif Display',serif;font-size:clamp(2rem,5vw,3.2rem);line-height:1.1;margin-bottom:.9rem;position:relative;}
-.hero p{font-size:14px;color:rgba(245,242,235,0.6);max-width:500px;margin:0 auto;position:relative;}
+.hero-eyebrow{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);margin-bottom:.7rem;font-family:'DM Mono',monospace;position:relative;}
+.hero h1{font-family:'DM Serif Display',serif;font-size:clamp(2rem,5vw,3rem);line-height:1.12;margin-bottom:.7rem;position:relative;}
+.hero h1 em{font-style:italic;color:#d4a017;}
+.hero p{font-size:.95rem;color:rgba(250,246,239,0.62);max-width:62ch;position:relative;}
 
 /* ─── MAIN ─── */
 .main{max-width:960px;margin:0 auto;padding:2.5rem 1.5rem;}
@@ -338,9 +340,11 @@ body{ background:#faf6ef; color:#1a1510; }
 </div>
 
 <div class="hero">
-  <div class="hero-eyebrow">Engineering Calculator Suite · PipingPro Academy</div>
-  <h1>Piping &amp; Pipeline <em>Calculators</em></h1>
-  <p>Professional-grade tools based on ASME, API, DNV and industry-standard codes — by Donny A. Bachtiar, CEO &amp; Founder of Zephrum Konsultan Limited.</p>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Engineering Calculator Suite · PipingPro Academy</div>
+    <h1>Piping &amp; Pipeline <em>Calculators</em></h1>
+    <p>Professional-grade tools based on ASME, API, DNV and industry-standard codes — by Donny A. Bachtiar, CEO &amp; Founder of Zephrum Konsultan Limited.</p>
+  </div>
 </div>
 
 <!-- TAB BAR -->
@@ -353,10 +357,6 @@ body{ background:#faf6ef; color:#1a1510; }
     <a href="calculators.html" class="tab-link active">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M9 7h6M9 11h6M9 15h3"/></svg>
       Calculator Suite
-    </a>
-    <a href="guides.html" class="tab-link">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M9 7h6M9 11h6M9 15h3"/></svg>
-      Technical Article
     </a>
   </div>
 </div>
@@ -418,16 +418,7 @@ body{ background:#faf6ef; color:#1a1510; }
 
     </div>
   </div>
-</div>
-  <footer>
-  <div class="footer-brand">PipingPro Academy</div>
-   <div class="footer-copy">© 2026 PipingPro Academy. All rights reserved.</div>
-
- 
-</footer>
-  
-  
-  <!-- /landing-view -->
+</div><!-- /landing-view -->
 
 <!-- ═══════════════ SUITE VIEW: PIPING ═══════════════ -->
 <div class="suite-view" id="suite-piping">
@@ -1010,6 +1001,12 @@ body{ background:#faf6ef; color:#1a1510; }
   </div>
 </div>
 
+<footer>
+  <div class="footer-brand">PipingPro Academy</div>
+   <div class="footer-copy">© 2026 PipingPro Academy. All rights reserved.</div>
+<script src="/counter.js"></script>
+ 
+</footer>
 
 <!-- ═══════════════════ NON-MEMBER POPUP — 280px compact ═══════════════════ -->
 <div class="modal-bg" id="modal-bg" onclick="closeModalBg(event)">
