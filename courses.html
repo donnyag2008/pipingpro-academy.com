@@ -237,7 +237,7 @@ footer a{color:var(--gold-bright);text-decoration:none;}
     <!-- Course 1 -->
     <div class="course-card" id="card-piping-fund" onclick="openCourse('piping-fund')">
       <div class="course-banner bg-rust">
-        <span class="course-badge badge-members" id="badge-static-stress">👑 Members</span>
+        <span class="course-badge badge-members" id="badge-piping-fund">👑 Members</span>
         <svg class="course-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M32 14 L58 25 L32 36 L6 25 Z" fill="rgba(255,255,255,0.92)"/>
           <path d="M16 30 V42 C16 47 48 47 48 42 V30" stroke="rgba(255,255,255,0.85)" stroke-width="2.6" fill="none"/>
@@ -250,7 +250,7 @@ footer a{color:var(--gold-bright);text-decoration:none;}
         <div class="course-name">Fundamental of Piping Engineering</div>
         <div class="course-sub">Course 01 · Foundation · ASME B31.3</div>
         <div class="course-desc">Build a solid foundation — codes &amp; standards, materials, sizing, components, layout and supports. Five structured modules taking you from first principles to plant-floor confidence.</div>
-       <button class="suite-btn locked" id="btn-static-stress">👑 Members Only</button>
+       <button class="suite-btn locked" id="btn-piping-fund">👑 Members Only</button>
       </div>
     </div>
 
@@ -301,7 +301,7 @@ footer a{color:var(--gold-bright);text-decoration:none;}
     <!-- Course 4 — Non-Metallic Piping Essentials -->
     <div class="course-card" id="card-nonmetallic" onclick="openCourse('nonmetallic')">
       <div class="course-banner bg-teal">
-        <span class="course-badge badge-unlocked" id="badge-nonmetallic">✦ Module 1 Free</span>
+        <span class="course-badge badge-members" id="badge-nonmetallic">👑 Members</span>
         <svg class="course-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
           <circle cx="32" cy="32" r="21" stroke="rgba(255,255,255,0.9)" stroke-width="3"/>
           <circle cx="32" cy="32" r="14" stroke="rgba(255,210,130,0.95)" stroke-width="2.6" stroke-dasharray="3.4 3.4"/>
@@ -313,7 +313,7 @@ footer a{color:var(--gold-bright);text-decoration:none;}
         <div class="course-name">Non-Metallic Piping Essentials</div>
         <div class="course-sub">Course 04 · Non-Metallic · API 15LE / 15S</div>
         <div class="course-desc">HDPE and composite pipe for oil &amp; gas — families &amp; selection, the API 15LE pressure-rating method, reinforced spoolable RTP/TCP, chemical resistance, and design, jointing &amp; installation.</div>
-        <button class="suite-btn open" id="btn-nonmetallic">Start Module 1 — Free →</button>
+        <button class="suite-btn locked" id="btn-nonmetallic">👑 Members Only</button>
       </div>
     </div>
 
@@ -430,7 +430,6 @@ const COURSES = {
     kicker: 'Course 01 · Foundation',
     bg: 'bg-rust',
     file: 'course-piping-fundamentals.html',
-    freeModule: 'piping-fundamentals-module-1.html',
     desc: 'A complete grounding in piping engineering for graduates and engineers crossing into the discipline. Each module builds on the last, ending with a graded quiz and a shareable certificate.',
     meta: ['5 modules', '1 quiz', 'Self-paced', 'Certificate'],
     modules: [
@@ -500,20 +499,15 @@ const COMING_SOON = {
   'dynamic-stress': 'Dynamic Stress Analysis'
 };
 
-// ─── ADMIN BYPASS ────────────────────────────────────────────
-const ADMIN_KEY = 'PPA-ADMIN-2026';
-const ADMIN_EMAIL = 'admin@pipingpro-academy.com';
-(function(){
-  const p = new URLSearchParams(window.location.search);
-  if(p.get('admin') === ADMIN_KEY){
-    localStorage.setItem('ppa_admin','1');
-    window.history.replaceState({},'',window.location.pathname);
-  }
-})();
+// ─── ADMIN ─────────────────────────────────────────────────
+// Admin access is granted via the Memberstack admin plan (pln_admin-vzd0rgr),
+// detected below. The old ?admin=KEY URL bypass and hardcoded login
+// credential have been removed (they were a public backdoor).
 
 // ─── MEMBERSTACK PLAN DETECTION (single source of truth on window) ───
 const MS_STUDENT_PLAN = 'pln_student-plan-l416c0pbs';
 const MS_PRO_PLAN     = 'pln_professional-n2is0jc4';
+const MS_ADMIN_PLAN   = 'pln_admin-vzd0rgr';
 
 window.MS_MEMBER = null;
 window.MS_PLAN   = null;   // 'professional' | 'student' | null
@@ -532,7 +526,8 @@ async function msLoadMember(){
         const active = member.planConnections.filter(p =>
           p.active || p.status === 'ACTIVE' || p.status === 'TRIALING');
         const ids = active.map(p => p.planId);
-        if(ids.includes(MS_PRO_PLAN))          window.MS_PLAN = 'professional';
+        if(ids.includes(MS_ADMIN_PLAN))        window.MS_PLAN = 'professional';
+        else if(ids.includes(MS_PRO_PLAN))     window.MS_PLAN = 'professional';
         else if(ids.includes(MS_STUDENT_PLAN)) window.MS_PLAN = 'student';
       }
     }
@@ -559,17 +554,10 @@ function initCards(){
       btn.textContent = 'Open Course →';
       btn.className = 'suite-btn open';
     } else {
-      if(COURSES[id] && COURSES[id].freeModule){
-        badge.textContent = '✦ Module 1 Free';
-        badge.className = 'course-badge badge-unlocked';
-        btn.textContent = 'Start Module 1 — Free →';
-        btn.className = 'suite-btn open';
-      } else {
-        badge.textContent = '👑 Members';
-        badge.className = 'course-badge badge-members';
-        btn.textContent = '👑 Members Only';
-        btn.className = 'suite-btn locked';
-      }
+      badge.textContent = '👑 Members';
+      badge.className = 'course-badge badge-members';
+      btn.textContent = '👑 Members Only';
+      btn.className = 'suite-btn locked';
     }
   });
 }
@@ -606,13 +594,8 @@ function openCourse(id){
     hint.style.display = 'none';
   } else {
     var subBtn = '<a href="index.html#pricing" class="modal-btn modal-btn-sub">👑 Subscribe to Unlock</a>';
-    if(c.freeModule){
-      actions.innerHTML = '<a href="' + c.freeModule + '" class="modal-btn modal-btn-open">Start Module 1 — Free →</a>' + subBtn;
-      hint.textContent = 'Module 1 is free · subscribe to unlock all 5 modules + quiz';
-    } else {
-      actions.innerHTML = subBtn;
-      hint.textContent = 'Full course included with membership · subscribe to unlock';
-    }
+    actions.innerHTML = subBtn;
+    hint.textContent = 'Full course included with membership · subscribe to unlock';
     hint.style.display = 'block';
   }
 
@@ -652,7 +635,7 @@ function openLoginModal(){
     document.getElementById('lmodal-avatar').textContent   = isAdmin ? '🛡️' : '✓';
     document.getElementById('lmodal-welcome').textContent  = isAdmin ? 'Admin Access Active' : 'Subscriber Access Active';
     document.getElementById('lmodal-email-display').textContent = isAdmin
-      ? ADMIN_EMAIL
+      ? 'Admin'
       : (localStorage.getItem('ppa_member_email') || 'Active subscription');
   } else {
     document.getElementById('lmodal-email').value = '';
@@ -688,11 +671,6 @@ function doLogin(){
   const password = document.getElementById('lmodal-password').value.trim();
   const err = document.getElementById('lmodal-err');
   err.style.display = 'none';
-  if(email === ADMIN_EMAIL && password === ADMIN_KEY){
-    localStorage.setItem('ppa_admin','1');
-    closeLModal(); location.reload();
-    return;
-  }
   const ms = window.$memberstackDom;
   if(!ms || !ms.loginMemberEmailPassword){
     err.textContent = 'Login is temporarily unavailable. Please try again shortly.';
