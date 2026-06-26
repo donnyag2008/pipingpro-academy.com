@@ -252,19 +252,24 @@
 
 <script>
 /* ── PRICING: geo-band detection + billing toggle + Memberstack checkout ──
-   Carried over verbatim from index.html so behaviour matches exactly.
-   NOTE: Professional uses the standard (non-trial) price IDs below. To launch
-   the 7-day trial, swap the headline monthly/annual IDs here for the
-   trial-enabled price IDs you created in Memberstack. */
+   Carried over from index.html so behaviour matches exactly.
+   TRIAL LAUNCH (headline band): the headline monthly/annual IDs below are the
+   7-day-trial-enabled prices created in Memberstack. Mid and lower bands
+   remain on standard immediate-charge prices by design (headline-first rollout).
+   The 7-day trial behaviour rides entirely on the price ID — Memberstack holds
+   the trial on the price, and purchasePlansWithCheckout passes it straight through. */
 (function(){
   // Professional price IDs by band + billing interval (USD)
   const BANDS = {
-    headline:{ label:'',         monthly:{id:'prc_pro-headline-monthly-cl9e0opd', amt:12}, annual:{id:'prc_pro-headline-annual-95iw0jen', amt:120} },
+    headline:{ label:'',         monthly:{id:'prc_professional-monthly-7-day-trial-headline--9i1k06nt', amt:12}, annual:{id:'prc_professional-annual-7-day-trial-headline--781m06sb', amt:120} },
     mid:     { label:'regional', monthly:{id:'prc_pro-mid-monthly-hd16n0pay',     amt:4},  annual:{id:'prc_pro-mid-annual-p99h0o63',      amt:39}  },
     lower:   { label:'regional', monthly:{id:'prc_pro-lower-monthly-8tiz0jxn',    amt:3},  annual:{id:'prc_pro-lower-annual-f6j00j4i',    amt:30}  }
   };
   const MID_COUNTRIES   = ['IN','ID'];                 // India, Indonesia
   const LOWER_COUNTRIES = ['EG','MA','DZ','TN'];       // Egypt, Morocco, Algeria, Tunisia
+
+  // Which bands run a 7-day trial (drives the card note copy only)
+  const TRIAL_BANDS = ['headline'];
 
   var band = 'headline';      // default; unmapped countries stay headline
   var billing = 'monthly';
@@ -274,11 +279,18 @@
     var priceEl  = document.getElementById('pro-price');
     var periodEl = document.getElementById('pro-period');
     var geoEl    = document.getElementById('geo-note');
+    var noteEl   = document.getElementById('pro-note');
     if(priceEl)  priceEl.textContent = b.amt;
     if(periodEl) periodEl.textContent = (billing === 'monthly') ? 'per month' : 'per year';
     if(geoEl)    geoEl.textContent = (band === 'headline')
       ? 'Pricing shown for your region.'
       : 'Regional pricing applied for your country.';
+    if(noteEl){
+      var per = (billing === 'monthly') ? '/mo' : '/yr';
+      noteEl.textContent = (TRIAL_BANDS.indexOf(band) !== -1)
+        ? '7-day free trial, then $' + b.amt + per + ' · cancel anytime'
+        : '$' + b.amt + per + ' · cancel anytime';
+    }
   }
 
   window.ppaSetBilling = function(mode){
