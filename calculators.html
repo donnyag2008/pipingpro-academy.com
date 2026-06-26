@@ -1129,7 +1129,9 @@ function refreshNavAuth(){
     el.innerHTML='<span class="nav-badge nav-badge-sub">✓ Subscriber</span>'
       +'<button class="login-btn logged-in" onclick="doLogout()">Logout</button>';
   } else {
-    el.innerHTML='<button class="login-btn" id="nav-login-btn" onclick="openLoginModal()">Login</button>';
+    el.innerHTML=
+      '<a href="/membership-plan.html" class="login-btn" id="nav-join-btn" style="text-decoration:none;display:inline-flex;align-items:center;">Join Now</a>'
+      +'<button id="nav-login-btn" onclick="openLoginModal()" style="font-size:12px;font-weight:600;padding:7px 14px;border-radius:6px;background:none;border:1px solid var(--rule);color:var(--ink);cursor:pointer;font-family:\'DM Sans\',sans-serif;text-transform:uppercase;letter-spacing:.06em;">Login</button>';
   }
 }
 
