@@ -848,7 +848,7 @@ let memberHasAccess = false;
   function closeSidebar(){ sidebar.classList.remove('open'); scrim.classList.remove('show'); }
 
   document.addEventListener('click', (e) => {
-    if (e.target.closest('[data-locked]')) { window.location.href = MEMBERSHIP_URL; return; }
+   if (e.target.closest('[data-locked]')) { window.location.href = memberHasAccess ? FULL_COURSE_URL : MEMBERSHIP_URL; return; }
     if (e.target.closest('.nav-lessons a')) { setTimeout(closeSidebar, 50); }
   });
 
