@@ -14,9 +14,8 @@
 <script>
 (function(){
   var STUDENT_PLAN = 'pln_student-plan-l416c0pbs';
-  var PRO_PLAN     = 'pln_professional-n2is0jc4';
-  var REDIRECT     = '/courses.html';   // where non-members get sent
-
+var PRO_PLAN     = 'pln_professional-n2is0jc4';
+var ADMIN_PLAN   = 'pln_admin-vzd0rgr';
   if(localStorage.getItem('ppa_admin') === '1') return; // admin bypass
 
   function hasPaidPlan(member){
