@@ -93,14 +93,19 @@ footer a{color:var(--accent2);text-decoration:none;}
 </head>
 <body>
 
+
 <nav>
   <a href="index.html" class="nav-logo">Piping<span>Pro</span> Academy</a>
   <div class="nav-right">
-    <a href="index.html" class="nav-back">← Back to Academy</a>
-    <a href="index.html#content" class="nav-login">Subscribe</a>
+    <a href="index.html" class="nav-back">← Back</a>
+    <span id="nav-auth" style="display:inline-flex;align-items:center;gap:.6rem;">
+      <button class="login-btn" id="nav-login-btn" onclick="openLoginModal()">Login</button>
+    </span>
   </div>
 </nav>
 
+
+  
 <header class="hero">
   <div class="hero-inner">
     <div class="hero-eyebrow">Knowledge Base</div>
