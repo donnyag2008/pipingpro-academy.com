@@ -37,9 +37,7 @@ nav{background:#1a1510;border-bottom:2px solid #b8860b;padding:0 5%;display:flex
 .nav-back:hover{color:#d4a017;}
 .nav-login{font-size:13px;font-weight:600;color:#fff;background:var(--accent);padding:7px 15px;border-radius:7px;text-decoration:none;}
 .nav-login:hover{background:#a5471f;}
-  .login-btn{font-size:12px;font-weight:600;padding:7px 16px;border-radius:6px;background:var(--gold);color:var(--ink);border:none;cursor:pointer;font-family:'DM Sans',sans-serif;text-transform:uppercase;letter-spacing:.06em;transition:background .18s;}
-.login-btn:hover{background:#c9a020;}
-.login-btn.logged-in{background:var(--teal);color:#fff;}
+  
 
 /* TAB BAR (matches calculators.html) */
 .tabs-wrap{background:var(--paper);border-bottom:1px solid var(--rule);}
@@ -102,13 +100,12 @@ footer a{color:var(--accent2);text-decoration:none;}
 
 <nav>
   <a href="index.html" class="nav-logo">Piping<span>Pro</span> Academy</a>
-  <div style="display:flex;align-items:center;gap:1rem;">
-    <a href="index.html" class="nav-back">← Back</a>
-    <div id="nav-auth" style="display:flex;align-items:center;gap:.65rem;">
-      <button class="login-btn" id="nav-login-btn" onclick="openLoginModal()">Login</button>
-    </div>
+  <div class="nav-right">
+    <a href="index.html" class="nav-back">← Back to Academy</a>
+    <a href="index.html#content" class="nav-login">Subscriber</a>
   </div>
 </nav>
+
   
 <header class="hero">
   <div class="hero-inner">
