@@ -9,23 +9,55 @@
 
   // --- Normalise the page path into a stable key ---
   let page = window.location.pathname.replace(/\/index\.html$/, "/");
-  if (page.length > 1) page = page.replace(/\/$/, ""); // strip trailing slash except root
+  if (page.length > 1) page = page.replace(/\/$/, "");
   if (page === "") page = "/";
 
   // --- Per-PAGE, per-day dedup ---
   const today = new Date().toDateString();
-  const dayKey = "ppa_visit_day:" + page;        // separate key per page
+  const dayKey = "ppa_visit_day:" + page;
   const isNewVisitToday = localStorage.getItem(dayKey) !== today;
-
-  // Admin never counts. Everyone else counts once per page per day.
   const shouldCount = !isAdmin && isNewVisitToday;
   const url = WORKER + "?page=" + encodeURIComponent(page);
 
-  fetch(url, { method: shouldCount ? "POST" : "GET" })
-    .then(r => r.json())
-    .then(d => {
+  // --- Resolve login state via Memberstack's load event (no polling) ---
+  function loggedIn() {
+    if (isAdmin) return Promise.resolve(true);    // admin always sees it
+
+    return new Promise((resolve) => {
+      let settled = false;
+      const done = (v) => { if (!settled) { settled = true; resolve(v); } };
+
+      const ask = (ms) => {
+        if (!ms || typeof ms.getCurrentMember !== "function") return done(false);
+        ms.getCurrentMember()
+          .then(({ data }) => done(!!data))
+          .catch(() => done(false));
+      };
+
+      // Already loaded?
+      if (window.$memberstackDom) return ask(window.$memberstackDom);
+
+      // Otherwise wait for the Memberstack script to finish loading
+      const s = document.querySelector(
+        'script[data-memberstack-app], script[src*="memberstack"]'
+      );
+      if (s) {
+        s.addEventListener("load", () => ask(window.$memberstackDom));
+        s.addEventListener("error", () => done(false));
+      }
+
+      // Safety net: if Memberstack never resolves, don't hang forever
+      setTimeout(() => ask(window.$memberstackDom), 3000);
+    });
+  }
+
+  Promise.all([
+    fetch(url, { method: shouldCount ? "POST" : "GET" }).then(r => r.json()),
+    loggedIn()
+  ])
+    .then(([d, show]) => {
       if (shouldCount) localStorage.setItem(dayKey, today);
-      if (!isAdmin) return;                         // display still admin-only
+      if (!show) return;                           // admin + any logged-in member
       const footer = document.querySelector("footer");
       if (!footer) return;
       const p = document.createElement("p");
