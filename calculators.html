@@ -1131,7 +1131,7 @@ function refreshNavAuth(){
   } else {
     el.innerHTML=
       '<a href="/membership-plan.html" class="login-btn" id="nav-join-btn" style="text-decoration:none;display:inline-flex;align-items:center;">Join Now</a>'
-      +'<button id="nav-login-btn" onclick="openLoginModal()" style="font-size:12px;font-weight:600;padding:7px 14px;border-radius:6px;background:none;border:1px solid var(--rule);color:var(--ink);cursor:pointer;font-family:\'DM Sans\',sans-serif;text-transform:uppercase;letter-spacing:.06em;">Login</button>';
+      +'<button id="nav-login-btn" onclick="openLoginModal()" style="font-size:12px;font-weight:600;padding:7px 14px;border-radius:6px;background:none;border:1px solid rgba(255,255,255,0.45);color:#f5f2eb;cursor:pointer;font-family:\'DM Sans\',sans-serif;text-transform:uppercase;letter-spacing:.06em;">Login</button>';
   }
 }
 
@@ -1230,13 +1230,11 @@ function openModal(id){
     return;
   }
 
-  // Locked for this visitor. If logged out → sign in. If logged in but
-  // tier too low (e.g. Student clicking a Professional tool) → membership.
-  if(isMember()){
-    window.location.href = '/membership-plan';
-  } else {
-    openLoginModal();
-  }
+  // Locked for this visitor → send to pricing, whether logged out (a prospect
+  // who should see the plans) or a member on too low a tier (upgrade). The
+  // pricing page's nav carries a Login button for any returning member who
+  // simply isn't signed in yet, so no one is stranded.
+  window.location.href = '/membership-plan.html';
 }
 
 function closeModal(){
