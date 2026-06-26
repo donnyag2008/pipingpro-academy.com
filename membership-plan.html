@@ -280,16 +280,21 @@
     var periodEl = document.getElementById('pro-period');
     var geoEl    = document.getElementById('geo-note');
     var noteEl   = document.getElementById('pro-note');
+    var ctaEl    = document.getElementById('pro-cta');
     if(priceEl)  priceEl.textContent = b.amt;
     if(periodEl) periodEl.textContent = (billing === 'monthly') ? 'per month' : 'per year';
     if(geoEl)    geoEl.textContent = (band === 'headline')
       ? 'Pricing shown for your region.'
       : 'Regional pricing applied for your country.';
+    var isTrial = (TRIAL_BANDS.indexOf(band) !== -1);
     if(noteEl){
       var per = (billing === 'monthly') ? '/mo' : '/yr';
-      noteEl.textContent = (TRIAL_BANDS.indexOf(band) !== -1)
+      noteEl.textContent = isTrial
         ? '7-day free trial, then $' + b.amt + per + ' · cancel anytime'
         : '$' + b.amt + per + ' · cancel anytime';
+    }
+    if(ctaEl){
+      ctaEl.textContent = isTrial ? 'Start 7-Day Free Trial →' : 'Get Professional Access';
     }
   }
 

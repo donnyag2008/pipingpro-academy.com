@@ -1297,16 +1297,31 @@
   var band = 'headline';      // default; unmapped countries stay headline
   var billing = 'monthly';
 
+  // Which bands run a 7-day trial (drives the note copy + button label)
+  const TRIAL_BANDS = ['headline'];
+
   function paint(){
     var b = BANDS[band][billing];
     var priceEl  = document.getElementById('pro-price');
     var periodEl = document.getElementById('pro-period');
     var geoEl    = document.getElementById('geo-note');
+    var noteEl   = document.getElementById('pro-note');
+    var ctaEl    = document.getElementById('pro-cta');
     if(priceEl)  priceEl.textContent = b.amt;
     if(periodEl) periodEl.textContent = (billing === 'monthly') ? 'per month' : 'per year';
     if(geoEl)    geoEl.textContent = (band === 'headline')
       ? 'Pricing shown for your region.'
       : 'Regional pricing applied for your country.';
+    var isTrial = (TRIAL_BANDS.indexOf(band) !== -1);
+    if(noteEl){
+      var per = (billing === 'monthly') ? '/mo' : '/yr';
+      noteEl.textContent = isTrial
+        ? '7-day free trial, then $' + b.amt + per + ' · cancel anytime'
+        : '$' + b.amt + per + ' · cancel anytime';
+    }
+    if(ctaEl){
+      ctaEl.textContent = isTrial ? 'Start 7-Day Free Trial →' : 'Get Professional Access';
+    }
   }
 
   // expose toggle + buy handlers
@@ -1411,7 +1426,7 @@
       </div>
       <div class="calc-modal-actions" id="calc-modal-actions"></div>
       <div class="calc-modal-hint" id="calc-modal-hint" style="display:none">
-        Not a member yet? <a href="#pricing" onclick="closeCalcModal()">View Membership Plans ↓</a>
+        Already a member? <a href="#" onclick="closeCalcModal();openLoginModal();return false;">Sign in</a>
       </div>
     </div>
   </div>
@@ -1645,7 +1660,7 @@ function openCalcModal(id){
   const actions = document.getElementById('calc-modal-actions');
   actions.innerHTML = canOpen
     ? `<a href="${c.file}" class="calc-modal-btn calc-modal-btn-open">Open Calculator →</a>`
-    : `<span class="calc-modal-btn calc-modal-btn-lock">🔒 Members Only</span>`;
+    : `<a href="#pricing" onclick="closeCalcModal()" class="calc-modal-btn calc-modal-btn-open">Start 7-Day Free Trial →</a>`;
 
   document.getElementById('calc-modal-hint').style.display = canOpen ? 'none' : 'block';
   document.getElementById('calc-modal-bg').classList.add('show');
