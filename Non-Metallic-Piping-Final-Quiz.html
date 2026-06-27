@@ -203,12 +203,14 @@
   @media print{
     @page{size:A4 landscape;margin:0;}
     body{background:#fff;} body::before{display:none;}
-    .topbar,footer.site,.cert-toolbar,.quiz-progress{display:none !important;}
+    .topbar,footer.site,.cert-toolbar,.cert-hint,.quiz-progress{display:none !important;}
     .wrap{padding:0;max-width:none;}
     #certScreen .wrap-cert{max-width:none;}
     .certificate{box-shadow:none;border-radius:0;}
     .screen:not(#certScreen){display:none !important;}
   }
+  .cert-sig .sig-date{font-family:'DM Serif Display',serif;font-size:1.15rem;font-style:normal;color:var(--ink);line-height:1.25;}
+  .cert-hint{text-align:center;font-size:0.8rem;color:var(--ink3);margin:-8px 0 24px;}
 </style>
 </head>
 <body>
@@ -303,6 +305,7 @@
         <button class="btn ghost" id="editNameBtn">Edit name</button>
         <button class="btn ghost" id="backToResultBtn">&larr; Back to results</button>
       </div>
+      <p class="cert-hint">In the print dialog, set the destination to <strong>Save as PDF</strong> to download your certificate.</p>
       <div class="certificate" id="certificate">
         <div class="cert-inner">
           <span class="cert-corner cc-tl"></span><span class="cert-corner cc-tr"></span>
@@ -337,10 +340,10 @@
               <div class="seal-cap">Verified</div>
             </div>
             <div class="cert-sig">
-              <div class="sig-name" id="certDateScript">&nbsp;</div>
+              <div class="sig-name sig-date" id="certDate">Date</div>
               <div class="sig-rule"></div>
-              <div class="sig-who" id="certDate">Date</div>
-              <div class="sig-role">Date of Completion</div>
+              <div class="sig-who">Date of Completion</div>
+              <div class="sig-role">&nbsp;</div>
             </div>
           </div>
           <div class="cert-meta">
@@ -619,7 +622,6 @@ function openCertificate(){
   document.getElementById('certScore').textContent=lastPct+'%';
   const d=new Date(); const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
   document.getElementById('certDate').textContent=d.getDate()+' '+months[d.getMonth()]+' '+d.getFullYear();
-  document.getElementById('certDateScript').innerHTML='&nbsp;';
   let hash=0; const seed=name+d.toDateString();
   for(let i=0;i<seed.length;i++){hash=((hash<<5)-hash+seed.charCodeAt(i))|0;}
   const id=Math.abs(hash).toString(36).toUpperCase().slice(0,6).padEnd(6,'0');

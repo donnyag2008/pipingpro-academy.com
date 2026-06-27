@@ -233,12 +233,13 @@
   @media print {
     @page { size: A4 landscape; margin: 12mm; }
     body { background: #fff; } body::before { display: none; }
-    .topbar, footer.site, .cert-gate, .cert-actions, .congrats-hero, .review, #screen-intro, #screen-quiz, #screen-fail { display: none !important; }
+    .topbar, footer.site, .cert-gate, .cert-actions, .cert-hint, .congrats-hero, .review, #screen-intro, #screen-quiz, #screen-fail { display: none !important; }
     .wrap { max-width: none; padding: 0; }
     #screen-congrats { display: block !important; }
     .cert-stage { margin: 0; }
     .certificate { box-shadow: none; border: none; aspect-ratio: 1.414 / 1; }
   }
+  .cert-hint{text-align:center;font-size:0.82rem;color:var(--ink3);margin:14px 0 0;}
 </style>
 
 </head>
@@ -384,6 +385,7 @@
         </button>
         <button class="btn btn-ghost" id="editNameBtn">Edit name</button>
       </div>
+      <p class="cert-hint">In the print dialog, set the destination to <strong>Save as PDF</strong> to download your certificate.</p>
     </div>
 
     <div class="review" id="reviewPass" style="display:none;"></div>
