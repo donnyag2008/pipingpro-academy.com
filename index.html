@@ -1181,15 +1181,15 @@
 </section>
 
 <script>
-  /* reveal the Market Terminal section only for admin */
-  (function () {
-    var admin = localStorage.getItem('ppa_admin') === '1'
-             || sessionStorage.getItem('ppa_admin') === '1';
-    if (admin) {
+  /* Market Terminal is admin-only. It is revealed after Memberstack resolves
+     the member's Admin plan (window.MS_IS_ADMIN), via revealMarketTerminal()
+     called from the DOMContentLoaded boot sequence. */
+  function revealMarketTerminal(){
+    if (window.MS_IS_ADMIN === true){
       var s = document.getElementById('market-terminal');
       if (s) s.style.display = '';
     }
-  })();
+  }
 </script>
 
 <!-- FOR WHO -->
@@ -1554,33 +1554,25 @@
     sp:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 35 Q20 28 35 35 Q50 42 65 35 Q80 28 88 35" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/><path d="M5 42 Q20 35 35 42 Q50 49 65 42 Q80 35 88 42" stroke="rgba(255,255,255,0.25)" stroke-width="1" fill="none"/><line x1="5" y1="78" x2="85" y2="78" stroke="rgba(255,255,255,0.3)" stroke-width="2"/><line x1="10" y1="72" x2="80" y2="72" stroke="rgba(255,255,255,0.85)" stroke-width="6" stroke-linecap="round"/><line x1="80" y1="38" x2="80" y2="72" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/><polygon points="80,74 77,67 83,67" fill="rgba(255,255,255,0.6)"/><polygon points="80,36 77,43 83,43" fill="rgba(255,255,255,0.6)"/></svg>`
   };
 
-  // ── ADMIN BYPASS ─────────────────────────────────────────────
-  const ADMIN_KEY='PPA-ADMIN-2026';
-  (function(){
-    var p=new URLSearchParams(window.location.search);
-    if(p.get('admin')===ADMIN_KEY){
-      localStorage.setItem('ppa_admin','1');
-      window.history.replaceState({},'',window.location.pathname);
-    }
-  })();
+  // Admin access is granted solely via the Memberstack Admin plan
+  // (pln_admin-vzd0rgr), detected in msLoadMember() as window.MS_IS_ADMIN.
+  // No URL key or hardcoded-credential bypass exists.
 </script>
 
 <script>
 // ════════════════════════════════════════════════════════════════
 //  PPA AUTH + MEMBERSTACK PLAN DETECTION  (single source of truth on window)
-//  NOTE: ADMIN_KEY is declared in the admin-bypass block ABOVE this script.
 // ════════════════════════════════════════════════════════════════
-
-const ADMIN_EMAIL = 'admin@pipingpro-academy.com';
 
 // Memberstack plan IDs (confirmed via getApp)
 const MS_STUDENT_PLAN = 'pln_student-plan-l416c0pbs';
 const MS_PRO_PLAN     = 'pln_professional-n2is0jc4';
 const MS_ADMIN_PLAN   = 'pln_admin-vzd0rgr';
 // Shared state — every function reads/writes the SAME window slot
-window.MS_MEMBER = null;
-window.MS_PLAN   = null;   // 'professional' | 'student' | null
-window.MS_READY  = false;
+window.MS_MEMBER   = null;
+window.MS_PLAN     = null;   // 'professional' | 'student' | null
+window.MS_IS_ADMIN = false;  // true when the member holds the Admin plan
+window.MS_READY    = false;
 
 async function msLoadMember(){
   try{
@@ -1590,6 +1582,7 @@ async function msLoadMember(){
       const member = (res && res.data) ? res.data : (res || null);
       window.MS_MEMBER = member;
       window.MS_PLAN = null;
+      window.MS_IS_ADMIN = false;
       if (member && Array.isArray(member.planConnections)){
         console.log('[PPA] planConnections:', member.planConnections);
         const active = member.planConnections.filter(p =>
@@ -1597,6 +1590,7 @@ async function msLoadMember(){
         const ids = active.map(p => p.planId);
         if (ids.includes(MS_PRO_PLAN) || ids.includes(MS_ADMIN_PLAN)) window.MS_PLAN = 'professional';
         else if (ids.includes(MS_STUDENT_PLAN)) window.MS_PLAN = 'student';
+        window.MS_IS_ADMIN = ids.includes(MS_ADMIN_PLAN);
       }
     }
   } catch(e){ console.warn('Memberstack load error', e); }
@@ -1604,18 +1598,16 @@ async function msLoadMember(){
 }
 
 function isMember(){
-  if (localStorage.getItem('ppa_admin') === '1') return true;
   return window.MS_PLAN === 'professional' || window.MS_PLAN === 'student';
 }
 function memberPlan(){
-  if (localStorage.getItem('ppa_admin') === '1') return 'professional';
   return window.MS_PLAN || null;
 }
 
 // Unlock homepage calculator cards for members
 function applyMemberView(){
   if (!isMember()) return;
-  const isAdmin = localStorage.getItem('ppa_admin') === '1';
+  const isAdmin = window.MS_IS_ADMIN === true;
   ['pw','wt','el','pc','ub','df','sp'].forEach(id => {
     const lock = document.getElementById('card-lock-'+id);
     if (lock) lock.style.display = 'none';
@@ -1681,12 +1673,12 @@ function openLoginModal(){
   document.getElementById('lmodal-member-view').style.display = loggedIn ? 'block' : 'none';
   document.getElementById('lmodal-err').style.display = 'none';
   if (loggedIn){
-    const admin = localStorage.getItem('ppa_admin') === '1';
+    const admin = window.MS_IS_ADMIN === true;
     const email = (window.MS_MEMBER && window.MS_MEMBER.auth && window.MS_MEMBER.auth.email) || 'Active subscription';
     document.getElementById('lmodal-avatar').textContent  = admin ? '🛡️' : '✓';
     document.getElementById('lmodal-welcome').textContent = admin ? 'Admin Access Active'
       : (memberPlan() === 'student' ? 'Student Access Active' : 'Professional Access Active');
-    document.getElementById('lmodal-email-display').textContent = admin ? ADMIN_EMAIL : email;
+    document.getElementById('lmodal-email-display').textContent = email;
   } else {
     document.getElementById('lmodal-email').value = '';
     document.getElementById('lmodal-password').value = '';
@@ -1706,7 +1698,7 @@ function closeLModalBg(e){
 function updateNavBtn(){
   const el = document.getElementById('nav-auth');
   if (!el) return;
-  const admin = localStorage.getItem('ppa_admin') === '1';
+  const admin = window.MS_IS_ADMIN === true;
   const join = document.getElementById('nav-join');
   if (join) join.style.display = isMember() ? 'none' : '';
   if (admin){
@@ -1725,11 +1717,6 @@ function doLogin(){
   const password = document.getElementById('lmodal-password').value.trim();
   const err      = document.getElementById('lmodal-err');
   err.style.display = 'none';
-
-  if (email === ADMIN_EMAIL && password === ADMIN_KEY){
-    localStorage.setItem('ppa_admin','1');
-    closeLModal(); location.reload(); return;
-  }
 
   const ms = window.$memberstackDom;
   if (!ms || !ms.loginMemberEmailPassword){
@@ -1762,6 +1749,7 @@ document.addEventListener('DOMContentLoaded', async function(){
   await msLoadMember();
   applyMemberView();
   updateNavBtn();
+  revealMarketTerminal();
 });
 </script>
 
