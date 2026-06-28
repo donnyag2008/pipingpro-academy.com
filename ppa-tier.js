@@ -47,7 +47,7 @@
     ps: 'student',
     el: 'student',
     lb: 'student',
-    // everything else (fx, fl, pe, di, sv, ss, tr, pc, ub, df, sp, hp, nl, pm, vf, ci)
+    // everything else (fx, fl, pe, di, sv, ss, tr, pc, ub, df, sp, bp, hp, nl, pm, vf, ci)
     // → professional (the default for anything not listed)
   };
 
