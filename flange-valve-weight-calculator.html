@@ -15,6 +15,8 @@
 <script>
 (function(){
   var THIS_CALC = window.THIS_CALC = 'vw';    // ← change per page (also exposed globally so /ppa-report-gate.js can read it)
+  window.PPA_STANDARDS = 'ASME B16.5-2003 and B16.47-1996 (flange dimensions), ASME B16.10-2000 (valve face-to-face / end-to-end) and the Fasani (Tyco) valve-weight catalogue';
+  window.PPA_DISCLAIMER_EXTRA = 'B16.5 raised-face outside diameter and hub fillet radius are tabulated elsewhere in the standard and are not reproduced here; certain B16.10 ring-joint cells are omitted where the source could not be certified.';
   var UPGRADE   = '/membership-plan.html';    // non-members land here
 
   /* Admin is decided by the logged-in Memberstack member — not a browser flag.
@@ -843,6 +845,7 @@ table.d tr:nth-child(even) td{background:#faf6ef}
 }
 </script>
 <!-- ════════ end Shared Report Engine ════════ -->
+<script src="/ppa-disclaimer.js"></script>
 <script src="/ppa-report-gate.js"></script>
 </body>
 </html>
