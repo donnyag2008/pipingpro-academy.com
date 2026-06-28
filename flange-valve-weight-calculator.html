@@ -495,6 +495,21 @@ function refreshSizes(t,c,s,d){const av=SIZES.filter(x=>d[t.value][c.value]&&d[t
 function flVal(d,t,c,s){return d[t]&&d[t][c]?d[t][c][s]:undefined;}
 function flKg(d,t,c,s){var v=flVal(d,t,c,s);return v==null?undefined:(typeof v==='object'?v.kg:v);}
 function flDim(d,t,c,s){var v=flVal(d,t,c,s);return (v&&typeof v==='object'&&v.dim)?v:null;}
+
+/* ===== ASME B16.5-2003 flange dimensions (NPS 1/2-24) — mm, bolt/hole in inch =====
+   Validated vs the inch Annex F tables; hub X/A/Y & bolting read from the standard.
+   Classes 150/300/600 (the process-piping core). 400/900/1500/2500 to follow. */
+const B16_5 = {"150":{"1/2":{"O":90,"tf":9.6,"X":30,"A":21.3,"Y":46,"BC":60.3,"n":4,"holeDia":0.625,"boltDia":0.5},"3/4":{"O":100,"tf":11.2,"X":38,"A":26.7,"Y":51,"BC":69.9,"n":4,"holeDia":0.625,"boltDia":0.5},"1":{"O":110,"tf":12.7,"X":49,"A":33.4,"Y":54,"BC":79.4,"n":4,"holeDia":0.625,"boltDia":0.5},"1-1/4":{"O":115,"tf":14.3,"X":59,"A":42.2,"Y":56,"BC":88.9,"n":4,"holeDia":0.625,"boltDia":0.5},"1-1/2":{"O":125,"tf":15.9,"X":65,"A":48.3,"Y":60,"BC":98.4,"n":4,"holeDia":0.625,"boltDia":0.5},"2":{"O":150,"tf":17.5,"X":78,"A":60.3,"Y":62,"BC":120.7,"n":4,"holeDia":0.75,"boltDia":0.625},"2-1/2":{"O":180,"tf":20.7,"X":90,"A":73.0,"Y":68,"BC":139.7,"n":4,"holeDia":0.75,"boltDia":0.625},"3":{"O":190,"tf":22.3,"X":108,"A":88.9,"Y":68,"BC":152.4,"n":4,"holeDia":0.75,"boltDia":0.625},"3-1/2":{"O":215,"tf":22.3,"X":122,"A":101.6,"Y":70,"BC":177.8,"n":8,"holeDia":0.75,"boltDia":0.625},"4":{"O":230,"tf":22.3,"X":135,"A":114.3,"Y":75,"BC":190.5,"n":8,"holeDia":0.75,"boltDia":0.625},"5":{"O":255,"tf":22.3,"X":164,"A":141.3,"Y":87,"BC":215.9,"n":8,"holeDia":0.875,"boltDia":0.75},"6":{"O":280,"tf":23.9,"X":192,"A":168.3,"Y":87,"BC":241.3,"n":8,"holeDia":0.875,"boltDia":0.75},"8":{"O":345,"tf":27.0,"X":246,"A":219.1,"Y":100,"BC":298.5,"n":8,"holeDia":0.875,"boltDia":0.75},"10":{"O":405,"tf":28.6,"X":305,"A":273.0,"Y":100,"BC":362.0,"n":12,"holeDia":1,"boltDia":0.875},"12":{"O":485,"tf":30.2,"X":365,"A":323.8,"Y":113,"BC":431.8,"n":12,"holeDia":1,"boltDia":0.875},"14":{"O":535,"tf":33.4,"X":400,"A":355.6,"Y":125,"BC":476.3,"n":12,"holeDia":1.125,"boltDia":1},"16":{"O":595,"tf":35.0,"X":457,"A":406.4,"Y":125,"BC":539.8,"n":16,"holeDia":1.125,"boltDia":1},"18":{"O":635,"tf":38.1,"X":505,"A":457.0,"Y":138,"BC":577.9,"n":16,"holeDia":1.25,"boltDia":1.125},"20":{"O":700,"tf":41.3,"X":559,"A":508.0,"Y":143,"BC":635.0,"n":20,"holeDia":1.25,"boltDia":1.125},"24":{"O":815,"tf":46.1,"X":663,"A":610.0,"Y":151,"BC":749.3,"n":20,"holeDia":1.375,"boltDia":1.25}},"300":{"1/2":{"O":95,"tf":12.7,"X":38,"A":21.3,"Y":51,"BC":66.7,"n":4,"holeDia":0.625,"boltDia":0.5},"3/4":{"O":115,"tf":14.3,"X":48,"A":26.7,"Y":56,"BC":82.6,"n":4,"holeDia":0.75,"boltDia":0.625},"1":{"O":125,"tf":15.9,"X":54,"A":33.4,"Y":60,"BC":88.9,"n":4,"holeDia":0.75,"boltDia":0.625},"1-1/4":{"O":135,"tf":17.5,"X":64,"A":42.2,"Y":64,"BC":98.4,"n":4,"holeDia":0.75,"boltDia":0.625},"1-1/2":{"O":155,"tf":19.1,"X":70,"A":48.3,"Y":67,"BC":114.3,"n":4,"holeDia":0.875,"boltDia":0.75},"2":{"O":165,"tf":20.7,"X":84,"A":60.3,"Y":68,"BC":127.0,"n":8,"holeDia":0.75,"boltDia":0.625},"2-1/2":{"O":190,"tf":23.9,"X":100,"A":73.0,"Y":75,"BC":149.2,"n":8,"holeDia":0.875,"boltDia":0.75},"3":{"O":210,"tf":27.0,"X":117,"A":88.9,"Y":78,"BC":168.3,"n":8,"holeDia":0.875,"boltDia":0.75},"3-1/2":{"O":230,"tf":28.6,"X":133,"A":101.6,"Y":79,"BC":184.2,"n":8,"holeDia":0.875,"boltDia":0.75},"4":{"O":255,"tf":30.2,"X":146,"A":114.3,"Y":84,"BC":200.0,"n":8,"holeDia":0.875,"boltDia":0.75},"5":{"O":280,"tf":33.4,"X":178,"A":141.3,"Y":97,"BC":235.0,"n":8,"holeDia":0.875,"boltDia":0.75},"6":{"O":320,"tf":35.0,"X":206,"A":168.3,"Y":97,"BC":269.9,"n":12,"holeDia":0.875,"boltDia":0.75},"8":{"O":380,"tf":39.7,"X":260,"A":219.1,"Y":110,"BC":330.2,"n":12,"holeDia":1,"boltDia":0.875},"10":{"O":445,"tf":46.1,"X":321,"A":273.0,"Y":116,"BC":387.4,"n":16,"holeDia":1.125,"boltDia":1},"12":{"O":520,"tf":49.3,"X":375,"A":323.8,"Y":129,"BC":450.8,"n":16,"holeDia":1.25,"boltDia":1.125},"14":{"O":585,"tf":52.4,"X":425,"A":355.6,"Y":141,"BC":514.4,"n":20,"holeDia":1.25,"boltDia":1.125},"16":{"O":650,"tf":55.6,"X":483,"A":406.4,"Y":144,"BC":571.5,"n":20,"holeDia":1.375,"boltDia":1.25},"18":{"O":710,"tf":58.8,"X":533,"A":457.0,"Y":157,"BC":628.6,"n":24,"holeDia":1.375,"boltDia":1.25},"20":{"O":775,"tf":62.0,"X":587,"A":508.0,"Y":160,"BC":685.8,"n":24,"holeDia":1.375,"boltDia":1.25},"24":{"O":915,"tf":68.3,"X":702,"A":610.0,"Y":167,"BC":812.8,"n":24,"holeDia":1.625,"boltDia":1.5}},"600":{"1/2":{"O":95,"tf":14.3,"X":38,"A":21.3,"Y":52,"BC":66.7,"n":4,"holeDia":0.625,"boltDia":0.5},"3/4":{"O":115,"tf":15.9,"X":48,"A":26.7,"Y":57,"BC":82.6,"n":4,"holeDia":0.75,"boltDia":0.625},"1":{"O":125,"tf":17.5,"X":54,"A":33.4,"Y":62,"BC":88.9,"n":4,"holeDia":0.75,"boltDia":0.625},"1-1/4":{"O":135,"tf":20.7,"X":64,"A":42.2,"Y":67,"BC":98.4,"n":4,"holeDia":0.75,"boltDia":0.625},"1-1/2":{"O":155,"tf":22.3,"X":70,"A":48.3,"Y":70,"BC":114.3,"n":4,"holeDia":0.875,"boltDia":0.75},"2":{"O":165,"tf":25.4,"X":84,"A":60.3,"Y":73,"BC":127.0,"n":8,"holeDia":0.75,"boltDia":0.625},"2-1/2":{"O":190,"tf":28.6,"X":100,"A":73.0,"Y":79,"BC":149.2,"n":8,"holeDia":0.875,"boltDia":0.75},"3":{"O":210,"tf":31.8,"X":117,"A":88.9,"Y":83,"BC":168.3,"n":8,"holeDia":0.875,"boltDia":0.75},"3-1/2":{"O":230,"tf":35.0,"X":133,"A":101.6,"Y":86,"BC":184.2,"n":8,"holeDia":1,"boltDia":0.875},"4":{"O":275,"tf":38.1,"X":152,"A":114.3,"Y":102,"BC":215.9,"n":8,"holeDia":1,"boltDia":0.875},"5":{"O":330,"tf":44.5,"X":189,"A":141.3,"Y":114,"BC":266.7,"n":8,"holeDia":1.125,"boltDia":1},"6":{"O":355,"tf":47.7,"X":222,"A":168.3,"Y":117,"BC":292.1,"n":12,"holeDia":1.125,"boltDia":1},"8":{"O":420,"tf":55.6,"X":273,"A":219.1,"Y":133,"BC":349.2,"n":12,"holeDia":1.25,"boltDia":1.125},"10":{"O":510,"tf":63.5,"X":343,"A":273.0,"Y":152,"BC":431.8,"n":16,"holeDia":1.375,"boltDia":1.25},"12":{"O":560,"tf":66.7,"X":400,"A":323.8,"Y":156,"BC":489.0,"n":20,"holeDia":1.375,"boltDia":1.25},"14":{"O":605,"tf":69.9,"X":432,"A":355.6,"Y":165,"BC":527.0,"n":20,"holeDia":1.5,"boltDia":1.375},"16":{"O":685,"tf":76.2,"X":495,"A":406.4,"Y":178,"BC":603.2,"n":20,"holeDia":1.625,"boltDia":1.5},"18":{"O":745,"tf":82.6,"X":546,"A":457.0,"Y":184,"BC":654.0,"n":20,"holeDia":1.75,"boltDia":1.625},"20":{"O":815,"tf":88.9,"X":610,"A":508.0,"Y":190,"BC":723.9,"n":24,"holeDia":1.75,"boltDia":1.625},"24":{"O":940,"tf":101.6,"X":718,"A":610.0,"Y":203,"BC":838.2,"n":24,"holeDia":2,"boltDia":1.875}}};
+/* unified flange-dimension lookup: B16.47 large-bore (carries .dim) OR B16.5 (1/2-24). */
+function flDimAny(t,c,s){
+  var v=flVal(flangeData,t,c,s);
+  if(v&&typeof v==='object'&&v.dim) return v;            // B16.47 merged record
+  if(typeof B16_5!=='undefined'&&B16_5[c]&&B16_5[c][s]){ // B16.5 record
+    var isWN=/Weld Neck/.test(t), typ=isWN?'WN':(/Slip-On/.test(t)?'SO':'BL');
+    return {std:'B16.5', cls:c, typ:typ, dim:B16_5[c][s]};
+  }
+  return null;
+}
 function vKg(d,t,c,s){const o=d[t]&&d[t][c]?d[t][c][s]:undefined;return o?o[vEnd]:undefined;}
 const fmt=x=>x>=100?Math.round(x):Math.round(x*10)/10;
 
@@ -505,31 +520,49 @@ function renderFDim(rec){
   if(!rec){
     el('fDimMeta').textContent='';
     el('fDimNote').style.display='none';
-    el('fDimTable').innerHTML='<tr><td style="padding:.5rem .2rem;color:var(--ink3);line-height:1.6">Dimensional data covers <strong>ASME B16.47 large-diameter flanges (NPS 26–60)</strong>. Choose a flange Type ending in <strong>“· B16.47-A”</strong> or <strong>“· B16.47-B”</strong> above to display OD, thickness, raised-face Ø, bolt circle, bolting and hub dimensions. (B16.5 sizes ≤ 24″ show weight only.)</td></tr>';
+    el('fDimTable').innerHTML='<tr><td style="padding:.5rem .2rem;color:var(--ink3);line-height:1.6">Dimensional data is shown for <strong>ASME B16.5 (NPS ½–24, Classes 150/300/600)</strong> and <strong>ASME B16.47 large-bore flanges (NPS 26–60)</strong>. Select a Type, Class and Size above. (Other B16.5 classes show weight only — dimensions to follow.)</td></tr>';
     w.style.display='block';
     return;
   }
   el('fDimNote').style.display='block';
-  const d=rec.dim, isWN=rec.typ==='WN', C=isWN?d.Cwn:d.Cbl;
-  el('fDimMeta').textContent='— ASME B16.47 · Series '+rec.series+' · '+(isWN?'Weld-Neck':'Blind');
-  const num=(sym,name,v)=>['<tr><td>',sym,'</td><td>',name,'</td><td>',v.toFixed(2),'</td><td>',inmm(v),'</td></tr>'].join('');
+  const d=rec.dim, isWN=rec.typ==='WN';
+  const boltLbl=v=>(BOLT_FRAC[String(v)]||v)+'″';
   let rows='';
-  rows+=num('O','Flange OD',d.O);
-  rows+=num('C','Flange thickness, min',C);
-  if(isWN){ rows+=num('X','Hub Ø, base',d.X); rows+=num('A','Hub Ø, weld end (≈ pipe OD)',d.A); rows+=num('Y','Length through hub',d.Y); }
-  rows+=num('R','Raised-face Ø',d.R);
-  rows+=num('—','Bolt-circle Ø',d.BC);
-  rows+='<tr><td>—</td><td>No. of bolts</td><td>'+d.n+'</td><td>—</td></tr>';
-  rows+=num('—','Bolt-hole Ø',d.holeDia);
-  rows+='<tr><td>—</td><td>Bolt Ø</td><td>'+(BOLT_FRAC[String(d.boltDia)]||d.boltDia)+'″</td><td>'+inmm(d.boltDia)+'</td></tr>';
-  rows+=num('r₁','Fillet radius, min',d.r1);
+  if(rec.std==='B16.5'){
+    // B16.5 dims are mm-native; bolt/hole Ø are inch. mm shown primary.
+    el('fDimMeta').textContent='— ASME B16.5-2003 · Class '+rec.cls+' · '+(isWN?'Weld-Neck':rec.typ==='SO'?'Slip-On':'Blind');
+    el('fDimNote').innerHTML='<strong>ASME B16.5-2003 · raised-face · dimensions in mm (bolt &amp; hole Ø in inches).</strong> Hub dimensions apply to weld-neck flanges. Verify against the governing edition before use.';
+    const mm=(sym,name,v)=> (v==null?'':'<tr><td>'+sym+'</td><td>'+name+'</td><td>'+(v/25.4).toFixed(2)+'</td><td>'+Math.round(v)+'</td></tr>');
+    const inr=(sym,name,v)=> '<tr><td>'+sym+'</td><td>'+name+'</td><td>'+boltLbl(v)+'</td><td>'+inmm(v)+'</td></tr>';
+    rows+=mm('O','Flange OD',d.O);
+    rows+=mm('t_f','Flange thickness, min',d.tf);
+    if(isWN){ rows+=mm('X','Hub Ø, base',d.X); rows+=mm('A','Hub Ø, weld end (≈ pipe OD)',d.A); rows+=mm('Y','Length through hub',d.Y); }
+    rows+=mm('—','Bolt-circle Ø',d.BC);
+    rows+='<tr><td>—</td><td>No. of bolts</td><td>'+d.n+'</td><td>—</td></tr>';
+    rows+=inr('—','Bolt-hole Ø',d.holeDia);
+    rows+=inr('—','Bolt Ø',d.boltDia);
+  } else {
+    // B16.47 dims are inch-native; in shown primary, mm computed.
+    const C=isWN?d.Cwn:d.Cbl;
+    el('fDimMeta').textContent='— ASME B16.47 · Series '+rec.series+' · '+(isWN?'Weld-Neck':'Blind');
+    const num=(sym,name,v)=> (v==null?'':'<tr><td>'+sym+'</td><td>'+name+'</td><td>'+v.toFixed(2)+'</td><td>'+inmm(v)+'</td></tr>');
+    rows+=num('O','Flange OD',d.O);
+    rows+=num('C','Flange thickness, min',C);
+    if(isWN){ rows+=num('X','Hub Ø, base',d.X); rows+=num('A','Hub Ø, weld end (≈ pipe OD)',d.A); rows+=num('Y','Length through hub',d.Y); }
+    rows+=num('R','Raised-face Ø',d.R);
+    rows+=num('—','Bolt-circle Ø',d.BC);
+    rows+='<tr><td>—</td><td>No. of bolts</td><td>'+d.n+'</td><td>—</td></tr>';
+    rows+=num('—','Bolt-hole Ø',d.holeDia);
+    rows+='<tr><td>—</td><td>Bolt Ø</td><td>'+boltLbl(d.boltDia)+'</td><td>'+inmm(d.boltDia)+'</td></tr>';
+    rows+=num('r₁','Fillet radius, min',d.r1);
+  }
   el('fDimTable').innerHTML='<tr><th>Sym</th><th>Dimension</th><th>in</th><th>mm</th></tr>'+rows;
   w.style.display='block';
 }
 function calcFlange(){
   const t=el('fType').value,c=el('fClass').value,s=el('fSize').value,q=parseInt(el('fQty').value)||1;
   const kg=flKg(flangeData,t,c,s);
-  renderFDim(flDim(flangeData,t,c,s));
+  renderFDim(flDimAny(t,c,s));
   if(kg===undefined){el('fEa').value='N/A';el('fTot').value='N/A';return 0;}
   const ea=unit==='kg'?kg:kg*KG_TO_LB;
   el('fEa').value=fmt(ea)+' '+unit;el('fTot').value=fmt(ea*q)+' '+unit+'  (×'+q+')';
@@ -609,7 +642,7 @@ function buildReport(){
   const ft=el('fType').value,fc=el('fClass').value,fs=el('fSize').value,fq=el('fQty').value;
   const vt=el('vType').value,vc=el('vClass').value,vs=el('vSize').value,vq=el('vQty').value;
   const fkg=flKg(flangeData,ft,fc,fs),vkg=vKg(valveData,vt,vc,vs);
-  const fdim=flDim(flangeData,ft,fc,fs);
+  const fdim=flDimAny(ft,fc,fs);
   const endL=vEnd==='fl'?'Flanged (W1)':'Butt-weld (W2)';
   const fEa=fkg===undefined?'—':fmt(fkg)+' kg',vEa=vkg===undefined?'—':fmt(vkg)+' kg';
   const fLine=fkg===undefined?'—':fmt(fkg*fq)+' kg',vLine=vkg===undefined?'—':fmt(vkg*vq)+' kg';
@@ -627,17 +660,28 @@ function buildReport(){
              ['End connection',endL,''],['Quantity',vq,'off'],['Unit weight',vEa,''],['Line total',vLine,'']]},
       {title:'Combined Estimate', type:'table', head:['Item','Weight','Unit'],
        rows:[['Flange line total',fLine,''],['Valve line total',vLine,''],['Combined total',total,'']]}
-    ].concat(fdim?[{title:'Flange Dimensions', badge:'ASME B16.47-1996 · Series '+fdim.series, type:'table',
+    ].concat(fdim?[{title:'Flange Dimensions',
+       badge:(fdim.std==='B16.5'?'ASME B16.5-2003 · Class '+fdim.cls:'ASME B16.47-1996 · Series '+fdim.series), type:'table',
        head:['Dimension','Value','Unit'],
-       rows:(function(){var d=fdim.dim,wn=fdim.typ==='WN',C=wn?d.Cwn:d.Cbl,r=[
-         ['Flange OD (O)',d.O.toFixed(2)+' / '+(d.O*25.4).toFixed(0),'in / mm']];
-         r.push(['Thickness min (C)',C.toFixed(2)+' / '+(C*25.4).toFixed(0),'in / mm']);
-         if(wn){r.push(['Hub Ø base (X)',d.X.toFixed(2),'in']);r.push(['Hub Ø weld end (A)',d.A.toFixed(2),'in']);r.push(['Length thru hub (Y)',d.Y.toFixed(2),'in']);}
-         r.push(['Raised-face Ø (R)',d.R.toFixed(2),'in']);
-         r.push(['Bolt-circle Ø',d.BC.toFixed(2)+' / '+(d.BC*25.4).toFixed(0),'in / mm']);
-         r.push(['Bolting',d.n+' × '+(BOLT_FRAC[String(d.boltDia)]||d.boltDia)+'″','off']);
-         r.push(['Bolt-hole Ø',d.holeDia.toFixed(2),'in']);
-         r.push(['Fillet radius min (r1)',d.r1.toFixed(2),'in']);
+       rows:(function(){var d=fdim.dim,wn=fdim.typ==='WN',r=[];
+         if(fdim.std==='B16.5'){
+           r.push(['Flange OD (O)',Math.round(d.O)+' / '+(d.O/25.4).toFixed(2),'mm / in']);
+           r.push(['Thickness min (tf)',Math.round(d.tf)+' / '+(d.tf/25.4).toFixed(2),'mm / in']);
+           if(wn){r.push(['Hub Ø base (X)',Math.round(d.X),'mm']);r.push(['Hub Ø weld end (A)',d.A.toFixed(1),'mm']);r.push(['Length thru hub (Y)',Math.round(d.Y),'mm']);}
+           r.push(['Bolt-circle Ø',d.BC.toFixed(1)+' / '+(d.BC/25.4).toFixed(2),'mm / in']);
+           r.push(['Bolting',d.n+' × '+(BOLT_FRAC[String(d.boltDia)]||d.boltDia)+'″','off']);
+           r.push(['Bolt-hole Ø',(BOLT_FRAC[String(d.holeDia)]||d.holeDia)+'″ / '+(d.holeDia*25.4).toFixed(1),'in / mm']);
+         } else {
+           var C=wn?d.Cwn:d.Cbl;
+           r.push(['Flange OD (O)',d.O.toFixed(2)+' / '+(d.O*25.4).toFixed(0),'in / mm']);
+           r.push(['Thickness min (C)',C.toFixed(2)+' / '+(C*25.4).toFixed(0),'in / mm']);
+           if(wn){r.push(['Hub Ø base (X)',d.X.toFixed(2),'in']);r.push(['Hub Ø weld end (A)',d.A.toFixed(2),'in']);r.push(['Length thru hub (Y)',d.Y.toFixed(2),'in']);}
+           r.push(['Raised-face Ø (R)',d.R.toFixed(2),'in']);
+           r.push(['Bolt-circle Ø',d.BC.toFixed(2)+' / '+(d.BC*25.4).toFixed(0),'in / mm']);
+           r.push(['Bolting',d.n+' × '+(BOLT_FRAC[String(d.boltDia)]||d.boltDia)+'″','off']);
+           r.push(['Bolt-hole Ø',d.holeDia.toFixed(2),'in']);
+           r.push(['Fillet radius min (r1)',d.r1.toFixed(2),'in']);
+         }
          return r;})()}]:[]).concat((function(){
       if(typeof getValveLength!=='function') return [];
       var fam=vFamily(vt,vc), nps=npsNum(vs), k=(vEnd==='bw')?'ete':'ff';
