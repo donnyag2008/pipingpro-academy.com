@@ -67,6 +67,7 @@ nav{background:#1a1510;border-bottom:2px solid #b8860b;padding:0 5%;display:flex
 .card-img.bg-coating{background:linear-gradient(135deg,#2a4a3a 0%,#3a7a5a 100%);}
 .card-img.bg-diainch{background:linear-gradient(135deg,#5a2a0d 0%,#b05730 100%);}
 .card-img.bg-sv{background:linear-gradient(135deg,#3a3320 0%,#7a6a3a 100%);}
+.card-img.bg-datasheet{background:linear-gradient(135deg,#2f2a1c 0%,#8a6420 100%);}
 
 
 .card-img svg{width:90px;height:90px;opacity:.9;}
@@ -475,6 +476,30 @@ body{ background:#faf6ef; color:#1a1510; }
         <div class="card-desc">Minimum wall thickness per ASME B31.3, B31.4, B31.8 with mill tolerance, corrosion allowance, and schedule selection.</div>
         <div class="card-tags"><span class="tag">ASME B31.3</span><span class="tag">B31.4</span><span class="tag">B31.8</span></div>
         <div class="card-action"><span class="card-btn btn-open" id="btn-wt">Open calculator</span></div>
+      </div>
+    </div>
+
+    <div class="calc-card" onclick="openModal('md')">
+      <div class="card-img bg-datasheet">
+        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="22" y="16" width="46" height="58" rx="3" stroke="rgba(255,255,255,0.85)" stroke-width="2.5" fill="none"/>
+          <line x1="22" y1="30" x2="68" y2="30" stroke="rgba(255,255,255,0.55)" stroke-width="1.6"/>
+          <line x1="45" y1="30" x2="45" y2="74" stroke="rgba(255,255,255,0.3)" stroke-width="1.2"/>
+          <line x1="28" y1="40" x2="40" y2="40" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+          <line x1="28" y1="48" x2="40" y2="48" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+          <line x1="28" y1="56" x2="40" y2="56" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+          <line x1="28" y1="64" x2="40" y2="64" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+          <path d="M50 66 Q57 59 61 52 Q64 47 64 41" stroke="rgba(255,220,120,0.95)" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <circle cx="50" cy="66" r="1.8" fill="rgba(255,220,120,0.95)"/>
+          <circle cx="64" cy="41" r="1.8" fill="rgba(255,220,120,0.95)"/>
+        </svg>
+        <span class="card-badge badge-member" id="badge-md" style="background:rgba(196,92,42,.9);color:#fff;">✦ Free</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Material Property Datasheet</div>
+        <div class="card-desc">Select a material and design temperature to read SMYS, SMTS, cold &amp; hot allowable stress (Sc / Sh), thermal expansion coefficient α and modulus E per ASME B31.3.</div>
+        <div class="card-tags"><span class="tag">ASME B31.3</span><span class="tag">Sc / Sh</span><span class="tag">α / E</span></div>
+        <div class="card-action"><span class="card-btn btn-open" id="btn-md">Open Calculator →</span></div>
       </div>
     </div>
     
@@ -1083,18 +1108,20 @@ const CALCS = {
   sv:{name:'Sectional Volume Calculator',desc:'Volume of a trench, excavation or irregular prism from cross-sectional areas taken at stations along its length. Average end-area and prismoidal (Simpson\u2019s) methods side by side, with a trapezoidal trench-geometry area helper, metric/imperial units, swell/bulking factor and cubic-yard output.',tags:['End-Area','Prismoidal','Earthworks'],what:['Average end-area volume (\u03a3 (A\u2081+A\u2082)/2\u00b7L)','Prismoidal (Simpson\u2019s) volume','Trapezoidal trench area helper','Metric / imperial units','Swell / bulking \u2192 loose volume','Cubic yards + CSV / PDF export'],file:'sectional-volume-calculator.html',bg:'bg-sv',svgId:'sv'},
   cp:{name:'Cathodic Protection Design Calculator',desc:'Buried-pipeline CP design to SAES-X-400 — ICCP/galvanic selection, anode & rectifier sizing, power source, and CP-station spacing per ISO 15589-1.',tags:['SAES-X-400','Cathodic Protection'],what:['ICCP / galvanic selection (§6.5)','Anode count & rectifier sizing','Circuit-resistance check (Rₒₚ ≤ 0.7 Rᵣₐₜₑ𝒹)','Power source (rectifier / PV)','CP-station spacing (attenuation)'],file:'cp-design-calculator.html',bg:'bg-rust',svgId:'cp'},
   pe:{name:'Piping Work Estimator',desc:'Equipment-factored FEED / conceptual estimate of bulk piping material, deliverables and engineering man-hours for a gas plant or GOSP. Major-equipment count drives line count, then tonnage, valves, fittings, supports, welds, isometrics, spools and discipline man-hours — every norm editable for calibration. Accuracy classed per AACE 18R-97.',tags:['AACE 18R-97','FEED Estimate','Gas Plant / GOSP','Man-Hours'],what:['Bulk pipe length &amp; tonnage','Valves, flanges, fittings, supports &amp; welds','Isometric, spool &amp; line-list counts','Stress-analysis package count','Piping engineering man-hours + FTE','AACE Class 4/5 accuracy banding'],file:'piping-work-estimator.html',bg:'bg-purple',svgId:'pe'},
-  bp:{name:'Buried Pipe — Soil-Pipe Interaction',desc:'Soil-pipe interaction &amp; flexibility for buried steel pipe — bi-linear soil restraint springs (axial, lateral, uplift, bearing), fully-restrained thermal stress with code check, virtual anchor length and movement at a bend by the beam-on-elastic-foundation method, plus the ALA &sect;3&ndash;4 earth / surface-live-load ovality, through-wall bending and ring-buckling check. Per ALA Guidelines for the Design of Buried Steel Pipe (2001) and Peng soil-pipe interaction, to ASME B31.4 / B31.8.',tags:['ALA 2001','ASME B31.4 / B31.8','Soil-Pipe Interaction'],what:['Axial / lateral / uplift / bearing soil springs','Restrained longitudinal stress + code check','Virtual anchor length &amp; free-end movement','Movement, moment &amp; bending stress at a bend','Ovality, through-wall bending &amp; ring buckling (ALA &sect;4)','FE spring export (CAESAR II / AutoPIPE / PIPLIN)'],file:'buried-pipe-soil-interaction.html',bg:'bg-bronze',svgId:'bp'}
+  bp:{name:'Buried Pipe — Soil-Pipe Interaction',desc:'Soil-pipe interaction &amp; flexibility for buried steel pipe — bi-linear soil restraint springs (axial, lateral, uplift, bearing), fully-restrained thermal stress with code check, virtual anchor length and movement at a bend by the beam-on-elastic-foundation method, plus the ALA &sect;3&ndash;4 earth / surface-live-load ovality, through-wall bending and ring-buckling check. Per ALA Guidelines for the Design of Buried Steel Pipe (2001) and Peng soil-pipe interaction, to ASME B31.4 / B31.8.',tags:['ALA 2001','ASME B31.4 / B31.8','Soil-Pipe Interaction'],what:['Axial / lateral / uplift / bearing soil springs','Restrained longitudinal stress + code check','Virtual anchor length &amp; free-end movement','Movement, moment &amp; bending stress at a bend','Ovality, through-wall bending &amp; ring buckling (ALA &sect;4)','FE spring export (CAESAR II / AutoPIPE / PIPLIN)'],file:'buried-pipe-soil-interaction.html',bg:'bg-bronze',svgId:'bp'},
+  md:{name:'Material Property Datasheet',desc:'Material reference lookup per ASME B31.3 — select a material and design temperature to read SMYS, SMTS, cold &amp; hot allowable stress (Sc / Sh), mean thermal expansion coefficient &alpha; and modulus of elasticity E, with full temperature-curve interpolation and an SI / US units toggle.',tags:['ASME B31.3','App. A · C-1 · C-6','Sc / Sh / α / E'],what:['SMYS &amp; SMTS by grade','Cold &amp; hot allowable stress (Sc / Sh)','Mean thermal expansion coefficient α','Modulus of elasticity E','Temperature-interpolated values','Full temperature curve · SI / US toggle'],file:'material-datasheet.html',bg:'bg-datasheet',svgId:'md'}
 };
 
 // ─── COMING SOON (rolling monthly release) ───────────────────
 const COMING_SOON = new Set([]);
 
 // ─── FREE (public, no login — the "try before you subscribe" tools) ───
-const FREE = new Set(['pw','wt','uc']);
+const FREE = new Set(['pw','wt','uc','md']);
 
 // ─── SVG BANK ────────────────────────────────────────────────
 const SVGS = {
  
+  md:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="22" y="16" width="46" height="58" rx="3" stroke="rgba(255,255,255,0.85)" stroke-width="2.5" fill="none"/><line x1="22" y1="30" x2="68" y2="30" stroke="rgba(255,255,255,0.55)" stroke-width="1.6"/><line x1="45" y1="30" x2="45" y2="74" stroke="rgba(255,255,255,0.3)" stroke-width="1.2"/><line x1="28" y1="40" x2="40" y2="40" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/><line x1="28" y1="48" x2="40" y2="48" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/><line x1="28" y1="56" x2="40" y2="56" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/><line x1="28" y1="64" x2="40" y2="64" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/><path d="M50 66 Q57 59 61 52 Q64 47 64 41" stroke="rgba(255,220,120,0.95)" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="50" cy="66" r="1.8" fill="rgba(255,220,120,0.95)"/><circle cx="64" cy="41" r="1.8" fill="rgba(255,220,120,0.95)"/></svg>`,
   lb:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M26 16 V58 H68" stroke="rgba(255,255,255,0.9)" stroke-width="4.5" fill="none" stroke-linecap="round"/><rect x="20" y="10" width="12" height="8" rx="1" fill="rgba(255,255,255,0.6)"/><rect x="66" y="52" width="8" height="12" rx="1" fill="rgba(255,255,255,0.6)"/><path d="M26 58 Q40 64 54 58" stroke="rgba(255,220,120,0.9)" stroke-width="1.8" fill="none" stroke-dasharray="3 2"/><line x1="26" y1="58" x2="26" y2="44" stroke="rgba(255,200,120,0.9)" stroke-width="2" stroke-linecap="round"/><polygon points="26,42 23,49 29,49" fill="rgba(255,200,120,0.9)"/></svg>`,
   uc:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="14" y="22" width="26" height="18" rx="3" stroke="rgba(255,255,255,0.85)" stroke-width="2.5" fill="none"/><rect x="50" y="50" width="26" height="18" rx="3" stroke="rgba(255,255,255,0.85)" stroke-width="2.5" fill="none"/><path d="M44 31 H62 M58 27 L62 31 L58 35" stroke="rgba(255,220,120,0.95)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M46 59 H28 M32 55 L28 59 L32 63" stroke="rgba(255,220,120,0.95)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
   pw:`<svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="45" cy="45" r="30" stroke="rgba(255,255,255,0.7)" stroke-width="3" fill="none"/><circle cx="45" cy="45" r="20" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none"/><line x1="45" y1="20" x2="45" y2="70" stroke="rgba(255,255,255,0.9)" stroke-width="2.5"/><polygon points="45,72 41,64 49,64" fill="rgba(255,255,255,0.9)"/><line x1="15" y1="45" x2="75" y2="45" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-dasharray="4 3"/></svg>`,

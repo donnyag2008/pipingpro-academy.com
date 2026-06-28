@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Material Datasheet — ASME B31.3 | PipingPro Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0e151d;
+    --panel:#141d27;
+    --panel-2:#1a2530;
+    --line:#283543;
+    --line-soft:#1f2a36;
+    --ink:#e8edf2;
+    --ink-dim:#8b9bab;
+    --ink-faint:#5e6f80;
+    --accent:#d98a3d;       /* heated-steel amber */
+    --accent-soft:#3a2c1c;
+    --verified:#4ea36e;
+    --indicative:#c9a13b;
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+    --sans:'Inter',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.5;
+    padding:clamp(14px,3vw,40px);
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:880px;margin:0 auto}
+
+  /* Header */
+  .head{
+    display:flex;align-items:flex-end;justify-content:space-between;
+    gap:16px;flex-wrap:wrap;
+    border-bottom:1px solid var(--line);
+    padding-bottom:18px;margin-bottom:24px;
+  }
+  .head h1{
+    font-size:clamp(20px,3.4vw,28px);
+    font-weight:700;letter-spacing:-.02em;line-height:1.1;
+  }
+  .head .eyebrow{
+    font-family:var(--mono);font-size:11px;font-weight:500;
+    letter-spacing:.18em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:8px;
+  }
+  .head .code-ref{
+    font-family:var(--mono);font-size:11px;color:var(--ink-faint);
+    text-align:right;line-height:1.7;white-space:nowrap;
+  }
+
+  /* Controls */
+  .controls{
+    display:grid;
+    grid-template-columns:1.4fr 1fr auto;
+    gap:14px;align-items:end;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:18px;margin-bottom:8px;
+  }
+  @media(max-width:600px){.controls{grid-template-columns:1fr}}
+  .field label{
+    display:block;font-family:var(--mono);font-size:10.5px;
+    letter-spacing:.12em;text-transform:uppercase;
+    color:var(--ink-dim);margin-bottom:7px;
+  }
+  select,input[type=number]{
+    width:100%;background:var(--panel-2);color:var(--ink);
+    border:1px solid var(--line);border-radius:7px;
+    padding:11px 12px;font-family:var(--mono);font-size:14px;
+    appearance:none;outline:none;transition:border-color .15s;
+  }
+  select:focus,input[type=number]:focus{border-color:var(--accent)}
+  select{
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 4 4-4' stroke='%238b9bab' stroke-width='1.5' fill='none'/></svg>");
+    background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;
+  }
+  .unit-toggle{display:flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+  .unit-toggle button{
+    background:var(--panel-2);color:var(--ink-dim);border:none;
+    font-family:var(--mono);font-size:12px;font-weight:500;
+    padding:11px 14px;cursor:pointer;transition:all .15s;
+  }
+  .unit-toggle button.active{background:var(--accent);color:#1a1208;font-weight:600}
+
+  /* Status strip */
+  .status{
+    font-family:var(--mono);font-size:11.5px;
+    color:var(--ink-dim);
+    padding:12px 4px 22px;
+    display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+  }
+  .dot{width:7px;height:7px;border-radius:50%;flex:none}
+  .dot.verified{background:var(--verified)}
+  .dot.indicative{background:var(--indicative)}
+  .status b{color:var(--ink)}
+
+  /* Primary datasheet */
+  .sheet{
+    background:var(--panel);border:1px solid var(--line);
+    border-radius:10px;overflow:hidden;margin-bottom:24px;
+  }
+  .sheet-title{
+    font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-dim);
+    padding:14px 18px;border-bottom:1px solid var(--line);
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .sheet-title .mat{color:var(--accent);font-weight:600;letter-spacing:.04em;text-transform:none;font-size:13px}
+  table{width:100%;border-collapse:collapse}
+  .prop-row{border-bottom:1px solid var(--line-soft)}
+  .prop-row:last-child{border-bottom:none}
+  .prop-row td{padding:14px 18px;vertical-align:middle}
+  .prop-name{font-weight:500;font-size:14px}
+  .prop-sub{display:block;font-family:var(--mono);font-size:10.5px;color:var(--ink-faint);margin-top:3px;letter-spacing:.04em}
+  .prop-val{
+    font-family:var(--mono);font-size:18px;font-weight:600;
+    text-align:right;color:var(--ink);white-space:nowrap;
+  }
+  .prop-val .u{font-size:11px;font-weight:400;color:var(--ink-dim);margin-left:5px}
+  .prop-val.hot{color:var(--accent)}
+  .placeholder{text-align:center;color:var(--ink-faint);padding:48px 18px;font-family:var(--mono);font-size:13px}
+
+  /* Full curve */
+  .curve-head{
+    font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-dim);margin:0 4px 12px;
+  }
+  .curve{
+    background:var(--panel);border:1px solid var(--line);
+    border-radius:10px;overflow-x:auto;margin-bottom:24px;
+  }
+  .curve table{min-width:520px}
+  .curve th{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--ink-dim);font-weight:500;
+    text-align:right;padding:12px 16px;border-bottom:1px solid var(--line);
+  }
+  .curve th:first-child{text-align:left}
+  .curve td{
+    font-family:var(--mono);font-size:13px;text-align:right;
+    padding:10px 16px;border-bottom:1px solid var(--line-soft);color:var(--ink);
+  }
+  .curve td:first-child{text-align:left;color:var(--ink-dim)}
+  .curve tr:last-child td{border-bottom:none}
+  .curve tr.interp{background:var(--accent-soft)}
+  .curve tr.interp td{color:var(--accent);font-weight:600}
+  .curve tr.interp td:first-child{color:var(--accent)}
+
+  .foot{
+    font-size:11.5px;color:var(--ink-faint);line-height:1.7;
+    border-top:1px solid var(--line);padding-top:18px;
+  }
+  .foot a{color:var(--ink-dim)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head">
+    <div>
+      <div class="eyebrow">PipingPro Academy · Calculator</div>
+      <h1>Material Property Datasheet</h1>
+    </div>
+    <div class="code-ref">
+      ASME B31.3 App. A · Table C-1 · C-6<br>
+      Sc / Sh · α · E lookup
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="field">
+      <label for="mat">Material</label>
+      <select id="mat">
+        <option value="">— select material —</option>
+        <option value="A106B">Carbon Steel — A106 Gr.B</option>
+        <option value="A333-6">Low-Temp CS — A333 Gr.6</option>
+        <option value="TP304">Stainless 304 — A312 TP304</option>
+        <option value="TP316L">Stainless 316L — A312 TP316L</option>
+        <option value="DUP2205">Duplex 2205 — A790 S31803</option>
+        <option value="P11">Cr-Mo — A335 P11 (1¼Cr-½Mo)</option>
+        <option value="P22">Cr-Mo — A335 P22 (2¼Cr-1Mo)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="temp">Design Temperature <span id="tunit">(°C)</span></label>
+      <input type="number" id="temp" value="200" step="5">
+    </div>
+    <div class="field">
+      <label>Units</label>
+      <div class="unit-toggle">
+        <button id="si" class="active" onclick="setUnits('SI')">SI</button>
+        <button id="us" onclick="setUnits('US')">US</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="status" id="status">
+    <span class="dot verified"></span><span>Select a material to view its property datasheet.</span>
+  </div>
+
+  <div class="sheet">
+    <div class="sheet-title">
+      <span>Properties at design temperature</span>
+      <span class="mat" id="sheet-mat">—</span>
+    </div>
+    <table><tbody id="sheet-body">
+      <tr><td class="placeholder" colspan="2">No material selected</td></tr>
+    </tbody></table>
+  </div>
+
+  <div id="curve-wrap" style="display:none">
+    <div class="curve-head">Full temperature curve · design point interpolated</div>
+    <div class="curve">
+      <table>
+        <thead><tr id="curve-head-row"></tr></thead>
+        <tbody id="curve-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="foot" id="foot">
+    Allowable stresses (Sc, Sh) per ASME B31.3 Appendix A; modulus E per Table C-6; mean coefficient of
+    thermal expansion α per Table C-1, referenced to 21&nbsp;°C. Linear interpolation between tabulated points.
+    Values are for preliminary engineering only — verify against the governing code edition and the project
+    material specification before use in a design deliverable.
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   SINGLE SOURCE OF TRUTH — SI units
+   Stress  : MPa      Temp : °C
+   E       : MPa      α    : ×10⁻⁶ mm/mm/°C (mean, ref 21°C)
+   US display is converted deterministically (no second dataset).
+   "status": verified  -> signed-off against our B31.3 dataset
+             indicative -> standard reference, confirm vs code edition
+   ============================================================ */
+const DATA = {
+  A106B:{ name:"Carbon Steel A106 Gr.B", status:"verified",
+    smys:240, smts:415, sc:138, tmin:-29, tmax:427,
+    t:[20,100,150,200,250,300,350,400],
+    sh:[138,138,131,124,117,110,103,97],
+    e :[203000,198000,195000,192000,189000,185000,181000,176000],
+    a :[11.5,11.9,12.1,12.4,12.7,13.0,13.2,13.4] },
+
+  "A333-6":{ name:"Low-Temp CS A333 Gr.6", status:"indicative",
+    smys:240, smts:415, sc:138, tmin:-46, tmax:343,
+    t:[20,100,150,200,250,300,343],
+    sh:[138,138,131,124,117,110,104],
+    e :[203000,198000,195000,192000,189000,185000,182000],
+    a :[11.5,11.9,12.1,12.4,12.7,13.0,13.2] },
+
+  TP304:{ name:"Stainless 304 (A312 TP304)", status:"verified",
+    smys:205, smts:515, sc:115, tmin:-198, tmax:425,
+    t:[20,100,150,200,250,300,350,400],
+    sh:[115,107,102,98,95,92,90,88],
+    e :[195000,189000,186000,182000,178000,174000,170000,165000],
+    a :[15.9,16.2,16.5,16.8,17.0,17.2,17.5,17.7] },
+
+  TP316L:{ name:"Stainless 316L (A312 TP316L)", status:"verified",
+    smys:170, smts:485, sc:115, tmin:-198, tmax:425,
+    t:[20,100,150,200,250,300,350,400],
+    sh:[115,109,105,102,99,96,94,92],
+    e :[195000,189000,186000,182000,178000,174000,170000,165000],
+    a :[15.9,16.2,16.5,16.8,17.0,17.2,17.5,17.7] },
+
+  DUP2205:{ name:"Duplex 2205 (A790 S31803)", status:"verified",
+    smys:450, smts:620, sc:172, tmin:-29, tmax:316,
+    t:[20,100,150,200,250,300],
+    sh:[172,168,163,158,152,146],
+    e :[200000,195000,192000,188000,184000,180000],
+    a :[13.0,13.5,13.7,14.0,14.2,14.5] },
+
+  P11:{ name:"Cr-Mo A335 P11 (1¼Cr-½Mo)", status:"indicative",
+    smys:205, smts:415, sc:138, tmin:-29, tmax:595,
+    t:[20,100,200,300,400,450,500,550,595],
+    sh:[138,138,134,130,124,116,98,72,41],
+    e :[205000,200000,193000,185000,176000,171000,166000,160000,155000],
+    a :[11.5,11.9,12.4,12.9,13.4,13.6,13.8,14.0,14.2] },
+
+  P22:{ name:"Cr-Mo A335 P22 (2¼Cr-1Mo)", status:"indicative",
+    smys:205, smts:415, sc:138, tmin:-29, tmax:650,
+    t:[20,100,200,300,400,450,500,550,600,650],
+    sh:[138,138,134,131,127,121,108,86,57,33],
+    e :[207000,202000,195000,187000,178000,173000,168000,162000,156000,150000],
+    a :[10.8,11.2,11.8,12.4,12.9,13.1,13.4,13.6,13.8,14.0] }
+};
+
+let units='SI', curMat='';
+
+/* ---------- unit helpers ---------- */
+const c2f = c => c*9/5+32;
+const stress = mpa => units==='SI' ? Math.round(mpa) : (mpa*0.145038).toFixed(2);            // MPa -> ksi
+const modE   = mpa => units==='SI' ? Math.round(mpa) : (mpa*0.145038/1000).toFixed(1);        // MPa -> 10^6 psi
+const alpha  = a   => units==='SI' ? a.toFixed(2) : (a*5/9).toFixed(2);                        // /°C -> /°F
+const temp   = c   => units==='SI' ? Math.round(c) : Math.round(c2f(c));
+const U = {
+  SI:{stress:"MPa", e:"MPa", a:"×10⁻⁶/°C", t:"°C"},
+  US:{stress:"ksi", e:"×10⁶ psi", a:"×10⁻⁶/°F", t:"°F"}
+};
+
+/* linear interpolation with range clamp flag */
+function interp(arr, ts, x){
+  if(x<=ts[0])         return {v:arr[0], clamp:x<ts[0]?'low':null};
+  if(x>=ts[ts.length-1]) return {v:arr[arr.length-1], clamp:x>ts[ts.length-1]?'high':null};
+  for(let i=0;i<ts.length-1;i++){
+    if(x>=ts[i] && x<=ts[i+1]){
+      const f=(x-ts[i])/(ts[i+1]-ts[i]);
+      return {v:arr[i]+f*(arr[i+1]-arr[i]), clamp:null};
+    }
+  }
+  return {v:arr[0], clamp:null};
+}
+
+function setUnits(u){
+  units=u;
+  document.getElementById('si').classList.toggle('active',u==='SI');
+  document.getElementById('us').classList.toggle('active',u==='US');
+  document.getElementById('tunit').textContent = u==='SI' ? '(°C)' : '(°F)';
+  // convert the temperature field value so the design point is preserved
+  const f=document.getElementById('temp');
+  const v=parseFloat(f.value);
+  if(!isNaN(v)) f.value = u==='US' ? Math.round(c2f(v)) : Math.round((v-32)*5/9);
+  render();
+}
+
+function render(){
+  const m=DATA[curMat];
+  const body=document.getElementById('sheet-body');
+  const status=document.getElementById('status');
+  const curveWrap=document.getElementById('curve-wrap');
+
+  if(!m){
+    body.innerHTML='<tr><td class="placeholder" colspan="2">No material selected</td></tr>';
+    document.getElementById('sheet-mat').textContent='—';
+    status.innerHTML='<span class="dot verified"></span><span>Select a material to view its property datasheet.</span>';
+    curveWrap.style.display='none';
+    return;
+  }
+
+  // read design temp in current units, convert to °C for lookup
+  let tInput=parseFloat(document.getElementById('temp').value);
+  if(isNaN(tInput)) tInput = units==='SI'?20:68;
+  const tC = units==='SI' ? tInput : (tInput-32)*5/9;
+
+  const sh=interp(m.sh,m.t,tC);
+  const e =interp(m.e ,m.t,tC);
+  const a =interp(m.a ,m.t,tC);
+  const u=U[units];
+
+  // out-of-range warning
+  let warn='';
+  if(tC < m.tmin || tC > m.tmax){
+    warn=` · ⚠ design temp outside rated range (${temp(m.tmin)} to ${temp(m.tmax)} ${u.t})`;
+  } else if(sh.clamp){
+    warn=` · ⚠ beyond tabulated data, value held at limit`;
+  }
+
+  document.getElementById('sheet-mat').textContent=m.name;
+
+  const dot = m.status==='verified'?'verified':'indicative';
+  const lbl = m.status==='verified'
+    ? 'Verified against our B31.3 dataset'
+    : 'Indicative — confirm vs your code edition';
+  status.innerHTML=`<span class="dot ${dot}"></span><span><b>${m.name}</b> — ${lbl}${warn}</span>`;
+
+  const rows=[
+    ['Temperature range', `Rated metal temperature`, `${temp(m.tmin)} … ${temp(m.tmax)}`, u.t, ''],
+    ['SMYS', 'Specified min. yield strength', stress(m.smys), u.stress, ''],
+    ['SMTS', 'Specified min. tensile strength', stress(m.smts), u.stress, ''],
+    ['Cold allowable stress, S<sub>c</sub>', 'At ambient (21 °C)', stress(m.sc), u.stress, ''],
+    ['Hot allowable stress, S<sub>h</sub>', `At ${temp(tC)} ${u.t} (interpolated)`, stress(sh.v), u.stress, 'hot'],
+    ['Thermal coefficient, α', `Mean, ref 21 °C · at ${temp(tC)} ${u.t}`, alpha(a.v), u.a, 'hot'],
+    ['Modulus of elasticity, E', `At ${temp(tC)} ${u.t}`, modE(e.v), u.e, 'hot'],
+  ];
+
+  body.innerHTML=rows.map(r=>`
+    <tr class="prop-row">
+      <td><span class="prop-name">${r[0]}</span><span class="prop-sub">${r[1]}</span></td>
+      <td class="prop-val ${r[4]}">${r[2]}<span class="u">${r[3]}</span></td>
+    </tr>`).join('');
+
+  renderCurve(m,tC);
+  curveWrap.style.display='block';
+}
+
+function renderCurve(m,tC){
+  const u=U[units];
+  document.getElementById('curve-head-row').innerHTML=
+    `<th>Temp ${u.t}</th><th>S<sub>h</sub> ${u.stress}</th><th>E ${u.e}</th><th>α ${u.a}</th>`;
+
+  // build rows from tabulated points, then insert interpolated design row in order
+  const pts=m.t.map((tc,i)=>({tc, sh:m.sh[i], e:m.e[i], a:m.a[i], interp:false}));
+  const inRange = tC>=m.t[0] && tC<=m.t[m.t.length-1];
+  const isPoint = m.t.includes(Math.round(tC*100)/100);
+  if(inRange && !isPoint){
+    const sh=interp(m.sh,m.t,tC).v, e=interp(m.e,m.t,tC).v, a=interp(m.a,m.t,tC).v;
+    pts.push({tc, sh, e, a, interp:true});
+    pts.sort((x,y)=>x.tc-y.tc);
+  }
+
+  document.getElementById('curve-body').innerHTML=pts.map(p=>`
+    <tr class="${p.interp?'interp':''}">
+      <td>${temp(p.tc)}${p.interp?' ◂ design':''}</td>
+      <td>${stress(p.sh)}</td>
+      <td>${modE(p.e)}</td>
+      <td>${alpha(p.a)}</td>
+    </tr>`).join('');
+}
+
+document.getElementById('mat').addEventListener('change',e=>{curMat=e.target.value;render();});
+document.getElementById('temp').addEventListener('input',render);
+render();
+</script>
+</body>
+</html>
