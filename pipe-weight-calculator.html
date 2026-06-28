@@ -28,7 +28,7 @@
 <!-- PPA ACCESS GATE -->
 <script>
 (function(){
-  var THIS_CALC = 'pw';                       // ← change per page
+  var THIS_CALC = window.THIS_CALC = 'pw';                       // ← change per page
   var UPGRADE = '/membership-plan.html';      // non-members land here
   function gate(){
     if(localStorage.getItem('ppa_admin') === '1') return;
