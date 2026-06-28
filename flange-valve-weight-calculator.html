@@ -14,7 +14,7 @@
 <!-- PPA ACCESS GATE (canonical Block A) -->
 <script>
 (function(){
-  var THIS_CALC = 'vw';                       // ← change per page
+  var THIS_CALC = window.THIS_CALC = 'vw';    // ← change per page (also exposed globally so /ppa-report-gate.js can read it)
   var UPGRADE   = '/membership-plan.html';    // non-members land here
 
   /* Admin is decided by the logged-in Memberstack member — not a browser flag.
@@ -417,7 +417,11 @@ body{ background:#faf6ef; color:#1a1510; }
       <div class="field"><label>Unit weight</label><input class="auto" id="vEa" value="—" readonly/></div>
       <div class="field"><label>Line item total</label><input class="auto" id="vTot" value="—" readonly/></div>
     </div>
-    <div class="info-box" style="margin-top:1rem"><strong>Face-to-face dimensions (ASME B16.10).</strong> Valve end-to-end / face-to-face lengths come from ASME B16.10, not B16.34. Drop the B16.10 face-to-face table in and this panel will display the dimension for the selected valve type, class, size and end connection.</div>
+    <div id="vDimWrap" style="display:none;margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--border)">
+      <div class="card-title" style="margin-bottom:.6rem">Valve Dimensions <span id="vDimMeta" style="font-weight:400;text-transform:none;letter-spacing:0"></span></div>
+      <div class="ref-table-wrap"><table class="ref-table" id="vDimTable"></table></div>
+      <div class="info-box" id="vDimNote" style="margin-top:.6rem"><strong>Lengths per ASME B16.10-2000.</strong> RF = raised-face face-to-face; BW = buttwelding end-to-end; RTJ = ring-joint end-to-end (RF&nbsp;+&nbsp;Table&nbsp;10&nbsp;X). Weight above is the Fasani (Tyco) catalogue figure — these lengths are the standard envelope, independent of vendor. Verify against the governing edition.</div>
+    </div>
   </div>
 
   <div class="card" style="background:var(--accent);border-color:var(--accent)">
@@ -445,6 +449,7 @@ body{ background:#faf6ef; color:#1a1510; }
 </div>
 </div>
 
+<script src="/ppa-b16-10.js"></script>
 <script>
 /* ===== DATA ===== */
 const SIZES=['1/2','3/4','1','1-1/4','1-1/2','2','2-1/2','3','3-1/2','4','5','6','8','10','12','14','16','18','20','24'];
@@ -530,7 +535,48 @@ function calcFlange(){
   el('fEa').value=fmt(ea)+' '+unit;el('fTot').value=fmt(ea*q)+' '+unit+'  (×'+q+')';
   return kg*q;
 }
+/* ===== B16.10 VALVE DIMENSIONS (from /ppa-b16-10.js) ===== */
+const VFAMILY={'Gate':'gate','Globe':'globeCheck','Check (Swing)':'swingCheck'};
+function npsNum(s){
+  if(s==null) return NaN; s=String(s).trim();
+  if(s.indexOf('-')>-1){var p=s.split('-');var fr=p[1].split('/');return parseFloat(p[0])+parseFloat(fr[0])/parseFloat(fr[1]);}
+  if(s.indexOf('/')>-1){var f=s.split('/');return parseFloat(f[0])/parseFloat(f[1]);}
+  return parseFloat(s);
+}
+function vFamily(t,c){
+  var fam=VFAMILY[t]||'gate';
+  // swing check is tabulated separately only where it extends past globe (Cl.300);
+  // elsewhere it shares the globe/lift/swing-check long-pattern column.
+  if(fam==='swingCheck' && !(typeof B16_10!=='undefined' && B16_10[c] && B16_10[c].swingCheck)) fam='globeCheck';
+  return fam;
+}
+function renderVDim(){
+  var w=el('vDimWrap'); if(!w) return;
+  if(typeof getValveLength!=='function'){ w.style.display='none'; return; }   // module not loaded
+  var t=el('vType').value, c=el('vClass').value, s=el('vSize').value, nps=npsNum(s);
+  var fam=vFamily(t,c), dimKey=(vEnd==='bw')?'ete':'ff';
+  var mm=getValveLength({cls:c,family:fam,nps:nps,dim:dimKey,units:'mm'});
+  var inch=getValveLength({cls:c,family:fam,nps:nps,dim:dimKey,units:'in'});
+  var famLbl=fam==='gate'?'Gate':fam==='globeCheck'?'Globe / lift / swing check':fam==='swingCheck'?'Swing check':fam;
+  el('vDimMeta').textContent='— ASME B16.10-2000 · Class '+c+' · '+famLbl;
+  if(mm==null){
+    el('vDimTable').innerHTML='<tr><td style="padding:.5rem .2rem;color:var(--ink3);line-height:1.6">No B16.10 length is tabulated for <strong>'+t+' · Class '+c+' · NPS '+s+'</strong> at this end connection. (Some catalogue sizes fall outside the B16.10 tables.)</td></tr>';
+    el('vDimNote').style.display='none'; w.style.display='block'; return;
+  }
+  el('vDimNote').style.display='block';
+  var endLbl=(vEnd==='bw')?'End-to-end (buttwelding)':'Face-to-face (RF flanged)';
+  var rows='<tr><th>Dimension</th><th>mm</th><th>in</th></tr>';
+  rows+='<tr><td>'+endLbl+'</td><td>'+mm+'</td><td>'+inch.toFixed(2)+'</td></tr>';
+  if(vEnd==='fl'){                                  // RTJ end-to-end only applies to flanged valves
+    var rmm=getRtjEndToEnd({cls:c,family:fam,nps:nps,units:'mm'});
+    var rin=getRtjEndToEnd({cls:c,family:fam,nps:nps,units:'in'});
+    if(rmm!=null) rows+='<tr><td>End-to-end (RTJ)</td><td>'+rmm+'</td><td>'+rin.toFixed(2)+'</td></tr>';
+  }
+  rows+='<tr><td>Tolerance (§5.1)</td><td>±'+b1610Tolerance(nps,'straightway','mm')+'</td><td>±'+b1610Tolerance(nps,'straightway','in').toFixed(2)+'</td></tr>';
+  el('vDimTable').innerHTML=rows; w.style.display='block';
+}
 function calcValve(){
+  renderVDim();
   const t=el('vType').value,c=el('vClass').value,s=el('vSize').value,q=parseInt(el('vQty').value)||1;
   const kg=vKg(valveData,t,c,s);
   if(kg===undefined){el('vEa').value='N/A';el('vTot').value='N/A';return 0;}
@@ -569,7 +615,7 @@ function buildReport(){
   const fLine=fkg===undefined?'—':fmt(fkg*fq)+' kg',vLine=vkg===undefined?'—':fmt(vkg*vq)+' kg';
   const total=fmt((fkg||0)*fq+(vkg||0)*vq)+' kg';
   window.PPA_REPORT={
-    docType:'Flange & Valve Weight', codeNote:'ASME B16.5 / Fasani (Tyco) catalogue',
+    docType:'Flange & Valve Weight', codeNote:'ASME B16.5 / B16.10 / Fasani (Tyco) catalogue',
     sections:[
       {title:'Flange', badge:'ASME B16.5 · RF · Carbon Steel', type:'table',
        head:['Parameter','Value','Unit'],
@@ -592,7 +638,18 @@ function buildReport(){
          r.push(['Bolting',d.n+' × '+(BOLT_FRAC[String(d.boltDia)]||d.boltDia)+'″','off']);
          r.push(['Bolt-hole Ø',d.holeDia.toFixed(2),'in']);
          r.push(['Fillet radius min (r1)',d.r1.toFixed(2),'in']);
-         return r;})()}]:[]),
+         return r;})()}]:[]).concat((function(){
+      if(typeof getValveLength!=='function') return [];
+      var fam=vFamily(vt,vc), nps=npsNum(vs), k=(vEnd==='bw')?'ete':'ff';
+      var mm=getValveLength({cls:vc,family:fam,nps:nps,dim:k,units:'mm'});
+      var inch=getValveLength({cls:vc,family:fam,nps:nps,dim:k,units:'in'});
+      if(mm==null) return [];
+      var vr=[[(vEnd==='bw'?'End-to-end (BW)':'Face-to-face (RF)'), mm+' / '+inch.toFixed(2),'mm / in']];
+      if(vEnd==='fl'){var rmm=getRtjEndToEnd({cls:vc,family:fam,nps:nps,units:'mm'}),rin=getRtjEndToEnd({cls:vc,family:fam,nps:nps,units:'in'});
+        if(rmm!=null) vr.push(['End-to-end (RTJ)', rmm+' / '+rin.toFixed(2),'mm / in']);}
+      vr.push(['Tolerance (§5.1)','±'+b1610Tolerance(nps,'straightway','mm')+' / ±'+b1610Tolerance(nps,'straightway','in').toFixed(2),'mm / in']);
+      return [{title:'Valve Dimensions', badge:'ASME B16.10-2000 · Class '+vc, type:'table', head:['Dimension','Value','Unit'], rows:vr}];
+    })()),
     verdict:{status:'warn',text:'Indicative dry weights — verify against vendor data before lifting-plan sign-off.'}
   };
 }
