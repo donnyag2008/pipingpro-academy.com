@@ -24,12 +24,12 @@ export async function onRequestGet({ request, env }) {
     sql += ` ORDER BY COALESCE(posted_at, created_at) DESC LIMIT ?`; binds.push(limit);
   } else {
     sql = `SELECT id,headline,summary,operator,contractor,project,scope,stage,region,country,
-                  location,value_usd,value_text,awarded_date,source_url,publisher
+                  location,value_usd,value_text,awarded_date,reported_date,source_url,publisher
            FROM awards WHERE status='live'`;
     const eq = (col, p) => { const v = u.searchParams.get(p); if (v) { sql += ` AND ${col}=?`; binds.push(v); } };
     eq('scope', 'scope'); eq('stage', 'stage'); eq('region', 'region');
     if (q) { sql += ` AND (lower(headline) LIKE ? OR lower(operator) LIKE ? OR lower(contractor) LIKE ?)`; binds.push(`%${q}%`, `%${q}%`, `%${q}%`); }
-    sql += ` ORDER BY COALESCE(awarded_date, created_at) DESC LIMIT ?`; binds.push(limit);
+    sql += ` ORDER BY COALESCE(reported_date, awarded_date, created_at) DESC LIMIT ?`; binds.push(limit);
   }
 
   const { results } = await env.DB.prepare(sql).bind(...binds).all();
