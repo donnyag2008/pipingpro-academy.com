@@ -42,6 +42,8 @@
     pw: 'free',
     wt: 'free',
     uc: 'free',
+    md: 'free',
+    mc: 'free',
     // Student tier (and above) — CONFIRM this list is what you intend.
     vw: 'student',
     ps: 'student',
