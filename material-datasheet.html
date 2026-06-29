@@ -10,7 +10,9 @@
 <!-- Memberstack -->
 <script data-memberstack-app="app_cmq9fsibv00720sujaqjm734o" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
 <script src="/ppa-tier.js"></script>
-<!-- PPA ACCESS GATE (canonical Block A) — free tool: gate no-ops when requiredTier==='free' -->
+<!-- shared material library: after the gate, before the md inline script -->
+<script src="ppa-materials.js"></script>
+  <!-- PPA ACCESS GATE (canonical Block A) — free tool: gate no-ops when requiredTier==='free' -->
 <script>
 (function(){
   var THIS_CALC = window.THIS_CALC = 'md';   // ← this page; keep 'md' in the FREE tier of ppa-tier.js
@@ -50,8 +52,7 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', gate); else gate();
 })();
 </script>
-<!-- shared material library: after the gate, before the md inline script -->
-<script src="ppa-materials.js"></script>
+
   
 <title>Material Property Datasheet — ASME B31.3 | PipingPro Academy</title>
 <meta name="description" content="ASME B31.3 material property datasheet — select a material and design temperature to read SMYS, SMTS, cold and hot allowable stress (Sc / Sh), thermal expansion coefficient and modulus of elasticity, with full temperature interpolation. Free, no login."/>
