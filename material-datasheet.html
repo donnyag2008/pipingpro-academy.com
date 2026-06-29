@@ -313,14 +313,6 @@ const alpha =a  =>units==='SI'?a.toFixed(2):(a*5/9).toFixed(2);
 const temp  =c  =>units==='SI'?Math.round(c):Math.round(c2f(c));
 const U={SI:{stress:"MPa",e:"MPa",a:"×10⁻⁶/°C",t:"°C"},US:{stress:"ksi",e:"×10⁶ psi",a:"×10⁻⁶/°F",t:"°F"}};
 
-function interp(arr,ts,x){
-  if(x<=ts[0])           return {v:arr[0], clamp:x<ts[0]?'low':null};
-  if(x>=ts[ts.length-1]) return {v:arr[arr.length-1], clamp:x>ts[ts.length-1]?'high':null};
-  for(let i=0;i<ts.length-1;i++){
-    if(x>=ts[i]&&x<=ts[i+1]){const f=(x-ts[i])/(ts[i+1]-ts[i]);return {v:arr[i]+f*(arr[i+1]-arr[i]),clamp:null};}
-  }
-  return {v:arr[0],clamp:null};
-}
 
 function showCalcTab(name){
   document.querySelectorAll('.calc-tab').forEach(t=>t.classList.remove('active'));
