@@ -26,7 +26,11 @@
   .ppa-nav .brand{font-family:var(--serif);font-size:1.15rem;color:var(--rust);letter-spacing:.2px;}
   .ppa-nav nav a{font-family:var(--mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-decoration:none;margin-left:22px;}
   .ppa-nav nav a:hover{color:var(--rust);}
-
+nav{background:#1a1510;border-bottom:2px solid #b8860b;padding:0 5%;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:200;}
+.nav-logo{font-family:'DM Serif Display',serif;font-size:1.15rem;color:#d4a017;letter-spacing:.02em;text-decoration:none;}
+.nav-logo span{color:#b8860b;}
+.nav-back{font-size:.82rem;font-weight:500;letter-spacing:.05em;text-transform:uppercase;color:#ccc;text-decoration:none;display:flex;align-items:center;gap:5px;transition:color .2s;}
+.nav-back:hover{color:#d4a017;}
   .ppa-hero{background:var(--ink);color:var(--paper);padding:48px 0 36px;border-bottom:3px solid var(--rust);position:relative;overflow:hidden;}
   .ppa-hero::before{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(90deg,rgba(255,255,255,.02) 0,rgba(255,255,255,.02) 1px,transparent 1px,transparent 60px),repeating-linear-gradient(0deg,rgba(255,255,255,.02) 0,rgba(255,255,255,.02) 1px,transparent 1px,transparent 60px);}
   .ppa-hero .wrap{position:relative;}
@@ -76,7 +80,17 @@
     <a href="/awards.html">Awards</a>
   </nav>
 </header>
-
+<nav>
+  <a href="index.html" class="nav-logo">Piping<span>Pro</span> Academy</a>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <a href="index.html" class="nav-back">← Back</a>
+    <a href="/jobs.html" aria-current="page">Jobs</a>
+    <a href="/awards.html">Awards</a>
+    <div id="nav-auth" style="display:flex;align-items:center;gap:.65rem;">
+      
+    </div>
+  </div>
+</nav>
 <section class="ppa-hero">
   <div class="wrap">
     <div class="eyebrow">Vacancies</div>
