@@ -1006,6 +1006,8 @@
     .sb-courses .sb-banner{background:linear-gradient(140deg,#7a3518 0%,#8b3a1a 100%);}
     .sb-calcs .sb-banner{background:linear-gradient(140deg,#1a3a5a 0%,#2a6a8a 100%);}
     .sb-guides .sb-banner{background:linear-gradient(140deg,#173d31 0%,#2a7558 100%);}
+    .sb-awards .sb-banner{background:linear-gradient(140deg,#6b4a10 0%,#b8860b 100%);}  /* gold / bronze — fits the "awards" theme */
+    .sb-jobs .sb-banner{background:linear-gradient(140deg,#1a3a4a 0%,#2a7a6a 100%);}  /* deep teal — distinct from the blue Calculator banner */
     .sb-banner svg{width:74px;height:74px;opacity:.95;position:relative;transition:transform .35s cubic-bezier(.2,.85,.25,1);}
     .suite-block:hover .sb-banner svg{transform:scale(1.07) rotate(-4deg);}
     .sb-count{font-size:10.5px;font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.62);position:relative;}
@@ -1098,14 +1100,17 @@
 
     <div class="suite-blocks">
 
-    <a class="suite-block sb-courses" href="awards.html">
+    <a class="suite-block sb-awards" href="awards.html">
       <div class="sb-banner">
         <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M32 14 L58 25 L32 36 L6 25 Z" fill="rgba(255,255,255,0.92)"/>
-          <path d="M16 30 V42 C16 47 48 47 48 42 V30" stroke="rgba(255,255,255,0.85)" stroke-width="2.6" fill="none"/>
-          <line x1="58" y1="25" x2="58" y2="42" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round"/>
-          <circle cx="58" cy="44" r="2.6" fill="rgba(255,210,130,0.95)"/>
-        </svg>
+  <path d="M22 10 H42 V24 C42 30 37 34 32 34 C27 34 22 30 22 24 Z" fill="rgba(255,255,255,0.92)"/>
+  <path d="M22 13 H15 V18 C15 23 19 25 23 25" stroke="rgba(255,255,255,0.85)" stroke-width="2.4" fill="none"/>
+  <path d="M42 13 H49 V18 C49 23 45 25 41 25" stroke="rgba(255,255,255,0.85)" stroke-width="2.4" fill="none"/>
+  <line x1="32" y1="34" x2="32" y2="42" stroke="rgba(255,255,255,0.85)" stroke-width="3"/>
+  <rect x="25" y="42" width="14" height="4" rx="1" fill="rgba(255,255,255,0.85)"/>
+  <rect x="22" y="46" width="20" height="6" rx="1.5" fill="rgba(255,255,255,0.85)"/>
+  <circle cx="32" cy="20" r="4" fill="rgba(255,210,130,0.95)"/>
+</svg>
         <span class="sb-count">Project Awards</span>
       </div>
       <div class="sb-body">
@@ -1116,17 +1121,14 @@
       </div>
     </a>
 
-    <a class="suite-block sb-calcs" href="jobs.html">
+    <a class="suite-block sb-jobs" href="jobs.html">
       <div class="sb-banner">
-        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="14" y="8" width="36" height="48" rx="5" stroke="rgba(255,255,255,0.9)" stroke-width="2.5" fill="none"/>
-          <rect x="20" y="14" width="24" height="9" rx="2" fill="rgba(255,210,130,0.92)"/>
-          <g fill="rgba(255,255,255,0.85)">
-            <circle cx="23" cy="32" r="2.4"/><circle cx="32" cy="32" r="2.4"/><circle cx="41" cy="32" r="2.4"/>
-            <circle cx="23" cy="41" r="2.4"/><circle cx="32" cy="41" r="2.4"/><circle cx="41" cy="41" r="2.4"/>
-            <circle cx="23" cy="50" r="2.4"/><circle cx="32" cy="50" r="2.4"/>
-          </g>
-        </svg>
+       <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="8" y="22" width="48" height="30" rx="4" stroke="rgba(255,255,255,0.9)" stroke-width="2.5" fill="none"/>
+  <path d="M24 22 V17 C24 15 25 14 27 14 H37 C39 14 40 15 40 17 V22" stroke="rgba(255,255,255,0.9)" stroke-width="2.5" fill="none"/>
+  <line x1="8" y1="35" x2="56" y2="35" stroke="rgba(255,255,255,0.85)" stroke-width="2.2"/>
+  <rect x="27" y="32" width="10" height="7" rx="1.5" fill="rgba(255,210,130,0.92)"/>
+</svg>
         <span class="sb-count">Job Opportunity</span>
       </div>
       <div class="sb-body">
