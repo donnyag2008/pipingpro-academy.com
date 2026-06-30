@@ -42,6 +42,7 @@
       background: var(--cream);
       color: var(--ink);
       line-height: 1.7;
+      max-width: 100%;
       overflow-x: hidden;
     }
 
@@ -992,7 +993,7 @@
 <section class="content-section" id="content">
   <style>
     /* ── MEMBERSHIP SUITES (two-block grid) ── */
-    .suite-blocks{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:2rem;margin-top:2.6rem;max-width:900px;}
+    .suite-blocks{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:2rem;margin-top:2.6rem;max-width:900px;}
     #content .suite-blocks{max-width:1040px;}
     .suite-block{display:flex;flex-direction:column;background:var(--cream);border:1px solid var(--paper-dark);border-radius:16px;overflow:hidden;text-decoration:none;color:inherit;cursor:pointer;transition:transform .32s cubic-bezier(.2,.85,.25,1),box-shadow .32s,border-color .3s;}
     .suite-block:hover{transform:translateY(-7px);box-shadow:0 20px 50px rgba(26,21,16,.16);border-color:var(--gold);}
