@@ -330,7 +330,7 @@
 
     .content-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
       gap: 1.5rem;
     }
     .content-card {
@@ -367,7 +367,7 @@
     .audience-section { background: var(--cream); }
     .audience-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
       gap: 1.2rem;
       margin-top: 2.5rem;
     }
@@ -420,7 +420,7 @@
     .pricing-section { background: var(--paper); }
     .pricing-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
       gap: 2rem;
       max-width: 680px;
       margin-top: 2.5rem;
@@ -603,7 +603,7 @@
     /* ── CALCULATOR CARDS ── */
     .calc-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
       gap: 1.2rem;
       margin-bottom: 2rem;
     }
