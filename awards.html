@@ -69,6 +69,11 @@ nav{background:#1a1510;border-bottom:2px solid #b8860b;padding:0 5%;display:flex
   .tag.stage{border-color:var(--rust);color:var(--rust);}
   .tag.scope{border-color:var(--gold);color:var(--gold);}
   .tag.val{border-color:var(--hair);color:var(--ink);font-weight:600;}
+  .tag.status{font-weight:700;}
+  .tag.status-open{border-color:var(--rust);color:#fff;background:var(--rust);}
+  .tag.status-pref{border-color:var(--gold-soft);color:#fff;background:var(--gold-soft);}
+  .tag.status-awarded{border-color:var(--hair);color:var(--muted);background:var(--hair-soft);}
+  .deadline{font-family:var(--mono);font-size:.76rem;color:var(--rust-deep);margin:0 0 12px;font-weight:600;}
   .src{font-family:var(--mono);font-size:.72rem;color:var(--muted);display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--hair-soft);padding-top:11px;}
   .src a{color:var(--rust);text-decoration:none;}
   .src a:hover{text-decoration:underline;}
@@ -116,6 +121,13 @@ nav{background:#1a1510;border-bottom:2px solid #b8860b;padding:0 5%;display:flex
       <option value="FEED">FEED</option><option value="EPC">EPC</option>
       <option value="EPCC">EPCC</option><option value="FID">FID</option><option value="PMC">PMC</option>
     </select>
+    <select id="f-status" aria-label="Award status">
+      <option value="">All statuses</option>
+      <option value="tender_open">Tender open</option>
+      <option value="preferred_bidder">Preferred bidder</option>
+      <option value="awarded">Awarded</option>
+      <option value="fid">FID</option>
+    </select>
     <select id="f-region" aria-label="Region">
       <option value="">All regions</option>
       <option value="Middle East">Middle East</option><option value="Europe">Europe</option>
@@ -133,14 +145,14 @@ nav{background:#1a1510;border-bottom:2px solid #b8860b;padding:0 5%;display:flex
 <script>
 const feed = document.getElementById('feed');
 const countEl = document.getElementById('count');
-const controls = ['f-scope','f-stage','f-region','f-q'].map(id => document.getElementById(id));
+const controls = ['f-scope','f-stage','f-status','f-region','f-q'].map(id => document.getElementById(id));
 const esc = s => (s==null?'':String(s)).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const debounce = (fn,ms)=>{let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms);};};
 
 function params(){
   const p = new URLSearchParams({type:'awards'});
-  const [s,st,r,q] = controls.map(c=>c.value.trim());
-  if(s)p.set('scope',s); if(st)p.set('stage',st); if(r)p.set('region',r); if(q)p.set('q',q);
+  const [s,st,status,r,q] = controls.map(c=>c.value.trim());
+  if(s)p.set('scope',s); if(st)p.set('stage',st); if(status)p.set('award_status',status); if(r)p.set('region',r); if(q)p.set('q',q);
   return p.toString();
 }
 function fmtVal(a){
@@ -148,21 +160,37 @@ function fmtVal(a){
   if(a.value_usd!=null) return a.value_usd>=1000 ? '$'+(a.value_usd/1000).toFixed(1)+'bn' : '$'+a.value_usd+'m';
   return null;
 }
+const STATUS_LABEL = {
+  tender_open: 'Tender Open',
+  preferred_bidder: 'Preferred Bidder',
+  awarded: 'Awarded',
+  fid: 'FID'
+};
+function statusBadge(a){
+  const status = a.award_status || 'awarded';
+  const label = STATUS_LABEL[status] || status;
+  const cls = status === 'tender_open' ? 'status-open' : (status === 'preferred_bidder' ? 'status-pref' : 'status-awarded');
+  return `<span class="tag status ${cls}">${esc(label)}</span>`;
+}
 function card(a){
   const who = [a.contractor && `<b>${esc(a.contractor)}</b>`, a.operator && `awarded by ${esc(a.operator)}`].filter(Boolean).join(' — ');
   const val = fmtVal(a);
+  const status = a.award_status || 'awarded';
   const tags = [
+    statusBadge(a),
     a.stage && `<span class="tag stage">${esc(a.stage)}</span>`,
     a.scope && `<span class="tag scope">${esc(a.scope)}</span>`,
     val && `<span class="tag val">${esc(val)}</span>`,
     a.location && `<span class="tag">${esc(a.location)}</span>`,
     !a.location && a.country && `<span class="tag">${esc(a.country)}</span>`,
   ].filter(Boolean).join('');
+  const deadlineNote = (status === 'tender_open' && a.bid_deadline) ? `<p class="deadline">Bid deadline: ${esc(a.bid_deadline)}</p>` : '';
   return `<article class="card">
     <h2><a href="${esc(a.source_url)}" target="_blank" rel="noopener">${esc(a.headline)}</a></h2>
     ${who?`<p class="who">${who}</p>`:''}
     ${a.summary?`<p class="sum">${esc(a.summary)}</p>`:''}
     <div class="tags">${tags}</div>
+    ${deadlineNote}
     <div class="src">
       <a href="${esc(a.source_url)}" target="_blank" rel="noopener">Source: ${esc(a.publisher)} &rarr;</a>
       <span class="date">${a.reported_date?'Reported '+esc(a.reported_date):''}</span>
