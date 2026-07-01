@@ -127,9 +127,23 @@
     .lmodal-err{font-size:11px;color:#b91c1c;margin-top:.5rem;display:none;}
     .lmodal-submit{width:100%;padding:11px;background:var(--gold);color:var(--ink);font-weight:700;font-size:13px;letter-spacing:.05em;text-transform:uppercase;border:none;border-radius:4px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .18s;margin-top:.4rem;}
     .lmodal-submit:hover{background:var(--gold-bright);}
-    .lmodal-logout{width:100%;padding:10px;background:var(--paper);color:var(--ink-light);font-weight:600;font-size:12px;border:1px solid var(--paper-dark);border-radius:4px;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:.7rem;}
+    .lmodal-logo{width:44px;height:44px;display:block;margin:0 auto 0.7rem;border-radius:50%;background:#fff;padding:4px;}
+    .lmodal-close{text-align:right;}
     .lmodal-logout:hover{background:var(--paper-dark);}
 
+    <!-- 1. Add this CSS near your other .lmodal-* rules -->
+<style>
+.lmodal-logo{width:44px;height:44px;display:block;margin:0 auto 0.7rem;border-radius:50%;background:#fff;padding:4px;}
+.lmodal-header{text-align:center;}
+</style>
+
+<!-- 2. Replace your existing .lmodal-header block with this -->
+<div class="lmodal-header">
+  <img class="lmodal-logo" src="/images/ppa-logo.png" alt="PipingPro Academy"/>
+  <div class="lmodal-title">Member Login</div>
+  <div class="lmodal-sub">PipingPro Academy</div>
+  <button class="lmodal-close" onclick="closeLModal()">✕</button>
+</div>
   
   
 
