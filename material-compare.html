@@ -146,6 +146,7 @@ h1,h2,h3{font-family:"DM Serif Display",Georgia,serif;font-weight:400;letter-spa
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:8px}
 @media(max-width:680px){.grid{grid-template-columns:1fr}}
 .metric{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow)}
+.metric.wide{grid-column:1 / -1}
 .metric .lab{font-size:12px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--ink-soft)}
 .metric .lab small{display:block;font-weight:500;letter-spacing:0;text-transform:none;color:var(--neutral);font-size:11px;margin-top:2px}
 .metric .vals{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:10px}
@@ -158,6 +159,19 @@ h1,h2,h3{font-family:"DM Serif Display",Georgia,serif;font-weight:400;letter-spa
 .badge.down{background:rgba(180,71,46,.12);color:var(--bad)}
 .badge.flat{background:var(--cream-dk);color:var(--neutral)}
 .metric .note{margin-top:10px;font-size:12.5px;color:var(--ink-soft);line-height:1.45}
+
+.weldgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px}
+@media(max-width:680px){.weldgrid{grid-template-columns:1fr}}
+.weldcol{border-radius:10px;padding:12px 14px;background:var(--cream-dk)}
+.weldcol.a{border-left:3px solid var(--rust)} .weldcol.b{border-left:3px solid var(--gold)}
+.weldcol .wname{font-family:"IBM Plex Mono",monospace;font-size:12.5px;font-weight:700;margin-bottom:6px}
+.wlvl{display:inline-flex;align-items:center;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;margin-bottom:8px}
+.wlvl.l1{background:rgba(63,125,82,.14);color:var(--good)}
+.wlvl.l2{background:rgba(192,138,45,.16);color:var(--rust-dk)}
+.wlvl.l3{background:rgba(180,71,46,.14);color:var(--bad)}
+.wlvl.l4{background:rgba(180,71,46,.22);color:var(--bad)}
+.weldrow{font-size:12.5px;color:var(--ink-soft);margin:4px 0}
+.weldrow b{color:var(--ink);font-weight:600}
 
 .charts{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px}
 @media(max-width:880px){.charts{grid-template-columns:1fr}}
@@ -278,6 +292,9 @@ footer{border-top:1px solid var(--line);padding:22px;text-align:center;color:var
       <h3>5 · Temperature envelope &amp; data status</h3>
       <p>The comparison shows where both materials are code-listed versus where only one reaches the design point, and flags each material's data status — <em>verified</em> against the PipingPro dataset, or <em>indicative</em> pending confirmation against your code edition.</p>
 
+      <h3>6 · Welding difficulty &amp; relative cost</h3>
+      <p>Two decision factors that never appear in a code table but often decide the outcome in practice. Welding difficulty reflects preheat/PWHT burden and procedure-control risk (e.g. sensitization in austenitics, sigma-phase risk in duplex, hydrogen cracking in Cr-Mo grades) — it is a practice-based indication, not a code requirement lookup; always confirm against your project WPS/PQR. The cost figure is a rough relative multiplier against carbon steel (A106B = 1.0), material cost only, no fabrication cost included — treat it as directional and confirm current mill pricing before using it in an estimate.</p>
+
       <div class="callout"><strong>Source of truth:</strong> all values are interpolated by <code>PPA.interp</code> between the tabulated points in <code>ppa-materials.js</code> — the same dataset and algorithm the <code>md</code> datasheet uses, so the two pages cannot drift. Confirm the governing line against your project PMS before issuing.</div>
     </div>
   </section>
@@ -285,13 +302,13 @@ footer{border-top:1px solid var(--line);padding:22px;text-align:center;color:var
 
 <footer>
   PipingPro Academy · Material Comparison · Shared dataset via ppa-materials.js
-  <div class="dataflag">Indicative grades require confirmation against your code edition. Density is supplementary handbook data.</div>
+  <div class="dataflag">Indicative grades require confirmation against your code edition. Density, welding notes and cost multiplier are supplementary handbook/practice data — directional, not a substitute for your WPS or a mill quote.</div>
 </footer>
 
 <!-- shared library FIRST -->
 <script src="ppa-materials.js"></script>
 <script>
-const M=PPA.MATERIALS, RHO=PPA.RHO, interp=PPA.interp, CV=PPA.convert, U=()=>PPA.UNITS[units];
+const M=PPA.MATERIALS, RHO=PPA.RHO, COST=PPA.COST, WELD=PPA.WELD, WLR=PPA.WELD_LEVEL_RANK, interp=PPA.interp, CV=PPA.convert, U=()=>PPA.UNITS[units];
 let units='SI';
 const el=id=>document.getElementById(id);
 const fmt=(n,d=2)=>n==null?"—":(+n).toFixed(d);
@@ -381,6 +398,18 @@ function render(){
         `Same geometry → dead-weight ratio ≈ ${fmt(ra/rb,3)}× on every support`));
   }
 
+  /* relative cost multiplier (supplementary, indicative only — only if present) */
+  if(COST[selA.value]!=null && COST[selB.value]!=null){
+    const ca=COST[selA.value], cb=COST[selB.value];
+    c.push(card("Relative cost","indicative multiplier · CS (A106B) = 1.0",ca.toFixed(1),cb.toFixed(1),"×",1,"lower",
+        `Material cost only, no fabrication/welding cost. Directional — confirm against current mill pricing before estimating.`));
+  }
+
+  /* welding comparison (supplementary, practice-based — only if present) */
+  if(WELD[selA.value]!=null && WELD[selB.value]!=null){
+    c.push(weldCard(a,b,WELD[selA.value],WELD[selB.value]));
+  }
+
   el("cards").innerHTML=c.join("");
 
   /* charts */
@@ -420,6 +449,22 @@ function envelope(a,b,okA,okB,tShow,units){
   return `<div class="metric"><div class="lab">Temperature envelope<small>code-listed range</small></div>
     <div class="vals"><span class="v a" style="font-size:15px">${rng(a)}</span></div>${tag(okA)}
     <div class="vals" style="margin-top:10px"><span class="v b" style="font-size:15px">${rng(b)}</span></div>${tag(okB)}</div>`;
+}
+function weldLevelBadge(level){
+  const rank=WLR[level]||2;
+  return `<span class="wlvl l${rank}">${level}</span>`;
+}
+function weldCard(a,b,wa,wb){
+  const col=(name,w,side)=>`<div class="weldcol ${side}">
+      <div class="wname">${name}</div>
+      ${weldLevelBadge(w.level)}
+      <div class="weldrow"><b>Preheat:</b> ${w.preheat}</div>
+      <div class="weldrow"><b>PWHT:</b> ${w.pwht}</div>
+      <div class="weldrow"><b>Process:</b> ${w.process}</div>
+      <div class="weldrow"><b>Watch for:</b> ${w.notes}</div>
+    </div>`;
+  return `<div class="metric wide"><div class="lab">Welding comparison<small>indicative shop/field practice — confirm against your WPS/PQR</small></div>
+    <div class="weldgrid">${col(a.name,wa,"a")}${col(b.name,wb,"b")}</div></div>`;
 }
 
 /* canvas line chart — two independent (t,val) series + design-T marker */

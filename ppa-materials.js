@@ -84,6 +84,68 @@
     DUP2205:7.80, P11:7.85, P22:7.85
   };
 
+  /* ---- SUPPLEMENTARY: relative cost multiplier (NOT real pricing) ----
+     Directional only. Mill/market pricing (especially Ni/Mo-bearing alloys)
+     moves with commodity cycles and varies by region, order volume and mill,
+     so an absolute figure would go stale and could mislead a decision. This
+     is a rough relative multiplier vs A106B = 1.0 baseline, for a same-size
+     pipe/fitting, material cost only (no fabrication/welding cost included —
+     see WELD for that dimension separately). Always confirm against current
+     mill quotes before using in an estimate. */
+  const COST = {
+    A106B:1.0, "A333-6":1.3, TP304:3.0, TP316L:3.5, DUP2205:5.5, P11:1.8, P22:2.2
+  };
+
+  /* ---- SUPPLEMENTARY: welding characteristics (NOT a code requirement
+     lookup — indicative practice notes only; always confirm against the
+     project WPS/PQR and the governing code edition before use). ----
+     level: Low | Moderate | Moderate-High | High — relative shop/field
+            difficulty and procedure-control burden, not a numeric ratio.
+     preheat: typical minimum preheat guidance (text, since it's often a
+              thickness-dependent range rather than a single number).
+     pwht: typical PWHT expectation for this grade.
+     process: commonly used process combination.
+     notes: the one pitfall worth knowing before you spec a dissimilar or
+            unfamiliar-grade weld. */
+  const WELD = {
+    A106B:{ level:"Low",
+      preheat:"Not normally required below ~25 mm; check WPS for thicker sections",
+      pwht:"Required above code thickness/temperature threshold (B31.3 Table 331.1.1)",
+      process:"GTAW root + SMAW fill (ER70S-2 / E7018)",
+      notes:"Standard carbon-steel practice; the most forgiving grade in this list." },
+    "A333-6":{ level:"Moderate",
+      preheat:"Light preheat typical, thickness dependent",
+      pwht:"Usually required — needed to restore/verify low-temperature CVN toughness",
+      process:"GTAW root + SMAW fill, low-hydrogen consumables",
+      notes:"Heat input must stay controlled or the low-temperature impact toughness the grade is chosen for gets eroded." },
+    TP304:{ level:"Moderate",
+      preheat:"None required",
+      pwht:"Not normally required — avoid unless a specific case requires it",
+      process:"GTAW root + GTAW/SMAW fill, matching filler",
+      notes:"Control interpass temperature; avoid prolonged dwell in the ~425–870°C sensitization range (carbide precipitation, reduced corrosion resistance)." },
+    TP316L:{ level:"Moderate",
+      preheat:"None required",
+      pwht:"Not normally required",
+      process:"GTAW root + GTAW/SMAW fill, low-carbon matching filler",
+      notes:"Lower carbon than 304 reduces sensitization risk, but interpass temperature control is still good practice." },
+    DUP2205:{ level:"High",
+      preheat:"None to slight; keep interpass temperature capped (~100°C typical limit)",
+      pwht:"Not normally required if the procedure is properly controlled",
+      process:"GTAW with matched high-nickel filler (e.g. ER2209)",
+      notes:"Narrow heat-input window — overheating shifts the ferrite/austenite balance and risks sigma-phase formation, degrading both toughness and the corrosion resistance the grade was selected for. Needs a qualified WPS and experienced welders." },
+    P11:{ level:"Moderate-High",
+      preheat:"150–200°C minimum, maintained between passes",
+      pwht:"Required per code",
+      process:"GTAW root + SMAW fill, low-hydrogen consumables",
+      notes:"Hydrogen cracking risk if preheat lapses between passes." },
+    P22:{ level:"High",
+      preheat:"200–260°C minimum, maintained between passes",
+      pwht:"Required (mandatory)",
+      process:"GTAW root + SMAW fill, low-hydrogen consumables",
+      notes:"Higher hardenability than P11 increases hydrogen-cracking risk; needs strict interpass control and PWHT — budget more inspection time." }
+  };
+  const WELD_LEVEL_RANK = { "Low":1, "Moderate":2, "Moderate-High":3, "High":4 };
+
   /* ---- interpolation (verbatim from md; clamps at table ends) ---- */
   function interp(arr, ts, x) {
     if (x <= ts[0])              return { v: arr[0], clamp: x < ts[0] ? 'low' : null };
@@ -113,5 +175,5 @@
   };
 
   g.PPA = g.PPA || {};
-  Object.assign(g.PPA, { MATERIALS, RHO, interp, convert, UNITS });
+  Object.assign(g.PPA, { MATERIALS, RHO, COST, WELD, WELD_LEVEL_RANK, interp, convert, UNITS });
 })(window);
