@@ -43,14 +43,16 @@
     wt: 'free',
     uc: 'free',
     md: 'free',
-   
+
     // Student tier (and above) — CONFIRM this list is what you intend.
     vw: 'student',
     ps: 'student',
     el: 'student',
     lb: 'student',
     mc: 'student',
-    // everything else (fx, fl, pe, di, sv, ss, tr, pc, ub, df, sp, bp, hp, nl, pm, vf, ci)
+    sv: 'student',   // moved from Professional
+    bp: 'student'    // moved from Professional
+    // everything else (fx, scl, fl, pe, di, ss, tr, pc, ub, df, sp, hp, nl, pm, vf, ci, cp)
     // → professional (the default for anything not listed)
   };
 
