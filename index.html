@@ -130,6 +130,20 @@
     .lmodal-logout{width:100%;padding:10px;background:var(--paper);color:var(--ink-light);font-weight:600;font-size:12px;border:1px solid var(--paper-dark);border-radius:4px;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:.7rem;}
     .lmodal-logout:hover{background:var(--paper-dark);}
 
+    <div class="lmodal-field">
+  <label class="lmodal-label">Password</label>
+  <input class="lmodal-input" id="lmodal-password" type="password" placeholder="••••••••••••" autocomplete="current-password"/>
+</div>
+
+<!-- ADD THIS LINE -->
+<div style="text-align:right;margin-top:-0.5rem;">
+  <a href="#" data-ms-modal="forgot-password" style="font-size:12px;color:var(--gold);text-decoration:none;">Forgot password?</a>
+</div>
+
+<div class="lmodal-err" id="lmodal-err">Incorrect email or password. Please try again.</div>
+<div style="text-align:right;margin-top:-0.5rem;">
+  <a href="#" onclick="closeLModal()" data-ms-modal="forgot-password" style="font-size:12px;color:var(--gold);text-decoration:none;">Forgot password?</a>
+</div>
     /* ── HERO ── */
     .hero {
       min-height: 88vh;
