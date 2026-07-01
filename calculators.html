@@ -68,6 +68,7 @@ nav{background:#1a1510;border-bottom:2px solid #b8860b;padding:0 5%;display:flex
 .card-img.bg-diainch{background:linear-gradient(135deg,#5a2a0d 0%,#b05730 100%);}
 .card-img.bg-sv{background:linear-gradient(135deg,#3a3320 0%,#7a6a3a 100%);}
 .card-img.bg-datasheet{background:linear-gradient(135deg,#2f2a1c 0%,#8a6420 100%);}
+.card-img.bg-rust{background:linear-gradient(135deg,#6b2a10 0%,#b8501e 100%);}
 
 
 .card-img svg{width:90px;height:90px;opacity:.9;}
@@ -570,7 +571,26 @@ body{ background:#faf6ef; color:#1a1510; }
         <div class="card-action"><span class="card-btn btn-open" id="btn-lb">Open Calculator →</span></div>
       </div>
     </div> 
-    
+    <div class="calc-card" onclick="openModal('cp')">
+  <div class="card-img bg-rust">
+    <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="8" y1="55" x2="82" y2="55" stroke="rgba(255,255,255,0.85)" stroke-width="7" stroke-linecap="round"/>
+      <rect x="8" y="48" width="74" height="14" rx="7" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" fill="none"/>
+      <circle cx="45" cy="24" r="9" stroke="rgba(255,255,255,0.8)" stroke-width="2.5" fill="none"/>
+      <line x1="45" y1="33" x2="45" y2="47" stroke="rgba(255,220,120,0.9)" stroke-width="2" stroke-dasharray="3 2"/>
+      <path d="M40 20 h10 M45 15 v10" stroke="rgba(255,220,120,0.95)" stroke-width="2" stroke-linecap="round"/>
+      <line x1="25" y1="55" x2="25" y2="68" stroke="rgba(255,255,255,0.45)" stroke-width="2" stroke-linecap="round"/>
+      <line x1="65" y1="55" x2="65" y2="68" stroke="rgba(255,255,255,0.45)" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span class="card-badge badge-member" id="badge-cp" style="background:rgba(184,134,11,.82);color:#fff;">👑 Professional</span>
+  </div>
+  <div class="card-body">
+    <div class="card-name">Cathodic Protection Design</div>
+    <div class="card-desc">Buried-pipeline CP design per SAES-X-400 — ICCP/galvanic selection, anode &amp; rectifier sizing, power source, and CP-station spacing per ISO 15589-1.</div>
+    <div class="card-tags"><span class="tag">SAES-X-400</span><span class="tag">ISO 15589-1</span><span class="tag">ICCP / Galvanic</span></div>
+    <div class="card-action"><span class="card-btn btn-locked" id="btn-cp">👑 Professional Only</span></div>
+  </div>
+</div>
     <div class="calc-card" onclick="openModal('vw')">
       <div class="card-img bg-forest">
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
