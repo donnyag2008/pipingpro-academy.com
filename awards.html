@@ -65,10 +65,11 @@ nav{background:#1a1510;border-bottom:2px solid #b8860b;padding:0 5%;display:flex
       gap: 1.5rem;
       border-top: 2px solid var(--gold);
     }
-    .footer-brand {
-      font-family: 'DM Serif Display', serif;
-      font-size: 1.1rem;
-      color: var(--gold-bright);
+   .footer-brand {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.1rem;
+  color: var(--gold);
+}
     }
     .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
     .footer-links a {
@@ -243,6 +244,7 @@ async function load(){
 }
 controls.forEach(c => c.addEventListener(c.type==='search'?'input':'change', debounce(load,250)));
 load();
+</script>
 
   <!-- FOOTER -->
 <footer>
