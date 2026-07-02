@@ -608,7 +608,19 @@ table.reg td.n{text-align:right;font-family:var(--mono);}
 
     <div class="pneumo-warn" id="pneumo-warn">
       <div class="pneumo-warn-icon">⚠️</div>
-      <div><strong>Pneumatic Test — Elevated Risk.</strong> Pneumatic testing stores far more energy than hydrostatic. Per ASME B31.3 Cl. 345.5 and SAES-A-004 §5.8, water shall be the primary medium and all alternatives evaluated first; pneumatic testing needs a written hazard analysis (ASME PCC-2 / GI 0002.102), Inspection Dept approval via CRM, and a stored-energy check ≤ 271 MJ (200×10⁶ ft·lb). Clear all personnel from the test area during pressurisation. Test pressure is limited to 1.1× design (vs 1.5× for hydrotest).</div>
+      <div>
+        <strong>Pneumatic Test — Prerequisites (SAES-A-004 §5.8 / ASME B31.3 Cl. 345.5).</strong>
+        Pneumatic testing stores far more energy than hydrostatic and is <u>not</u> an equal alternative — the following must be satisfied before proceeding:
+        <ul style="margin:.5rem 0 0 1.1rem;padding:0;line-height:1.6;">
+          <li><strong>Justification documented</strong> that hydrostatic testing is impracticable — water shall be the primary medium and all alternatives evaluated first (§5.8.1).</li>
+          <li><strong>Written hazard analysis</strong> completed per ASME PCC-2 Art. 501 / GI 0002.102 (§5.8.1).</li>
+          <li><strong>Inspection Dept / IEU approval</strong> secured via CRM before commencement (§5.8.2).</li>
+          <li><strong>Stored energy verified ≤ 271 MJ</strong> (200×10⁶ ft·lb) for the test boundary; above this, <strong>Director-level approval</strong> is required (§5.8.3) — check the Gas Volume card below once your inputs are in.</li>
+          <li><strong>Preliminary leak test at 170 kPa (25 psi)</strong> per ASME Sec V Art. 10, before stepping up to test pressure (§5.8.4).</li>
+          <li><strong>Exclusion zone established</strong> per PCC-2 Art. 501 safe-distance calc; all non-essential personnel clear during pressurisation.</li>
+          <li><strong>Test pressure capped at 1.1× design</strong> (vs 1.5× for hydrotest).</li>
+        </ul>
+      </div>
     </div>
 
     <div class="pneumo-warn show" id="storage-warn" style="display:none;">
@@ -1046,16 +1058,17 @@ function setTestType(t) {
   const gb = document.getElementById('gen-btn');
   gb.className = 'btn ' + (t==='pneumo' ? 'btn-pneumo' : 'btn-hydro');
 
-  // Default the test medium to match the test type — nitrogen is the code-preferred
-  // pneumatic medium (compressed air is only used where N2 isn't practical). Only
-  // switches it if the current medium doesn't already belong to the right category,
-  // so a deliberate manual choice (e.g. Compressed Air, or Process Fluid for a leak
-  // test) is never overwritten.
+  // Default the test medium to match the test type — Compressed Air is the default
+  // pneumatic medium here (cost — N2 is significantly more expensive); switch to
+  // Nitrogen manually for hydrocarbon/un-cleaned systems where air is restricted
+  // (SAES-A-004 §5.8 / B31.3). Only switches it if the current medium doesn't
+  // already belong to the right category, so a deliberate manual choice (e.g.
+  // Nitrogen, or Process Fluid for a leak test) is never overwritten.
   const medEl = document.getElementById('test-medium');
   const gasMedia    = ['nitrogen','air'];
   const liquidMedia = ['water','glycol'];
   if (t === 'pneumo' && !gasMedia.includes(medEl.value)) {
-    medEl.value = 'nitrogen';
+    medEl.value = 'air';
   } else if (t !== 'pneumo' && !liquidMedia.includes(medEl.value) && medEl.value !== 'process') {
     medEl.value = 'water';
   }
