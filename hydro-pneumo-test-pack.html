@@ -610,6 +610,11 @@ table.reg td.n{text-align:right;font-family:var(--mono);}
       <div class="pneumo-warn-icon">⚠️</div>
       <div><strong>Pneumatic Test — Elevated Risk.</strong> Pneumatic testing stores far more energy than hydrostatic. Per ASME B31.3 Cl. 345.5 and SAES-A-004 §5.8, water shall be the primary medium and all alternatives evaluated first; pneumatic testing needs a written hazard analysis (ASME PCC-2 / GI 0002.102), Inspection Dept approval via CRM, and a stored-energy check ≤ 271 MJ (200×10⁶ ft·lb). Clear all personnel from the test area during pressurisation. Test pressure is limited to 1.1× design (vs 1.5× for hydrotest).</div>
     </div>
+
+    <div class="pneumo-warn show" id="storage-warn" style="display:none;">
+      <div class="pneumo-warn-icon">🔒</div>
+      <div><strong>Autosave / autofill history is blocked in this browser.</strong> Your line number, P&amp;ID, and other entries won't be remembered here — this is caused by browser privacy settings or corporate IT policy (private/InPrivate browsing, "clear data on exit", or storage blocked by group policy) restricting local storage on this device, not a fault in the calculator itself. Try a different browser/profile, or a machine without the restriction, to get the remembered-values and autocomplete dropdowns.</div>
+    </div>
   </div>
 
   <!-- Line Details -->
@@ -1040,6 +1045,21 @@ function setTestType(t) {
   document.getElementById('pneumo-warn').classList.toggle('show', t==='pneumo');
   const gb = document.getElementById('gen-btn');
   gb.className = 'btn ' + (t==='pneumo' ? 'btn-pneumo' : 'btn-hydro');
+
+  // Default the test medium to match the test type — nitrogen is the code-preferred
+  // pneumatic medium (compressed air is only used where N2 isn't practical). Only
+  // switches it if the current medium doesn't already belong to the right category,
+  // so a deliberate manual choice (e.g. Compressed Air, or Process Fluid for a leak
+  // test) is never overwritten.
+  const medEl = document.getElementById('test-medium');
+  const gasMedia    = ['nitrogen','air'];
+  const liquidMedia = ['water','glycol'];
+  if (t === 'pneumo' && !gasMedia.includes(medEl.value)) {
+    medEl.value = 'nitrogen';
+  } else if (t !== 'pneumo' && !liquidMedia.includes(medEl.value) && medEl.value !== 'process') {
+    medEl.value = 'water';
+  }
+
   updateCalc();
 }
 
@@ -1745,6 +1765,24 @@ updateCalc = function(){ __origUpdateCalc_T(); updatePlus(); };
   document.addEventListener('change', function(e){ if(e.target.matches && e.target.matches(SCOPE)) saveAll(); });
 
   window.__ppaRestoreCalcInputs = restoreAll;
+})();
+
+/* ----- Detect whether localStorage is actually usable on this device/browser -----
+   Corporate IT policies (InPrivate-only mode, "clear on exit", group-policy storage
+   blocks) or strict tracking-prevention can silently disable it — silently, so without
+   this check the autosave/autofill history just looks broken with no explanation. */
+(function(){
+  var ok = false;
+  try{
+    var k = '__ppa_storage_test__';
+    localStorage.setItem(k, '1');
+    ok = localStorage.getItem(k) === '1';
+    localStorage.removeItem(k);
+  }catch(e){ ok = false; }
+  if(!ok){
+    var w = document.getElementById('storage-warn');
+    if(w) w.style.display = 'flex';
+  }
 })();
 
 /* ----- Per-field input history → shows as a native dropdown under text/number boxes -----
