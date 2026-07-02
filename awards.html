@@ -54,6 +54,37 @@ nav{background:#1a1510;border-bottom:2px solid #b8860b;padding:0 5%;display:flex
   .filters select:focus,.filters input:focus{outline:2px solid var(--gold-soft);outline-offset:1px;border-color:var(--gold-soft);}
   .count{font-family:var(--mono);font-size:.74rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;padding:6px 0 18px;}
 
+/* ── FOOTER ── */
+    footer {
+      background: var(--ink);
+      padding: 3rem 8%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      border-top: 2px solid var(--gold);
+    }
+    .footer-brand {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.1rem;
+      color: var(--gold-bright);
+    }
+    .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .footer-links a {
+      font-size: 0.8rem;
+      color: #888;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-copy { font-size: 0.75rem; color: #555; }
+
+
+
+
+
+  
   /* award cards */
   .feed{display:grid;gap:14px;padding-bottom:64px;}
   .card{background:var(--paper);border:1px solid var(--hair);border-left:3px solid var(--gold);border-radius:3px;padding:20px 22px;transition:border-color .15s ease,transform .15s ease;}
@@ -212,6 +243,25 @@ async function load(){
 }
 controls.forEach(c => c.addEventListener(c.type==='search'?'input':'change', debounce(load,250)));
 load();
+
+  <!-- FOOTER -->
+<footer>
+  <div class="footer-brand">PipingPro Academy</div>
+  <div class="footer-links">
+   <a href="privacy-policy.html">Privacy Policy</a>
+<a href="terms-of-use.html">Terms of Use</a>
+    <a href="https://zephrum-konsultan.co.uk" target="_blank" rel="noopener">Zephrum Konsultan</a>
+    <a href="mailto:donny.bachtiar@pipingpro-academy.com">Contact</a>
+  </div>
+  <div class="footer-copy">© 2026 PipingPro Academy. All rights reserved.</div>
+
+<script src="/counter.js"></script>
+  
+</footer>
+
+
+  
 </script>
+  <script src="/counter.js"></script>
 </body>
 </html>
