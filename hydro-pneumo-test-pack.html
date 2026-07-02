@@ -629,7 +629,7 @@ table.reg td.n{text-align:right;font-family:var(--mono);}
         <input type="text" id="pipe-class" placeholder="e.g. A1A, CS150">
       </div>
     </div>
-    <div class="fg3 gap">
+    <div class="fg4 gap">
       <div class="field">
         <label>Design Code</label>
         <select id="design-code" onchange="updateCalc()">
@@ -657,14 +657,34 @@ table.reg td.n{text-align:right;font-family:var(--mono);}
           <option value="457.0" data-nps='18"'>18"</option>
           <option value="508.0" data-nps='20"'>20"</option>
           <option value="610.0" data-nps='24"'>24"</option>
+          <option value="660.4" data-nps='26"'>26"</option>
+          <option value="711.2" data-nps='28"'>28"</option>
+          <option value="762.0" data-nps='30"'>30"</option>
+          <option value="812.8" data-nps='32"'>32"</option>
+          <option value="863.6" data-nps='34"'>34"</option>
+          <option value="914.4" data-nps='36"'>36"</option>
+          <option value="965.2" data-nps='38"'>38"</option>
+          <option value="1016.0" data-nps='40"'>40"</option>
+          <option value="1066.8" data-nps='42"'>42"</option>
+          <option value="1117.6" data-nps='44"'>44"</option>
+          <option value="1168.4" data-nps='46"'>46"</option>
+          <option value="1219.2" data-nps='48"'>48"</option>
+          <option value="1320.8" data-nps='52"'>52"</option>
+          <option value="1422.4" data-nps='56"'>56"</option>
+          <option value="1524.0" data-nps='60"'>60"</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Flange Standard</label>
+        <select id="flange-standard" onchange="onFlangeStandardChange()">
+          <option value="b165">ASME B16.5 (NPS ≤ 24")</option>
+          <option value="b1647a">ASME B16.47 Series A — MSS SP-44</option>
+          <option value="b1647b">ASME B16.47 Series B — API 605</option>
         </select>
       </div>
       <div class="field">
         <label>Flange Rating</label>
-        <select id="flange-rating">
-          <option>Class 150</option><option>Class 300</option><option>Class 600</option>
-          <option>Class 900</option><option>Class 1500</option><option>Class 2500</option>
-        </select>
+        <select id="flange-rating"></select>
       </div>
     </div>
   </div>
@@ -1064,16 +1084,56 @@ function getGaugeRange(testP) {
 }
 
 // STD wall thickness (mm) per B36.10M, keyed by OD (mm) — used to auto-fill on NPS change
+// NPS 14" (355.6mm OD) and above hold at a constant 9.53mm (0.375") "Standard" wall per
+// B36.10M — this also covers the >24" large-bore range where flanges move to B16.47.
 var STD_WALL = {
   "21.3":2.77,"26.7":2.87,"33.4":3.38,"48.3":3.68,"60.3":3.91,
   "88.9":5.49,"114.3":6.02,"168.3":7.11,"219.1":8.18,"273.0":9.27,
-  "323.8":9.53,"406.4":9.53,"457.0":9.53,"508.0":9.53,"610.0":9.53
+  "323.8":9.53,"406.4":9.53,"457.0":9.53,"508.0":9.53,"610.0":9.53,
+  "660.4":9.53,"711.2":9.53,"762.0":9.53,"812.8":9.53,"863.6":9.53,
+  "914.4":9.53,"965.2":9.53,"1016.0":9.53,"1066.8":9.53,"1117.6":9.53,
+  "1168.4":9.53,"1219.2":9.53,"1320.8":9.53,"1422.4":9.53,"1524.0":9.53
 };
+
+// Flange rating classes by standard. B16.47 (both series) does not carry
+// Class 1500 / 2500 — those large-bore ratings simply aren't manufactured to B16.47.
+var FLANGE_CLASSES = {
+  b165:   ['150','300','600','900','1500','2500'],
+  b1647a: ['75','150','300','400','600','900'],
+  b1647b: ['75','150','300','400','600','900']
+};
+var B1647_THRESHOLD_MM = 660.4; // 26" OD — B16.47 starts where B16.5 stops (>24")
+
+function populateFlangeRatings() {
+  const std  = document.getElementById('flange-standard').value;
+  const sel  = document.getElementById('flange-rating');
+  const cur  = sel.value;
+  sel.innerHTML = FLANGE_CLASSES[std].map(c => `<option>Class ${c}</option>`).join('');
+  // keep the previous class selected if it still exists under the new standard
+  if ([...sel.options].some(o => o.textContent === cur)) sel.value = cur;
+}
+
+function onFlangeStandardChange() {
+  populateFlangeRatings();
+  updateCalc();
+}
 
 function onNpsChange() {
   const od = document.getElementById('nps').value;
   const w  = STD_WALL[od];
   if (w !== undefined) document.getElementById('wall-t').value = w;
+
+  // Auto-switch flange standard when crossing the 24"/26" B16.5 → B16.47 boundary,
+  // but leave the engineer's Series A/B choice alone once >24" is selected.
+  const stdSel = document.getElementById('flange-standard');
+  const isLarge = parseFloat(od) >= B1647_THRESHOLD_MM;
+  if (isLarge && stdSel.value === 'b165') {
+    stdSel.value = 'b1647a';
+    populateFlangeRatings();
+  } else if (!isLarge && stdSel.value !== 'b165') {
+    stdSel.value = 'b165';
+    populateFlangeRatings();
+  }
   updateCalc();
 }
 
@@ -1269,6 +1329,11 @@ function generatePack() {
   const npsSelEl  = document.getElementById('nps');
   const nps       = npsSelEl.options[npsSelEl.selectedIndex].text;
   const flangeRat = document.getElementById('flange-rating').value;
+  const flangeStdEl  = document.getElementById('flange-standard');
+  const flangeStdCode = flangeStdEl.value;
+  const flangeStdShort = flangeStdCode === 'b165' ? 'B16.5'
+                        : flangeStdCode === 'b1647a' ? 'B16.47 Ser.A'
+                        : 'B16.47 Ser.B';
   const designP   = parseFloat(document.getElementById('design-p').value) || 0;
   const designT   = document.getElementById('design-t').value;
   const testT     = document.getElementById('test-t').value;
@@ -1312,7 +1377,7 @@ function generatePack() {
     {label:'Hold Time',      val:`${holdMins} min`},
     {label:'Test Medium',    val:medium.split('(')[0].trim()},
     {label:'Design Code',    val:codeLabel.split(' ')[0]+' '+codeLabel.split(' ')[1]},
-    {label:'NPS / Rating',   val:`${nps} / ${flangeRat}`},
+    {label:'NPS / Rating',   val:`${nps} / ${flangeRat} (${flangeStdShort})`},
     {label:'Design P / T',   val:`${designP} barg / ${designT}°C`},
     {label:'Gauge Range',    val:`0–${gaugeRange} barg`},
     {label:'Isolation',      val:isolation.split('(')[0].trim()},
@@ -1642,6 +1707,7 @@ var __origUpdateCalc_T = updateCalc;
 updateCalc = function(){ __origUpdateCalc_T(); updatePlus(); };
 
 // Init
+populateFlangeRatings();
 fillCatSelectT('l-cat');
 updateCalc();
 document.addEventListener('DOMContentLoaded', function(){
