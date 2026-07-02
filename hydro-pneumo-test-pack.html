@@ -1312,6 +1312,7 @@ function clItem(text, tag) {
 }
 
 function generatePack() {
+  updateCalc(); // ensure pd-* live values (incl. pneumatic gas volume/energy) reflect the current form before we read them
   const lineNo    = document.getElementById('line-no').value || '—';
   const pidRef    = document.getElementById('pid-ref').value || '—';
   const pipeClass = document.getElementById('pipe-class').value || '—';
@@ -1373,7 +1374,20 @@ function generatePack() {
     {label:'Gauge Range',    val:`0–${gaugeRange} barg`},
     {label:'Isolation',      val:isolation.split('(')[0].trim()},
   ];
-  if (vol) {
+  if (isPneumo) {
+    // Pneumatic: surface the gas-volume/stored-energy figures already computed by updateCalc(),
+    // not the water fill/drain numbers — those don't apply to a gas test.
+    const gasFree    = document.getElementById('pd-gasfree').textContent;
+    const contained  = document.getElementById('pd-contained').textContent;
+    const energyMJ   = document.getElementById('pd-energy').textContent;
+    const exclDist   = document.getElementById('pd-distance').textContent;
+    metaItems.push(
+      {label:'Contained Volume', val:`${contained} L`},
+      {label:'Free Gas Volume',  val:`${gasFree} m³`},
+      {label:'Stored Energy',    val:`${energyMJ} MJ`},
+      {label:'Excl. Zone (min)', val:`${exclDist} m`},
+    );
+  } else if (vol) {
     metaItems.push(
       {label:'Water Volume', val:`${Math.round(vol.volL).toLocaleString('en-GB')} L`},
       {label:'Fill Time',    val:fmtDur(vol.fillMin)},
@@ -1733,10 +1747,67 @@ updateCalc = function(){ __origUpdateCalc_T(); updatePlus(); };
   window.__ppaRestoreCalcInputs = restoreAll;
 })();
 
+/* ----- Per-field input history → shows as a native dropdown under text/number boxes -----
+   Every time you leave a field (tab/click away) after typing something new, that value is
+   added to a small remembered list for THAT field. Click into the field again (even empty)
+   and the browser shows your past entries as a dropdown you can pick from — standard
+   HTML5 <datalist> behaviour, so it works the same in Chrome/Edge without any custom UI. */
+(function(){
+  var HIST_KEY  = 'ppa-hp-testpack-history-v1';
+  var MAX_HIST  = 12;
+  var HIST_SCOPE = '#calctab-calculator input:not([type=file])'; // text/number boxes only — selects already have their own dropdown
+
+  function getHist(){ try{ return JSON.parse(localStorage.getItem(HIST_KEY)||'{}'); }catch(e){ return {}; } }
+  function setHist(o){ try{ localStorage.setItem(HIST_KEY, JSON.stringify(o)); }catch(e){} }
+
+  function ensureDatalist(el){
+    var dlId = 'dl-' + el.id;
+    var dl = document.getElementById(dlId);
+    if(!dl){
+      dl = document.createElement('datalist');
+      dl.id = dlId;
+      el.insertAdjacentElement('afterend', dl);
+      el.setAttribute('list', dlId);
+      el.setAttribute('autocomplete', 'off'); // avoid the plain browser autofill fighting with our own list
+    }
+    return dl;
+  }
+
+  function renderOptions(el){
+    var hist = getHist()[el.id] || [];
+    var dl = ensureDatalist(el);
+    dl.innerHTML = hist.map(function(v){ return '<option value="'+String(v).replace(/"/g,'&quot;')+'"></option>'; }).join('');
+  }
+
+  function recordValue(el){
+    var v = (el.value || '').trim();
+    if(!v) return;
+    var hist = getHist();
+    var list = (hist[el.id] || []).filter(function(x){ return x !== v; });
+    list.unshift(v);
+    if(list.length > MAX_HIST) list = list.slice(0, MAX_HIST);
+    hist[el.id] = list;
+    setHist(hist);
+    renderOptions(el);
+  }
+
+  function initAll(){
+    document.querySelectorAll(HIST_SCOPE).forEach(function(el){
+      if(!el.id) return;
+      renderOptions(el);
+      el.addEventListener('change', function(){ recordValue(el); });
+      el.addEventListener('blur',   function(){ recordValue(el); });
+    });
+  }
+
+  window.__ppaInitHistory = initAll;
+})();
+
 // Init
 populateFlangeRatings();
 fillCatSelectT('l-cat');
 __ppaRestoreCalcInputs();
+__ppaInitHistory();
 updateCalc();
 document.addEventListener('DOMContentLoaded', function(){
   fillCatSelectT('r-cat');
