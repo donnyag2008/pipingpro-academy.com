@@ -587,10 +587,10 @@ table.reg td.n{text-align:right;font-family:var(--mono);}
 
 
 <div class="calc-tabs">
-  <button class="calc-tab active" onclick="showCalcTab('calculator')">⚙ Calculator</button>
-  <button class="calc-tab" onclick="showCalcTab('feed')">📥 LDT Import → FEED Scope</button>
-  <button class="calc-tab" onclick="showCalcTab('register')">🗂 Test-Package Register</button>
-  <button class="calc-tab" onclick="showCalcTab('theory')">📚 Theory &amp; Reference</button>
+  <button type="button" class="calc-tab active" onclick="showCalcTab('calculator')">⚙ Calculator</button>
+  <button type="button" class="calc-tab" onclick="showCalcTab('feed')">📥 LDT Import → FEED Scope</button>
+  <button type="button" class="calc-tab" onclick="showCalcTab('register')">🗂 Test-Package Register</button>
+  <button type="button" class="calc-tab" onclick="showCalcTab('theory')">📚 Theory &amp; Reference</button>
 </div>
 
 <div class="calc-panel active" id="calctab-calculator">
@@ -601,9 +601,9 @@ table.reg td.n{text-align:right;font-family:var(--mono);}
     <div class="ctitle"><span class="ctitle-icon">🧪</span>Test Type Selection</div>
 
     <div class="test-toggle">
-      <button class="tt-btn active-hydro" id="btn-hydro" onclick="setTestType('hydro')">💧 Hydrostatic Test</button>
-      <button class="tt-btn" id="btn-pneumo" onclick="setTestType('pneumo')">💨 Pneumatic Test</button>
-      <button class="tt-btn" id="btn-leak" onclick="setTestType('leak')">🔍 Initial Service Leak Test</button>
+      <button type="button" class="tt-btn active-hydro" id="btn-hydro" onclick="setTestType('hydro')">💧 Hydrostatic Test</button>
+      <button type="button" class="tt-btn" id="btn-pneumo" onclick="setTestType('pneumo')">💨 Pneumatic Test</button>
+      <button type="button" class="tt-btn" id="btn-leak" onclick="setTestType('leak')">🔍 Initial Service Leak Test</button>
     </div>
 
     <div class="pneumo-warn" id="pneumo-warn">
@@ -956,13 +956,13 @@ table.reg td.n{text-align:right;font-family:var(--mono);}
       </div>
     </div>
 
-    <button class="btn btn-hydro" id="gen-btn" onclick="generatePack()">Generate Test Pack →</button>
+    <button type="button" class="btn btn-hydro" id="gen-btn" onclick="generatePack()">Generate Test Pack →</button>
   </div>
 
   <!-- ── TEST PACK OUTPUT ── -->
   <div class="test-pack" id="test-pack">
 
-    <button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+    <button type="button" class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
 
     <!-- Pack Header -->
     <div class="pack-header">
@@ -1745,12 +1745,12 @@ document.addEventListener('DOMContentLoaded', function(){
       <div class="field"><label>Status</label><select id="r-status"><option>Planned</option><option>Released</option><option>Tested</option><option>Reinstated</option></select></div>
     </div>
     <div class="reg-actions">
-      <button class="reg-btn primary" onclick="regAdd()">+ Add line</button>
-      <button class="reg-btn" onclick="regPull()">⤓ Pull from calculator</button>
-      <button class="reg-btn" onclick="regClearForm()">Clear form</button>
-      <button class="reg-btn gold" onclick="regExport()">Export CSV</button>
+      <button type="button" class="reg-btn primary" onclick="regAdd()">+ Add line</button>
+      <button type="button" class="reg-btn" onclick="regPull()">⤓ Pull from calculator</button>
+      <button type="button" class="reg-btn" onclick="regClearForm()">Clear form</button>
+      <button type="button" class="reg-btn gold" onclick="regExport()">Export CSV</button>
       <label class="reg-btn" style="margin:0">Import CSV<input id="r-import" type="file" accept=".csv" style="display:none" onchange="regImport(event)"></label>
-      <button class="reg-btn danger" onclick="regWipe()">Wipe register</button>
+      <button type="button" class="reg-btn danger" onclick="regWipe()">Wipe register</button>
     </div>
     <div class="reg-sum" id="r-summary"></div>
     <div style="overflow:auto"><table class="reg" id="r-tbl">
@@ -1820,7 +1820,7 @@ document.addEventListener('DOMContentLoaded', function(){
     </div>
     <div class="feed-note">Ratio defaults to 1.00 (carbon steel ≤ 400 °F). For hot lines, set S<sub>c</sub>/S<sub>h</sub> from the material allowable-stress table; the tool applies P<sub>T</sub> = factor × P<sub>design</sub> × ratio.</div>
     <div class="reg-actions">
-      <button class="reg-btn primary" onclick="feedGenerate()">▶ Generate FEED schedule</button>
+      <button type="button" class="reg-btn primary" onclick="feedGenerate()">▶ Generate FEED schedule</button>
     </div>
   </div>
 
@@ -1829,9 +1829,9 @@ document.addEventListener('DOMContentLoaded', function(){
     <div class="feed-scope" id="feed-scope"></div>
     <div class="feed-note" id="feed-scope-note"></div>
     <div class="reg-actions">
-      <button class="reg-btn" onclick="feedSuggestPkgs()">🔗 Suggest preliminary packages (From/To)</button>
-      <button class="reg-btn gold" onclick="feedExport()">Export CSV</button>
-      <button class="reg-btn" onclick="window.print()">Print / Save PDF</button>
+      <button type="button" class="reg-btn" onclick="feedSuggestPkgs()">🔗 Suggest preliminary packages (From/To)</button>
+      <button type="button" class="reg-btn gold" onclick="feedExport()">Export CSV</button>
+      <button type="button" class="reg-btn" onclick="window.print()">Print / Save PDF</button>
     </div>
     <div style="overflow:auto"><table class="reg" id="feed-tbl">
       <thead><tr><th>Line Tag</th><th>Pkg (prelim)</th><th>Service</th><th>Spec</th><th>Ph</th><th>Design T</th><th>Design P</th><th>Test P (barg)</th><th>Test P (psig)</th><th>Medium</th></tr></thead>
