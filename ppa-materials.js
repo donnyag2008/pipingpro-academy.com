@@ -27,6 +27,8 @@
      ASTM_SPECS ............ ASTM/API/CSA specification full names (178 specs)
      TABLE_A1_NOTES ........ ASME B31.3 Table A-1 Notes 1–79 (75 active, 8 deleted)
      TABLE_A1_GENERAL_NOTES  General Notes (a)–(f)
+     P_NUMBERS ............. P-Number base metal groupings (ASME Sec IX QW-422)
+     A_NUMBERS ............. A-Number weld metal classification (QW-442)
      CURVES_323 ............ Figure 323.2.2A digitised curves A–D + notes
      curveMDMT(curve, mm) .. Helper: MDMT lookup from curve & thickness
      PARA_323 .............. Para. 323 material requirements (323.1–323.2.4)
@@ -45,43 +47,43 @@
   /* ---- VERIFIED DATASET (lifted verbatim from md — do not re-key) ---- */
   const MATERIALS = {
     A106B:{ name:"Carbon Steel A106 Gr.B", status:"verified",
-      smys:240, smts:415, sc:138, tmin:-29, tmax:427,
+      pNo:1, smys:240, smts:415, sc:138, tmin:-29, tmax:427,
       t:[20,100,150,200,250,300,350,400],
       sh:[138,138,131,124,117,110,103,97],
       e :[203000,198000,195000,192000,189000,185000,181000,176000],
       a :[11.5,11.9,12.1,12.4,12.7,13.0,13.2,13.4] },
     "A333-6":{ name:"Low-Temp CS A333 Gr.6", status:"indicative",
-      smys:240, smts:415, sc:138, tmin:-46, tmax:343,
+      pNo:1, smys:240, smts:415, sc:138, tmin:-46, tmax:343,
       t:[20,100,150,200,250,300,343],
       sh:[138,138,131,124,117,110,104],
       e :[203000,198000,195000,192000,189000,185000,182000],
       a :[11.5,11.9,12.1,12.4,12.7,13.0,13.2] },
     TP304:{ name:"Stainless 304 (A312 TP304)", status:"verified",
-      smys:205, smts:515, sc:115, tmin:-198, tmax:425,
+      pNo:8, smys:205, smts:515, sc:115, tmin:-198, tmax:425,
       t:[20,100,150,200,250,300,350,400],
       sh:[115,107,102,98,95,92,90,88],
       e :[195000,189000,186000,182000,178000,174000,170000,165000],
       a :[15.9,16.2,16.5,16.8,17.0,17.2,17.5,17.7] },
     TP316L:{ name:"Stainless 316L (A312 TP316L)", status:"verified",
-      smys:170, smts:485, sc:115, tmin:-198, tmax:425,
+      pNo:8, smys:170, smts:485, sc:115, tmin:-198, tmax:425,
       t:[20,100,150,200,250,300,350,400],
       sh:[115,109,105,102,99,96,94,92],
       e :[195000,189000,186000,182000,178000,174000,170000,165000],
       a :[15.9,16.2,16.5,16.8,17.0,17.2,17.5,17.7] },
     DUP2205:{ name:"Duplex 2205 (A790 S31803)", status:"verified",
-      smys:450, smts:620, sc:172, tmin:-29, tmax:316,
+      pNo:"10H", smys:450, smts:620, sc:172, tmin:-29, tmax:316,
       t:[20,100,150,200,250,300],
       sh:[172,168,163,158,152,146],
       e :[200000,195000,192000,188000,184000,180000],
       a :[13.0,13.5,13.7,14.0,14.2,14.5] },
     P11:{ name:"Cr-Mo A335 P11 (1¼Cr-½Mo)", status:"indicative",
-      smys:205, smts:415, sc:138, tmin:-29, tmax:595,
+      pNo:4, smys:205, smts:415, sc:138, tmin:-29, tmax:595,
       t:[20,100,200,300,400,450,500,550,595],
       sh:[138,138,134,130,124,116,98,72,41],
       e :[205000,200000,193000,185000,176000,171000,166000,160000,155000],
       a :[11.5,11.9,12.4,12.9,13.4,13.6,13.8,14.0,14.2] },
     P22:{ name:"Cr-Mo A335 P22 (2¼Cr-1Mo)", status:"indicative",
-      smys:205, smts:415, sc:138, tmin:-29, tmax:650,
+      pNo:"5A", smys:205, smts:415, sc:138, tmin:-29, tmax:650,
       t:[20,100,200,300,400,450,500,550,600,650],
       sh:[138,138,134,131,127,121,108,86,57,33],
       e :[207000,202000,195000,187000,178000,173000,168000,162000,156000,150000],
@@ -656,6 +658,120 @@
   const TABLE_A1_DELETED_NOTES = [16, 17, 18, 23, "42a", 44, 38, 76];
 
   /* ==================================================================
+     P-NUMBERS — Base Metal Groupings for Welding Qualification
+     ------------------------------------------------------------------
+     Per ASME BPVC Section IX, QW-200.3 and QW/QB-422.
+     P-Numbers group similar base metals so that qualification of a
+     welding procedure on one material in a P-Number group qualifies the
+     procedure for all materials in that group (subject to other essential
+     variable restrictions).
+
+     Referenced by Table A-1 Note (5).
+     ================================================================== */
+  const P_NUMBERS = {
+    1:    { metal:"Carbon Manganese Steels", groups:4,
+            typical:"A106 Gr.B, A53 Gr.B, A333 Gr.6, A516 Gr.60/70, A105, A234 WPB, API 5L B/X42–X80" },
+    2:    { metal:"Not Used", groups:0, typical:"—" },
+    3:    { metal:"½Mo or ½Cr-½Mo Steels", groups:3,
+            typical:"A335 P1, A234 WP1, A182 F1" },
+    4:    { metal:"1¼Cr-½Mo Steels", groups:2,
+            typical:"A335 P11, A234 WP11, A182 F11" },
+    "5A": { metal:"2¼Cr-1Mo Steels", groups:1,
+            typical:"A335 P22, A234 WP22, A182 F22" },
+    "5B": { metal:"5Cr-½Mo or 9Cr-1Mo Steels", groups:2,
+            typical:"A335 P5, P9, A182 F5, F9" },
+    "5C": { metal:"Cr-Mo-V Steels", groups:5,
+            typical:"A335 P91, A182 F91" },
+    6:    { metal:"Martensitic Stainless Steels", groups:6,
+            typical:"Grade 410, 415, 429" },
+    7:    { metal:"Ferritic Stainless Steels", groups:1,
+            typical:"Grade 409, 430" },
+    8:    { metal:"Austenitic Stainless Steels", groups:4,
+            typical:"Gr.1: 304, 316, 317, 347; Gr.2: 309, 310; Gr.3: High Mn; Gr.4: High Mo" },
+    "9A": { metal:"2–4% Nickel Steels", groups:1, typical:"A203 Gr.A/B (2¼Ni)" },
+    "9B": { metal:"2–4% Nickel Steels", groups:1, typical:"A203 Gr.D/E (3½Ni)" },
+    "9C": { metal:"2–4% Nickel Steels", groups:1, typical:"—" },
+    "10A":{ metal:"Various Low Alloy Steels", groups:1, typical:"Cr-V, Mn-V steels" },
+    "10B":{ metal:"Various Low Alloy Steels", groups:1, typical:"—" },
+    "10C":{ metal:"Various Low Alloy Steels", groups:1, typical:"—" },
+    "10F":{ metal:"Various Low Alloy Steels", groups:1, typical:"—" },
+    "10H":{ metal:"Duplex and Super Duplex Stainless Steel", groups:1,
+            typical:"S31803 (2205), S32750 (2507)" },
+    "10I":{ metal:"High Chromium Stainless Steel", groups:1, typical:"—" },
+    "10J":{ metal:"High Chromium, Molybdenum Stainless Steel", groups:1, typical:"—" },
+    "10K":{ metal:"High Chromium, Molybdenum, Nickel Stainless Steel", groups:1, typical:"—" },
+    "11A":{ metal:"Various High Strength Low Alloy Steels", groups:6,
+            typical:"A694 F52–F70, A860 WPHY grades" },
+    "11B":{ metal:"Various High Strength Low Alloy Steels", groups:10, typical:"—" },
+    "15E":{ metal:"9Cr-1Mo (modified) Steels", groups:1,
+            typical:"A335 P91/P92, A182 F91/F92" },
+    21:   { metal:"Aluminium — High Al Content", groups:1, typical:"1000 and 3000 series" },
+    22:   { metal:"Aluminium — 5000 Series", groups:1, typical:"5052, 5454" },
+    23:   { metal:"Aluminium — 6000 Series", groups:1, typical:"6061, 6063" },
+    25:   { metal:"Aluminium — 5000 Series (High Mg)", groups:1, typical:"5083, 5086, 5456" },
+    31:   { metal:"High Copper Content", groups:1, typical:"Cu pipe/tube (B42, B75)" },
+    32:   { metal:"Brass", groups:1, typical:"Cu-Zn alloys" },
+    33:   { metal:"Copper Silicon", groups:1, typical:"Cu-Si alloys (B96, B98)" },
+    34:   { metal:"Copper Nickel", groups:1, typical:"Cu-Ni 90/10, 70/30 (B466, B467)" },
+    35:   { metal:"Copper Aluminium", groups:1, typical:"Al-Bronze (B148, B150)" },
+    41:   { metal:"High Nickel Content", groups:1, typical:"Nickel 200/201 (B161, B162)" },
+    42:   { metal:"Nickel-Copper", groups:1, typical:"Monel 400/K-500 (B165, B164)" },
+    43:   { metal:"Nickel-Chromium-Iron", groups:1,
+            typical:"Inconel 600/625, Hastelloy C22/C276/X (B167, B444, B574)" },
+    44:   { metal:"Nickel-Molybdenum", groups:1, typical:"Hastelloy B2 (B333, B335)" },
+    45:   { metal:"Nickel-Chromium-Silicon", groups:1, typical:"—" },
+    46:   { metal:"Nickel-Chromium-Silicone", groups:1, typical:"—" },
+    47:   { metal:"Nickel-Chromium-Tungsten", groups:1, typical:"—" },
+    51:   { metal:"Titanium Alloys — Unalloyed", groups:1, typical:"Gr.1, Gr.2 (B861, B862)" },
+    52:   { metal:"Titanium Alloys — Alpha/Near-Alpha", groups:1, typical:"Gr.5, Gr.12" },
+    53:   { metal:"Titanium Alloys — Alpha-Beta", groups:1, typical:"—" },
+    61:   { metal:"Zirconium Alloys — Unalloyed", groups:1, typical:"R60702 (B523, B550)" },
+    62:   { metal:"Zirconium Alloys — Alloyed", groups:1, typical:"R60705" },
+    81:   { metal:"Cobalt and Cobalt-Based Alloys", groups:1, typical:"—" }
+  };
+
+  /* ==================================================================
+     A-NUMBERS — Weld Metal Classification (Ferrous Only)
+     ------------------------------------------------------------------
+     Per ASME BPVC Section IX, Table QW-442.
+     The A-Number classifies ferrous weld metal deposits by chemical
+     composition for procedure qualification. It is an essential variable
+     for several welding processes.
+
+     Values shown are maximum percentages unless a range is given.
+     ================================================================== */
+  const A_NUMBERS = {
+    1:  { type:"Mild Steel",
+          C:0.20, Cr:0.20, Mo:0.30, Ni:0.50, Mn:1.60, Si:1.00 },
+    2:  { type:"Carbon-Molybdenum",
+          C:0.15, Cr:0.50, Mo:"0.40–0.65", Ni:0.50, Mn:1.60, Si:1.00 },
+    3:  { type:"Chrome (0.4–2%)-Molybdenum",
+          C:0.15, Cr:"0.40–2.00", Mo:"0.40–0.65", Ni:0.50, Mn:1.60, Si:1.00 },
+    4:  { type:"Chrome (2–4%)-Molybdenum",
+          C:0.15, Cr:"2.00–4.00", Mo:"0.40–1.50", Ni:0.50, Mn:1.60, Si:2.00 },
+    5:  { type:"Chrome (4–10.5%)-Molybdenum",
+          C:0.15, Cr:"4.00–10.50", Mo:"0.40–1.50", Ni:0.80, Mn:1.20, Si:2.00 },
+    6:  { type:"Chrome-Martensitic",
+          C:0.15, Cr:"11.00–15.00", Mo:0.70, Ni:0.80, Mn:2.00, Si:1.00 },
+    7:  { type:"Chrome-Ferritic",
+          C:0.15, Cr:"11.00–30.00", Mo:1.00, Ni:0.80, Mn:1.00, Si:3.00 },
+    8:  { type:"Chromium-Nickel (Austenitic)",
+          C:0.15, Cr:"14.50–30.00", Mo:4.00, Ni:"7.50–15.00", Mn:2.50, Si:1.00 },
+    9:  { type:"Chromium-Nickel (High Ni Austenitic)",
+          C:0.30, Cr:"19.00–30.00", Mo:6.00, Ni:"15.00–37.00", Mn:2.50, Si:1.00 },
+    10: { type:"Nickel to 4%",
+          C:0.15, Cr:0.50, Mo:0.55, Ni:"0.80–4.00", Mn:1.70, Si:1.00 },
+    11: { type:"Manganese-Molybdenum",
+          C:0.17, Cr:0.50, Mo:"0.25–0.75", Ni:0.85, Mn:"1.25–2.25", Si:1.00 },
+    12: { type:"Nickel-Chrome-Molybdenum",
+          C:0.15, Cr:1.50, Mo:"0.25–0.80", Ni:"1.25–2.80", Mn:"0.75–2.25", Si:1.00 },
+    _notes: [
+      "Single values shown are maximum percentages.",
+      "Only listed elements are used to determine A-Numbers."
+    ]
+  };
+
+  /* ==================================================================
      FIGURE 323.2.2A — Impact Test Exemption Curves & Notes
      ------------------------------------------------------------------
      For carbon steels with a letter designation (A, B, C, D) in the
@@ -876,6 +992,7 @@
   Object.assign(g.PPA, {
     MATERIALS, RHO, COST, WELD, WELD_LEVEL_RANK,
     ASTM_SPECS, TABLE_A1_NOTES, TABLE_A1_GENERAL_NOTES, TABLE_A1_DELETED_NOTES,
+    P_NUMBERS, A_NUMBERS,
     CURVES_323, curveMDMT, PARA_323,
     interp, convert, UNITS
   });
