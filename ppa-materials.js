@@ -8,7 +8,8 @@
 
    BASE UNITS: SI.
      Stress (Sh, Sc, SMYS, SMTS) ... MPa
-     Temperature (t, tmin, tmax) .... °C
+     Temperature (t, tmin, tmax) .... °C  (tmin may be a string "A"/"B"/"C"/"D"
+                                           for curve designation per Figure 323.2.2A)
      Modulus E ...................... MPa
      Thermal expansion α ............ ×10⁻⁶ mm/mm/°C  (mean, ref 21 °C)
    US display is derived deterministically (see PPA.convert).
@@ -17,6 +18,19 @@
    status:
      'verified'   — checked against the PipingPro B31.3 dataset
      'indicative' — confirm Sh / α against your code edition before issue
+
+   CONTENTS:
+     MATERIALS ............. Material mechanical & thermal property data
+     RHO ................... Density (g/cm³)
+     COST .................. Relative cost multiplier (vs A106B = 1.0)
+     WELD .................. Welding characteristics & practice notes
+     ASTM_SPECS ............ ASTM/API/CSA specification full names (178 specs)
+     TABLE_A1_NOTES ........ ASME B31.3 Table A-1 Notes 1–79 (75 active, 8 deleted)
+     TABLE_A1_GENERAL_NOTES  General Notes (a)–(f)
+     CURVES_323 ............ Figure 323.2.2A digitised curves A–D + notes
+     curveMDMT(curve, mm) .. Helper: MDMT lookup from curve & thickness
+     PARA_323 .............. Para. 323 material requirements (323.1–323.2.4)
+     interp / convert / UNITS  Interpolation and unit conversion utilities
 
    MIGRATION (md): add  <script src="ppa-materials.js"></script>  before the
    md inline script, then at the top of that script replace the local
@@ -271,18 +285,107 @@
     B75:   "Seamless Copper Tube",
     B466:  "Seamless Copper-Nickel Pipe and Tube",
     B467:  "Welded Copper-Nickel Pipe",
+    B43:   "Seamless Red Brass Pipe, Standard Sizes",
+    B68:   "Seamless Copper Tube, Bright Annealed",
+    B88:   "Seamless Copper Water Tube",
+    B96:   "Copper-Silicon Alloy Plate, Sheet, Strip, and Rolled Bar for General Purposes and Pressure Vessels",
+    B98:   "Copper-Silicon Alloy Rod, Bar and Shapes",
+    B148:  "Aluminum-Bronze Sand Castings",
+    B150:  "Aluminum Bronze Rod, Bar and Shapes",
+    B152:  "Copper Sheet, Strip, Plate and Rolled Bar",
+    B169:  "Aluminum Bronze Sheet, Strip, and Rolled Bar",
+    B171:  "Copper-Alloy Plate and Sheet for Pressure Vessels, Condensers, and Heat Exchangers",
+    B187:  "Copper, Bus Bar, Rod, and Shapes and General Purpose Rod, Bar, and Shapes",
+    B280:  "Seamless Copper Tube for Air Conditioning and Refrigeration Field Service",
+    B283:  "Copper and Copper-Alloy Die Forgings (Hot-Pressed)",
+    B371:  "Copper-Zinc-Silicon Alloy Rod",
 
     /* --- Titanium --- */
     B265:  "Titanium and Titanium Alloy Strip, Sheet, and Plate",
     B348:  "Titanium and Titanium Alloy Bars and Billets",
     B363:  "Seamless and Welded Unalloyed Titanium and Titanium Alloy Welding Fittings",
+    B367:  "Titanium and Titanium Alloy Castings",
     B381:  "Titanium and Titanium Alloy Forgings",
     B861:  "Titanium and Titanium Alloy Seamless Pipe",
     B862:  "Titanium and Titanium Alloy Welded Pipe",
 
+    /* --- Zirconium --- */
+    B493:  "Zirconium and Zirconium Alloy Forgings",
+    B523:  "Seamless and Welded Zirconium and Zirconium Alloy Tubes",
+    B550:  "Zirconium and Zirconium Alloy Bar and Wire",
+    B551:  "Zirconium and Zirconium Alloy Strip, Sheet, and Plate",
+
+    /* --- Aluminium --- */
+    B26:   "Aluminum-Alloy Sand Castings",
+    B209:  "Aluminum and Aluminum-Alloy Sheet and Plate",
+    B210:  "Aluminum and Aluminum-Alloy Drawn Seamless Tubes",
+    B211:  "Aluminum and Aluminum-Alloy Rolled or Cold Finished Bar, Rod, and Wire",
+    B221:  "Aluminum and Aluminum-Alloy Extruded Bars, Rods, Wire, Profiles, and Tubes",
+    B241:  "Aluminum and Aluminum-Alloy Seamless Pipe and Seamless Extruded Tube",
+    B247:  "Aluminum and Aluminum-Alloy Die Forgings, Hand Forgings, and Rolled Ring Forgings",
+    B345:  "Aluminum and Aluminum-Alloy Seamless Pipe and Seamless Extruded Tube for Gas and Oil Transmission and Distribution Piping Systems",
+    B361:  "Factory-Made Wrought Aluminum and Aluminum-Alloy Welding Fittings",
+    B491:  "Aluminum and Aluminum-Alloy Extruded Round Tubes for General-Purpose Applications",
+
+    /* --- Additional Nickel Alloy specs --- */
+    B163:  "Seamless Nickel and Nickel Alloy Condenser and Heat Exchanger Tubes",
+    B166:  "Nickel-Chromium-Iron Alloys, Ni-Cr-Co-Mo Alloy, Ni-Fe-Cr-W Alloy, and Ni-Cr-Mo-Cu Alloy Rod, Bar, and Wire",
+    B333:  "Nickel-Molybdenum Alloy Plate, Sheet, and Strip",
+    B335:  "Nickel-Molybdenum Alloy Rod",
+    B408:  "Nickel-Iron-Chromium Alloy Rod and Bar",
+    B425:  "Ni-Fe-Cr-Mo-Cu Alloy (UNS N08825, N08221, N06845) Rod and Bar",
+    B435:  "UNS N06002, N06230, N12160, R30556 Plate, Sheet, and Strip",
+    B446:  "Ni-Cr-Mo-Cb Alloy (UNS N06625), Ni-Cr-Mo-Si Alloy (UNS N06219), Ni-Cr-Mo-W Alloy (UNS N06650) Rod and Bar",
+    B463:  "UNS N08020 Alloy Plate, Sheet, and Strip",
+    B464:  "Welded UNS N08020 Alloy Pipe",
+    B515:  "Welded UNS N08120, N08800, N08810, N08811 Alloy Tubes",
+    B517:  "Welded Ni-Cr-Fe Alloy (UNS N06600, N06603, N06025, N06045) Pipe",
+    B572:  "UNS N06002, N06230, N12160, R30556 Rod",
+    B675:  "UNS N08367 Welded Pipe",
+    B688:  "Chromium-Nickel-Molybdenum-Iron (UNS N08367) Plate, Sheet, and Strip",
+    B704:  "Welded UNS N06625, N06219 and N08825 Alloy Tubes",
+    B709:  "Iron-Nickel-Chromium-Molybdenum Alloy (UNS N08028) Plate, Sheet, and Strip",
+    B729:  "Seamless UNS N08020, N08026, N08024 Nickel-Alloy Pipe and Tube",
+    B804:  "UNS N08367 and N08926 Welded Pipe",
+
+    /* --- Additional Carbon & Alloy Steel --- */
+    A47:   "Ferritic Malleable Iron Castings",
+    A48:   "Gray Iron Castings",
+    A126:  "Gray Iron Castings for Valves, Flanges, and Pipe Fittings",
+    A197:  "Cupola Malleable Iron",
+    A204:  "Pressure Vessel Plates, Alloy Steel, Molybdenum",
+    A270:  "Seamless and Welded Austenitic and Ferritic/Austenitic Stainless Steel Sanitary Tubing",
+    A278:  "Gray Iron Castings for Pressure-Containing Parts for Temperatures Up to 650°F (350°C)",
+    A302:  "Pressure Vessel Plates, Alloy Steel, Manganese-Molybdenum and Manganese-Molybdenum-Nickel",
+    A334:  "Seamless and Welded Carbon and Alloy-Steel Tubes for Low-Temperature Service",
+    A395:  "Ferritic Ductile Iron Pressure-Retaining Castings for Use at Elevated Temperatures",
+    A426:  "Centrifugally Cast Ferritic Alloy Steel Pipe for High-Temperature Service",
+    A437:  "Stainless and Alloy-Steel Turbine-Type Bolting Material Specially Heat Treated for High-Temperature Service",
+    A451:  "Centrifugally Cast Austenitic Steel Pipe for High-Temperature Service",
+    A453:  "High-Temperature Bolting, with Expansion Coefficients Comparable to Austenitic Stainless Steels",
+    A487:  "Steel Castings Suitable for Pressure Service",
+    A494:  "Castings, Nickel and Nickel Alloy",
+    A524:  "Seamless Carbon Steel Pipe for Atmospheric and Lower Temperatures",
+    A536:  "Ductile Iron Castings",
+    A571:  "Austenitic Ductile Iron Castings for Pressure-Containing Parts Suitable for Low-Temperature Service",
+    A645:  "Pressure Vessel Plates, 5% and 5½% Nickel Alloy Steels, Specially Heat Treated",
+    A675:  "Steel Bars, Carbon, Hot-Wrought, Special Quality, Mechanical Properties",
+    A696:  "Steel Bars, Carbon, Hot-Wrought or Cold-Finished, Special Quality, for Pressure Piping Components",
+    A814:  "Cold-Worked Welded Austenitic Stainless Steel Pipe",
+    A992:  "Structural Steel Shapes",
+    A1010: "Higher-Strength Martensitic Stainless Steel Plate, Sheet, and Strip",
+    A1011: "Steel, Sheet and Strip, Hot-Rolled, Carbon, Structural, High-Strength Low-Alloy",
+    A1053: "Welded Ferritic-Martensitic Stainless Steel Pipe",
+
+    /* --- Miscellaneous --- */
+    B21:   "Naval Brass Rod, Bar, and Shapes",
+    B61:   "Steam or Valve Bronze Castings",
+    B62:   "Composition Bronze or Ounce Metal Castings",
+    E112:  "Standard Test Methods for Determining Average Grain Size",
+    F3125: "High Strength Structural Bolts, Steel and Alloy Steel, Heat Treated, 120 ksi and 150 ksi Minimum Tensile Strength",
+
     /* --- Low-Temperature Nickel Steels (for LNG / cryogenic) --- */
     A203:  "Pressure Vessel Plates, Alloy Steel, Nickel",
-    A333:  "Seamless and Welded Steel Pipe for Low-Temperature Service and Other Applications with Required Notch Toughness",
     A353:  "Pressure Vessel Plates, Alloy Steel, Double-Normalized and Tempered 9% Nickel",
     A553:  "Pressure Vessel Plates, Alloy Steel, Quenched and Tempered 7, 8, and 9 % Nickel",
 
@@ -394,8 +497,163 @@
           text:"Material used below −29°C (−20°F) shall be impact tested if carbon content is above 0.10%." },
 
     40: { ref:"para. 302.3.3(c), Table 302.3.3C",
-          text:"Casting quality factor can be enhanced by supplementary examination per Table 302.3.3C. The higher factor may be substituted in pressure design equations." }
+          text:"Casting quality factor can be enhanced by supplementary examination per Table 302.3.3C. The higher factor may be substituted in pressure design equations." },
+
+    41: { ref:"Material specification",
+          text:"Design stresses for the cold drawn temper are based on hot rolled properties until required data on cold drawn are submitted." },
+
+    42: { ref:"Product specification (A193/A194)",
+          text:"This is a product specification; no design stresses are necessary. Metal temperature limits vary by grade: Gr.1 −29 to 482°C; Gr.2/2H/2HM −48 to 593°C; Gr.3 −29 to 593°C; Gr.6 −29 to 427°C; Gr.7 −48 to 593°C; Gr.7L −101 to 593°C; Gr.7M −48 to 593°C; Gr.7ML −73 to 593°C; Gr.8FA [see Note (39)] −29 to 427°C; Gr.8MA/8TA −198 to 816°C; Gr.8/8A/8CA −254 to 816°C." },
+
+    "42b":{ ref:"Product specification",
+            text:"This is a product specification; no design stresses are necessary. For usage limitations, see paras. 309.2.1 and 309.2.2." },
+
+    43: { ref:"para. 323.4.2(c)",
+          text:"Stress values are not applicable when either welding or thermal cutting is employed." },
+
+    45: { ref:"Material specification",
+          text:"Stress values shown are applicable for die forgings only." },
+
+    46: { ref:"A312 para. 6.1.4",
+          text:"Lines of allowable stresses in Table A-1 for all A312 materials include heavily cold worked (HCW) material as defined in A312 para. 6.1.4." },
+
+    47: { ref:"Material specification",
+          text:"If no welding is employed in fabrication, stress values may be increased to 230 MPa (33.3 ksi)." },
+
+    48: { ref:"Material specification",
+          text:"The stress value for this gray iron material at its upper temperature limit of 232°C (450°F) is the same as that shown in the 204°C (400°F) column." },
+
+    49: { ref:"Material specification",
+          text:"If the chemical composition of this grade renders it hardenable, qualification under P-No. 6 is required." },
+
+    50: { ref:"Material specification",
+          text:"This material is grouped in P-No. 7 because its hardenability is low." },
+
+    51: { ref:"ASME BPVC Section IX QW/QB-422",
+          text:"This material may require special consideration for welding qualification. A qualified WPS is required for each strength level of material." },
+
+    52: { ref:"Engineering practice",
+          text:"Copper-silicon alloys are not always suitable when exposed to certain media and high temperature, particularly above 100°C (212°F). The user should verify the alloy is satisfactory for the intended service." },
+
+    53: { ref:"Heat treatment requirement",
+          text:"Stress relief heat treatment is required for service above 232°C (450°F)." },
+
+    54: { ref:"Material specification",
+          text:"Maximum operating temperature is arbitrarily set at 260°C (500°F) because hard temper adversely affects design stress in the creep rupture temperature ranges." },
+
+    55: { ref:"Material specification (API 5L)",
+          text:"Pipe produced to this specification is not intended for high temperature service. Stress values apply to either non-expanded or cold expanded material in the as-rolled, normalized, or normalized and tempered condition." },
+
+    56: { ref:"Engineering practice",
+          text:"Because of thermal instability, this material is not recommended for service above 427°C (800°F)." },
+
+    57: { ref:"para. F323.4(b)(2)",
+          text:"Conversion of carbides to graphite may occur after prolonged exposure to temperatures over 427°C (800°F). See para. F323.4(b)(2)." },
+
+    58: { ref:"para. F323.4(b)(3)",
+          text:"Conversion of carbides to graphite may occur after prolonged exposure to temperatures over 468°C (875°F). See para. F323.4(b)(3)." },
+
+    59: { ref:"para. F323.4(b)(4)",
+          text:"For temperatures above 482°C (900°F), consider the advantages of killed steel. See para. F323.4(b)(4)." },
+
+    60: { ref:"Material specification (A193 bolting)",
+          text:"For all design temperatures, maximum hardness shall be Rockwell C35 immediately under thread roots. Hardness taken on a flat area at least 3 mm (⅛ in.) across, prepared by removing threads. Determination made at same frequency as tensile tests." },
+
+    61: { ref:"Heat treatment",
+          text:"Annealed at approximately 982°C (1,800°F)." },
+
+    62: { ref:"Heat treatment",
+          text:"Annealed at approximately 1,121°C (2,050°F)." },
+
+    63: { ref:"Material specification (aluminium)",
+          text:"For stress relieved tempers (T351, T3510, T3511, T451, T4510, T4511, T651, T6510, T6511), stress values for material in the listed temper shall be used." },
+
+    64: { ref:"ASME BPVC Section IX QW-462.1",
+          text:"The minimum tensile strength of the reduced section tensile specimen per QW-462.1 shall not be less than 758 MPa (110.0 ksi)." },
+
+    65: { ref:"Material specification (A203 Ni steel plates)",
+          text:"The minimum temperature shown is for the heaviest wall meeting spec mechanical properties. For lighter walls: A203 A/B max 51 mm → −68°C, over 51–76 mm → −59°C; A203 D/E max 51 mm → −101°C, over 51–76 mm → −87°C." },
+
+    66: { ref:"Material specification",
+          text:"Stress values shown are 90% of those for the corresponding core material." },
+
+    67: { ref:"para. 331, A671/A672/A691",
+          text:"For use under this Code, heat treatment requirements for pipe manufactured to A671, A672, and A691 shall be as required by para. 331 for the particular material being used." },
+
+    68: { ref:"Material specification",
+          text:"Tension test specimen from plate 12.7 mm (½ in.) and thicker is machined from the core and does not include cladding alloy; therefore, stress values listed are for materials less than 12.7 mm." },
+
+    69: { ref:"Pressure limitation",
+          text:"This material may be used only in non-pressure applications." },
+
+    70: { ref:"Engineering practice (Alloy 625)",
+          text:"Alloy 625 (UNS N06625) in the annealed condition is subject to severe loss of impact strength at room temperature after exposure in the range 538°C to 760°C (1,000°F to 1,400°F)." },
+
+    71: { ref:"Material specification (API 5L / HSLA)",
+          text:"These materials are normally microalloyed with Cb, V, and/or Ti. Supplemental specifications commonly establish more restrictive chemistry, plate rolling specifications, and requirements for weldability (C-equivalent) and toughness." },
+
+    72: { ref:"Welding requirement",
+          text:"For service temperature above 454°C (850°F), weld metal shall have a carbon content greater than 0.05%." },
+
+    73: { ref:"Table 331.1.1 (zirconium)",
+          text:"Heat treatment is required after welding for all products of zirconium Grade R60705. See Table 331.1.1." },
+
+    74: { ref:"B366 Table 2",
+          text:"Mechanical properties of fittings made from forging stock shall meet minimum tensile requirements of one of the bar, forging, or rod specifications listed in Table 2 of B366 for which tensile testing is required." },
+
+    75: { ref:"Material specification (Cr-Mo)",
+          text:"Stress values shown are for materials in the normalized and tempered condition, or when heat treatment is unknown. If material is annealed, use reduced values above 510°C (950°F): 538°C → 55.1 MPa; 566°C → 39.3 MPa; 593°C → 26.2 MPa; 621°C → 16.5 MPa; 649°C → 9.6 MPa." },
+
+    77: { ref:"CSA Z245.1 equivalence",
+          text:"Pipe grades produced per CSA Z245.1 are considered equivalent to API 5L and treated as listed materials. Equivalents: B↔241, X42↔290, X46↔317, X52↔359, X56↔386, X60↔414, X65↔448, X70↔483, X80↔550." },
+
+    78: { ref:"Table 302.3.5",
+          text:"Not permitted for the P4 and P5 materials in Table 302.3.5 for Elevated Temperature Fluid Service." },
+
+    79: { ref:"para. 323.3",
+          text:"For use under this Code, impact testing shall be performed per para. 323.3 at the design minimum temperature but not warmer than −29°C (−20°F)." },
+
+    /* --- Additional notes from earlier range not previously included --- */
+    "9a":{ ref:"Table 326.1, B564",
+           text:"Component standards in Table 326.1 impose the following restrictions on this material when used as a forging: composition, properties, heat treatment, and grain size shall conform to this specification; manufacturing procedures, tolerances, tests, certification, and markings shall be per ASTM B564." },
+
+    10: { ref:"para. 302.3.3",
+          text:"This casting quality factor is applicable only when proper supplementary examination has been performed." },
+
+    11: { ref:"Heat treatment",
+          text:"For use under this Code, radiography shall be performed after heat treatment." },
+
+    21: { ref:"Material specification",
+          text:"For material thickness greater than 127 mm (5 in.), the specified minimum tensile strength is 483 MPa (70 ksi)." },
+
+    "21a":{ ref:"Material specification",
+            text:"For material thickness greater than 127 mm (5 in.), the specified minimum tensile strength is 448 MPa (65 ksi)." },
+
+    22: { ref:"Material specification",
+          text:"Minimum tensile strength for weld qualification and stress values shown shall be multiplied by 0.90 for pipe with OD less than 51 mm (2 in.) and D/t less than 15. May be waived if the welding procedure consistently produces welds meeting the listed minimum tensile strength of 165 MPa (24 ksi)." },
+
+    24: { ref:"Material specification",
+          text:"Yield strength is not stated in the material specification. The value shown is based on yield strengths of materials with similar characteristics." },
+
+    33: { ref:"Welding practice",
+          text:"For welded construction with work hardened grades, use stress values for annealed material; for welded construction with precipitation hardened grades, use special stress values for welded construction given in the Tables." },
+
+    34: { ref:"Welding/brazing/soldering",
+          text:"If material is welded, brazed, or soldered, the allowable stress values for the annealed condition shall be used." }
   };
+
+  /* --- General Notes for Tables A-1, A-1A, A-1B, A-2, A-2M --- */
+  const TABLE_A1_GENERAL_NOTES = {
+    a: "The allowable stress values, P-Number assignments, weld joint and casting quality factors, and minimum temperatures in Tables A-1, A-1A, A-1B, A-2, and A-2M, together with the referenced Notes in the stress tables, are requirements of this Code.",
+    b: "Notes (1) through (7) are referenced in column headings and body headings for material type and product form; Notes (8) and following are referenced in the Notes column for specific materials. Notes marked with an asterisk (*) restate requirements found in the text of the Code.",
+    c: "The stress values given in ksi (Tables A-1/A-2) and in MPa (Tables A-1M/A-2M) may be used. The ksi and MPa values are not exact equivalents; for any given material, use only one system consistently.",
+    d: "Copper and copper alloy temper symbols: H = drawn; H01 = quarter hard; H02 = half hard; H06 = extra hard; H55 = light drawn; H58 = drawn general purpose; H80 = hard drawn; HR50 = drawn stress relieved; M20 = hot rolled; O25 = hot rolled annealed; O50 = light annealed; O60 = soft annealed; O61 = annealed; WO50 = welded annealed; WO61 = welded fully finished annealed.",
+    e: "Nickel and nickel alloy Class column abbreviations: ann. = annealed; C.D. = cold worked; forg. = forged; H.F. = hot finished; H.R. = hot rolled; H.W. = hot worked; plt. = plate; R. = rolled; rel. = relieved; sol. = solution; str. = stress; tr. = treated.",
+    f: "Table A-1M Product Form abbreviations: forg. = forgings; ftg. = fittings; pl. = plate; shps. = shapes; sht. = sheet; smls. = seamless; struct. = structural; wld. = welded."
+  };
+
+  /* --- Deleted notes (for completeness / cross-reference) --- */
+  const TABLE_A1_DELETED_NOTES = [16, 17, 18, 23, "42a", 44, 38, 76];
 
   /* ==================================================================
      FIGURE 323.2.2A — Impact Test Exemption Curves & Notes
@@ -617,7 +875,8 @@
   g.PPA = g.PPA || {};
   Object.assign(g.PPA, {
     MATERIALS, RHO, COST, WELD, WELD_LEVEL_RANK,
-    ASTM_SPECS, TABLE_A1_NOTES, CURVES_323, curveMDMT, PARA_323,
+    ASTM_SPECS, TABLE_A1_NOTES, TABLE_A1_GENERAL_NOTES, TABLE_A1_DELETED_NOTES,
+    CURVES_323, curveMDMT, PARA_323,
     interp, convert, UNITS
   });
 })(window);
