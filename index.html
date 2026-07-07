@@ -1511,9 +1511,10 @@
     var member = null;
     try { var r = await ms.getCurrentMember(); member = r && r.data ? r.data : null; } catch(e){}
     if(!member){
-      openSignupModal();
-      return;
+      try { await ms.openModal('SIGNUP'); } catch(e){}
+      try { var r2 = await ms.getCurrentMember(); member = r2 && r2.data ? r2.data : null; } catch(e){}
     }
+    if(!member){ return; }
     try{
       await ms.purchasePlansWithCheckout({
         priceId: priceId,
@@ -1522,19 +1523,6 @@
       });
     }catch(e){ console.error('PPA checkout error', e); }
   };
-
-  // Geo-detect via Cloudflare (site is on Cloudflare Pages)
-  fetch('/cdn-cgi/trace').then(function(r){ return r.text(); }).then(function(t){
-    var m = t.match(/loc=([A-Z]{2})/);
-    var cc = m ? m[1] : '';
-    if(MID_COUNTRIES.indexOf(cc) !== -1)       band = 'mid';
-    else if(LOWER_COUNTRIES.indexOf(cc) !== -1) band = 'lower';
-    else                                        band = 'headline';
-    paint();
-  }).catch(function(){ band = 'headline'; paint(); });
-
-  paint(); // initial paint with default before geo resolves
-})();
 </script>
 
 <!-- AUTHOR -->
