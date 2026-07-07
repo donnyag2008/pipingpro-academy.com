@@ -976,6 +976,60 @@
           <input type="checkbox" id="lmodal-remember" style="accent-color:var(--gold);width:14px;height:14px;cursor:pointer;"/>
           <label for="lmodal-remember" style="font-size:12px;color:var(--ink-light);cursor:pointer;">Remember me on this device</label>
         </div>
+
+        // ── SIGNUP MODAL ──────────────────────────────────────────────
+function openSignupModal(){
+  document.getElementById('smodal-email').value = '';
+  document.getElementById('smodal-password').value = '';
+  document.getElementById('smodal-country').value = '';
+  document.getElementById('smodal-err').style.display = 'none';
+  document.getElementById('smodal-bg').classList.add('show');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('smodal-email').focus(), 200);
+}
+function closeSModal(){
+  document.getElementById('smodal-bg').classList.remove('show');
+  document.body.style.overflow = '';
+}
+function closeSModalBg(e){
+  if (e.target === document.getElementById('smodal-bg')) closeSModal();
+}
+async function doSignup(){
+  const email    = document.getElementById('smodal-email').value.trim();
+  const password = document.getElementById('smodal-password').value.trim();
+  const country  = document.getElementById('smodal-country').value;
+  const err      = document.getElementById('smodal-err');
+  err.style.display = 'none';
+  if (!email || !password || !country){
+    err.textContent = 'Please fill in all fields.';
+    err.style.display = 'block'; return;
+  }
+  if (password.length < 8){
+    err.textContent = 'Password must be at least 8 characters.';
+    err.style.display = 'block'; return;
+  }
+  const ms = window.$memberstackDom;
+  if (!ms){
+    err.textContent = 'Signup is temporarily unavailable.';
+    err.style.display = 'block'; return;
+  }
+  try {
+    await ms.signupMemberEmailPassword({
+      email: email,
+      password: password,
+      customFields: { country: country }
+    });
+    closeSModal();
+    await msLoadMember();
+    applyMemberView();
+    updateNavBtn();
+  } catch(e){
+    const msg = (e && e.message) ? e.message : 'Signup failed. Please try again.';
+    err.textContent = msg;
+    err.style.display = 'block';
+  }
+}
+        
         <button class="lmodal-submit" onclick="doLogin()">Sign In →</button>
       </div>
       <div id="lmodal-member-view" style="display:none;text-align:center;padding:.5rem 0;">
