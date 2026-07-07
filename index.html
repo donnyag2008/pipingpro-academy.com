@@ -1846,39 +1846,38 @@ function closeSModalBg(e){
   if (e.target === document.getElementById('smodal-bg')) closeSModal();
 }
 async function doSignup(){
-  const email    = document.getElementById('smodal-email').value.trim();
-  const password = document.getElementById('smodal-password').value.trim();
-  const country  = document.getElementById('smodal-country').value;
-  const err      = document.getElementById('smodal-err');
+  const country = document.getElementById('smodal-country').value;
+  const err = document.getElementById('smodal-err');
   err.style.display = 'none';
-  if (!email || !password || !country){
-    err.textContent = 'Please fill in all fields.';
+
+  if (!country){
+    err.textContent = 'Please select your country.';
     err.style.display = 'block'; return;
   }
-  if (password.length < 8){
-    err.textContent = 'Password must be at least 8 characters.';
-    err.style.display = 'block'; return;
-  }
+
   const ms = window.$memberstackDom;
   if (!ms){
     err.textContent = 'Signup is temporarily unavailable.';
     err.style.display = 'block'; return;
   }
+
+  // Close our modal, let Memberstack handle signup with captcha
+  closeSModal();
   try {
-    await ms.signupMemberEmailPassword({
-      email: email,
-      password: password,
-      customFields: { country: country }
-    });
-    closeSModal();
-    await msLoadMember();
-    applyMemberView();
-    updateNavBtn();
-  } catch(e){
-    const msg = (e && e.message) ? e.message : 'Signup failed. Please try again.';
-    err.textContent = msg;
-    err.style.display = 'block';
-  }
+    await ms.openModal('SIGNUP');
+  } catch(e){}
+
+  // After signup, update the country custom field
+  try {
+    const r = await ms.getCurrentMember();
+    const member = r && r.data ? r.data : null;
+    if (member){
+      await ms.updateMember({ customFields: { country: country } });
+      await msLoadMember();
+      applyMemberView();
+      updateNavBtn();
+    }
+  } catch(e){ console.warn('Could not update country', e); }
 }
 // ── LOGIN MODAL ───────────────────────────────────────────────
 function openLoginModal(){
