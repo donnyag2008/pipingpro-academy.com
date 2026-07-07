@@ -1937,7 +1937,7 @@ function doLogout(){
 }
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape'){ if (typeof closeCalcModal === 'function') closeCalcModal(); closeLModal(); closeSModal(); }
+ if (e.key === 'Escape'){ if (typeof closeCalcModal === 'function') closeCalcModal(); closeLModal(); }
   if (e.ctrlKey && e.shiftKey && e.key === 'A') openLoginModal();
 });
 document.addEventListener('keydown', e => {
