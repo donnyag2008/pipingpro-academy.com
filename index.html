@@ -988,6 +988,97 @@
   </div>
 </div>
 
+<!-- SIGNUP MODAL — add this right after the LOGIN MODAL closing </div> -->
+<div class="lmodal-bg" id="smodal-bg" onclick="closeSModalBg(event)">
+  <div class="lmodal">
+    <div class="lmodal-header">
+      <img class="lmodal-logo" src="/images/ppa-logo.png" alt="PipingPro Academy"/>
+      <div class="lmodal-title">Create Your Account</div>
+      <div class="lmodal-sub">PipingPro Academy</div>
+      <button class="lmodal-close" onclick="closeSModal()">✕</button>
+    </div>
+    <div class="lmodal-body">
+      <div class="lmodal-field">
+        <label class="lmodal-label">Email</label>
+        <input class="lmodal-input" id="smodal-email" type="email" placeholder="your@email.com" autocomplete="email"/>
+      </div>
+      <div class="lmodal-field">
+        <label class="lmodal-label">Password</label>
+        <input class="lmodal-input" id="smodal-password" type="password" placeholder="Min 8 characters" autocomplete="new-password"/>
+      </div>
+      <div class="lmodal-field">
+        <label class="lmodal-label">Country</label>
+        <select class="lmodal-input" id="smodal-country" style="appearance:auto;">
+          <option value="" disabled selected>Select your country</option>
+          <option value="Algeria">Algeria</option>
+          <option value="Angola">Angola</option>
+          <option value="Argentina">Argentina</option>
+          <option value="Australia">Australia</option>
+          <option value="Azerbaijan">Azerbaijan</option>
+          <option value="Bahrain">Bahrain</option>
+          <option value="Bangladesh">Bangladesh</option>
+          <option value="Brazil">Brazil</option>
+          <option value="Brunei">Brunei</option>
+          <option value="Canada">Canada</option>
+          <option value="Chile">Chile</option>
+          <option value="China">China</option>
+          <option value="Colombia">Colombia</option>
+          <option value="Egypt">Egypt</option>
+          <option value="France">France</option>
+          <option value="Germany">Germany</option>
+          <option value="Ghana">Ghana</option>
+          <option value="India">India</option>
+          <option value="Indonesia">Indonesia</option>
+          <option value="Iraq">Iraq</option>
+          <option value="Italy">Italy</option>
+          <option value="Japan">Japan</option>
+          <option value="Kazakhstan">Kazakhstan</option>
+          <option value="Kuwait">Kuwait</option>
+          <option value="Libya">Libya</option>
+          <option value="Malaysia">Malaysia</option>
+          <option value="Mexico">Mexico</option>
+          <option value="Morocco">Morocco</option>
+          <option value="Myanmar">Myanmar</option>
+          <option value="Netherlands">Netherlands</option>
+          <option value="New Zealand">New Zealand</option>
+          <option value="Nigeria">Nigeria</option>
+          <option value="Norway">Norway</option>
+          <option value="Oman">Oman</option>
+          <option value="Pakistan">Pakistan</option>
+          <option value="Peru">Peru</option>
+          <option value="Philippines">Philippines</option>
+          <option value="Qatar">Qatar</option>
+          <option value="Russia">Russia</option>
+          <option value="Saudi Arabia">Saudi Arabia</option>
+          <option value="Singapore">Singapore</option>
+          <option value="South Africa">South Africa</option>
+          <option value="South Korea">South Korea</option>
+          <option value="Spain">Spain</option>
+          <option value="Thailand">Thailand</option>
+          <option value="Trinidad and Tobago">Trinidad and Tobago</option>
+          <option value="Tunisia">Tunisia</option>
+          <option value="Turkey">Turkey</option>
+          <option value="Turkmenistan">Turkmenistan</option>
+          <option value="UAE">UAE</option>
+          <option value="United Kingdom">United Kingdom</option>
+          <option value="United States">United States</option>
+          <option value="Uzbekistan">Uzbekistan</option>
+          <option value="Venezuela">Venezuela</option>
+          <option value="Vietnam">Vietnam</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="lmodal-err" id="smodal-err">Please fill in all fields.</div>
+      <button class="lmodal-submit" onclick="doSignup()">Create Account →</button>
+      <div style="text-align:center;margin-top:0.8rem;">
+        <span style="font-size:12px;color:var(--ink-light);">Already a member? </span>
+        <a href="#" onclick="closeSModal();openLoginModal();return false;" style="font-size:12px;color:var(--gold);text-decoration:none;">Sign in</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
 <!-- HERO -->
 <section class="hero">
   <p class="hero-eyebrow">Professional Piping Engineering Education</p>
@@ -1417,10 +1508,9 @@
     var member = null;
     try { var r = await ms.getCurrentMember(); member = r && r.data ? r.data : null; } catch(e){}
     if(!member){
-      try { await ms.openModal('SIGNUP'); } catch(e){}
-      try { var r2 = await ms.getCurrentMember(); member = r2 && r2.data ? r2.data : null; } catch(e){}
+      openSignupModal();
+      return;
     }
-    if(!member){ return; } // visitor cancelled signup
     try{
       await ms.purchasePlansWithCheckout({
         priceId: priceId,
@@ -1443,7 +1533,6 @@
   paint(); // initial paint with default before geo resolves
 })();
 </script>
-
 
 <!-- AUTHOR -->
 <section class="author-section" id="author">
