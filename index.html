@@ -1504,7 +1504,7 @@
     ppaCheckout(b.id);
   };
 
-  // Programmatic Memberstack checkout — signs the visitor up first if needed
+ // Programmatic Memberstack checkout — signs the visitor up first if needed
   window.ppaCheckout = async function(priceId){
     var ms = window.$memberstackDom;
     if(!ms){ console.warn('Memberstack not ready'); return; }
@@ -1523,7 +1523,21 @@
       });
     }catch(e){ console.error('PPA checkout error', e); }
   };
+
+  // Geo-detect via Cloudflare (site is on Cloudflare Pages)
+  fetch('/cdn-cgi/trace').then(function(r){ return r.text(); }).then(function(t){
+    var m = t.match(/loc=([A-Z]{2})/);
+    var cc = m ? m[1] : '';
+    if(MID_COUNTRIES.indexOf(cc) !== -1)       band = 'mid';
+    else if(LOWER_COUNTRIES.indexOf(cc) !== -1) band = 'lower';
+    else                                        band = 'headline';
+    paint();
+  }).catch(function(){ band = 'headline'; paint(); });
+
+  paint(); // initial paint with default before geo resolves
+})();
 </script>
+
 
 <!-- AUTHOR -->
 <section class="author-section" id="author">
