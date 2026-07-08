@@ -589,6 +589,7 @@ table.reg td.n{text-align:right;font-family:var(--mono);}
 <div class="calc-tabs">
   <button type="button" class="calc-tab active" onclick="showCalcTab('calculator')">⚙ Calculator</button>
   <button type="button" class="calc-tab" onclick="showCalcTab('feed')">📥 LDT Import → FEED Scope</button>
+  <button type="button" class="calc-tab" onclick="showCalcTab('screener')">📊 Pneumatic Test Screener</button>
   <button type="button" class="calc-tab" onclick="showCalcTab('register')">🗂 Test-Package Register</button>
   <button type="button" class="calc-tab" onclick="showCalcTab('theory')">📚 Theory &amp; Reference</button>
 </div>
@@ -1992,6 +1993,145 @@ document.addEventListener('DOMContentLoaded', function(){
 </div>
 </div><!-- /calctab-feed -->
 
+<!-- ══ PNEUMATIC TEST SCREENER PANEL ══ -->
+<style id="pp-screener-css">
+.scr-disc{background:var(--blue-bg,rgba(29,78,216,.08));border:1px solid var(--blue-bd,rgba(29,78,216,.2));border-left:4px solid #1d4ed8;border-radius:8px;padding:11px 14px;font-size:12px;line-height:1.7;color:#1e3a5f;margin-bottom:1rem;}
+.scr-disc b{color:#1e2d4d;}
+.scr-scope{background:linear-gradient(135deg,var(--steel2),var(--steel));border-radius:10px;padding:1.2rem 1.3rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:14px;margin:4px 0 2px;}
+.scr-note{font-size:11px;color:var(--ink3);margin-top:8px;line-height:1.55;}
+.scr-pass{background:var(--pass-bg,#d1fae5);color:#065f46;padding:2px 8px;border-radius:4px;font-size:10.5px;font-weight:700;}
+.scr-fail{background:var(--red-bg,#f6e6df);color:var(--red,#8b3a1a);padding:2px 8px;border-radius:4px;font-size:10.5px;font-weight:700;}
+.scr-na{background:var(--paper2);color:var(--ink3);padding:2px 8px;border-radius:4px;font-size:10.5px;font-weight:600;}
+.scr-len-input{width:70px;padding:3px 6px;border:1.5px solid #d4cfc5;border-radius:5px;font-family:var(--mono);font-size:11.5px;text-align:right;background:#fffef9;}
+.scr-len-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(139,58,26,.1);}
+#scr-tbl th,#scr-tbl td{vertical-align:middle;white-space:nowrap;font-size:11.5px;}
+#scr-tbl td:first-child{font-family:var(--mono);font-size:11px;white-space:normal;overflow-wrap:anywhere;word-break:break-word;max-width:180px;line-height:1.35;}
+#scr-tbl .n{text-align:right;font-family:var(--mono);}
+.scr-filter-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0;}
+.scr-filter-bar select,.scr-filter-bar input{padding:5px 8px;border:1.5px solid #d4cfc5;border-radius:6px;font-size:12px;font-family:var(--sans);background:#fffef9;}
+.scr-pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;background:#dbeafe;color:#1e3a8a;margin-left:6px;}
+.scr-bar-vis{height:6px;border-radius:3px;margin-top:3px;}
+.scr-bar-ok{background:#10b981;}
+.scr-bar-over{background:#ef4444;}
+</style>
+
+<div class="calc-panel" id="calctab-screener">
+<div class="main">
+
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">📊</span>LDT Pneumatic Test Screener<span class="scr-pill">FEED · SAES-L-150 / SAES-A-004</span></div>
+    <div class="scr-disc">
+      <b>Batch stored-energy screening.</b> Upload the Line Designation Table → the tool calculates for every line: the <b>maximum test boundary length</b> that stays under the <b>271 MJ</b> (200×10⁶ ft·lb) stored-energy threshold for pneumatic testing per SAES-A-004 §5.8.3.
+      Where you enter an estimated length, it also calculates actual stored energy and flags pass/fail. Lines without length show max allowable length only — the key FEED routing input.
+    </div>
+    <label class="feed-drop" for="scr-file">
+      <div class="fd-ic">📄</div>
+      <div class="fd-t">Drop or choose your Line List (LDT)</div>
+      <div class="fd-s">.xlsm · .xlsx · .csv — parses ALL "LINE LIST" sheets automatically</div>
+      <input id="scr-file" type="file" accept=".xlsm,.xlsx,.xls,.csv" style="display:none" onchange="scrOnFile(event)">
+    </label>
+    <div id="scr-fileinfo" class="scr-note"></div>
+  </div>
+
+  <div class="card" id="scr-map-card" style="display:none">
+    <div class="ctitle"><span class="ctitle-icon">🧭</span>Column Mapping &amp; Defaults</div>
+    <div class="fg4">
+      <div class="field"><label>Sheet selection</label>
+        <select id="scr-sheet-mode">
+          <option value="all">All "LINE LIST" sheets (auto)</option>
+          <option value="single">Single sheet</option>
+        </select>
+      </div>
+      <div class="field" id="scr-single-wrap" style="display:none"><label>Sheet</label><select id="scr-sheet"></select></div>
+      <div class="field"><label>Header row</label><input type="number" id="scr-hrow" value="5" min="1" onchange="scrBuildMapUI()"></div>
+      <div class="field"><label>Data starts at row</label><input type="number" id="scr-drow" value="6" min="1"></div>
+    </div>
+    <div class="fg4 gap" id="scr-mapfields"></div>
+    <div class="ctitle gap" style="font-size:.85rem;margin-top:1.3rem;"><span class="ctitle-icon">⚙</span>Screening Basis</div>
+    <div class="fg4">
+      <div class="field"><label>Design-P unit (in LDT)</label><select id="scr-punit"><option value="psig" selected>PSIG</option><option value="barg">barg</option><option value="kpag">kPag</option></select></div>
+      <div class="field"><label>Default schedule (if LDT = dash)</label>
+        <select id="scr-defsched">
+          <option value="STD" selected>STD (Std Weight)</option>
+          <option value="XS">XS (Extra Strong)</option>
+          <option value="XXS">XXS (Double Extra Strong)</option>
+          <option value="10">Sch 10</option>
+          <option value="20">Sch 20</option>
+          <option value="30">Sch 30</option>
+          <option value="40">Sch 40</option>
+          <option value="60">Sch 60</option>
+          <option value="80">Sch 80</option>
+          <option value="100">Sch 100</option>
+          <option value="120">Sch 120</option>
+          <option value="140">Sch 140</option>
+          <option value="160">Sch 160</option>
+        </select>
+      </div>
+      <div class="field"><label>Length unit (for manual entry)</label>
+        <select id="scr-lunit"><option value="m" selected>metres</option><option value="ft">feet</option></select>
+      </div>
+      <div class="field"><label>Pneumatic test factor</label>
+        <input type="number" id="scr-factor" value="1.1" step="0.01" min="1" max="2">
+        <span class="scr-note">1.1 × DP per SAES-L-150</span>
+      </div>
+    </div>
+    <div class="scr-note">Wall thickness resolves from LDT schedule first; falls back to the default schedule above. Standard pipe ODs per ASME B36.10M. Stored energy per ASME PCC-2 Eq. II-2 (isentropic, k = 1.4 for air/N₂). Max length = the length at which E = 271 MJ.</div>
+    <div class="reg-actions">
+      <button type="button" class="reg-btn primary" onclick="scrGenerate()">▶ Screen all lines</button>
+    </div>
+  </div>
+
+  <div class="card" id="scr-out-card" style="display:none">
+    <div class="ctitle"><span class="ctitle-icon">💨</span>Pneumatic Test Screening Register <span style="font-size:11px;font-weight:400;color:var(--ink3);margin-left:8px;">271 MJ threshold · SAES-A-004 §5.8.3</span></div>
+    <div class="scr-scope" id="scr-scope"></div>
+    <div class="scr-note" id="scr-scope-note"></div>
+    <div class="scr-filter-bar">
+      <label style="font-size:11px;font-weight:600;color:var(--ink2);">Filter:</label>
+      <select id="scr-flt-result" onchange="scrRenderTable()">
+        <option value="all">All lines</option>
+        <option value="pass">✓ Eligible (under 271 MJ)</option>
+        <option value="fail">✕ Exceeds 271 MJ</option>
+        <option value="noLen">No length entered</option>
+      </select>
+      <select id="scr-flt-service" onchange="scrRenderTable()">
+        <option value="all">All services</option>
+      </select>
+      <select id="scr-flt-size" onchange="scrRenderTable()">
+        <option value="all">All sizes</option>
+      </select>
+      <input type="text" id="scr-search" placeholder="Search line number…" oninput="scrRenderTable()" style="width:160px;">
+    </div>
+    <div class="reg-actions">
+      <button type="button" class="reg-btn gold" onclick="scrExport()">Export CSV</button>
+      <button type="button" class="reg-btn" onclick="scrExportSummary()">Export summary</button>
+      <button type="button" class="reg-btn" onclick="window.print()">Print / Save PDF</button>
+    </div>
+    <div style="overflow-x:auto;margin-top:8px;"><table class="reg" id="scr-tbl">
+      <thead><tr>
+        <th>Line Tag</th>
+        <th>Size</th>
+        <th>Service</th>
+        <th>DP (psig)</th>
+        <th>TP<sub>pneu</sub> (barg)</th>
+        <th>OD (mm)</th>
+        <th>WT (mm)</th>
+        <th>Max L (m)</th>
+        <th>Est. Length</th>
+        <th>E (MJ)</th>
+        <th>R (m)</th>
+        <th>Result</th>
+      </tr></thead>
+      <tbody id="scr-body"></tbody>
+    </table></div>
+    <div class="scr-note" style="margin-top:10px;">
+      <b>Max L</b> = maximum test boundary length to stay ≤ 271 MJ at pneumatic test pressure. <b>E</b> = actual stored energy (only where length entered). <b>R</b> = exclusion-zone radius per PCC-2 App. 501-III.
+      Includes 3% fittings/manifold volume allowance. Full line volume used (conservative); PCC-2 permits capping piping contribution at 8 pipe-diameters per single failure.
+    </div>
+  </div>
+
+</div>
+</div><!-- /calctab-screener -->
+
 <!-- ══ THEORY & REFERENCE PANEL ══ -->
 <div class="calc-panel" id="calctab-theory">
 <div style="max-width:920px;margin:0 auto;padding:2rem 1.5rem;">
@@ -2136,7 +2276,7 @@ document.addEventListener('DOMContentLoaded', function(){
 <script>
 /* ── THEORY TAB SWITCHING ── */
 function showCalcTab(name){
-  ['calculator','feed','register','theory'].forEach(function(t){
+  ['calculator','feed','screener','register','theory'].forEach(function(t){
     var btn = document.querySelector('.calc-tab[onclick*="' + t + '"]');
     var panel = document.getElementById('calctab-' + t);
     if(btn) btn.classList.toggle('active', t===name);
@@ -2311,6 +2451,495 @@ function feedExport(){
   var blob=new Blob([csv],{type:'text/csv'}),u=URL.createObjectURL(blob),a=document.createElement('a');
   a.href=u; a.download='feed_test_parameter_schedule.csv'; a.click(); URL.revokeObjectURL(u);
 }
+
+/* ════════════════════════════════════════════════════════════════════════
+   PNEUMATIC TEST SCREENER ENGINE — batch stored-energy screening
+   per SAES-A-004 §5.8.3 / ASME PCC-2 Eq. II-2
+   ════════════════════════════════════════════════════════════════════════ */
+var scrWB=null, scrRecs=[], scrAllAOA=[];
+
+/* ── NPS → OD (mm) lookup per ASME B36.10M ── */
+var NPS_OD={
+  '0.5':21.3,'1/2':21.3, '0.75':26.7,'3/4':26.7, '1':33.4, '1.25':42.2,'1-1/4':42.2,
+  '1.5':48.3,'1-1/2':48.3, '2':60.3, '2.5':73.0,'2-1/2':73.0, '3':88.9, '3.5':101.6,
+  '4':114.3, '5':141.3, '6':168.3, '8':219.1, '10':273.1, '12':323.9,
+  '14':355.6, '16':406.4, '18':457.2, '20':508.0, '22':558.8, '24':609.6,
+  '26':660.4, '28':711.2, '30':762.0, '32':812.8, '34':863.6, '36':914.4,
+  '38':965.2, '40':1016.0, '42':1066.8, '44':1117.6, '46':1168.4, '48':1219.2,
+  '50':1270.0, '52':1320.8, '54':1371.6, '56':1422.4, '58':1473.2, '60':1524.0,
+  '64':1625.6
+};
+
+/* ── NPS × Schedule → WT (mm) per ASME B36.10M — common schedules ── */
+/* Format: NPS_KEY: {schedule: WT_mm} */
+var NPS_WT={
+  '0.5' :{STD:2.77,XS:3.73,10:2.11,40:2.77,80:3.73,160:4.75,XXS:7.47},
+  '0.75':{STD:2.87,XS:3.91,10:2.11,40:2.87,80:3.91,160:5.56,XXS:7.82},
+  '1'   :{STD:3.38,XS:4.55,10:2.77,40:3.38,80:4.55,160:6.35,XXS:9.09},
+  '1.25':{STD:3.56,XS:4.85,10:2.77,40:3.56,80:4.85,160:6.35,XXS:9.70},
+  '1.5' :{STD:3.68,XS:5.08,10:2.77,40:3.68,80:5.08,160:7.14,XXS:10.16},
+  '2'   :{STD:3.91,XS:5.54,10:2.77,40:3.91,80:5.54,160:8.74,XXS:11.07},
+  '2.5' :{STD:5.16,XS:7.01,10:3.05,40:5.16,80:7.01,160:9.53,XXS:14.02},
+  '3'   :{STD:5.49,XS:7.62,10:3.05,40:5.49,80:7.62,160:11.13,XXS:15.24},
+  '3.5' :{STD:5.74,XS:8.08,10:3.05,40:5.74,80:8.08,XXS:16.15},
+  '4'   :{STD:6.02,XS:8.56,10:3.05,40:6.02,60:7.14,80:8.56,100:11.13,120:13.49,140:15.88,160:17.12,XXS:17.12},
+  '5'   :{STD:6.55,XS:9.53,10:3.40,40:6.55,60:9.53,80:9.53,100:12.70,120:15.88,140:19.05,160:19.05,XXS:19.05},
+  '6'   :{STD:7.11,XS:10.97,10:3.40,40:7.11,60:10.97,80:10.97,100:14.27,120:18.26,140:21.95,160:21.95,XXS:21.95},
+  '8'   :{STD:8.18,XS:12.70,10:3.76,20:6.35,30:7.04,40:8.18,60:10.31,80:12.70,100:15.09,120:18.26,140:20.62,160:23.01,XXS:22.23},
+  '10'  :{STD:9.27,XS:12.70,10:4.19,20:6.35,30:7.80,40:9.27,60:12.70,80:15.09,100:18.26,120:21.44,140:25.40,160:28.58,XXS:25.40},
+  '12'  :{STD:9.53,XS:12.70,10:4.19,20:6.35,30:8.38,40:10.31,60:14.27,80:17.48,100:21.44,120:25.40,140:28.58,160:33.32,XXS:25.40},
+  '14'  :{STD:9.53,XS:12.70,10:4.78,20:6.35,30:7.92,40:11.13,60:15.09,80:19.05,100:23.83,120:27.79,140:31.75,160:35.71},
+  '16'  :{STD:9.53,XS:12.70,10:4.78,20:6.35,30:7.92,40:12.70,60:16.66,80:21.44,100:26.19,120:30.96,140:36.53,160:40.49},
+  '18'  :{STD:9.53,XS:12.70,10:4.78,20:6.35,30:8.74,40:14.27,60:19.05,80:23.83,100:29.36,120:34.93,140:39.67,160:45.24},
+  '20'  :{STD:9.53,XS:12.70,10:5.54,20:6.35,30:9.53,40:15.09,60:20.62,80:26.19,100:32.54,120:38.10,140:44.45,160:50.01},
+  '22'  :{STD:9.53,XS:12.70,10:5.54,20:6.35,30:9.53,60:22.23,80:28.58,100:34.93,120:41.28,140:47.63,160:53.98},
+  '24'  :{STD:9.53,XS:12.70,10:5.54,20:6.35,30:9.53,40:17.48,60:24.61,80:30.96,100:38.89,120:46.02,140:52.37,160:59.54},
+  '26'  :{STD:9.53,XS:12.70,10:6.35,20:7.92},
+  '28'  :{STD:9.53,XS:12.70,10:6.35,20:7.92,30:12.70},
+  '30'  :{STD:9.53,XS:12.70,10:6.35,20:7.92,30:12.70},
+  '32'  :{STD:9.53,XS:12.70,10:6.35,20:7.92,30:12.70,40:17.48},
+  '34'  :{STD:9.53,XS:12.70,10:6.35,20:7.92,30:12.70,40:17.48},
+  '36'  :{STD:9.53,XS:12.70,10:6.35,20:7.92,30:12.70,40:19.05},
+  '40'  :{STD:9.53,XS:12.70,10:6.35,20:7.92},
+  '42'  :{STD:9.53,XS:12.70,10:6.35,20:7.92},
+  '48'  :{STD:9.53,XS:12.70,10:6.35,20:7.92},
+  '52'  :{STD:9.53,XS:12.70,10:6.35},
+  '54'  :{STD:9.53,XS:12.70,10:6.35},
+  '56'  :{STD:9.53,XS:12.70,10:6.35},
+  '60'  :{STD:9.53,XS:12.70,10:6.35},
+  '64'  :{STD:9.53,XS:12.70,10:6.35}
+};
+
+/* ── Stored energy calc (ASME PCC-2 Eq. II-2) ── */
+var SCR_K = 1.4;      // ratio of specific heats, air / N₂
+var SCR_ATM = 1.013;  // bar
+var SCR_ELIM = 271e6; // J  = 271 MJ
+
+function scrStoredEnergy(ptBarg, volM3) {
+  var Pt = (ptBarg + SCR_ATM) * 1e5;   // Pa absolute
+  var Pa = SCR_ATM * 1e5;
+  return (1/(SCR_K-1)) * Pt * volM3 * (1 - Math.pow(Pa/Pt, (SCR_K-1)/SCR_K));
+}
+
+function scrSafeDistance(E_J) {
+  var tntKg = E_J / 4266920;
+  var Rscale = 20 * Math.cbrt(tntKg);
+  var Rtier;
+  if (E_J <= 135.5e6)      Rtier = 30;
+  else if (E_J <= 271e6)   Rtier = 60;
+  else                     Rtier = 0;
+  return Math.max(Rtier, Rscale);
+}
+
+function scrMaxLength(ptBarg, idMm) {
+  // Solve for L at E = 271 MJ
+  var Pt   = (ptBarg + SCR_ATM) * 1e5;
+  var Pa   = SCR_ATM * 1e5;
+  var idM  = idMm / 1000;
+  var areaM2 = Math.PI/4 * idM * idM;
+  var factor = (1/(SCR_K-1)) * Pt * areaM2 * 1.03 * (1 - Math.pow(Pa/Pt, (SCR_K-1)/SCR_K));
+  if (factor <= 0) return Infinity;
+  return SCR_ELIM / factor;   // metres
+}
+
+/* ── Parse NPS from LDT size string ── */
+function scrParseNPS(s) {
+  if (s == null) return null;
+  s = String(s).trim().replace(/"/g,'').replace(/″/g,'').replace(/['']/g,'').replace(/\s*inch(es)?/i,'');
+  // Handle fractions: "3/4", "1-1/2", "1 1/2"
+  s = s.replace(/\s+/g,'-');
+  if (NPS_OD[s] !== undefined) return s;
+  // Try numeric
+  var n = parseFloat(s);
+  if (!isNaN(n)) {
+    var ns = String(n);
+    if (NPS_OD[ns] !== undefined) return ns;
+    // Try common fractional equivalents
+    if (n === 0.5)  return '0.5';
+    if (n === 0.75) return '0.75';
+    if (n === 1.25) return '1.25';
+    if (n === 1.5)  return '1.5';
+    if (n === 2.5)  return '2.5';
+    if (n === 3.5)  return '3.5';
+  }
+  return null;
+}
+
+function scrResolveWT(npsKey, schedRaw) {
+  var wts = NPS_WT[npsKey];
+  if (!wts) return null;
+  // Clean schedule string
+  var sch = (schedRaw == null || String(schedRaw).trim() === '-' || String(schedRaw).trim() === '') ? null : String(schedRaw).trim().toUpperCase();
+  if (sch) {
+    sch = sch.replace(/^SCH\.?\s*/i,'').replace(/^S-?/i,'');
+    if (wts[sch] !== undefined) return wts[sch];
+    // Try "STD", "XS", "XXS"
+    if (/^STD/i.test(sch)) return wts['STD'];
+    if (/^XS$|^EX/i.test(sch)) return wts['XS'];
+    if (/^XXS/i.test(sch)) return wts['XXS'];
+    // Try numeric
+    var n = parseInt(sch);
+    if (!isNaN(n) && wts[String(n)] !== undefined) return wts[String(n)];
+  }
+  // Fall back to user-selected default
+  var def = document.getElementById('scr-defsched').value;
+  return wts[def] || wts['STD'] || null;
+}
+
+function scrPToBarg(v,u){ var x=parseFloat(v); if(isNaN(x)||x<=0) return null; return u==='barg'?x : u==='psig'?x*0.0689476 : u==='kpag'?x*0.01 : x; }
+
+/* ── Column mapping fields for screener ── */
+var SCR_FIELDS=[
+  {k:'tag',   l:'Line Tag'},
+  {k:'lineno',l:'Line No.'},
+  {k:'size',  l:'Size (NPS)'},
+  {k:'service',l:'Service'},
+  {k:'spec',  l:'Piping Spec'},
+  {k:'sched', l:'Schedule'},
+  {k:'dP',    l:'Design Press'},
+  {k:'pid',   l:'P&ID No.'},
+  {k:'length',l:'Length (ft)'}
+];
+/* SPI preset — maps to header row 5 columns in Wood's SmartPlant format */
+var SCR_SPI={tag:'',lineno:'B',size:'C',service:'G',spec:'D',sched:'E',dP:'K',pid:'AI',length:'W'};
+
+/* ── File upload handler ── */
+function scrOnFile(e){
+  var f=e.target.files[0]; if(!f) return;
+  document.getElementById('scr-fileinfo').textContent='Reading '+f.name+' …';
+  var rd=new FileReader();
+  rd.onload=function(){
+    try{
+      scrWB=XLSX.read(new Uint8Array(rd.result),{type:'array'});
+    }catch(err){ document.getElementById('scr-fileinfo').textContent='Could not read file: '+err.message; return; }
+    // Populate single-sheet selector
+    var sel=document.getElementById('scr-sheet'); sel.innerHTML='';
+    scrWB.SheetNames.forEach(function(n){ var o=document.createElement('option'); o.value=n; o.textContent=n; sel.appendChild(o); });
+    // Count LINE LIST sheets
+    var llSheets = scrWB.SheetNames.filter(function(n){ return /^LINE LIST \d/i.test(n); });
+    document.getElementById('scr-fileinfo').textContent=f.name+' · '+scrWB.SheetNames.length+' sheet(s), '+llSheets.length+' LINE LIST sheet(s)';
+    document.getElementById('scr-map-card').style.display='';
+    scrBuildMapUI();
+  };
+  rd.readAsArrayBuffer(f);
+}
+
+document.getElementById('scr-sheet-mode').addEventListener('change',function(){
+  document.getElementById('scr-single-wrap').style.display = this.value==='single'?'':'none';
+});
+
+function scrBuildMapUI(){
+  // Read first LINE LIST sheet to get header
+  if(!scrWB) return;
+  var sheetName;
+  if(document.getElementById('scr-sheet-mode').value==='single'){
+    sheetName = document.getElementById('scr-sheet').value;
+  } else {
+    sheetName = scrWB.SheetNames.find(function(n){ return /^LINE LIST \d/i.test(n); }) || scrWB.SheetNames[0];
+  }
+  var ws=scrWB.Sheets[sheetName];
+  var aoa=XLSX.utils.sheet_to_json(ws,{header:1,defval:null,raw:false,blankrows:true});
+  var hrow=parseInt(document.getElementById('scr-hrow').value,10)-1;
+  var header=aoa[hrow]||[];
+  var ncol=aoa.reduce(function(m,r){ return Math.max(m, r?r.length:0); },header.length);
+
+  var wrap=document.getElementById('scr-mapfields'); wrap.innerHTML='';
+  SCR_FIELDS.forEach(function(f){
+    var div=document.createElement('div'); div.className='field';
+    var html='<label>'+f.l+'</label><select id="sm-'+f.k+'"><option value="">— none —</option>';
+    for(var c=0;c<ncol;c++){
+      var t=header[c]?(' · '+String(header[c]).replace(/\s+/g,' ').trim().slice(0,28)):'';
+      html+='<option value="'+idxToCol(c)+'">'+idxToCol(c)+t+'</option>';
+    }
+    html+='</select>';
+    div.innerHTML=html;
+    wrap.appendChild(div);
+    // Apply SPI preset
+    var pre=SCR_SPI[f.k]||'';
+    if(pre) div.querySelector('select').value=pre;
+  });
+}
+
+/* ── Main generate function ── */
+function scrGenerate(){
+  if(!scrWB){ return; }
+  var drow=parseInt(document.getElementById('scr-drow').value,10)-1;
+  var punit=document.getElementById('scr-punit').value;
+  var factor=parseFloat(document.getElementById('scr-factor').value)||1.1;
+
+  // Collect sheets to process
+  var sheetsToProcess=[];
+  if(document.getElementById('scr-sheet-mode').value==='single'){
+    sheetsToProcess=[document.getElementById('scr-sheet').value];
+  } else {
+    sheetsToProcess=scrWB.SheetNames.filter(function(n){ return /^LINE LIST \d/i.test(n); });
+  }
+
+  scrRecs=[];
+  var seen={};   // deduplicate by line number
+  sheetsToProcess.forEach(function(sn){
+    var ws=scrWB.Sheets[sn];
+    var aoa=XLSX.utils.sheet_to_json(ws,{header:1,defval:null,raw:false,blankrows:true});
+    for(var r=drow;r<aoa.length;r++){
+      var row=aoa[r]||[];
+      var get=function(k){ var el=document.getElementById('sm-'+k); if(!el) return null; var L=el.value; if(!L) return null; var i=colToIdx(L); var v=row[i]; return (v===''||v==null)?null:v; };
+      var lineno=get('lineno'), tagDirect=get('tag');
+      if(!tagDirect && lineno==null) continue;
+
+      var sizeRaw=get('size'), serviceRaw=get('service'), specRaw=get('spec'), schedRaw=get('sched');
+      var dPRaw=get('dP'), pidRaw=get('pid'), lengthRaw=get('length');
+
+      // Build tag
+      var tag = tagDirect || (sizeRaw&&serviceRaw&&lineno&&specRaw ?
+        (sizeRaw+'-'+serviceRaw+'-'+String(lineno).trim()+'-'+specRaw) :
+        (lineno ? String(lineno) : '(unnamed)'));
+
+      // Deduplicate across sheets
+      var dedupKey = String(lineno||tag).trim();
+      if(seen[dedupKey]) continue;
+      seen[dedupKey]=true;
+
+      // Parse size → NPS key → OD
+      var npsKey = scrParseNPS(sizeRaw);
+      var odMm   = npsKey ? NPS_OD[npsKey] : null;
+
+      // Resolve wall thickness
+      var wtMm = npsKey ? scrResolveWT(npsKey, schedRaw) : null;
+
+      // ID
+      var idMm = (odMm && wtMm) ? (odMm - 2*wtMm) : null;
+
+      // Design pressure → test pressure (barg)
+      var dpPsig = parseFloat(dPRaw);
+      var dpBarg = scrPToBarg(dPRaw, punit);
+      var tpBarg = dpBarg != null ? Math.round(factor * dpBarg * 10)/10 : null;
+
+      // Max length for 271 MJ
+      var maxLenM = (tpBarg != null && tpBarg > 0 && idMm != null && idMm > 0) ? scrMaxLength(tpBarg, idMm) : null;
+
+      // Parse length if available
+      var lengthVal = lengthRaw ? parseFloat(String(lengthRaw).replace(/,/g,'')) : null;
+      if (isNaN(lengthVal) || lengthVal <= 0) lengthVal = null;
+      // Length in LDT is in feet — convert to metres if present
+      var lengthM = lengthVal ? lengthVal * 0.3048 : null;
+
+      // Stored energy (only if length available)
+      var energyMJ=null, safeR=null, result=null;
+      if (lengthM && tpBarg && idMm) {
+        var areaM2 = Math.PI/4 * Math.pow(idMm/1000, 2);
+        var volM3 = areaM2 * lengthM * 1.03;
+        var E_J = scrStoredEnergy(tpBarg, volM3);
+        energyMJ = E_J / 1e6;
+        safeR = scrSafeDistance(E_J);
+        result = energyMJ <= 271 ? 'pass' : 'fail';
+      }
+
+      scrRecs.push({
+        tag:tag, lineno:lineno, size:sizeRaw, npsKey:npsKey, service:serviceRaw, spec:specRaw,
+        sched:schedRaw, pid:pidRaw,
+        dpPsig:isNaN(dpPsig)?null:dpPsig, dpBarg:dpBarg, tpBarg:tpBarg,
+        odMm:odMm, wtMm:wtMm, idMm:idMm,
+        maxLenM:maxLenM,
+        lengthM:lengthM, userLen:null,       // userLen = manually entered
+        energyMJ:energyMJ, safeR:safeR, result:result,
+        sheet:sn
+      });
+    }
+  });
+
+  // Populate filter dropdowns
+  var svcSet={}, sizeSet={};
+  scrRecs.forEach(function(r){ if(r.service) svcSet[r.service]=1; if(r.size) sizeSet[r.size]=1; });
+  var svcSel=document.getElementById('scr-flt-service');
+  svcSel.innerHTML='<option value="all">All services</option>';
+  Object.keys(svcSet).sort().forEach(function(s){ svcSel.innerHTML+='<option value="'+escF(s)+'">'+escF(s)+'</option>'; });
+  var sizSel=document.getElementById('scr-flt-size');
+  sizSel.innerHTML='<option value="all">All sizes</option>';
+  Object.keys(sizeSet).sort(function(a,b){ return (parseFloat(a)||0)-(parseFloat(b)||0); }).forEach(function(s){ sizSel.innerHTML+='<option value="'+escF(s)+'">'+escF(s)+'</option>'; });
+
+  scrRenderTable();
+  document.getElementById('scr-out-card').style.display = scrRecs.length?'':'none';
+}
+
+/* ── Render table with filters ── */
+function scrRenderTable(){
+  var fltResult  = document.getElementById('scr-flt-result').value;
+  var fltService = document.getElementById('scr-flt-service').value;
+  var fltSize    = document.getElementById('scr-flt-size').value;
+  var search     = (document.getElementById('scr-search').value||'').toLowerCase();
+  var lunit      = document.getElementById('scr-lunit').value;
+  var luFactor   = lunit==='ft' ? 3.28084 : 1;
+  var luLabel    = lunit==='ft' ? 'ft' : 'm';
+
+  var filtered = scrRecs.filter(function(r){
+    if(fltResult==='pass' && r.result!=='pass') return false;
+    if(fltResult==='fail' && r.result!=='fail') return false;
+    if(fltResult==='noLen' && (r.lengthM || r.userLen)) return false;
+    if(fltService!=='all' && r.service!==fltService) return false;
+    if(fltSize!=='all' && r.size!==fltSize) return false;
+    if(search && r.tag.toLowerCase().indexOf(search)===-1 && String(r.lineno||'').toLowerCase().indexOf(search)===-1) return false;
+    return true;
+  });
+
+  var body = document.getElementById('scr-body'); body.innerHTML='';
+  filtered.forEach(function(r, idx){
+    var tr=document.createElement('tr');
+    // Determine effective length (user override or from LDT)
+    var effLenM = r.userLen || r.lengthM;
+    var effE = r.energyMJ, effR = r.safeR, effResult = r.result;
+    if(r.userLen && r.tpBarg && r.idMm){
+      var a2 = Math.PI/4*Math.pow(r.idMm/1000,2);
+      var v2 = a2 * r.userLen * 1.03;
+      var ej = scrStoredEnergy(r.tpBarg, v2);
+      effE = ej/1e6;
+      effR = scrSafeDistance(ej);
+      effResult = effE <= 271 ? 'pass' : 'fail';
+    }
+
+    var resultHTML = !effResult ? '<span class="scr-na">—</span>'
+      : effResult==='pass' ? '<span class="scr-pass">✓ ≤ 271</span>'
+      : '<span class="scr-fail">✕ &gt; 271</span>';
+
+    var maxLenDisp = r.maxLenM!=null ? (r.maxLenM*luFactor).toLocaleString('en-GB',{maximumFractionDigits:0}) : '—';
+
+    // Length input field
+    var lenVal = r.userLen ? (r.userLen*luFactor).toFixed(0) : (r.lengthM ? (r.lengthM*luFactor).toFixed(0) : '');
+    var lenInputId = 'scr-len-'+idx;
+
+    tr.innerHTML=
+      '<td>'+escF(r.tag)+'</td>'+
+      '<td>'+escF(r.size||'—')+'</td>'+
+      '<td>'+escF(r.service||'—')+'</td>'+
+      '<td class="n">'+(r.dpPsig!=null?r.dpPsig:'—')+'</td>'+
+      '<td class="n">'+(r.tpBarg!=null?r.tpBarg:'—')+'</td>'+
+      '<td class="n">'+(r.odMm!=null?r.odMm.toFixed(1):'—')+'</td>'+
+      '<td class="n">'+(r.wtMm!=null?r.wtMm.toFixed(2):'—')+'</td>'+
+      '<td class="n">'+maxLenDisp+'</td>'+
+      '<td><input class="scr-len-input" type="number" id="'+lenInputId+'" value="'+lenVal+'" placeholder="'+luLabel+'" data-ridx="'+scrRecs.indexOf(r)+'" onchange="scrUpdateLen(this)"></td>'+
+      '<td class="n">'+(effE!=null?(effE<10?effE.toFixed(1):Math.round(effE)):'—')+'</td>'+
+      '<td class="n">'+(effR!=null?Math.ceil(effR):'—')+'</td>'+
+      '<td>'+resultHTML+'</td>';
+    body.appendChild(tr);
+  });
+
+  // Scope summary
+  scrRenderScope(filtered);
+}
+
+/* ── Update length for a single row ── */
+function scrUpdateLen(el){
+  var ridx = parseInt(el.dataset.ridx);
+  var r = scrRecs[ridx]; if(!r) return;
+  var lunit = document.getElementById('scr-lunit').value;
+  var val = parseFloat(el.value);
+  if(isNaN(val) || val <= 0){
+    r.userLen = null;
+    r.energyMJ = null; r.safeR = null; r.result = null;
+  } else {
+    r.userLen = lunit==='ft' ? val * 0.3048 : val;
+    if(r.tpBarg && r.idMm){
+      var a2 = Math.PI/4*Math.pow(r.idMm/1000,2);
+      var v2 = a2 * r.userLen * 1.03;
+      var ej = scrStoredEnergy(r.tpBarg, v2);
+      r.energyMJ = ej/1e6;
+      r.safeR = scrSafeDistance(ej);
+      r.result = r.energyMJ <= 271 ? 'pass' : 'fail';
+    }
+  }
+  scrRenderTable();
+}
+
+/* ── Scope tiles ── */
+function scrRenderScope(filtered){
+  var total=filtered.length, withLen=0, pass=0, fail=0, noCalc=0;
+  var uniqueSizes={}, uniqueServices={};
+  filtered.forEach(function(r){
+    if(r.size) uniqueSizes[r.size]=1;
+    if(r.service) uniqueServices[r.service]=1;
+    var effResult = r.result;
+    if(r.userLen && r.tpBarg && r.idMm){
+      var a2 = Math.PI/4*Math.pow(r.idMm/1000,2);
+      var v2 = a2 * r.userLen * 1.03;
+      var ej = scrStoredEnergy(r.tpBarg, v2);
+      effResult = (ej/1e6) <= 271 ? 'pass' : 'fail';
+    }
+    if(effResult==='pass') pass++;
+    else if(effResult==='fail') fail++;
+    else noCalc++;
+    if(r.userLen || r.lengthM) withLen++;
+  });
+
+  function tile(v,l,color){ return '<div class="pd-block"><div class="pd-val"'+(color?' style="color:'+color+'"':'')+'">'+v+'</div><div class="pd-label">'+l+'</div></div>'; }
+  document.getElementById('scr-scope').innerHTML =
+    tile(total,'Total lines')+
+    tile(Object.keys(uniqueSizes).length,'Pipe sizes')+
+    tile(Object.keys(uniqueServices).length,'Services')+
+    tile(withLen,'With length data')+
+    tile(pass,'✓ Eligible','#10b981')+
+    tile(fail,'✕ Exceeds 271 MJ','#ef4444');
+
+  document.getElementById('scr-scope-note').innerHTML =
+    '<b>'+total+' lines screened</b> across '+Object.keys(uniqueServices).length+' services. '+
+    (withLen ? withLen+' lines have length data → '+pass+' pass, '+fail+' fail, '+(total-withLen)+' awaiting length.' :
+    'No length data in this FEED LDT — the <b>Max L</b> column shows the maximum test boundary length per line that stays under 271 MJ. Use this as a routing constraint during FEED.')+
+    ' All calculations at pneumatic test pressure ('+document.getElementById('scr-factor').value+'× design). Enter estimated lengths in the table to get stored energy per line.';
+}
+
+/* ── Export full CSV ── */
+function scrExport(){
+  var lunit = document.getElementById('scr-lunit').value;
+  var luFactor = lunit==='ft' ? 3.28084 : 1;
+  var head=['Line Tag','Line No','Size','Service','Spec','P&ID','DP (psig)','DP (barg)','TP pneu (barg)','OD (mm)','WT (mm)','ID (mm)',
+    'Max Length ('+lunit+')','Est Length ('+lunit+')','Stored Energy (MJ)','Safe Distance (m)','Result'];
+  var csv=[head.join(',')];
+  scrRecs.forEach(function(r){
+    var effLen = r.userLen || r.lengthM;
+    var effE=r.energyMJ, effR=r.safeR, effResult=r.result;
+    if(r.userLen && r.tpBarg && r.idMm){
+      var a2=Math.PI/4*Math.pow(r.idMm/1000,2), v2=a2*r.userLen*1.03, ej=scrStoredEnergy(r.tpBarg,v2);
+      effE=ej/1e6; effR=scrSafeDistance(ej); effResult=effE<=271?'PASS':'FAIL';
+    } else { effResult = effResult==='pass'?'PASS':(effResult==='fail'?'FAIL':''); }
+    csv.push([
+      escCsv(r.tag), escCsv(r.lineno), escCsv(r.size), escCsv(r.service), escCsv(r.spec), escCsv(r.pid),
+      r.dpPsig||'', r.dpBarg!=null?r.dpBarg.toFixed(2):'', r.tpBarg||'',
+      r.odMm!=null?r.odMm.toFixed(1):'', r.wtMm!=null?r.wtMm.toFixed(2):'', r.idMm!=null?r.idMm.toFixed(1):'',
+      r.maxLenM!=null?(r.maxLenM*luFactor).toFixed(0):'',
+      effLen!=null?(effLen*luFactor).toFixed(0):'',
+      effE!=null?(effE<10?effE.toFixed(1):Math.round(effE)):'',
+      effR!=null?Math.ceil(effR):'',
+      effResult
+    ].join(','));
+  });
+  dlCsv(csv.join('\n'), 'pneumatic_test_screening_register.csv');
+}
+
+function scrExportSummary(){
+  // Group by size + DP → one row per unique combination
+  var groups={};
+  scrRecs.forEach(function(r){
+    var key=(r.size||'?')+'|'+(r.dpPsig||'?');
+    if(!groups[key]) groups[key]={size:r.size,dpPsig:r.dpPsig,tpBarg:r.tpBarg,odMm:r.odMm,wtMm:r.wtMm,idMm:r.idMm,maxLenM:r.maxLenM,count:0,services:{}};
+    groups[key].count++;
+    if(r.service) groups[key].services[r.service]=1;
+  });
+  var head=['Size','DP (psig)','TP pneu (barg)','OD (mm)','WT (mm)','Max Length (m)','Line Count','Services'];
+  var csv=[head.join(',')];
+  Object.keys(groups).sort(function(a,b){
+    var ga=groups[a],gb=groups[b]; return (ga.odMm||0)-(gb.odMm||0) || (ga.dpPsig||0)-(gb.dpPsig||0);
+  }).forEach(function(k){
+    var g=groups[k];
+    csv.push([
+      escCsv(g.size), g.dpPsig||'', g.tpBarg||'',
+      g.odMm!=null?g.odMm.toFixed(1):'', g.wtMm!=null?g.wtMm.toFixed(2):'',
+      g.maxLenM!=null?Math.round(g.maxLenM):'',
+      g.count, escCsv(Object.keys(g.services).join('; '))
+    ].join(','));
+  });
+  dlCsv(csv.join('\n'), 'pneumatic_screening_summary_by_size.csv');
+}
+
+function escCsv(v){ v=(v==null?'':String(v)); return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; }
+function dlCsv(csv, name){ var b=new Blob([csv],{type:'text/csv'}),u=URL.createObjectURL(b),a=document.createElement('a'); a.href=u; a.download=name; a.click(); URL.revokeObjectURL(u); }
 </script>
 </body>
 </html>
