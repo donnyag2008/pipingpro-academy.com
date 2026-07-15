@@ -317,7 +317,7 @@ const fmt=(n,d=2)=>n==null?"—":(+n).toFixed(d);
 /* dropdowns — group by subCat for easier navigation */
 const selA=el("matA"), selB=el("matB");
 Object.entries(M).forEach(([k,m])=>{ selA.add(new Option(`${m.name}${m.subCat?' ['+m.subCat+']':''}`,k)); selB.add(new Option(`${m.name}${m.subCat?' ['+m.subCat+']':''}`,k)); });
-selA.value="A106B"; selB.value="TP316L";
+selA.value="A106B"; selB.value="A312TP316L";
 el("matcount").textContent=Object.keys(M).length+" materials";
 
 /* tabs */

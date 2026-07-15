@@ -1054,6 +1054,14 @@
       sh:[40,40,39.6,39.2,38.6,37.8,37.4,37,36.6,36.3,36.1,35.8,35.4,31.2,31.2,23.1,21,13.2] },
   };
 
+  /* ---- v1 backward-compatible aliases (so existing bookmarks / links don't break) ---- */
+  MATERIALS["A333-6"]  = MATERIALS["A3336"];
+  MATERIALS["TP304"]   = MATERIALS["A312TP304"];
+  MATERIALS["TP316L"]  = MATERIALS["A312TP316L"];
+  MATERIALS["DUP2205"] = MATERIALS["A790_2205"];
+  MATERIALS["P11"]     = MATERIALS["A335P11"];
+  MATERIALS["P22"]     = MATERIALS["A335P22"];
+
   /* ---- TABLE C-6: Moduli of Elasticity, ×10⁶ psi ---- */
   const E_GROUPS = {
     CS:{ desc:"Carbon steels, C ≤ 0.30%",
