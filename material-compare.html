@@ -215,7 +215,7 @@ footer{border-top:1px solid var(--line);padding:22px;text-align:center;color:var
     <h1>Material Comparison</h1>
     <p>Compare two piping materials side by side at design temperature — allowable stress, modulus, thermal expansion and the derived ratios that drive a substitution decision. Reads the same dataset as the Material Property Datasheet.</p>
     <div class="std">
-      <span>Shared ppa-materials.js</span><span>SI base · US derived</span><span>ASME B31.3</span><span id="matcount">materials</span>
+      <span>Shared ppa-materials.js</span><span>US base · SI derived</span><span>ASME B31.3</span><span id="matcount">materials</span>
     </div>
   </div>
 </header>
@@ -306,16 +306,17 @@ footer{border-top:1px solid var(--line);padding:22px;text-align:center;color:var
 </footer>
 
 <!-- shared library FIRST -->
-<script src="ppa-materials.js"></script>
+<script src="/ppa-materials.js"></script>
 <script>
+/* ── ppa-materials.js v2: US Customary canonical (ksi, °F) ── */
 const M=PPA.MATERIALS, RHO=PPA.RHO, COST=PPA.COST, WELD=PPA.WELD, WLR=PPA.WELD_LEVEL_RANK, interp=PPA.interp, CV=PPA.convert, U=()=>PPA.UNITS[units];
-let units='SI';
+let units='US';
 const el=id=>document.getElementById(id);
 const fmt=(n,d=2)=>n==null?"—":(+n).toFixed(d);
 
-/* dropdowns */
+/* dropdowns — group by subCat for easier navigation */
 const selA=el("matA"), selB=el("matB");
-Object.entries(M).forEach(([k,m])=>{ selA.add(new Option(m.name,k)); selB.add(new Option(m.name,k)); });
+Object.entries(M).forEach(([k,m])=>{ selA.add(new Option(`${m.name}${m.subCat?' ['+m.subCat+']':''}`,k)); selB.add(new Option(`${m.name}${m.subCat?' ['+m.subCat+']':''}`,k)); });
 selA.value="A106B"; selB.value="TP316L";
 el("matcount").textContent=Object.keys(M).length+" materials";
 
@@ -326,101 +327,122 @@ document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
   t.classList.add("active"); el("tab-"+t.dataset.tab).classList.add("active");
 });
 
-/* unit toggle — convert the entered temperature, keep everything in sync */
+/* unit toggle */
 document.querySelectorAll("#unitToggle button").forEach(b=>b.onclick=()=>{
   if(b.dataset.u===units) return;
   const f=el("tdes"), v=parseFloat(f.value);
-  if(!isNaN(v)) f.value = b.dataset.u==='US'? Math.round(CV.c2f(v)) : Math.round(CV.f2c(v));
+  if(!isNaN(v)) f.value = b.dataset.u==='SI'? Math.round(CV.f2c(v)) : Math.round(CV.c2f(v));
   units=b.dataset.u;
   el("tunit").textContent = units==='SI'?'(°C)':'(°F)';
   document.querySelectorAll("#unitToggle button").forEach(x=>x.classList.toggle("active",x===b));
   render();
 });
+/* default to US on load */
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll("#unitToggle button").forEach(x=>x.classList.toggle("active",x.dataset.u==='US'));
+  el("tunit").textContent='(°F)'; el("tdes").value='500';
+});
 
-const inRange=(m,tC)=> tC>=m.tmin && tC<=m.tmax;
+const inRange=(m,tF)=>{ const tminN=typeof m.tmin==='number'?m.tmin:-999; return tF>=tminN && tF<=m.t[m.t.length-1]; };
 function statusChip(m){
-  const v=m.status==='verified';
-  return `<span class="statuschip ${m.status}"><span class="sd"></span>${v?'verified':'indicative'}</span>`;
+  const st=m.status||'verified';
+  return `<span class="statuschip ${st}"><span class="sd"></span>${st}</span>`;
 }
 
 function render(){
-  const a=M[selA.value], b=M[selB.value], u=U();
-  let tIn=parseFloat(el("tdes").value); if(isNaN(tIn)) tIn = units==='SI'?20:68;
-  const tC = units==='SI'? tIn : CV.f2c(tIn);     // internal calc temp in °C
+  const kA=selA.value, kB=selB.value;
+  const a=M[kA], b=M[kB], u=U();
+  let tIn=parseFloat(el("tdes").value); if(isNaN(tIn)) tIn = units==='US'?500:260;
+  const tF = units==='US'? tIn : CV.c2f(tIn);     // internal calc temp in °F (canonical)
+
+  const scA=a.sh[0], scB=b.sh[0];                 // cold allowable = sh[0]
+  const tmaxA=a.t[a.t.length-1], tmaxB=b.t[b.t.length-1];
 
   el("legA").textContent=a.name; el("legB").textContent=b.name;
   el("stA").innerHTML=statusChip(a); el("stB").innerHTML=statusChip(b);
 
-  const Sa=interp(a.sh,a.t,tC), Sb=interp(b.sh,b.t,tC);
-  const Ea=interp(a.e,a.t,tC),  Eb=interp(b.e,b.t,tC);
-  const Aa=interp(a.a,a.t,tC),  Ab=interp(b.a,b.t,tC);
-  const SAa=1.25*a.sc+0.25*Sa.v, SAb=1.25*b.sc+0.25*Sb.v;     // f=1
-  const okA=inRange(a,tC), okB=inRange(b,tC);
+  const Sa=interp(a.sh,a.t,tF), Sb=interp(b.sh,b.t,tF);
+  const Ea_=PPA.getE(kA,tF),  Eb_=PPA.getE(kB,tF);
+  const Aa_=PPA.getAlpha(kA,tF), Ab_=PPA.getAlpha(kB,tF);
+  const EaV=Ea_?Ea_.v:0, EbV=Eb_?Eb_.v:0;
+  const AaV=Aa_?Aa_.v:0, AbV=Ab_?Ab_.v:0;
+  const SAa=1.25*scA+0.25*Sa.v, SAb=1.25*scB+0.25*Sb.v;
+  const okA=inRange(a,tF), okB=inRange(b,tF);
 
   /* verdict */
   const r=Sa.v/Sb.v, pct=Math.abs(r-1)*100;
   const richer = r>1 ? a.name : b.name;
   let vtxt = pct<2
-    ? `At <span class="tdesign">${CV.temp(tC,units)} ${u.t}</span>, both materials give essentially the same hot allowable (within 2%). The decision turns on expansion, weight, corrosion or cost rather than wall thickness.`
-    : `At <span class="tdesign">${CV.temp(tC,units)} ${u.t}</span>, <strong>${richer}</strong> carries about <strong>${fmt(pct,0)}% more</strong> hot allowable stress — a thinner wall and lower weight for the same pressure design.`;
+    ? `At <span class="tdesign">${CV.temp(tF,units)} ${u.t}</span>, both materials give essentially the same hot allowable (within 2%). The decision turns on expansion, weight, corrosion or cost rather than wall thickness.`
+    : `At <span class="tdesign">${CV.temp(tF,units)} ${u.t}</span>, <strong>${richer}</strong> carries about <strong>${fmt(pct,0)}% more</strong> hot allowable stress — a thinner wall and lower weight for the same pressure design.`;
   if(!okA||!okB) vtxt += ` Note: ${(!okA?a.name:b.name)} is outside its code-listed range here — values held at the table limit.`;
   el("verdict").innerHTML=`<h3>At a glance</h3><p>${vtxt}</p>`;
 
   /* cards */
   const c=[];
-  c.push(card("Hot allowable  S\u2095",`at ${CV.temp(tC,units)} ${u.t}`,CV.stress(Sa.v,units),CV.stress(Sb.v,units),u.stress,units==='SI'?0:2,"higher",
+  c.push(card("Hot allowable  S\u2095",`at ${CV.temp(tF,units)} ${u.t}`,CV.stress(Sa.v,units),CV.stress(Sb.v,units),u.stress,units==='SI'?0:1,"higher",
       `Wall ∝ 1/S — ratio ≈ ${fmt(Sa.v/Sb.v,2)}×`));
-  c.push(card("Displacement allowable  S\u2090","1.25S꜀ + 0.25S\u2095 (f=1)",CV.stress(SAa,units),CV.stress(SAb,units),u.stress,units==='SI'?0:2,"higher",
+  c.push(card("Displacement allowable  S\u2090","1.25S꜀ + 0.25S\u2095 (f=1)",CV.stress(SAa,units),CV.stress(SAb,units),u.stress,units==='SI'?0:1,"higher",
       "Flexibility headroom for the expansion stress range"));
-  c.push(card("Elastic modulus  E",`at ${CV.temp(tC,units)} ${u.t}`,CV.modE(Ea.v,units),CV.modE(Eb.v,units),u.e,units==='SI'?0:1,"context",
-      `Stiffer attracts more displacement load — ratio ≈ ${fmt(Ea.v/Eb.v,2)}×`));
-  c.push(card("Thermal expansion  α",`mean, 21°C ref, at ${CV.temp(tC,units)} ${u.t}`,CV.alpha(Aa.v,units),CV.alpha(Ab.v,units),u.a,2,"context",
-      `Δα ≈ ${fmt(Math.abs(CV.alpha(Aa.v,units)-CV.alpha(Ab.v,units)),2)} ${u.a} → differential strain at A↔B joints`));
-  c.push(card("Cold allowable  S꜀","at 21°C",CV.stress(a.sc,units),CV.stress(b.sc,units),u.stress,units==='SI'?0:2,"higher",""));
-  c.push(card("Yield  SMYS","specified minimum",CV.stress(a.smys,units),CV.stress(b.smys,units),u.stress,units==='SI'?0:2,"higher",
+  c.push(card("Elastic modulus  E",`at ${CV.temp(tF,units)} ${u.t}`,CV.modE(EaV,units),CV.modE(EbV,units),u.e,units==='SI'?0:1,"context",
+      EbV?`Stiffer attracts more displacement load — ratio ≈ ${fmt(EaV/EbV,2)}×`:''));
+  c.push(card("Thermal expansion  α",`mean, 70°F ref, at ${CV.temp(tF,units)} ${u.t}`,CV.alpha(AaV,units),CV.alpha(AbV,units),u.a,2,"context",
+      `Δα ≈ ${fmt(Math.abs(CV.alpha(AaV,units)-CV.alpha(AbV,units)),2)} ${u.a} → differential strain at A↔B joints`));
+  c.push(card("Cold allowable  S꜀","at ambient",CV.stress(scA,units),CV.stress(scB,units),u.stress,units==='SI'?0:1,"higher",""));
+  c.push(card("Yield  SMYS","specified minimum",CV.stress(a.smys,units),CV.stress(b.smys,units),u.stress,units==='SI'?0:1,"higher",
       `SMTS: ${CV.stress(a.smts,units)} vs ${CV.stress(b.smts,units)} ${u.stress}`));
 
   /* differential expansion over a connected run */
-  const dStrain=(Aa.v-Ab.v)*1e-6*(tC-21);
-  const dShow = units==='SI'? (dStrain*30000).toFixed(1)+" mm / 30 m" : (dStrain*1200).toFixed(2)+" in / 100 ft";
+  const dTF=tF-70;  // from 70°F ref
+  const dStrain=(AaV-AbV)*1e-6*dTF;
+  const dShow = units==='SI'? (dStrain*30000*0.3048).toFixed(1)+" mm / 30 m" : (dStrain*1200).toFixed(2)+" in / 100 ft";
   c.push(info("Differential expansion","A − B over a connected run", dShow,
-      `(α_A − α_B)·L·ΔT, ΔT = ${fmt(Math.abs(CV.temp(tC,units)-CV.temp(21,units)),0)} ${u.t} from 21°C ref. The movement a dissimilar-metal joint must absorb.`));
+      `(α_A − α_B)·L·ΔT, ΔT = ${fmt(Math.abs(dTF),0)} °F from 70°F ref. The movement a dissimilar-metal joint must absorb.`));
 
   /* envelope + status */
-  c.push(envelope(a,b,okA,okB,CV.temp(tC,units)+" "+u.t,units));
+  const rngShow=m=>{const tn=typeof m.tmin==='number'?CV.temp(m.tmin,units):String(m.tmin); return `${tn} … ${CV.temp(m.t[m.t.length-1],units)} ${u.t}`;};
+  c.push(`<div class="metric"><div class="lab">Temperature envelope<small>code-listed range</small></div>
+    <div class="vals"><span class="v a" style="font-size:15px">${rngShow(a)}</span></div>${okA?'<span class="badge up">valid</span>':'<span class="badge down">outside range</span>'}
+    <div class="vals" style="margin-top:10px"><span class="v b" style="font-size:15px">${rngShow(b)}</span></div>${okB?'<span class="badge up">valid</span>':'<span class="badge down">outside range</span>'}</div>`);
 
-  /* density (supplementary, only if present) */
-  if(RHO[selA.value]!=null && RHO[selB.value]!=null){
-    const ra=RHO[selA.value], rb=RHO[selB.value];
+  /* density */
+  if(RHO[kA]!=null && RHO[kB]!=null){
+    const ra=RHO[kA], rb=RHO[kB];
     const rA = units==='SI'? ra.toFixed(2) : (ra*0.0361273).toFixed(3);
     const rB = units==='SI'? rb.toFixed(2) : (rb*0.0361273).toFixed(3);
     c.push(card("Density  ρ","supplementary handbook data",rA,rB,units==='SI'?"g/cm³":"lb/in³",units==='SI'?2:3,"lower",
         `Same geometry → dead-weight ratio ≈ ${fmt(ra/rb,3)}× on every support`));
   }
 
-  /* relative cost multiplier (supplementary, indicative only — only if present) */
-  if(COST[selA.value]!=null && COST[selB.value]!=null){
-    const ca=COST[selA.value], cb=COST[selB.value];
-    c.push(card("Relative cost","indicative multiplier · CS (A106B) = 1.0",ca.toFixed(1),cb.toFixed(1),"×",1,"lower",
+  /* cost */
+  if(COST[kA]!=null && COST[kB]!=null){
+    c.push(card("Relative cost","indicative multiplier · CS (A106B) = 1.0",COST[kA].toFixed(1),COST[kB].toFixed(1),"×",1,"lower",
         `Material cost only, no fabrication/welding cost. Directional — confirm against current mill pricing before estimating.`));
   }
 
-  /* welding comparison (supplementary, practice-based — only if present) */
-  if(WELD[selA.value]!=null && WELD[selB.value]!=null){
-    c.push(weldCard(a,b,WELD[selA.value],WELD[selB.value]));
+  /* weld */
+  if(WELD[kA]!=null && WELD[kB]!=null){
+    c.push(weldCard(a,b,WELD[kA],WELD[kB]));
   }
 
   el("cards").innerHTML=c.join("");
 
-  /* charts */
+  /* charts — build E and α arrays from group lookups across the sh temperature points */
+  const eGrpA=PPA.E_GROUPS[a.eGrp], eGrpB=PPA.E_GROUPS[b.eGrp];
+  const aGrpA=PPA.A_GROUPS[a.aGrp], aGrpB=PPA.A_GROUPS[b.aGrp];
+  const eA=a.t.map(t=>eGrpA?interp(eGrpA.e,eGrpA.t,t).v:0);
+  const eB=b.t.map(t=>eGrpB?interp(eGrpB.e,eGrpB.t,t).v:0);
+  const aA=a.t.map(t=>aGrpA?interp(aGrpA.a,aGrpA.t,t).v:0);
+  const aB=b.t.map(t=>aGrpB?interp(aGrpB.a,aGrpB.t,t).v:0);
+
   el("t1").textContent=`Hot allowable vs temperature (${u.stress})`;
   el("t2").textContent=`Elastic modulus vs temperature (${u.e})`;
   el("t3").textContent=`Thermal expansion vs temperature (${u.a})`;
-  chart("cS",a.t,a.sh,b.t,b.sh,v=>CV.stress(v,units),tC);
-  chart("cE",a.t,a.e, b.t,b.e, v=>CV.modE(v,units),  tC);
-  chart("cA",a.t,a.a, b.t,b.a, v=>CV.alpha(v,units), tC);
+  chart("cS",a.t,a.sh,b.t,b.sh,v=>CV.stress(v,units),tF);
+  chart("cE",a.t,eA,   b.t,eB,  v=>CV.modE(v,units),  tF);
+  chart("cA",a.t,aA,   b.t,aB,  v=>CV.alpha(v,units), tF);
 
-  el("flag").textContent=`Calc temp ${tC.toFixed(0)} °C · PPA.interp on ppa-materials.js · A=${selA.value} (${a.status})  B=${selB.value} (${b.status})`;
+  el("flag").textContent=`Calc temp ${tF.toFixed(0)} °F · PPA.interp on ppa-materials.js v2 · A=${kA} [${a.subCat||''}]  B=${kB} [${b.subCat||''}]`;
 }
 
 function ratioBadge(va,vb,prefer){
@@ -473,7 +495,7 @@ function chart(id, tA,vA, tB,vB, conv, tC){
   cv.width=W*dpr; cv.height=H*dpr; cv.style.height=H+"px";
   const g=cv.getContext("2d"); g.scale(dpr,dpr); g.clearRect(0,0,W,H);
   const padL=42,padR=12,padT=12,padB=26;
-  const tConv=c=> units==='SI'? c : CV.c2f(c);
+  const tConv=f=> units==='US'? f : CV.f2c(f);
   const SA=tA.map((t,i)=>[tConv(t),conv(vA[i])]);
   const SB=tB.map((t,i)=>[tConv(t),conv(vB[i])]);
   const all=SA.concat(SB); if(!all.length) return;
@@ -486,7 +508,7 @@ function chart(id, tA,vA, tB,vB, conv, tC){
   for(let k=0;k<=4;k++){ const yy=padT+k*(H-padT-padB)/4; g.beginPath(); g.moveTo(padL,yy); g.lineTo(W-padR,yy); g.stroke();
     const val=ymax-(ymax-ymin)*k/4; g.fillText(val.toFixed(Math.abs(val)<100?1:0),3,yy+3); }
   [xmin,(xmin+xmax)/2,xmax].forEach(xv=>g.fillText(xv.toFixed(0),X(xv)-8,H-8));
-  const tShow=tConv(tC);
+  const tShow=tConv(tC);  // tC is actually tF from render()
   if(tShow>=xmin&&tShow<=xmax){ const px=X(tShow); g.strokeStyle="#c08a2d"; g.setLineDash([4,3]);
     g.beginPath(); g.moveTo(px,padT); g.lineTo(px,H-padB); g.stroke(); g.setLineDash([]); }
   const line=(pts,color)=>{ g.strokeStyle=color; g.lineWidth=2.2; g.beginPath();
