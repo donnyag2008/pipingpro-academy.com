@@ -205,13 +205,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:14p
       <div class="field"><label>Material</label>
         <select id="mat" onchange="render()">
           <option value="">— select material —</option>
-          <option value="A106B">Carbon Steel — A106 Gr.B</option>
-          <option value="A333-6">Low-Temp CS — A333 Gr.6</option>
-          <option value="TP304">Stainless 304 — A312 TP304</option>
-          <option value="TP316L">Stainless 316L — A312 TP316L</option>
-          <option value="DUP2205">Duplex 2205 — A790 S31803</option>
-          <option value="P11">Cr-Mo — A335 P11 (1¼Cr-½Mo)</option>
-          <option value="P22">Cr-Mo — A335 P22 (2¼Cr-1Mo)</option>
         </select>
       </div>
       <div class="field"><label>Design temperature <span id="tunit">(°C)</span></label>
@@ -305,6 +298,26 @@ body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:14p
 const DATA   = PPA.MATERIALS;
 const interp = PPA.interp;
 const CV     = PPA.convert;
+
+/* populate material dropdown dynamically from the shared library */
+(function(){
+  const sel=document.getElementById('mat');
+  const groups={};
+  Object.entries(DATA).forEach(([k,m])=>{
+    const cat=m.subCat||'Other';
+    if(!groups[cat]) groups[cat]=[];
+    groups[cat].push([k,m]);
+  });
+  Object.keys(groups).sort().forEach(cat=>{
+    const og=document.createElement('optgroup');
+    og.label=cat;
+    groups[cat].forEach(([k,m])=>{
+      og.appendChild(new Option(`${m.name}`,k));
+    });
+    sel.appendChild(og);
+  });
+  sel.value='A106B';
+})();
 
 let units='US';
 const el=id=>document.getElementById(id);
