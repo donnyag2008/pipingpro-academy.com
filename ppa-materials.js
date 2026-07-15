@@ -1184,60 +1184,120 @@
     A494: 0.80
   };
 
-  /* ---- Density, g/cm³ (handbook values, code-agnostic) ---- */
-  const RHO = {
-    CS:7.85, Alloy:7.85, SS_Aust:8.00, SS_Duplex:7.80,
-    Ni_Monel:8.83, Ni_Inconel600:8.47, Ni_Inconel625:8.44, Ni_Incoloy800:7.94
+  /* ---- Density, g/cm³ (handbook values, code-agnostic) ----
+     Physical property of the alloy — same regardless of product form.
+     Resolved by material group, not per-spec. */
+  const RHO_GROUPS = {
+    CS:7.85, Alloy:7.85,
+    SS_Aust:8.00, SS_Duplex:7.80, SS_Ferritic:7.75,
+    Ni_Monel:8.83, Ni_Inconel600:8.47, Ni_Inconel625:8.44, Ni_Incoloy800:7.94,
+    Ni_Generic:8.44
   };
+  function getRho(matKey){
+    const m = MATERIALS[matKey]; if(!m) return null;
+    const sc = m.subCat||''; const uns = m.uns||'';
+    if(sc.includes('Ni') || uns.startsWith('N0')){
+      if(uns.startsWith('N044')) return RHO_GROUPS.Ni_Monel;
+      if(uns==='N06600') return RHO_GROUPS.Ni_Inconel600;
+      if(uns==='N06625') return RHO_GROUPS.Ni_Inconel625;
+      if(uns.startsWith('N088')) return RHO_GROUPS.Ni_Incoloy800;
+      return RHO_GROUPS.Ni_Generic;
+    }
+    if(sc.includes('CS') || sc==='') return RHO_GROUPS.CS;
+    if(sc.includes('Alloy')) return RHO_GROUPS.Alloy;
+    if(sc.includes('Duplex')) return RHO_GROUPS.SS_Duplex;
+    if(sc.includes('Ferritic')) return RHO_GROUPS.SS_Ferritic;
+    if(sc.includes('SS') || sc.includes('Superaustenitic')) return RHO_GROUPS.SS_Aust;
+    return RHO_GROUPS.CS;
+  }
+  /* backward compat: RHO as proxy so RHO[key] still works */
+  const RHO = new Proxy({}, { get:(_, k) => getRho(k) });
 
   /* ---- SUPPLEMENTARY: welding characteristics (NOT a code requirement
      lookup — indicative practice notes only; always confirm against the
      project WPS/PQR and the governing code edition before use). ----
-     level: Low | Moderate | Moderate-High | High — relative shop/field
-            difficulty and procedure-control burden, not a numeric ratio.
-     preheat: typical minimum preheat guidance (text, since it's often a
-              thickness-dependent range rather than a single number).
-     pwht: typical PWHT expectation for this grade.
-     process: commonly used process combination.
-     notes: the one pitfall worth knowing before you spec a dissimilar or
-            unfamiliar-grade weld. */
-  const WELD = {
-    A106B:{ level:"Low",
+     Resolved by material group so all 253 materials get coverage. */
+  const WELD_GROUPS = {
+    CS:{ level:"Low",
       preheat:"Not normally required below ~25 mm; check WPS for thicker sections",
       pwht:"Required above code thickness/temperature threshold (B31.3 Table 331.1.1)",
       process:"GTAW root + SMAW fill (ER70S-2 / E7018)",
-      notes:"Standard carbon-steel practice; the most forgiving grade in this list." },
-    "A333-6":{ level:"Moderate",
+      notes:"Standard carbon-steel practice; the most forgiving group." },
+    CS_LT:{ level:"Moderate",
       preheat:"Light preheat typical, thickness dependent",
       pwht:"Usually required — needed to restore/verify low-temperature CVN toughness",
       process:"GTAW root + SMAW fill, low-hydrogen consumables",
       notes:"Heat input must stay controlled or the low-temperature impact toughness the grade is chosen for gets eroded." },
-    TP304:{ level:"Moderate",
-      preheat:"None required",
-      pwht:"Not normally required — avoid unless a specific case requires it",
-      process:"GTAW root + GTAW/SMAW fill, matching filler",
-      notes:"Control interpass temperature; avoid prolonged dwell in the ~425–870°C sensitization range (carbide precipitation, reduced corrosion resistance)." },
-    TP316L:{ level:"Moderate",
-      preheat:"None required",
-      pwht:"Not normally required",
-      process:"GTAW root + GTAW/SMAW fill, low-carbon matching filler",
-      notes:"Lower carbon than 304 reduces sensitization risk, but interpass temperature control is still good practice." },
-    DUP2205:{ level:"High",
-      preheat:"None to slight; keep interpass temperature capped (~100°C typical limit)",
-      pwht:"Not normally required if the procedure is properly controlled",
-      process:"GTAW with matched high-nickel filler (e.g. ER2209)",
-      notes:"Narrow heat-input window — overheating shifts the ferrite/austenite balance and risks sigma-phase formation, degrading both toughness and the corrosion resistance the grade was selected for. Needs a qualified WPS and experienced welders." },
-    P11:{ level:"Moderate-High",
+    CrMo_low:{ level:"Moderate-High",
       preheat:"150–200°C minimum, maintained between passes",
       pwht:"Required per code",
       process:"GTAW root + SMAW fill, low-hydrogen consumables",
       notes:"Hydrogen cracking risk if preheat lapses between passes." },
-    P22:{ level:"High",
+    CrMo_high:{ level:"High",
       preheat:"200–260°C minimum, maintained between passes",
       pwht:"Required (mandatory)",
       process:"GTAW root + SMAW fill, low-hydrogen consumables",
-      notes:"Higher hardenability than P11 increases hydrogen-cracking risk; needs strict interpass control and PWHT — budget more inspection time." }
+      notes:"Higher hardenability increases hydrogen-cracking risk; needs strict interpass control and PWHT — budget more inspection time." },
+    CrMo_P91:{ level:"High",
+      preheat:"200–300°C minimum, strict interpass control",
+      pwht:"Mandatory — precise temperature/time control required (typically 760°C ± 15°C)",
+      process:"GTAW root + SMAW/GTAW fill, matched creep-strength fillers",
+      notes:"Martensitic microstructure — requires exact PWHT to temper martensite. Under- or over-tempering both degrade creep life. Type IV cracking risk in service." },
+    SS_Aust:{ level:"Moderate",
+      preheat:"None required",
+      pwht:"Not normally required — avoid unless a specific case requires it",
+      process:"GTAW root + GTAW/SMAW fill, matching filler",
+      notes:"Control interpass temperature ≤175°C; avoid prolonged dwell in the 425–870°C sensitization range. Use low-carbon (L-grade) fillers where corrosion resistance is critical." },
+    SS_Duplex:{ level:"High",
+      preheat:"None to slight; keep interpass temperature capped (~150°C max)",
+      pwht:"Not normally required if the procedure is properly controlled",
+      process:"GTAW with matched high-nickel filler (e.g. ER2209 for 2205, ER2594 for 2507)",
+      notes:"Narrow heat-input window — overheating shifts the ferrite/austenite balance and risks sigma-phase formation, degrading both toughness and the corrosion resistance the grade was selected for. Needs a qualified WPS and experienced welders." },
+    SS_SuperDuplex:{ level:"High",
+      preheat:"None; strict interpass temperature ≤100°C",
+      pwht:"Not normally required — avoid; risk of sigma phase",
+      process:"GTAW with overalloyed filler (e.g. ER2594/ER25.10.4L)",
+      notes:"Even narrower heat-input window than standard duplex. Sigma phase and chi phase precipitation risk is higher due to elevated Mo/W content. Ferrite count verification (30–65%) mandatory. Maximum interpass 100°C." },
+    Ni_Monel:{ level:"Moderate-High",
+      preheat:"None normally required; keep interpass ≤150°C",
+      pwht:"Not normally required",
+      process:"GTAW with ENiCu-7 / ERNiCu-7 filler",
+      notes:"Susceptible to hot cracking — strict cleanliness required. Sulphur contamination is the primary risk; no contact with sulphur-bearing compounds or marking paints." },
+    Ni_Inconel:{ level:"High",
+      preheat:"None normally required; interpass ≤150°C",
+      pwht:"Not normally required for solution-annealed material",
+      process:"GTAW with matching filler (ERNiCrMo-3 for 625, ERNiCr-3 for 600)",
+      notes:"Hot cracking susceptibility — keep heat input low, use stringer beads. Thorough cleaning between passes. Alloy 625 subject to severe impact strength loss after 538–760°C exposure." },
+    Ni_Incoloy:{ level:"Moderate-High",
+      preheat:"None normally required",
+      pwht:"Not normally required",
+      process:"GTAW with ERNiFeCr-1 or matching filler",
+      notes:"Similar precautions to austenitic SS but with higher interpass sensitivity. Adequate shielding gas coverage essential." }
   };
+  function getWeld(matKey){
+    const m = MATERIALS[matKey]; if(!m) return null;
+    const sc = m.subCat||''; const uns = m.uns||''; const grade = m.grade||''; const spec = m.spec||'';
+    if(sc.includes('Super Duplex')) return WELD_GROUPS.SS_SuperDuplex;
+    if(sc.includes('Duplex') || sc.includes('Lean Duplex')) return WELD_GROUPS.SS_Duplex;
+    if(sc.includes('Ni') || uns.startsWith('N0')){
+      if(uns.startsWith('N044')) return WELD_GROUPS.Ni_Monel;
+      if(uns.startsWith('N066')||uns.startsWith('N06')) return WELD_GROUPS.Ni_Inconel;
+      if(uns.startsWith('N088')||uns.startsWith('N10')) return WELD_GROUPS.Ni_Incoloy;
+      return WELD_GROUPS.Ni_Inconel;
+    }
+    if(sc.includes('CS')){
+      if(spec==='A333'||spec==='A350') return WELD_GROUPS.CS_LT;
+      return WELD_GROUPS.CS;
+    }
+    if(sc.includes('Alloy')){
+      if(grade.includes('91')||grade.includes('P91')||grade.includes('F91')||grade.includes('WP91')) return WELD_GROUPS.CrMo_P91;
+      if(grade.includes('22')||grade.includes('P22')||grade.includes('F22')||grade.includes('WP22')) return WELD_GROUPS.CrMo_high;
+      return WELD_GROUPS.CrMo_low;
+    }
+    if(sc.includes('SS') || sc.includes('Superaustenitic')) return WELD_GROUPS.SS_Aust;
+    return WELD_GROUPS.CS;
+  }
+  const WELD = new Proxy({}, { get:(_, k) => getWeld(k) });
   const WELD_LEVEL_RANK = { "Low":1, "Moderate":2, "Moderate-High":3, "High":4 };
 
 
@@ -2046,16 +2106,49 @@
 
 
   /* ---- SUPPLEMENTARY: relative cost multiplier (NOT real pricing) ----
-     Directional only. Mill/market pricing (especially Ni/Mo-bearing alloys)
-     moves with commodity cycles and varies by region, order volume and mill,
-     so an absolute figure would go stale and could mislead a decision. This
-     is a rough relative multiplier vs A106B = 1.0 baseline, for a same-size
-     pipe/fitting, material cost only (no fabrication/welding cost included —
-     see WELD for that dimension separately). Always confirm against current
-     mill quotes before using in an estimate. */
-  const COST = {
-    A106B:1.0, "A333-6":1.3, TP304:3.0, TP316L:3.5, DUP2205:5.5, P11:1.8, P22:2.2
+     Directional only — relative to A106B = 1.0, by alloy family.
+     Always confirm against current mill quotes before estimating. */
+  const COST_GROUPS = {
+    CS:1.0, CS_LT:1.3,
+    Alloy_CrMo_low:1.8, Alloy_CrMo_high:2.2, Alloy_P91:3.5,
+    SS_304:3.0, SS_316:3.5, SS_316L:3.5, SS_321:3.2, SS_347:3.5,
+    Duplex:5.5, SuperDuplex:8.0, LeanDuplex:4.0,
+    Superaustenitic:6.0,
+    Ni_Monel:6.0, Ni_Inconel600:8.0, Ni_Inconel625:12.0, Ni_Incoloy800:7.0,
+    Ni_Generic:8.0
   };
+  function getCost(matKey){
+    const m = MATERIALS[matKey]; if(!m) return null;
+    const sc = m.subCat||''; const uns = m.uns||''; const spec = m.spec||''; const grade = m.grade||'';
+    if(sc.includes('Super Duplex')) return COST_GROUPS.SuperDuplex;
+    if(sc.includes('Lean Duplex')) return COST_GROUPS.LeanDuplex;
+    if(sc.includes('Duplex')) return COST_GROUPS.Duplex;
+    if(sc.includes('Superaustenitic')) return COST_GROUPS.Superaustenitic;
+    if(sc.includes('Ni') || uns.startsWith('N0')){
+      if(uns.startsWith('N044')) return COST_GROUPS.Ni_Monel;
+      if(uns==='N06600') return COST_GROUPS.Ni_Inconel600;
+      if(uns==='N06625') return COST_GROUPS.Ni_Inconel625;
+      if(uns.startsWith('N088')) return COST_GROUPS.Ni_Incoloy800;
+      return COST_GROUPS.Ni_Generic;
+    }
+    if(sc.includes('CS')){
+      if(spec==='A333'||spec==='A350') return COST_GROUPS.CS_LT;
+      return COST_GROUPS.CS;
+    }
+    if(sc.includes('Alloy')){
+      if(grade.includes('91')||grade.includes('P91')) return COST_GROUPS.Alloy_P91;
+      if(grade.includes('22')||grade.includes('P22')||grade.includes('WP22')) return COST_GROUPS.Alloy_CrMo_high;
+      return COST_GROUPS.Alloy_CrMo_low;
+    }
+    if(sc.includes('SS')){
+      if(uns.includes('S316')||grade.includes('316')) return COST_GROUPS.SS_316;
+      if(uns.includes('S321')||grade.includes('321')) return COST_GROUPS.SS_321;
+      if(uns.includes('S347')||grade.includes('347')) return COST_GROUPS.SS_347;
+      return COST_GROUPS.SS_304;
+    }
+    return COST_GROUPS.CS;
+  }
+  const COST = new Proxy({}, { get:(_, k) => getCost(k) });
 
 
 
