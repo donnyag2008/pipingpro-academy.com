@@ -301,18 +301,18 @@ body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:14p
 <!-- shared material library: after the gate, before the md inline script -->
 <script src="/ppa-materials.js"></script>
 <script>
+/* ── ppa-materials.js v2: US Customary canonical (ksi, °F) ── */
 const DATA   = PPA.MATERIALS;
 const interp = PPA.interp;
+const CV     = PPA.convert;
 
-let units='SI';
+let units='US';
 const el=id=>document.getElementById(id);
-const c2f=c=>c*9/5+32;
-const stress=mpa=>units==='SI'?Math.round(mpa):(mpa*0.145038).toFixed(2);
-const modE  =mpa=>units==='SI'?Math.round(mpa):(mpa*0.145038/1000).toFixed(1);
-const alpha =a  =>units==='SI'?a.toFixed(2):(a*5/9).toFixed(2);
-const temp  =c  =>units==='SI'?Math.round(c):Math.round(c2f(c));
-const U={SI:{stress:"MPa",e:"MPa",a:"×10⁻⁶/°C",t:"°C"},US:{stress:"ksi",e:"×10⁶ psi",a:"×10⁻⁶/°F",t:"°F"}};
-
+const stress=v=>CV.stress(v,units);
+const modE  =v=>CV.modE(v,units);
+const alpha =v=>CV.alpha(v,units);
+const temp  =f=>CV.temp(f,units);
+const U=()=>PPA.UNITS[units];
 
 function showCalcTab(name){
   document.querySelectorAll('.calc-tab').forEach(t=>t.classList.remove('active'));
@@ -328,69 +328,92 @@ function setUnits(u){
   el('uUS').classList.toggle('on',u==='US');
   el('tunit').textContent=u==='SI'?'(°C)':'(°F)';
   const f=el('temp'); const v=parseFloat(f.value);
-  if(!isNaN(v)) f.value=u==='US'?Math.round(c2f(v)):Math.round((v-32)*5/9);
+  if(!isNaN(v)) f.value = u==='SI'? Math.round(CV.f2c(v)) : Math.round(CV.c2f(v));
   render();
 }
 
 function render(){
-  const m=DATA[el('mat').value];
+  const key=el('mat').value;
+  const m=DATA[key];
   if(!m){ el('results').style.display='none'; return; }
   el('results').style.display='block';
 
-  let tIn=parseFloat(el('temp').value); if(isNaN(tIn)) tIn=units==='SI'?20:68;
-  const tC=units==='SI'?tIn:(tIn-32)*5/9;
-  const u=U[units];
-  const sh=interp(m.sh,m.t,tC), e=interp(m.e,m.t,tC), a=interp(m.a,m.t,tC);
+  let tIn=parseFloat(el('temp').value); if(isNaN(tIn)) tIn=units==='US'?100:38;
+  const tF=units==='US'?tIn:CV.c2f(tIn);   // internal calc in °F (canonical)
+  const tmax=m.t[m.t.length-1];             // last tabulated temp (°F)
+  const sc=m.sh[0];                         // cold allowable = Sh at first temp point
+  const u=U();
+
+  const sh=interp(m.sh,m.t,tF);
+  const E_=PPA.getE(key,tF);
+  const A_=PPA.getAlpha(key,tF);
+  const eVal=E_?E_.v:null, aVal=A_?A_.v:null;
 
   // hero
-  el('heroLabel').textContent=`Hot allowable stress, Sh @ ${temp(tC)} ${u.t}`;
+  el('heroLabel').textContent=`Hot allowable stress, Sh @ ${temp(tF)} ${u.t}`;
   el('heroVal').textContent=stress(sh.v);
   el('heroUnit').textContent=u.stress;
-  el('heroSc').textContent=stress(m.sc)+' '+u.stress;
-  el('heroE').textContent=modE(e.v)+' '+u.e;
-  el('heroA').textContent=alpha(a.v)+' '+u.a;
+  el('heroSc').textContent=stress(sc)+' '+u.stress;
+  el('heroE').textContent=(eVal!=null?modE(eVal):'—')+' '+u.e;
+  el('heroA').textContent=(aVal!=null?alpha(aVal):'—')+' '+u.a;
 
   // status
-  const dot=m.status==='verified'?'verified':'indicative';
-  const lbl=m.status==='verified'?'Verified against the PipingPro B31.3 dataset':'Indicative — confirm Sh / α against your code edition';
+  const st=m.status||'verified';
+  const dot=st==='verified'?'verified':'indicative';
+  const lbl=st==='verified'?'Verified against the PipingPro B31.3 dataset':'Indicative — confirm Sh / α against your code edition';
   el('status').innerHTML=`<span class="dot ${dot}"></span><span><b>${m.name}</b> — ${lbl}</span>`;
   el('sheetMat').textContent='· '+m.name;
 
+  // tmin display
+  const tminF=typeof m.tmin==='number'?m.tmin:null;
+  const tminShow=tminF!=null?temp(tminF):String(m.tmin);
+
   // datasheet table
   const rows=[
-    ['T','Temperature range',`${temp(m.tmin)} … ${temp(m.tmax)}`,u.t,''],
+    ['T','Temperature range',`${tminShow} … ${temp(tmax)}`,u.t,''],
     ['SMYS','Specified min. yield strength',stress(m.smys),u.stress,''],
     ['SMTS','Specified min. tensile strength',stress(m.smts),u.stress,''],
-    ['S<sub>c</sub>','Cold allowable stress (21 °C)',stress(m.sc),u.stress,''],
-    ['S<sub>h</sub>',`Hot allowable stress @ ${temp(tC)} ${u.t}`,stress(sh.v),u.stress,'hot'],
-    ['α',`Mean thermal expansion @ ${temp(tC)} ${u.t}`,alpha(a.v),u.a,'hot'],
-    ['E',`Modulus of elasticity @ ${temp(tC)} ${u.t}`,modE(e.v),u.e,'hot'],
+    ['S<sub>c</sub>','Cold allowable stress (ambient)',stress(sc),u.stress,''],
+    ['S<sub>h</sub>',`Hot allowable stress @ ${temp(tF)} ${u.t}`,stress(sh.v),u.stress,'hot'],
+    ['α',`Mean thermal expansion @ ${temp(tF)} ${u.t}`,aVal!=null?alpha(aVal):'—',u.a,'hot'],
+    ['E',`Modulus of elasticity @ ${temp(tF)} ${u.t}`,eVal!=null?modE(eVal):'—',u.e,'hot'],
   ];
   el('sheetBody').innerHTML=rows.map(r=>
     `<tr class="${r[4]}"><td>${r[0]}</td><td>${r[1]}</td><td class="v">${r[2]}</td><td>${r[3]}</td></tr>`).join('');
 
   // range note
   let note='';
-  if(tC<m.tmin||tC>m.tmax){
-    note=`<div class="warn-box"><strong>Design temperature outside the rated range</strong> (${temp(m.tmin)} to ${temp(m.tmax)} ${u.t}). Hot values are held at the nearest tabulated limit.</div>`;
+  const tminNum=typeof m.tmin==='number'?m.tmin:-999;
+  if(tF<tminNum||tF>tmax){
+    note=`<div class="warn-box"><strong>Design temperature outside the rated range</strong> (${tminShow} to ${temp(tmax)} ${u.t}). Hot values are held at the nearest tabulated limit.</div>`;
   } else if(sh.clamp){
     note=`<div class="info-box">Design temperature is beyond the tabulated data; values are held at the table limit.</div>`;
   }
   el('rangeNote').innerHTML=note;
 
-  // curve
+  // curve table — build from sh temps + E/α group temps
+  const eGrp=PPA.E_GROUPS[m.eGrp], aGrp=PPA.A_GROUPS[m.aGrp];
   el('curveHead').innerHTML=`<th>Temp ${u.t}</th><th></th><th>S<sub>h</sub> ${u.stress}</th><th>E ${u.e}</th><th>α ${u.a}</th>`;
-  const pts=m.t.map((tc,i)=>({tc,sh:m.sh[i],e:m.e[i],a:m.a[i],interp:false}));
-  const inRange=tC>=m.t[0]&&tC<=m.t[m.t.length-1];
-  const isPoint=m.t.some(p=>Math.abs(p-tC)<0.5);
-  if(inRange&&!isPoint){
-    pts.push({tc,sh:interp(m.sh,m.t,tC).v,e:interp(m.e,m.t,tC).v,a:interp(m.a,m.t,tC).v,interp:true});
-    pts.sort((x,y)=>x.tc-y.tc);
+  const pts=m.t.map((tf,i)=>({tf, sh:m.sh[i],
+    e:eGrp?interp(eGrp.e,eGrp.t,tf).v:null,
+    a:aGrp?interp(aGrp.a,aGrp.t,tf).v:null,
+    isInterp:false}));
+  const inRng=tF>=m.t[0]&&tF<=m.t[m.t.length-1];
+  const isPoint=m.t.some(p=>Math.abs(p-tF)<0.5);
+  if(inRng&&!isPoint){
+    pts.push({tf:tF, sh:sh.v, e:eVal, a:aVal, isInterp:true});
+    pts.sort((x,y)=>x.tf-y.tf);
   }
   el('curveBody').innerHTML=pts.map(p=>
-    `<tr class="${p.interp?'interp':''}"><td>${temp(p.tc)}</td><td>${p.interp?'◂ design':''}</td><td>${stress(p.sh)}</td><td>${modE(p.e)}</td><td>${alpha(p.a)}</td></tr>`).join('');
+    `<tr class="${p.isInterp?'interp':''}"><td>${temp(p.tf)}</td><td>${p.isInterp?'◂ design':''}</td><td>${stress(p.sh)}</td><td>${p.e!=null?modE(p.e):'—'}</td><td>${p.a!=null?alpha(p.a):'—'}</td></tr>`).join('');
 }
 
+/* default to US units on load */
+document.addEventListener('DOMContentLoaded',()=>{
+  el('uUS').classList.add('on'); el('uSI').classList.remove('on');
+  el('tunit').textContent='(°F)';
+  el('temp').value='100';
+});
 render();
 </script>
 <script src="/counter.js"></script>
