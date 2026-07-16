@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <!-- SEO Meta Tags for Pipe Weight Calculator -->
-<title>ASME B36.10 Pipe Weight & Section Properties Calculator</title>
+<title>ASME B36.10 & B36.19 Pipe Weight & Section Properties Calculator</title>
 <meta name="description" content="Calculate pipe weight per foot, fluid weight, moment of inertia, section modulus, and flow area automatically per ASME B36.10 and Nayyar 7th Edition.">
 <meta name="keywords" content="pipe weight calculator, ASME B36.10, pipe section properties, moment of inertia pipe, section modulus calculator, fluid weight piping, piping design tool">
 
@@ -236,7 +236,7 @@ body{ background:#faf6ef; color:#1a1510; }
 <div class="ppa-hero">
   <div class="ppa-hero-eyebrow">Free · Engineering Calculator Suite ·  PipingPro Academy</div>
   <h1>Pipe Weight &amp; <em>Section Properties</em></h1>
-  <p>Pipe weight, fluid weight, moment of inertia, section modulus &amp; radius of gyration per ASME B36.10 (carbon steel) &amp; B36.19 (stainless steel) / Nayyar 7th Ed.</p>
+  <p>Pipe weight, fluid weight, moment of inertia, section modulus &amp; radius of gyration per ASME B36.10 (carbon steel, NPS ⅛–80) &amp; B36.19 (stainless steel, NPS ⅛–30) / Nayyar 7th Ed.</p>
 </div>
 
 
@@ -259,17 +259,8 @@ body{ background:#faf6ef; color:#1a1510; }
         <div class="sel-title">Select pipe size (ASME B36.10)</div>
         <div class="sel-grid">
           <div class="f"><label>NPS</label>
-            <select onchange="pwNps(this.value)">
+            <select id="pw-nps" onchange="pwNps(this.value)">
               <option value="">— select —</option>
-              <option value="0.5">NPS 1/2</option><option value="0.75">NPS 3/4</option>
-              <option value="1">NPS 1</option><option value="1.25">NPS 1¼</option>
-              <option value="1.5">NPS 1½</option><option value="2">NPS 2</option>
-              <option value="2.5">NPS 2½</option><option value="3">NPS 3</option>
-              <option value="4">NPS 4</option><option value="6">NPS 6</option>
-              <option value="8">NPS 8</option><option value="10">NPS 10</option>
-              <option value="12">NPS 12</option><option value="14">NPS 14</option>
-              <option value="16">NPS 16</option><option value="18">NPS 18</option>
-              <option value="20">NPS 20</option><option value="24">NPS 24</option>
             </select>
           </div>
           <div class="f"><label>Schedule</label>
@@ -331,32 +322,41 @@ body{ background:#faf6ef; color:#1a1510; }
 
 
 
+<script src="/js/ppa-pipe-data.js"></script>
 <script>
-var P={
-  "0.5":{od:0.840,s:{"40":0.109,"80":0.147,"160":0.187,"XXS":0.294}},
-  "0.75":{od:1.050,s:{"40":0.113,"80":0.154,"160":0.219,"XXS":0.308}},
-  "1":{od:1.315,s:{"40":0.133,"80":0.179,"160":0.250,"XXS":0.358}},
-  "1.25":{od:1.660,s:{"40":0.140,"80":0.191,"160":0.250,"XXS":0.382}},
-  "1.5":{od:1.900,s:{"40":0.145,"80":0.200,"160":0.281,"XXS":0.400}},
-  "2":{od:2.375,s:{"40":0.154,"80":0.218,"160":0.344,"XXS":0.436}},
-  "2.5":{od:2.875,s:{"40":0.203,"80":0.276,"160":0.375,"XXS":0.552}},
-  "3":{od:3.500,s:{"40":0.216,"80":0.300,"160":0.438,"XXS":0.600}},
-  "4":{od:4.500,s:{"40":0.237,"80":0.337,"120":0.438,"160":0.531,"XXS":0.674}},
-  "6":{od:6.625,s:{"40":0.280,"80":0.432,"120":0.562,"160":0.719,"XXS":0.864}},
-  "8":{od:8.625,s:{"40":0.322,"80":0.500,"100":0.594,"120":0.719,"140":0.812,"160":0.906}},
-  "10":{od:10.750,s:{"40":0.365,"60":0.500,"80":0.594,"100":0.719,"120":0.844,"140":1.000,"160":1.125}},
-  "12":{od:12.750,s:{"40":0.406,"60":0.562,"80":0.688,"100":0.844,"120":1.000,"140":1.125,"160":1.312}},
-  "14":{od:14.000,s:{"40":0.438,"60":0.594,"80":0.750,"100":0.938,"120":1.094,"140":1.250,"160":1.406}},
-  "16":{od:16.000,s:{"40":0.500,"60":0.656,"80":0.844,"100":1.031,"120":1.219,"140":1.438,"160":1.594}},
-  "18":{od:18.000,s:{"40":0.562,"60":0.750,"80":0.938,"100":1.156,"120":1.375,"140":1.562,"160":1.781}},
-  "20":{od:20.000,s:{"40":0.594,"60":0.812,"80":1.031,"100":1.281,"120":1.500,"140":1.750,"160":1.969}},
-  "24":{od:24.000,s:{"40":0.688,"60":0.969,"80":1.219,"100":1.531,"120":1.812,"140":2.062,"160":2.344}}
-};
+var P=PPA_B36_10;
 
 var _pwNps="",_pwOD=0,_pwT=0;
 
 function txt(id,v){document.getElementById(id).textContent=v;}
 function gv(id){return parseFloat(document.getElementById(id).value)||0;}
+
+/* Format a schedule key for display */
+function fmtSch(k,wall){
+  /* Numeric key that matches wall value → wall-only entry (large bore, no Sch designation) */
+  if(parseFloat(k)===wall && !isNaN(k)) return 't = '+wall+'"';
+  return 'Sch '+k+' (t='+wall+'")';
+}
+/* Format schedule key for info bar */
+function fmtSchInfo(k){
+  if(!isNaN(k) && k.indexOf('.')!==-1) return 't='+k+'"';
+  return 'Sch '+k;
+}
+
+/* Populate NPS dropdown from data object */
+function fillNpsSelect(selId,data){
+  var el=document.getElementById(selId);
+  if(!el) return;
+  var first=el.querySelector('option');/* keep "— select —" */
+  el.innerHTML='';
+  if(first) el.appendChild(first);
+  Object.keys(data).forEach(function(nps){
+    var o=document.createElement('option');
+    o.value=nps;
+    o.textContent='NPS '+(PPA_NPS_LABELS[nps]||nps);
+    el.appendChild(o);
+  });
+}
 
 function fillSch(schId,nps){
   var el=document.getElementById(schId);
@@ -364,7 +364,7 @@ function fillSch(schId,nps){
   if(!nps||!P[nps]){el.innerHTML='<option>— select NPS first —</option>';return;}
   Object.keys(P[nps].s).forEach(function(k,i){
     var o=document.createElement('option');
-    o.value=k;o.textContent='Sch '+k+' (t='+P[nps].s[k]+'")';
+    o.value=k;o.textContent=fmtSch(k,P[nps].s[k]);
     if(i===0)o.selected=true;
     el.appendChild(o);
   });
@@ -379,15 +379,18 @@ function pwNps(nps){
   var firstSch=Object.keys(P[nps].s)[0];
   _pwT=P[nps].s[firstSch];
   txt('d-pw-t',_pwT+'"');
-  txt('pw-pipe-info','NPS '+nps+' Sch '+firstSch+' · OD='+P[nps].od+'" · t='+_pwT+'" · Source: ASME B36.10');
+  txt('pw-pipe-info','NPS '+(_pwNps)+' '+fmtSchInfo(firstSch)+' · OD='+P[nps].od+'" · t='+_pwT+'" · Source: ASME B36.10');
 }
 
 function pwSch(sch){
   if(!_pwNps||!sch||!P[_pwNps])return;
   _pwT=P[_pwNps].s[sch];
   txt('d-pw-t',_pwT+'"');
-  txt('pw-pipe-info','NPS '+_pwNps+' Sch '+sch+' · OD='+P[_pwNps].od+'" · t='+_pwT+'" · Source: ASME B36.10');
+  txt('pw-pipe-info','NPS '+_pwNps+' '+fmtSchInfo(sch)+' · OD='+P[_pwNps].od+'" · t='+_pwT+'" · Source: ASME B36.10');
 }
+
+/* Init CS NPS dropdown on load */
+document.addEventListener('DOMContentLoaded',function(){ fillNpsSelect('pw-nps',P); });
 
 function calcPW(){
   if(!_pwOD||!_pwT)return;
@@ -448,26 +451,8 @@ function calcPW(){
         <div class="sel-title">Select pipe size (ASME B36.19)</div>
         <div class="sel-grid">
           <div class="f"><label>NPS</label>
-            <select onchange="ssNps(this.value)">
+            <select id="ss-nps" onchange="ssNps(this.value)">
               <option value="">— select —</option>
-              <option value="0.125">NPS 1/8</option>
-              <option value="0.25">NPS 1/4</option>
-              <option value="0.375">NPS 3/8</option>
-              <option value="0.5">NPS 1/2</option>
-              <option value="0.75">NPS 3/4</option>
-              <option value="1">NPS 1</option>
-              <option value="1.25">NPS 1¼</option>
-              <option value="1.5">NPS 1½</option>
-              <option value="2">NPS 2</option>
-              <option value="2.5">NPS 2½</option>
-              <option value="3">NPS 3</option>
-              <option value="3.5">NPS 3½</option>
-              <option value="4">NPS 4</option>
-              <option value="5">NPS 5</option>
-              <option value="6">NPS 6</option>
-              <option value="8">NPS 8</option>
-              <option value="10">NPS 10</option>
-              <option value="12">NPS 12</option>
             </select>
           </div>
           <div class="f"><label>Schedule</label>
@@ -525,28 +510,8 @@ function calcPW(){
 </div>
  <script src="/js/ppa-materials.js"></script>
 <script>
-/* ── ASME B36.19 DATA ── */
-var SS={
-  "0.125":{od:0.405,s:{"5S":0.049,"10S":0.068,"40S":0.068,"80S":0.095}},
-  "0.25": {od:0.540,s:{"5S":0.065,"10S":0.088,"40S":0.088,"80S":0.119}},
-  "0.375":{od:0.675,s:{"5S":0.065,"10S":0.091,"40S":0.091,"80S":0.126}},
-  "0.5":  {od:0.840,s:{"5S":0.065,"10S":0.083,"40S":0.109,"80S":0.147}},
-  "0.75": {od:1.050,s:{"5S":0.065,"10S":0.083,"40S":0.113,"80S":0.154}},
-  "1":    {od:1.315,s:{"5S":0.065,"10S":0.109,"40S":0.133,"80S":0.179}},
-  "1.25": {od:1.660,s:{"5S":0.065,"10S":0.109,"40S":0.140,"80S":0.191}},
-  "1.5":  {od:1.900,s:{"5S":0.065,"10S":0.109,"40S":0.145,"80S":0.200}},
-  "2":    {od:2.375,s:{"5S":0.065,"10S":0.109,"40S":0.154,"80S":0.218}},
-  "2.5":  {od:2.875,s:{"5S":0.083,"10S":0.120,"40S":0.203,"80S":0.276}},
-  "3":    {od:3.500,s:{"5S":0.083,"10S":0.120,"40S":0.216,"80S":0.300}},
-  "3.5":  {od:4.000,s:{"5S":0.083,"10S":0.120,"40S":0.226,"80S":0.318}},
-  "4":    {od:4.500,s:{"5S":0.083,"10S":0.120,"40S":0.237,"80S":0.337}},
-  "5":    {od:5.563,s:{"5S":0.109,"10S":0.134,"40S":0.258,"80S":0.375}},
-  "6":    {od:6.625,s:{"5S":0.109,"10S":0.134,"40S":0.280,"80S":0.432}},
-  "8":    {od:8.625,s:{"5S":0.109,"10S":0.148,"20S":0.250,"40S":0.322,"80S":0.500}},
-  "10":   {od:10.750,s:{"5S":0.134,"10S":0.165,"20S":0.250,"40S":0.365,"80S":0.500}},
-  "12":   {od:12.750,s:{"5S":0.156,"10S":0.180,"20S":0.250,"40S":0.375,"80S":0.500}}
-};
-var _ssNps="",_ssOD=0,_ssT=0,SS_DENSITY=0.2900;
+var SS=PPA_B36_19;
+var _ssNps="",_ssOD=0,_ssT=0,SS_DENSITY=PPA_DENSITY.SS;
 function ssTxt(id,v){document.getElementById(id).textContent=v;}
 function ssGv(id){return parseFloat(document.getElementById(id).value)||0;}
 function fillSSSch(nps){
@@ -572,6 +537,8 @@ function ssSch(sch){
   _ssT=SS[_ssNps].s[sch];ssTxt('d-ss-t',_ssT+'"');
   ssTxt('ss-pipe-info','NPS '+_ssNps+' Sch '+sch+' · OD='+SS[_ssNps].od+'" · t='+_ssT+'" · Source: ASME B36.19');
 }
+/* Init SS NPS dropdown on load */
+document.addEventListener('DOMContentLoaded',function(){ fillNpsSelect('ss-nps',SS); });
 function calcSS(){
   if(!_ssOD||!_ssT)return;
   var len=ssGv('ss-len'),sg=ssGv('ss-sg')||1;
@@ -614,8 +581,8 @@ function calcSS(){
       <div class="ref-title">Reference Standards</div>
       <div class="ref-table-wrap"><table class="ref-table">
         <tr><th>Standard</th><th>Title</th><th>Relevance</th></tr>
-        <tr><td>ASME B36.10M</td><td>Welded and Seamless Wrought Steel Pipe</td><td>OD and wall thickness for NPS ⅛" to 80"</td></tr>
-        <tr><td>ASME B36.19M</td><td>Stainless Steel Pipe</td><td>OD and wall thickness for stainless schedules</td></tr>
+        <tr><td>ASME B36.10M</td><td>Welded and Seamless Wrought Steel Pipe</td><td>OD and wall thickness for NPS ⅛" to 80" (all schedules)</td></tr>
+        <tr><td>ASME B36.19M</td><td>Stainless Steel Pipe</td><td>OD and wall thickness for NPS ⅛" to 30" (Sch 5S/10S/40S/80S)</td></tr>
         <tr><td>Nayyar, 7th Ed.</td><td>Piping Handbook</td><td>Section properties reference tables</td></tr>
       </table></div>
     </div>
