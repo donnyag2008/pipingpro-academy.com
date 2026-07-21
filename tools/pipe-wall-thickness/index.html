@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!--
+    ============================================================
+    PipingPro Academy — Calculator Landing Page Template
+    ============================================================
+    TO REPLICATE FOR EACH CALCULATOR, CHANGE:
+      1. <title> and meta description
+      2. Code badge text (e.g. ASME B31.3 §304.1.2)
+      3. <h1> title
+      4. Subtitle text
+      5. Tier label (FREE / STUDENT / PROFESSIONAL)
+      6. iframe src path (point to existing calculator file)
+      7. "How It Works" explainer content
+      8. FAQ structured data
+      9. Related calculators grid
+     10. Canonical URL and og:url
+    ============================================================
+  -->
+
+  <!-- SEO Meta -->
+  <title>Pipe Wall Thickness Calculator (ASME B31.3) | PipingPro Academy</title>
+  <meta name="description" content="Free online pipe wall thickness calculator per ASME B31.3 §304.1.2. Calculate minimum required thickness for internal pressure including corrosion and mill tolerance allowances.">
+  <meta name="keywords" content="pipe wall thickness calculator, ASME B31.3, minimum wall thickness, pressure design thickness, piping engineering calculator">
+  <meta name="author" content="PipingPro Academy">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Pipe Wall Thickness Calculator — PipingPro Academy">
+  <meta property="og:description" content="Free ASME B31.3 pipe wall thickness calculator with corrosion and mill tolerance allowances. Used by piping engineers worldwide.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://pipingpro-academy.com/calculators/pipe-wall-thickness">
+  <meta property="og:site_name" content="PipingPro Academy">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://pipingpro-academy.com/calculators/pipe-wall-thickness">
+
+  <!-- Structured Data: SoftwareApplication -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Pipe Wall Thickness Calculator",
+    "applicationCategory": "EngineeringApplication",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "author": {
+      "@type": "Organization",
+      "name": "PipingPro Academy",
+      "url": "https://pipingpro-academy.com"
+    },
+    "description": "Calculate minimum required pipe wall thickness per ASME B31.3 §304.1.2 for internal pressure design, including corrosion allowance and mill tolerance."
+  }
+  </script>
+
+  <!-- Structured Data: FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How do you calculate minimum pipe wall thickness per ASME B31.3?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Per ASME B31.3 §304.1.2, the minimum required thickness t = PD / 2(SEW + PY), where P is internal design pressure, D is pipe outside diameter, S is allowable stress at design temperature, E is weld joint quality factor, W is weld strength reduction factor, and Y is a coefficient dependent on material and temperature."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What allowances must be added to the calculated minimum wall thickness?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The minimum ordered wall thickness must include the corrosion/erosion allowance (c) and the manufacturer's mill under-thickness tolerance (typically 12.5% for seamless pipe per ASTM standards). The relationship is: t_nominal ≥ (t_min + c) / (1 − mill tolerance)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the Y coefficient in the B31.3 wall thickness formula?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The Y coefficient accounts for the redistribution of circumferential stress under creep conditions at elevated temperatures. For ferritic steels below 482°C (900°F), Y = 0.4. At higher temperatures, Y increases up to 0.7 per ASME B31.3 Table 304.1.1."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- Structured Data: BreadcrumbList -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://pipingpro-academy.com" },
+      { "@type": "ListItem", "position": 2, "name": "Calculators", "item": "https://pipingpro-academy.com/calculators" },
+      { "@type": "ListItem", "position": 3, "name": "Pipe Wall Thickness Calculator" }
+    ]
+  }
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================
+       PPA DESIGN TOKENS — shared across all landing pages
+       ========================================================== */
+    :root {
+      --ppa-cream:      #FAF6F0;
+      --ppa-cream-mid:  #F0EAE0;
+      --ppa-rust:       #B84C2A;
+      --ppa-rust-dark:  #8E3A1F;
+      --ppa-rust-light: rgba(184, 76, 42, 0.08);
+      --ppa-gold:       #C4943A;
+      --ppa-gold-light: #E8C96A;
+      --ppa-navy:       #1A2332;
+      --ppa-navy-mid:   #2A3A50;
+      --ppa-text:       #2C2C2C;
+      --ppa-text-mid:   #5A5A5A;
+      --ppa-border:     #D6CFC4;
+      --ppa-white:      #FFFFFF;
+
+      --font-body:    'IBM Plex Sans', -apple-system, sans-serif;
+      --font-display: 'IBM Plex Serif', Georgia, serif;
+      --font-mono:    'IBM Plex Mono', 'Courier New', monospace;
+    }
+
+    /* ==========================================================
+       RESET & BASE
+       ========================================================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--ppa-text);
+      background: var(--ppa-cream);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; }
+    img { max-width: 100%; display: block; }
+
+    /* ==========================================================
+       NAV — replace with your actual site nav / include
+       ========================================================== */
+    .ppa-nav {
+      background: var(--ppa-navy);
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .ppa-nav__logo {
+      font-family: var(--font-display);
+      color: var(--ppa-gold);
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+    .ppa-nav__links { display: flex; gap: 20px; align-items: center; }
+    .ppa-nav__links a {
+      color: var(--ppa-cream-mid);
+      text-decoration: none;
+      font-size: 0.84rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .ppa-nav__links a:hover { color: var(--ppa-gold); }
+    .ppa-nav__cta {
+      background: var(--ppa-rust) !important;
+      color: var(--ppa-white) !important;
+      padding: 7px 18px;
+      border-radius: 4px;
+      font-weight: 600 !important;
+      font-size: 0.84rem !important;
+    }
+    .ppa-nav__cta:hover { background: var(--ppa-rust-dark) !important; }
+
+    /* ==========================================================
+       BREADCRUMB
+       ========================================================== */
+    .breadcrumb {
+      max-width: 940px;
+      margin: 0 auto;
+      padding: 16px 24px 0;
+      font-size: 0.78rem;
+      color: var(--ppa-text-mid);
+    }
+    .breadcrumb a { color: var(--ppa-rust); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb .sep { margin: 0 6px; opacity: 0.5; }
+
+    /* ==========================================================
+       PAGE HEADER
+       ========================================================== */
+    .page-header {
+      max-width: 940px;
+      margin: 0 auto;
+      padding: 28px 24px 24px;
+    }
+    .code-badge {
+      display: inline-block;
+      background: var(--ppa-navy);
+      color: var(--ppa-gold-light);
+      font-family: var(--font-mono);
+      font-size: 0.73rem;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 3px;
+      letter-spacing: 0.04em;
+      margin-bottom: 14px;
+    }
+    .page-header h1 {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 4vw, 2.1rem);
+      font-weight: 600;
+      color: var(--ppa-navy);
+      line-height: 1.25;
+      margin-bottom: 10px;
+    }
+    .page-header__sub {
+      font-size: 1rem;
+      color: var(--ppa-text-mid);
+      max-width: 680px;
+      line-height: 1.6;
+    }
+    .tier-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 3px;
+    }
+    .tier-badge--free {
+      color: #2E7D32;
+      background: rgba(46, 125, 50, 0.08);
+    }
+    .tier-badge--student {
+      color: var(--ppa-gold);
+      background: rgba(196, 148, 58, 0.1);
+    }
+    .tier-badge--pro {
+      color: var(--ppa-rust);
+      background: var(--ppa-rust-light);
+    }
+    .tier-badge svg { width: 14px; height: 14px; }
+
+    /* ==========================================================
+       CALCULATOR IFRAME
+       ========================================================== */
+    .calc-section {
+      max-width: 940px;
+      margin: 0 auto;
+      padding: 0 24px 40px;
+    }
+    .calc-frame {
+      background: var(--ppa-white);
+      border: 1px solid var(--ppa-border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .calc-frame iframe {
+      width: 100%;
+      height: 600px;          /* adjust per calculator */
+      border: none;
+      display: block;
+    }
+
+    /* ==========================================================
+       TECHNICAL EXPLAINER — the SEO content
+       ========================================================== */
+    .explainer {
+      max-width: 940px;
+      margin: 0 auto;
+      padding: 0 24px 44px;
+    }
+    .explainer__card {
+      background: var(--ppa-white);
+      border: 1px solid var(--ppa-border);
+      border-radius: 6px;
+      padding: 32px;
+    }
+    .explainer__card h2 {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--ppa-navy);
+      margin-bottom: 16px;
+    }
+    .explainer__card p {
+      margin-bottom: 14px;
+      font-size: 0.93rem;
+      line-height: 1.7;
+    }
+    .explainer__card p:last-child { margin-bottom: 0; }
+
+    .clause-ref {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--ppa-rust);
+      background: var(--ppa-rust-light);
+      padding: 2px 6px;
+      border-radius: 2px;
+      white-space: nowrap;
+    }
+
+    .formula-block {
+      background: var(--ppa-cream-mid);
+      border-left: 3px solid var(--ppa-gold);
+      padding: 16px 20px;
+      margin: 20px 0;
+      border-radius: 0 4px 4px 0;
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      color: var(--ppa-navy);
+      line-height: 1.9;
+      overflow-x: auto;
+    }
+
+    .explainer__note {
+      background: var(--ppa-cream-mid);
+      border-radius: 4px;
+      padding: 14px 18px;
+      margin-top: 20px;
+      font-size: 0.85rem;
+      color: var(--ppa-text-mid);
+      line-height: 1.6;
+    }
+    .explainer__note strong {
+      color: var(--ppa-navy);
+      font-weight: 600;
+    }
+
+    /* ==========================================================
+       CTA BANNER
+       ========================================================== */
+    .cta-section {
+      max-width: 940px;
+      margin: 0 auto;
+      padding: 0 24px 44px;
+    }
+    .cta-card {
+      background: var(--ppa-navy);
+      border-radius: 6px;
+      padding: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .cta-card h3 {
+      font-family: var(--font-display);
+      color: var(--ppa-gold);
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .cta-card p {
+      color: var(--ppa-cream-mid);
+      font-size: 0.88rem;
+      max-width: 500px;
+      line-height: 1.55;
+    }
+    .cta-btn {
+      display: inline-block;
+      background: var(--ppa-rust);
+      color: var(--ppa-white);
+      padding: 12px 28px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.92rem;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .cta-btn:hover { background: var(--ppa-rust-dark); }
+
+    /* ==========================================================
+       RELATED CALCULATORS
+       ========================================================== */
+    .related {
+      max-width: 940px;
+      margin: 0 auto;
+      padding: 0 24px 56px;
+    }
+    .related h2 {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--ppa-navy);
+      margin-bottom: 18px;
+    }
+    .related__grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 14px;
+    }
+    .related__card {
+      background: var(--ppa-white);
+      border: 1px solid var(--ppa-border);
+      border-radius: 5px;
+      padding: 20px;
+      text-decoration: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      display: block;
+    }
+    .related__card:hover {
+      border-color: var(--ppa-gold);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .related__code {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--ppa-gold);
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      margin-bottom: 6px;
+    }
+    .related__title {
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: var(--ppa-navy);
+      margin-bottom: 5px;
+    }
+    .related__desc {
+      font-size: 0.78rem;
+      color: var(--ppa-text-mid);
+      line-height: 1.5;
+    }
+
+    /* ==========================================================
+       FOOTER
+       ========================================================== */
+    .ppa-footer {
+      background: var(--ppa-navy);
+      padding: 28px 24px;
+      text-align: center;
+    }
+    .ppa-footer p {
+      color: var(--ppa-text-mid);
+      font-size: 0.76rem;
+    }
+    .ppa-footer a {
+      color: var(--ppa-gold);
+      text-decoration: none;
+    }
+    .ppa-footer a:hover { text-decoration: underline; }
+
+    /* ==========================================================
+       RESPONSIVE
+       ========================================================== */
+    @media (max-width: 640px) {
+      .ppa-nav__links a:not(.ppa-nav__cta) { display: none; }
+      .cta-card { flex-direction: column; text-align: center; }
+      .cta-card p { max-width: 100%; }
+      .explainer__card { padding: 24px 18px; }
+      .calc-frame iframe { height: 500px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       NAV — Replace with your actual site nav include/component
+       ============================================================ -->
+  <nav class="ppa-nav">
+    <a href="/" class="ppa-nav__logo">PipingPro Academy</a>
+    <div class="ppa-nav__links">
+      <a href="/courses">Courses</a>
+      <a href="/toolkits">Toolkits</a>
+      <a href="/calculators">Calculators</a>
+      <a href="/membership" class="ppa-nav__cta">Join Free</a>
+    </div>
+  </nav>
+
+  <!-- ============================================================
+       BREADCRUMB
+       ============================================================ -->
+  <div class="breadcrumb">
+    <a href="/">Home</a><span class="sep">›</span>
+    <a href="/calculators">Calculators</a><span class="sep">›</span>
+    Pipe Wall Thickness
+  </div>
+
+  <!-- ============================================================
+       PAGE HEADER
+       ============================================================ -->
+  <header class="page-header">
+    <!-- CHANGE: code clause reference -->
+    <div class="code-badge">ASME B31.3 §304.1.2</div>
+
+    <!-- CHANGE: calculator name -->
+    <h1>Pipe Wall Thickness Calculator</h1>
+
+    <!-- CHANGE: one-sentence description -->
+    <p class="page-header__sub">
+      Calculate minimum required wall thickness for straight pipe under
+      internal pressure per ASME B31.3, including corrosion allowance
+      and manufacturer's mill tolerance.
+    </p>
+
+    <!-- CHANGE: tier-badge--free / tier-badge--student / tier-badge--pro -->
+    <div class="tier-badge tier-badge--free">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg>
+      FREE TIER
+    </div>
+  </header>
+
+  <!-- ============================================================
+       CALCULATOR — iframe to existing file at root
+       ============================================================ -->
+  <section class="calc-section">
+    <div class="calc-frame">
+      <!--
+        CHANGE: src path to your actual calculator file.
+        Since this page lives at /calculators/pipe-wall-thickness/index.html,
+        the root-level file is two directories up:
+          ../../wall-thickness.html
+
+        OR use an absolute path from your domain:
+          /wall-thickness.html
+
+        Adjust the height to fit the calculator content.
+      -->
+      <iframe
+        src="/pipe-wall-thickness-calculator.html"
+        title="Pipe Wall Thickness Calculator"
+        loading="lazy"
+      ></iframe>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       TECHNICAL EXPLAINER — this is the SEO content Google indexes
+       ============================================================ -->
+  <section class="explainer">
+    <div class="explainer__card">
+
+      <!-- CHANGE: all content below per calculator -->
+      <h2>How This Calculation Works</h2>
+
+      <p>
+        The minimum required wall thickness for straight pipe under internal
+        pressure is defined by the design equation in
+        <span class="clause-ref">ASME B31.3 §304.1.2</span>. This equation
+        accounts for the pipe outside diameter, the internal design pressure,
+        the material's allowable stress at design temperature, and de-rating
+        factors for weld quality and high-temperature service.
+      </p>
+
+      <div class="formula-block">
+        t = PD / 2(SEW + PY)<br>
+        <br>
+        P = internal design pressure (psig)<br>
+        D = pipe outside diameter (in.)<br>
+        S = allowable stress at design temperature (psi) — per B31.3 Table A-1<br>
+        E = longitudinal weld joint quality factor — per B31.3 Table A-1A/A-1B<br>
+        W = weld strength reduction factor — per B31.3 §302.3.5(e)<br>
+        Y = coefficient from B31.3 Table 304.1.1
+      </div>
+
+      <p>
+        The calculated minimum thickness is then increased by the
+        corrosion/erosion allowance and adjusted for the manufacturer's
+        mill under-thickness tolerance — typically 12.5% for seamless pipe
+        per ASTM standards:
+      </p>
+
+      <div class="formula-block">
+        t<sub>ordered</sub> ≥ (t + c) / (1 − mill tolerance)
+      </div>
+
+      <p>
+        This calculator pulls allowable stress values from the PipingPro Academy
+        materials database (based on ASME B31.3 Table A-1) and automatically
+        applies the correct Y coefficient for your selected material and design
+        temperature. Results include the next available standard pipe schedule
+        per ASME B36.10M (carbon steel) or B36.19M (stainless steel).
+      </p>
+
+      <div class="explainer__note">
+        <strong>Engineering note:</strong> For pipe with D/t ratio less than 6
+        (thick-wall pipe), the Boardman/Lame equation should be used instead of
+        the simplified Barlow-based formula above. This calculator flags such
+        cases automatically. For external pressure design, refer to
+        <span class="clause-ref">ASME B31.3 §304.1.3</span> and the
+        ASME BPVC Section II Part D charts.
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CTA — link to parent toolkit or membership page
+       ============================================================ -->
+  <section class="cta-section">
+    <div class="cta-card">
+      <div>
+        <!-- CHANGE: toolkit name and description -->
+        <h3>Piping Mechanical Engineering Toolkit</h3>
+        <p>
+          This calculator is one of six tools in the Piping Mechanical Toolkit —
+          including sustained stress check, pipe span, branch reinforcement,
+          flange leakage, and MAWP calculators. Free tier gets core tools;
+          upgrade for PDF reports and advanced features.
+        </p>
+      </div>
+      <!-- CHANGE: link to relevant toolkit page -->
+      <a href="/toolkits/piping-mechanical" class="cta-btn">View Full Toolkit →</a>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       RELATED CALCULATORS — cross-link to other landing pages
+       ============================================================ -->
+  <section class="related">
+    <h2>Related Calculators</h2>
+    <div class="related__grid">
+
+      <!-- CHANGE: update links, codes, titles, descriptions -->
+      <a href="/calculators/branch-reinforcement" class="related__card">
+        <div class="related__code">ASME B31.3 §304.3.3</div>
+        <div class="related__title">Branch Reinforcement Calculator</div>
+        <div class="related__desc">Area replacement method for branch connections under internal pressure.</div>
+      </a>
+
+      <a href="/calculators/sustained-stress" class="related__card">
+        <div class="related__code">ASME B31.3 §302.3.5</div>
+        <div class="related__title">Sustained Stress Check</div>
+        <div class="related__desc">Verify longitudinal stresses from pressure and weight against code allowable limits.</div>
+      </a>
+
+      <a href="/calculators/hydro-test-pressure" class="related__card">
+        <div class="related__code">ASME B31.3 §345.4</div>
+        <div class="related__title">Hydrotest Pressure Calculator</div>
+        <div class="related__desc">Calculate required hydrostatic test pressure and verify shell stress at test conditions.</div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FOOTER — replace with your actual site footer include
+       ============================================================ -->
+  <footer class="ppa-footer">
+    <p>
+      © 2026 <a href="/">PipingPro Academy</a> ·
+      Built by engineers, for engineers ·
+      <a href="/about">About</a> ·
+      <a href="/contact">Contact</a> ·
+      <a href="/privacy">Privacy</a>
+    </p>
+  </footer>
+
+</body>
+</html>
