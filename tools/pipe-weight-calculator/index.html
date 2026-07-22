@@ -515,7 +515,9 @@
 
     <!-- CHANGE: one-sentence description -->
     <p class="page-header__sub">
-      Calculate Pipe Weight, pipe area, moment inertia, Inside Diameter for Carbon & Stainless Steel, piping engineering calculator as per ASME B36.10, AMSE B36.19, Piping Handbook Mohinder L Nayyar..
+      Calculate pipe weight per unit length and section properties (ID, cross-sectional area,
+moment of inertia, section modulus) for carbon steel and stainless steel pipe to
+ASME B36.10M and B36.19M.
     </p>
 
     <!-- CHANGE: tier-badge--free / tier-badge--student / tier-badge--pro -->
@@ -556,50 +558,46 @@
     <div class="explainer__card">
 
       <!-- CHANGE: all content below per calculator -->
-      <h2>How This Calculation Works</h2>
-
-      <p>
-        This toolkit is to perform calculation of pipe weight, pipe area, moment inertia, Inside Diameter for Carbon & Stainless Steel, using formula from ASME B36.10, ASME B36.19 and Piping Handbook by MOhinder L. Nayyar.
-      </p>
-
-      <div class="formula-block">
-        t = PD / 2(SEW + PY)<br>
-        <br>
-        P = internal design pressure (psig)<br>
-        D = pipe outside diameter (in.)<br>
-        S = allowable stress at design temperature (psi) — per B31.3 Table A-1<br>
-        E = longitudinal weld joint quality factor — per B31.3 Table A-1A/A-1B<br>
-        W = weld strength reduction factor — per B31.3 §302.3.5(e)<br>
-        Y = coefficient from B31.3 Table 304.1.1
-      </div>
-
-      <p>
-        The calculated minimum thickness is then increased by the
-        corrosion/erosion allowance and adjusted for the manufacturer's
-        mill under-thickness tolerance — typically 12.5% for seamless pipe
-        per ASTM standards:
-      </p>
-
-      <div class="formula-block">
-        t<sub>ordered</sub> ≥ (t + c) / (1 − mill tolerance)
-      </div>
-
-      <p>
-        This calculator pulls allowable stress values from the PipingPro Academy
-        materials database (based on ASME B31.3 Table A-1) and automatically
-        applies the correct Y coefficient for your selected material and design
-        temperature. Results include the next available standard pipe schedule
-        per ASME B36.10M (carbon steel) or B36.19M (stainless steel).
-      </p>
-
-      <div class="explainer__note">
-        <strong>Engineering note:</strong> For pipe with D/t ratio less than 6
-        (thick-wall pipe), the Boardman/Lame equation should be used instead of
-        the simplified Barlow-based formula above. This calculator flags such
-        cases automatically. For external pressure design, refer to
-        <span class="clause-ref">ASME B31.3 §304.1.3</span> and the
-        ASME BPVC Section II Part D charts.
-      </div>
+     <h2>How This Calculation Works</h2>
+<p>
+  Pipe weight per unit length is calculated from the pipe cross-sectional
+  metal area and material density:
+</p>
+<div class="formula-block">
+  W = A<sub>m</sub> × ρ<br>
+  <br>
+  A<sub>m</sub> = (π/4) × (D² − d²)<br>
+  <br>
+  D = pipe outside diameter (in. or mm) — per ASME B36.10M / B36.19M<br>
+  d = pipe inside diameter = D − 2t<br>
+  t = nominal wall thickness for the selected schedule<br>
+  ρ = material density (lb/in³ or kg/m³)
+</div>
+<p>
+  Outside diameters and nominal wall thicknesses are taken from
+  ASME B36.10M (carbon and alloy steel pipe) and ASME B36.19M
+  (stainless steel pipe). Material densities follow the values in
+  Mohinder L. Nayyar's <em>Piping Handbook</em> — for example,
+  carbon steel at 0.2836 lb/in³ (7,850 kg/m³) and Type 304/316
+  stainless steel at 0.289 lb/in³ (8,000 kg/m³).
+</p>
+<p>
+  The calculator also returns key section properties used in piping
+  stress analysis and support span calculations:
+</p>
+<div class="formula-block">
+  I = (π/64) × (D⁴ − d⁴) &nbsp; — moment of inertia<br>
+  Z = 2I / D &nbsp; — section modulus<br>
+  A<sub>i</sub> = (π/4) × d² &nbsp; — internal flow area
+</div>
+<div class="explainer__note">
+  <strong>Engineering note:</strong> Actual pipe weight may vary from
+  calculated values due to manufacturer's mill tolerance on wall
+  thickness (typically +/−12.5% for seamless pipe per ASTM standards).
+  For weight-critical applications such as offshore lifts or pipe
+  support load calculations, consider using the minimum or maximum
+  tolerance-adjusted wall thickness as appropriate.
+</div>
     </div>
   </section>
 
