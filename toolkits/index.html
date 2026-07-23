@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- SEO Meta -->
+  <title>Engineering Toolkits — 27 Piping & Pipeline Calculators | PipingPro Academy</title>
+  <meta name="description" content="Free and professional piping engineering calculators: pipe wall thickness, pipe weight, stress analysis, pipeline integrity, support design and more. Built by engineers with 35+ years of Oil & Gas experience.">
+  <meta name="keywords" content="piping engineering calculators, pipeline calculators, pipe wall thickness, pipe weight calculator, pipe stress analysis, ASME B31.3, pipe support span, pipeline integrity">
+  <meta name="author" content="PipingPro Academy">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Engineering Toolkits — 27 Piping & Pipeline Calculators | PipingPro Academy">
+  <meta property="og:description" content="Free and professional piping engineering calculators covering mechanical design, stress analysis, pipeline integrity, support engineering and project estimation.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://pipingpro-academy.com/toolkits/">
+  <meta property="og:site_name" content="PipingPro Academy">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://pipingpro-academy.com/toolkits/">
+
+  <!-- Structured Data: BreadcrumbList -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://pipingpro-academy.com" },
+      { "@type": "ListItem", "position": 2, "name": "Engineering Toolkits" }
+    ]
+  }
+  </script>
+
+  <!-- Structured Data: ItemList -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "PipingPro Academy Engineering Toolkits",
+    "description": "27 piping and pipeline engineering calculators across 6 discipline toolkits",
+    "numberOfItems": 6,
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Piping Mechanical Design" },
+      { "@type": "ListItem", "position": 2, "name": "Pipeline Mechanical Design" },
+      { "@type": "ListItem", "position": 3, "name": "Pipe Support Engineering" },
+      { "@type": "ListItem", "position": 4, "name": "Piping Stress Analysis" },
+      { "@type": "ListItem", "position": 5, "name": "Project Engineering" },
+      { "@type": "ListItem", "position": 6, "name": "Pipeline Integrity" }
+    ]
+  }
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================
+       PPA DESIGN TOKENS
+       ========================================================== */
+    :root {
+      --ppa-cream:      #FAF6F0;
+      --ppa-cream-mid:  #F0EAE0;
+      --ppa-rust:       #B84C2A;
+      --ppa-rust-dark:  #8E3A1F;
+      --ppa-rust-light: rgba(184, 76, 42, 0.08);
+      --ppa-gold:       #C4943A;
+      --ppa-gold-light: #E8C96A;
+      --ppa-navy:       #1A2332;
+      --ppa-navy-mid:   #2A3A50;
+      --ppa-text:       #2C2C2C;
+      --ppa-text-mid:   #5A5A5A;
+      --ppa-border:     #D6CFC4;
+      --ppa-white:      #FFFFFF;
+
+      --font-body:    'IBM Plex Sans', -apple-system, sans-serif;
+      --font-display: 'IBM Plex Serif', Georgia, serif;
+      --font-mono:    'IBM Plex Mono', 'Courier New', monospace;
+    }
+
+    /* ==========================================================
+       RESET & BASE
+       ========================================================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--ppa-text);
+      background: var(--ppa-cream);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; }
+    img { max-width: 100%; display: block; }
+
+    /* ==========================================================
+       NAV
+       ========================================================== */
+    .ppa-nav {
+      background: var(--ppa-navy);
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .ppa-nav__logo {
+      font-family: var(--font-display);
+      color: var(--ppa-gold);
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+    .ppa-nav__links { display: flex; gap: 20px; align-items: center; }
+    .ppa-nav__links a {
+      color: var(--ppa-cream-mid);
+      text-decoration: none;
+      font-size: 0.84rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .ppa-nav__links a:hover { color: var(--ppa-gold); }
+    .ppa-nav__cta {
+      background: var(--ppa-rust) !important;
+      color: var(--ppa-white) !important;
+      padding: 7px 18px;
+      border-radius: 4px;
+      font-weight: 600 !important;
+      font-size: 0.84rem !important;
+    }
+    .ppa-nav__cta:hover { background: var(--ppa-rust-dark) !important; }
+
+    /* ==========================================================
+       BREADCRUMB
+       ========================================================== */
+    .breadcrumb {
+      max-width: 940px;
+      margin: 0 auto;
+      padding: 16px 24px 0;
+      font-size: 0.78rem;
+      color: var(--ppa-text-mid);
+    }
+    .breadcrumb a { color: var(--ppa-rust); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb .sep { margin: 0 6px; opacity: 0.5; }
+
+    /* ==========================================================
+       PAGE HEADER
+       ========================================================== */
+    .page-header {
+      max-width: 940px;
+      margin: 0 auto;
+      padding: 28px 24px 8px;
+    }
+    .page-header h1 {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 4vw, 2.1rem);
+      font-weight: 600;
+      color: var(--ppa-navy);
+      line-height: 1.25;
+      margin-bottom: 10px;
+    }
+    .page-header__sub {
+      font-size: 1rem;
+      color: var(--ppa-text-mid);
+      max-width: 720px;
+      line-height: 1.6;
+    }
+    .page-header__stats {
+      display: flex;
+      gap: 24px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .stat {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+    .stat__num {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--ppa-rust);
+      line-height: 1;
+    }
+    .stat__label {
+      font-size: 0.82rem;
+      color: var(--ppa-text-mid);
+      font-weight: 500;
+    }
+
+    /* ==========================================================
+       TOOLKIT SECTIONS
+       ========================================================== */
+    .toolkits {
+      max-width: 940px;
+      margin: 0 auto;
+      padding: 32px 24px 20px;
+    }
+
+    .toolkit {
+      background: var(--ppa-white);
+      border: 1px solid var(--ppa-border);
+      border-radius: 6px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .toolkit__header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--ppa-border);
+      background: var(--ppa-cream);
+    }
+    .toolkit__letter {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--ppa-white);
+      background: var(--ppa-navy);
+      width: 34px;
+      height: 34px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .toolkit__name {
+      font-family: var(--font-display);
+      font-size: 1.08rem;
+      font-weight: 600;
+      color: var(--ppa-navy);
+    }
+    .toolkit__count {
+      font-size: 0.75rem;
+      color: var(--ppa-text-mid);
+      font-weight: 500;
+      margin-left: auto;
+      white-space: nowrap;
+    }
+
+    .toolkit__list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .toolkit__item {
+      display: flex;
+      align-items: center;
+      padding: 14px 24px;
+      border-bottom: 1px solid var(--ppa-cream-mid);
+      transition: background 0.15s;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .toolkit__item:last-child { border-bottom: none; }
+    .toolkit__item:hover { background: var(--ppa-cream); }
+    .toolkit__item--coming-soon { opacity: 0.55; pointer-events: none; }
+
+    .toolkit__item-number {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--ppa-text-mid);
+      width: 20px;
+      flex-shrink: 0;
+      text-align: right;
+    }
+    .toolkit__item-name {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--ppa-navy);
+      flex: 1;
+    }
+    .toolkit__item:hover .toolkit__item-name { color: var(--ppa-rust); }
+
+    .tier-tag {
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 3px;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .tier-tag--free {
+      color: #2E7D32;
+      background: rgba(46, 125, 50, 0.08);
+    }
+    .tier-tag--student {
+      color: var(--ppa-gold);
+      background: rgba(196, 148, 58, 0.1);
+    }
+    .tier-tag--pro {
+      color: var(--ppa-rust);
+      background: var(--ppa-rust-light);
+    }
+    .tier-tag--soon {
+      color: var(--ppa-text-mid);
+      background: var(--ppa-cream-mid);
+    }
+
+    .toolkit__item-arrow {
+      color: var(--ppa-border);
+      flex-shrink: 0;
+      transition: color 0.15s;
+    }
+    .toolkit__item:hover .toolkit__item-arrow { color: var(--ppa-rust); }
+
+    /* ==========================================================
+       TIER LEGEND
+       ========================================================== */
+    .tier-legend {
+      max-width: 940px;
+      margin: 0 auto;
+      padding: 0 24px 12px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .tier-legend__label {
+      font-size: 0.78rem;
+      color: var(--ppa-text-mid);
+      font-weight: 500;
+    }
+
+    /* ==========================================================
+       CTA BANNER
+       ========================================================== */
+    .cta-section {
+      max-width: 940px;
+      margin: 0 auto;
+      padding: 20px 24px 56px;
+    }
+    .cta-card {
+      background: var(--ppa-navy);
+      border-radius: 6px;
+      padding: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .cta-card h3 {
+      font-family: var(--font-display);
+      color: var(--ppa-gold);
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .cta-card p {
+      color: var(--ppa-cream-mid);
+      font-size: 0.88rem;
+      max-width: 500px;
+      line-height: 1.55;
+    }
+    .cta-btn {
+      display: inline-block;
+      background: var(--ppa-rust);
+      color: var(--ppa-white);
+      padding: 12px 28px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.92rem;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .cta-btn:hover { background: var(--ppa-rust-dark); }
+
+    /* ==========================================================
+       FOOTER
+       ========================================================== */
+    .ppa-footer {
+      background: var(--ppa-navy);
+      padding: 28px 24px;
+      text-align: center;
+    }
+    .ppa-footer p {
+      color: var(--ppa-text-mid);
+      font-size: 0.76rem;
+    }
+    .ppa-footer a {
+      color: var(--ppa-gold);
+      text-decoration: none;
+    }
+    .ppa-footer a:hover { text-decoration: underline; }
+
+    /* ==========================================================
+       RESPONSIVE
+       ========================================================== */
+    @media (max-width: 640px) {
+      .ppa-nav__links a:not(.ppa-nav__cta) { display: none; }
+      .toolkit__header { padding: 16px 18px; }
+      .toolkit__item { padding: 12px 18px; }
+      .cta-card { flex-direction: column; text-align: center; }
+      .cta-card p { max-width: 100%; }
+      .page-header__stats { gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="ppa-nav">
+    <a href="/" class="ppa-nav__logo">PipingPro Academy</a>
+    <div class="ppa-nav__links">
+      <a href="/courses">Courses</a>
+      <a href="/toolkits/">Toolkits</a>
+      <a href="/membership-plan.html" class="ppa-nav__cta">Join Free</a>
+    </div>
+  </nav>
+
+  <!-- BREADCRUMB -->
+  <div class="breadcrumb">
+    <a href="/">Home</a><span class="sep">›</span>
+    Engineering Toolkits
+  </div>
+
+  <!-- PAGE HEADER -->
+  <header class="page-header">
+    <h1>Engineering Toolkits</h1>
+    <p class="page-header__sub">
+      27 piping and pipeline engineering calculators across 6 discipline areas — built from
+      35+ years of Oil &amp; Gas project experience with ASME, API and international codes.
+    </p>
+    <div class="page-header__stats">
+      <div class="stat">
+        <span class="stat__num">27</span>
+        <span class="stat__label">Calculators</span>
+      </div>
+      <div class="stat">
+        <span class="stat__num">6</span>
+        <span class="stat__label">Toolkits</span>
+      </div>
+      <div class="stat">
+        <span class="stat__num">4</span>
+        <span class="stat__label">Free tools</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- TIER LEGEND -->
+  <div class="tier-legend">
+    <span class="tier-legend__label">Access tiers:</span>
+    <span class="tier-tag tier-tag--free">FREE</span>
+    <span class="tier-tag tier-tag--student">STUDENT</span>
+    <span class="tier-tag tier-tag--pro">PROFESSIONAL</span>
+  </div>
+
+  <!-- TOOLKIT SECTIONS -->
+  <section class="toolkits">
+
+    <!-- A. Piping Mechanical Design -->
+    <div class="toolkit">
+      <div class="toolkit__header">
+        <div class="toolkit__letter">A</div>
+        <div class="toolkit__name">Piping Mechanical Design</div>
+        <div class="toolkit__count">7 calculators</div>
+      </div>
+      <ul class="toolkit__list">
+        <li>
+          <a href="/tools/wall-thickness-calculator/" class="toolkit__item">
+            <span class="toolkit__item-number">1</span>
+            <span class="toolkit__item-name">Pipe Wall Thickness (ASME B31.3)</span>
+            <span class="tier-tag tier-tag--free">FREE</span>
+            <svg class="toolkit__item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="/tools/pipe-weight-calculator/" class="toolkit__item">
+            <span class="toolkit__item-number">2</span>
+            <span class="toolkit__item-name">Pipe Weight &amp; Section Properties</span>
+            <span class="tier-tag tier-tag--free">FREE</span>
+            <svg class="toolkit__item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="/tools/material-property-datasheet/" class="toolkit__item">
+            <span class="toolkit__item-number">3</span>
+            <span class="toolkit__item-name">Material Property Datasheet</span>
+            <span class="tier-tag tier-tag--free">FREE</span>
+            <svg class="toolkit__item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="/tools/unit-converter/" class="toolkit__item">
+            <span class="toolkit__item-number">4</span>
+            <span class="toolkit__item-name">Engineering Unit Converter</span>
+            <span class="tier-tag tier-tag--free">FREE</span>
+            <svg class="toolkit__item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="/tools/flange-valve-weight-calculator/" class="toolkit__item">
+            <span class="toolkit__item-number">5</span>
+            <span class="toolkit__item-name">Flange &amp; Valve Weight</span>
+            <span class="tier-tag tier-tag--pro">PROFESSIONAL</span>
+            <svg class="toolkit__item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="/tools/material-compare/" class="toolkit__item">
+            <span class="toolkit__item-number">6</span>
+            <span class="toolkit__item-name">Material Comparison</span>
+            <span class="tier-tag tier-tag--pro">PROFESSIONAL</span>
+            <svg class="toolkit__item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="/tools/pipe-coating-insulation-calculator/" class="toolkit__item">
+            <span class="toolkit__item-number">7</span>
+            <span class="toolkit__item-name">Pipe Coating and Insulation</span>
+            <span class="tier-tag tier-tag--pro">PROFESSIONAL</span>
+            <svg class="toolkit__item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- B. Pipeline Mechanical Design -->
+    <div class="toolkit">
+      <div class="toolkit__header">
+        <div class="toolkit__letter">B</div>
+        <div class="toolkit__name">Pipeline Mechanical Design</div>
+        <div class="toolkit__count">7 calculators</div>
+      </div>
+      <ul class="toolkit__list">
+        <li>
+          <a href="/tools/pipeline-wall-thickness-calculator/" class="toolkit__item">
+            <span class="toolkit__item-number">1</span>
+            <span class="toolkit__item-name">Pipe Wall Thickness (B31.4 / B31.8 / ISO 13623)</span>
+            <span class="tier-tag tier-tag--pro">PROFESSIONAL</span>
+            <svg class="toolkit__item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="/tools/buried-pipe-soil-interaction/" class="toolkit__item">
+            <span class="toolkit__item-number">2</span>
+            <span class="toolkit__item-name">Buried Pipe Soil Interaction (ALA 2001)</span>
+            <span class="tier-tag tier-tag--pro">PROFESSIONAL</span>
+            <svg class="toolkit__item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="/tools/upheaval-buckling/" class="toolkit__item">
+            <span class="toolkit__item-number">3</span>
+            <span class="toolkit__item-name">Upheaval Buckling</span>
+            <span class="tier-tag tier-tag--pro">PROFESSIONAL</span>
+            <svg class="toolkit__item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="/tools/ductile-fracture/" class="toolkit__item">
+            <span class="toolkit__item-number">4</span>
+            <span class="toolkit__item-name">Ductile Fracture</span>
+            <span class="tier-tag tier-tag--pro">PROFESSIONAL</span>
+            <svg class="toolkit__item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="/tools/cathodic-protection-design/" class="toolkit__item">
+            <span class="toolkit__item-number">5</span>
+            <span class="toolkit__item-name">Cathodic Protection Design (SAES-X-400)</span>
+            <span class="tier-tag tier-tag--pro">PROFESSIONAL</span>
+            <svg class="toolkit__item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="/tools/sectional-volume/" class="toolkit__item">
+            <span class="toolkit__item-number">6</span>
+            <span class="toolkit__item-name">Sectional Volume</span>
+            <span class="tier-tag tier-tag--pro">PROFESSIONAL</span>
+            <svg class="toolkit__item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="/tools/pipeline-crossing-calculator/" class="toolkit__item">
+            <span class="toolkit__item-number">7</span>
+            <span class="toolkit__item-name">Pipeline Crossing Calculator</span>
+            <span class="tier-tag tier-tag--pro">PROFESSIONAL</span>
+            <svg class="toolkit__item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- C. Pipe Support Engineering -->
+    <div class="toolkit">
+      <div class="toolkit__header">
+        <div class="toolkit__letter">C</div>
+        <div class="toolkit__name">Pipe Support Engineering</div>
+        <div class="toolkit__count">3 calculators</div>
+      </div>
+      <ul class="toolkit__list">
+        <li>
+          <a href="/tools/pipe-support-span/" class="toolkit__item">
+            <span class="toolkit__item-number">1</span>
+            <span class="toolkit__item-name">Pipe Support Span Calculator</span>
+            <span class="tier-tag tier-tag--pro">PROFESSIONAL</span>
+            <svg class="toolkit__item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="/tools/special-pipe-support/" class="toolkit__item">
+            <span class="toolkit__item-number">2</span>
+            <span class="toolkit__item-name">Special Pipe Support + Trunnion Support</span>
+            <span class="tier-tag tier-tag--pro">PROFESSIONAL</span>
+            <svg class="toolkit__item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="/tools/standard-pipe-support-catalog/" class="toolkit__item">
+            <span class="toolkit__item-number">3</span>
+            <span class="toolkit__item-name">Standard Pipe Support Catalog + Spring Hanger</span>
+            <span class="tier-tag tier-tag--pro">PROFESSIONAL</span>
+            <svg class="toolkit__item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- D. Project Engineering -->
+    <div class="toolkit">
+      <div class="toolkit__header">
+        <div class="toolkit__letter">D</div>
+        <div class="toolkit__name">Project Engineering</div>
+        <div class="toolkit__count">3 calculators</div>
+      </div>
+      <ul class="toolkit__list">
+        <li>
+          <a href="/tools/hydro-pneumo-test-pack/" class="toolkit__item">
+            <span class="toolkit__item-number">1</span>
+            <span class="toolkit__item-name">Hydro-Pneumatic Test Pack Generator</span>
+            <span class="tier-tag tier-tag--pro">PROFESSIONAL</span>
+            <svg class="toolkit__item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="/tools/piping-pipeline-estimation/" class="toolkit__item">
+            <span class="toolkit__item-number">2</span>
+            <span class="toolkit__item-name">Piping and Pipeline Estimation</span>
+            <span class="tier-tag tier-tag--pro">PROFESSIONAL</span>
+            <svg class="toolkit__item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="/tools/pid-mto/" class="toolkit__item">
+            <span class="toolkit__item-number">3</span>
+            <span class="toolkit__item-name">P&amp;ID MTO</span>
+            <span class="tier-tag tier-tag--pro">PROFESSIONAL</span>
+            <svg class="toolkit__item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- E. Piping Stress Analysis -->
+    <div class="toolkit">
+      <div class="toolkit__header">
+        <div class="toolkit__letter">E</div>
+        <div class="toolkit__name">Piping Stress Analysis</div>
+        <div class="toolkit__count">7 calculators</div>
+      </div>
+      <ul class="toolkit__list">
+        <li>
+          <a href="/tools/expansion-loop/" class="toolkit__item">
+            <span class="toolkit__item-number">1</span>
+            <span class="toolkit__item-name">Expansion Loop</span>
+            <span class="tier-tag tier-tag--pro">PROFESSIONAL</span>
+            <svg class="toolkit__item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="/tools/l-bend-two-anchor-stress/" class="toolkit__item">
+            <span class="toolkit__item-number">2</span>
+            <span class="toolkit__item-name">L-Bend Two-Anchor Stress</span>
+            <span class="tier-tag tier-tag--pro">PROFESSIONAL</span>
+            <svg class="toolkit__item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="/tools/stress-critical-line-selector/" class="toolkit__item">
+            <span class="toolkit__item-number">3</span>
+            <span class="toolkit__item-name">Stress Critical Line Selector</span>
+            <span class="tier-tag tier-tag--pro">PROFESSIONAL</span>
+            <svg class="toolkit__item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="/tools/flange-leakage-check/" class="toolkit__item">
+            <span class="toolkit__item-number">4</span>
+            <span class="toolkit__item-name">Flange Leakage Check</span>
+            <span class="tier-tag tier-tag--pro">PROFESSIONAL</span>
+            <svg class="toolkit__item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="/tools/nozzle-load-checker/" class="toolkit__item">
+            <span class="toolkit__item-number">5</span>
+            <span class="toolkit__item-name">Nozzle Load Checker</span>
+            <span class="tier-tag tier-tag--pro">PROFESSIONAL</span>
+            <svg class="toolkit__item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="/tools/vibration-fatigue/" class="toolkit__item">
+            <span class="toolkit__item-number">6</span>
+            <span class="toolkit__item-name">Vibration Fatigue</span>
+            <span class="tier-tag tier-tag--pro">PROFESSIONAL</span>
+            <svg class="toolkit__item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="/tools/initial-movement-calculation/" class="toolkit__item">
+            <span class="toolkit__item-number">7</span>
+            <span class="toolkit__item-name">Initial Movement Calculation</span>
+            <span class="tier-tag tier-tag--pro">PROFESSIONAL</span>
+            <svg class="toolkit__item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- F. Pipeline Integrity -->
+    <div class="toolkit">
+      <div class="toolkit__header">
+        <div class="toolkit__letter">F</div>
+        <div class="toolkit__name">Pipeline Integrity</div>
+        <div class="toolkit__count">1 calculator</div>
+      </div>
+      <ul class="toolkit__list">
+        <li>
+          <a href="/tools/remaining-strength-corroded-pipe/" class="toolkit__item">
+            <span class="toolkit__item-number">1</span>
+            <span class="toolkit__item-name">Remaining Strength of Corroded Pipe (B31G / Mod B31G / RSTRENG)</span>
+            <span class="tier-tag tier-tag--pro">PROFESSIONAL</span>
+            <svg class="toolkit__item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </li>
+        <li>
+          <div class="toolkit__item toolkit__item--coming-soon">
+            <span class="toolkit__item-number">2</span>
+            <span class="toolkit__item-name">Fitness-for-Service / Corrosion Rate Estimation</span>
+            <span class="tier-tag tier-tag--soon">COMING SOON</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cta-card">
+      <div>
+        <h3>Unlock All 27 Engineering Calculators</h3>
+        <p>
+          Free tier gives you pipe weight, wall thickness, material datasheet and unit converter.
+          Upgrade to Professional for full access to all toolkits, PDF reports and advanced features.
+        </p>
+      </div>
+      <a href="/membership-plan.html" class="cta-btn">View Plans →</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="ppa-footer">
+    <p>
+      © 2026 <a href="/">PipingPro Academy</a> ·
+      Built by engineers, for engineers ·
+      <a href="/about">About</a> ·
+      <a href="/contact">Contact</a> ·
+      <a href="/privacy">Privacy</a>
+    </p>
+  </footer>
+
+</body>
+</html>
