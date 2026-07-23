@@ -62,38 +62,37 @@
 
   <!-- Structured Data: FAQPage -->
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "How do you calculate minimum pipe wall thickness per ASME B31.3?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Per ASME B31.3 §304.1.2, the minimum required thickness t = PD / 2(SEW + PY), where P is internal design pressure, D is pipe outside diameter, S is allowable stress at design temperature, E is weld joint quality factor, W is weld strength reduction factor, and Y is a coefficient dependent on material and temperature."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "What allowances must be added to the calculated minimum wall thickness?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "The minimum ordered wall thickness must include the corrosion/erosion allowance (c) and the manufacturer's mill under-thickness tolerance (typically 12.5% for seamless pipe per ASTM standards). The relationship is: t_nominal ≥ (t_min + c) / (1 − mill tolerance)."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "What is the Y coefficient in the B31.3 wall thickness formula?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "The Y coefficient accounts for the redistribution of circumferential stress under creep conditions at elevated temperatures. For ferritic steels below 482°C (900°F), Y = 0.4. At higher temperatures, Y increases up to 0.7 per ASME B31.3 Table 304.1.1."
-        }
+ {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do you calculate pipe weight per unit length?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Pipe weight per unit length equals the cross-sectional metal area multiplied by the material density. The metal area is Am = (π/4) × (D² − d²), where D is the outside diameter and d is the inside diameter (D − 2t). For carbon steel, the standard density is 0.2836 lb/in³ (7,850 kg/m³)."
       }
-    ]
-  }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between ASME B36.10M and B36.19M?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ASME B36.10M covers welded and seamless wrought steel pipe dimensions for carbon and alloy steels. ASME B36.19M covers stainless steel pipe and includes additional schedule designations (5S, 10S, 40S, 80S). Outside diameters are the same, but available wall thicknesses differ between the two standards."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What section properties does this calculator provide?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The calculator returns moment of inertia (I), section modulus (Z), cross-sectional metal area (Am), and internal flow area (Ai). These properties are used in pipe stress analysis for bending stress calculations and in support span design per ASME B31.3."
+      }
+    }
+  ]
+}
   </script>
-
   <!-- Structured Data: BreadcrumbList -->
   <script type="application/ld+json">
   {
@@ -102,7 +101,7 @@
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://pipingpro-academy.com" },
       { "@type": "ListItem", "position": 2, "name": "Calculators", "item": "https://pipingpro-academy.com/calculators" },
-      { "@type": "ListItem", "position": 3, "name": "Pipe Wall Thickness Calculator" }
+      { "@type": "ListItem", "position": 3, "name": "Pipe Weight and Section Properties Calculator" }
     ]
   }
   </script>
@@ -534,7 +533,7 @@ ASME B36.10M and B36.19M.
     <div class="calc-frame">
       <!--
         CHANGE: src path to your actual calculator file.
-        Since this page lives at /calculators/pipe-wall-thickness/index.html,
+        Since this page lives at /calculators/pipe-weight-calculator/index.html,
         the root-level file is two directories up:
           ../../wall-thickness.html
 
@@ -640,7 +639,7 @@ ASME B36.10M and B36.19M.
         <div class="related__desc">Calculate External paint quantity & hot insulation MTO — mineral wool, calcium silicate, aerogel & more for O&G plant piping.</div>
       </a>
 
-      <a href="/tolls/flange-valve-weight-calculator/" class="related__card">
+      <a href="/tools/flange-valve-weight-calculator/" class="related__card">
         <div class="related__code">ASME B16.5</div>
         <div class="related__title">Flange & Valve Weight Table</div>
         <div class="related__desc">Retrieve Flange and Valve Weight for Class Rating 150 to 2500 from ANSI B16.5 and vendor data for Valve.</div>
