@@ -102,8 +102,8 @@
     "@type": "BreadcrumbList",
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://pipingpro-academy.com" },
-      { "@type": "ListItem", "position": 2, "name": "Calculators", "item": "https://pipingpro-academy.com/calculators" },
-      { "@type": "ListItem", "position": 3, "name": "Material Datasheet" }
+      { "@type": "ListItem", "position": 2, "name": "Calculators", "item": "https://pipingpro-academy.com/toolkits/" },
+      { "@type": "ListItem", "position": 3, "name": "Pipe Material Datasheet" }
     ]
   }
   </script>
@@ -489,9 +489,8 @@
     <a href="/" class="ppa-nav__logo">PipingPro Academy</a>
     <div class="ppa-nav__links">
       <a href="/courses">Courses</a>
-      <a href="/toolkits">Toolkits</a>
-      <a href="/calculators">Calculators</a>
-      <a href="/membership" class="ppa-nav__cta">Join Free</a>
+      <a href="/toolkits/">Toolkits</a>
+      <a href="/membership-plan.html" class="ppa-nav__cta">Join Free</a>
     </div>
   </nav>
 
@@ -500,7 +499,7 @@
        ============================================================ -->
   <div class="breadcrumb">
     <a href="/">Home</a><span class="sep">›</span>
-    <a href="/calculators">Calculators</a><span class="sep">›</span>
+    <a href="/toolkits/">Toolkits</a><span class="sep">›</span>
     Pipe Material Datasheets
   </div>
 
@@ -516,7 +515,7 @@
 
     <!-- CHANGE: one-sentence description -->
     <p class="page-header__sub">
-      Retrieve pipe material datasheets such as Basic Allowable Stress, SMTS, SMYS, Maximum and Minimum Temperature, P-Number, Creep temperature ranges.
+      Retrieve pipe material datasheets such as Basic Allowable Stress, SMTS, SMYS, Maximum and Minimum Temperature, P-Number, and Creep temperature ranges.
     </p>
 
     <!-- CHANGE: tier-badge--free / tier-badge--student / tier-badge--pro -->
@@ -531,18 +530,7 @@
        ============================================================ -->
   <section class="calc-section">
     <div class="calc-frame">
-      <!--
-        CHANGE: src path to your actual calculator file.
-        Since this page lives at /calculators/pipe-wall-thickness/index.html,
-        the root-level file is two directories up:
-          ../../wall-thickness.html
-
-        OR use an absolute path from your domain:
-          /wall-thickness.html
-
-        Adjust the height to fit the calculator content.
-      -->
-      <iframe
+     <iframe
         src="/material-datasheet.html"
         title="Pipe Material Datasheet"
         loading="lazy"
@@ -605,20 +593,19 @@
   <section class="cta-section">
     <div class="cta-card">
       <div>
-        <!-- CHANGE: toolkit name and description -->
         <h3>Piping Mechanical Design Engineering Toolkits</h3>
         <p>
-          This toolkit is one of seven tools in the Piping Mechanical Design Engineering Toolkits —
-          including pipe weight and section properties calculation, pipe wall thickness calculation as per ASME B31.3/4/8, Flange and Valve Weight as per ANSI B16.5, Pipe Material Comparisons and Pipe Coating and Insulation calculations. Free tier gets core tools;
+          This calculator is part of the Piping Mechanical Design Engineering Toolkit — seven tools covering pipe weight and section properties calculation, material property datasheet as per ASME B31.3 Table A1, pipe wall thickness calculation as per ASME B31.3/4/8, Engineering Unit Converter for your day-to-day piping stress job, Flange and Valve Weight as per ANSI B16.5, Pipe Material Comparisons, and Pipe Coating and Insulation calculations. Free tier gets core tools;
           upgrade for PDF reports and advanced features.
         </p>
       </div>
       <!-- CHANGE: link to relevant toolkit page -->
-      <a href="/calculators" class="cta-btn">View Full Toolkits →</a>
+      <a href="/toolkits/" class="cta-btn">View Full Toolkits →</a>
     </div>
   </section>
 
-  <!-- ============================================================
+
+ <!-- ============================================================
        RELATED CALCULATORS — cross-link to other landing pages
        ============================================================ -->
   <section class="related">
@@ -638,7 +625,7 @@
         <div class="related__desc">Calculate External paint quantity & hot insulation MTO — mineral wool, calcium silicate, aerogel & more for O&G plant piping.</div>
       </a>
 
-      <a href="/tolls/flange-valve-weight-calculator/" class="related__card">
+      <a href="/tools/flange-valve-weight-calculator/" class="related__card">
         <div class="related__code">ASME B16.5</div>
         <div class="related__title">Flange & Valve Weight Table</div>
         <div class="related__desc">Retrieve Flange and Valve Weight for Class Rating 150 to 2500 from ANSI B16.5 and vendor data for Valve.</div>
