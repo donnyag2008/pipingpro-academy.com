@@ -57,6 +57,38 @@
       letter-spacing: 0.02em;
       text-decoration: none;
     }
+
+    /* ── Hamburger toggle (mobile only) ── */
+.nav-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  z-index: 1001;
+  flex-direction: column;
+  gap: 5px;
+}
+.nav-hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--gold);
+  border-radius: 2px;
+  transition: transform 0.3s, opacity 0.3s;
+}
+.nav-hamburger.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.nav-hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+.nav-hamburger.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.nav-links { display: flex; gap: 1.6rem; align-items: center; }
+    
     .nav-links { display: flex; gap: 1.6rem; align-items: center; }
     .nav-links a {
       color: #ccc;
@@ -96,12 +128,47 @@
     .nav-badge-admin{background:rgba(212,160,23,.16);color:var(--gold-bright);border:1px solid var(--gold);}
     .nav-badge-sub{background:rgba(45,150,121,.18);color:#3fae8c;border:1px solid #2d9679;}
 
-    @media (max-width: 700px) {
-      nav { padding: 0 4%; }
-      .nav-links { gap: 0.6rem; flex-wrap: wrap; }
-      .nav-links a.nav-hide-mobile { display: none; }
-      .nav-cta { padding: 0.4rem 0.9rem; }
-    }
+   @media (max-width: 768px) {
+  .nav-hamburger {
+    display: flex;
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  nav {
+    position: relative;
+  }
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--ink, #1a1a1a);
+    padding: 1rem 1.5rem 1.5rem;
+    gap: 0.2rem;
+    border-bottom: 2px solid var(--gold);
+    z-index: 1000;
+  }
+  .nav-links.open {
+    display: flex;
+  }
+  .nav-links a,
+  .nav-links button {
+    padding: 0.6rem 0;
+    width: 100%;
+    text-align: left;
+  }
+  .nav-hide-mobile {
+    display: block !important;
+  }
+  .nav-cta {
+    margin-top: 0.5rem;
+    text-align: center !important;
+  }
+}
 
     /* ── LOGIN MODAL ── */
     .lmodal-bg{position:fixed;inset:0;background:rgba(26,21,16,.75);z-index:500;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .2s;}
@@ -354,7 +421,7 @@
 <!-- NAV -->
 <nav>
   <a class="nav-logo" href="#">PipingPro Academy</a>
-  <div class="nav-links">
+ <div class="nav-links">
     <a href="courses.html">Courses</a>
     <a href="calculators.html">Engineering Toolkits</a>
     <a href="guides.html" class="nav-hide-mobile">Technical Articles</a>
