@@ -972,6 +972,18 @@ document.addEventListener('DOMContentLoaded', async function(){
   updateNavBtn();
 });
 </script>
-
+  <script>
+function toggleMobileMenu() {
+  document.getElementById('nav-hamburger').classList.toggle('open');
+  document.getElementById('nav-links').classList.toggle('open');
+}
+// Close menu when a link is tapped
+document.querySelectorAll('.nav-links a, .nav-links button').forEach(el => {
+  el.addEventListener('click', () => {
+    document.getElementById('nav-hamburger').classList.remove('open');
+    document.getElementById('nav-links').classList.remove('open');
+  });
+});
+</script>
 </body>
 </html>
