@@ -223,6 +223,12 @@
       transition: gap 0.25s, color 0.2s;
     }
     .service-cta:hover { gap: 0.85rem; color: var(--gold-bright); }
+    a.service-title-link { text-decoration: none; color: inherit; display: block; }
+    a.service-title-link:hover .service-title { color: var(--rust); }
+    a.service-image-link { display: block; text-decoration: none; }
+    a.service-title { text-decoration: none; color: var(--ink); transition: color 0.2s; }
+    a.service-title:hover { color: var(--rust); }
+    a.service-image-link { display: block; text-decoration: none; }
 
     /* Floating image panel */
     .service-image {
@@ -458,7 +464,7 @@
     <div class="service-inner">
       <div class="service-text">
         <div class="service-eyebrow">Discipline 01</div>
-        <h2 class="service-title">Onshore Pipeline Engineering Design Services</h2>
+        <a href="onshore-pipeline.html" class="service-title"><a href="onshore-pipeline.html" class="service-title-link"><h2 class="service-title">Onshore Pipeline Engineering Design Services</h2></a></a>
         <p class="service-desc">Complete onshore pipeline engineering design workflow &mdash; from pipeline sizing and wall thickness to upheaval buckling, road &amp; rail crossings, ductile fracture arrest, and cathodic protection design. Every step mapped to the deliverables and standards that Aramco, Shell, and BP projects require.</p>
         <div class="service-tags">
           <span class="service-tag">ASME B31.4</span>
@@ -467,12 +473,14 @@
           <span class="service-tag">DNV-RP-F110</span>
           <span class="service-tag">SAES-L-131</span>
         </div>
-        <a href="calculators.html" class="service-cta">Explore Pipeline Tools &rarr;</a>
+        <a href="onshore-pipeline.html" class="service-cta">Explore Pipeline Tools &rarr;</a>
       </div>
-      <div class="service-image">
-        <img src="/images/onshore-pipeline.jpg" alt="Onshore pipeline construction" />
-        <div class="service-image-badge">Pipeline Design and Analysis &middot; Deliverables; FEED/EPC</div>
-      </div>
+      <a href="onshore-pipeline.html" class="service-image-link">
+        <div class="service-image">
+          <img src="https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=800&q=80" alt="Onshore pipeline construction" />
+          <div class="service-image-badge">Pipeline Design and Analysis &middot; Deliverables; FEED/EPC</div>
+        </div>
+      </a>
     </div>
   </div>
 
@@ -481,7 +489,7 @@
     <div class="service-inner">
       <div class="service-text">
         <div class="service-eyebrow">Discipline 02</div>
-        <h2 class="service-title">Process Piping Engineering Design Services</h2>
+        <a href="process-piping.html" class="service-title"><a href="process-piping.html" class="service-title-link"><h2 class="service-title">Process Piping Engineering Design Services</h2></a></a>
         <p class="service-desc">End-to-end process piping engineering workflow &mdash; wall thickness design, stress analysis, expansion loop sizing, pipe support engineering, material selection, flange rating verification, and flexibility screening. Aligned with the deliverables EPC contractors submit to Aramco, ADNOC, and TotalEnergies.</p>
         <div class="service-tags">
           <span class="service-tag">ASME B31.3</span>
@@ -490,12 +498,14 @@
           <span class="service-tag">CAESAR II</span>
           <span class="service-tag">SAES-L-150</span>
         </div>
-        <a href="calculators.html" class="service-cta">Explore Piping Tools &rarr;</a>
+        <a href="process-piping.html" class="service-cta">Explore Piping Tools &rarr;</a>
       </div>
-      <div class="service-image">
-        <img src="/images/process-piping.jpg" alt="Process piping at industrial plant" />
-        <div class="service-image-badge">Piping Engineering Design and Analysis &middot; Material Selection &middot; FEED/EPC</div>
-      </div>
+      <a href="process-piping.html" class="service-image-link">
+        <div class="service-image">
+          <img src="https://images.unsplash.com/photo-1513828583688-c52646db42da?w=800&q=80" alt="Process piping at industrial plant" />
+          <div class="service-image-badge">Piping Engineering Design and Analysis &middot; Material Selection &middot; FEED/EPC</div>
+        </div>
+      </a>
     </div>
   </div>
 
@@ -504,7 +514,7 @@
     <div class="service-inner">
       <div class="service-text">
         <div class="service-eyebrow">Discipline 03</div>
-        <h2 class="service-title">Offshore Pipeline Engineering Design Services</h2>
+        <a href="offshore-pipeline.html" class="service-title"><a href="offshore-pipeline.html" class="service-title-link"><h2 class="service-title">Offshore Pipeline Engineering Design Services</h2></a></a>
         <p class="service-desc">Subsea and offshore pipeline design workflow &mdash; pressure containment, external collapse, propagating buckle arrest, on-bottom stability under hydrodynamic loads, and free-span vibration analysis. Fully referenced to DNV-ST-F101 and operator-specific requirements for deepwater and shallow water installations.</p>
         <div class="service-tags">
           <span class="service-tag">DNV-ST-F101</span>
@@ -512,12 +522,14 @@
           <span class="service-tag">DNV-RP-E305</span>
           <span class="service-tag">API RP 1111</span>
         </div>
-        <a href="calculators.html" class="service-cta">Explore Subsea Tools &rarr;</a>
+        <a href="offshore-pipeline.html" class="service-cta">Explore Subsea Tools &rarr;</a>
       </div>
-      <div class="service-image">
-       <img src="/images/offshore-pipeline.jpg" alt="Offshore pipeline construction" />
-        <div class="service-image-badge">Subsea Design &middot; On-Bottom Stability &middot; VIV</div>
-      </div>
+      <a href="offshore-pipeline.html" class="service-image-link">
+        <div class="service-image">
+          <img src="https://images.unsplash.com/photo-1518709766631-a6a7f45921c3?w=800&q=80" alt="Offshore platform and pipeline" />
+          <div class="service-image-badge">Subsea Design &middot; On-Bottom Stability &middot; VIV</div>
+        </div>
+      </a>
     </div>
   </div>
 
@@ -526,7 +538,7 @@
     <div class="service-inner">
       <div class="service-text">
         <div class="service-eyebrow">Discipline 04</div>
-        <h2 class="service-title">AI-Based Software</h2>
+        <a href="https://complianceiq-eat.pages.dev" target="_blank" class="service-title"><a href="https://complianceiq-eat.pages.dev" target="_blank" class="service-title-link"><h2 class="service-title">AI-Based Software</h2></a></a>
         <p class="service-desc">AI-assisted engineering tools that go beyond calculation &mdash; reading drawings, checking layouts against project standards, and turning engineering judgement into repeatable screening. Built on real FEED project data and designed to augment, not replace, the experienced engineer's workflow.</p>
         <div class="service-tags">
           <span class="service-tag">Plot Plan AI</span>
@@ -535,10 +547,12 @@
         </div>
         <a href="https://complianceiq-eat.pages.dev" target="_blank" class="service-cta">Open ComplianceIQ &rarr;</a>
       </div>
-      <div class="service-image">
-        <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80" alt="AI and engineering software" />
-        <div class="service-image-badge">ComplianceIQ &middot; AI-Powered &middot; FEED Stage</div>
-      </div>
+      <a href="https://complianceiq-eat.pages.dev" target="_blank" class="service-image-link">
+        <div class="service-image">
+          <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80" alt="AI and engineering software" />
+          <div class="service-image-badge">ComplianceIQ &middot; AI-Powered &middot; FEED Stage</div>
+        </div>
+      </a>
     </div>
   </div>
 

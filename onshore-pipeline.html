@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Onshore Pipeline Engineering — PipingPro Academy</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #faf6ef; --paper: #f3ede2; --paper-dark: #e8dfd0;
+      --ink: #1a1510; --ink-light: #4a3f30; --ink-mid: #5c4e3c;
+      --gold: #b8860b; --gold-bright: #d4a017; --gold-pale: #f5e9c8;
+      --rust: #8b3a1a; --rule: #c8b89a;
+      --spec-color: #1565C0; --spec-bg: #E3F2FD;
+      --report-color: #2E7D32; --report-bg: #E8F5E9;
+      --mech-color: #A0522D; --mech-bg: #FFF5EE;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); line-height: 1.7; }
+
+    /* ── NAV ── */
+    nav { position: sticky; top: 0; z-index: 100; background: var(--ink); display: flex; align-items: center; justify-content: space-between; padding: 0 5%; height: 60px; border-bottom: 2px solid var(--gold); }
+    .nav-logo { font-family: 'DM Serif Display', serif; font-size: 1.15rem; color: var(--gold-bright); letter-spacing: 0.02em; text-decoration: none; }
+    .nav-links { display: flex; gap: 1.6rem; align-items: center; }
+    .nav-links a { color: #ccc; text-decoration: none; font-size: 0.82rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--gold-bright); }
+    @media (max-width: 700px) { nav { padding: 0 4%; } .nav-links { gap: 0.6rem; } .nav-links a.hide-m { display: none; } }
+
+    /* ── HERO ── */
+    .page-hero { background: linear-gradient(135deg, var(--ink) 0%, #2C2418 100%); padding: 3rem 8% 2.5rem; border-bottom: 4px solid var(--gold); }
+    .hero-eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: var(--gold); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 0.6rem; }
+    .page-hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(1.6rem, 4vw, 2.2rem); color: #fff; margin-bottom: 0.25rem; line-height: 1.2; }
+    .hero-sub { font-size: 1rem; color: #bdb0a0; margin-bottom: 1.6rem; }
+
+    /* Architecture diagram */
+    .arch-box { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: #8a7c6a; line-height: 2; padding: 1rem 1.2rem; background: #0d0a07; border-radius: 4px; margin-bottom: 1.4rem; overflow-x: auto; white-space: pre; }
+    .arch-box .c-spec { color: var(--spec-color); }
+    .arch-box .c-rpt { color: var(--report-color); }
+    .arch-box .c-mech { color: var(--mech-color); }
+    .arch-box .c-gold { color: var(--gold-bright); }
+
+    /* Stats */
+    .hero-stats { display: flex; gap: 2rem; flex-wrap: wrap; }
+    .hero-stat-n { font-family: 'IBM Plex Mono', monospace; font-size: 1.6rem; font-weight: 700; line-height: 1; }
+    .hero-stat-l { font-size: 0.6rem; color: #8a7c6a; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 0.15rem; }
+
+    /* ── MAIN CONTENT ── */
+    .content-wrap { max-width: 920px; margin: 0 auto; padding: 1.8rem 1rem 3rem; }
+
+    /* ── SECTION CARDS ── */
+    .section-card { margin-bottom: 1.2rem; background: #fff; border: 1px solid var(--paper-dark); border-radius: 8px; overflow: hidden; }
+    .section-header { padding: 1.1rem 1.4rem 1rem; cursor: pointer; display: flex; justify-content: space-between; align-items: flex-start; transition: background 0.15s; }
+    .section-header:hover { filter: brightness(0.97); }
+    .section-header.spec-h { border-bottom: 3px solid var(--spec-color); background: var(--spec-bg); }
+    .section-header.report-h { border-bottom: 3px solid var(--report-color); background: var(--report-bg); }
+    .section-header.mech-h { border-bottom: 3px solid var(--mech-color); background: var(--mech-bg); }
+    .section-num { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; font-weight: 700; opacity: 0.6; }
+    .section-title { font-size: 1.05rem; font-weight: 700; margin: 0.2rem 0 0.25rem; }
+    .section-desc { font-size: 0.8rem; color: var(--ink-mid); line-height: 1.55; }
+    .chevron { font-size: 1.2rem; color: var(--ink-mid); margin-left: 1rem; transition: transform 0.2s; flex-shrink: 0; margin-top: 0.3rem; }
+    .chevron.open { transform: rotate(180deg); }
+    .section-body { display: none; padding: 0.8rem 1rem 1.2rem; }
+    .section-body.open { display: block; }
+
+    /* Badges */
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em; font-family: 'IBM Plex Mono', monospace; }
+    .badge-spec { background: var(--spec-bg); color: var(--spec-color); }
+    .badge-report { background: var(--report-bg); color: var(--report-color); }
+    .badge-mech { background: var(--mech-bg); color: var(--mech-color); }
+    .badge-live { background: #E8F5E9; color: #2E7D32; }
+    .badge-dev { background: #FFF3E0; color: #E65100; }
+    .badge-planned { background: #F0E8DA; color: #8A7C6A; }
+
+    /* ── ITEM ROWS ── */
+    .item-row { border: 1px solid var(--paper-dark); border-radius: 5px; overflow: hidden; background: #fff; margin-bottom: 0.5rem; }
+    .item-header { display: flex; align-items: center; justify-content: space-between; padding: 0.65rem 0.9rem; cursor: pointer; transition: background 0.12s; }
+    .item-header:hover { background: var(--cream); }
+    .item-seq { font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; font-weight: 700; opacity: 0.5; margin-right: 0.7rem; }
+    .item-name { font-size: 0.85rem; font-weight: 600; flex: 1; }
+    .item-meta { display: flex; align-items: center; gap: 0.5rem; }
+    .item-count { font-size: 0.7rem; color: var(--ink-mid); }
+    .item-detail { display: none; padding: 0 0.9rem 0.8rem; border-top: 1px solid #f0e8da; }
+    .item-detail.open { display: block; }
+    .detail-row { display: flex; align-items: flex-start; gap: 0.5rem; padding: 0.2rem 0; font-size: 0.78rem; color: var(--ink-mid); border-bottom: 1px solid #f0e8da; }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-num { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; color: var(--ink-mid); width: 1.4rem; flex-shrink: 0; padding-top: 0.15rem; opacity: 0.6; }
+    .detail-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin: 0.5rem 0 0.25rem; }
+    .output-note { margin-top: 0.5rem; padding: 0.4rem 0.7rem; background: #f5f0e8; border-radius: 3px; font-size: 0.72rem; color: var(--ink-mid); font-style: italic; }
+
+    /* Calculator link box */
+    .calc-link { margin-top: 0.5rem; padding: 0.5rem 0.7rem; border-radius: 3px; display: flex; align-items: center; justify-content: space-between; }
+    .calc-link.live { background: rgba(46,125,50,0.06); border: 1px dashed #2E7D32; }
+    .calc-link.planned { background: rgba(230,81,0,0.06); border: 1px dashed #E65100; }
+    .calc-link-label { font-size: 0.65rem; color: var(--ink-mid); text-transform: uppercase; letter-spacing: 0.05em; }
+    .calc-link-name { font-size: 0.78rem; font-weight: 600; }
+    .appendix-note { margin-top: 0.25rem; padding: 0.25rem 0.7rem; font-size: 0.72rem; color: var(--ink-mid); font-style: italic; }
+
+    /* Appendix cards */
+    .app-card { background: #fff; border: 1px solid var(--paper-dark); border-left: 4px solid var(--mech-color); border-radius: 5px; padding: 0.8rem 1rem; margin-bottom: 0.6rem; }
+    .app-card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.25rem; }
+    .app-seq { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; font-weight: 700; color: var(--mech-color); padding: 2px 8px; background: rgba(160,82,45,0.07); border-radius: 3px; }
+    .app-name { font-size: 0.88rem; font-weight: 700; margin-left: 0.5rem; }
+    .app-desc { font-size: 0.78rem; color: var(--ink-mid); line-height: 1.55; margin: 0.25rem 0 0.4rem 0.25rem; }
+    .app-calc { font-size: 0.65rem; color: var(--ink-mid); text-transform: uppercase; letter-spacing: 0.05em; padding-left: 0.25rem; }
+    .app-calc span { font-size: 0.78rem; font-weight: 600; color: var(--mech-color); text-transform: none; letter-spacing: 0; }
+
+    /* Cascade note */
+    .cascade-note { margin-top: 1rem; padding: 0.7rem 1rem; background: #FFF3E0; border-radius: 4px; border: 1px solid rgba(184,134,11,0.25); }
+    .cascade-note-title { font-size: 0.7rem; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.25rem; }
+    .cascade-note p { font-size: 0.78rem; color: var(--ink-mid); line-height: 1.6; }
+
+    /* Delivery format */
+    .delivery-box { background: var(--cream); border: 1px solid var(--paper-dark); border-radius: 8px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+    .delivery-title { font-size: 0.78rem; font-weight: 700; color: var(--rust); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.8rem; }
+    .delivery-item { padding: 0.7rem 1rem; background: #fff; border-radius: 5px; border: 1px solid var(--paper-dark); margin-bottom: 0.6rem; }
+    .delivery-item-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.15rem; }
+    .delivery-item p { font-size: 0.78rem; color: var(--ink-mid); line-height: 1.55; }
+
+    /* Footer */
+    .page-footer { text-align: center; padding: 1rem 0 0; border-top: 1px solid var(--paper-dark); font-size: 0.72rem; color: var(--ink-mid); }
+    .page-footer span { font-family: 'IBM Plex Mono', monospace; }
+
+    /* ── Back link ── */
+    .back-link { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--gold); font-size: 0.82rem; font-weight: 600; text-decoration: none; margin-bottom: 1.2rem; transition: gap 0.2s; }
+    .back-link:hover { gap: 0.7rem; color: var(--gold-bright); }
+
+    @media (max-width: 700px) { .content-wrap { padding: 1.2rem 0.5rem 2rem; } .page-hero { padding: 2rem 6% 1.8rem; } }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="/">PipingPro Academy</a>
+  <div class="nav-links">
+    <a href="courses.html">Courses</a>
+    <a href="calculators.html">Calculators</a>
+    <a href="guides.html" class="hide-m">Technical Articles</a>
+    <a href="/#author" class="hide-m">About</a>
+    <a href="/#pricing">Membership</a>
+    <a href="/awards.html" class="hide-m">Awards</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="page-hero">
+  <p class="hero-eyebrow">PipingPro Academy — Engineering Toolkit</p>
+  <h1>Onshore Pipeline Engineering</h1>
+  <p class="hero-sub">Design &amp; Construction Analysis</p>
+
+  <div class="arch-box"><span class="c-gold">┌─ Deliverable Architecture ───────────────────────────────────┐</span>
+│                                                              │
+│  <span class="c-spec">01 SPECIFICATIONS</span>          Word templates, fillable sections      │
+│     5 documents              grey example text, user replaces     │
+│                                                              │
+│  <span class="c-rpt">02 DESIGN REPORTS</span>          Word report + calculator appendix      │
+│     8 reports                narrative body + calc output          │
+│                                                              │
+│  <span class="c-mech">03 MECHANICAL DESIGN</span>       Word report + 5 calc appendices        │
+│     1 consolidated report    design data cascades to all calcs     │
+│                                                              │
+<span class="c-gold">├──────────────────────────────────────────────────────────────┤</span>
+│  All outputs: .docx │ Calcs: interactive web → appendix PDF  │
+<span class="c-gold">└──────────────────────────────────────────────────────────────┘</span></div>
+
+  <div class="hero-stats">
+    <div><div class="hero-stat-n" style="color:var(--spec-color)">5</div><div class="hero-stat-l">Specifications</div></div>
+    <div><div class="hero-stat-n" style="color:var(--report-color)">8</div><div class="hero-stat-l">Design Reports</div></div>
+    <div><div class="hero-stat-n" style="color:var(--mech-color)">5</div><div class="hero-stat-l">Mech Design Appendices</div></div>
+    <div><div class="hero-stat-n" style="color:var(--gold)">10/18</div><div class="hero-stat-l">Live / Total</div></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="content-wrap">
+
+  <a class="back-link" href="/">&larr; Back to Home</a>
+
+  <!-- ═══════════════ SECTION 01: SPECIFICATIONS ═══════════════ -->
+  <div class="section-card" id="sec-specs">
+    <div class="section-header spec-h" onclick="toggleSection('specs')">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <span class="section-num" style="color:var(--spec-color)">SECTION 01</span>
+          <span class="badge badge-spec">SPECIFICATION</span>
+        </div>
+        <div class="section-title">Specifications</div>
+        <div class="section-desc">Each specification is a Word (.docx) file with a professional Table of Contents. Every section contains an empty input box pre-filled with example text in grey italics — the user replaces the example with their project-specific data. No calculators, just structured engineering documents.</div>
+      </div>
+      <span class="chevron" id="chev-specs">▾</span>
+    </div>
+    <div class="section-body" id="body-specs">
+
+      <!-- 1.1 -->
+      <div class="item-row">
+        <div class="item-header" onclick="toggleItem(this)">
+          <div style="display:flex;align-items:center;flex:1"><span class="item-seq" style="color:var(--spec-color)">1.1</span><span class="item-name">Pipeline Design Basis</span></div>
+          <div class="item-meta"><span class="item-count">16 sections</span><span class="badge badge-planned">PLANNED</span><span class="chevron">▾</span></div>
+        </div>
+        <div class="item-detail">
+          <div class="detail-row"><span class="detail-num">01</span>Project Description &amp; Scope</div>
+          <div class="detail-row"><span class="detail-num">02</span>Design Codes &amp; Standards</div>
+          <div class="detail-row"><span class="detail-num">03</span>Design Life</div>
+          <div class="detail-row"><span class="detail-num">04</span>Pipeline Route Description</div>
+          <div class="detail-row"><span class="detail-num">05</span>Design Conditions (Pressure, Temperature)</div>
+          <div class="detail-row"><span class="detail-num">06</span>Operating Conditions</div>
+          <div class="detail-row"><span class="detail-num">07</span>Fluid Properties &amp; Composition</div>
+          <div class="detail-row"><span class="detail-num">08</span>Material Selection Philosophy</div>
+          <div class="detail-row"><span class="detail-num">09</span>Corrosion Allowance &amp; Strategy</div>
+          <div class="detail-row"><span class="detail-num">10</span>Environmental Data (Ambient, Soil, Seismic)</div>
+          <div class="detail-row"><span class="detail-num">11</span>Geotechnical Data</div>
+          <div class="detail-row"><span class="detail-num">12</span>Pipeline Classification &amp; Design Factors</div>
+          <div class="detail-row"><span class="detail-num">13</span>Crossings &amp; Special Features</div>
+          <div class="detail-row"><span class="detail-num">14</span>Pigging Requirements</div>
+          <div class="detail-row"><span class="detail-num">15</span>Testing &amp; Pre-commissioning Philosophy</div>
+          <div class="detail-row"><span class="detail-num">16</span>HAZOP / Safety Requirements</div>
+          <div class="output-note">Output: .docx — Each section has an empty text box with grey example text that the user replaces with project-specific data.</div>
+        </div>
+      </div>
+
+      <!-- 1.2 -->
+      <div class="item-row">
+        <div class="item-header" onclick="toggleItem(this)">
+          <div style="display:flex;align-items:center;flex:1"><span class="item-seq" style="color:var(--spec-color)">1.2</span><span class="item-name">Flow Assurance Basis of Design</span></div>
+          <div class="item-meta"><span class="item-count">13 sections</span><span class="badge badge-planned">PLANNED</span><span class="chevron">▾</span></div>
+        </div>
+        <div class="item-detail">
+          <div class="detail-row"><span class="detail-num">01</span>Fluid Characterisation</div>
+          <div class="detail-row"><span class="detail-num">02</span>Flow Rates (Min / Normal / Max / Turndown)</div>
+          <div class="detail-row"><span class="detail-num">03</span>Hydraulic Design Philosophy</div>
+          <div class="detail-row"><span class="detail-num">04</span>Pipeline Sizing Criteria</div>
+          <div class="detail-row"><span class="detail-num">05</span>Pressure Drop Requirements</div>
+          <div class="detail-row"><span class="detail-num">06</span>Velocity Limits (Erosional / Min Entrainment)</div>
+          <div class="detail-row"><span class="detail-num">07</span>Flow Regime Assessment</div>
+          <div class="detail-row"><span class="detail-num">08</span>Liquid Holdup &amp; Slug Analysis</div>
+          <div class="detail-row"><span class="detail-num">09</span>Thermal Profile &amp; Heat Transfer</div>
+          <div class="detail-row"><span class="detail-num">10</span>Wax / Hydrate / Scale Screening</div>
+          <div class="detail-row"><span class="detail-num">11</span>Corrosion Screening (CO₂ / H₂S)</div>
+          <div class="detail-row"><span class="detail-num">12</span>Surge / Water Hammer Assessment</div>
+          <div class="detail-row"><span class="detail-num">13</span>Transient Operations (Start-up / Shutdown / Blowdown)</div>
+          <div class="output-note">Output: .docx — Each section has an empty text box with grey example text that the user replaces with project-specific data.</div>
+        </div>
+      </div>
+
+      <!-- 1.3 -->
+      <div class="item-row">
+        <div class="item-header" onclick="toggleItem(this)">
+          <div style="display:flex;align-items:center;flex:1"><span class="item-seq" style="color:var(--spec-color)">1.3</span><span class="item-name">Population Density Index Report</span></div>
+          <div class="item-meta"><span class="item-count">10 sections</span><span class="badge badge-planned">PLANNED</span><span class="chevron">▾</span></div>
+        </div>
+        <div class="item-detail">
+          <div class="detail-row"><span class="detail-num">01</span>Applicable Code &amp; Edition</div>
+          <div class="detail-row"><span class="detail-num">02</span>Route Corridor Definition</div>
+          <div class="detail-row"><span class="detail-num">03</span>Class Location Unit (CLU) Methodology</div>
+          <div class="detail-row"><span class="detail-num">04</span>Building Count per CLU (200m corridor)</div>
+          <div class="detail-row"><span class="detail-num">05</span>Location Class Assignment per KP</div>
+          <div class="detail-row"><span class="detail-num">06</span>Design Factor Table per Class</div>
+          <div class="detail-row"><span class="detail-num">07</span>Change-in-Class Assessment</div>
+          <div class="detail-row"><span class="detail-num">08</span>Population Growth Projections</div>
+          <div class="detail-row"><span class="detail-num">09</span>Class Location Map</div>
+          <div class="detail-row"><span class="detail-num">10</span>Summary Table &amp; Recommendations</div>
+          <div class="output-note">Output: .docx — Each section has an empty text box with grey example text that the user replaces with project-specific data.</div>
+        </div>
+      </div>
+
+      <!-- 1.4 -->
+      <div class="item-row">
+        <div class="item-header" onclick="toggleItem(this)">
+          <div style="display:flex;align-items:center;flex:1"><span class="item-seq" style="color:var(--spec-color)">1.4</span><span class="item-name">Line Pipe Specification</span></div>
+          <div class="item-meta"><span class="item-count">14 sections</span><span class="badge badge-planned">PLANNED</span><span class="chevron">▾</span></div>
+        </div>
+        <div class="item-detail">
+          <div class="detail-row"><span class="detail-num">01</span>Scope &amp; Applicability</div>
+          <div class="detail-row"><span class="detail-num">02</span>Referenced Standards</div>
+          <div class="detail-row"><span class="detail-num">03</span>Line Pipe Grade &amp; PSL Level</div>
+          <div class="detail-row"><span class="detail-num">04</span>Manufacturing Process (Seamless / SAW / ERW)</div>
+          <div class="detail-row"><span class="detail-num">05</span>Delivery Condition (Q&amp;T / TMCP / Normalised)</div>
+          <div class="detail-row"><span class="detail-num">06</span>Chemical Composition Requirements</div>
+          <div class="detail-row"><span class="detail-num">07</span>Mechanical Properties (SMYS / SMTS / Elongation)</div>
+          <div class="detail-row"><span class="detail-num">08</span>Supplementary Requirements — Sour Service (HIC / SSC / SSCC)</div>
+          <div class="detail-row"><span class="detail-num">09</span>Supplementary Requirements — Fracture Toughness (CVN / DWTT)</div>
+          <div class="detail-row"><span class="detail-num">10</span>Dimensional Tolerances (OD / WT / Length)</div>
+          <div class="detail-row"><span class="detail-num">11</span>Surface Condition &amp; Inspection</div>
+          <div class="detail-row"><span class="detail-num">12</span>Coating Specification (FBE / 3LPE / 3LPP)</div>
+          <div class="detail-row"><span class="detail-num">13</span>Marking &amp; Traceability</div>
+          <div class="detail-row"><span class="detail-num">14</span>Documentation &amp; Certification (EN 10204 3.2)</div>
+          <div class="output-note">Output: .docx — Each section has an empty text box with grey example text that the user replaces with project-specific data.</div>
+        </div>
+      </div>
+
+      <!-- 1.5 -->
+      <div class="item-row">
+        <div class="item-header" onclick="toggleItem(this)">
+          <div style="display:flex;align-items:center;flex:1"><span class="item-seq" style="color:var(--spec-color)">1.5</span><span class="item-name">Barred Tee Specification</span></div>
+          <div class="item-meta"><span class="item-count">11 sections</span><span class="badge badge-planned">PLANNED</span><span class="chevron">▾</span></div>
+        </div>
+        <div class="item-detail">
+          <div class="detail-row"><span class="detail-num">01</span>Scope &amp; Applicability</div>
+          <div class="detail-row"><span class="detail-num">02</span>Referenced Standards</div>
+          <div class="detail-row"><span class="detail-num">03</span>Header &amp; Branch Size Matrix</div>
+          <div class="detail-row"><span class="detail-num">04</span>Pressure Rating &amp; Design Conditions</div>
+          <div class="detail-row"><span class="detail-num">05</span>Material Specification &amp; Matching</div>
+          <div class="detail-row"><span class="detail-num">06</span>Bar Plate Design Requirements</div>
+          <div class="detail-row"><span class="detail-num">07</span>Dimensional Requirements</div>
+          <div class="detail-row"><span class="detail-num">08</span>Welding Requirements (Butt Weld / Branch Weld)</div>
+          <div class="detail-row"><span class="detail-num">09</span>NDT Requirements</div>
+          <div class="detail-row"><span class="detail-num">10</span>Coating Requirements</div>
+          <div class="detail-row"><span class="detail-num">11</span>Testing &amp; Certification</div>
+          <div class="output-note">Output: .docx — Each section has an empty text box with grey example text that the user replaces with project-specific data.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════ SECTION 02: DESIGN REPORTS ═══════════════ -->
+  <div class="section-card" id="sec-reports">
+    <div class="section-header report-h" onclick="toggleSection('reports')">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <span class="section-num" style="color:var(--report-color)">SECTION 02</span>
+          <span class="badge badge-report">DESIGN REPORT</span>
+        </div>
+        <div class="section-title">Pipeline Design Reports</div>
+        <div class="section-desc">Each design report is a Word (.docx) file with standard engineering report structure: Introduction, Scope, References, Design Data, Methodology, Results Summary, Recommendations. The calculation detail is generated by the linked PipingPro calculator and attached as an appendix.</div>
+      </div>
+      <span class="chevron" id="chev-reports">▾</span>
+    </div>
+    <div class="section-body" id="body-reports">
+
+      <!-- 2.1 Wall Thickness -->
+      <div class="item-row"><div class="item-header" onclick="toggleItem(this)"><div style="display:flex;align-items:center;flex:1"><span class="item-seq" style="color:var(--report-color)">2.1</span><span class="item-name">Wall Thickness Calculation Report</span></div><div class="item-meta"><span class="badge badge-live">LIVE</span><span class="chevron">▾</span></div></div><div class="item-detail"><div class="detail-label" style="color:var(--report-color)">Report Body Sections</div><div class="detail-row"><span class="detail-num">01</span>Introduction &amp; Scope</div><div class="detail-row"><span class="detail-num">02</span>Design Codes &amp; References</div><div class="detail-row"><span class="detail-num">03</span>Design Data (Pressure, Temperature, Material, Location Class)</div><div class="detail-row"><span class="detail-num">04</span>Methodology — Barlow Formula with Code Factors</div><div class="detail-row"><span class="detail-num">05</span>Results Summary Table (per pipeline segment / location class)</div><div class="detail-row"><span class="detail-num">06</span>Selected Wall Thickness vs Calculated</div><div class="detail-row"><span class="detail-num">07</span>Recommendations</div><div class="calc-link live"><div><span class="calc-link-label">Linked Calculator → </span><span class="calc-link-name">Wall Thickness Calculator (B31.4 / B31.8 / ISO 13623)</span></div><span class="badge badge-live">LIVE</span></div><div class="appendix-note">Appendix A — Wall Thickness Calculation Sheets</div></div></div>
+
+      <!-- 2.2 Pipeline Crossing -->
+      <div class="item-row"><div class="item-header" onclick="toggleItem(this)"><div style="display:flex;align-items:center;flex:1"><span class="item-seq" style="color:var(--report-color)">2.2</span><span class="item-name">Pipeline Crossing Calculation Report</span></div><div class="item-meta"><span class="badge badge-live">LIVE</span><span class="chevron">▾</span></div></div><div class="item-detail"><div class="detail-label" style="color:var(--report-color)">Report Body Sections</div><div class="detail-row"><span class="detail-num">01</span>Introduction &amp; Scope</div><div class="detail-row"><span class="detail-num">02</span>Crossing Inventory (Road / Rail / Water / Pipeline)</div><div class="detail-row"><span class="detail-num">03</span>Design Data per Crossing</div><div class="detail-row"><span class="detail-num">04</span>Methodology — Casing Design, Depth of Cover</div><div class="detail-row"><span class="detail-num">05</span>Results Summary per Crossing Type</div><div class="detail-row"><span class="detail-num">06</span>Recommendations &amp; Special Requirements</div><div class="calc-link live"><div><span class="calc-link-label">Linked Calculator → </span><span class="calc-link-name">Pipeline Crossing Design Calculator</span></div><span class="badge badge-live">LIVE</span></div><div class="appendix-note">Appendix A — Crossing Design Calculation Sheets</div></div></div>
+
+      <!-- 2.3 Ductile Fracture -->
+      <div class="item-row"><div class="item-header" onclick="toggleItem(this)"><div style="display:flex;align-items:center;flex:1"><span class="item-seq" style="color:var(--report-color)">2.3</span><span class="item-name">Ductile Fracture Propagation Report</span></div><div class="item-meta"><span class="badge badge-live">LIVE</span><span class="chevron">▾</span></div></div><div class="item-detail"><div class="detail-label" style="color:var(--report-color)">Report Body Sections</div><div class="detail-row"><span class="detail-num">01</span>Introduction &amp; Scope</div><div class="detail-row"><span class="detail-num">02</span>Design Data (Fluid, Pressure, Temperature, Material)</div><div class="detail-row"><span class="detail-num">03</span>Methodology — Battelle Two-Curve Method</div><div class="detail-row"><span class="detail-num">04</span>Decompression Wavespeed Analysis</div><div class="detail-row"><span class="detail-num">05</span>Arrest Toughness Requirements</div><div class="detail-row"><span class="detail-num">06</span>Charpy Energy Specification</div><div class="detail-row"><span class="detail-num">07</span>Results Summary</div><div class="detail-row"><span class="detail-num">08</span>Recommendations (Crack Arrestors if required)</div><div class="calc-link live"><div><span class="calc-link-label">Linked Calculator → </span><span class="calc-link-name">Ductile Fracture Propagation Calculator (BTCM)</span></div><span class="badge badge-live">LIVE</span></div><div class="appendix-note">Appendix A — Fracture Propagation Calculation Sheets</div></div></div>
+
+      <!-- 2.4 Cathodic Protection -->
+      <div class="item-row"><div class="item-header" onclick="toggleItem(this)"><div style="display:flex;align-items:center;flex:1"><span class="item-seq" style="color:var(--report-color)">2.4</span><span class="item-name">Cathodic Protection Design Report</span></div><div class="item-meta"><span class="badge badge-live">LIVE</span><span class="chevron">▾</span></div></div><div class="item-detail"><div class="detail-label" style="color:var(--report-color)">Report Body Sections</div><div class="detail-row"><span class="detail-num">01</span>Introduction &amp; Scope</div><div class="detail-row"><span class="detail-num">02</span>Design Data (Pipeline, Soil Resistivity, Coating)</div><div class="detail-row"><span class="detail-num">03</span>CP System Selection (Galvanic / Impressed Current)</div><div class="detail-row"><span class="detail-num">04</span>Anode Design &amp; Spacing</div><div class="detail-row"><span class="detail-num">05</span>Current Demand Calculation</div><div class="detail-row"><span class="detail-num">06</span>Anode Life Assessment</div><div class="detail-row"><span class="detail-num">07</span>Results Summary</div><div class="detail-row"><span class="detail-num">08</span>Recommendations</div><div class="calc-link live"><div><span class="calc-link-label">Linked Calculator → </span><span class="calc-link-name">Cathodic Protection Design Calculator (SAES-X-400)</span></div><span class="badge badge-live">LIVE</span></div><div class="appendix-note">Appendix A — CP Design Calculation Sheets</div></div></div>
+
+      <!-- 2.5 Coating -->
+      <div class="item-row"><div class="item-header" onclick="toggleItem(this)"><div style="display:flex;align-items:center;flex:1"><span class="item-seq" style="color:var(--report-color)">2.5</span><span class="item-name">Pipeline Coating and Painting Report</span></div><div class="item-meta"><span class="badge badge-planned">PLANNED</span><span class="chevron">▾</span></div></div><div class="item-detail"><div class="detail-label" style="color:var(--report-color)">Report Body Sections</div><div class="detail-row"><span class="detail-num">01</span>Introduction &amp; Scope</div><div class="detail-row"><span class="detail-num">02</span>Corrosion Classification (Atmospheric / Buried / Submerged)</div><div class="detail-row"><span class="detail-num">03</span>External Coating Selection (FBE / 3LPE / 3LPP)</div><div class="detail-row"><span class="detail-num">04</span>Internal Coating/Lining (if applicable)</div><div class="detail-row"><span class="detail-num">05</span>Above Ground Section — Paint System Selection</div><div class="detail-row"><span class="detail-num">06</span>Field Joint Coating Specification</div><div class="detail-row"><span class="detail-num">07</span>Thermal Insulation (if applicable)</div><div class="detail-row"><span class="detail-num">08</span>Coating Repair Procedure</div><div class="detail-row"><span class="detail-num">09</span>Inspection &amp; Testing Requirements</div><div class="detail-row"><span class="detail-num">10</span>Recommendations</div></div></div>
+
+      <!-- 2.6 Construction Schedule -->
+      <div class="item-row"><div class="item-header" onclick="toggleItem(this)"><div style="display:flex;align-items:center;flex:1"><span class="item-seq" style="color:var(--report-color)">2.6</span><span class="item-name">Pipeline Construction Schedule Calculation</span></div><div class="item-meta"><span class="badge badge-planned">PLANNED</span><span class="chevron">▾</span></div></div><div class="item-detail"><div class="detail-label" style="color:var(--report-color)">Report Body Sections</div><div class="detail-row"><span class="detail-num">01</span>Introduction &amp; Scope</div><div class="detail-row"><span class="detail-num">02</span>Pipeline Data (Dia-Inch, Length, Terrain)</div><div class="detail-row"><span class="detail-num">03</span>Crew Composition &amp; Productivity Rates</div><div class="detail-row"><span class="detail-num">04</span>Construction Sequence Breakdown</div><div class="detail-row"><span class="detail-num"></span><span style="padding-left:1rem">— Grading &amp; Trenching</span></div><div class="detail-row"><span class="detail-num"></span><span style="padding-left:1rem">— Stringing &amp; Bending</span></div><div class="detail-row"><span class="detail-num"></span><span style="padding-left:1rem">— Welding (Mainline + Tie-ins)</span></div><div class="detail-row"><span class="detail-num"></span><span style="padding-left:1rem">— Girth Weld Coating (Field Joint)</span></div><div class="detail-row"><span class="detail-num"></span><span style="padding-left:1rem">— Lowering-in</span></div><div class="detail-row"><span class="detail-num"></span><span style="padding-left:1rem">— Backfilling</span></div><div class="detail-row"><span class="detail-num"></span><span style="padding-left:1rem">— Hydrostatic Testing</span></div><div class="detail-row"><span class="detail-num"></span><span style="padding-left:1rem">— Pre-commissioning &amp; Drying</span></div><div class="detail-row"><span class="detail-num">05</span>Duration Calculation per Activity</div><div class="detail-row"><span class="detail-num">06</span>Critical Path &amp; Float Analysis</div><div class="detail-row"><span class="detail-num">07</span>Results Summary — Overall Schedule</div><div class="detail-row"><span class="detail-num">08</span>Recommendations</div><div class="calc-link planned"><div><span class="calc-link-label">Linked Calculator → </span><span class="calc-link-name">Construction Schedule Calculator</span></div><span class="badge badge-planned">PLANNED</span></div><div class="appendix-note">Appendix A — Schedule Calculation &amp; Gantt</div></div></div>
+
+      <!-- 2.7 Dia-Inch -->
+      <div class="item-row"><div class="item-header" onclick="toggleItem(this)"><div style="display:flex;align-items:center;flex:1"><span class="item-seq" style="color:var(--report-color)">2.7</span><span class="item-name">Dia-Inch Calculation Report</span></div><div class="item-meta"><span class="badge badge-live">LIVE</span><span class="chevron">▾</span></div></div><div class="item-detail"><div class="detail-label" style="color:var(--report-color)">Report Body Sections</div><div class="detail-row"><span class="detail-num">01</span>Introduction &amp; Scope</div><div class="detail-row"><span class="detail-num">02</span>Pipeline Inventory (Size × Length)</div><div class="detail-row"><span class="detail-num">03</span>Dia-Inch Calculation per Segment</div><div class="detail-row"><span class="detail-num">04</span>Total Project Dia-Inch</div><div class="detail-row"><span class="detail-num">05</span>Crew Multiplier Assessment</div><div class="detail-row"><span class="detail-num">06</span>Results Summary</div><div class="calc-link live"><div><span class="calc-link-label">Linked Calculator → </span><span class="calc-link-name">Dia-Inch Estimator (Crew Multiplier)</span></div><span class="badge badge-live">LIVE</span></div><div class="appendix-note">Appendix A — Dia-Inch Calculation Sheets</div></div></div>
+
+      <!-- 2.8 Sectional Volume -->
+      <div class="item-row"><div class="item-header" onclick="toggleItem(this)"><div style="display:flex;align-items:center;flex:1"><span class="item-seq" style="color:var(--report-color)">2.8</span><span class="item-name">Sectional Volume Calculation Report</span></div><div class="item-meta"><span class="badge badge-live">LIVE</span><span class="chevron">▾</span></div></div><div class="item-detail"><div class="detail-label" style="color:var(--report-color)">Report Body Sections</div><div class="detail-row"><span class="detail-num">01</span>Introduction &amp; Scope</div><div class="detail-row"><span class="detail-num">02</span>Pipeline Profile &amp; Sections</div><div class="detail-row"><span class="detail-num">03</span>Volume Calculation per Test Section</div><div class="detail-row"><span class="detail-num">04</span>Water Supply &amp; Disposal Requirements</div><div class="detail-row"><span class="detail-num">05</span>Results Summary</div><div class="detail-row"><span class="detail-num">06</span>Recommendations</div><div class="calc-link live"><div><span class="calc-link-label">Linked Calculator → </span><span class="calc-link-name">Sectional Volume Calculator</span></div><span class="badge badge-live">LIVE</span></div><div class="appendix-note">Appendix A — Volume Calculation Sheets</div></div></div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════ SECTION 03: MECHANICAL DESIGN REPORT ═══════════════ -->
+  <div class="section-card" id="sec-mech">
+    <div class="section-header mech-h" onclick="toggleSection('mech')">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <span class="section-num" style="color:var(--mech-color)">SECTION 03</span>
+          <span class="badge badge-mech">MECHANICAL DESIGN</span>
+        </div>
+        <div class="section-title">Pipeline Mechanical Design Report</div>
+        <div class="section-desc">The flagship deliverable — a single consolidated mechanical design report per the Saudi Aramco ACCS format. Word document with report body (Introduction, Design Data, Methodology, Summary of Results, Recommendations), plus five detailed calculation appendices generated by the linked calculators.</div>
+      </div>
+      <span class="chevron" id="chev-mech">▾</span>
+    </div>
+    <div class="section-body" id="body-mech">
+
+      <!-- Report Body ToC -->
+      <div class="detail-label" style="color:var(--mech-color)">Report Body — Table of Contents</div>
+      <div style="background:var(--cream);border:1px solid var(--paper-dark);border-radius:5px;padding:0.7rem 1rem;margin-bottom:1rem;">
+        <div class="detail-row"><span class="detail-num">01</span>Project Introduction &amp; Scope</div>
+        <div class="detail-row"><span class="detail-num">02</span>Abbreviations</div>
+        <div class="detail-row"><span class="detail-num">03</span>References (Codes, Project Documents)</div>
+        <div class="detail-row"><span class="detail-num">04</span>Design Data — Material Properties</div>
+        <div class="detail-row"><span class="detail-num">05</span>Design Data — Pipeline Design Conditions (per segment)</div>
+        <div class="detail-row"><span class="detail-num">06</span>Design Data — Content Density</div>
+        <div class="detail-row"><span class="detail-num">07</span>Design Data — Soil Cover</div>
+        <div class="detail-row"><span class="detail-num">08</span>Design Data — Soil Properties</div>
+        <div class="detail-row"><span class="detail-num">09</span>Methodology — Combined Stress &amp; Minimum Bending Radius</div>
+        <div class="detail-row"><span class="detail-num">10</span>Methodology — Upheaval Buckling Check</div>
+        <div class="detail-row"><span class="detail-num">11</span>Methodology — Buoyancy Assessment</div>
+        <div class="detail-row"><span class="detail-num">12</span>Methodology — Anchor Loads</div>
+        <div class="detail-row"><span class="detail-num">13</span>Methodology — Buried Pipe Soil Interaction</div>
+        <div class="detail-row"><span class="detail-num">14</span>Summary of Results — Minimum Elastic Bending Radius Table</div>
+        <div class="detail-row"><span class="detail-num">15</span>Summary of Results — Upheaval Buckling Table</div>
+        <div class="detail-row"><span class="detail-num">16</span>Summary of Results — Buoyancy Assessment Table</div>
+        <div class="detail-row"><span class="detail-num">17</span>Summary of Results — Anchor Force Table</div>
+        <div class="detail-row"><span class="detail-num">18</span>Recommendations</div>
+        <div class="detail-row"><span class="detail-num">19</span>Hold Register</div>
+      </div>
+
+      <!-- Appendices -->
+      <div class="detail-label" style="color:var(--mech-color)">Calculation Appendices</div>
+
+      <div class="app-card"><div class="app-card-head"><div style="display:flex;align-items:center"><span class="app-seq">App-1</span><span class="app-name">Wall Thickness Calculation</span></div><span class="badge badge-live">LIVE</span></div><div class="app-desc">Per B31.4/B31.8. Hoop stress, calculated vs selected WT, D/t ratio, acceptance criteria. One sheet per pipeline segment × location class.</div><div class="app-calc">Calculator: <span>Wall Thickness Calculator</span></div></div>
+
+      <div class="app-card"><div class="app-card-head"><div style="display:flex;align-items:center"><span class="app-seq">App-2</span><span class="app-name">Pipeline Combined Stress Calculation including Anchor Force</span></div><span class="badge badge-dev">DEV</span></div><div class="app-desc">Hoop, longitudinal (4 load cases), Von Mises equivalent stress, available bending margin, minimum elastic bend radius (in multiples of OD), hydrotest stress check, and anchor force for both thermal cases.</div><div class="app-calc">Calculator: <span>Combined Stress &amp; Bending Radius Calculator</span></div></div>
+
+      <div class="app-card"><div class="app-card-head"><div style="display:flex;align-items:center"><span class="app-seq">App-3</span><span class="app-name">Upheaval Buckling Analysis</span></div><span class="badge badge-live">LIVE</span></div><div class="app-desc">Dr. K. Peters / 3R method. Compressive restraining force, buckling length, uplift resistance from soil, allowable overbend angle for 5 burial depth cases. Elastic vs cold/field bend classification.</div><div class="app-calc">Calculator: <span>Upheaval Buckling Calculator</span></div></div>
+
+      <div class="app-card"><div class="app-card-head"><div style="display:flex;align-items:center"><span class="app-seq">App-4</span><span class="app-name">Buoyancy and On-Bottom Stability Analysis</span></div><span class="badge badge-planned">PLANNED</span></div><div class="app-desc">Pipeline weight vs displaced water. Three conditions: installed (dry soil backfill), installed (submerged soil), construction (empty, no backfill). FOS ≥ 1.1. Additional counterweight if required.</div><div class="app-calc">Calculator: <span>Buoyancy / On-Bottom Stability Calculator</span></div></div>
+
+      <div class="app-card"><div class="app-card-head"><div style="display:flex;align-items:center"><span class="app-seq">App-5</span><span class="app-name">Buried Pipe Soil Interaction</span></div><span class="badge badge-live">LIVE</span></div><div class="app-desc">ALA 2001 methodology. Axial soil spring, lateral bearing capacity, vertical uplift/bearing, pipe-soil force-displacement curves for restrained and unrestrained sections.</div><div class="app-calc">Calculator: <span>Buried Pipe Soil Interaction Calculator</span></div></div>
+
+      <!-- Cascade Note -->
+      <div class="cascade-note">
+        <div class="cascade-note-title">Data Cascade</div>
+        <p>Design data is entered once in the report body (Section 4). The same inputs — pipe OD, material grade, design pressure, temperatures, soil properties — automatically cascade to all five appendix calculators. Wall thickness from App-1 feeds into Combined Stress (App-2), which feeds into Upheaval Buckling (App-3) and Buoyancy (App-4). One set of inputs, one consolidated output.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════ DELIVERY FORMAT SUMMARY ═══════════════ -->
+  <div class="delivery-box">
+    <div class="delivery-title">Delivery Format — All Sections</div>
+
+    <div class="delivery-item" style="border-left:4px solid var(--spec-color)">
+      <div class="delivery-item-title" style="color:var(--spec-color)">Specifications (Section 01)</div>
+      <p><strong>Format:</strong> Word .docx template<br><strong>How it works:</strong> Structured ToC → each section has an empty box with grey placeholder example text → user deletes/replaces with project data</p>
+    </div>
+
+    <div class="delivery-item" style="border-left:4px solid var(--report-color)">
+      <div class="delivery-item-title" style="color:var(--report-color)">Design Reports (Section 02)</div>
+      <p><strong>Format:</strong> Word .docx report + calculator appendix<br><strong>How it works:</strong> Report body: Introduction, Design Data, Methodology, Results, Recommendations (fillable) → linked calculator generates appendix with detailed calculation sheets</p>
+    </div>
+
+    <div class="delivery-item" style="border-left:4px solid var(--mech-color)">
+      <div class="delivery-item-title" style="color:var(--mech-color)">Mechanical Design Report (Section 03)</div>
+      <p><strong>Format:</strong> Word .docx report + 5× calculator appendices<br><strong>How it works:</strong> Single report body with design data entered once → cascades to all 5 calculator appendices → auto-assembled into one consolidated document (Saudi Aramco 2616-ENG style)</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="page-footer">
+    PipingPro Academy — Onshore Pipeline Engineering: Design &amp; Construction Analysis<br>
+    <span>pipingpro-academy.com</span>
+  </div>
+
+</div>
+
+<script>
+function toggleSection(id) {
+  var body = document.getElementById('body-' + id);
+  var chev = document.getElementById('chev-' + id);
+  var isOpen = body.classList.contains('open');
+  // Close all sections first
+  ['specs', 'reports', 'mech'].forEach(function(s) {
+    document.getElementById('body-' + s).classList.remove('open');
+    document.getElementById('chev-' + s).classList.remove('open');
+  });
+  if (!isOpen) {
+    body.classList.add('open');
+    chev.classList.add('open');
+  }
+}
+
+function toggleItem(headerEl) {
+  var detail = headerEl.nextElementSibling;
+  var chevron = headerEl.querySelector('.chevron');
+  var isOpen = detail.classList.contains('open');
+  detail.classList.toggle('open');
+  if (chevron) chevron.classList.toggle('open');
+}
+
+// Open Mechanical Design by default
+document.addEventListener('DOMContentLoaded', function() {
+  toggleSection('mech');
+});
+</script>
+
+</body>
+</html>
