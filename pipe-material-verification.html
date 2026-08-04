@@ -322,6 +322,12 @@
             <option value="B423-825">B423 UNS N08825 (Incoloy 825)</option>
             <option value="B619-C276">B619 UNS N10276 (Hastelloy C-276)</option>
           </optgroup>
+          <optgroup label="Clad Pipe (CS Backing + CRA Liner)">
+            <option value="CLAD-CS-316L">CS + 316L Liner (A106 Gr.B + TP316L)</option>
+            <option value="CLAD-CS-825">CS + Incoloy 825 Liner (A106 Gr.B + 825)</option>
+            <option value="CLAD-CS-625">CS + Inconel 625 Liner (A106 Gr.B + 625)</option>
+            <option value="CLAD-LT-625">Low-Temp CS + Inconel 625 (A333 Gr.6 + 625)</option>
+          </optgroup>
         </select>
       </div>
       <div class="form-group">
@@ -724,6 +730,71 @@ const MATERIALS = {
     notes: 'Outstanding resistance to most corrosive chemicals including oxidising and reducing acids. Premium cost.',
     avoid: [],
     preferFor: ['sulfuric','sour','seawater']
+  },
+  // ── CLAD PIPE ──
+  'CLAD-CS-316L': {
+    name: 'Clad: A106 Gr.B + 316L Liner', shortName: 'CS + 316L Clad',
+    type: 'Clad Pipe (CS Backing + 316L Liner)', mfg: 'Metallurgically Bonded',
+    clad: true, backing: 'A106-B', liner: 'A312-316L',
+    smts: 415, smys: 241,
+    maxTemp: 427, minTemp: -29,
+    mdmtBase: -29,
+    naceSuitable: true, naceNote: '316L liner suitable per NACE MR0175. Backing hardness ≤ 22 HRC.',
+    stress: {
+      38:138, 100:138, 150:138, 200:132, 250:125, 300:114, 350:105, 400:90, 427:70
+    },
+    notes: 'Cost-effective clad solution. CS provides structural strength, 316L liner provides corrosion resistance. CA = 0 mm (liner acts as corrosion barrier). Common for mildly corrosive hydrocarbon, CO₂, and amine service.',
+    avoid: [],
+    preferFor: ['co2','amine','seawater','general'],
+    cladCA: 0
+  },
+  'CLAD-CS-825': {
+    name: 'Clad: A106 Gr.B + Incoloy 825 Liner', shortName: 'CS + 825 Clad',
+    type: 'Clad Pipe (CS Backing + Incoloy 825 Liner)', mfg: 'Metallurgically Bonded',
+    clad: true, backing: 'A106-B', liner: 'B423-825',
+    smts: 415, smys: 241,
+    maxTemp: 427, minTemp: -29,
+    mdmtBase: -29,
+    naceSuitable: true, naceNote: 'Incoloy 825 liner suitable per NACE MR0175. Excellent sour service resistance.',
+    stress: {
+      38:138, 100:138, 150:138, 200:132, 250:125, 300:114, 350:105, 400:90, 427:70
+    },
+    notes: 'Mid-range clad solution. CS backing for pressure containment, Incoloy 825 liner for aggressive sour and CO₂ environments. CA = 0 mm. Preferred over solid 825 for cost savings on large bore pipe.',
+    avoid: [],
+    preferFor: ['sour','co2','sulfuric','seawater'],
+    cladCA: 0
+  },
+  'CLAD-CS-625': {
+    name: 'Clad: A106 Gr.B + Inconel 625 Liner', shortName: 'CS + 625 Clad',
+    type: 'Clad Pipe (CS Backing + Inconel 625 Liner)', mfg: 'Metallurgically Bonded',
+    clad: true, backing: 'A106-B', liner: 'B444-625',
+    smts: 415, smys: 241,
+    maxTemp: 427, minTemp: -29,
+    mdmtBase: -29,
+    naceSuitable: true, naceNote: 'Inconel 625 liner provides highest sour service resistance. NACE MR0175 compliant.',
+    stress: {
+      38:138, 100:138, 150:138, 200:132, 250:125, 300:114, 350:105, 400:90, 427:70
+    },
+    notes: 'Premium clad solution. CS backing for pressure, Inconel 625 liner for the most aggressive sour, chloride, and high-temperature corrosive environments. CA = 0 mm. Significantly cheaper than solid Inconel 625 for large bore.',
+    avoid: [],
+    preferFor: ['sour','co2','sulfuric','seawater','high-temp'],
+    cladCA: 0
+  },
+  'CLAD-LT-625': {
+    name: 'Clad: A333 Gr.6 + Inconel 625 Liner', shortName: 'A333-6 + 625 Clad',
+    type: 'Clad Pipe (Low-Temp CS Backing + Inconel 625 Liner)', mfg: 'Metallurgically Bonded',
+    clad: true, backing: 'A333-6', liner: 'B444-625',
+    smts: 415, smys: 241,
+    maxTemp: 343, minTemp: -46,
+    mdmtBase: -46,
+    naceSuitable: true, naceNote: 'Inconel 625 liner for sour service. A333 Gr.6 backing impact tested to -46°C.',
+    stress: {
+      38:138, 100:138, 150:138, 200:132, 250:125, 300:114, 343:105
+    },
+    notes: 'Clad for low-temperature sour service. A333 Gr.6 backing provides impact toughness to -46°C, Inconel 625 liner provides corrosion resistance. CA = 0 mm. Common for sour gas pipelines in cold climates.',
+    avoid: [],
+    preferFor: ['sour','co2','low-temp'],
+    cladCA: 0
   }
 };
 
@@ -891,9 +962,11 @@ function runFind() {
     // Wall thickness check if NPS provided
     if (nps && PIPE_DATA[nps] && S > 0) {
       const od = PIPE_DATA[nps].od;
-      const tReq = calcMinWall(dp, od, S, 1.0, 3.0);
+      const caVal = mat.clad ? 0 : 3.0; // Clad pipe: CA = 0 (liner provides corrosion barrier)
+      const tReq = calcMinWall(dp, od, S, 1.0, caVal);
       suitability.tReq = tReq;
       suitability.od = od;
+      if (mat.clad) suitability.strengths.push('CA = 0 mm (CRA liner provides corrosion barrier)');
       // Check if any standard schedule can accommodate
       const schData = PIPE_DATA[nps].sch;
       const validSchedules = Object.entries(schData).filter(([s,t]) => t >= tReq);
@@ -909,6 +982,7 @@ function runFind() {
     // Cost scoring (approximate)
     if (mat.type === 'Carbon Steel') suitability.score += 20;
     else if (mat.type.startsWith('Low Alloy')) suitability.score += 10;
+    else if (mat.clad) suitability.score += 5; // Clad: cheaper than solid CRA, more than CS
     else if (mat.type.includes('Duplex')) suitability.score += 0;
     else if (mat.type.includes('Austenitic')) suitability.score += 5;
     else suitability.score -= 10; // Nickel alloys — expensive
@@ -1015,6 +1089,18 @@ function runVerify() {
   let overallPass = true;
   let overallWarn = false;
 
+  // Clad pipe: override CA to 0 and add info check
+  const effectiveCA = mat.clad ? 0 : ca;
+  if (mat.clad) {
+    const backingMat = MATERIALS[mat.backing];
+    const linerMat = MATERIALS[mat.liner];
+    checks.push({
+      pass: true, title: 'Clad Pipe Construction',
+      detail: `Backing: ${backingMat.name} (provides structural strength for pressure containment). Liner: ${linerMat.name} (provides corrosion resistance). Corrosion allowance = 0 mm — CRA liner acts as corrosion barrier. Wall thickness calculation based on backing material allowable stress.`,
+      clause: 'ASME B31.3 §305.2.3'
+    });
+  }
+
   // CHECK 1: Temperature range
   if (dt > mat.maxTemp) {
     checks.push({
@@ -1075,22 +1161,23 @@ function runVerify() {
   // CHECK 4: Wall thickness
   if (nps && sch && S > 0 && PIPE_DATA[nps]) {
     const od = PIPE_DATA[nps].od;
-    const tReq = calcMinWall(dp, od, S, E, ca);
+    const tReq = calcMinWall(dp, od, S, E, effectiveCA);
     const schData = PIPE_DATA[nps].sch;
     const tAvail = schData[sch];
+    const caLabel = mat.clad ? '0 mm CA (CRA liner)' : `${effectiveCA} mm CA`;
 
     if (tAvail) {
       const ratio = (tReq / tAvail * 100).toFixed(1);
       if (tReq <= tAvail) {
         checks.push({
           pass: true, title: `Wall Thickness — PASS (${ratio}% utilisation)`,
-          detail: `Required: ${tReq.toFixed(2)} mm (incl. ${ca} mm CA). Available: Sch ${sch} = ${tAvail.toFixed(2)} mm for NPS ${nps} (OD ${od} mm). Weld joint factor E = ${E}.`,
+          detail: `Required: ${tReq.toFixed(2)} mm (incl. ${caLabel}). Available: Sch ${sch} = ${tAvail.toFixed(2)} mm for NPS ${nps} (OD ${od} mm). Weld joint factor E = ${E}.`,
           clause: 'ASME B31.3 §304.1.2'
         });
       } else {
         checks.push({
           pass: false, title: `Wall Thickness — FAIL (${ratio}% utilisation)`,
-          detail: `Required: ${tReq.toFixed(2)} mm (incl. ${ca} mm CA). Available: Sch ${sch} = ${tAvail.toFixed(2)} mm. Wall thickness is insufficient — increase schedule or reduce pressure.`,
+          detail: `Required: ${tReq.toFixed(2)} mm (incl. ${caLabel}). Available: Sch ${sch} = ${tAvail.toFixed(2)} mm. Wall thickness is insufficient — increase schedule or reduce pressure.`,
           clause: 'ASME B31.3 §304.1.2'
         });
         overallPass = false;
