@@ -311,8 +311,8 @@ body{ background:#faf6ef; color:#1a1510; }
 <div class="hero">
   <div class="hero-inner">
     <div class="hero-eyebrow">Engineering Toolkits · PipingPro Academy</div>
-    <h1>Piping <em>Engineering Toolkits</em></h1>
-    <p>Professional-grade calculators for plant piping mechanical design — wall thickness, pipe weight, pressure-temperature ratings, flange &amp; valve weights, material properties, unit conversion and coating &amp; insulation — built on ASME B31.3, B16.5, B36.10 and industry-standard codes.</p>
+    <h1>Pipe Support <em>Engineering Toolkits</em></h1>
+    <p>Professional-grade calculators for pipe support engineering — support span calculation, special pipe support structural design, and trunnion support local stress analysis — built on M.W. Kellogg, ASME B31.3 and structural design codes.</p>
   </div>
 </div>
 
@@ -334,115 +334,63 @@ body{ background:#faf6ef; color:#1a1510; }
   </div>
 </div>
 
-<!-- ═══════════════ SUITE: PIPING MECHANICAL DESIGN ═══════════════ -->
-<div class="suite-view" id="suite-piping-mech">
+<!-- ═══════════════ SUITE: PIPE SUPPORT ENGINEERING ═══════════════ -->
+<div class="suite-view" id="suite-support">
   <div class="suite-header">
     <div class="suite-header-inner">
       <button class="suite-header-back" onclick="window.location.href='calculators.html'">← All Toolkits</button>
       <div class="suite-header-text">
         <div class="suite-header-eyebrow">Engineering Toolkit</div>
-        <div class="suite-header-title">Piping Mechanical Design</div>
-        <div class="suite-header-codes">ASME B31.3 · B16.5 · B36.10</div>
+        <div class="suite-header-title">Pipe Support Engineering</div>
+        <div class="suite-header-codes">M.W. Kellogg · ASME B31.3 · Structural</div>
       </div>
     </div>
   </div>
   <div class="main">
     <div class="grid">
 
-    <div class="calc-card" onclick="openModal('pw')">
-      <div class="card-img bg-teal">
-        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="45" cy="45" r="30" stroke="rgba(255,255,255,0.7)" stroke-width="3" fill="none"/><circle cx="45" cy="45" r="20" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none"/><line x1="45" y1="20" x2="45" y2="70" stroke="rgba(255,255,255,0.9)" stroke-width="2.5"/><polygon points="45,72 41,64 49,64" fill="rgba(255,255,255,0.9)"/><line x1="15" y1="45" x2="75" y2="45" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-dasharray="4 3"/></svg>
-        <span class="card-badge badge-member" id="badge-pw">✦ Free</span>
+    <div class="calc-card" onclick="openModal('ps')">
+      <div class="card-img" style="background:linear-gradient(135deg,#1a2a5a 0%,#2a4a8a 100%)">
+        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="5" y1="38" x2="85" y2="38" stroke="rgba(255,255,255,0.85)" stroke-width="5" stroke-linecap="round"/><line x1="20" y1="38" x2="20" y2="58" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round"/><line x1="70" y1="38" x2="70" y2="58" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round"/><line x1="12" y1="58" x2="28" y2="58" stroke="rgba(255,255,255,0.5)" stroke-width="3" stroke-linecap="round"/><line x1="62" y1="58" x2="78" y2="58" stroke="rgba(255,255,255,0.5)" stroke-width="3" stroke-linecap="round"/><path d="M20 38 Q45 52 70 38" stroke="rgba(255,220,100,0.9)" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-dasharray="4 2"/><line x1="20" y1="25" x2="70" y2="25" stroke="rgba(255,255,255,0.6)" stroke-width="1.2"/><polygon points="20,25 27,22 27,28" fill="rgba(255,255,255,0.6)"/><polygon points="70,25 63,22 63,28" fill="rgba(255,255,255,0.6)"/></svg>
+        <span class="card-badge badge-member" id="badge-ps">👑 Members</span>
       </div>
       <div class="card-body">
-        <div class="card-name">Pipe Weight &amp; Section Properties</div>
-        <div class="card-desc">Pipe weight per foot, fluid weight, moment of inertia, section modulus, and flow area per ASME B36.10.</div>
-        <div class="card-tags"><span class="tag">ASME B36.10</span><span class="tag">Nayyar 7th Ed.</span></div>
-        <div class="card-action"><span class="card-btn btn-open" id="btn-pw">Open Calculator →</span></div>
+        <div class="card-name">Pipe Support Span Calculator</div>
+        <div class="card-desc">Maximum allowable span between supports — stress method, deflection method &amp; natural frequency check per M.W. Kellogg / ASME B31.3. Includes layout reduction factors for L-bend and Z-bend.</div>
+        <div class="card-tags"><span class="tag">M.W. Kellogg</span><span class="tag">ASME B31.3</span><span class="tag">Span / Deflection</span></div>
+        <div class="card-action"><span class="card-btn btn-locked" id="btn-ps">👑 Members Only</span></div>
       </div>
     </div>
 
-    <div class="calc-card" onclick="openModal('wt')">
-      <div class="card-img bg-accent">
-        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="45" cy="45" r="28" stroke="rgba(255,255,255,0.8)" stroke-width="7" fill="none"/><line x1="45" y1="17" x2="45" y2="10" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/><line x1="45" y1="73" x2="45" y2="80" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/><line x1="40" y1="10" x2="50" y2="10" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/><line x1="40" y1="80" x2="50" y2="80" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/><line x1="75" y1="45" x2="62" y2="45" stroke="rgba(255,255,255,0.7)" stroke-width="2"/><polygon points="63,45 70,41 70,49" fill="rgba(255,255,255,0.7)"/></svg>
-        <span class="card-badge badge-member" id="badge-wt">✦ Free</span>
+    <div class="calc-card" onclick="openModal('ss')">
+      <div class="card-img" style="background:linear-gradient(135deg,#1a2a4a 0%,#2a4a7a 100%)">
+        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="55" x2="80" y2="55" stroke="rgba(255,255,255,0.8)" stroke-width="6" stroke-linecap="round"/><line x1="25" y1="55" x2="25" y2="30" stroke="rgba(255,255,255,0.6)" stroke-width="3" stroke-linecap="round"/><line x1="65" y1="55" x2="65" y2="30" stroke="rgba(255,255,255,0.6)" stroke-width="3" stroke-linecap="round"/><line x1="45" y1="25" x2="45" y2="55" stroke="rgba(255,255,255,0.9)" stroke-width="4" stroke-linecap="round"/><line x1="20" y1="25" x2="70" y2="25" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"/><line x1="10" y1="65" x2="80" y2="65" stroke="rgba(255,255,255,0.3)" stroke-width="2"/></svg>
+        <span class="card-badge badge-member" id="badge-ss">👑 Members</span>
       </div>
       <div class="card-body">
-        <div class="card-name">Pipe Wall Thickness</div>
-        <div class="card-desc">Minimum wall thickness per ASME B31.3 with mill tolerance, corrosion allowance, and schedule selection.</div>
-        <div class="card-tags"><span class="tag">ASME B31.3</span></div>
-        <div class="card-action"><span class="card-btn btn-open" id="btn-wt">Open Calculator →</span></div>
+        <div class="card-name">Special Pipe Support Calculator</div>
+        <div class="card-desc">Structural calculator for special pipe supports — load analysis, member sizing, and connection design for custom support configurations.</div>
+        <div class="card-tags"><span class="tag">Structural</span><span class="tag">Pipe Support</span><span class="tag">Load Analysis</span></div>
+        <div class="card-action"><span class="card-btn btn-locked" id="btn-ss">👑 Members Only</span></div>
       </div>
     </div>
 
-    <div class="calc-card" onclick="openModal('md')">
-      <div class="card-img bg-datasheet">
-        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="22" y="16" width="46" height="58" rx="3" stroke="rgba(255,255,255,0.85)" stroke-width="2.5" fill="none"/><line x1="22" y1="30" x2="68" y2="30" stroke="rgba(255,255,255,0.55)" stroke-width="1.6"/><line x1="45" y1="30" x2="45" y2="74" stroke="rgba(255,255,255,0.3)" stroke-width="1.2"/><line x1="28" y1="40" x2="40" y2="40" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/><line x1="28" y1="48" x2="40" y2="48" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/><line x1="28" y1="56" x2="40" y2="56" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/><line x1="28" y1="64" x2="40" y2="64" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/><path d="M50 66 Q57 59 61 52 Q64 47 64 41" stroke="rgba(255,220,120,0.95)" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="50" cy="66" r="1.8" fill="rgba(255,220,120,0.95)"/><circle cx="64" cy="41" r="1.8" fill="rgba(255,220,120,0.95)"/></svg>
-        <span class="card-badge badge-member" id="badge-md">✦ Free</span>
+    <div class="calc-card" onclick="openModal('tr')">
+      <div class="card-img" style="background:linear-gradient(135deg,#3a1a2a 0%,#6a2a4a 100%)">
+        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="45" x2="80" y2="45" stroke="rgba(255,255,255,0.8)" stroke-width="8" stroke-linecap="round"/><rect x="38" y="30" width="14" height="30" rx="2" fill="rgba(255,255,255,0.6)"/><line x1="45" y1="60" x2="45" y2="75" stroke="rgba(255,255,255,0.7)" stroke-width="3" stroke-linecap="round"/><line x1="35" y1="75" x2="55" y2="75" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"/><line x1="45" y1="30" x2="45" y2="15" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-dasharray="3 2"/><polygon points="45,13 41,21 49,21" fill="rgba(255,255,255,0.4)"/></svg>
+        <span class="card-badge badge-member" id="badge-tr">👑 Members</span>
       </div>
       <div class="card-body">
-        <div class="card-name">Material Property Datasheet</div>
-        <div class="card-desc">Select a material and design temperature to read SMYS, SMTS, cold &amp; hot allowable stress (Sc / Sh), thermal expansion α and modulus E per ASME B31.3.</div>
-        <div class="card-tags"><span class="tag">ASME B31.3</span><span class="tag">Sc / Sh</span><span class="tag">α / E</span></div>
-        <div class="card-action"><span class="card-btn btn-open" id="btn-md">Open Calculator →</span></div>
-      </div>
-    </div>
-
-    <div class="calc-card" onclick="openModal('uc')">
-      <div class="card-img bg-plum">
-        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="14" y="22" width="26" height="18" rx="3" stroke="rgba(255,255,255,0.85)" stroke-width="2.5" fill="none"/><rect x="50" y="50" width="26" height="18" rx="3" stroke="rgba(255,255,255,0.85)" stroke-width="2.5" fill="none"/><path d="M44 31 H62 M58 27 L62 31 L58 35" stroke="rgba(255,220,120,0.95)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M46 59 H28 M32 55 L28 59 L32 63" stroke="rgba(255,220,120,0.95)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span class="card-badge badge-member" id="badge-uc">✦ Free</span>
-      </div>
-      <div class="card-body">
-        <div class="card-name">Engineering Unit Converter</div>
-        <div class="card-desc">Fast unit conversions for piping &amp; process work — pressure, temperature, length, flow and density, with SI ⇄ US / Imperial switching.</div>
-        <div class="card-tags"><span class="tag">Unit Conversion</span><span class="tag">SI ⇄ US</span></div>
-        <div class="card-action"><span class="card-btn btn-open" id="btn-uc">Open Converter →</span></div>
-      </div>
-    </div>
-
-    <div class="calc-card" onclick="openModal('vw')">
-      <div class="card-img bg-forest">
-        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="30" cy="45" rx="16" ry="7" stroke="rgba(255,255,255,0.8)" stroke-width="2.5" fill="none"/><line x1="20" y1="38" x2="20" y2="52" stroke="rgba(255,255,255,0.55)" stroke-width="5" stroke-linecap="round"/><line x1="40" y1="38" x2="40" y2="52" stroke="rgba(255,255,255,0.55)" stroke-width="5" stroke-linecap="round"/><line x1="40" y1="45" x2="58" y2="45" stroke="rgba(255,255,255,0.7)" stroke-width="3.5"/><rect x="58" y="34" width="16" height="22" rx="2" stroke="rgba(255,255,255,0.8)" stroke-width="2.5" fill="none"/><line x1="66" y1="34" x2="66" y2="24" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round"/><line x1="60" y1="24" x2="72" y2="24" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round"/></svg>
-        <span class="card-badge badge-member" id="badge-vw">👑 Members</span>
-      </div>
-      <div class="card-body">
-        <div class="card-name">Flange &amp; Valve Weight</div>
-        <div class="card-desc">Dry weights for MTO, lifting &amp; support estimating — weld-neck, slip-on &amp; blind flanges from ASME B16.5, plus gate, globe &amp; check valve weights.</div>
-        <div class="card-tags"><span class="tag">ASME B16.5</span><span class="tag">Valve MTO</span><span class="tag">Class 150–2500</span></div>
-        <div class="card-action"><span class="card-btn btn-locked" id="btn-vw">👑 Members Only</span></div>
-      </div>
-    </div>
-
-    <div class="calc-card" onclick="openModal('mc')">
-      <div class="card-img bg-datasheet">
-        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="14" y="20" width="28" height="50" rx="3" stroke="rgba(255,255,255,0.85)" stroke-width="2.5" fill="none"/><rect x="48" y="20" width="28" height="50" rx="3" stroke="rgba(255,255,255,0.55)" stroke-width="2.5" fill="none"/><line x1="20" y1="32" x2="36" y2="32" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/><line x1="20" y1="40" x2="36" y2="40" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/><line x1="20" y1="48" x2="32" y2="48" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/><line x1="54" y1="32" x2="70" y2="32" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><line x1="54" y1="40" x2="70" y2="40" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><line x1="54" y1="48" x2="66" y2="48" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><path d="M40 60 H50 M46 56 L50 60 L46 64" stroke="rgba(255,220,120,0.95)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span class="card-badge badge-member" id="badge-mc">👑 Members</span>
-      </div>
-      <div class="card-body">
-        <div class="card-name">Material Comparison</div>
-        <div class="card-desc">Compare two materials side by side at design temperature — Sh / Sc, Sa, modulus E, expansion α and SMYS / SMTS with derived ratios and overlaid curves.</div>
-        <div class="card-tags"><span class="tag">ASME B31.3</span><span class="tag">Sh / Sc / Sa</span><span class="tag">Δα · curves</span></div>
-        <div class="card-action"><span class="card-btn btn-locked" id="btn-mc">👑 Members Only</span></div>
-      </div>
-    </div>
-
-    <div class="calc-card" onclick="openModal('ci')">
-      <div class="card-img bg-coating">
-        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="45" x2="80" y2="45" stroke="rgba(255,255,255,0.9)" stroke-width="7" stroke-linecap="round"/><rect x="10" y="36" width="70" height="18" rx="5" stroke="rgba(255,255,255,0.45)" stroke-width="2" fill="none"/><rect x="10" y="30" width="70" height="30" rx="7" stroke="rgba(255,255,255,0.20)" stroke-width="1.5" fill="none"/><path d="M22 25 Q30 20 38 25" stroke="rgba(255,220,160,0.85)" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M42 22 Q50 17 58 22" stroke="rgba(255,220,160,0.85)" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M62 25 Q70 20 78 25" stroke="rgba(255,220,160,0.85)" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
-        <span class="card-badge badge-member" id="badge-ci">👑 Members</span>
-      </div>
-      <div class="card-body">
-        <div class="card-name">Pipe Coating &amp; Insulation</div>
-        <div class="card-desc">Paint quantity per coat (litres &amp; drums) and hot insulation MTO — mineral wool, calcium silicate, aerogel and more for O&amp;G plant piping.</div>
-        <div class="card-tags"><span class="tag">ISO 12944</span><span class="tag">ASTM C547</span><span class="tag">Hot Insulation</span></div>
-        <div class="card-action"><span class="card-btn btn-locked" id="btn-ci">👑 Members Only</span></div>
+        <div class="card-name">Trunnion Support Calculator</div>
+        <div class="card-desc">Trunnion pipe support design — local stress at trunnion-to-pipe junction, weld loads, and adequacy check for vertical and horizontal loads.</div>
+        <div class="card-tags"><span class="tag">Trunnion</span><span class="tag">Local Stress</span><span class="tag">Support Design</span></div>
+        <div class="card-action"><span class="card-btn btn-locked" id="btn-tr">👑 Members Only</span></div>
       </div>
     </div>
 
     </div><!-- /grid -->
   </div><!-- /main -->
-</div><!-- /suite-piping-mech -->
+</div><!-- /suite-support -->
 
 
 <!-- ═══════════════════ UNDER CONSTRUCTION POPUP ═══════════════════ -->

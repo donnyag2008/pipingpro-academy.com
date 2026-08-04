@@ -311,8 +311,8 @@ body{ background:#faf6ef; color:#1a1510; }
 <div class="hero">
   <div class="hero-inner">
     <div class="hero-eyebrow">Engineering Toolkits · PipingPro Academy</div>
-    <h1>Piping <em>Engineering Toolkits</em></h1>
-    <p>Professional-grade calculators for plant piping mechanical design — wall thickness, pipe weight, pressure-temperature ratings, flange &amp; valve weights, material properties, unit conversion and coating &amp; insulation — built on ASME B31.3, B16.5, B36.10 and industry-standard codes.</p>
+    <h1>Piping Mechanical Design &amp; <em>Project Engineering</em></h1>
+    <p>Professional-grade calculators for plant piping — mechanical design (wall thickness, pipe weight, pressure-temperature ratings, material properties, coating &amp; insulation) and project engineering (test packs, work estimation, P&amp;ID MTO, dia-inch verification) — built on ASME B31.3, B16.5, B36.10 and industry-standard codes.</p>
   </div>
 </div>
 
@@ -341,8 +341,8 @@ body{ background:#faf6ef; color:#1a1510; }
       <button class="suite-header-back" onclick="window.location.href='calculators.html'">← All Toolkits</button>
       <div class="suite-header-text">
         <div class="suite-header-eyebrow">Engineering Toolkit</div>
-        <div class="suite-header-title">Piping Mechanical Design</div>
-        <div class="suite-header-codes">ASME B31.3 · B16.5 · B36.10</div>
+        <div class="suite-header-title">Piping Mechanical Design &amp; Project Engineering</div>
+        <div class="suite-header-codes">ASME B31.3 · B16.5 · B36.10 · AACE 18R-97 · SAES-A-004</div>
       </div>
     </div>
   </div>
@@ -437,6 +437,60 @@ body{ background:#faf6ef; color:#1a1510; }
         <div class="card-desc">Paint quantity per coat (litres &amp; drums) and hot insulation MTO — mineral wool, calcium silicate, aerogel and more for O&amp;G plant piping.</div>
         <div class="card-tags"><span class="tag">ISO 12944</span><span class="tag">ASTM C547</span><span class="tag">Hot Insulation</span></div>
         <div class="card-action"><span class="card-btn btn-locked" id="btn-ci">👑 Members Only</span></div>
+      </div>
+    </div>
+
+    <!-- ─── PROJECT ENGINEERING ─── -->
+
+    <div class="calc-card" onclick="openModal('hp')">
+      <div class="card-img" style="background:linear-gradient(135deg,#1a4a3a 0%,#2a8a6a 100%)">
+        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="25" width="50" height="40" rx="3" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" fill="none"/><line x1="20" y1="38" x2="70" y2="38" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><line x1="30" y1="48" x2="60" y2="48" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/><line x1="30" y1="55" x2="55" y2="55" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/><line x1="45" y1="65" x2="45" y2="75" stroke="rgba(255,255,255,0.6)" stroke-width="2"/><line x1="35" y1="75" x2="55" y2="75" stroke="rgba(255,255,255,0.6)" stroke-width="2"/></svg>
+        <span class="card-badge badge-member" id="badge-hp">👑 Members</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Hydro / Pneumo Test Pack</div>
+        <div class="card-desc">Test pack generator for hydrostatic and pneumatic pressure testing — test pressures, hold times, safe distance, and documentation per ASME B31.3 / SAES-A-004.</div>
+        <div class="card-tags"><span class="tag">ASME B31.3</span><span class="tag">SAES-A-004</span><span class="tag">PCC-2</span></div>
+        <div class="card-action"><span class="card-btn btn-locked" id="btn-hp">👑 Members Only</span></div>
+      </div>
+    </div>
+
+    <div class="calc-card" onclick="openModal('pe')">
+      <div class="card-img bg-purple">
+        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 12 H54 L66 24 V78 H24 Z" stroke="rgba(255,255,255,0.85)" stroke-width="3" fill="none" stroke-linejoin="round"/><path d="M54 12 V24 H66" stroke="rgba(255,255,255,0.55)" stroke-width="2" fill="none" stroke-linejoin="round"/><line x1="31" y1="35" x2="59" y2="35" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"/><line x1="31" y1="44" x2="59" y2="44" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"/><line x1="31" y1="53" x2="48" y2="53" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"/><circle cx="61" cy="61" r="13" fill="rgba(255,210,130,0.95)"/><path d="M56 55 H66 L59 61 L66 67 H56" stroke="#3a2a1a" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="card-badge badge-member" id="badge-pe">👑 Members</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Piping Work Estimator</div>
+        <div class="card-desc">Equipment-factored FEED-stage estimate of bulk piping material, deliverables and engineering man-hours for a gas plant or GOSP — accuracy classed per AACE 18R-97.</div>
+        <div class="card-tags"><span class="tag">AACE 18R-97</span><span class="tag">FEED Estimate</span><span class="tag">Man-Hours</span></div>
+        <div class="card-action"><span class="card-btn btn-locked" id="btn-pe">👑 Members Only</span></div>
+      </div>
+    </div>
+
+    <div class="calc-card" onclick="openModal('pm')">
+      <div class="card-img bg-mossy">
+        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="20" width="70" height="50" rx="3" stroke="rgba(255,255,255,0.6)" stroke-width="2" fill="none"/><line x1="10" y1="33" x2="80" y2="33" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><line x1="28" y1="20" x2="28" y2="70" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><line x1="52" y1="20" x2="52" y2="70" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><circle cx="19" cy="44" r="4" stroke="rgba(255,255,255,0.8)" stroke-width="1.5" fill="none"/><line x1="19" y1="52" x2="19" y2="62" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round"/><circle cx="40" cy="44" r="4" stroke="rgba(255,255,255,0.8)" stroke-width="1.5" fill="none"/><line x1="40" y1="52" x2="40" y2="62" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round"/></svg>
+        <span class="card-badge badge-member" id="badge-pm">👑 Members</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">P&amp;ID MTO Calculator</div>
+        <div class="card-desc">Material take-off from P&amp;IDs — AI reads title blocks, assigns drawings to areas, and aggregates instruments, equipment, lines, valves and fittings with CSV export.</div>
+        <div class="card-tags"><span class="tag">P&amp;ID</span><span class="tag">MTO</span><span class="tag">Multi-Drawing</span></div>
+        <div class="card-action"><span class="card-btn btn-locked" id="btn-pm">👑 Members Only</span></div>
+      </div>
+    </div>
+
+    <div class="calc-card" onclick="openModal('di')">
+      <div class="card-img bg-diainch">
+        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="8" y1="48" x2="40" y2="48" stroke="rgba(255,255,255,0.85)" stroke-width="9" stroke-linecap="round"/><line x1="50" y1="48" x2="82" y2="48" stroke="rgba(255,255,255,0.85)" stroke-width="9" stroke-linecap="round"/><path d="M45 39 l-3 4 l3 4 l-3 4" stroke="rgba(255,200,120,0.95)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="18" y1="36" x2="18" y2="60" stroke="rgba(255,255,255,0.55)" stroke-width="1.4"/><polygon points="18,34 15,41 21,41" fill="rgba(255,255,255,0.55)"/><polygon points="18,62 15,55 21,55" fill="rgba(255,255,255,0.55)"/><text x="50" y="26" text-anchor="middle" font-size="13" fill="rgba(255,255,255,0.9)" font-family="monospace">Ø×N</text></svg>
+        <span class="card-badge badge-member" id="badge-di">👑 Members</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Dia-Inch &amp; Change-Order Estimator</div>
+        <div class="card-desc">Weld diameter-inch take-off split between pipe rack and equipment area, converted to welding man-hours and labour cost — an independent check on contractor change-order claims.</div>
+        <div class="card-tags"><span class="tag">Dia-Inch</span><span class="tag">Welding MTO</span><span class="tag">Change Order</span></div>
+        <div class="card-action"><span class="card-btn btn-locked" id="btn-di">👑 Members Only</span></div>
       </div>
     </div>
 
