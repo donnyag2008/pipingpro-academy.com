@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pipe Material Suitability Verification — AI Tool | PipingPro Academy</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #faf6ef; --paper: #f3ede2; --paper-dark: #e8dfd0;
+      --ink: #1a1510; --ink-light: #4a3f30;
+      --gold: #b8860b; --gold-bright: #d4a017; --gold-pale: #f5e9c8;
+      --rust: #8b3a1a; --rule: #c8b89a;
+      --green: #1a6b3a; --green-bg: #e0f2e9;
+      --red: #b91c1c; --red-bg: #fde8e8;
+      --amber: #92600a; --amber-bg: #fef3cd;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif; background: var(--cream);
+      color: var(--ink); line-height: 1.7; overflow-x: hidden;
+    }
+
+    /* ── HEADER BAR ── */
+    .tool-header {
+      background: var(--ink); padding: 1.2rem 5%; border-bottom: 2px solid var(--gold);
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.8rem;
+    }
+    .tool-header-left { display: flex; align-items: center; gap: 1rem; }
+    .back-link {
+      font-size: 0.78rem; font-weight: 600; color: var(--gold-bright);
+      text-decoration: none; letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .back-link:hover { color: #fff; }
+    .tool-title {
+      font-family: 'DM Serif Display', serif; font-size: 1.15rem; color: #fff;
+    }
+    .tool-badge {
+      font-size: 0.62rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+      background: rgba(184,134,11,0.2); color: var(--gold-bright); border: 1px solid var(--gold);
+      padding: 0.2rem 0.6rem; border-radius: 20px;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .tool-container { max-width: 960px; margin: 0 auto; padding: 2.5rem 5% 4rem; }
+
+    /* ── MODE TABS ── */
+    .mode-tabs {
+      display: flex; gap: 0; margin-bottom: 2rem; border-radius: 6px; overflow: hidden;
+      border: 2px solid var(--paper-dark);
+    }
+    .mode-tab {
+      flex: 1; padding: 1rem; text-align: center; cursor: pointer;
+      font-size: 0.88rem; font-weight: 700; letter-spacing: 0.03em;
+      background: var(--paper); color: var(--ink-light); border: none;
+      font-family: 'DM Sans', sans-serif; transition: background 0.2s, color 0.2s;
+    }
+    .mode-tab.active { background: var(--ink); color: #fff; }
+    .mode-tab:hover:not(.active) { background: var(--paper-dark); }
+    .mode-tab-sub {
+      display: block; font-size: 0.72rem; font-weight: 400; margin-top: 0.2rem; opacity: 0.7;
+    }
+
+    /* ── PANELS ── */
+    .mode-panel { display: none; }
+    .mode-panel.active { display: block; }
+
+    /* ── FORM STYLES ── */
+    .form-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem 2rem;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+    .form-group.full-width { grid-column: 1 / -1; }
+    .form-label {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--ink-light);
+    }
+    .form-input, .form-select {
+      padding: 0.65rem 0.8rem; border: 1px solid var(--paper-dark); border-radius: 4px;
+      font-family: 'DM Sans', sans-serif; font-size: 0.92rem; color: var(--ink);
+      background: #fff; outline: none; transition: border-color 0.2s;
+    }
+    .form-input:focus, .form-select:focus { border-color: var(--gold); }
+    .form-select { appearance: auto; }
+    .form-hint { font-size: 0.72rem; color: var(--ink-light); font-style: italic; }
+
+    .btn-run {
+      margin-top: 1.5rem; padding: 0.85rem 2.5rem; background: var(--gold);
+      color: var(--ink); font-weight: 800; font-size: 0.92rem; letter-spacing: 0.05em;
+      text-transform: uppercase; border: none; border-radius: 4px; cursor: pointer;
+      font-family: 'DM Sans', sans-serif; transition: background 0.2s, transform 0.15s;
+    }
+    .btn-run:hover { background: var(--gold-bright); transform: translateY(-1px); }
+
+    /* ── RESULTS ── */
+    .results-area { margin-top: 2.5rem; }
+    .results-title {
+      font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: var(--ink);
+      margin-bottom: 1.5rem; padding-bottom: 0.8rem; border-bottom: 2px solid var(--gold);
+    }
+
+    /* Verdict banner */
+    .verdict {
+      padding: 1.2rem 1.5rem; border-radius: 6px; margin-bottom: 1.5rem;
+      display: flex; align-items: flex-start; gap: 1rem;
+    }
+    .verdict-icon { font-size: 1.6rem; flex-shrink: 0; margin-top: 0.1rem; }
+    .verdict-text { flex: 1; }
+    .verdict-headline {
+      font-family: 'DM Serif Display', serif; font-size: 1.15rem; margin-bottom: 0.3rem;
+    }
+    .verdict-detail { font-size: 0.88rem; line-height: 1.6; }
+    .verdict-pass { background: var(--green-bg); border: 1px solid #a3d9b1; }
+    .verdict-pass .verdict-headline { color: var(--green); }
+    .verdict-fail { background: var(--red-bg); border: 1px solid #f5a3a3; }
+    .verdict-fail .verdict-headline { color: var(--red); }
+    .verdict-warn { background: var(--amber-bg); border: 1px solid #e0c97a; }
+    .verdict-warn .verdict-headline { color: var(--amber); }
+
+    /* Check rows */
+    .check-list { display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 2rem; }
+    .check-row {
+      background: #fff; border: 1px solid var(--paper-dark); border-radius: 6px;
+      padding: 1rem 1.2rem; display: flex; align-items: flex-start; gap: 0.8rem;
+    }
+    .check-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 0.15rem; }
+    .check-body { flex: 1; }
+    .check-title { font-weight: 700; font-size: 0.88rem; margin-bottom: 0.2rem; }
+    .check-detail { font-size: 0.82rem; color: var(--ink-light); line-height: 1.6; }
+    .check-clause {
+      display: inline-block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; background: var(--gold-pale); color: var(--gold);
+      padding: 0.15rem 0.4rem; border-radius: 3px; margin-top: 0.4rem;
+    }
+
+    /* Material cards */
+    .material-card {
+      background: #fff; border: 2px solid var(--paper-dark); border-radius: 8px;
+      padding: 1.4rem 1.5rem; margin-bottom: 1rem;
+      transition: border-color 0.2s;
+    }
+    .material-card.recommended { border-color: var(--green); }
+    .material-card.acceptable { border-color: var(--gold); }
+    .material-card.not-suitable { border-color: var(--red); opacity: 0.7; }
+    .mat-header { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem; }
+    .mat-rank {
+      width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; font-size: 0.75rem; font-weight: 800; flex-shrink: 0;
+    }
+    .recommended .mat-rank { background: var(--green-bg); color: var(--green); }
+    .acceptable .mat-rank { background: var(--gold-pale); color: var(--gold); }
+    .not-suitable .mat-rank { background: var(--red-bg); color: var(--red); }
+    .mat-name {
+      font-family: 'DM Serif Display', serif; font-size: 1.1rem; color: var(--ink);
+    }
+    .mat-tag {
+      font-size: 0.62rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 0.2rem 0.5rem; border-radius: 12px; margin-left: auto;
+    }
+    .recommended .mat-tag { background: var(--green-bg); color: var(--green); }
+    .acceptable .mat-tag { background: var(--gold-pale); color: var(--gold); }
+    .not-suitable .mat-tag { background: var(--red-bg); color: var(--red); }
+    .mat-props {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.5rem; margin-bottom: 0.8rem;
+    }
+    .mat-prop {
+      font-size: 0.78rem; color: var(--ink-light);
+    }
+    .mat-prop strong { color: var(--ink); font-weight: 700; }
+    .mat-reasoning {
+      font-size: 0.82rem; color: var(--ink-light); line-height: 1.65;
+      padding-top: 0.6rem; border-top: 1px solid var(--paper-dark);
+    }
+
+    /* PDF button */
+    .btn-pdf {
+      margin-top: 1.5rem; padding: 0.7rem 2rem; background: var(--ink);
+      color: #fff; font-weight: 700; font-size: 0.82rem; letter-spacing: 0.05em;
+      text-transform: uppercase; border: none; border-radius: 4px; cursor: pointer;
+      font-family: 'DM Sans', sans-serif; transition: background 0.2s;
+    }
+    .btn-pdf:hover { background: #2a2520; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .tool-header { padding: 1rem 4%; }
+      .tool-container { padding: 1.5rem 4% 3rem; }
+      .mat-props { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="tool-header">
+  <div class="tool-header-left">
+    <a href="ai-tools.html" class="back-link">← AI Tools</a>
+    <div class="tool-title">Pipe Material Suitability Verification</div>
+  </div>
+  <span class="tool-badge">AI-Powered · ASME B31.3</span>
+</div>
+
+<div class="tool-container">
+
+  <!-- MODE TABS -->
+  <div class="mode-tabs">
+    <button class="mode-tab active" onclick="setMode('find')" id="tab-find">
+      Find the Right Material
+      <span class="mode-tab-sub">Tell me your conditions — I'll recommend materials</span>
+    </button>
+    <button class="mode-tab" onclick="setMode('verify')" id="tab-verify">
+      Verify My Selection
+      <span class="mode-tab-sub">Check if your chosen material is fit for purpose</span>
+    </button>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       MODE 1: FIND MATERIAL
+       ════════════════════════════════════════════ -->
+  <div class="mode-panel active" id="panel-find">
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Design Pressure (barg)</label>
+        <input class="form-input" type="number" id="f-dp" placeholder="e.g. 50" step="any" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Design Temperature (°C)</label>
+        <input class="form-input" type="number" id="f-dt" placeholder="e.g. 350" step="any" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Minimum Design Metal Temperature (°C)</label>
+        <input class="form-input" type="number" id="f-mdmt" placeholder="e.g. -29" step="any" />
+        <span class="form-hint">Leave blank if not applicable</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Pipe Size (NPS)</label>
+        <select class="form-select" id="f-nps">
+          <option value="">Select size</option>
+          <option value="0.5">½"</option><option value="0.75">¾"</option>
+          <option value="1">1"</option><option value="1.5">1½"</option>
+          <option value="2">2"</option><option value="3">3"</option>
+          <option value="4">4"</option><option value="6">6"</option>
+          <option value="8">8"</option><option value="10">10"</option>
+          <option value="12">12"</option><option value="14">14"</option>
+          <option value="16">16"</option><option value="18">18"</option>
+          <option value="20">20"</option><option value="24">24"</option>
+          <option value="30">30"</option><option value="36">36"</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Service Type</label>
+        <select class="form-select" id="f-service">
+          <option value="normal">Normal Fluid Service</option>
+          <option value="cat-d">Category D Fluid Service</option>
+          <option value="cat-m">Category M Fluid Service</option>
+          <option value="sour">Sour Service (H₂S — NACE MR0175)</option>
+          <option value="high-temp">High Temperature (>427°C / 800°F)</option>
+          <option value="low-temp">Low Temperature (< -29°C / -20°F)</option>
+          <option value="cyclic">Severe Cyclic Service</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Fluid / Application</label>
+        <select class="form-select" id="f-fluid">
+          <option value="general">General Hydrocarbon</option>
+          <option value="steam">Steam</option>
+          <option value="caustic">Caustic (NaOH)</option>
+          <option value="amine">Amine Service</option>
+          <option value="co2">CO₂ / Carbonic Acid</option>
+          <option value="sulfuric">Sulfuric Acid</option>
+          <option value="seawater">Seawater / Cooling Water</option>
+          <option value="hydrogen">Hydrogen Service</option>
+          <option value="oxygen">Oxygen Service</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-run" onclick="runFind()">Find Suitable Materials →</button>
+    <div class="results-area" id="results-find"></div>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       MODE 2: VERIFY MATERIAL
+       ════════════════════════════════════════════ -->
+  <div class="mode-panel" id="panel-verify">
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Material Specification</label>
+        <select class="form-select" id="v-mat">
+          <option value="">Select material</option>
+          <optgroup label="Carbon Steel">
+            <option value="A106-B">A106 Gr.B (CS Seamless Pipe)</option>
+            <option value="A333-6">A333 Gr.6 (CS Low-Temp Seamless)</option>
+            <option value="A53-B">A53 Gr.B (CS ERW/Seamless)</option>
+            <option value="API5L-B">API 5L Gr.B (CS Line Pipe)</option>
+            <option value="API5L-X52">API 5L X52 (CS Line Pipe)</option>
+            <option value="API5L-X65">API 5L X65 (CS Line Pipe)</option>
+          </optgroup>
+          <optgroup label="Low Alloy Steel">
+            <option value="A335-P5">A335 P5 (5Cr-½Mo)</option>
+            <option value="A335-P9">A335 P9 (9Cr-1Mo)</option>
+            <option value="A335-P11">A335 P11 (1¼Cr-½Mo)</option>
+            <option value="A335-P22">A335 P22 (2¼Cr-1Mo)</option>
+            <option value="A335-P91">A335 P91 (9Cr-1Mo-V)</option>
+          </optgroup>
+          <optgroup label="Stainless Steel — Austenitic">
+            <option value="A312-304">A312 TP304 (18Cr-8Ni)</option>
+            <option value="A312-304L">A312 TP304L (18Cr-8Ni Low-C)</option>
+            <option value="A312-316">A312 TP316 (16Cr-12Ni-2Mo)</option>
+            <option value="A312-316L">A312 TP316L (16Cr-12Ni-2Mo Low-C)</option>
+            <option value="A312-321">A312 TP321 (18Cr-10Ni-Ti)</option>
+            <option value="A312-347">A312 TP347 (18Cr-10Ni-Nb)</option>
+          </optgroup>
+          <optgroup label="Stainless Steel — Duplex">
+            <option value="A790-S31803">A790 UNS S31803 (2205 Duplex)</option>
+            <option value="A790-S32750">A790 UNS S32750 (2507 Super Duplex)</option>
+          </optgroup>
+          <optgroup label="Nickel Alloy">
+            <option value="B444-625">B444 UNS N06625 (Inconel 625)</option>
+            <option value="B423-825">B423 UNS N08825 (Incoloy 825)</option>
+            <option value="B619-C276">B619 UNS N10276 (Hastelloy C-276)</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Pipe Size (NPS)</label>
+        <select class="form-select" id="v-nps">
+          <option value="">Select size</option>
+          <option value="0.5">½"</option><option value="0.75">¾"</option>
+          <option value="1">1"</option><option value="1.5">1½"</option>
+          <option value="2">2"</option><option value="3">3"</option>
+          <option value="4">4"</option><option value="6">6"</option>
+          <option value="8">8"</option><option value="10">10"</option>
+          <option value="12">12"</option><option value="14">14"</option>
+          <option value="16">16"</option><option value="18">18"</option>
+          <option value="20">20"</option><option value="24">24"</option>
+          <option value="30">30"</option><option value="36">36"</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Design Pressure (barg)</label>
+        <input class="form-input" type="number" id="v-dp" placeholder="e.g. 50" step="any" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Design Temperature (°C)</label>
+        <input class="form-input" type="number" id="v-dt" placeholder="e.g. 350" step="any" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Minimum Design Metal Temperature (°C)</label>
+        <input class="form-input" type="number" id="v-mdmt" placeholder="e.g. -29" step="any" />
+        <span class="form-hint">Leave blank if not applicable</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Schedule / Wall Thickness</label>
+        <select class="form-select" id="v-sch">
+          <option value="">Select schedule</option>
+          <option value="5S">5S</option><option value="10S">10S</option>
+          <option value="10">10</option><option value="20">20</option>
+          <option value="30">30</option><option value="STD">STD</option>
+          <option value="40">40</option><option value="60">60</option>
+          <option value="80">80 (XS)</option><option value="100">100</option>
+          <option value="120">120</option><option value="140">140</option>
+          <option value="160">160</option><option value="XXS">XXS</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Corrosion Allowance (mm)</label>
+        <input class="form-input" type="number" id="v-ca" placeholder="e.g. 3.0" step="any" value="3.0" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Service Type</label>
+        <select class="form-select" id="v-service">
+          <option value="normal">Normal Fluid Service</option>
+          <option value="cat-d">Category D Fluid Service</option>
+          <option value="cat-m">Category M Fluid Service</option>
+          <option value="sour">Sour Service (H₂S — NACE MR0175)</option>
+          <option value="high-temp">High Temperature (>427°C / 800°F)</option>
+          <option value="low-temp">Low Temperature (< -29°C / -20°F)</option>
+          <option value="cyclic">Severe Cyclic Service</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Weld Joint Factor (E)</label>
+        <select class="form-select" id="v-weld">
+          <option value="1.0">1.0 — Seamless</option>
+          <option value="0.85">0.85 — ERW (examined)</option>
+          <option value="0.80">0.80 — Electric Fusion Welded</option>
+          <option value="0.60">0.60 — Furnace Butt Welded</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Fluid / Application</label>
+        <select class="form-select" id="v-fluid">
+          <option value="general">General Hydrocarbon</option>
+          <option value="steam">Steam</option>
+          <option value="caustic">Caustic (NaOH)</option>
+          <option value="amine">Amine Service</option>
+          <option value="co2">CO₂ / Carbonic Acid</option>
+          <option value="sulfuric">Sulfuric Acid</option>
+          <option value="seawater">Seawater / Cooling Water</option>
+          <option value="hydrogen">Hydrogen Service</option>
+          <option value="oxygen">Oxygen Service</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-run" onclick="runVerify()">Verify Material Selection →</button>
+    <div class="results-area" id="results-verify"></div>
+  </div>
+
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+//  MATERIAL DATABASE — ASME B31.3 Table A-1 (key materials)
+//  Allowable stress values in MPa at temperature (°C)
+// ════════════════════════════════════════════════════════════════
+const MATERIALS = {
+  'A106-B': {
+    name: 'ASTM A106 Gr.B', shortName: 'A106 Gr.B',
+    type: 'Carbon Steel', mfg: 'Seamless',
+    smts: 415, smys: 241,
+    maxTemp: 427, minTemp: -29,
+    mdmtBase: -29,
+    naceSuitable: true, naceNote: 'Suitable per NACE MR0175 with hardness ≤ 22 HRC',
+    stress: {
+      38:138, 100:138, 150:138, 200:132, 250:125, 300:114, 350:105, 400:90, 427:70
+    },
+    notes: 'Most common carbon steel pipe. Workhorse material for general hydrocarbon service up to 427°C.',
+    avoid: ['sulfuric','caustic_high','oxygen'],
+    preferFor: ['general','steam','amine','co2']
+  },
+  'A333-6': {
+    name: 'ASTM A333 Gr.6', shortName: 'A333 Gr.6',
+    type: 'Carbon Steel', mfg: 'Seamless',
+    smts: 415, smys: 241,
+    maxTemp: 343, minTemp: -46,
+    mdmtBase: -46,
+    naceSuitable: true, naceNote: 'Suitable per NACE MR0175 with hardness ≤ 22 HRC. Normalised condition required.',
+    stress: {
+      38:138, 100:138, 150:138, 200:132, 250:125, 300:114, 343:105
+    },
+    notes: 'Low-temperature carbon steel. Impact tested to -46°C. Used where MDMT is below -29°C.',
+    avoid: ['sulfuric','oxygen'],
+    preferFor: ['general','low-temp']
+  },
+  'A53-B': {
+    name: 'ASTM A53 Gr.B', shortName: 'A53 Gr.B',
+    type: 'Carbon Steel', mfg: 'ERW/Seamless',
+    smts: 415, smys: 241,
+    maxTemp: 400, minTemp: -29,
+    mdmtBase: -29,
+    naceSuitable: true, naceNote: 'ERW type suitable per NACE MR0175 with hardness ≤ 22 HRC',
+    stress: {
+      38:138, 100:138, 150:138, 200:132, 250:125, 300:114, 350:105, 400:90
+    },
+    notes: 'General purpose CS pipe, available ERW or seamless. For utility and low-pressure service.',
+    avoid: ['sulfuric','caustic','oxygen','hydrogen'],
+    preferFor: ['general']
+  },
+  'API5L-B': {
+    name: 'API 5L Gr.B (PSL 2)', shortName: 'API 5L Gr.B',
+    type: 'Carbon Steel', mfg: 'Seamless/LSAW',
+    smts: 415, smys: 241,
+    maxTemp: 232, minTemp: -29,
+    mdmtBase: -29,
+    naceSuitable: true, naceNote: 'PSL 2 with Annex H for sour service',
+    stress: {
+      38:138, 100:138, 150:138, 200:132, 232:125
+    },
+    notes: 'Pipeline grade. Primarily for liquid and gas transportation pipelines per B31.4/B31.8.',
+    avoid: ['sulfuric','oxygen'],
+    preferFor: ['general','co2']
+  },
+  'API5L-X52': {
+    name: 'API 5L X52 (PSL 2)', shortName: 'API 5L X52',
+    type: 'Carbon Steel', mfg: 'Seamless/LSAW',
+    smts: 455, smys: 359,
+    maxTemp: 232, minTemp: -29,
+    mdmtBase: -29,
+    naceSuitable: true, naceNote: 'PSL 2 with Annex H for sour service',
+    stress: {
+      38:152, 100:152, 150:152, 200:145, 232:137
+    },
+    notes: 'Higher strength pipeline grade. Allows thinner wall for same pressure.',
+    avoid: ['sulfuric','oxygen'],
+    preferFor: ['general','co2']
+  },
+  'API5L-X65': {
+    name: 'API 5L X65 (PSL 2)', shortName: 'API 5L X65',
+    type: 'Carbon Steel', mfg: 'Seamless/LSAW',
+    smts: 531, smys: 448,
+    maxTemp: 232, minTemp: -29,
+    mdmtBase: -29,
+    naceSuitable: true, naceNote: 'PSL 2 with Annex H. Hardness control critical for sour.',
+    stress: {
+      38:177, 100:177, 150:177, 200:169, 232:160
+    },
+    notes: 'High strength pipeline grade. Common for long-distance gas pipelines.',
+    avoid: ['sulfuric','oxygen'],
+    preferFor: ['general','co2']
+  },
+  'A335-P5': {
+    name: 'ASTM A335 P5', shortName: 'A335 P5',
+    type: 'Low Alloy (5Cr-½Mo)', mfg: 'Seamless',
+    smts: 415, smys: 207,
+    maxTemp: 593, minTemp: -29,
+    mdmtBase: -29,
+    naceSuitable: true, naceNote: 'Suitable per NACE MR0175 with PWHT and hardness ≤ 22 HRC',
+    stress: {
+      38:118, 100:118, 150:118, 200:114, 250:110, 300:110, 350:110, 400:107, 450:97, 500:76, 550:55, 593:34
+    },
+    notes: 'Chrome-moly for high-temperature service. Good sulfidation resistance up to 593°C.',
+    avoid: ['caustic','sulfuric'],
+    preferFor: ['general','steam','hydrogen','high-temp']
+  },
+  'A335-P9': {
+    name: 'ASTM A335 P9', shortName: 'A335 P9',
+    type: 'Low Alloy (9Cr-1Mo)', mfg: 'Seamless',
+    smts: 415, smys: 207,
+    maxTemp: 593, minTemp: -29,
+    mdmtBase: -29,
+    naceSuitable: true, naceNote: 'Suitable per NACE MR0175 with PWHT and hardness ≤ 22 HRC',
+    stress: {
+      38:118, 100:118, 150:118, 200:114, 250:110, 300:110, 350:110, 400:105, 450:93, 500:72, 550:52, 593:31
+    },
+    notes: 'Higher chromium than P5. Better oxidation and sulfidation resistance. Used in refinery heater tube piping.',
+    avoid: ['caustic','sulfuric'],
+    preferFor: ['general','steam','hydrogen','high-temp']
+  },
+  'A335-P11': {
+    name: 'ASTM A335 P11', shortName: 'A335 P11',
+    type: 'Low Alloy (1¼Cr-½Mo)', mfg: 'Seamless',
+    smts: 415, smys: 207,
+    maxTemp: 593, minTemp: -29,
+    mdmtBase: -29,
+    naceSuitable: true, naceNote: 'Suitable per NACE MR0175 with PWHT and hardness ≤ 22 HRC',
+    stress: {
+      38:118, 100:118, 150:118, 200:114, 250:110, 300:110, 350:110, 400:110, 450:103, 500:83, 550:59, 593:37
+    },
+    notes: 'First step up from carbon steel for elevated temperature. Retains strength better than A106 above 400°C.',
+    avoid: ['caustic','sulfuric'],
+    preferFor: ['general','steam','hydrogen','high-temp']
+  },
+  'A335-P22': {
+    name: 'ASTM A335 P22', shortName: 'A335 P22',
+    type: 'Low Alloy (2¼Cr-1Mo)', mfg: 'Seamless',
+    smts: 415, smys: 207,
+    maxTemp: 593, minTemp: -29,
+    mdmtBase: -29,
+    naceSuitable: true, naceNote: 'Suitable per NACE MR0175 with PWHT and hardness ≤ 22 HRC',
+    stress: {
+      38:118, 100:118, 150:118, 200:114, 250:110, 300:110, 350:110, 400:110, 450:103, 500:83, 550:59, 593:37
+    },
+    notes: 'Higher Cr than P11. Better hydrogen and sulfidation resistance. Common in refinery high-temp/high-pressure service.',
+    avoid: ['caustic','sulfuric'],
+    preferFor: ['general','steam','hydrogen','high-temp']
+  },
+  'A335-P91': {
+    name: 'ASTM A335 P91', shortName: 'A335 P91',
+    type: 'Low Alloy (9Cr-1Mo-V)', mfg: 'Seamless',
+    smts: 585, smys: 415,
+    maxTemp: 593, minTemp: -29,
+    mdmtBase: -29,
+    naceSuitable: false, naceNote: 'Generally NOT recommended for sour service — high hardness difficult to control',
+    stress: {
+      38:159, 100:159, 150:155, 200:150, 250:147, 300:145, 350:143, 400:138, 450:127, 500:107, 550:72, 593:43
+    },
+    notes: 'High-strength creep-resistant alloy. Allows significantly thinner walls at high temperature. Requires strict PWHT control.',
+    avoid: ['caustic','sulfuric','sour'],
+    preferFor: ['steam','high-temp']
+  },
+  'A312-304': {
+    name: 'ASTM A312 TP304', shortName: 'A312 TP304',
+    type: 'Austenitic SS (18Cr-8Ni)', mfg: 'Seamless/Welded',
+    smts: 515, smys: 205,
+    maxTemp: 816, minTemp: -254,
+    mdmtBase: -254,
+    naceSuitable: true, naceNote: 'Suitable per NACE MR0175. Solution annealed condition.',
+    stress: {
+      38:138, 100:110, 150:101, 200:93, 250:86, 300:81, 350:76, 400:72, 450:69, 500:66, 550:63, 600:59, 650:55, 700:38, 750:24, 816:14
+    },
+    notes: 'Standard austenitic stainless. Excellent cryogenic properties. Susceptible to chloride SCC above 60°C.',
+    avoid: ['seawater'],
+    preferFor: ['general','caustic','low-temp','oxygen']
+  },
+  'A312-304L': {
+    name: 'ASTM A312 TP304L', shortName: 'A312 TP304L',
+    type: 'Austenitic SS (18Cr-8Ni Low-C)', mfg: 'Seamless/Welded',
+    smts: 485, smys: 170,
+    maxTemp: 427, minTemp: -254,
+    mdmtBase: -254,
+    naceSuitable: true, naceNote: 'Suitable per NACE MR0175. Solution annealed condition.',
+    stress: {
+      38:115, 100:95, 150:88, 200:81, 250:75, 300:71, 350:67, 400:64, 427:62
+    },
+    notes: 'Low-carbon version of 304. Better intergranular corrosion resistance in welded condition. Lower allowable stress than 304.',
+    avoid: ['seawater'],
+    preferFor: ['general','caustic','low-temp','oxygen']
+  },
+  'A312-316': {
+    name: 'ASTM A312 TP316', shortName: 'A312 TP316',
+    type: 'Austenitic SS (16Cr-12Ni-2Mo)', mfg: 'Seamless/Welded',
+    smts: 515, smys: 205,
+    maxTemp: 816, minTemp: -254,
+    mdmtBase: -254,
+    naceSuitable: true, naceNote: 'Suitable per NACE MR0175. Solution annealed condition.',
+    stress: {
+      38:138, 100:112, 150:104, 200:95, 250:88, 300:83, 350:79, 400:75, 450:72, 500:69, 550:66, 600:63, 650:59, 700:41, 750:26, 816:15
+    },
+    notes: 'Mo addition gives better pitting/crevice resistance than 304. Standard choice for seawater-adjacent and mildly corrosive service.',
+    avoid: [],
+    preferFor: ['general','caustic','seawater','amine','low-temp','oxygen']
+  },
+  'A312-316L': {
+    name: 'ASTM A312 TP316L', shortName: 'A312 TP316L',
+    type: 'Austenitic SS (16Cr-12Ni-2Mo Low-C)', mfg: 'Seamless/Welded',
+    smts: 485, smys: 170,
+    maxTemp: 427, minTemp: -254,
+    mdmtBase: -254,
+    naceSuitable: true, naceNote: 'Suitable per NACE MR0175. Solution annealed condition.',
+    stress: {
+      38:115, 100:97, 150:90, 200:83, 250:77, 300:73, 350:69, 400:66, 427:64
+    },
+    notes: 'Low-carbon 316. Better intergranular corrosion resistance. Most common SS for welded process piping in corrosive service.',
+    avoid: [],
+    preferFor: ['general','caustic','seawater','amine','co2','low-temp','oxygen']
+  },
+  'A312-321': {
+    name: 'ASTM A312 TP321', shortName: 'A312 TP321',
+    type: 'Austenitic SS (18Cr-10Ni-Ti)', mfg: 'Seamless/Welded',
+    smts: 515, smys: 205,
+    maxTemp: 816, minTemp: -254,
+    mdmtBase: -254,
+    naceSuitable: true, naceNote: 'Suitable per NACE MR0175. Solution annealed condition.',
+    stress: {
+      38:138, 100:115, 150:103, 200:92, 250:85, 300:81, 350:77, 400:74, 450:71, 500:68, 550:66, 600:64, 650:62, 700:45, 750:28, 816:16
+    },
+    notes: 'Ti-stabilised austenitic. Resists sensitisation. Preferred over 304/304L for sustained service 425–816°C.',
+    avoid: [],
+    preferFor: ['general','steam','high-temp']
+  },
+  'A312-347': {
+    name: 'ASTM A312 TP347', shortName: 'A312 TP347',
+    type: 'Austenitic SS (18Cr-10Ni-Nb)', mfg: 'Seamless/Welded',
+    smts: 515, smys: 205,
+    maxTemp: 816, minTemp: -254,
+    mdmtBase: -254,
+    naceSuitable: true, naceNote: 'Suitable per NACE MR0175. Solution annealed condition.',
+    stress: {
+      38:138, 100:117, 150:108, 200:97, 250:89, 300:85, 350:81, 400:77, 450:75, 500:72, 550:70, 600:67, 650:65, 700:48, 750:30, 816:17
+    },
+    notes: 'Nb-stabilised austenitic. Similar to 321 but higher creep strength. Used in refinery high-temperature piping.',
+    avoid: [],
+    preferFor: ['general','steam','high-temp','hydrogen']
+  },
+  'A790-S31803': {
+    name: 'ASTM A790 UNS S31803', shortName: '2205 Duplex',
+    type: 'Duplex SS (22Cr-5Ni-3Mo)', mfg: 'Seamless/Welded',
+    smts: 620, smys: 450,
+    maxTemp: 315, minTemp: -46,
+    mdmtBase: -46,
+    naceSuitable: true, naceNote: 'Suitable per NACE MR0175. Solution annealed. Max 232°C for sour service.',
+    stress: {
+      38:172, 100:157, 150:148, 200:140, 250:135, 300:132, 315:131
+    },
+    notes: 'High strength, excellent chloride SCC resistance. Cost-effective for seawater, produced water, CO₂ service. Max temp limited.',
+    avoid: ['steam','high-temp'],
+    preferFor: ['seawater','co2','general','sour']
+  },
+  'A790-S32750': {
+    name: 'ASTM A790 UNS S32750', shortName: '2507 Super Duplex',
+    type: 'Super Duplex SS (25Cr-7Ni-4Mo)', mfg: 'Seamless/Welded',
+    smts: 795, smys: 550,
+    maxTemp: 315, minTemp: -46,
+    mdmtBase: -46,
+    naceSuitable: true, naceNote: 'Suitable per NACE MR0175. Max 232°C for sour service.',
+    stress: {
+      38:207, 100:190, 150:179, 200:170, 250:163, 300:159, 315:157
+    },
+    notes: 'Highest corrosion resistance among standard duplex grades. For aggressive chloride and sour environments.',
+    avoid: ['steam','high-temp'],
+    preferFor: ['seawater','co2','sour']
+  },
+  'B444-625': {
+    name: 'ASTM B444 UNS N06625', shortName: 'Inconel 625',
+    type: 'Nickel Alloy (Ni-Cr-Mo)', mfg: 'Seamless',
+    smts: 827, smys: 414,
+    maxTemp: 593, minTemp: -254,
+    mdmtBase: -254,
+    naceSuitable: true, naceNote: 'Suitable per NACE MR0175. Solution annealed condition.',
+    stress: {
+      38:193, 100:176, 150:168, 200:161, 250:155, 300:150, 350:147, 400:145, 450:143, 500:139, 550:126, 593:103
+    },
+    notes: 'Premium corrosion-resistant alloy. Exceptional in aggressive sour, chloride, and high-temperature environments. Very expensive.',
+    avoid: [],
+    preferFor: ['sour','seawater','co2','sulfuric','high-temp']
+  },
+  'B423-825': {
+    name: 'ASTM B423 UNS N08825', shortName: 'Incoloy 825',
+    type: 'Nickel Alloy (Ni-Fe-Cr-Mo)', mfg: 'Seamless',
+    smts: 586, smys: 241,
+    maxTemp: 538, minTemp: -254,
+    mdmtBase: -254,
+    naceSuitable: true, naceNote: 'Suitable per NACE MR0175. Stabilised grade.',
+    stress: {
+      38:148, 100:131, 150:124, 200:117, 250:113, 300:110, 350:108, 400:107, 450:106, 500:103, 538:90
+    },
+    notes: 'Cost-effective nickel alloy. Good resistance to sulfuric/phosphoric acid and sour gas. Between SS316 and Inconel 625.',
+    avoid: [],
+    preferFor: ['sour','sulfuric','co2','seawater']
+  },
+  'B619-C276': {
+    name: 'ASTM B619 UNS N10276', shortName: 'Hastelloy C-276',
+    type: 'Nickel Alloy (Ni-Mo-Cr)', mfg: 'Welded',
+    smts: 690, smys: 283,
+    maxTemp: 538, minTemp: -254,
+    mdmtBase: -254,
+    naceSuitable: true, naceNote: 'Suitable per NACE MR0175. Solution annealed.',
+    stress: {
+      38:157, 100:139, 150:131, 200:124, 250:120, 300:117, 350:114, 400:112, 450:109, 500:107, 538:99
+    },
+    notes: 'Outstanding resistance to most corrosive chemicals including oxidising and reducing acids. Premium cost.',
+    avoid: [],
+    preferFor: ['sulfuric','sour','seawater']
+  }
+};
+
+// ── PIPE OD & WALL THICKNESS (ASME B36.10/B36.19 — common sizes) ──
+const PIPE_DATA = {
+  '0.5':  {od:21.3,  sch:{STD:2.77,'40':2.77,'80':3.73,'160':4.78}},
+  '0.75': {od:26.7,  sch:{STD:2.87,'40':2.87,'80':3.91,'160':5.56}},
+  '1':    {od:33.4,  sch:{STD:3.38,'40':3.38,'80':4.55,'160':6.35}},
+  '1.5':  {od:48.3,  sch:{STD:3.68,'40':3.68,'80':5.08,'160':7.14}},
+  '2':    {od:60.3,  sch:{STD:3.91,'40':3.91,'80':5.54,'160':8.74}},
+  '3':    {od:88.9,  sch:{STD:5.49,'40':5.49,'80':7.62,'160':11.13}},
+  '4':    {od:114.3, sch:{'5S':1.65,'10S':2.11,'10':2.11,STD:6.02,'40':6.02,'80':8.56,'120':11.13,'160':13.49,XXS:17.12}},
+  '6':    {od:168.3, sch:{'5S':1.65,'10S':2.77,'10':2.77,STD:7.11,'40':7.11,'80':10.97,'120':14.27,'160':18.26,XXS:21.95}},
+  '8':    {od:219.1, sch:{'5S':1.65,'10S':2.77,'10':2.77,'20':6.35,'30':7.04,STD:8.18,'40':8.18,'60':10.31,'80':12.70,'100':15.09,'120':18.26,'140':20.62,'160':23.01,XXS:22.23}},
+  '10':   {od:273.1, sch:{'5S':1.65,'10S':3.40,'10':3.40,'20':6.35,'30':7.80,STD:9.27,'40':9.27,'60':12.70,'80':15.09,'100':18.26,'120':21.44,'140':25.40,'160':28.58,XXS:25.40}},
+  '12':   {od:323.9, sch:{'5S':1.65,'10S':3.96,'10':3.96,'20':6.35,'30':8.38,STD:9.53,'40':10.31,'60':14.27,'80':17.48,'100':21.44,'120':25.40,'140':28.58,'160':33.32,XXS:25.40}},
+  '14':   {od:355.6, sch:{'5S':1.65,'10S':3.96,'10':3.96,'20':7.92,'30':9.53,STD:9.53,'40':11.13,'60':15.09,'80':19.05,'100':23.83,'120':27.79,'140':31.75,'160':35.71}},
+  '16':   {od:406.4, sch:{'5S':1.65,'10S':4.19,'10':4.19,'20':7.92,'30':9.53,STD:9.53,'40':12.70,'60':16.66,'80':21.44,'100':26.19,'120':30.96,'140':36.53,'160':40.49}},
+  '18':   {od:457.2, sch:{'5S':1.65,'10S':4.19,'10':4.19,'20':7.92,STD:9.53,'30':11.13,'40':14.27,'60':19.05,'80':23.83,'100':29.36,'120':34.93,'140':39.67,'160':45.24}},
+  '20':   {od:508.0, sch:{'5S':1.65,'10S':4.78,'10':4.78,'20':9.53,STD:9.53,'30':12.70,'40':15.09,'60':20.62,'80':26.19,'100':32.54,'120':38.10,'140':44.45,'160':50.01}},
+  '24':   {od:609.6, sch:{'5S':1.65,'10S':5.54,'10':5.54,'20':9.53,STD:9.53,'30':14.27,'40':17.48,'60':24.61,'80':30.96,'100':38.89,'120':46.02,'140':52.37,'160':59.54}},
+  '30':   {od:762.0, sch:{'5S':1.65,'10S':6.35,'10':6.35,'20':12.70,STD:9.53,'30':15.88}},
+  '36':   {od:914.4, sch:{'5S':1.65,'10S':6.35,'10':6.35,'20':12.70,STD:9.53,'30':15.88,'40':19.05}}
+};
+
+// ════════════════════════════════════════════════════════════════
+//  ENGINEERING LOGIC
+// ════════════════════════════════════════════════════════════════
+
+function getAllowableStress(matKey, tempC) {
+  const m = MATERIALS[matKey];
+  if (!m || tempC > m.maxTemp) return null;
+  const temps = Object.keys(m.stress).map(Number).sort((a,b) => a-b);
+  if (tempC <= temps[0]) return m.stress[temps[0]];
+  if (tempC >= temps[temps.length-1]) return m.stress[temps[temps.length-1]];
+  for (let i = 0; i < temps.length - 1; i++) {
+    if (tempC >= temps[i] && tempC <= temps[i+1]) {
+      const frac = (tempC - temps[i]) / (temps[i+1] - temps[i]);
+      return m.stress[temps[i]] + frac * (m.stress[temps[i+1]] - m.stress[temps[i]]);
+    }
+  }
+  return null;
+}
+
+function calcMinWall(dp_barg, od_mm, S_mpa, E, ca_mm) {
+  const P = dp_barg * 0.1; // barg to MPa
+  const Y = 0.4; // B31.3 coefficient for t < D/6
+  const W = 1.0; // weld strength reduction factor
+  const tm = (P * od_mm) / (2 * (S_mpa * E * W + P * Y));
+  return tm + ca_mm; // add corrosion allowance
+}
+
+function getFluidWarnings(matKey, fluid) {
+  const m = MATERIALS[matKey];
+  const warnings = [];
+  if (fluid === 'caustic' && m.type === 'Carbon Steel') {
+    warnings.push('Carbon steel in caustic service requires PWHT to prevent caustic SCC (NACE SP0403). Max temperature ~93°C without special precautions.');
+  }
+  if (fluid === 'amine' && m.type === 'Carbon Steel') {
+    warnings.push('Carbon steel in amine service requires PWHT per API RP 945 to prevent amine SCC.');
+  }
+  if (fluid === 'hydrogen' && m.type === 'Carbon Steel') {
+    warnings.push('Check Nelson Curve (API RP 941) for hydrogen attack resistance at service temperature and hydrogen partial pressure.');
+  }
+  if (fluid === 'sulfuric' && m.type === 'Carbon Steel') {
+    warnings.push('Carbon steel is only suitable for sulfuric acid above 93% concentration at velocities below 0.9 m/s per NACE 5A151.');
+  }
+  if (fluid === 'seawater' && (matKey.includes('304') || matKey === 'A312-304' || matKey === 'A312-304L')) {
+    warnings.push('TP304/304L susceptible to chloride pitting and SCC in seawater. TP316L, duplex, or nickel alloys are preferred.');
+  }
+  if (fluid === 'oxygen' && m.type === 'Carbon Steel') {
+    warnings.push('Carbon steel for oxygen service requires thorough cleaning per CGA G-4.1 and velocity limits. Stainless steel or Monel preferred for high-pressure oxygen.');
+  }
+  if (fluid === 'co2' && m.type === 'Carbon Steel') {
+    warnings.push('Carbon steel in wet CO₂ service subject to mesa corrosion. Corrosion rate depends on partial pressure, temperature, and pH. Consider corrosion-resistant alloy or inhibition.');
+  }
+  return warnings;
+}
+
+function getServiceWarnings(matKey, service) {
+  const m = MATERIALS[matKey];
+  const warnings = [];
+  if (service === 'sour' && !m.naceSuitable) {
+    warnings.push('NOT SUITABLE for sour service — does not meet NACE MR0175/ISO 15156 requirements.');
+  } else if (service === 'sour' && m.naceSuitable) {
+    warnings.push(m.naceNote);
+  }
+  if (service === 'cyclic') {
+    warnings.push('Severe cyclic service per B31.3 §300.2 — fatigue analysis required. Stress range reduction factors (f) apply per Table 302.3.5.');
+  }
+  if (service === 'cat-m') {
+    warnings.push('Category M service — toxic fluid. Additional examination, testing, and material requirements per B31.3 Chapter VIII.');
+  }
+  return warnings;
+}
+
+// ════════════════════════════════════════════════════════════════
+//  MODE SWITCHING
+// ════════════════════════════════════════════════════════════════
+function setMode(mode) {
+  document.getElementById('tab-find').classList.toggle('active', mode === 'find');
+  document.getElementById('tab-verify').classList.toggle('active', mode === 'verify');
+  document.getElementById('panel-find').classList.toggle('active', mode === 'find');
+  document.getElementById('panel-verify').classList.toggle('active', mode === 'verify');
+}
+
+// ════════════════════════════════════════════════════════════════
+//  MODE 1: FIND SUITABLE MATERIALS
+// ════════════════════════════════════════════════════════════════
+function runFind() {
+  const dp = parseFloat(document.getElementById('f-dp').value);
+  const dt = parseFloat(document.getElementById('f-dt').value);
+  const mdmt = document.getElementById('f-mdmt').value ? parseFloat(document.getElementById('f-mdmt').value) : null;
+  const nps = document.getElementById('f-nps').value;
+  const service = document.getElementById('f-service').value;
+  const fluid = document.getElementById('f-fluid').value;
+
+  if (isNaN(dp) || isNaN(dt)) {
+    alert('Please enter Design Pressure and Design Temperature.');
+    return;
+  }
+
+  const results = [];
+
+  for (const [key, mat] of Object.entries(MATERIALS)) {
+    const S = getAllowableStress(key, dt);
+    const tempOk = dt <= mat.maxTemp;
+    const mdmtOk = mdmt === null || mdmt >= mat.minTemp;
+    const suitability = { key, mat, S, tempOk, mdmtOk, issues: [], strengths: [], score: 0 };
+
+    if (!tempOk) {
+      suitability.issues.push(`Max temperature ${mat.maxTemp}°C exceeded (DT = ${dt}°C)`);
+      suitability.score -= 100;
+    }
+    if (!mdmtOk) {
+      suitability.issues.push(`Min temperature ${mat.minTemp}°C exceeded (MDMT = ${mdmt}°C)`);
+      suitability.score -= 100;
+    }
+    if (S === null) {
+      suitability.issues.push('No allowable stress data at this temperature');
+      suitability.score -= 100;
+    }
+
+    // Service checks
+    if (service === 'sour' && !mat.naceSuitable) {
+      suitability.issues.push('Not suitable for sour service per NACE MR0175');
+      suitability.score -= 100;
+    } else if (service === 'sour' && mat.naceSuitable) {
+      suitability.strengths.push(mat.naceNote);
+      suitability.score += 10;
+    }
+
+    if (mat.avoid && mat.avoid.includes(fluid)) {
+      suitability.issues.push(`Generally avoided for ${fluid} service`);
+      suitability.score -= 50;
+    }
+    if (mat.preferFor && mat.preferFor.includes(fluid)) {
+      suitability.strengths.push(`Commonly specified for ${fluid} service`);
+      suitability.score += 15;
+    }
+    if (mat.preferFor && mat.preferFor.includes(service)) {
+      suitability.score += 10;
+    }
+
+    // Wall thickness check if NPS provided
+    if (nps && PIPE_DATA[nps] && S > 0) {
+      const od = PIPE_DATA[nps].od;
+      const tReq = calcMinWall(dp, od, S, 1.0, 3.0);
+      suitability.tReq = tReq;
+      suitability.od = od;
+      // Check if any standard schedule can accommodate
+      const schData = PIPE_DATA[nps].sch;
+      const validSchedules = Object.entries(schData).filter(([s,t]) => t >= tReq);
+      if (validSchedules.length > 0) {
+        suitability.minSch = validSchedules[0][0];
+        suitability.strengths.push(`Available from Sch ${validSchedules[0][0]} (t_req = ${tReq.toFixed(2)} mm)`);
+      } else {
+        suitability.issues.push(`No standard schedule has sufficient wall (t_req = ${tReq.toFixed(2)} mm)`);
+        suitability.score -= 30;
+      }
+    }
+
+    // Cost scoring (approximate)
+    if (mat.type === 'Carbon Steel') suitability.score += 20;
+    else if (mat.type.startsWith('Low Alloy')) suitability.score += 10;
+    else if (mat.type.includes('Duplex')) suitability.score += 0;
+    else if (mat.type.includes('Austenitic')) suitability.score += 5;
+    else suitability.score -= 10; // Nickel alloys — expensive
+
+    if (S > 0 && tempOk) suitability.score += 20;
+
+    results.push(suitability);
+  }
+
+  // Sort by score descending
+  results.sort((a, b) => b.score - a.score);
+
+  // Render results
+  const container = document.getElementById('results-find');
+  let html = `<h3 class="results-title">Recommended Materials for ${dp} barg / ${dt}°C</h3>`;
+
+  // Filter into categories
+  const recommended = results.filter(r => r.score >= 20 && r.issues.length === 0);
+  const acceptable = results.filter(r => r.score >= 0 && r.score < 20 && r.issues.filter(i => !i.includes('avoided')).length === 0);
+  const notSuitable = results.filter(r => r.score < 0 || r.issues.some(i => i.includes('exceeded') || i.includes('Not suitable') || i.includes('No allowable')));
+
+  // Show recommended
+  recommended.forEach((r, i) => {
+    html += renderMaterialCard(r, i + 1, 'recommended', 'Recommended');
+  });
+
+  // Show acceptable (max 3)
+  acceptable.slice(0, 3).forEach((r, i) => {
+    html += renderMaterialCard(r, recommended.length + i + 1, 'acceptable', 'Acceptable');
+  });
+
+  // Show a few not-suitable as comparison
+  const showNotSuitable = notSuitable.filter(r =>
+    r.mat.type === 'Carbon Steel' || r.score > -50
+  ).slice(0, 2);
+  showNotSuitable.forEach((r, i) => {
+    html += renderMaterialCard(r, recommended.length + Math.min(acceptable.length, 3) + i + 1, 'not-suitable', 'Not Suitable');
+  });
+
+  if (recommended.length === 0 && acceptable.length === 0) {
+    html += `<div class="verdict verdict-fail">
+      <div class="verdict-icon">⚠</div>
+      <div class="verdict-text">
+        <div class="verdict-headline">No Standard Material Found</div>
+        <div class="verdict-detail">The combination of ${dp} barg at ${dt}°C with ${service} service / ${fluid} fluid is extremely demanding. Consider specialist metallurgical consultation for exotic alloys or clad/lined construction.</div>
+      </div>
+    </div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+function renderMaterialCard(r, rank, cls, label) {
+  const S = r.S ? r.S.toFixed(1) : 'N/A';
+  let reasoning = '';
+  if (r.strengths.length) reasoning += r.strengths.map(s => '✓ ' + s).join('<br/>');
+  if (r.issues.length) reasoning += (reasoning ? '<br/>' : '') + r.issues.map(s => '✗ ' + s).join('<br/>');
+  reasoning += '<br/>' + r.mat.notes;
+
+  const fluidWarnings = getFluidWarnings(r.key, document.getElementById('f-fluid')?.value || document.getElementById('v-fluid')?.value || 'general');
+  if (fluidWarnings.length) reasoning += '<br/><br/>' + fluidWarnings.map(w => '⚠ ' + w).join('<br/>');
+
+  return `<div class="material-card ${cls}">
+    <div class="mat-header">
+      <div class="mat-rank">${rank}</div>
+      <div class="mat-name">${r.mat.name}</div>
+      <span class="mat-tag">${label}</span>
+    </div>
+    <div class="mat-props">
+      <div class="mat-prop"><strong>Type:</strong> ${r.mat.type}</div>
+      <div class="mat-prop"><strong>S @ DT:</strong> ${S} MPa</div>
+      <div class="mat-prop"><strong>Temp Range:</strong> ${r.mat.minTemp}°C to ${r.mat.maxTemp}°C</div>
+      <div class="mat-prop"><strong>SMTS:</strong> ${r.mat.smts} MPa</div>
+      ${r.tReq ? `<div class="mat-prop"><strong>t_req:</strong> ${r.tReq.toFixed(2)} mm</div>` : ''}
+      ${r.minSch ? `<div class="mat-prop"><strong>Min Sch:</strong> ${r.minSch}</div>` : ''}
+    </div>
+    <div class="mat-reasoning">${reasoning}</div>
+  </div>`;
+}
+
+// ════════════════════════════════════════════════════════════════
+//  MODE 2: VERIFY MATERIAL SELECTION
+// ════════════════════════════════════════════════════════════════
+function runVerify() {
+  const matKey = document.getElementById('v-mat').value;
+  const nps = document.getElementById('v-nps').value;
+  const dp = parseFloat(document.getElementById('v-dp').value);
+  const dt = parseFloat(document.getElementById('v-dt').value);
+  const mdmt = document.getElementById('v-mdmt').value ? parseFloat(document.getElementById('v-mdmt').value) : null;
+  const sch = document.getElementById('v-sch').value;
+  const ca = parseFloat(document.getElementById('v-ca').value) || 0;
+  const E = parseFloat(document.getElementById('v-weld').value);
+  const service = document.getElementById('v-service').value;
+  const fluid = document.getElementById('v-fluid').value;
+
+  if (!matKey || isNaN(dp) || isNaN(dt)) {
+    alert('Please select a material and enter Design Pressure and Design Temperature.');
+    return;
+  }
+
+  const mat = MATERIALS[matKey];
+  const S = getAllowableStress(matKey, dt);
+  const checks = [];
+  let overallPass = true;
+  let overallWarn = false;
+
+  // CHECK 1: Temperature range
+  if (dt > mat.maxTemp) {
+    checks.push({
+      pass: false, title: 'Design Temperature — FAIL',
+      detail: `${mat.shortName} is rated to ${mat.maxTemp}°C maximum. Design temperature of ${dt}°C exceeds this limit.`,
+      clause: 'ASME B31.3 Table A-1'
+    });
+    overallPass = false;
+  } else if (dt > mat.maxTemp - 30) {
+    checks.push({
+      pass: 'warn', title: 'Design Temperature — WARNING',
+      detail: `${mat.shortName} is rated to ${mat.maxTemp}°C. Design temperature of ${dt}°C is within 30°C of the upper limit. Allowable stress drops significantly in this range.`,
+      clause: 'ASME B31.3 Table A-1'
+    });
+    overallWarn = true;
+  } else {
+    checks.push({
+      pass: true, title: 'Design Temperature — PASS',
+      detail: `${mat.shortName} is rated to ${mat.maxTemp}°C. Design temperature of ${dt}°C is within range.`,
+      clause: 'ASME B31.3 Table A-1'
+    });
+  }
+
+  // CHECK 2: MDMT
+  if (mdmt !== null) {
+    if (mdmt < mat.minTemp) {
+      checks.push({
+        pass: false, title: 'Minimum Design Metal Temperature — FAIL',
+        detail: `${mat.shortName} base MDMT is ${mat.minTemp}°C. Required MDMT of ${mdmt}°C is below this — impact testing required, or select a low-temperature grade.`,
+        clause: 'ASME B31.3 §323.2'
+      });
+      overallPass = false;
+    } else {
+      checks.push({
+        pass: true, title: 'Minimum Design Metal Temperature — PASS',
+        detail: `${mat.shortName} base MDMT is ${mat.minTemp}°C. Required MDMT of ${mdmt}°C is within range.`,
+        clause: 'ASME B31.3 §323.2'
+      });
+    }
+  }
+
+  // CHECK 3: Allowable stress
+  if (S !== null) {
+    checks.push({
+      pass: true, title: `Allowable Stress at ${dt}°C — ${S.toFixed(1)} MPa`,
+      detail: `Interpolated from B31.3 Table A-1. SMTS = ${mat.smts} MPa, SMYS = ${mat.smys} MPa.`,
+      clause: 'ASME B31.3 Table A-1'
+    });
+  } else {
+    checks.push({
+      pass: false, title: 'Allowable Stress — NOT AVAILABLE',
+      detail: `No allowable stress data for ${mat.shortName} at ${dt}°C. Temperature likely exceeds material limit.`,
+      clause: 'ASME B31.3 Table A-1'
+    });
+    overallPass = false;
+  }
+
+  // CHECK 4: Wall thickness
+  if (nps && sch && S > 0 && PIPE_DATA[nps]) {
+    const od = PIPE_DATA[nps].od;
+    const tReq = calcMinWall(dp, od, S, E, ca);
+    const schData = PIPE_DATA[nps].sch;
+    const tAvail = schData[sch];
+
+    if (tAvail) {
+      const ratio = (tReq / tAvail * 100).toFixed(1);
+      if (tReq <= tAvail) {
+        checks.push({
+          pass: true, title: `Wall Thickness — PASS (${ratio}% utilisation)`,
+          detail: `Required: ${tReq.toFixed(2)} mm (incl. ${ca} mm CA). Available: Sch ${sch} = ${tAvail.toFixed(2)} mm for NPS ${nps} (OD ${od} mm). Weld joint factor E = ${E}.`,
+          clause: 'ASME B31.3 §304.1.2'
+        });
+      } else {
+        checks.push({
+          pass: false, title: `Wall Thickness — FAIL (${ratio}% utilisation)`,
+          detail: `Required: ${tReq.toFixed(2)} mm (incl. ${ca} mm CA). Available: Sch ${sch} = ${tAvail.toFixed(2)} mm. Wall thickness is insufficient — increase schedule or reduce pressure.`,
+          clause: 'ASME B31.3 §304.1.2'
+        });
+        overallPass = false;
+      }
+    } else {
+      checks.push({
+        pass: 'warn', title: 'Wall Thickness — Schedule Not Found',
+        detail: `Schedule ${sch} is not standard for NPS ${nps}. Cannot verify wall thickness.`,
+        clause: 'ASME B36.10M'
+      });
+      overallWarn = true;
+    }
+  }
+
+  // CHECK 5: Service compatibility
+  const svcWarnings = getServiceWarnings(matKey, service);
+  svcWarnings.forEach(w => {
+    const isFail = w.startsWith('NOT SUITABLE');
+    if (isFail) overallPass = false;
+    checks.push({
+      pass: isFail ? false : 'warn',
+      title: isFail ? 'Service Compatibility — FAIL' : 'Service Compatibility — Note',
+      detail: w,
+      clause: isFail ? 'NACE MR0175 / ISO 15156' : 'ASME B31.3 §300.2'
+    });
+    if (!isFail) overallWarn = true;
+  });
+
+  // CHECK 6: Fluid compatibility
+  const fluidWarnings = getFluidWarnings(matKey, fluid);
+  fluidWarnings.forEach(w => {
+    checks.push({
+      pass: 'warn', title: 'Fluid Compatibility — Warning',
+      detail: w,
+      clause: 'Industry Practice / NACE'
+    });
+    overallWarn = true;
+  });
+
+  // Build results
+  const container = document.getElementById('results-verify');
+  let html = `<h3 class="results-title">Verification: ${mat.name}</h3>`;
+
+  // Overall verdict
+  if (overallPass && !overallWarn) {
+    html += `<div class="verdict verdict-pass">
+      <div class="verdict-icon">✓</div>
+      <div class="verdict-text">
+        <div class="verdict-headline">${mat.shortName} is Fit for Purpose</div>
+        <div class="verdict-detail">Material passes all checks for ${dp} barg at ${dt}°C in ${service.replace('-',' ')} service.</div>
+      </div>
+    </div>`;
+  } else if (overallPass && overallWarn) {
+    html += `<div class="verdict verdict-warn">
+      <div class="verdict-icon">⚠</div>
+      <div class="verdict-text">
+        <div class="verdict-headline">${mat.shortName} is Acceptable with Conditions</div>
+        <div class="verdict-detail">Material passes primary checks but has warnings that require engineering review. See details below.</div>
+      </div>
+    </div>`;
+  } else {
+    html += `<div class="verdict verdict-fail">
+      <div class="verdict-icon">✗</div>
+      <div class="verdict-text">
+        <div class="verdict-headline">${mat.shortName} is NOT Fit for Purpose</div>
+        <div class="verdict-detail">One or more checks have failed. See details below for specific failures and alternative recommendations.</div>
+      </div>
+    </div>`;
+  }
+
+  // Individual checks
+  html += '<div class="check-list">';
+  checks.forEach(c => {
+    const icon = c.pass === true ? '✓' : c.pass === 'warn' ? '⚠' : '✗';
+    const color = c.pass === true ? 'var(--green)' : c.pass === 'warn' ? 'var(--amber)' : 'var(--red)';
+    html += `<div class="check-row">
+      <div class="check-icon" style="color:${color}">${icon}</div>
+      <div class="check-body">
+        <div class="check-title">${c.title}</div>
+        <div class="check-detail">${c.detail}</div>
+        <span class="check-clause">${c.clause}</span>
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+
+  // If failed, suggest alternatives
+  if (!overallPass) {
+    html += '<h3 class="results-title" style="margin-top:2rem;">Recommended Alternatives</h3>';
+
+    const alternatives = [];
+    for (const [key, alt] of Object.entries(MATERIALS)) {
+      if (key === matKey) continue;
+      const altS = getAllowableStress(key, dt);
+      if (altS === null || dt > alt.maxTemp) continue;
+      if (mdmt !== null && mdmt < alt.minTemp) continue;
+      if (service === 'sour' && !alt.naceSuitable) continue;
+      if (alt.avoid && alt.avoid.includes(fluid)) continue;
+
+      let score = 0;
+      if (alt.preferFor && alt.preferFor.includes(fluid)) score += 15;
+      if (alt.preferFor && alt.preferFor.includes(service)) score += 10;
+      if (alt.type === 'Carbon Steel') score += 20;
+      else if (alt.type.startsWith('Low Alloy')) score += 10;
+
+      // Check wall thickness if NPS given
+      let tInfo = '';
+      if (nps && PIPE_DATA[nps] && altS > 0) {
+        const tReq = calcMinWall(dp, PIPE_DATA[nps].od, altS, 1.0, ca || 3);
+        const schData = PIPE_DATA[nps].sch;
+        const validSch = Object.entries(schData).filter(([s,t]) => t >= tReq);
+        if (validSch.length > 0) {
+          tInfo = `Available from Sch ${validSch[0][0]}`;
+          score += 10;
+        } else {
+          score -= 20;
+        }
+      }
+
+      alternatives.push({ key, mat: alt, S: altS, score, tInfo });
+    }
+
+    alternatives.sort((a, b) => b.score - a.score);
+    alternatives.slice(0, 3).forEach((alt, i) => {
+      html += `<div class="material-card recommended">
+        <div class="mat-header">
+          <div class="mat-rank">${i + 1}</div>
+          <div class="mat-name">${alt.mat.name}</div>
+          <span class="mat-tag" style="background:var(--green-bg);color:var(--green);">Alternative</span>
+        </div>
+        <div class="mat-props">
+          <div class="mat-prop"><strong>Type:</strong> ${alt.mat.type}</div>
+          <div class="mat-prop"><strong>S @ ${dt}°C:</strong> ${alt.S.toFixed(1)} MPa</div>
+          <div class="mat-prop"><strong>Temp Range:</strong> ${alt.mat.minTemp}°C to ${alt.mat.maxTemp}°C</div>
+          ${alt.tInfo ? `<div class="mat-prop"><strong>Wall:</strong> ${alt.tInfo}</div>` : ''}
+        </div>
+        <div class="mat-reasoning">${alt.mat.notes}</div>
+      </div>`;
+    });
+  }
+
+  container.innerHTML = html;
+}
+</script>
+</body>
+</html>
