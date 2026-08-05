@@ -234,6 +234,19 @@
       display: flex; align-items: center; justify-content: center;
     }
     .sign-toggle.negative { background: var(--gold); color: #fff; }
+
+    /* ── UNIT TOGGLE ── */
+    .unit-toggle {
+      display: flex; border: 1px solid var(--gold); border-radius: 4px; overflow: hidden;
+      font-family: 'DM Sans', sans-serif; flex-shrink: 0;
+    }
+    .unit-btn {
+      padding: 0.3rem 0.7rem; font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.06em; border: none; cursor: pointer;
+      background: transparent; color: var(--gold-bright);
+      transition: background 0.2s, color 0.2s;
+    }
+    .unit-btn.active { background: var(--gold); color: #fff; }
   </style>
   <!-- Shared PPA material library (single source of truth) -->
   <script src="https://pipingpro-academy.com/ppa-materials.js"></script>
@@ -246,7 +259,13 @@
     <a href="ai-tools.html" class="back-link">← AI Tools</a>
     <div class="tool-title">Pipe Material Suitability Verification</div>
   </div>
-  <span class="tool-badge">AI-Powered · ASME B31.3</span>
+  <div style="display:flex;align-items:center;gap:0.8rem;">
+    <div class="unit-toggle">
+      <button class="unit-btn active" id="btn-si" onclick="setUnits('SI')">SI</button>
+      <button class="unit-btn" id="btn-us" onclick="setUnits('US')">US</button>
+    </div>
+    <span class="tool-badge">AI-Powered · ASME B31.3</span>
+  </div>
 </div>
 
 <div class="tool-container">
@@ -269,15 +288,15 @@
   <div class="mode-panel active" id="panel-find">
     <div class="form-grid">
       <div class="form-group">
-        <label class="form-label">Design Pressure (barg)</label>
+        <label class="form-label">Design Pressure (<span class="u-p">barg</span>)</label>
         <input class="form-input" type="number" id="f-dp" placeholder="e.g. 50" step="any" />
       </div>
       <div class="form-group">
-        <label class="form-label">Design Temperature (°C)</label>
+        <label class="form-label">Design Temperature (<span class="u-t">°C</span>)</label>
         <input class="form-input" type="number" id="f-dt" placeholder="e.g. 350" step="any" inputmode="text" />
       </div>
       <div class="form-group">
-        <label class="form-label">Minimum Design Metal Temperature (°C)</label>
+        <label class="form-label">Minimum Design Metal Temperature (<span class="u-t">°C</span>)</label>
         <div class="mdmt-row">
           <button type="button" class="sign-toggle" id="f-mdmt-sign" onclick="toggleSign('f-mdmt-sign')">+</button>
           <input class="form-input" type="number" id="f-mdmt" placeholder="e.g. 29" step="any" inputmode="numeric" min="0" />
@@ -358,15 +377,15 @@
         </select>
       </div>
       <div class="form-group">
-        <label class="form-label">Design Pressure (barg)</label>
+        <label class="form-label">Design Pressure (<span class="u-p">barg</span>)</label>
         <input class="form-input" type="number" id="v-dp" placeholder="e.g. 50" step="any" />
       </div>
       <div class="form-group">
-        <label class="form-label">Design Temperature (°C)</label>
+        <label class="form-label">Design Temperature (<span class="u-t">°C</span>)</label>
         <input class="form-input" type="number" id="v-dt" placeholder="e.g. 350" step="any" inputmode="text" />
       </div>
       <div class="form-group">
-        <label class="form-label">Minimum Design Metal Temperature (°C)</label>
+        <label class="form-label">Minimum Design Metal Temperature (<span class="u-t">°C</span>)</label>
         <div class="mdmt-row">
           <button type="button" class="sign-toggle" id="v-mdmt-sign" onclick="toggleSign('v-mdmt-sign')">+</button>
           <input class="form-input" type="number" id="v-mdmt" placeholder="e.g. 29" step="any" inputmode="numeric" min="0" />
@@ -387,7 +406,7 @@
         </select>
       </div>
       <div class="form-group">
-        <label class="form-label">Corrosion Allowance (mm)</label>
+        <label class="form-label">Corrosion Allowance (<span class="u-l">mm</span>)</label>
         <input class="form-input" type="number" id="v-ca" placeholder="e.g. 3.0" step="any" value="3.0" />
       </div>
       <div class="form-group">
@@ -433,6 +452,96 @@
 </div>
 
 <script>
+// ════════════════════════════════════════════════════════════════
+//  UNIT SYSTEM — SI (default) / US Customary toggle
+// ════════════════════════════════════════════════════════════════
+let UNIT = 'SI'; // 'SI' or 'US'
+
+const U = {
+  SI: { p:'barg', t:'°C', s:'MPa', l:'mm' },
+  US: { p:'psig', t:'°F',  s:'ksi',  l:'in.' }
+};
+
+function setUnits(u) {
+  const prev = UNIT;
+  UNIT = u;
+  document.getElementById('btn-si').classList.toggle('active', u === 'SI');
+  document.getElementById('btn-us').classList.toggle('active', u === 'US');
+
+  // Update all unit labels
+  document.querySelectorAll('.u-p').forEach(el => el.textContent = U[u].p);
+  document.querySelectorAll('.u-t').forEach(el => el.textContent = U[u].t);
+  document.querySelectorAll('.u-l').forEach(el => el.textContent = U[u].l);
+
+  // Convert existing input values
+  if (prev !== u) {
+    convertField('f-dp',   prev, u, 'p');
+    convertField('f-dt',   prev, u, 't');
+    convertField('f-mdmt', prev, u, 't_abs');
+    convertField('v-dp',   prev, u, 'p');
+    convertField('v-dt',   prev, u, 't');
+    convertField('v-mdmt', prev, u, 't_abs');
+    convertField('v-ca',   prev, u, 'l');
+  }
+
+  // Clear results so stale unit displays don't persist
+  document.getElementById('results-find').innerHTML = '';
+  document.getElementById('results-verify').innerHTML = '';
+}
+
+function convertField(id, from, to, type) {
+  const el = document.getElementById(id);
+  if (!el || el.value === '') return;
+  let v = parseFloat(el.value);
+  if (isNaN(v)) return;
+
+  if (type === 'p') {
+    // barg ↔ psig: 1 barg = 14.5038 psig
+    v = (from === 'SI') ? +(v * 14.5038).toFixed(1) : +(v / 14.5038).toFixed(1);
+  } else if (type === 't') {
+    // °C ↔ °F (signed value in field)
+    v = (from === 'SI') ? Math.round(v * 9/5 + 32) : Math.round((v - 32) * 5/9);
+  } else if (type === 't_abs') {
+    // MDMT field stores absolute value; sign is in toggle button
+    // Convert magnitude only: |°C| ↔ |°F delta from 32|
+    // Actually need to reconstruct signed value, convert, then split
+    const signBtn = document.getElementById(id + '-sign');
+    const isNeg = signBtn && signBtn.classList.contains('negative');
+    let signed = isNeg ? -v : v;
+    signed = (from === 'SI') ? (signed * 9/5 + 32) : ((signed - 32) * 5/9);
+    signed = Math.round(signed);
+    if (signed < 0) {
+      el.value = Math.abs(signed);
+      if (signBtn && !isNeg) signBtn.classList.add('negative');
+      if (signBtn) signBtn.textContent = '−';
+    } else {
+      el.value = signed;
+      if (signBtn && isNeg) signBtn.classList.remove('negative');
+      if (signBtn) signBtn.textContent = '+';
+    }
+    return;
+  } else if (type === 'l') {
+    // mm ↔ in.
+    v = (from === 'SI') ? +(v / 25.4).toFixed(3) : +(v * 25.4).toFixed(1);
+  }
+  el.value = v;
+}
+
+// Helper: get input value converted to SI for internal calculations
+function toSI_P(val) { return UNIT === 'US' ? val / 14.5038 : val; }       // → barg
+function toSI_T(val) { return UNIT === 'US' ? (val - 32) * 5/9 : val; }    // → °C
+function toSI_L(val) { return UNIT === 'US' ? val * 25.4 : val; }          // → mm
+
+// Helper: format output values for display
+function fmtP(barg) { return UNIT === 'US' ? (barg * 14.5038).toFixed(0) + ' psig' : barg.toFixed(0) + ' barg'; }
+function fmtT(c)    { return UNIT === 'US' ? Math.round(c * 9/5 + 32) + '°F' : Math.round(c) + '°C'; }
+function fmtS(mpa)  { return UNIT === 'US' ? (mpa / 6.895).toFixed(1) + ' ksi' : mpa.toFixed(1) + ' MPa'; }
+function fmtL(mm)   { return UNIT === 'US' ? (mm / 25.4).toFixed(3) + ' in.' : mm.toFixed(2) + ' mm'; }
+function fmtSv(mpa) { return UNIT === 'US' ? (mpa / 6.895).toFixed(1) : mpa.toFixed(1); } // value only
+function uS()       { return UNIT === 'US' ? 'ksi' : 'MPa'; }
+function uT()       { return UNIT === 'US' ? '°F' : '°C'; }
+function uL()       { return UNIT === 'US' ? 'in.' : 'mm'; }
+
 // ════════════════════════════════════════════════════════════════
 //  PPA BRIDGE — Maps curated materials to ppa-materials.js
 //  Core data (stress, SMTS/SMYS, tmin, curves) from PPA.MATERIALS
@@ -602,7 +711,8 @@ function getMDMTValue(prefix) {
   const raw = parseFloat(document.getElementById(prefix + '-mdmt').value);
   if (isNaN(raw)) return null;
   const isNeg = document.getElementById(prefix + '-mdmt-sign').classList.contains('negative');
-  return isNeg ? -raw : raw;
+  const signed = isNeg ? -raw : raw;
+  return UNIT === 'US' ? (signed - 32) * 5/9 : signed; // always return °C
 }
 
 /* ── Build the Verify-mode dropdown from CALC_MAT_ORDER ── */
@@ -716,17 +826,13 @@ function setMode(mode) {
 //  MODE 1: FIND SUITABLE MATERIALS
 // ════════════════════════════════════════════════════════════════
 function runFind() {
-  const dp = parseFloat(document.getElementById('f-dp').value);
-  const dt = parseFloat(document.getElementById('f-dt').value);
-  const mdmt = getMDMTValue('f');
+  const dp_raw = parseFloat(document.getElementById('f-dp').value);
+  const dt_raw = parseFloat(document.getElementById('f-dt').value);
+  if (isNaN(dp_raw) || isNaN(dt_raw)) { alert('Please enter Design Pressure and Design Temperature.'); return; }
+  const dp = toSI_P(dp_raw);  // barg
+  const dt = toSI_T(dt_raw);  // °C
+  const mdmt = getMDMTValue('f'); // °C or null
   const nps = document.getElementById('f-nps').value;
-  const service = document.getElementById('f-service').value;
-  const fluid = document.getElementById('f-fluid').value;
-
-  if (isNaN(dp) || isNaN(dt)) {
-    alert('Please enter Design Pressure and Design Temperature.');
-    return;
-  }
 
   const results = [];
 
@@ -742,11 +848,11 @@ function runFind() {
     const suitability = { key, S, tempOk, mdmtOk, issues: [], strengths: [], score: 0 };
 
     if (!tempOk) {
-      suitability.issues.push(`Max temperature ${maxTemp}°C exceeded (DT = ${dt}°C)`);
+      suitability.issues.push(`Max temperature ${fmtT(maxTemp)} exceeded (DT = ${fmtT(dt)})`);
       suitability.score -= 100;
     }
     if (!mdmtOk) {
-      suitability.issues.push(`Min temperature ${minTemp}°C exceeded (MDMT = ${mdmt}°C)`);
+      suitability.issues.push(`Min temperature ${fmtT(minTemp)} exceeded (MDMT = ${fmtT(mdmt)})`);
       suitability.score -= 100;
     }
     if (S === null) {
@@ -783,14 +889,14 @@ function runFind() {
       const tReq = calcMinWall(dp, od, S, 1.0, caVal);
       suitability.tReq = tReq;
       suitability.od = od;
-      if (clad) suitability.strengths.push('CA = 0 mm (CRA liner provides corrosion barrier)');
+      if (clad) suitability.strengths.push('CA = 0 ${uL()} (CRA liner provides corrosion barrier)');
       const schData = PIPE_DATA[nps].sch;
       const validSchedules = Object.entries(schData).filter(([s,t]) => t >= tReq);
       if (validSchedules.length > 0) {
         suitability.minSch = validSchedules[0][0];
-        suitability.strengths.push(`Available from Sch ${validSchedules[0][0]} (t_req = ${tReq.toFixed(2)} mm)`);
+        suitability.strengths.push(`Available from Sch ${validSchedules[0][0]} (t_req = ${fmtL(tReq)})`);
       } else {
-        suitability.issues.push(`No standard schedule has sufficient wall (t_req = ${tReq.toFixed(2)} mm)`);
+        suitability.issues.push(`No standard schedule has sufficient wall (t_req = ${fmtL(tReq)})`);
         suitability.score -= 30;
       }
     }
@@ -814,7 +920,7 @@ function runFind() {
 
   // Render results
   const container = document.getElementById('results-find');
-  let html = `<h3 class="results-title">Recommended Materials for ${dp} barg / ${dt}°C</h3>`;
+  let html = `<h3 class="results-title">Recommended Materials for ${fmtP(dp)} / ${fmtT(dt)}</h3>`;
 
   // Filter into categories
   const recommended = results.filter(r => r.score >= 20 && r.issues.length === 0);
@@ -854,7 +960,7 @@ function runFind() {
 
 function renderMaterialCard(r, rank, cls, label) {
   const suit = getSuit(r.key);
-  const S = r.S ? r.S.toFixed(1) : 'N/A';
+  const S = r.S ? fmtSv(r.S) : 'N/A';
   const maxTemp = getMaxTempC(r.key);
   const minTemp = getMinTempC(r.key);
   let reasoning = '';
@@ -874,10 +980,10 @@ function renderMaterialCard(r, rank, cls, label) {
     <div class="mat-details">
       <div class="mat-props">
         <div class="mat-prop"><strong>Type:</strong> ${suit.type || ''}</div>
-        <div class="mat-prop"><strong>S @ DT:</strong> ${S} MPa</div>
-        <div class="mat-prop"><strong>Temp Range:</strong> ${minTemp}°C to ${maxTemp}°C</div>
-        <div class="mat-prop"><strong>SMTS:</strong> ${getSmtsMPa(r.key)} MPa</div>
-        ${r.tReq ? `<div class="mat-prop"><strong>t_req:</strong> ${r.tReq.toFixed(2)} mm</div>` : ''}
+        <div class="mat-prop"><strong>S @ DT:</strong> ${S} ${uS()}</div>
+        <div class="mat-prop"><strong>Temp Range:</strong> ${fmtT(minTemp)} to ${fmtT(maxTemp)}</div>
+        <div class="mat-prop"><strong>SMTS:</strong> ${fmtS(getSmtsMPa(r.key))}</div>
+        ${r.tReq ? `<div class="mat-prop"><strong>t_req:</strong> ${fmtL(r.tReq)}</div>` : ''}
         ${r.minSch ? `<div class="mat-prop"><strong>Min Sch:</strong> ${r.minSch}</div>` : ''}
       </div>
       <div class="mat-reasoning">${reasoning}</div>
@@ -896,19 +1002,17 @@ function renderMaterialCard(r, rank, cls, label) {
 function runVerify() {
   const matKey = document.getElementById('v-mat').value;
   const nps = document.getElementById('v-nps').value;
-  const dp = parseFloat(document.getElementById('v-dp').value);
-  const dt = parseFloat(document.getElementById('v-dt').value);
-  const mdmt = getMDMTValue('v');
+  const dp_raw = parseFloat(document.getElementById('v-dp').value);
+  const dt_raw = parseFloat(document.getElementById('v-dt').value);
+  if (!matKey || isNaN(dp_raw) || isNaN(dt_raw)) { alert('Please select a material and enter Design Pressure and Design Temperature.'); return; }
+  const dp = toSI_P(dp_raw);  // barg
+  const dt = toSI_T(dt_raw);  // °C
+  const mdmt = getMDMTValue('v'); // °C or null
   const sch = document.getElementById('v-sch').value;
-  const ca = parseFloat(document.getElementById('v-ca').value) || 0;
+  const ca = toSI_L(parseFloat(document.getElementById('v-ca').value) || 0); // mm
   const E = parseFloat(document.getElementById('v-weld').value);
   const service = document.getElementById('v-service').value;
   const fluid = document.getElementById('v-fluid').value;
-
-  if (!matKey || isNaN(dp) || isNaN(dt)) {
-    alert('Please select a material and enter Design Pressure and Design Temperature.');
-    return;
-  }
 
   const suit = getSuit(matKey);
   const shortName = getShortName(matKey);
@@ -932,7 +1036,7 @@ function runVerify() {
     const cm = CLAD_MATS[matKey];
     checks.push({
       pass: true, title: 'Clad Pipe Construction',
-      detail: `Backing: ${getMatName(cm.backing)} (structural strength for pressure containment). Liner: ${getMatName(cm.liner)} (corrosion resistance). Corrosion allowance = 0 mm — CRA liner acts as corrosion barrier. Wall thickness based on backing material stress.`,
+      detail: `Backing: ${getMatName(cm.backing)} (structural strength for pressure containment). Liner: ${getMatName(cm.liner)} (corrosion resistance). Corrosion allowance = 0 ${uL()} — CRA liner acts as corrosion barrier. Wall thickness based on backing material stress.`,
       clause: 'ASME B31.3 §305.2.3'
     });
   }
@@ -941,21 +1045,21 @@ function runVerify() {
   if (dt > maxTemp) {
     checks.push({
       pass: false, title: 'Design Temperature — FAIL',
-      detail: `${shortName} is rated to ${maxTemp}°C maximum. Design temperature of ${dt}°C exceeds this limit.`,
+      detail: `${shortName} is rated to ${fmtT(maxTemp)} maximum. Design temperature of ${fmtT(dt)} exceeds this limit.`,
       clause: 'ASME B31.3 Table A-1'
     });
     overallPass = false;
   } else if (dt > maxTemp - 30) {
     checks.push({
       pass: 'warn', title: 'Design Temperature — WARNING',
-      detail: `${shortName} is rated to ${maxTemp}°C. Design temperature of ${dt}°C is within 30°C of the upper limit. Allowable stress drops significantly in this range.`,
+      detail: `${shortName} is rated to ${fmtT(maxTemp)}. Design temperature of ${fmtT(dt)} is within 30°C of the upper limit. Allowable stress drops significantly in this range.`,
       clause: 'ASME B31.3 Table A-1'
     });
     overallWarn = true;
   } else {
     checks.push({
       pass: true, title: 'Design Temperature — PASS',
-      detail: `${shortName} is rated to ${maxTemp}°C. Design temperature of ${dt}°C is within range.`,
+      detail: `${shortName} is rated to ${fmtT(maxTemp)}. Design temperature of ${fmtT(dt)} is within range.`,
       clause: 'ASME B31.3 Table A-1'
     });
   }
@@ -967,22 +1071,22 @@ function runVerify() {
     let mdmtDetail = '';
     if (mdmtInfo.isCurve) {
       const tLabel = wallThick ? `${wallThick.toFixed(1)} mm wall` : 'default 10 mm wall';
-      mdmtDetail = `${shortName} has Curve ${mdmtInfo.curve} designation (Figure 323.2.2A). At ${tLabel}, allowable MDMT = ${minTemp}°C.`;
+      mdmtDetail = `${shortName} has Curve ${mdmtInfo.curve} designation (Figure 323.2.2A). At ${tLabel}, allowable MDMT = ${fmtT(minTemp)}.`;
     } else {
-      mdmtDetail = `${shortName} base MDMT is ${minTemp}°C.`;
+      mdmtDetail = `${shortName} base MDMT is ${fmtT(minTemp)}.`;
     }
 
     if (mdmt < minTemp) {
       checks.push({
         pass: false, title: 'Minimum Design Metal Temperature — FAIL',
-        detail: `${mdmtDetail} Required MDMT of ${mdmt}°C is below this — impact testing required per para. 323.2.2, or select a low-temperature grade.`,
+        detail: `${mdmtDetail} Required MDMT of ${fmtT(mdmt)} is below this — impact testing required per para. 323.2.2, or select a low-temperature grade.`,
         clause: 'ASME B31.3 §323.2.2'
       });
       overallPass = false;
     } else {
       checks.push({
         pass: true, title: 'Minimum Design Metal Temperature — PASS',
-        detail: `${mdmtDetail} Required MDMT of ${mdmt}°C is within range.`,
+        detail: `${mdmtDetail} Required MDMT of ${fmtT(mdmt)} is within range.`,
         clause: 'ASME B31.3 §323.2.2'
       });
     }
@@ -991,14 +1095,14 @@ function runVerify() {
   // CHECK 3: Allowable stress
   if (S !== null) {
     checks.push({
-      pass: true, title: `Allowable Stress at ${dt}°C — ${S.toFixed(1)} MPa`,
-      detail: `Interpolated from B31.3 Table A-1. SMTS = ${getSmtsMPa(matKey)} MPa, SMYS = ${getSmysMPa(matKey)} MPa.`,
+      pass: true, title: `Allowable Stress at ${fmtT(dt)} — ${fmtS(S)}`,
+      detail: `Interpolated from B31.3 Table A-1. SMTS = ${fmtS(getSmtsMPa(matKey))}, SMYS = ${fmtS(getSmysMPa(matKey))}.`,
       clause: 'ASME B31.3 Table A-1'
     });
   } else {
     checks.push({
       pass: false, title: 'Allowable Stress — NOT AVAILABLE',
-      detail: `No allowable stress data for ${shortName} at ${dt}°C. Temperature likely exceeds material limit.`,
+      detail: `No allowable stress data for ${shortName} at ${fmtT(dt)}. Temperature likely exceeds material limit.`,
       clause: 'ASME B31.3 Table A-1'
     });
     overallPass = false;
@@ -1010,21 +1114,21 @@ function runVerify() {
     const tReq = calcMinWall(dp, od, S, E, effectiveCA);
     const schData = PIPE_DATA[nps].sch;
     const tAvail = schData[sch];
-    const caLabel = clad ? '0 mm CA (CRA liner)' : `${effectiveCA} mm CA`;
+    const caLabel = clad ? `0 ${uL()} CA (CRA liner)` : `${fmtL(effectiveCA)} CA`;
 
     if (tAvail) {
       const ratio = (tReq / tAvail * 100).toFixed(1);
       if (tReq <= tAvail) {
         checks.push({
           pass: true, title: `Wall Thickness — PASS (${ratio}% utilisation)`,
-          detail: `Required: ${tReq.toFixed(2)} mm (incl. ${caLabel}). Available: Sch ${sch} = ${tAvail.toFixed(2)} mm for NPS ${nps} (OD ${od} mm). Weld joint factor E = ${E}.`,
+          detail: `Required: ${fmtL(tReq)} (incl. ${caLabel}). Available: Sch ${sch} = ${fmtL(tAvail)} for NPS ${nps} (OD ${fmtL(od)}). Weld joint factor E = ${E}.`,
           clause: 'ASME B31.3 §304.1.2',
           link: 'https://pipingpro-academy.com/pipe-wall-thickness-calculator'
         });
       } else {
         checks.push({
           pass: false, title: `Wall Thickness — FAIL (${ratio}% utilisation)`,
-          detail: `Required: ${tReq.toFixed(2)} mm (incl. ${caLabel}). Available: Sch ${sch} = ${tAvail.toFixed(2)} mm. Wall thickness is insufficient — increase schedule or reduce pressure.`,
+          detail: `Required: ${fmtL(tReq)} (incl. ${caLabel}). Available: Sch ${sch} = ${fmtL(tAvail)}. Wall thickness is insufficient — increase schedule or reduce pressure.`,
           clause: 'ASME B31.3 §304.1.2',
           link: 'https://pipingpro-academy.com/pipe-wall-thickness-calculator'
         });
@@ -1075,7 +1179,7 @@ function runVerify() {
       <div class="verdict-icon">✓</div>
       <div class="verdict-text">
         <div class="verdict-headline">${shortName} is Fit for Purpose</div>
-        <div class="verdict-detail">Material passes all checks for ${dp} barg at ${dt}°C in ${service.replace('-',' ')} service.</div>
+        <div class="verdict-detail">Material passes all checks for ${fmtP(dp)} at ${fmtT(dt)} in ${service.replace('-',' ')} service.</div>
       </div>
     </div>`;
   } else if (overallPass && overallWarn) {
@@ -1160,8 +1264,8 @@ function runVerify() {
         </div>
         <div class="mat-props">
           <div class="mat-prop"><strong>Type:</strong> ${as.type || ''}</div>
-          <div class="mat-prop"><strong>S @ ${dt}°C:</strong> ${alt.S.toFixed(1)} MPa</div>
-          <div class="mat-prop"><strong>Temp Range:</strong> ${getMinTempC(alt.key)}°C to ${getMaxTempC(alt.key)}°C</div>
+          <div class="mat-prop"><strong>S @ ${fmtT(dt)}:</strong> ${fmtS(alt.S)}</div>
+          <div class="mat-prop"><strong>Temp Range:</strong> ${fmtT(getMinTempC(alt.key))} to ${fmtT(getMaxTempC(alt.key))}</div>
           ${alt.tInfo ? `<div class="mat-prop"><strong>Wall:</strong> ${alt.tInfo}</div>` : ''}
         </div>
         <div class="mat-reasoning">${as.notes || ''}</div>
