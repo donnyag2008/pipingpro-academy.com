@@ -174,6 +174,39 @@
       padding-top: 0.6rem; border-top: 1px solid var(--paper-dark);
     }
 
+    /* Expandable card details */
+    .mat-details {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.35s ease, opacity 0.25s ease;
+      opacity: 0;
+    }
+    .material-card.expanded .mat-details {
+      max-height: 600px; opacity: 1;
+    }
+    .mat-toggle {
+      display: flex; align-items: center; justify-content: center;
+      gap: 0.4rem; width: 100%; padding: 0.5rem 0 0.1rem;
+      background: none; border: none; cursor: pointer;
+      font-family: 'DM Sans', sans-serif; font-size: 0.75rem;
+      font-weight: 600; color: var(--gold); letter-spacing: 0.04em;
+      transition: color 0.2s;
+    }
+    .mat-toggle:hover { color: var(--ink); }
+    .mat-toggle-icon {
+      display: inline-block; transition: transform 0.3s ease;
+      font-size: 0.65rem;
+    }
+    .material-card.expanded .mat-toggle-icon { transform: rotate(180deg); }
+    .mat-header { cursor: pointer; }
+    .mat-calc-link {
+      display: inline-block; margin-top: 0.8rem; padding: 0.45rem 1rem;
+      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.03em;
+      color: var(--gold); background: var(--gold-pale);
+      border: 1px solid var(--gold); border-radius: 4px;
+      text-decoration: none; transition: background 0.2s, color 0.2s;
+    }
+    .mat-calc-link:hover { background: var(--gold); color: #fff; }
+
     /* PDF button */
     .btn-pdf {
       margin-top: 1.5rem; padding: 0.7rem 2rem; background: var(--ink);
@@ -1046,20 +1079,27 @@ function renderMaterialCard(r, rank, cls, label) {
   if (fluidWarnings.length) reasoning += '<br/><br/>' + fluidWarnings.map(w => '⚠ ' + w).join('<br/>');
 
   return `<div class="material-card ${cls}">
-    <div class="mat-header">
+    <div class="mat-header" onclick="this.closest('.material-card').classList.toggle('expanded')">
       <div class="mat-rank">${rank}</div>
       <div class="mat-name">${r.mat.name}</div>
       <span class="mat-tag">${label}</span>
     </div>
-    <div class="mat-props">
-      <div class="mat-prop"><strong>Type:</strong> ${r.mat.type}</div>
-      <div class="mat-prop"><strong>S @ DT:</strong> ${S} MPa</div>
-      <div class="mat-prop"><strong>Temp Range:</strong> ${r.mat.minTemp}°C to ${r.mat.maxTemp}°C</div>
-      <div class="mat-prop"><strong>SMTS:</strong> ${r.mat.smts} MPa</div>
-      ${r.tReq ? `<div class="mat-prop"><strong>t_req:</strong> ${r.tReq.toFixed(2)} mm</div>` : ''}
-      ${r.minSch ? `<div class="mat-prop"><strong>Min Sch:</strong> ${r.minSch}</div>` : ''}
+    <div class="mat-details">
+      <div class="mat-props">
+        <div class="mat-prop"><strong>Type:</strong> ${r.mat.type}</div>
+        <div class="mat-prop"><strong>S @ DT:</strong> ${S} MPa</div>
+        <div class="mat-prop"><strong>Temp Range:</strong> ${r.mat.minTemp}°C to ${r.mat.maxTemp}°C</div>
+        <div class="mat-prop"><strong>SMTS:</strong> ${r.mat.smts} MPa</div>
+        ${r.tReq ? `<div class="mat-prop"><strong>t_req:</strong> ${r.tReq.toFixed(2)} mm</div>` : ''}
+        ${r.minSch ? `<div class="mat-prop"><strong>Min Sch:</strong> ${r.minSch}</div>` : ''}
+      </div>
+      <div class="mat-reasoning">${reasoning}</div>
+      ${r.tReq ? `<a class="mat-calc-link" href="https://pipingpro-academy.com/pipe-wall-thickness-calculator" target="_blank">Run Full Wall Thickness Calculation →</a>` : ''}
     </div>
-    <div class="mat-reasoning">${reasoning}</div>
+    <button class="mat-toggle" onclick="this.closest('.material-card').classList.toggle('expanded')">
+      <span class="mat-toggle-label">Details</span>
+      <span class="mat-toggle-icon">▼</span>
+    </button>
   </div>`;
 }
 
@@ -1172,13 +1212,15 @@ function runVerify() {
         checks.push({
           pass: true, title: `Wall Thickness — PASS (${ratio}% utilisation)`,
           detail: `Required: ${tReq.toFixed(2)} mm (incl. ${caLabel}). Available: Sch ${sch} = ${tAvail.toFixed(2)} mm for NPS ${nps} (OD ${od} mm). Weld joint factor E = ${E}.`,
-          clause: 'ASME B31.3 §304.1.2'
+          clause: 'ASME B31.3 §304.1.2',
+          link: 'https://pipingpro-academy.com/pipe-wall-thickness-calculator'
         });
       } else {
         checks.push({
           pass: false, title: `Wall Thickness — FAIL (${ratio}% utilisation)`,
           detail: `Required: ${tReq.toFixed(2)} mm (incl. ${caLabel}). Available: Sch ${sch} = ${tAvail.toFixed(2)} mm. Wall thickness is insufficient — increase schedule or reduce pressure.`,
-          clause: 'ASME B31.3 §304.1.2'
+          clause: 'ASME B31.3 §304.1.2',
+          link: 'https://pipingpro-academy.com/pipe-wall-thickness-calculator'
         });
         overallPass = false;
       }
@@ -1259,6 +1301,7 @@ function runVerify() {
         <div class="check-title">${c.title}</div>
         <div class="check-detail">${c.detail}</div>
         <span class="check-clause">${c.clause}</span>
+        ${c.link ? `<a class="mat-calc-link" href="${c.link}" target="_blank">Full Wall Thickness Calculator →</a>` : ''}
       </div>
     </div>`;
   });
