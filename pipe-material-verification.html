@@ -254,7 +254,7 @@
     (function(){
       var loaded = false;
       var s = document.createElement('script');
-      s.src = 'https://pipingpro-academy.com/ppa-materials.js';
+      s.src = 'https://raw.githubusercontent.com/donnyag2008/pipingpro-academy.com/main/ppa-materials.js';
       s.onload = function(){ loaded = true; document.dispatchEvent(new Event('ppa-ready')); };
       s.onerror = function(){ showLoadError(); };
       document.head.appendChild(s);
