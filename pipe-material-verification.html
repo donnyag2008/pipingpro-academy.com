@@ -249,15 +249,72 @@
     .unit-btn.active { background: var(--gold); color: #fff; }
   </style>
   <!-- Shared PPA material library (single source of truth) -->
-  <script src="/ppa-materials.js"></script>
   <script>
-    if(typeof PPA==='undefined'){
-      document.addEventListener('DOMContentLoaded', function(){
-        var el = document.getElementById('load-error');
-        if(el) el.style.display = 'block';
-      });
-    }
-  </script>
+/* ppa-materials.js v2.0 — EMBEDDED SUBSET for Material Verification Calculator */
+(function(g){"use strict";
+const MATERIALS={
+"A53B":{name:"A53 B",subCat:"CS Pipe",form:"PIPE",spec:"A53",grade:"B",uns:"K03005",pNo:1,notes:"57, 59",tmin:"B",smts:60,smys:35,eGrp:"CS",aGrp:"Grp1",t:[100,200,300,400,500,600,650,700,750,800,850,900,950,1000,1050,1100],sh:[20,20,20,19.9,19,17.9,17.3,16.7,13.9,11.4,8.7,5.9,4,2.5,1.6,1]},
+"A106B":{name:"A106 B",subCat:"CS Pipe",form:"PIPE",spec:"A106",grade:"B",uns:"K03006",pNo:1,notes:"57.0",tmin:"B",smts:60,smys:35,eGrp:"CS",aGrp:"Grp1",t:[100,200,300,400,500,600,650,700,750,800,850,900,950,1000,1050,1100],sh:[20,20,20,19.9,19,17.9,17.3,16.7,13.9,11.4,8.7,5.9,4,2.5,1.6,1]},
+"A3336":{name:"A333 6.0",subCat:"CS Pipe",form:"PIPE",spec:"A333",grade:"6.0",uns:"K03006",pNo:1,notes:"57.0",tmin:-50,smts:60,smys:35,eGrp:"CS",aGrp:"Grp1",t:[100,200,300,400,500,600,650,700,750,800,850,900,950,1000,1050,1100],sh:[20,20,20,19.9,19,17.9,17.3,16.7,13.9,11.4,8.7,5.9,4,2.5,1.6,1]},
+"API5LB":{name:"API5L B",subCat:"CS Pipe",form:"PIPE",spec:"API5L",grade:"B",uns:"",pNo:1,notes:"57, 59, 77",tmin:"B",smts:60,smys:35,eGrp:"CS",aGrp:"Grp1",t:[100,200,300,400,500,600,650,700,750,800,850,900,950,1000,1050,1100],sh:[20,20,20,19.9,19,17.9,17.3,16.7,13.9,11.4,8.7,5.9,4,2.5,1.6,1]},
+"API5LX52":{name:"API5L X52",subCat:"CS Pipe",form:"PIPE",spec:"API5L",grade:"X52",uns:"",pNo:1,notes:"55, 77",tmin:"A",smts:66,smys:52,eGrp:"CS",aGrp:"Grp1",t:[100,200,300,400],sh:[22,22,22,22]},
+"API5LX65":{name:"API5L X65",subCat:"CS Pipe",form:"PIPE",spec:"API5L",grade:"X65",uns:"",pNo:1,notes:"51, 55, 71, 77",tmin:"A",smts:77,smys:65,eGrp:"CS",aGrp:"Grp1",t:[100,200,300,400],sh:[25.7,25.7,25.7,25.7]},
+"A335P5":{name:"A335 P5",subCat:"Alloy Pipe",form:"PIPE",spec:"A335",grade:"P5",uns:"K41545",pNo:"5B",notes:"-",tmin:-20,smts:60,smys:30,eGrp:"CrMo_5Cr9Cr",aGrp:"CrMo_5Cr1Mo",t:[100,200,300,400,500,600,650,700,750,800,850,900,950,1000,1050,1100,1150,1200],sh:[20,18.1,17.4,17.2,17.1,16.8,16.6,16.3,15.9,15.4,14.3,10.9,8,5.8,4.2,2.9,1.8,1]},
+"A335P9":{name:"A335 P9",subCat:"Alloy Pipe",form:"PIPE",spec:"A335",grade:"P9",uns:"K90941",pNo:"5B",notes:"",tmin:-20,smts:60,smys:30,eGrp:"CrMo_9Cr",aGrp:"CrMo_9Cr1Mo",t:[100,200,300,400,500,600,650,700,750,800,850,900,950,1000,1050,1100,1150,1200],sh:[20,18.1,17.4,17.2,17.1,16.8,16.6,16.3,15.9,15.4,14.8,14.1,10.6,7.4,5,3.3,2.2,1.5]},
+"A335P11":{name:"A335 P11",subCat:"Alloy Pipe",form:"PIPE",spec:"A335",grade:"P11",uns:"K11597",pNo:4,notes:"-",tmin:-20,smts:60,smys:30,eGrp:"CrMo_Cr2Cr",aGrp:"Grp2",t:[100,200,300,400,500,600,650,700,750,800,850,900,950,1000,1050,1100,1150,1200],sh:[20,18.5,17.6,16.8,16.2,15.7,15.4,15.1,14.8,14.4,14,13.6,9.3,6.3,4.2,2.8,1.9,1.2]},
+"A335P22":{name:"A335 P22",subCat:"Alloy Pipe",form:"PIPE",spec:"A335",grade:"P22",uns:"K21590",pNo:"5A",notes:"72, 75",tmin:-20,smts:60,smys:30,eGrp:"CrMo_2Cr3Cr",aGrp:"Grp2",t:[100,200,300,400,500,600,650,700,750,800,850,900,950,1000,1050,1100,1150,1200],sh:[20,18.7,18.2,18,17.9,17.9,17.9,17.9,17.9,17.7,17.1,13.6,10.8,8,5.7,3.8,2.4,1.4]},
+"A335P91":{name:"A335 P91",subCat:"Alloy Pipe",form:"PIPE",spec:"A335",grade:"P91",uns:"K90901",pNo:"15E",notes:"",tmin:-20,smts:85,smys:60,eGrp:"CrMo_9Cr",aGrp:"CrMo_9Cr1Mo",t:[100,200,300,400,500,600,650,700,750,800,850,900,950,1000,1050,1100,1150,1200],sh:[28.3,28.3,28.3,28.2,28.1,27.7,27.3,26.7,25.9,24.9,23.7,22.3,20.7,18,14,10.3,7,4.3]},
+"A312TP304":{name:"A312 TP304",subCat:"SS Pipe",form:"PIPE",spec:"A312",grade:"TP304",uns:"S30400",pNo:8,notes:"26,28",tmin:-425,smts:75,smys:30,eGrp:"SS_Aust",aGrp:"SS_Aust",t:[100,200,300,400,500,600,650,700,750,800,850,900,950,1000,1050,1100,1150,1200,1250,1300,1350,1400,1450,1500],sh:[20,20,20,18.6,17.5,16.6,16.2,15.8,15.5,15.2,14.9,14.6,14.3,14,12.4,9.8,7.7,6.1,4.7,3.7,2.9,2.3,1.8,1.4]},
+"A312TP304L":{name:"A312 TP304L",subCat:"SS Pipe",form:"PIPE",spec:"A312",grade:"TP304L",uns:"S30403",pNo:8,notes:"-",tmin:-425,smts:70,smys:25,eGrp:"SS_Aust",aGrp:"SS_Aust",t:[100,200,300,400,500,600,650,700,750,800,850,900,950,1000,1050,1100,1150,1200,1250,1300,1350,1400,1450,1500],sh:[16.7,16.7,16.7,15.8,14.7,14,13.7,13.5,13.3,13,12.8,12.6,12.3,12,6.3,5.1,4,3.2,2.6,2.1,1.7,1.1,1,0.9]},
+"A312TP316":{name:"A312 TP316",subCat:"SS Pipe",form:"PIPE",spec:"A312",grade:"TP316",uns:"S31600",pNo:8,notes:"26,28",tmin:-425,smts:70,smys:30,eGrp:"SS_Aust",aGrp:"SS_Aust",t:[100,200,300,400,500,600,650,700,750,800,850,900,950,1000,1050,1100,1150,1200,1250,1300,1350,1400,1450,1500],sh:[20,20,20,19.3,18,17,16.6,16.3,16.1,15.9,15.7,15.6,15.4,15.3,15.1,12.4,9.8,7.4,5.5,4.1,3.1,2.3,1.7,1.3]},
+"A312TP316L":{name:"A312 TP316L",subCat:"SS Pipe",form:"PIPE",spec:"A312",grade:"TP316L",uns:"S31603",pNo:8,notes:"",tmin:-425,smts:70,smys:25,eGrp:"SS_Aust",aGrp:"SS_Aust",t:[100,200,300,400,500,600,650,700,750,800,850,900,950,1000,1050,1100,1150,1200,1250,1300,1350,1400,1450,1500],sh:[16.7,16.7,16.7,15.7,14.8,14,13.7,13.5,13.2,12.9,12.7,12.4,12.1,11.8,11.6,11.4,8.8,6.4,4.7,3.5,2.5,1.8,1.3,1]},
+"A312TP321":{name:"A312 TP321",subCat:"SS Pipe",form:"SMLS PIPE",spec:"A312",grade:"TP321",uns:"S32100",pNo:8,notes:"28.0",tmin:-425,smts:75,smys:30,eGrp:"SS_Aust",aGrp:"SS_Aust",t:[100,200,300,400,500,600,650,700,750,800,850,900,950,1000,1050,1100,1150,1200,1250,1300,1350,1400,1450,1500],sh:[20,20,20,20,19.3,18.3,17.8,17.5,17.2,16.9,16.7,16.5,16.4,16.2,9.6,6.9,5,3.6,2.6,1.7,1.1,0.8,0.5,0.3]},
+"A312TP347":{name:"A312 TP347",subCat:"SS Pipe",form:"PIPE",spec:"A312",grade:"TP347",uns:"S34700",pNo:8,notes:"",tmin:-425,smts:70,smys:30,eGrp:"SS_Aust",aGrp:"SS_Aust",t:[100,200,300,400,500,600,650,700,750,800,850,900,950,1000,1050,1100,1150,1200,1250,1300,1350,1400,1450,1500],sh:[20,20,20,20,20,19.3,19,18.7,18.5,18.3,18.2,18.1,18.1,16,12.1,9.1,6.1,4.4,3.3,2.2,1.5,1.2,0.9,0.8]},
+"A790_31803":{name:"A790 S31803 (Duplex)",subCat:"Duplex 22Cr",form:"Smls. & Wld. Pipe",spec:"A790",grade:"",uns:"S31803",pNo:"10H",notes:"25",tmin:-60,smts:90,smys:65,eGrp:"SS_Straight",aGrp:"SS_Straight",t:[100,200,300,400,500,600],sh:[30,30,28.9,27.8,27.2,26.9]},
+"A790_2507":{name:"A790 2507 (Super Duplex)",subCat:"Super Duplex 25Cr",form:"Smls. & Wld. Pipe",spec:"A790",grade:"2507",uns:"S32750",pNo:"10H",notes:"25",tmin:-60,smts:116,smys:80,eGrp:"SS_Straight",aGrp:"SS_Straight",t:[100,200,300,400,500,600],sh:[38.7,38.5,36.4,35.1,34.5,34.3]},
+"B564_625":{name:"B564 Inconel 625",subCat:"Ni Alloy Forging",form:"Forging",spec:"B564",grade:"N06625",uns:"N06625",pNo:43,notes:"9,64",tmin:-325,smts:120,smys:60,eGrp:"Ni_N06625",aGrp:"Ni_N06625",t:[100,200,300,400,500,600,650,700,750,800,850,900,950,1000,1050,1100,1150,1200],sh:[40,40,39.6,39.2,38.6,37.8,37.4,37,36.6,36.3,36.1,35.8,35.4,31.2,31.2,23.1,21,13.2]}
+};
+
+const CURVES_323={
+description:"ASME B31.3 Figure 323.2.2A",
+thickness_mm:[6,8,10,13,16,19,25,32,38,50,64,75,100,125,150],
+A:[-18,-12,-7,-1,4,9,16,22,27,33,38,41,47,51,54],
+B:[-30,-26,-22,-18,-14,-10,-4,1,6,12,17,20,26,30,33],
+C:[-40,-37,-34,-30,-27,-23,-18,-13,-9,-3,2,5,10,14,17],
+D:[-52,-49,-46,-43,-40,-37,-33,-29,-25,-20,-16,-13,-8,-4,-1]
+};
+
+function curveMDMT(curve,thickness_mm){
+var t=CURVES_323.thickness_mm,temps=CURVES_323[curve];
+if(!temps)return null;
+if(thickness_mm<=t[0])return{mdmt_C:temps[0],clamp:"below_min_thickness"};
+if(thickness_mm>=t[t.length-1])return{mdmt_C:temps[temps.length-1],clamp:"above_max_thickness"};
+for(var i=0;i<t.length-1;i++){
+if(thickness_mm>=t[i]&&thickness_mm<=t[i+1]){
+var f=(thickness_mm-t[i])/(t[i+1]-t[i]);
+return{mdmt_C:Math.round(temps[i]+f*(temps[i+1]-temps[i])),clamp:null};
+}}return null;}
+
+function interp(arr,ts,x){
+if(x<=ts[0])return{v:arr[0],clamp:x<ts[0]?'low':null};
+if(x>=ts[ts.length-1])return{v:arr[arr.length-1],clamp:x>ts[ts.length-1]?'high':null};
+for(var i=0;i<ts.length-1;i++){
+if(x>=ts[i]&&x<=ts[i+1]){
+var f=(x-ts[i])/(ts[i+1]-ts[i]);
+return{v:arr[i]+f*(arr[i+1]-arr[i]),clamp:null};
+}}return{v:arr[0],clamp:null};}
+
+var f2c=function(f){return(f-32)*5/9};
+var c2f=function(c){return c*9/5+32};
+var convert={f2c:f2c,c2f:c2f,
+stress:function(ksi,u){return u==='US'?+(+ksi).toFixed(1):+(ksi*6.895).toFixed(0)},
+temp:function(f,u){return u==='US'?Math.round(f):Math.round(f2c(f))}
+};
+var UNITS={US:{stress:"ksi",t:"°F"},SI:{stress:"MPa",t:"°C"}};
+
+g.PPA=g.PPA||{};
+Object.assign(g.PPA,{MATERIALS:MATERIALS,CURVES_323:CURVES_323,curveMDMT:curveMDMT,interp:interp,convert:convert,UNITS:UNITS});
+})(window);
 </head>
 <body>
 
