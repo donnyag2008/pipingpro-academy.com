@@ -249,25 +249,14 @@
     .unit-btn.active { background: var(--gold); color: #fff; }
   </style>
   <!-- Shared PPA material library (single source of truth) -->
+  <script src="/ppa-materials.js"></script>
   <script>
-    // Load ppa-materials.js dynamically — non-blocking with timeout
-    (function(){
-      var loaded = false;
-      var s = document.createElement('script');
-      s.src = 'https://raw.githubusercontent.com/donnyag2008/pipingpro-academy.com/main/ppa-materials.js';
-      s.onload = function(){ loaded = true; document.dispatchEvent(new Event('ppa-ready')); };
-      s.onerror = function(){ showLoadError(); };
-      document.head.appendChild(s);
-      // Timeout fallback — if not loaded in 5s, show error
-      setTimeout(function(){
-        if(!loaded) showLoadError();
-      }, 5000);
-      function showLoadError(){
-        if(loaded) return;
+    if(typeof PPA==='undefined'){
+      document.addEventListener('DOMContentLoaded', function(){
         var el = document.getElementById('load-error');
         if(el) el.style.display = 'block';
-      }
-    })();
+      });
+    }
   </script>
 </head>
 <body>
@@ -756,9 +745,7 @@ function buildMatDropdown() {
     sel.appendChild(og);
   });
 }
-document.addEventListener('ppa-ready', buildMatDropdown);
-// Fallback if PPA loaded before this script (e.g. cached)
-if(typeof PPA !== 'undefined') buildMatDropdown();
+document.addEventListener('DOMContentLoaded', buildMatDropdown);
 
 // ── PIPE OD & WALL THICKNESS (ASME B36.10/B36.19 — common sizes) ──
 const PIPE_DATA = {
