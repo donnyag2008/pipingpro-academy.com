@@ -250,15 +250,23 @@
   </style>
   <!-- Shared PPA material library (single source of truth) -->
   <script>
-    // Load ppa-materials.js dynamically — non-blocking
+    // Load ppa-materials.js dynamically — non-blocking with timeout
     (function(){
+      var loaded = false;
       var s = document.createElement('script');
       s.src = 'https://pipingpro-academy.com/ppa-materials.js';
-      s.onload = function(){ document.dispatchEvent(new Event('ppa-ready')); };
-      s.onerror = function(){
-        document.body.innerHTML = '<div style="padding:2rem;font-family:sans-serif;color:#b91c1c;"><h2>Loading Error</h2><p>Could not load ppa-materials.js from pipingpro-academy.com. Please download this file and open in your browser, or deploy to Cloudflare Pages.</p></div>';
-      };
+      s.onload = function(){ loaded = true; document.dispatchEvent(new Event('ppa-ready')); };
+      s.onerror = function(){ showLoadError(); };
       document.head.appendChild(s);
+      // Timeout fallback — if not loaded in 5s, show error
+      setTimeout(function(){
+        if(!loaded) showLoadError();
+      }, 5000);
+      function showLoadError(){
+        if(loaded) return;
+        var el = document.getElementById('load-error');
+        if(el) el.style.display = 'block';
+      }
     })();
   </script>
 </head>
@@ -280,6 +288,12 @@
 </div>
 
 <div class="tool-container">
+
+  <!-- Load error banner (shown if ppa-materials.js fails to load) -->
+  <div id="load-error" style="display:none;padding:1.2rem 1.5rem;background:#fde8e8;border:1px solid #f5a3a3;border-radius:6px;margin-bottom:1.5rem;">
+    <strong style="color:#b91c1c;">Could not load material library</strong><br/>
+    <span style="font-size:0.88rem;color:#4a3f30;">ppa-materials.js did not load from pipingpro-academy.com. This preview environment blocks external scripts. Please <strong>download this file</strong> and open in your browser, or deploy to Cloudflare Pages.</span>
+  </div>
 
   <!-- MODE TABS -->
   <div class="mode-tabs">
