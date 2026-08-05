@@ -905,7 +905,8 @@ function runFind() {
   const dt = toSI_T(dt_raw);  // °C
   const mdmt = getMDMTValue('f'); // °C or null
   const nps = document.getElementById('f-nps').value;
-
+  const service = document.getElementById('f-service').value;
+  const fluid = document.getElementById('f-fluid').value;
   const results = [];
 
   // Iterate curated material list
