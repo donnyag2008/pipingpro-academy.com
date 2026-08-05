@@ -249,9 +249,17 @@
     .unit-btn.active { background: var(--gold); color: #fff; }
   </style>
   <!-- Shared PPA material library (single source of truth) -->
-  <script src="https://pipingpro-academy.com/ppa-materials.js"></script>
   <script>
-    if(typeof PPA==='undefined'){document.body.innerHTML='<div style="padding:2rem;font-family:sans-serif;color:#b91c1c;"><h2>Loading Error</h2><p>Could not load ppa-materials.js. Please check your internet connection or deploy this file to pipingpro-academy.com.</p></div>';}
+    // Load ppa-materials.js dynamically — non-blocking
+    (function(){
+      var s = document.createElement('script');
+      s.src = 'https://pipingpro-academy.com/ppa-materials.js';
+      s.onload = function(){ document.dispatchEvent(new Event('ppa-ready')); };
+      s.onerror = function(){
+        document.body.innerHTML = '<div style="padding:2rem;font-family:sans-serif;color:#b91c1c;"><h2>Loading Error</h2><p>Could not load ppa-materials.js from pipingpro-academy.com. Please download this file and open in your browser, or deploy to Cloudflare Pages.</p></div>';
+      };
+      document.head.appendChild(s);
+    })();
   </script>
 </head>
 <body>
@@ -734,7 +742,9 @@ function buildMatDropdown() {
     sel.appendChild(og);
   });
 }
-document.addEventListener('DOMContentLoaded', buildMatDropdown);
+document.addEventListener('ppa-ready', buildMatDropdown);
+// Fallback if PPA loaded before this script (e.g. cached)
+if(typeof PPA !== 'undefined') buildMatDropdown();
 
 // ── PIPE OD & WALL THICKNESS (ASME B36.10/B36.19 — common sizes) ──
 const PIPE_DATA = {
