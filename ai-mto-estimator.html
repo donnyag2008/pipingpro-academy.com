@@ -975,12 +975,15 @@ async function runExtraction(id) {
       :[{type:'image',source:{type:'base64',media_type:d.mediaType,data:d.base64}},{type:'text',text:'Extract the full MTO from this P&ID. Return JSON only.'}];
     const res=await fetch(API_BASE,{
       method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:MODEL,max_tokens:8192,system:MTO_PROMPT,messages:[{role:'user',content:contentBlocks}]})
+      body:JSON.stringify({model:MODEL,max_tokens:16384,system:MTO_PROMPT,messages:[{role:'user',content:contentBlocks}]})
     });
     if(!res.ok){const e=await res.json();throw new Error(e.error?.message||`API ${res.status}`);}
     const resp=await res.json();
+    if(resp.stop_reason==='max_tokens') throw new Error('MTO response too large — try a simpler drawing or split into sections.');
     const text=resp.content?.find(b=>b.type==='text')?.text||'';
-    const parsed=JSON.parse(text.replace(/```json|```/gi,'').trim());
+    let parsed;
+    try{ parsed=JSON.parse(text.replace(/```json|```/gi,'').trim()); }
+    catch(parseErr){ console.error('Raw response:', text.slice(-200)); throw new Error('AI returned incomplete JSON. Try re-processing this drawing.'); }
     const mtoArea=parsed.drawing?.area_unit||parsed.drawing?.unit;
     if(mtoArea&&mtoArea.trim()) d.area=mtoArea.trim();
     if(!d.label&&parsed.drawing?.number) d.label=parsed.drawing.number;
