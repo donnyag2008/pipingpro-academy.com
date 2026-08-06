@@ -975,7 +975,7 @@ async function runExtraction(id) {
       :[{type:'image',source:{type:'base64',media_type:d.mediaType,data:d.base64}},{type:'text',text:'Extract the full MTO from this P&ID. Return JSON only.'}];
     const res=await fetch(API_BASE,{
       method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:MODEL,max_tokens:4000,system:MTO_PROMPT,messages:[{role:'user',content:contentBlocks}]})
+      body:JSON.stringify({model:MODEL,max_tokens:8192,system:MTO_PROMPT,messages:[{role:'user',content:contentBlocks}]})
     });
     if(!res.ok){const e=await res.json();throw new Error(e.error?.message||`API ${res.status}`);}
     const resp=await res.json();
