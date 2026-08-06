@@ -875,9 +875,10 @@ function confirmAdd() {
   if (!modalFile) return;
   const area  = document.getElementById('modal-area').value.trim() || 'Unassigned';
   const label = document.getElementById('modal-label').value.trim();
+  const file  = modalFile; // capture before async
   const reader = new FileReader();
-  reader.onload = e => { addDrawingEntry(modalFile, area, label, e.target.result.split(',')[1]); };
-  reader.readAsDataURL(modalFile);
+  reader.onload = e => { addDrawingEntry(file, area, label, e.target.result.split(',')[1]); };
+  reader.readAsDataURL(file);
   document.getElementById('modal-overlay').style.display = 'none';
   pendingFiles.shift();
   if (pendingFiles.length) setTimeout(()=>openModalFor(pendingFiles[0]), 200);
