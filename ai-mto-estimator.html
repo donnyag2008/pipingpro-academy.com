@@ -789,7 +789,8 @@ Return ONLY a single valid JSON object — no markdown, no explanation. Structur
   "special_items": [{ "type":"FLOW_ELEMENT|RESTRICTION_ORIFICE|STEAM_TRAP|SILENCER|SAMPLE_POINT|RUPTURE_DISC|FLAME_ARRESTOR","tag":null,"line_number":null,"quantity":1,"notes":"" }],
   "utility_connections": [{ "type":"CWS|CWR|STEAM|CONDENSATE|N2|IA|PA|FW|FLARE|DRAIN|VENT","size_in":2,"size_label":"2\\"","connected_to":"","quantity":1 }]
 }
-IMPORTANT: In drawing.area_unit, capture the Unit/Area/System name exactly as shown in the title block. In drawing.number, capture the full drawing number. Rules: count every valve; inline=true for orifice plates, control valves, flowmeters physically in pipe; schematic_length_mm=estimated drawn line length on A1 sheet; is_small_bore true if <=2 inch.`;
+IMPORTANT: In drawing.area_unit, capture the Unit/Area/System name exactly as shown in the title block. In drawing.number, capture the full drawing number. Rules: count every valve; inline=true for orifice plates, control valves, flowmeters physically in pipe; schematic_length_mm=estimated drawn line length on A1 sheet; is_small_bore true if <=2 inch.
+CONCISENESS RULES: Keep the JSON compact. Use null not empty strings. Omit "notes" fields unless critical. For instruments, group identical types on the same line as quantity>1 instead of separate entries. Do NOT repeat drawing notes or P&ID notes text in any field. Keep all string values short — tag numbers and brief labels only.`;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // P&ID MTO — STATE
@@ -979,11 +980,18 @@ async function runExtraction(id) {
     });
     if(!res.ok){const e=await res.json();throw new Error(e.error?.message||`API ${res.status}`);}
     const resp=await res.json();
-    if(resp.stop_reason==='max_tokens') throw new Error('MTO response too large — try a simpler drawing or split into sections.');
+    const stopReason=resp.stop_reason||'';
     const text=resp.content?.find(b=>b.type==='text')?.text||'';
+    console.log('API stop_reason:', stopReason, '| response length:', text.length);
+    if(stopReason==='max_tokens') throw new Error('MTO response truncated (max tokens). Try re-processing — the AI will be more concise on retry.');
+    const cleanText=text.replace(/```json|```/gi,'').trim();
     let parsed;
-    try{ parsed=JSON.parse(text.replace(/```json|```/gi,'').trim()); }
-    catch(parseErr){ console.error('Raw response:', text.slice(-200)); throw new Error('AI returned incomplete JSON. Try re-processing this drawing.'); }
+    try{ parsed=JSON.parse(cleanText); }
+    catch(parseErr){
+      console.error('JSON parse failed at:', parseErr.message);
+      console.error('Last 300 chars:', cleanText.slice(-300));
+      throw new Error('AI returned incomplete JSON (stop: '+stopReason+', len: '+text.length+'). Try re-processing this drawing.');
+    }
     const mtoArea=parsed.drawing?.area_unit||parsed.drawing?.unit;
     if(mtoArea&&mtoArea.trim()) d.area=mtoArea.trim();
     if(!d.label&&parsed.drawing?.number) d.label=parsed.drawing.number;
