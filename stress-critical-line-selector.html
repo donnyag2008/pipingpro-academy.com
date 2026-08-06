@@ -284,6 +284,7 @@ code,pre,.mono,[class*="mono"]{ font-family:'IBM Plex Mono',ui-monospace,monospa
         <button class="btn ghost" id="b_calc">Recalculate</button>
         <button class="btn ghost" id="b_csv">Export CSV</button>
         <button class="btn ghost" id="b_demo">Load example</button>
+        <button class="btn ghost" id="b_clear" style="color:var(--c1);border-color:var(--c1)">Clear all</button>
         <div class="counts" id="b_counts"></div>
       </div>
       <div class="btab-wrap">
@@ -974,6 +975,7 @@ function calcBatch(){
 $('b_add').addEventListener('click',()=>newRow());
 $('b_calc').addEventListener('click',calcBatch);
 $('b_demo').addEventListener('click',()=>{ $('b_body').innerHTML=''; EXAMPLE.forEach(d=>newRow(d)); calcBatch(); });
+$('b_clear').addEventListener('click',()=>{ if(!$('b_body').children.length || confirm('Clear all lines and start fresh?')){ $('b_body').innerHTML=''; calcBatch(); } });
 $('b_import').addEventListener('click',()=>{
   const txt=$('b_paste').value.trim(); if(!txt) return; $('b_body').innerHTML='';
   txt.split(/\r?\n/).forEach(ln=>{ const p=ln.split(/\t|,(?![^()]*\))/).map(s=>s.trim()); if(p.length&&p[0]) newRow([p[0],p[1]||'',p[2]||'',p[3]||'',p[4]||'',p[5]||'']); });
