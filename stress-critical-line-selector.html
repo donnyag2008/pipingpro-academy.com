@@ -271,21 +271,20 @@ code,pre,.mono,[class*="mono"]{ font-family:'IBM Plex Mono',ui-monospace,monospa
     </div>
   </div>
 
-  <!-- BATCH -->
+  <!-- BATCH / LDT -->
   <div class="view" id="batch">
-    <div class="card">
-      <div class="toolbar">
-        <button class="btn" id="b_add">+ Add row</button>
-        <button class="btn ghost" id="b_calc">Recalculate</button>
-        <button class="btn ghost" id="b_csv">Export CSV</button>
-        <button class="btn ghost" id="b_demo">Load example</button>
-        <button class="btn ghost" id="b_clear" style="color:var(--c1);border-color:var(--c1)">Clear all</button>
-        <button class="btn gold" id="b_upload">⬆ Upload LDT</button>
+
+    <!-- ── Upload panel (shown when no results) ── -->
+    <div class="card" id="b_upload_panel">
+      <p class="formtitle">Upload Line Designation Table</p>
+      <p style="font-size:13px;color:var(--ink2);margin:0 0 1rem;line-height:1.7">Upload your project LDT (.xlsx, .xlsm, .xls, or .csv). The tool will auto-detect columns, classify every line against the active criteria profile, and add a <b>Class</b> and <b>Governing Criterion</b> column.</p>
+      <div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:center">
+        <button class="btn gold" id="b_upload" style="font-size:14px;padding:.7rem 1.4rem">⬆ Upload LDT</button>
         <input type="file" id="b_upload_file" accept=".xlsx,.xlsm,.xls,.csv" style="display:none">
-        <div class="counts" id="b_counts"></div>
+        <button class="btn ghost" id="b_demo">Load example</button>
       </div>
       <!-- LDT Format presets bar -->
-      <div id="ldt-fmt-bar" style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.8rem;padding:.55rem .8rem;background:#fff;border:1px solid var(--rule);border-radius:8px;font-size:12px">
+      <div id="ldt-fmt-bar" style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-top:.8rem;padding:.55rem .8rem;background:var(--paper2);border:1px solid var(--rule-soft);border-radius:8px;font-size:12px">
         <span style="color:var(--ink3);font-weight:600;white-space:nowrap">LDT format:</span>
         <select id="ldt-fmt-select" style="max-width:220px;padding:.3rem .5rem;border:1px solid var(--rule);border-radius:4px;font-size:12px;font-weight:600">
           <option value="auto">Auto-detect</option>
@@ -296,23 +295,68 @@ code,pre,.mono,[class*="mono"]{ font-family:'IBM Plex Mono',ui-monospace,monospa
         <input type="file" id="ldt-fmt-import-file" accept=".json" style="display:none" onchange="importLdtFormat(event)">
         <span id="ldt-fmt-info" style="color:var(--ink3);font-size:11px;margin-left:auto"></span>
       </div>
-      <div class="btab-wrap">
-        <table class="batch">
-          <thead><tr>
-            <th style="width:165px">Line number</th><th style="width:80px">Svc</th><th style="width:65px">NPD in</th>
-            <th style="width:75px">Temp °C</th><th style="width:65px">Vap %</th><th style="width:120px">From</th>
-            <th style="width:120px">To</th><th style="width:58px">Class</th><th style="width:150px">Driver</th><th style="width:32px"></th>
-          </tr></thead>
-          <tbody id="b_body"></tbody>
-        </table>
+      <div style="margin-top:1rem;border-top:1px solid var(--rule-soft);padding-top:.8rem">
+        <p class="formtitle" style="margin-bottom:.4rem">Or paste / enter manually</p>
+        <p style="font-size:12.5px;color:var(--ink2);margin:0 0 .5rem">Tab- or comma-separated: <code style="font-family:var(--mono)">Line | NPD | Temp | Vap% | From | To</code></p>
+        <textarea id="b_paste" placeholder="6-P-30101-HC-1A1&#9;8&#9;220&#9;100&#9;V-301&#9;E-302"></textarea>
+        <button class="btn ghost" id="b_import" style="margin-top:.5rem">Import pasted rows</button>
       </div>
-      <p class="formtitle" style="margin-top:1.4rem">Criticality Requirement Chart — all lines</p>
-      <div id="b_chart"></div>
-      <p class="formtitle" style="margin-top:1.4rem">Paste from spreadsheet</p>
-      <p style="font-size:12.5px;color:var(--ink2);margin:0 0 .5rem">Tab- or comma-separated: <code style="font-family:var(--mono)">Line | NPD | Temp | Vap% | From | To</code></p>
-      <textarea id="b_paste" placeholder="6-P-30101-HC-1A1&#9;8&#9;220&#9;100&#9;V-301&#9;E-302"></textarea>
-      <button class="btn" id="b_import" style="margin-top:.5rem">Import pasted rows</button>
     </div>
+
+    <!-- ── Results panel (shown after import) ── -->
+    <div id="b_results_panel" style="display:none">
+
+      <!-- Summary banner -->
+      <div class="card" style="padding:1rem 1.3rem">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.6rem">
+          <div>
+            <p style="font-size:14px;font-weight:700;color:var(--ink);margin:0" id="b_res_title">Critical Line List</p>
+            <p style="font-size:12px;color:var(--ink3);margin:.2rem 0 0" id="b_res_subtitle"></p>
+          </div>
+          <div class="counts" id="b_counts" style="margin-left:0"></div>
+        </div>
+      </div>
+
+      <!-- Action bar -->
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin:.7rem 0">
+        <button class="btn gold" id="b_csv">⬇ Export CSV</button>
+        <button class="btn ghost" id="b_upload2">⬆ Upload different LDT</button>
+        <input type="file" id="b_upload_file2" accept=".xlsx,.xlsm,.xls,.csv" style="display:none">
+        <button class="btn ghost" id="b_calc">Recalculate</button>
+        <button class="btn ghost" id="b_clear" style="color:var(--c1);border-color:var(--c1)">Clear all</button>
+      </div>
+
+      <!-- Read-only classified line list -->
+      <div class="card" style="padding:0;overflow:hidden">
+        <div class="btab-wrap" style="border:0;border-radius:0">
+          <table class="batch" id="b_results_table">
+            <thead><tr>
+              <th style="width:36px">#</th>
+              <th style="width:58px;text-align:center">Class</th>
+              <th style="width:190px">Line number</th>
+              <th style="width:65px">NPD in</th>
+              <th style="width:80px">Temp °C</th>
+              <th style="width:70px">Svc</th>
+              <th style="width:110px">From</th>
+              <th style="width:110px">To</th>
+              <th>Governing criterion</th>
+            </tr></thead>
+            <tbody id="b_res_body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CRC chart -->
+      <div class="card" style="margin-top:.8rem">
+        <p class="formtitle">Criticality Requirement Chart — all lines</p>
+        <div id="b_chart"></div>
+      </div>
+    </div>
+
+    <!-- Hidden editable table (for internal data storage — not shown to user) -->
+    <table style="display:none"><tbody id="b_body"></tbody></table>
+
+  </div>
   </div>
 
 </div>
@@ -828,12 +872,24 @@ function buildEnvelopeSVG(points){
     const tf=cToF(p.temp);
     const cx=X(Math.min(p.npd,xMax)), cy=Y(Math.max(yMin,Math.min(yMax,tf)));
     const r=p.big?7:4.5;
-    g+=`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r}" fill="#1a1510" fill-opacity="0.92" stroke="#fff" stroke-width="1.6"/>`;
+    /* Colour by classification */
+    const dotColors={C1:'#b21f2d',C2:'#c9670c',C3:'#b8860b',NC:'#1a6b5a'};
+    const fill=dotColors[p.cls]||'#1a1510';
+    g+=`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r}" fill="${fill}" fill-opacity="0.88" stroke="#fff" stroke-width="1.4"/>`;
     if(p.label){
       g+=`<rect x="${(cx+r+2).toFixed(1)}" y="${(cy-9).toFixed(1)}" width="${(p.label.length*6.2+8).toFixed(0)}" height="16" rx="3" fill="#fff" fill-opacity="0.82"/>`;
       g+=`<text x="${(cx+r+6).toFixed(1)}" y="${(cy+3).toFixed(1)}" font-size="10.5" fill="#1a1510" font-family="monospace">${p.label}</text>`;
     }
   });
+  /* Legend */
+  if(points.length>1){
+    const lx=m.l+pw-130, ly=m.t+10;
+    g+=`<rect x="${lx}" y="${ly}" width="128" height="62" rx="4" fill="#fff" fill-opacity="0.88" stroke="#e8dfd0"/>`;
+    [['C1','#b21f2d'],['C2','#c9670c'],['C3','#b8860b'],['NC','#1a6b5a']].forEach(([lbl,col],i)=>{
+      g+=`<circle cx="${lx+12}" cy="${ly+12+i*14}" r="4" fill="${col}"/>`;
+      g+=`<text x="${lx+22}" y="${ly+15+i*14}" font-size="10" fill="#1a1510" font-family="monospace">${lbl}</text>`;
+    });
+  }
   g+=`<text x="${m.l+pw/2}" y="${H-6}" text-anchor="middle" font-size="11" fill="#4a3f30">Pipe size (in)</text>`;
   g+=`<text x="14" y="${m.t+ph/2}" text-anchor="middle" font-size="11" fill="#4a3f30" transform="rotate(-90 14 ${m.t+ph/2})">Temperature (°F)</text>`;
   g+=`</svg>`;
@@ -876,7 +932,7 @@ function runSingle(){
   }
   $('s_result').innerHTML=html;
   if(r.checks.length && isFinite(npd) && isFinite(temp))
-    renderEnvelope('s_chart',[{npd,temp,label:`${npd}″ / ${temp}°C`,big:true}]);
+    renderEnvelope('s_chart',[{npd,temp,label:`${npd}″ / ${temp}°C`,big:true,cls:r.final}]);
 }
 $('s_run').addEventListener('click',runSingle);
 ['s_line','s_svc','s_npd','s_temp','s_vap','s_from','s_to'].forEach(id=>{
@@ -884,7 +940,7 @@ $('s_run').addEventListener('click',runSingle);
 });
 
 /* ═══════════════════════════════════════════════════════════
-   BATCH
+   BATCH — classified data store + results view
    ═══════════════════════════════════════════════════════════ */
 const EXAMPLE=[
   ['6-P-30101-HC-1A1-H',8,220,100,'V-301','E-302'],
@@ -898,67 +954,130 @@ const EXAMPLE=[
   ['4-P-30901-HC-1A1',2,45,0,'','DRAIN'],
 ];
 
-function newRow(d){
-  d=d||['','','','','',''];
-  const tr=document.createElement('tr');
-  ['line','npd','temp','vap','from','to'].forEach((k,i)=>{
-    const td=document.createElement('td'); const inp=document.createElement('input');
-    inp.type='text'; inp.value=(d[i]??''); inp.dataset.k=k;
-    inp.addEventListener('input',()=>{ if(k==='line') tr.querySelector('.svccell').textContent=svcFromLine(inp.value); calcBatch(); });
-    td.appendChild(inp); tr.appendChild(td);
-    if(k==='line'){ const s=document.createElement('td'); s.className='svccell out detail'; s.textContent=svcFromLine(String(d[0]||'')); tr.appendChild(s); }
+/* _classifiedLines = [{line,npd,temp,vap,from,to,svc,cls,driver},...] */
+let _classifiedLines=[];
+
+function classifyLines(rawRows){
+  /* rawRows = [[line,npd,temp,vap,from,to],...] */
+  _classifiedLines=[];
+  rawRows.forEach(d=>{
+    const inp={line:String(d[0]||''),npd:String(d[1]||''),temp:String(d[2]||''),vap:String(d[3]||''),from:String(d[4]||''),to:String(d[5]||'')};
+    if(!inp.line.trim()) return;
+    const r=assess(inp);
+    _classifiedLines.push({
+      line:inp.line, npd:inp.npd, temp:inp.temp, vap:inp.vap,
+      from:inp.from, to:inp.to, svc:svcFromLine(inp.line),
+      cls:r.final||'NC', driver:driverText(r)
+    });
   });
-  const c=document.createElement('td'); c.className='out'; c.dataset.role='cls'; tr.appendChild(c);
-  const dr=document.createElement('td'); dr.className='out detail'; dr.dataset.role='drv'; tr.appendChild(dr);
-  const x=document.createElement('td'); const b=document.createElement('button'); b.className='delx'; b.textContent='×';
-  b.onclick=()=>{tr.remove();calcBatch();}; x.appendChild(b); tr.appendChild(x);
-  $('b_body').appendChild(tr); return tr;
+  /* Sort: C1 first, then C2, C3, NC, LDT? */
+  const order={C1:0,C2:1,C3:2,NC:3,'LDT?':4};
+  _classifiedLines.sort((a,b)=>(order[a.cls]??5)-(order[b.cls]??5));
 }
 
-function readRow(tr){ const v={}; tr.querySelectorAll('input').forEach(i=>v[i.dataset.k]=i.value); return v; }
+function renderResults(){
+  if(!_classifiedLines.length){
+    $('b_upload_panel').style.display='';
+    $('b_results_panel').style.display='none';
+    return;
+  }
+  $('b_upload_panel').style.display='none';
+  $('b_results_panel').style.display='';
 
-function calcBatch(){
-  const tally={C1:0,C2:0,C3:0,NC:0,'LDT?':0}; const pts=[];
-  $('b_body').querySelectorAll('tr').forEach(tr=>{
-    const v=readRow(tr);
-    const r=assess({line:v.line,npd:v.npd,temp:v.temp,vap:v.vap,from:v.from,to:v.to});
-    const ct=tr.querySelector('[data-role=cls]'), dt=tr.querySelector('[data-role=drv]');
-    if(!r.final){ ct.innerHTML=''; dt.textContent=''; return; }
-    const key=r.final==='LDT?'?'LDT':r.final;
-    ct.innerHTML=`<span class="pill p-${key}">${r.final}</span>`; dt.textContent=driverText(r);
-    if(tally[r.final]!==undefined) tally[r.final]++;
-    const npd=parseFloat(v.npd), temp=parseFloat(v.temp);
-    if(isFinite(npd)&&isFinite(temp)&&r.final!=='LDT?') pts.push({npd,temp,cls:r.final});
+  const prof=activeProfile();
+  const tally={C1:0,C2:0,C3:0,NC:0,'LDT?':0};
+  const pts=[];
+  const tbody=$('b_res_body'); tbody.innerHTML='';
+
+  _classifiedLines.forEach((L,i)=>{
+    if(tally[L.cls]!==undefined) tally[L.cls]++;
+    const npd=parseFloat(L.npd), temp=parseFloat(L.temp);
+    if(isFinite(npd)&&isFinite(temp)&&L.cls!=='LDT?') pts.push({npd,temp,cls:L.cls});
+
+    const key=L.cls==='LDT?'?'LDT':L.cls;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td class="out" style="color:var(--ink3)">${i+1}</td>`
+      +`<td class="out"><span class="pill p-${key}">${L.cls}</span></td>`
+      +`<td style="padding:.45rem .6rem;font-weight:600;white-space:nowrap">${L.line}</td>`
+      +`<td style="padding:.45rem .6rem;font-family:var(--mono);font-size:12px">${L.npd}</td>`
+      +`<td style="padding:.45rem .6rem;font-family:var(--mono);font-size:12px;${parseFloat(L.temp)>=200?'color:var(--c1);font-weight:700':parseFloat(L.temp)<=-50?'color:#2563EB;font-weight:700':''}">${L.temp}</td>`
+      +`<td style="padding:.45rem .6rem;font-size:12px">${L.svc}</td>`
+      +`<td style="padding:.45rem .6rem;font-size:12px">${L.from}</td>`
+      +`<td style="padding:.45rem .6rem;font-size:12px">${L.to}</td>`
+      +`<td class="detail" style="padding:.45rem .6rem">${L.driver}</td>`;
+    tbody.appendChild(tr);
   });
+
   const total=Object.values(tally).reduce((a,b)=>a+b,0);
   $('b_counts').innerHTML=[['C1','C1'],['C2','C2'],['C3','C3'],['NC','NC'],['LDT?','LDT']].map(([k,key])=>
     `<span class="count"><span class="pill p-${key}" style="font-size:10px">${k}</span> <b>${tally[k]}</b></span>`).join('')
     +`<span class="count">Total <b>${total}</b></span>`;
+
+  $('b_res_title').textContent='Critical Line List — '+total+' lines';
+  $('b_res_subtitle').textContent='Criteria: '+prof.name+' · '+new Date().toLocaleDateString('en-GB');
   renderEnvelope('b_chart', pts);
 }
 
-$('b_add').addEventListener('click',()=>newRow());
+/* Legacy helpers for internal data (newRow still used by directImport) */
+function newRow(d){
+  d=d||['','','','','',''];
+  /* Just store in _classifiedLines — no DOM table */
+  const inp={line:String(d[0]||''),npd:String(d[1]||''),temp:String(d[2]||''),vap:String(d[3]||''),from:String(d[4]||''),to:String(d[5]||'')};
+  if(!inp.line.trim()) return;
+  const r=assess(inp);
+  _classifiedLines.push({
+    line:inp.line, npd:inp.npd, temp:inp.temp, vap:inp.vap,
+    from:inp.from, to:inp.to, svc:svcFromLine(inp.line),
+    cls:r.final||'NC', driver:driverText(r)
+  });
+}
+function calcBatch(){
+  /* Re-classify all stored lines and re-render */
+  const raw=_classifiedLines.map(L=>[L.line,L.npd,L.temp,L.vap,L.from,L.to]);
+  classifyLines(raw);
+  renderResults();
+}
+
 $('b_calc').addEventListener('click',calcBatch);
-$('b_demo').addEventListener('click',()=>{ $('b_body').innerHTML=''; EXAMPLE.forEach(d=>newRow(d)); calcBatch(); });
-$('b_clear').addEventListener('click',()=>{ if(!$('b_body').children.length || confirm('Clear all lines and start fresh?')){ $('b_body').innerHTML=''; calcBatch(); } });
+$('b_demo').addEventListener('click',()=>{
+  _classifiedLines=[];
+  EXAMPLE.forEach(d=>newRow(d));
+  const order={C1:0,C2:1,C3:2,NC:3,'LDT?':4};
+  _classifiedLines.sort((a,b)=>(order[a.cls]??5)-(order[b.cls]??5));
+  renderResults();
+});
+$('b_clear').addEventListener('click',()=>{
+  if(!_classifiedLines.length || confirm('Clear all lines and start fresh?')){
+    _classifiedLines=[];
+    renderResults();
+  }
+});
 $('b_import').addEventListener('click',()=>{
-  const txt=$('b_paste').value.trim(); if(!txt) return; $('b_body').innerHTML='';
-  txt.split(/\r?\n/).forEach(ln=>{ const p=ln.split(/\t|,(?![^()]*\))/).map(s=>s.trim()); if(p.length&&p[0]) newRow([p[0],p[1]||'',p[2]||'',p[3]||'',p[4]||'',p[5]||'']); });
-  calcBatch(); $('b_paste').value='';
+  const txt=$('b_paste').value.trim(); if(!txt) return;
+  _classifiedLines=[];
+  const raw=[];
+  txt.split(/\r?\n/).forEach(ln=>{
+    const p=ln.split(/\t|,(?![^()]*\))/).map(s=>s.trim());
+    if(p.length&&p[0]) raw.push([p[0],p[1]||'',p[2]||'',p[3]||'',p[4]||'',p[5]||'']);
+  });
+  classifyLines(raw);
+  renderResults();
+  $('b_paste').value='';
 });
 $('b_csv').addEventListener('click',()=>{
+  if(!_classifiedLines.length){ alert('No lines to export.'); return; }
   const prof=activeProfile();
-  let rows=[['Line','Service','NPD_in','Temp_'+prof.tunit,'Vap_pct','From','To','Class','Driver','Profile']];
-  $('b_body').querySelectorAll('tr').forEach(tr=>{
-    const v=readRow(tr);
-    const r=assess({line:v.line,npd:v.npd,temp:v.temp,vap:v.vap,from:v.from,to:v.to});
-    if(!r.final) return;
-    rows.push([v.line,svcFromLine(v.line),v.npd,v.temp,v.vap,v.from,v.to,r.final,driverText(r),prof.name]);
+  let rows=[['#','Class','Line Number','NPD_in','Design_Temp_'+prof.tunit,'Vap_pct','Service','From','To','Governing_Criterion','Criteria_Profile']];
+  _classifiedLines.forEach((L,i)=>{
+    rows.push([i+1,L.cls,L.line,L.npd,L.temp,L.vap,L.svc,L.from,L.to,L.driver,prof.name]);
   });
   const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
   const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-  a.download='stress_critical_line_list.csv'; a.click();
+  a.download='critical_line_list.csv'; a.click();
 });
+/* Second upload button (in results panel) */
+$('b_upload2').addEventListener('click',()=>$('b_upload_file2').click());
+$('b_upload_file2').addEventListener('change',handleLdtUpload);
 
 /* ═══════════════════════════════════════════════════════════
    LDT FILE UPLOAD — Excel (.xlsx/.xlsm/.xls) and CSV
@@ -1205,9 +1324,8 @@ function directImport(fileInfo){
   }
 
   /* ─── Import rows ─── */
-  $('b_body').innerHTML='';
   const DN_TO_NPS={15:0.5,20:0.75,25:1,32:1.25,40:1.5,50:2,65:2.5,80:3,100:4,125:5,150:6,200:8,250:10,300:12,350:14,400:16,450:18,500:20,600:24,650:26,700:28,750:30,800:32,850:34,900:36,950:38,1000:40,1050:42,1100:44,1200:48};
-  let imported=0;
+  const raw=[];
   rows.forEach(r=>{
     const lineNo=String(r[ci.line]||'').trim();
     if(!lineNo) return;
@@ -1228,22 +1346,11 @@ function directImport(fileInfo){
     temp=temp.replace(/\s*[°]?\s*(C|F|deg)\s*$/i,'').trim();
     vap=vap.replace(/\s*%\s*$/i,'').trim();
     if(!vap) vap='100';
-    newRow([lineNo,npd,temp,vap,from,to]);
-    imported++;
+    raw.push([lineNo,npd,temp,vap,from,to]);
   });
-  calcBatch();
+  classifyLines(raw);
+  renderResults();
   switchSubtab('batch',document.querySelector('.subtab:nth-child(2)'));
-
-  /* Summary */
-  const mapped=[];
-  if(ci.line>=0) mapped.push('Line No');
-  if(ci.npd>=0) mapped.push('NPD');
-  if(ci.temp>=0) mapped.push('Temp');
-  if(ci.vap>=0) mapped.push('Vap%');
-  if(ci.from>=0) mapped.push('From');
-  if(ci.to>=0) mapped.push('To');
-  if(ci.svc>=0) mapped.push('Svc');
-  alert(imported+' lines imported ('+method+').\nMapped: '+mapped.join(', '));
 }
 
 function handleLdtUpload(ev) {
@@ -1476,7 +1583,6 @@ try{
   populateProfileSelect();
   populateLdtFormatSelect();
   $('s_svc').placeholder=svcFromLine($('s_line').value);
-  EXAMPLE.forEach(d=>newRow(d)); calcBatch();
 }catch(e){ console.error('SCL init error:',e); }
 </script>
 
