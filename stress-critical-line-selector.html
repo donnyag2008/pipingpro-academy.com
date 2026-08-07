@@ -284,6 +284,18 @@ code,pre,.mono,[class*="mono"]{ font-family:'IBM Plex Mono',ui-monospace,monospa
         <input type="file" id="b_upload_file" accept=".xlsx,.xlsm,.xls,.csv" style="display:none">
         <div class="counts" id="b_counts"></div>
       </div>
+      <!-- LDT Format presets bar -->
+      <div id="ldt-fmt-bar" style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.8rem;padding:.55rem .8rem;background:#fff;border:1px solid var(--rule);border-radius:8px;font-size:12px">
+        <span style="color:var(--ink3);font-weight:600;white-space:nowrap">LDT format:</span>
+        <select id="ldt-fmt-select" style="max-width:220px;padding:.3rem .5rem;border:1px solid var(--rule);border-radius:4px;font-size:12px;font-weight:600">
+          <option value="auto">Auto-detect</option>
+        </select>
+        <button class="btn sm ghost" onclick="deleteLdtFormat()" id="ldt-fmt-del" style="display:none">Delete</button>
+        <button class="btn sm ghost" onclick="exportLdtFormat()">Export</button>
+        <button class="btn sm ghost" onclick="document.getElementById('ldt-fmt-import-file').click()">Import</button>
+        <input type="file" id="ldt-fmt-import-file" accept=".json" style="display:none" onchange="importLdtFormat(event)">
+        <span id="ldt-fmt-info" style="color:var(--ink3);font-size:11px;margin-left:auto"></span>
+      </div>
       <div class="btab-wrap">
         <table class="batch">
           <thead><tr>
@@ -371,6 +383,7 @@ code,pre,.mono,[class*="mono"]{ font-family:'IBM Plex Mono',ui-monospace,monospa
     </div>
     <div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1.1rem">
       <button onclick="closeLdtMap()" style="background:transparent;color:#4a3f30;border:1px solid #c8b89a;padding:.6rem 1.2rem;border-radius:4px;cursor:pointer;font-weight:600">Cancel</button>
+      <button onclick="saveLdtFormatFromModal()" style="background:var(--teal);color:#fff;border:none;padding:.6rem 1.2rem;border-radius:4px;cursor:pointer;font-weight:700;font-size:13px">💾 Save as LDT Format</button>
       <button onclick="importLdtMapped()" style="background:#b8860b;color:#1a1510;border:none;padding:.6rem 1.5rem;border-radius:4px;cursor:pointer;font-weight:700">Import Lines →</button>
     </div>
   </div>
@@ -950,15 +963,25 @@ $('b_csv').addEventListener('click',()=>{
 /* ═══════════════════════════════════════════════════════════
    LDT FILE UPLOAD — Excel (.xlsx/.xlsm/.xls) and CSV
    ═══════════════════════════════════════════════════════════ */
+/* Patterns are tried in order — first match wins.
+   Put specific/design patterns before generic ones so we pick
+   DESIGN TEMPERATURE over OPERATING TEMPERATURE, etc. */
 const LDT_FIELD_PATTERNS = {
-  line: [/line\s*(no|number|tag|id)/i, /^line$/i, /line\s*des/i, /tag\s*no/i],
-  npd:  [/^(npd|nps|size|dia|diam|nominal)/i, /pipe\s*size/i, /^od$/i, /^dn$/i],
-  temp: [/temp/i, /^t\s*des/i, /design\s*t/i, /^dt$/i],
-  vap:  [/vap/i, /phase/i, /wt\s*frac/i, /v\.?w\.?f/i],
+  line: [/line\s*(no|number|tag|id)/i, /^line$/i, /line\s*des/i, /tag\s*no/i, /^line\s*num/i],
+  npd:  [/designated\s*size/i, /nominal\s*(pipe\s*)?(dia|size)/i, /pipe\s*size/i, /^(npd|nps|size|dia|diam|nominal)/i, /^od$/i, /^dn$/i],
+  temp: [/max\s*design\s*temp/i, /design\s*temp/i, /des\.?\s*temp/i, /^temp.*des/i, /^t\s*des/i, /^dt$/i, /temp/i],
+  vap:  [/vap/i, /^phase$/i, /wt\s*frac/i, /v\.?w\.?f/i],
   from: [/^from$/i, /from\s*(equip|tag|node)/i, /^origin/i, /upstream/i],
   to:   [/^to$/i, /to\s*(equip|tag|node)/i, /^dest/i, /downstream/i],
-  svc:  [/servi?ce/i, /^svc$/i, /fluid/i, /^medium$/i],
+  svc:  [/service\s*code/i, /servi?ce/i, /^svc$/i, /fluid\s*code/i, /^fluid$/i, /^medium$/i],
 };
+
+/* Headers that indicate "this row is the LDT column header row" */
+const LDT_HEADER_SIGNATURES = [
+  /line\s*(no|number|tag)/i, /from/i, /to/i, /size/i, /temp/i,
+  /service/i, /pipe\s*class/i, /spec/i, /pressure/i, /schedule/i,
+  /npd|nps|nominal/i, /design/i, /stream/i, /phase/i, /p&id/i, /pid/i,
+];
 const LDT_FIELD_LABELS = {
   line:'Line Number *', npd:'NPD (in) *', temp:'Design Temp (°C) *',
   vap:'Vapour %', from:'From (equip)', to:'To (equip)', svc:'Service code',
@@ -968,17 +991,172 @@ let _ldtParsedData = null;
 let _ldtSheetNames = [];
 let _ldtWorkbook = null;
 
+/* ═══════════════════════════════════════════════════════════
+   LDT FORMAT PRESETS — save column mappings by header name
+   ═══════════════════════════════════════════════════════════ */
+const LS_LDT_FORMATS = 'ppa_scl_ldt_formats';
+
+function loadLdtFormats(){
+  try{ return JSON.parse(localStorage.getItem(LS_LDT_FORMATS)||'{}'); }
+  catch(e){ return {}; }
+}
+function saveLdtFormats(fmts){
+  localStorage.setItem(LS_LDT_FORMATS, JSON.stringify(fmts));
+}
+
+function populateLdtFormatSelect(){
+  const sel=$('ldt-fmt-select');
+  const cur=sel.value;
+  sel.innerHTML='<option value="auto">Auto-detect</option>';
+  const fmts=loadLdtFormats();
+  for(const [k,f] of Object.entries(fmts)){
+    const o=document.createElement('option'); o.value=k;
+    o.textContent=f.name; sel.appendChild(o);
+  }
+  /* Restore previous selection if still exists */
+  if(cur && fmts[cur]) sel.value=cur;
+  $('ldt-fmt-del').style.display=(sel.value!=='auto')?'inline-block':'none';
+  $('ldt-fmt-info').textContent='';
+  if(sel.value!=='auto' && fmts[sel.value]){
+    const f=fmts[sel.value];
+    const mapped=Object.entries(f.columns).filter(([k,v])=>v).map(([k])=>LDT_FIELD_LABELS[k]||k);
+    $('ldt-fmt-info').textContent=mapped.join(', ');
+  }
+}
+
+$('ldt-fmt-select').addEventListener('change',()=>{
+  $('ldt-fmt-del').style.display=($('ldt-fmt-select').value!=='auto')?'inline-block':'none';
+  populateLdtFormatSelect();
+});
+
+function deleteLdtFormat(){
+  const id=$('ldt-fmt-select').value;
+  if(id==='auto') return;
+  const fmts=loadLdtFormats();
+  if(!fmts[id]) return;
+  if(!confirm('Delete LDT format "'+fmts[id].name+'"?')) return;
+  delete fmts[id]; saveLdtFormats(fmts);
+  $('ldt-fmt-select').value='auto';
+  populateLdtFormatSelect();
+}
+
+function exportLdtFormat(){
+  const id=$('ldt-fmt-select').value;
+  if(id==='auto'){
+    /* Export all formats */
+    const fmts=loadLdtFormats();
+    if(!Object.keys(fmts).length){ alert('No saved LDT formats to export.'); return; }
+    const blob=new Blob([JSON.stringify(fmts,null,2)],{type:'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+    a.download='ldt_formats_all.json'; a.click();
+  } else {
+    const fmts=loadLdtFormats();
+    const f=fmts[id]; if(!f) return;
+    const blob=new Blob([JSON.stringify(f,null,2)],{type:'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+    a.download=(f.name.replace(/[^a-z0-9]/gi,'_'))+'_ldt_format.json'; a.click();
+  }
+}
+
+function importLdtFormat(ev){
+  const file=ev.target.files[0]; if(!file) return;
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      const fmts=loadLdtFormats();
+      if(data.columns && data.name){
+        /* Single format */
+        const id='fmt-'+Date.now();
+        fmts[id]=data;
+        saveLdtFormats(fmts); populateLdtFormatSelect();
+        $('ldt-fmt-select').value=id; populateLdtFormatSelect();
+        alert('Imported LDT format: '+data.name);
+      } else {
+        /* Multiple formats */
+        let count=0;
+        for(const [k,v] of Object.entries(data)){
+          if(v.columns && v.name){ fmts['fmt-'+Date.now()+'-'+count]=v; count++; }
+        }
+        saveLdtFormats(fmts); populateLdtFormatSelect();
+        alert('Imported '+count+' LDT format(s).');
+      }
+    }catch(err){ alert('Invalid JSON: '+err.message); }
+  };
+  r.readAsText(file); ev.target.value='';
+}
+
+/* Save current modal mapping as a named LDT format preset */
+function saveLdtFormatFromModal(){
+  if(!_ldtParsedData) return;
+  const {headers}=_ldtParsedData;
+  const name=prompt('Name this LDT format (e.g. "Wood SPI", "Bechtel GASCO"):');
+  if(!name || !name.trim()) return;
+
+  /* Read the dropdown selections and store the HEADER NAME for each field */
+  const columns={};
+  ['line','npd','temp','vap','from','to','svc'].forEach(fld=>{
+    const sel=$('ldt-map-'+fld);
+    const idx=sel?parseInt(sel.value):-1;
+    columns[fld]=(idx>=0 && headers[idx])?headers[idx]:null;
+  });
+
+  const fmts=loadLdtFormats();
+  const id='fmt-'+Date.now();
+  fmts[id]={name:name.trim(), columns};
+  saveLdtFormats(fmts);
+  populateLdtFormatSelect();
+  $('ldt-fmt-select').value=id;
+  populateLdtFormatSelect();
+  alert('LDT format "'+name.trim()+'" saved. Next upload will use this mapping automatically.');
+}
+
+/* Match a saved format's column names against the current file's headers.
+   Returns a column index map, or null if match is too weak. */
+function matchLdtFormat(fmt, headers){
+  const norm=headers.map(h=>h.replace(/[\r\n\t]+/g,' ').trim().toLowerCase());
+  const ci={};
+  let matched=0, required=0;
+  ['line','npd','temp','vap','from','to','svc'].forEach(fld=>{
+    ci[fld]=-1;
+    const savedName=(fmt.columns[fld]||'').replace(/[\r\n\t]+/g,' ').trim().toLowerCase();
+    if(!savedName) return;
+    /* Exact match first */
+    let idx=norm.indexOf(savedName);
+    if(idx<0){
+      /* Fuzzy: check if header contains the saved name or vice versa */
+      for(let i=0;i<norm.length;i++){
+        if(norm[i].includes(savedName) || savedName.includes(norm[i])){
+          idx=i; break;
+        }
+      }
+    }
+    if(idx>=0){ ci[fld]=idx; matched++; }
+    if(fld==='line') required=1; /* line is mandatory */
+  });
+  /* Need at least line + 1 other field to consider it a match */
+  if(ci.line<0 || matched<2) return null;
+  return ci;
+}
+
+/* ─── Updated upload flow: preset → auto-detect → modal ─── */
+
 $('b_upload').addEventListener('click', () => $('b_upload_file').click());
 $('b_upload_file').addEventListener('change', handleLdtUpload);
 
 function autoMapColumns(headers){
   const map={};
+  /* Normalise: collapse newlines/tabs to spaces for matching */
+  const norm=headers.map(h=>h.replace(/[\r\n\t]+/g,' ').trim());
   const fields=['line','npd','temp','vap','from','to','svc'];
   fields.forEach(fld=>{
     const patterns=LDT_FIELD_PATTERNS[fld]||[];
     map[fld]=-1;
-    for(let i=0;i<headers.length;i++){
-      if(patterns.some(p=>p.test(headers[i]))){ map[fld]=i; break; }
+    for(const p of patterns){
+      for(let i=0;i<norm.length;i++){
+        if(p.test(norm[i])){ map[fld]=i; break; }
+      }
+      if(map[fld]>=0) break; /* stop at first pattern that matched */
     }
   });
   return map;
@@ -987,15 +1165,46 @@ function autoMapColumns(headers){
 function directImport(fileInfo){
   if(!_ldtParsedData) return;
   const {headers, rows}=_ldtParsedData;
-  const ci=autoMapColumns(headers);
+  let ci=null;
+  let method='';
 
-  // If we can't find Line Number, fall back to the mapping modal
-  if(ci.line<0){
-    openColumnMapper(fileInfo + ' — could not auto-detect Line Number column');
+  /* Step 1: Try user-selected preset (if not "auto") */
+  const selFmt=$('ldt-fmt-select').value;
+  if(selFmt!=='auto'){
+    const fmts=loadLdtFormats();
+    if(fmts[selFmt]){
+      ci=matchLdtFormat(fmts[selFmt], headers);
+      if(ci) method='preset: '+fmts[selFmt].name;
+    }
+  }
+
+  /* Step 2: Try all saved presets for best match */
+  if(!ci){
+    const fmts=loadLdtFormats();
+    let bestMatch=null, bestCount=0, bestName='';
+    for(const [k,f] of Object.entries(fmts)){
+      const m=matchLdtFormat(f, headers);
+      if(m){
+        const count=Object.values(m).filter(v=>v>=0).length;
+        if(count>bestCount){ bestMatch=m; bestCount=count; bestName=f.name; }
+      }
+    }
+    if(bestMatch){ ci=bestMatch; method='preset: '+bestName; }
+  }
+
+  /* Step 3: Auto-detect from header patterns */
+  if(!ci){
+    ci=autoMapColumns(headers);
+    if(ci.line>=0) method='auto-detect';
+  }
+
+  /* Step 4: If still can't find Line Number, fall back to modal */
+  if(!ci || ci.line<0){
+    openColumnMapper(fileInfo + ' — could not auto-detect columns');
     return;
   }
 
-  // Proceed with direct import
+  /* ─── Import rows ─── */
   $('b_body').innerHTML='';
   const DN_TO_NPS={15:0.5,20:0.75,25:1,32:1.25,40:1.5,50:2,65:2.5,80:3,100:4,125:5,150:6,200:8,250:10,300:12,350:14,400:16,450:18,500:20,600:24,650:26,700:28,750:30,800:32,850:34,900:36,950:38,1000:40,1050:42,1100:44,1200:48};
   let imported=0;
@@ -1007,12 +1216,10 @@ function directImport(fileInfo){
     let vap=ci.vap>=0?String(r[ci.vap]||'').trim():'';
     let from=ci.from>=0?String(r[ci.from]||'').trim():'';
     let to=ci.to>=0?String(r[ci.to]||'').trim():'';
-    // Extract NPD from line number if not mapped
     if(!npd && lineNo.includes('-')){
       const first=lineNo.split('-')[0];
       if(/^\d+\.?\d*$/.test(first)) npd=first;
     }
-    // DN → NPS conversion
     if(/^DN\s*\d/i.test(npd)){
       const dn=parseFloat(npd.replace(/[^0-9.]/g,''));
       npd=String(DN_TO_NPS[dn]||dn/25.4);
@@ -1027,23 +1234,16 @@ function directImport(fileInfo){
   calcBatch();
   switchSubtab('batch',document.querySelector('.subtab:nth-child(2)'));
 
-  // Build summary of what was mapped
+  /* Summary */
   const mapped=[];
-  if(ci.line>=0) mapped.push('Line No → Col '+(ci.line+1));
-  if(ci.npd>=0) mapped.push('NPD → Col '+(ci.npd+1));
-  if(ci.temp>=0) mapped.push('Temp → Col '+(ci.temp+1));
-  if(ci.vap>=0) mapped.push('Vap% → Col '+(ci.vap+1));
-  if(ci.from>=0) mapped.push('From → Col '+(ci.from+1));
-  if(ci.to>=0) mapped.push('To → Col '+(ci.to+1));
-  const unmapped=[];
-  if(ci.npd<0) unmapped.push('NPD (extracted from line number where possible)');
-  if(ci.temp<0) unmapped.push('Temperature');
-  if(ci.from<0) unmapped.push('From');
-  if(ci.to<0) unmapped.push('To');
-
-  let msg=imported+' lines imported and classified.\n\nAuto-detected: '+mapped.join(', ');
-  if(unmapped.length) msg+='\n\nNot found: '+unmapped.join(', ')+'\n\nYou can edit any cell directly in the table, or use ⬆ Upload LDT again with a different file.';
-  alert(msg);
+  if(ci.line>=0) mapped.push('Line No');
+  if(ci.npd>=0) mapped.push('NPD');
+  if(ci.temp>=0) mapped.push('Temp');
+  if(ci.vap>=0) mapped.push('Vap%');
+  if(ci.from>=0) mapped.push('From');
+  if(ci.to>=0) mapped.push('To');
+  if(ci.svc>=0) mapped.push('Svc');
+  alert(imported+' lines imported ('+method+').\nMapped: '+mapped.join(', '));
 }
 
 function handleLdtUpload(ev) {
@@ -1090,12 +1290,31 @@ function handleLdtUpload(ev) {
 function loadSheet(name) {
   const ws = _ldtWorkbook.Sheets[name];
   const json = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
-  let headerIdx = 0;
-  for (let i = 0; i < Math.min(json.length, 15); i++) {
-    const filled = (json[i] || []).filter(c => String(c).trim()).length;
-    if (filled >= 3) { headerIdx = i; break; }
+
+  /* Smart header detection: score each of the first 20 rows by how many
+     LDT-characteristic column names it contains. The row with the highest
+     score wins. This handles LDTs with project info rows above the header. */
+  let headerIdx = 0, bestScore = 0;
+  for (let i = 0; i < Math.min(json.length, 20); i++) {
+    const row = json[i] || [];
+    let score = 0;
+    row.forEach(cell => {
+      const txt = String(cell).replace(/[\r\n]+/g, ' ').trim();
+      if (!txt) return;
+      LDT_HEADER_SIGNATURES.forEach(pat => { if (pat.test(txt)) score++; });
+    });
+    if (score > bestScore) { bestScore = score; headerIdx = i; }
   }
-  const headers = (json[headerIdx] || []).map(h => String(h).trim());
+  /* Fallback: if no signatures matched, use first row with 3+ filled cells */
+  if (bestScore === 0) {
+    for (let i = 0; i < Math.min(json.length, 15); i++) {
+      const filled = (json[i] || []).filter(c => String(c).trim()).length;
+      if (filled >= 3) { headerIdx = i; break; }
+    }
+  }
+
+  /* Normalise headers: collapse newlines to spaces */
+  const headers = (json[headerIdx] || []).map(h => String(h).replace(/[\r\n]+/g, ' ').trim());
   const rows = json.slice(headerIdx + 1).filter(r => r.some(c => String(c).trim()));
   _ldtParsedData = { headers, rows, headerIdx };
 }
@@ -1255,6 +1474,7 @@ function ppaOpenReportSCL(){ if(!buildSCLReport()){ alert('Please assess a line 
    ═══════════════════════════════════════════════════════════ */
 try{
   populateProfileSelect();
+  populateLdtFormatSelect();
   $('s_svc').placeholder=svcFromLine($('s_line').value);
   EXAMPLE.forEach(d=>newRow(d)); calcBatch();
 }catch(e){ console.error('SCL init error:',e); }
