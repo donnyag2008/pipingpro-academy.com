@@ -79,6 +79,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <style>
 :root{
   --ink:#1a1510;--ink2:#4a3f30;--ink3:#6b5d49;
@@ -132,7 +133,6 @@ input[type=text],input[type=number],select{width:100%;padding:.5rem .65rem;borde
 select{font-family:var(--font);font-size:13px;}
 input:focus,select:focus{outline:2px solid var(--accent);outline-offset:-1px;background:#fff;}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;}
-.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.7rem;}
 .btn{appearance:none;border:1px solid var(--accent);background:var(--accent);color:#fff;font-weight:600;font-size:13px;padding:.6rem 1rem;border-radius:6px;cursor:pointer;font-family:var(--font);transition:opacity .15s;}
 .btn:hover{opacity:.9;}
 .btn.ghost{background:#fff;color:var(--ink);border-color:var(--rule);}
@@ -155,7 +155,7 @@ table.chk-table{width:100%;border-collapse:collapse;font-size:13px;}
 .p-C1{background:var(--c1)} .p-C2{background:var(--c2)} .p-C3{background:var(--c3)} .p-NC{background:#cdd2c9;color:#5a6155} .p-LDT{background:var(--ldt)}
 .chk-table td.detail{font-family:var(--mono);font-size:12px;color:var(--ink2);}
 .chk-table tr.driver{background:#fbf6ec;}
-.chk-table tr.driver td:first-child::before{content:'\u25B6 ';color:var(--accent);font-size:9px;}
+.chk-table tr.driver td:first-child::before{content:'\25B6 ';color:var(--accent);font-size:9px;}
 .toolbar{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-bottom:1rem;}
 .counts{display:flex;gap:.5rem;margin-left:auto;flex-wrap:wrap;}
 .count{font-family:var(--mono);font-size:12px;padding:.35rem .7rem;border-radius:6px;border:1px solid var(--rule);background:#fff;font-weight:600;}
@@ -175,12 +175,8 @@ textarea{width:100%;min-height:90px;border:1px solid var(--rule);border-radius:8
 svg.crc{max-width:100%;height:auto;display:block;background:#fff;border:1px solid var(--rule);border-radius:9px;margin-top:.6rem;}
 .cap{font-size:11.5px;color:var(--ink3);margin-top:.5rem;line-height:1.6;}
 .note{background:var(--teal-light);border:1px solid rgba(26,107,90,.2);border-radius:8px;padding:.8rem 1rem;font-size:12.5px;color:#155847;margin:.8rem 0;line-height:1.7;}
-
-/* ── Criteria tab ── */
 .profile-bar{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;margin-bottom:1.2rem;padding:.9rem 1.1rem;background:#fff;border:1px solid var(--rule);border-radius:10px;}
 .profile-bar select{max-width:280px;font-weight:600;}
-.profile-bar .pname{font-weight:700;font-size:14px;color:var(--ink);}
-.profile-bar .pdesc{font-size:12px;color:var(--ink3);margin-left:.3rem;}
 .rule-group{margin-bottom:1.5rem;}
 .rule-group-head{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin:0 0 .5rem;padding-bottom:.4rem;border-bottom:1px solid var(--rule-soft);display:flex;justify-content:space-between;align-items:center;}
 .rule-row{display:grid;grid-template-columns:1fr 80px 80px 80px 80px 70px 36px;gap:.4rem;align-items:center;padding:.4rem .5rem;border-bottom:1px solid var(--paper2);font-size:12.5px;}
@@ -230,7 +226,6 @@ code,pre,.mono,[class*="mono"]{ font-family:'IBM Plex Mono',ui-monospace,monospa
 
   <div class="disclaimer"><strong>Screening recommendation, not a verdict.</strong> Output is an engineering screening of the level of analysis required — it does not replace the project's stress-critical line list procedure or the responsible stress engineer's judgement. Switch to the <b>Criteria Profiles</b> tab to change or create screening rules for your project.</div>
 
-  <!-- Active profile indicator -->
   <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:1rem;font-size:13px">
     <span style="color:var(--ink3)">Active profile:</span>
     <span class="active-tag" id="calc-active-tag"></span>
@@ -285,6 +280,8 @@ code,pre,.mono,[class*="mono"]{ font-family:'IBM Plex Mono',ui-monospace,monospa
         <button class="btn ghost" id="b_csv">Export CSV</button>
         <button class="btn ghost" id="b_demo">Load example</button>
         <button class="btn ghost" id="b_clear" style="color:var(--c1);border-color:var(--c1)">Clear all</button>
+        <button class="btn gold" id="b_upload">⬆ Upload LDT</button>
+        <input type="file" id="b_upload_file" accept=".xlsx,.xlsm,.xls,.csv" style="display:none">
         <div class="counts" id="b_counts"></div>
       </div>
       <div class="btab-wrap">
@@ -325,7 +322,6 @@ code,pre,.mono,[class*="mono"]{ font-family:'IBM Plex Mono',ui-monospace,monospa
     <input type="file" id="prof-import-file" accept=".json" style="display:none" onchange="importProfile(event)">
   </div>
 
-  <!-- Profile metadata -->
   <div class="card" id="prof-meta-card">
     <p class="formtitle">Profile details</p>
     <div class="row2">
@@ -337,7 +333,6 @@ code,pre,.mono,[class*="mono"]{ font-family:'IBM Plex Mono',ui-monospace,monospa
     <label class="fld"><span class="lab">Description</span><input type="text" id="prof-desc" onchange="saveProfileMeta()"></label>
   </div>
 
-  <!-- Rules editor -->
   <div id="rules-editor"></div>
 
   <div class="note" style="margin-top:1rem"><b>How rules work.</b> Each rule specifies conditions (min/max size, min/max temperature, service, equipment prefix, two-phase) and an output class (C1, C2, C3, NC). When a line is assessed, every rule is tested. The line takes the highest (most onerous) class from all matching rules. A line that matches no rule defaults to NC.</div>
@@ -363,6 +358,24 @@ code,pre,.mono,[class*="mono"]{ font-family:'IBM Plex Mono',ui-monospace,monospa
 </div>
 </div>
 
+<!-- ════════ LDT Column Mapping Modal ════════ -->
+<div id="ldt-map-modal" style="display:none;position:fixed;inset:0;background:rgba(26,21,16,.55);z-index:10001;align-items:center;justify-content:center;padding:1rem">
+  <div style="background:#faf6ef;border-radius:8px;max-width:620px;width:100%;max-height:90vh;overflow-y:auto;padding:1.6rem 1.8rem;box-shadow:0 10px 40px rgba(26,21,16,.3);font-family:'DM Sans',sans-serif">
+    <h3 style="font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:1.3rem;color:#1a1510;margin:0 0 .3rem">Map LDT Columns</h3>
+    <p style="font-size:.82rem;color:#4a3f30;margin:0 0 .4rem" id="ldt-map-info"></p>
+    <p style="font-size:.78rem;color:#6b5d49;margin:0 0 1rem">Map each field to the correct column from your LDT. "— skip —" means the field won't be imported.</p>
+    <div id="ldt-map-fields" style="display:grid;grid-template-columns:140px 1fr 1fr;gap:.5rem .7rem;align-items:center"></div>
+    <div style="margin-top:1rem;padding:.7rem;background:#f3ede2;border-radius:6px;font-size:12px;max-height:160px;overflow-y:auto">
+      <p style="font-weight:700;color:#4a3f30;margin:0 0 .3rem;font-size:11px;text-transform:uppercase;letter-spacing:.06em">Preview (first 5 rows)</p>
+      <div id="ldt-map-preview" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#1a1510;white-space:pre-wrap"></div>
+    </div>
+    <div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1.1rem">
+      <button onclick="closeLdtMap()" style="background:transparent;color:#4a3f30;border:1px solid #c8b89a;padding:.6rem 1.2rem;border-radius:4px;cursor:pointer;font-weight:600">Cancel</button>
+      <button onclick="importLdtMapped()" style="background:#b8860b;color:#1a1510;border:none;padding:.6rem 1.5rem;border-radius:4px;cursor:pointer;font-weight:700">Import Lines →</button>
+    </div>
+  </div>
+</div>
+
 <footer class="ppa-footer">
   <div class="ppa-footer-logo">Piping<span>Pro</span> Academy</div>
   <p>Screening aid for piping flexibility classification — output is a preliminary recommendation, not a substitute for the project stress-critical line list procedure.</p>
@@ -381,21 +394,17 @@ const BUILTIN_PROFILES = {
   id:'epc-generic', name:'EPC Generic', builtin:true, tunit:'C',
   desc:'Standard EPC twelve-criterion LDT screening method — representative of typical major-project procedures.',
   rules:[
-    // Size-only
     {cat:'size', desc:'Small bore < 2″', maxNPD:1.99, cls:'NC'},
     {cat:'size', desc:'2″ to < 16″ — moderate size', minNPD:2, maxNPD:15.99, cls:'C3'},
     {cat:'size', desc:'16″ to < 24″ — large bore', minNPD:16, maxNPD:23.99, cls:'C2'},
     {cat:'size', desc:'≥ 24″ — very large bore', minNPD:24, cls:'C1'},
-    // Size + Temperature
     {cat:'size_temp', desc:'≥ 2″ and ≥ 280°C — high temp', minNPD:2, minTemp:280, cls:'C1'},
     {cat:'size_temp', desc:'≥ 6″ and ≥ 200°C — elevated temp', minNPD:6, minTemp:200, cls:'C1'},
     {cat:'size_temp', desc:'≥ 2″ and ≤ −101°C — cryogenic', minNPD:2, maxTemp:-101, cls:'C2'},
     {cat:'size_temp', desc:'≥ 6″ and ≤ −50°C — low temp', minNPD:6, maxTemp:-50, cls:'C2'},
-    // Two-phase
     {cat:'twophase', desc:'> 6″ two-phase flow', minNPD:6.01, cls:'C1'},
     {cat:'twophase', desc:'> 3″ two-phase flow', minNPD:3.01, cls:'C2'},
     {cat:'twophase', desc:'≥ 2″ two-phase flow', minNPD:2, cls:'C3'},
-    // Equipment
     {cat:'equip', desc:'Boiler (B-) ≥ 4″', prefix:'B-', minNPD:4, cls:'C1'},
     {cat:'equip', desc:'Compressor (C-) HC any size', prefix:'C-', svcMatch:'HC', vapReq:'gas', cls:'C1'},
     {cat:'equip', desc:'Compressor (C-) gas > 4″', prefix:'C-', minNPD:4.01, vapReq:'gas', cls:'C1'},
@@ -418,45 +427,33 @@ const BUILTIN_PROFILES = {
   id:'saes-l-120', name:'SAES-L-120 / Saudi Aramco', builtin:true, tunit:'C',
   desc:'Saudi Aramco SAES-L-120 Piping Flexibility Analysis, as implemented on Khursaniyah Gas Plant (Bechtel K78-L-RE-551950/551951). Temp thresholds in °C.',
   rules:[
-    // ── C1: Formal Piping Flexibility Analysis (Most Critical) ──
-    // Size + Temperature
     {cat:'size_temp', desc:'C1-A: ≥ 6″ NPS process ≥ 260°C (500°F)', minNPD:6, minTemp:260, cls:'C1'},
     {cat:'size_temp', desc:'C1-B: ≥ 16″ NPS process ≥ 121°C (250°F)', minNPD:16, minTemp:121, cls:'C1'},
-    // Size-only (very large)
     {cat:'size', desc:'C1-all: All lines > 12″ NPS (per 6.3.1.1d)', minNPD:12.01, cls:'C1'},
-    // Equipment
     {cat:'equip', desc:'C1-H: Fired heaters / steam generators', prefix:'H-', minNPD:2, cls:'C1'},
     {cat:'equip', desc:'C1-I: Compressors / turbines (C-)', prefix:'C-', minNPD:2, cls:'C1'},
     {cat:'equip', desc:'C1-I: Compressors / turbines (T-)', prefix:'T-', minNPD:2, cls:'C1'},
     {cat:'equip', desc:'C1-J: Pumps (P-) > 6″ NPS', prefix:'P-', minNPD:6.01, cls:'C1'},
     {cat:'equip', desc:'C1-K: Reactors (R-)', prefix:'R-', minNPD:2, cls:'C1'},
-    // Service-based
     {cat:'service', desc:'C1-C: AG flowlines / trunklines (FL svc)', svcCodes:'FL,TL,TS', minNPD:2, cls:'C1'},
     {cat:'service', desc:'C1-D: Gas manifold header (GM svc)', svcCodes:'GM', minNPD:2, cls:'C1'},
     {cat:'service', desc:'C1-E: Expansion joint lines (EJ flag)', svcCodes:'EJ', minNPD:2, cls:'C1'},
     {cat:'service', desc:'C1-F: Refractory lined (RL flag)', svcCodes:'RL', minNPD:2, cls:'C1'},
-
-    // ── C2: Formal Analysis (Critical) ──
     {cat:'size_temp', desc:'C2-A: ≤ 4″ NPS process > 315°C (600°F)', maxNPD:4, minTemp:316, cls:'C2'},
     {cat:'size_temp', desc:'C2-B: 6–8″ NPS > 204°C but < 260°C', minNPD:6, maxNPD:8, minTemp:205, maxTemp:259, cls:'C2'},
     {cat:'size_temp', desc:'C2-C: 10–12″ NPS > 149°C but < 260°C', minNPD:10, maxNPD:12, minTemp:150, maxTemp:259, cls:'C2'},
     {cat:'size_temp', desc:'C2-D: 14″ NPS < 260°C', minNPD:14, maxNPD:14, maxTemp:259, cls:'C2'},
     {cat:'size_temp', desc:'C2-E: All sizes cold process ≤ −100°C (−148°F)', minNPD:2, maxTemp:-100, cls:'C2'},
     {cat:'size_temp', desc:'C2-F: ≥ 16″ NPS up to 121°C', minNPD:16, maxTemp:121, cls:'C2'},
-    // Service
     {cat:'service', desc:'C2-G: Sour gas service ≥ 4″ NPS', svcCodes:'SG', minNPD:4, cls:'C2'},
     {cat:'service', desc:'C2-H: Sour crude service ≥ 12″ NPS', svcCodes:'SC', minNPD:12, cls:'C2'},
     {cat:'service', desc:'C2-I: Relief systems', svcCodes:'RV,PSV,BDV', minNPD:2, cls:'C2'},
     {cat:'service', desc:'C2-J: Lines subject to slugging (SL flag)', svcCodes:'SL', minNPD:2, cls:'C2'},
     {cat:'service', desc:'C2-K: Non-metallic process lines (NM flag)', svcCodes:'NM', minNPD:2, cls:'C2'},
-    // Equipment
     {cat:'equip', desc:'C2-L: Pumps (P-) ≤ 6″ NPS', prefix:'P-', maxNPD:6, cls:'C2'},
     {cat:'equip', desc:'C2-M: Air-cooled HX ≥ 4″ NPS', prefix:'AIRCOOL', minNPD:4, cls:'C2'},
     {cat:'equip', desc:'C2-N: Storage tanks ≥ 12″ NPS', prefix:'TK-', minNPD:12, cls:'C2'},
-    // Two-phase
     {cat:'twophase', desc:'Two-phase slug flow > 6″', minNPD:6.01, cls:'C1'},
-
-    // ── C3 / NC ──
     {cat:'size', desc:'NC: Small bore ≤ 2″ at ambient, instruments', maxNPD:2, cls:'NC'},
   ],
   aircoolTags:['E-101','E-102','E-103','E-104','E-105','E-106'],
@@ -474,10 +471,8 @@ const LS_ACTIVE='ppa_scl_active';
 
 function loadProfiles(){
   const saved=JSON.parse(localStorage.getItem(LS_KEY)||'{}');
-  // Always include builtins (fresh copy)
   const all={};
   for(const [k,v] of Object.entries(BUILTIN_PROFILES)) all[k]={...JSON.parse(JSON.stringify(v))};
-  // Merge saved custom profiles
   for(const [k,v] of Object.entries(saved)){ if(!v.builtin) all[k]=v; }
   return all;
 }
@@ -589,15 +584,11 @@ function renderProfileEditor(){
   $('prof-name').value=p.name; $('prof-name').disabled=ro;
   $('prof-desc').value=p.desc||''; $('prof-desc').disabled=ro;
   $('prof-tunit').value=p.tunit||'C'; $('prof-tunit').disabled=ro;
-
   const ed=$('rules-editor'); ed.innerHTML='';
   const tunit=p.tunit||'C';
-
   CATS.forEach(cat=>{
     const catRules=(p.rules||[]).filter(r=>r.cat===cat.key);
     const grp=document.createElement('div'); grp.className='rule-group';
-
-    // Header
     const hd=document.createElement('div'); hd.className='rule-group-head';
     hd.innerHTML=`<span>${cat.label} (${catRules.length})</span>`;
     if(!ro){
@@ -606,7 +597,6 @@ function renderProfileEditor(){
       hd.appendChild(ab);
     }
     grp.appendChild(hd);
-
     if(catRules.length===0){
       const empty=document.createElement('p');
       empty.style.cssText='font-size:12.5px;color:var(--ink3);padding:.5rem 0';
@@ -614,7 +604,6 @@ function renderProfileEditor(){
       grp.appendChild(empty);
     } else {
       const card=document.createElement('div'); card.className='rule-card';
-      // Column headers
       const hdr=document.createElement('div'); hdr.className='rule-hdr';
       if(cat.key==='size') hdr.textContent='Description · Min NPD · Max NPD · — · — · Class ·';
       else if(cat.key==='size_temp') hdr.textContent=`Description · Min NPD · Max NPD · Min T(°${tunit}) · Max T(°${tunit}) · Class ·`;
@@ -622,18 +611,13 @@ function renderProfileEditor(){
       else if(cat.key==='equip') hdr.textContent='Description · Prefix · Min NPD · Max NPD · Svc/Vap · Class ·';
       else if(cat.key==='service') hdr.textContent='Description · Svc Codes · Min NPD · Max NPD · — · Class ·';
       card.appendChild(hdr);
-
       catRules.forEach((rule,ri)=>{
         const globalIdx=p.rules.indexOf(rule);
         const row=document.createElement('div'); row.className='rule-row';
-
-        // Description
         const dInp=document.createElement('input'); dInp.type='text'; dInp.value=rule.desc||''; dInp.disabled=ro;
         dInp.style.cssText='width:100%;font-size:12px'; dInp.className='rdesc';
         dInp.onchange=()=>{ rule.desc=dInp.value; saveProfiles(PROFILES); };
         row.appendChild(dInp);
-
-        // Field-specific inputs
         if(cat.key==='size'||cat.key==='twophase'){
           row.appendChild(makeNumInput(rule,'minNPD',ro)); row.appendChild(makeNumInput(rule,'maxNPD',ro));
           row.appendChild(makePlaceholder()); row.appendChild(makePlaceholder());
@@ -653,28 +637,21 @@ function renderProfileEditor(){
           row.appendChild(makeNumInput(rule,'minNPD',ro)); row.appendChild(makeNumInput(rule,'maxNPD',ro));
           row.appendChild(makePlaceholder());
         }
-
-        // Class selector
         const cls=document.createElement('select'); cls.disabled=ro; cls.style.cssText='font-size:12px;font-weight:700;padding:.3rem';
         CLS_OPTS.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; if(rule.cls===c) o.selected=true; cls.appendChild(o); });
         cls.onchange=()=>{ rule.cls=cls.value; saveProfiles(PROFILES); };
         row.appendChild(cls);
-
-        // Delete
         if(!ro){
           const del=document.createElement('button'); del.className='delx'; del.textContent='×';
           del.onclick=()=>{ p.rules.splice(globalIdx,1); saveProfiles(PROFILES); renderProfileEditor(); };
           row.appendChild(del);
         } else { row.appendChild(makePlaceholder()); }
-
         card.appendChild(row);
       });
       grp.appendChild(card);
     }
     ed.appendChild(grp);
   });
-
-  // Air cooler tags
   const acDiv=document.createElement('div'); acDiv.className='card'; acDiv.style.marginTop='1rem';
   acDiv.innerHTML=`<p class="formtitle">Air-cooler equipment tags</p>
     <label class="fld"><span class="lab">Comma-separated tags <span class="hint">(used by AIRCOOL prefix rules)</span></span>
@@ -729,27 +706,20 @@ function assess(L){
   const FROM=(L.from||'').trim().toUpperCase(), TO=(L.to||'').trim().toUpperCase();
   const svc=(L.svc&&L.svc.trim())? L.svc.trim().toUpperCase() : svcFromLine(line);
   const s2=svc.substr(0,2), s3=svc.substr(0,3);
-
   if(!line) return {final:'',flag:'',checks:[]};
   if(isNaN(E)) return {final:'LDT?',flag:'Size not numeric — section break / data incomplete',checks:[]};
-
   const touch=p=>FROM.startsWith(p)||TO.startsWith(p);
   const aircool=(prof.aircoolTags||[]).map(s=>s.toUpperCase());
   const touchAircool=()=>aircool.some(t=>FROM===t||TO===t||FROM.startsWith(t)||TO.startsWith(t));
   const checks=[];
-
   (prof.rules||[]).forEach(rule=>{
     let matched=false, detail='';
-
-    // NPD range check (common to most)
     const npdOk=(rule.minNPD==null||E>=rule.minNPD)&&(rule.maxNPD==null||E<=rule.maxNPD);
-
     switch(rule.cat){
       case 'size':
         matched=npdOk;
         detail=`${E}″ → ${rule.cls}`;
         break;
-
       case 'size_temp':
         if(!isNaN(T)){
           const tempOk=(rule.minTemp==null||T>=rule.minTemp)&&(rule.maxTemp==null||T<=rule.maxTemp);
@@ -757,12 +727,10 @@ function assess(L){
           detail=`${E}″ @ ${T}°${prof.tunit||'C'}`;
         } else { detail='no temp data'; }
         break;
-
       case 'twophase':
         if(Q>0&&Q<100){ matched=npdOk; detail=`vap ${Q}% @ ${E}″`; }
         else { detail=`single phase (${isNaN(Q)?'?':Q}%)`; }
         break;
-
       case 'equip': {
         let equipMatch=false;
         if(rule.prefix==='AIRCOOL'){ equipMatch=touchAircool(); }
@@ -787,13 +755,10 @@ function assess(L){
     }
     checks.push({name:rule.desc||rule.cat, class:matched?rule.cls:'NC', detail, cat:rule.cat, matched});
   });
-
-  // Determine final class = most onerous
   let maxRank=1, final='NC';
   checks.forEach(c=>{
     if(c.matched && CLASS_RANK[c.class]>maxRank){ maxRank=CLASS_RANK[c.class]; final=c.class; }
   });
-
   return {final, flag:'', checks};
 }
 
@@ -804,7 +769,7 @@ function driverText(r){
 }
 
 /* ═══════════════════════════════════════════════════════════
-   CRC CHART (reads boundaries from active profile)
+   CRC CHART
    ═══════════════════════════════════════════════════════════ */
 function buildEnvelopeSVG(points){
   const prof=activeProfile();
@@ -820,12 +785,6 @@ function buildEnvelopeSVG(points){
   const X=v=>m.l+(Math.max(0,v)/xMax)*pw;
   const Y=v=>m.t+ph-((v-yMin)/(yMax-yMin))*ph;
   const poly=p=>p.map(([x,y])=>`${X(x).toFixed(1)},${Y(Math.max(yMin,Math.min(yMax,y))).toFixed(1)}`).join(' ');
-  const c1poly=curve2.length>=3?[
-    [curve2[0][0],yMax],[...curve2[0]],
-    ...curve2.slice(1),
-    [xMax,curve2[curve2.length-1][1]],[xMax,yMax]
-  ].map(a=>Array.isArray(a[0])?a:a):[];
-  // Build C1 polygon properly
   const c1pts=[];
   if(curve2.length>=2){
     c1pts.push([curve2[0][0],yMax]);
@@ -833,7 +792,6 @@ function buildEnvelopeSVG(points){
     c1pts.push([xMax,curve2[curve2.length-1][1]]);
     c1pts.push([xMax,yMax]);
   }
-
   let g=`<svg class="crc" viewBox="0 0 ${W} ${H}" style="max-width:560px;width:100%;height:auto" role="img" aria-label="Criticality Requirement Chart">`;
   g+=`<rect x="${m.l}" y="${m.t}" width="${pw}" height="${ph}" fill="rgba(201,103,12,.10)" stroke="#e8dfd0"/>`;
   g+=`<polygon points="${poly(curve1)}" fill="rgba(184,134,11,.16)"/>`;
@@ -849,14 +807,10 @@ function buildEnvelopeSVG(points){
   if(yMin<0&&yMax>0) g+=`<line x1="${m.l}" y1="${Y(0)}" x2="${m.l+pw}" y2="${Y(0)}" stroke="#8a7a60" stroke-dasharray="3 3"/>`;
   g+=`<polyline points="${poly(curve1)}" fill="none" stroke="#1a1510" stroke-width="2.4" stroke-linejoin="round"/>`;
   g+=`<polyline points="${poly(curve2)}" fill="none" stroke="#1a1510" stroke-width="2.4" stroke-linejoin="round"/>`;
-
-  // Zone labels
   const cx1=X(xMax*0.75), cy1=Y(yMax*0.7);
   g+=`<text x="${cx1}" y="${cy1}" text-anchor="middle" font-size="15" font-weight="700" fill="#b21f2d" font-family="monospace">C1</text>`;
   g+=`<text x="${X(2.5)}" y="${Y(yMax*0.8)}" text-anchor="middle" font-size="15" font-weight="700" fill="#c9670c" font-family="monospace">C2</text>`;
   g+=`<text x="${X(3)}" y="${Y(200)}" text-anchor="middle" font-size="15" font-weight="700" fill="#8a6500" font-family="monospace">C3</text>`;
-
-  // Plot points
   points.forEach(p=>{
     const tf=cToF(p.temp);
     const cx=X(Math.min(p.npd,xMax)), cy=Y(Math.max(yMin,Math.min(yMax,tf)));
@@ -877,7 +831,7 @@ function renderEnvelope(elId,points){ const el=$(elId); if(el) el.innerHTML=buil
 /* ═══════════════════════════════════════════════════════════
    SINGLE-LINE ASSESSMENT
    ═══════════════════════════════════════════════════════════ */
-$('s_line').addEventListener('input',()=>{ $('s_svc').placeholder=svcFromLine($('s_line').value)||'auto'; });
+$('s_line').addEventListener('input',()=>{ $('s_svc').placeholder=svcFromLine($('s_line').value); });
 
 function runSingle(){
   const inp={line:$('s_line').value, svc:$('s_svc').value, npd:$('s_npd').value, temp:$('s_temp').value, vap:$('s_vap').value, from:$('s_from').value, to:$('s_to').value};
@@ -889,8 +843,6 @@ function runSingle(){
   const key=cls==='LDT?'?'LDT':cls;
   let html=`<div class="verdict v-${key}"><div class="badge b-${key}">${cls}</div><div class="vtxt"><strong>${desc}</strong><span>Governing: ${driverText(r)||'—'}</span></div></div>`;
   if(r.checks.length){
-    // Show only checks that are relevant (matched or from relevant categories)
-    const relevant=r.checks.filter(c=>c.matched || c.class!=='NC');
     const showAll=r.checks;
     html+=`<table class="chk-table"><thead><tr><th>Screening check</th><th>Result</th><th>Detail</th></tr></thead><tbody>`;
     showAll.forEach(c=>{
@@ -996,6 +948,188 @@ $('b_csv').addEventListener('click',()=>{
 });
 
 /* ═══════════════════════════════════════════════════════════
+   LDT FILE UPLOAD — Excel (.xlsx/.xlsm/.xls) and CSV
+   ═══════════════════════════════════════════════════════════ */
+const LDT_FIELD_PATTERNS = {
+  line: [/line\s*(no|number|tag|id)/i, /^line$/i, /line\s*des/i, /tag\s*no/i],
+  npd:  [/^(npd|nps|size|dia|diam|nominal)/i, /pipe\s*size/i, /^od$/i, /^dn$/i],
+  temp: [/temp/i, /^t\s*des/i, /design\s*t/i, /^dt$/i],
+  vap:  [/vap/i, /phase/i, /wt\s*frac/i, /v\.?w\.?f/i],
+  from: [/^from$/i, /from\s*(equip|tag|node)/i, /^origin/i, /upstream/i],
+  to:   [/^to$/i, /to\s*(equip|tag|node)/i, /^dest/i, /downstream/i],
+  svc:  [/servi?ce/i, /^svc$/i, /fluid/i, /^medium$/i],
+};
+const LDT_FIELD_LABELS = {
+  line:'Line Number *', npd:'NPD (in) *', temp:'Design Temp (°C) *',
+  vap:'Vapour %', from:'From (equip)', to:'To (equip)', svc:'Service code',
+};
+
+let _ldtParsedData = null;
+let _ldtSheetNames = [];
+let _ldtWorkbook = null;
+
+$('b_upload').addEventListener('click', () => $('b_upload_file').click());
+$('b_upload_file').addEventListener('change', handleLdtUpload);
+
+function handleLdtUpload(ev) {
+  const file = ev.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  const isCSV = file.name.toLowerCase().endsWith('.csv');
+  reader.onload = function(e) {
+    try {
+      if (isCSV) {
+        const text = e.target.result;
+        const lines = text.split(/\r?\n/).filter(l => l.trim());
+        if (lines.length < 2) { alert('CSV file appears empty.'); return; }
+        const headers = lines[0].split(/,|\t/).map(h => h.replace(/^"|"$/g, '').trim());
+        const rows = lines.slice(1).map(l => {
+          return l.match(/(".*?"|[^,\t]+)/g)?.map(c => c.replace(/^"|"$/g, '').trim()) || [];
+        });
+        _ldtParsedData = { headers, rows };
+        _ldtSheetNames = ['CSV'];
+        _ldtWorkbook = null;
+        openColumnMapper(file.name);
+      } else {
+        const data = new Uint8Array(e.target.result);
+        const wb = XLSX.read(data, { type: 'array' });
+        _ldtWorkbook = wb;
+        _ldtSheetNames = wb.SheetNames;
+        let sheetName = wb.SheetNames[0];
+        for (const name of wb.SheetNames) {
+          if (/line\s*(list|des)|ldt|main.*pipe/i.test(name)) { sheetName = name; break; }
+        }
+        loadSheet(sheetName);
+        openColumnMapper(file.name + ' → ' + sheetName);
+      }
+    } catch (err) {
+      alert('Error reading file: ' + err.message);
+      console.error('LDT upload error:', err);
+    }
+  };
+  if (isCSV) reader.readAsText(file);
+  else reader.readAsArrayBuffer(file);
+  ev.target.value = '';
+}
+
+function loadSheet(name) {
+  const ws = _ldtWorkbook.Sheets[name];
+  const json = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+  let headerIdx = 0;
+  for (let i = 0; i < Math.min(json.length, 15); i++) {
+    const filled = (json[i] || []).filter(c => String(c).trim()).length;
+    if (filled >= 3) { headerIdx = i; break; }
+  }
+  const headers = (json[headerIdx] || []).map(h => String(h).trim());
+  const rows = json.slice(headerIdx + 1).filter(r => r.some(c => String(c).trim()));
+  _ldtParsedData = { headers, rows, headerIdx };
+}
+
+function openColumnMapper(fileInfo) {
+  if (!_ldtParsedData) return;
+  const { headers, rows } = _ldtParsedData;
+  $('ldt-map-info').textContent = fileInfo + ' — ' + rows.length + ' data rows, ' + headers.length + ' columns';
+  const container = $('ldt-map-fields');
+  container.innerHTML = '';
+  // Header labels
+  ['Field','Map to column','Sample'].forEach(t=>{
+    const h=document.createElement('div');
+    h.style.cssText='font-size:11px;font-weight:700;color:#6b5d49;text-transform:uppercase;letter-spacing:.06em';
+    h.textContent=t; container.appendChild(h);
+  });
+  // Sheet selector
+  if (_ldtSheetNames.length > 1 && _ldtWorkbook) {
+    const slabel = document.createElement('div'); slabel.style.cssText='font-size:12px;font-weight:600;color:#4a3f30'; slabel.textContent='Sheet';
+    const ssel = document.createElement('select'); ssel.id='ldt-sheet-sel';
+    ssel.style.cssText='width:100%;padding:.4rem;border:1px solid #c8b89a;border-radius:4px;font-size:12px';
+    _ldtSheetNames.forEach(n=>{ const o=document.createElement('option'); o.value=n; o.textContent=n; ssel.appendChild(o); });
+    ssel.value=_ldtSheetNames.find(n=>/line|ldt|main/i.test(n))||_ldtSheetNames[0];
+    ssel.onchange=()=>{ loadSheet(ssel.value); openColumnMapper(ssel.value); };
+    container.appendChild(slabel); container.appendChild(ssel); container.appendChild(document.createElement('div'));
+  }
+  const fields=['line','npd','temp','vap','from','to','svc'];
+  fields.forEach(fld=>{
+    const lab=document.createElement('div');
+    lab.style.cssText='font-size:13px;font-weight:600;color:#1a1510';
+    lab.textContent=LDT_FIELD_LABELS[fld];
+    const sel=document.createElement('select'); sel.id='ldt-map-'+fld;
+    sel.style.cssText='width:100%;padding:.4rem;border:1px solid #c8b89a;border-radius:4px;font-size:12px;font-family:var(--mono)';
+    const skip=document.createElement('option'); skip.value='-1'; skip.textContent='— skip —'; sel.appendChild(skip);
+    headers.forEach((h,i)=>{
+      const o=document.createElement('option'); o.value=i;
+      o.textContent='Col '+(i+1)+': '+(h||'(empty)');
+      sel.appendChild(o);
+    });
+    // Auto-map
+    const patterns=LDT_FIELD_PATTERNS[fld]||[];
+    let matched=-1;
+    for(let i=0;i<headers.length;i++){
+      if(patterns.some(p=>p.test(headers[i]))){ matched=i; break; }
+    }
+    sel.value=matched;
+    const sample=document.createElement('div');
+    sample.style.cssText='font-family:var(--mono);font-size:11px;color:#6b5d49;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
+    if(matched>=0 && rows[0]) sample.textContent=String(rows[0][matched]||'');
+    sel.onchange=()=>{
+      const ci=parseInt(sel.value);
+      sample.textContent=(ci>=0 && rows[0])?String(rows[0][ci]||''):'';
+    };
+    container.appendChild(lab); container.appendChild(sel); container.appendChild(sample);
+  });
+  // Preview
+  $('ldt-map-preview').textContent=rows.slice(0,5).map((r,ri)=>
+    (ri+1)+'. '+r.slice(0,8).map(c=>String(c).substring(0,20)).join(' | ')
+  ).join('\n');
+  $('ldt-map-modal').style.display='flex';
+}
+
+function closeLdtMap(){
+  $('ldt-map-modal').style.display='none';
+  _ldtParsedData=null;
+}
+
+function importLdtMapped(){
+  if(!_ldtParsedData) return;
+  const {rows}=_ldtParsedData;
+  const getCol=fld=>{const sel=$('ldt-map-'+fld); return sel?parseInt(sel.value):-1;};
+  const ci={line:getCol('line'),npd:getCol('npd'),temp:getCol('temp'),vap:getCol('vap'),from:getCol('from'),to:getCol('to'),svc:getCol('svc')};
+  if(ci.line<0){ alert('Line Number column is required — please map it.'); return; }
+  if(ci.npd<0 && ci.temp<0){ alert('At least NPD or Temperature must be mapped.'); return; }
+  $('b_body').innerHTML='';
+  const DN_TO_NPS={15:0.5,20:0.75,25:1,32:1.25,40:1.5,50:2,65:2.5,80:3,100:4,125:5,150:6,200:8,250:10,300:12,350:14,400:16,450:18,500:20,600:24,650:26,700:28,750:30,800:32,850:34,900:36,950:38,1000:40,1050:42,1100:44,1200:48};
+  let imported=0;
+  rows.forEach(r=>{
+    const lineNo=String(r[ci.line]||'').trim();
+    if(!lineNo) return;
+    let npd=ci.npd>=0?String(r[ci.npd]||'').trim():'';
+    let temp=ci.temp>=0?String(r[ci.temp]||'').trim():'';
+    let vap=ci.vap>=0?String(r[ci.vap]||'').trim():'';
+    let from=ci.from>=0?String(r[ci.from]||'').trim():'';
+    let to=ci.to>=0?String(r[ci.to]||'').trim():'';
+    // Extract NPD from line number if not mapped
+    if(!npd && lineNo.includes('-')){
+      const first=lineNo.split('-')[0];
+      if(/^\d+\.?\d*$/.test(first)) npd=first;
+    }
+    // DN → NPS conversion
+    if(/^DN\s*\d/i.test(npd)){
+      const dn=parseFloat(npd.replace(/[^0-9.]/g,''));
+      npd=String(DN_TO_NPS[dn]||dn/25.4);
+    }
+    npd=npd.replace(/\s*(in|inch|inches|"|'')\s*$/i,'').trim();
+    temp=temp.replace(/\s*[°]?\s*(C|F|deg)\s*$/i,'').trim();
+    vap=vap.replace(/\s*%\s*$/i,'').trim();
+    if(!vap) vap='100';
+    newRow([lineNo,npd,temp,vap,from,to]);
+    imported++;
+  });
+  calcBatch();
+  closeLdtMap();
+  switchSubtab('batch',document.querySelector('.subtab:nth-child(2)'));
+  alert(imported+' lines imported from LDT and classified.');
+}
+
+/* ═══════════════════════════════════════════════════════════
    TAB NAVIGATION
    ═══════════════════════════════════════════════════════════ */
 function showCalcTab(name,ev){
@@ -1007,6 +1141,7 @@ function showCalcTab(name,ev){
   if(name==='criteria') renderProfileEditor();
   if(name==='theory') renderEnvelope('theory-chart',[]);
 }
+
 /* Subtab switcher (called via inline onclick) */
 function switchSubtab(tabId, btn){
   document.querySelectorAll('.subtab').forEach(x=>x.classList.remove('active'));
@@ -1015,15 +1150,6 @@ function switchSubtab(tabId, btn){
   var el = $(tabId);
   if(el) el.classList.add('active');
 }
-
-/* ═══════════════════════════════════════════════════════════
-   INIT
-   ═══════════════════════════════════════════════════════════ */
-try{
-  populateProfileSelect();
-  $('s_svc').placeholder=svcFromLine($('s_line').value);
-  EXAMPLE.forEach(d=>newRow(d)); calcBatch();
-}catch(e){ console.error('SCL init error:',e); }
 
 /* ═══════════════════════════════════════════════════════════
    PDF REPORT BUILDER
@@ -1049,6 +1175,15 @@ function buildSCLReport(){
   return true;
 }
 function ppaOpenReportSCL(){ if(!buildSCLReport()){ alert('Please assess a line first.'); return; } if(typeof ppaOpenReport==='function') ppaOpenReport(); else alert('Report engine not loaded.'); }
+
+/* ═══════════════════════════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════════════════════════ */
+try{
+  populateProfileSelect();
+  $('s_svc').placeholder=svcFromLine($('s_line').value);
+  EXAMPLE.forEach(d=>newRow(d)); calcBatch();
+}catch(e){ console.error('SCL init error:',e); }
 </script>
 
 <!-- ════════ PipingPro Shared Report Engine v1.0 ════════ -->
@@ -1133,7 +1268,6 @@ table.d tr:nth-child(even) td{background:#faf6ef}
 .verdict.pass{background:#e7f1ee;color:#1a6b5a;border-color:#1a6b5a}
 .verdict.fail{background:#fbe9eb;color:#b21f2d;border-color:#b21f2d}
 .verdict.warn{background:#f5e9c8;color:#6b4e00;border-color:#b8860b}
-.ptext{font-size:9.5pt;line-height:1.65;color:#1a1510}
 .sig{display:flex;gap:30px;margin-top:26px}
 .sig div{flex:1;border-top:1px solid #1a1510;padding-top:5px;font-size:8pt;color:#4a3f30}
 .disc{font-size:7.5pt;color:#6b5d49;margin-top:22px;line-height:1.55;border-top:1px solid #e8dfd0;padding-top:10px}
