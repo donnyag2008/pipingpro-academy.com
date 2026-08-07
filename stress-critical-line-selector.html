@@ -971,6 +971,81 @@ let _ldtWorkbook = null;
 $('b_upload').addEventListener('click', () => $('b_upload_file').click());
 $('b_upload_file').addEventListener('change', handleLdtUpload);
 
+function autoMapColumns(headers){
+  const map={};
+  const fields=['line','npd','temp','vap','from','to','svc'];
+  fields.forEach(fld=>{
+    const patterns=LDT_FIELD_PATTERNS[fld]||[];
+    map[fld]=-1;
+    for(let i=0;i<headers.length;i++){
+      if(patterns.some(p=>p.test(headers[i]))){ map[fld]=i; break; }
+    }
+  });
+  return map;
+}
+
+function directImport(fileInfo){
+  if(!_ldtParsedData) return;
+  const {headers, rows}=_ldtParsedData;
+  const ci=autoMapColumns(headers);
+
+  // If we can't find Line Number, fall back to the mapping modal
+  if(ci.line<0){
+    openColumnMapper(fileInfo + ' — could not auto-detect Line Number column');
+    return;
+  }
+
+  // Proceed with direct import
+  $('b_body').innerHTML='';
+  const DN_TO_NPS={15:0.5,20:0.75,25:1,32:1.25,40:1.5,50:2,65:2.5,80:3,100:4,125:5,150:6,200:8,250:10,300:12,350:14,400:16,450:18,500:20,600:24,650:26,700:28,750:30,800:32,850:34,900:36,950:38,1000:40,1050:42,1100:44,1200:48};
+  let imported=0;
+  rows.forEach(r=>{
+    const lineNo=String(r[ci.line]||'').trim();
+    if(!lineNo) return;
+    let npd=ci.npd>=0?String(r[ci.npd]||'').trim():'';
+    let temp=ci.temp>=0?String(r[ci.temp]||'').trim():'';
+    let vap=ci.vap>=0?String(r[ci.vap]||'').trim():'';
+    let from=ci.from>=0?String(r[ci.from]||'').trim():'';
+    let to=ci.to>=0?String(r[ci.to]||'').trim():'';
+    // Extract NPD from line number if not mapped
+    if(!npd && lineNo.includes('-')){
+      const first=lineNo.split('-')[0];
+      if(/^\d+\.?\d*$/.test(first)) npd=first;
+    }
+    // DN → NPS conversion
+    if(/^DN\s*\d/i.test(npd)){
+      const dn=parseFloat(npd.replace(/[^0-9.]/g,''));
+      npd=String(DN_TO_NPS[dn]||dn/25.4);
+    }
+    npd=npd.replace(/\s*(in|inch|inches|"|'')\s*$/i,'').trim();
+    temp=temp.replace(/\s*[°]?\s*(C|F|deg)\s*$/i,'').trim();
+    vap=vap.replace(/\s*%\s*$/i,'').trim();
+    if(!vap) vap='100';
+    newRow([lineNo,npd,temp,vap,from,to]);
+    imported++;
+  });
+  calcBatch();
+  switchSubtab('batch',document.querySelector('.subtab:nth-child(2)'));
+
+  // Build summary of what was mapped
+  const mapped=[];
+  if(ci.line>=0) mapped.push('Line No → Col '+(ci.line+1));
+  if(ci.npd>=0) mapped.push('NPD → Col '+(ci.npd+1));
+  if(ci.temp>=0) mapped.push('Temp → Col '+(ci.temp+1));
+  if(ci.vap>=0) mapped.push('Vap% → Col '+(ci.vap+1));
+  if(ci.from>=0) mapped.push('From → Col '+(ci.from+1));
+  if(ci.to>=0) mapped.push('To → Col '+(ci.to+1));
+  const unmapped=[];
+  if(ci.npd<0) unmapped.push('NPD (extracted from line number where possible)');
+  if(ci.temp<0) unmapped.push('Temperature');
+  if(ci.from<0) unmapped.push('From');
+  if(ci.to<0) unmapped.push('To');
+
+  let msg=imported+' lines imported and classified.\n\nAuto-detected: '+mapped.join(', ');
+  if(unmapped.length) msg+='\n\nNot found: '+unmapped.join(', ')+'\n\nYou can edit any cell directly in the table, or use ⬆ Upload LDT again with a different file.';
+  alert(msg);
+}
+
 function handleLdtUpload(ev) {
   const file = ev.target.files[0];
   if (!file) return;
@@ -989,7 +1064,7 @@ function handleLdtUpload(ev) {
         _ldtParsedData = { headers, rows };
         _ldtSheetNames = ['CSV'];
         _ldtWorkbook = null;
-        openColumnMapper(file.name);
+        directImport(file.name);
       } else {
         const data = new Uint8Array(e.target.result);
         const wb = XLSX.read(data, { type: 'array' });
@@ -1000,7 +1075,7 @@ function handleLdtUpload(ev) {
           if (/line\s*(list|des)|ldt|main.*pipe/i.test(name)) { sheetName = name; break; }
         }
         loadSheet(sheetName);
-        openColumnMapper(file.name + ' → ' + sheetName);
+        directImport(file.name + ' → ' + sheetName);
       }
     } catch (err) {
       alert('Error reading file: ' + err.message);
@@ -1089,12 +1164,14 @@ function closeLdtMap(){
 }
 
 function importLdtMapped(){
+  /* Called from the fallback modal — reads user's dropdown selections */
   if(!_ldtParsedData) return;
   const {rows}=_ldtParsedData;
   const getCol=fld=>{const sel=$('ldt-map-'+fld); return sel?parseInt(sel.value):-1;};
   const ci={line:getCol('line'),npd:getCol('npd'),temp:getCol('temp'),vap:getCol('vap'),from:getCol('from'),to:getCol('to'),svc:getCol('svc')};
   if(ci.line<0){ alert('Line Number column is required — please map it.'); return; }
-  if(ci.npd<0 && ci.temp<0){ alert('At least NPD or Temperature must be mapped.'); return; }
+  closeLdtMap();
+
   $('b_body').innerHTML='';
   const DN_TO_NPS={15:0.5,20:0.75,25:1,32:1.25,40:1.5,50:2,65:2.5,80:3,100:4,125:5,150:6,200:8,250:10,300:12,350:14,400:16,450:18,500:20,600:24,650:26,700:28,750:30,800:32,850:34,900:36,950:38,1000:40,1050:42,1100:44,1200:48};
   let imported=0;
@@ -1106,12 +1183,10 @@ function importLdtMapped(){
     let vap=ci.vap>=0?String(r[ci.vap]||'').trim():'';
     let from=ci.from>=0?String(r[ci.from]||'').trim():'';
     let to=ci.to>=0?String(r[ci.to]||'').trim():'';
-    // Extract NPD from line number if not mapped
     if(!npd && lineNo.includes('-')){
       const first=lineNo.split('-')[0];
       if(/^\d+\.?\d*$/.test(first)) npd=first;
     }
-    // DN → NPS conversion
     if(/^DN\s*\d/i.test(npd)){
       const dn=parseFloat(npd.replace(/[^0-9.]/g,''));
       npd=String(DN_TO_NPS[dn]||dn/25.4);
@@ -1124,7 +1199,6 @@ function importLdtMapped(){
     imported++;
   });
   calcBatch();
-  closeLdtMap();
   switchSubtab('batch',document.querySelector('.subtab:nth-child(2)'));
   alert(imported+' lines imported from LDT and classified.');
 }
