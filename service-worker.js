@@ -11,7 +11,7 @@
 // Bump CACHE_VERSION when you deploy updated calculators/pages.
 // ============================================================
 
-const CACHE_VERSION = 'ppa-v1';
+const CACHE_VERSION = 'ppa-v2';
 const STATIC_CACHE = `static-${CACHE_VERSION}`;
 const PAGE_CACHE   = `pages-${CACHE_VERSION}`;
 
@@ -19,9 +19,7 @@ const PAGE_CACHE   = `pages-${CACHE_VERSION}`;
 // Add every calculator route your site has.
 // These will be available offline immediately after first visit.
 const PRECACHE_PAGES = [
-  '/',
   '/calculators.html',
-  // ── Piping Mechanical Design ──
   '/tools/pipe-wall-thickness-calculator.html',
   '/tools/pipe-volume-weight-calculator.html',
   '/tools/pressure-sustaining-calculator.html',
@@ -35,19 +33,58 @@ const PRECACHE_PAGES = [
 // ── Static assets to pre-cache ─────────────────────────────
 // Add your CSS, JS bundles, shared images, and fonts.
 const PRECACHE_ASSETS = [
+  '/ppa-pipe-data.js',
+  '/ppa-materials.js',
+  '/ppa-tier.js',
+  // Add your actual CSS/image paths here
   // '/css/main.css',
-  // '/js/calculators.js',
   // '/images/ppa-logo.png',
-  // Add your actual asset paths here
 ];
+
+// ── Helper: strip redirect from response so it can be cached ──
+async function cleanResponse(response) {
+  if (response.redirected) {
+    const body = await response.blob();
+    return new Response(body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: response.headers,
+    });
+  }
+  return response;
+}
 
 // ── Install: pre-cache critical resources ──────────────────
 self.addEventListener('install', (event) => {
   console.log('[SW] Installing service worker:', CACHE_VERSION);
   event.waitUntil(
     Promise.all([
-      caches.open(PAGE_CACHE).then((cache) => cache.addAll(PRECACHE_PAGES)),
-      caches.open(STATIC_CACHE).then((cache) => cache.addAll(PRECACHE_ASSETS)),
+      caches.open(PAGE_CACHE).then(async (cache) => {
+        for (const url of PRECACHE_PAGES) {
+          try {
+            const response = await fetch(url, { redirect: 'follow' });
+            if (response.ok) {
+              const clean = await cleanResponse(response);
+              await cache.put(url, clean);
+            }
+          } catch (err) {
+            console.warn('[SW] Failed to pre-cache:', url, err);
+          }
+        }
+      }),
+      caches.open(STATIC_CACHE).then(async (cache) => {
+        for (const url of PRECACHE_ASSETS) {
+          try {
+            const response = await fetch(url, { redirect: 'follow' });
+            if (response.ok) {
+              const clean = await cleanResponse(response);
+              await cache.put(url, clean);
+            }
+          } catch (err) {
+            console.warn('[SW] Failed to pre-cache:', url, err);
+          }
+        }
+      }),
     ]).then(() => self.skipWaiting())
   );
 });
@@ -76,10 +113,11 @@ self.addEventListener('fetch', (event) => {
   // Only handle GET requests
   if (request.method !== 'GET') return;
 
-  // Skip non-http(s) requests and Memberstack/Stripe/analytics calls
+  // Only handle same-origin requests
   const url = new URL(request.url);
-  if (!url.protocol.startsWith('http')) return;
+  if (url.origin !== self.location.origin) return;
 
+  // Skip Memberstack/Stripe/analytics calls
   const SKIP_DOMAINS = [
     'api.memberstack.com',
     'js.stripe.com',
@@ -90,8 +128,11 @@ self.addEventListener('fetch', (event) => {
   ];
   if (SKIP_DOMAINS.some((d) => url.hostname.includes(d))) return;
 
+  // Skip API and functions routes
+  if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/functions/')) return;
+
   // HTML pages → stale-while-revalidate
-  if (request.headers.get('Accept')?.includes('text/html') || url.pathname.endsWith('.html') || url.pathname === '/') {
+  if (request.headers.get('Accept')?.includes('text/html') || url.pathname.endsWith('.html')) {
     event.respondWith(staleWhileRevalidate(request, PAGE_CACHE));
     return;
   }
@@ -101,7 +142,6 @@ self.addEventListener('fetch', (event) => {
 });
 
 // ── Cache-first strategy ───────────────────────────────────
-// Great for CSS, JS, images that don't change often.
 async function cacheFirst(request, cacheName) {
   const cached = await caches.match(request);
   if (cached) return cached;
@@ -109,12 +149,13 @@ async function cacheFirst(request, cacheName) {
   try {
     const networkResponse = await fetch(request);
     if (networkResponse.ok) {
+      const clean = await cleanResponse(networkResponse);
       const cache = await caches.open(cacheName);
-      cache.put(request, networkResponse.clone());
+      cache.put(request, clean.clone());
+      return clean;
     }
     return networkResponse;
   } catch (err) {
-    // Offline and not cached — return a basic fallback
     return new Response('Offline — resource not cached', {
       status: 503,
       statusText: 'Service Unavailable',
@@ -123,21 +164,20 @@ async function cacheFirst(request, cacheName) {
 }
 
 // ── Stale-while-revalidate strategy ────────────────────────
-// Serve cached version instantly, update cache in background.
-// User gets fast load; next visit gets the updated page.
 async function staleWhileRevalidate(request, cacheName) {
   const cache = await caches.open(cacheName);
   const cached = await cache.match(request);
 
   const fetchPromise = fetch(request)
-    .then((networkResponse) => {
+    .then(async (networkResponse) => {
       if (networkResponse.ok) {
-        cache.put(request, networkResponse.clone());
+        const clean = await cleanResponse(networkResponse);
+        cache.put(request, clean.clone());
+        return clean;
       }
       return networkResponse;
     })
-    .catch(() => cached); // If network fails, fall back to cache
+    .catch(() => cached);
 
-  // Return cached immediately if available, otherwise wait for network
   return cached || fetchPromise;
 }
