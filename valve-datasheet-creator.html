@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valve Datasheet Creator — PipingPro Academy</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --ink-2: #374151;
+    --ink-3: #6b7280;
+    --ink-4: #9ca3af;
+    --surface: #ffffff;
+    --surface-2: #f8f9fb;
+    --surface-3: #f1f3f5;
+    --border: #e2e5e9;
+    --accent: #0f6faa;
+    --accent-bg: #e8f4fb;
+    --accent-2: #0c5a8a;
+    --green: #0a7c42;
+    --green-bg: #ecfdf5;
+    --green-bdr: #86efac;
+    --amber: #b45309;
+    --amber-bg: #fffbeb;
+    --red: #b91c1c;
+    --red-bg: #fef2f2;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --mono: "SF Mono", "Cascadia Code", Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--surface-2); color: var(--ink); line-height: 1.5; }
+
+  .container { max-width: 780px; margin: 0 auto; padding: 20px 16px; }
+
+  /* Header */
+  .hdr { margin-bottom: 20px; }
+  .hdr h1 { font-size: 22px; font-weight: 600; letter-spacing: -0.3px; }
+  .hdr h1 span { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 10px;
+    background: var(--green-bg); color: var(--green); vertical-align: middle; margin-left: 8px; }
+  .hdr p { font-size: 13px; color: var(--ink-3); margin-top: 4px; }
+
+  /* Cards */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px; margin-bottom: 14px; }
+  .card-blue { background: var(--accent-bg); border-color: #93c5fd; }
+  .card-green { background: var(--green-bg); border-color: var(--green-bdr); }
+  .card-title { font-size: 14px; font-weight: 600; color: var(--accent-2); margin-bottom: 10px; }
+  .card-green .card-title { color: var(--green); }
+
+  /* Quick fills */
+  .qf-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+  .qf-btn { padding: 4px 8px; font-size: 10.5px; border-radius: 5px; cursor: pointer;
+    border: 1px solid var(--border); background: var(--surface); color: var(--ink-2);
+    font-family: var(--font); transition: all 0.15s; }
+  .qf-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .qf-btn.active { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+
+  /* Form grid */
+  .form-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+  .field { min-width: 0; }
+  .field.half { flex: 1 1 48%; min-width: 180px; }
+  .field.full { flex: 1 1 100%; }
+  .field label { display: block; font-size: 11px; font-weight: 500; color: var(--ink-3); margin-bottom: 2px; }
+  .field label.pass { color: var(--green); }
+  .field label.pass::after { content: " ✓"; }
+  .field label.warn { color: var(--amber); }
+  .field label.warn::after { content: " ⚠"; }
+  .field label.fail { color: var(--red); }
+  .field label.fail::after { content: " ✗"; }
+
+  input, select, textarea {
+    width: 100%; padding: 7px 9px; border: 1px solid var(--border); border-radius: 6px;
+    font-size: 12.5px; font-family: var(--font); background: var(--surface); color: var(--ink);
+  }
+  select { cursor: pointer; }
+  textarea { resize: vertical; line-height: 1.4; }
+  .derived { background: var(--green-bg); color: #065f46; font-weight: 500; border-color: var(--green-bdr); }
+  .readonly { background: var(--surface-3); color: var(--ink-2); }
+
+  /* PMS summary */
+  .pms-summary { margin-top: 8px; padding: 7px 10px; background: var(--surface); border-radius: 6px;
+    border: 1px solid #bfdbfe; font-size: 11px; color: var(--accent-2);
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px 14px; }
+  .pms-summary b { font-weight: 600; }
+
+  /* Section headers */
+  .sh { display: flex; align-items: center; gap: 8px; margin-top: 16px; margin-bottom: 8px;
+    padding-bottom: 4px; border-bottom: 1px solid var(--border); }
+  .sh span { font-size: 14px; font-weight: 600; color: var(--ink); }
+  .sh .badge { font-size: 10px; font-weight: 500; padding: 1px 7px; border-radius: 4px;
+    background: var(--green-bg); color: var(--green); }
+
+  /* Buttons */
+  .btn-row { display: flex; gap: 8px; margin-top: 12px; }
+  .btn-primary { padding: 9px 22px; font-size: 13px; font-weight: 600; border-radius: 7px; cursor: pointer;
+    border: 2px solid var(--green); background: var(--green); color: #fff; font-family: var(--font);
+    transition: all 0.15s; }
+  .btn-primary:hover { background: #059669; }
+  .btn-primary:disabled { background: var(--ink-4); border-color: var(--ink-4); cursor: not-allowed; }
+  .btn-secondary { padding: 9px 16px; font-size: 12px; border-radius: 7px; cursor: pointer;
+    border: 1px solid var(--border); background: var(--surface); color: var(--ink-2);
+    font-family: var(--font); }
+  .btn-pdf { padding: 9px 22px; font-size: 13px; font-weight: 600; border-radius: 7px; cursor: pointer;
+    border: 2px solid var(--accent); background: var(--accent); color: #fff; font-family: var(--font); }
+  .btn-pdf:hover { background: var(--accent-2); }
+
+  /* Validation bar */
+  .val-bar { display: flex; gap: 8px; align-items: center; margin-top: 10px; padding: 6px 10px;
+    background: var(--surface); border-radius: 6px; border: 1px solid var(--border); font-size: 11px; }
+  .val-bar .v-pass { color: var(--green); font-weight: 600; }
+  .val-bar .v-warn { color: var(--amber); font-weight: 600; }
+  .val-bar .v-fail { color: var(--red); font-weight: 600; }
+  .val-msg { margin-left: 4px; font-size: 10.5px; }
+
+  /* PIL badge */
+  .pil-badge { font-size: 11px; padding: 2px 8px; border-radius: 5px; font-weight: 600; font-family: var(--mono); }
+  .pil-green { background: #dcfce7; color: #166534; }
+  .pil-blue { background: #dbeafe; color: #1e40af; }
+
+  /* Generated section */
+  #generated-section { display: none; }
+
+  /* Footer note */
+  .foot-note { font-size: 10px; color: var(--ink-4); margin-top: 8px; line-height: 1.3; }
+
+  @media (max-width: 600px) {
+    .field.half { flex: 1 1 100%; min-width: 0; }
+    .pms-summary { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- Header -->
+  <div class="hdr">
+    <h1>Valve Datasheet Creator <span>PipingPro</span></h1>
+    <p>Select pipe class and enter service conditions. All material and configuration fields are derived automatically.</p>
+  </div>
+
+  <!-- Quick fills -->
+  <div>
+    <label style="font-size:11px; color:var(--ink-3); font-weight:500;">Quick fill from Karan project</label>
+    <div class="qf-row" id="qf-row"></div>
+  </div>
+
+  <!-- Step 1: Inputs -->
+  <div class="card card-blue">
+    <div class="card-title">Step 1 — Pipe class & service conditions</div>
+    <div class="form-grid">
+      <div class="field half">
+        <label>Pipe class</label>
+        <select id="pipeClass" onchange="onPipeClassChange()">
+          <option value="">Select pipe class...</option>
+        </select>
+      </div>
+      <div class="field half">
+        <label>Valve type</label>
+        <select id="valveType">
+          <option value="Ball">Ball</option>
+          <option value="Gate">Gate</option>
+          <option value="Globe">Globe</option>
+          <option value="Check">Check</option>
+        </select>
+      </div>
+      <div class="field half">
+        <label>Size min (NPS)</label>
+        <input type="text" id="sizeMin" placeholder="2">
+      </div>
+      <div class="field half">
+        <label>Size max (NPS)</label>
+        <input type="text" id="sizeMax" placeholder="24">
+      </div>
+      <div class="field half">
+        <label>Max service temp (°C)</label>
+        <input type="text" id="maxTemp" placeholder="218.33">
+      </div>
+      <div class="field half">
+        <label>Min service temp (°C)</label>
+        <input type="text" id="minTemp" placeholder="7.78">
+      </div>
+      <div class="field half">
+        <label>MAOP (BarG)</label>
+        <input type="text" id="maop" placeholder="45.172">
+      </div>
+      <div class="field half">
+        <label>Service description</label>
+        <input type="text" id="serviceDesc" placeholder="e.g. Fuel Gas (Hydrocarbon)">
+      </div>
+    </div>
+
+    <!-- PMS summary -->
+    <div class="pms-summary" id="pmsSummary" style="display:none;"></div>
+
+    <div class="btn-row">
+      <button class="btn-primary" id="btnGenerate" onclick="generateDatasheet()" disabled>▶ Generate Datasheet</button>
+      <button class="btn-secondary" onclick="resetAll()">Reset</button>
+    </div>
+  </div>
+
+  <!-- Step 2: Generated Datasheet -->
+  <div id="generated-section" class="card card-green">
+    <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+      <div class="card-title" style="margin:0;">Step 2 — Generated valve datasheet</div>
+      <span class="pil-badge pil-green" id="pilBadge"></span>
+      <span class="pil-badge pil-blue" id="pcBadge"></span>
+    </div>
+    <p style="font-size:11px; color:#065f46; margin-bottom:10px;">
+      Green fields are auto-derived from pipe class. Review and adjust any field before export.
+    </p>
+
+    <!-- Design Section -->
+    <div class="sh"><span>Design section</span><span class="badge">Auto-derived</span></div>
+    <div class="form-grid">
+      <div class="field half"><label>Valve type</label><input id="ds_valveType" class="readonly" readonly></div>
+      <div class="field half"><label>Industrial standard</label><input id="ds_standard" class="derived" readonly></div>
+      <div class="field full"><label>Sub-type / features</label><input id="ds_subType" class="derived"></div>
+      <div class="field full"><label>SAMSS references</label><input id="ds_samss" class="derived"></div>
+      <div class="field half"><label>Pressure class</label><input id="ds_pressureClass" class="derived" readonly></div>
+      <div class="field half"><label>Size / port</label><input id="ds_sizeRange" class="readonly" readonly></div>
+      <div class="field half"><label>End connections</label><input id="ds_endConnection" class="derived" readonly></div>
+      <div class="field half"><label>Operator type</label><input id="ds_operatorType" class="derived" readonly></div>
+      <div class="field half"><label>MAOP (BarG)</label><input id="ds_maop" class="readonly" readonly></div>
+      <div class="field full"><label>Other</label><input id="ds_lockingDevice" class="derived"></div>
+      <div class="field half"><label>Max service temp (°C)</label><input id="ds_maxTemp" class="readonly" readonly></div>
+      <div class="field half"><label>Min service temp (°C)</label><input id="ds_minTemp" class="readonly" readonly></div>
+      <div class="field half"><label id="lbl_firesafe">Fire-safe</label><input id="ds_firesafe" class="derived" readonly></div>
+      <div class="field half"><label id="lbl_sourService">Sour service</label><input id="ds_sourService" class="derived" readonly></div>
+      <div class="field full"><label>Service description</label><input id="ds_service"></div>
+    </div>
+
+    <!-- Materials Section -->
+    <div class="sh"><span>Materials section</span><span class="badge">From pipe class</span></div>
+    <div class="form-grid">
+      <div class="field half"><label>Body / bonnet</label><input id="ds_bodyMaterial" class="derived" readonly></div>
+      <div class="field half"><label>Stem</label><input id="ds_stemMaterial" class="derived" readonly></div>
+      <div class="field half"><label id="lbl_seatMaterial">Seat / inserts</label><input id="ds_seatMaterial" class="derived"></div>
+      <div class="field half"><label>Ball / disc / plug</label><input id="ds_ballMaterial" class="derived" readonly></div>
+      <div class="field half"><label>Packing / O-rings</label><input id="ds_packing" class="derived" readonly></div>
+      <div class="field half"><label id="lbl_bolting">Bolting (stud + nut)</label><input id="ds_bolting" class="derived" readonly></div>
+      <div class="field half"><label>Gaskets / seals</label><input id="ds_gaskets" class="derived" readonly></div>
+      <div class="field half"><label>Coatings / linings</label><input id="ds_coatings" class="derived" readonly></div>
+    </div>
+
+    <!-- Validation bar -->
+    <div class="val-bar" id="valBar"></div>
+
+    <!-- Special Notes -->
+    <div class="sh"><span>Special notes</span></div>
+    <textarea id="ds_specialNotes" rows="4"></textarea>
+
+    <p class="foot-note" id="pilRef"></p>
+
+    <!-- Export buttons -->
+    <div class="btn-row">
+      <button class="btn-pdf" onclick="exportPDF()">📄 Export as PDF</button>
+      <button class="btn-secondary" onclick="exportJSON()">💾 Export JSON</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// PIPE CLASS DATABASE
+// ══════════════════════════════════════════════
+
+const PIPE_CLASSES = {
+  "1CC1P01": { rating:150, matGroup:"CS", description:"CS, Class 150, Non-sour", body:"ASTM A216 WCB", trim:"SS Type 316", bolting:"ASTM A193 Gr.B7M / A194 Gr.2HM", gasket:"Graphite", endConn:"RF", flangeStd:"ASME B16.5", flangeFinish:"3.2 to 6.4 micron RA", packing:"Expanded graphite per 04-SAMSS-051", sour:false, lining:null, service:"Hydrocarbon / General" },
+  "1CC2P01": { rating:150, matGroup:"CS", description:"CS, Class 150, Non-sour", body:"ASTM A216 WCB", trim:"SS Type 316", bolting:"ASTM A193 Gr.B7M / A194 Gr.2HM", gasket:"Graphite", endConn:"RF", flangeStd:"ASME B16.5", flangeFinish:"3.2 to 6.4 micron RA", packing:"Expanded graphite per 04-SAMSS-051", sour:false, lining:null, service:"Hydrocarbon / General" },
+  "1CS1U05": { rating:150, matGroup:"CS", description:"CS, Class 150, Utility", body:"ASTM A216 WCB", trim:"SS Type 316", bolting:"ASTM A193 Gr.B7M / A194 Gr.2HM", gasket:"Graphite", endConn:"RF", flangeStd:"ASME B16.5", flangeFinish:"3.2 to 6.4 micron RA", packing:"Expanded graphite per 04-SAMSS-051", sour:false, lining:null, service:"Utility" },
+  "1SD0P01": { rating:150, matGroup:"SS", description:"SS 316, Class 150, Non-sour", body:"ASTM A351 CF8M", trim:"SS Type 316", bolting:"ASTM A193 Gr.B8M / A194 Gr.8M", gasket:"Graphite", endConn:"RF", flangeStd:"ASME B16.5", flangeFinish:"3.2 to 6.4 micron RA", packing:"Expanded graphite per 04-SAMSS-051", sour:false, lining:null, service:"Chemical / General SS" },
+  "1SD0P03": { rating:150, matGroup:"SS", description:"SS 316, Class 150, Sour (H₂S)", body:"ASTM A351 CF8M", trim:"SS Type 316", bolting:"ASTM A193 Gr.B8M / A194 Gr.8M", gasket:"Graphite", endConn:"RF", flangeStd:"ASME B16.5", flangeFinish:"3.2 to 6.4 micron RA", packing:"Expanded graphite per 04-SAMSS-051", sour:true, lining:null, service:"H₂S Gas / Sour Service" },
+  "3CC1P01": { rating:300, matGroup:"CS", description:"CS, Class 300, Non-sour", body:"ASTM A216 WCB", trim:"SS Type 316", bolting:"ASTM A193 Gr.B7M / A194 Gr.2HM", gasket:"Graphite", endConn:"RF", flangeStd:"ASME B16.5", flangeFinish:"3.2 to 6.4 micron RA", packing:"Expanded graphite per 04-SAMSS-051", sour:false, lining:null, service:"Fuel Gas (Hydrocarbon)" },
+  "3CC2P01": { rating:300, matGroup:"CS", description:"CS, Class 300, Non-sour", body:"ASTM A216 WCB", trim:"SS Type 316", bolting:"ASTM A193 Gr.B7M / A194 Gr.2HM", gasket:"Graphite", endConn:"RF", flangeStd:"ASME B16.5", flangeFinish:"3.2 to 6.4 micron RA", packing:"Expanded graphite per 04-SAMSS-051", sour:false, lining:null, service:"Fuel Gas (Hydrocarbon)" },
+  "3SD0P01": { rating:300, matGroup:"SS", description:"SS 316, Class 300, Non-sour", body:"ASTM A351 CF8M", trim:"SS Type 316", bolting:"ASTM A193 Gr.B8M / A194 Gr.8M", gasket:"Graphite", endConn:"RF", flangeStd:"ASME B16.5", flangeFinish:"3.2 to 6.4 micron RA", packing:"Expanded graphite per 04-SAMSS-051", sour:false, lining:null, service:"VT / Chemical" },
+  "3LE0W16": { rating:300, matGroup:"CS_LINED", description:"CS Epoxy Lined, Class 300, Raw Water", body:"ASTM A216 WCB, Epoxy Lined", trim:"UNS S31254 6Mo", bolting:"ASTM A193 Gr.B7M / A194 Gr.2HM", gasket:"Graphite", endConn:"RF", flangeStd:"ASME B16.5", flangeFinish:"3.2 to 6.4 micron RA", packing:"Expanded graphite per 04-SAMSS-051", sour:false, lining:"Fusion bonded Epoxy per 09-SAMSS-91 / SAES-H-002", service:"Raw Water" },
+  "3LE0P01": { rating:300, matGroup:"CS_LINED", description:"CS Epoxy Lined, Class 300, HC Condensate", body:"ASTM A216 WCB, Epoxy Lined", trim:"SS Type 316", bolting:"ASTM A193 Gr.B7M / A194 Gr.2HM", gasket:"Graphite", endConn:"RF", flangeStd:"ASME B16.5", flangeFinish:"3.2 to 6.4 micron RA", packing:"Expanded graphite per 04-SAMSS-051", sour:false, lining:"Fusion bonded Epoxy per 09-SAMSS-91 / SAES-H-002", service:"Blow Down (HC Condensate)" },
+  "6CC1P01": { rating:600, matGroup:"CS", description:"CS, Class 600, Non-sour", body:"ASTM A216 WCB", trim:"SS Type 316", bolting:"ASTM A193 Gr.B7M / A194 Gr.2HM", gasket:"Graphite", endConn:"RF", flangeStd:"ASME B16.5", flangeFinish:"3.2 to 6.4 micron RA", packing:"Expanded graphite per 04-SAMSS-051", sour:false, lining:null, service:"BFW / Sales Gas / Power Gas" },
+  "6CC2P01": { rating:600, matGroup:"CS", description:"CS, Class 600, Non-sour", body:"ASTM A216 WCB", trim:"SS Type 316", bolting:"ASTM A193 Gr.B7M / A194 Gr.2HM", gasket:"Graphite", endConn:"RF", flangeStd:"ASME B16.5", flangeFinish:"3.2 to 6.4 micron RA", packing:"Expanded graphite per 04-SAMSS-051", sour:false, lining:null, service:"BFW / Sales Gas / Power Gas" },
+  "6SD0P01": { rating:600, matGroup:"SS", description:"SS 316, Class 600, Non-sour", body:"ASTM A351 CF8M", trim:"SS Type 316", bolting:"ASTM A193 Gr.B8M / A194 Gr.8M", gasket:"Graphite", endConn:"RF", flangeStd:"ASME B16.5", flangeFinish:"3.2 to 6.4 micron RA", packing:"Expanded graphite per 04-SAMSS-051", sour:false, lining:null, service:"Chemical (Phosphate) / Fuel Gas" },
+};
+
+const QUICK_FILLS = {
+  "Karan 201: 1CC1P01 Ball 2\"-4\"": { pc:"1CC1P01", vt:"Ball", sMin:"2", sMax:"4", maxT:"218.33", minT:"7.78", maop:"10.345", svc:"" },
+  "Karan 205: 1SD0P03 Ball 1\"-4\" H₂S": { pc:"1SD0P03", vt:"Ball", sMin:"1", sMax:"4", maxT:"152.78", minT:"7.78", maop:"3.9", svc:"Hydrogen Sulphide Gas, Relief Line" },
+  "Karan 211: 3LE0W16 Ball 2\"-4\" Water": { pc:"3LE0W16", vt:"Ball", sMin:"2", sMax:"4", maxT:"65.55", minT:"7.78", maop:"39.3", svc:"Raw Water" },
+  "Karan 213: 6CC1P01 Ball 2\"-24\"": { pc:"6CC1P01", vt:"Ball", sMin:"2", sMax:"24", maxT:"218.34", minT:"7.78", maop:"86.414", svc:"BFW, Power Gas, Sales Gas" },
+};
+
+let currentDS = null;
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+
+function init() {
+  // Populate pipe class dropdown
+  const sel = document.getElementById("pipeClass");
+  for (const [k, v] of Object.entries(PIPE_CLASSES)) {
+    const opt = document.createElement("option");
+    opt.value = k; opt.textContent = `${k} — ${v.description}`;
+    sel.appendChild(opt);
+  }
+
+  // Populate quick fills
+  const qfRow = document.getElementById("qf-row");
+  for (const [name, qf] of Object.entries(QUICK_FILLS)) {
+    const btn = document.createElement("button");
+    btn.className = "qf-btn"; btn.textContent = name;
+    btn.onclick = () => loadQuickFill(name, qf);
+    qfRow.appendChild(btn);
+  }
+}
+
+function loadQuickFill(name, qf) {
+  document.getElementById("pipeClass").value = qf.pc;
+  document.getElementById("valveType").value = qf.vt;
+  document.getElementById("sizeMin").value = qf.sMin;
+  document.getElementById("sizeMax").value = qf.sMax;
+  document.getElementById("maxTemp").value = qf.maxT;
+  document.getElementById("minTemp").value = qf.minT;
+  document.getElementById("maop").value = qf.maop;
+  document.getElementById("serviceDesc").value = qf.svc;
+  onPipeClassChange();
+
+  // Highlight active
+  document.querySelectorAll(".qf-btn").forEach(b => b.classList.remove("active"));
+  event.target.classList.add("active");
+}
+
+function onPipeClassChange() {
+  const pc = PIPE_CLASSES[document.getElementById("pipeClass").value];
+  const summary = document.getElementById("pmsSummary");
+  const btn = document.getElementById("btnGenerate");
+
+  if (pc) {
+    summary.style.display = "grid";
+    summary.innerHTML = `
+      <div>Body: <b>${pc.body}</b></div><div>Trim: <b>${pc.trim}</b></div>
+      <div>Bolting: <b>${pc.bolting.replace("ASTM ","")}</b></div>
+      <div>Rating: <b>Class ${pc.rating}</b></div><div>End: <b>${pc.endConn}</b></div>
+      <div>Sour: <b>${pc.sour ? "Yes" : "No"}</b></div>`;
+    btn.disabled = false;
+  } else {
+    summary.style.display = "none";
+    btn.disabled = true;
+  }
+  document.getElementById("generated-section").style.display = "none";
+}
+
+// ══════════════════════════════════════════════
+// DERIVE DATASHEET
+// ══════════════════════════════════════════════
+
+function generateDatasheet() {
+  const pipeClassCode = document.getElementById("pipeClass").value;
+  const pc = PIPE_CLASSES[pipeClassCode];
+  if (!pc) return;
+
+  const valveType = document.getElementById("valveType").value;
+  const sizeMin = document.getElementById("sizeMin").value;
+  const sizeMax = document.getElementById("sizeMax").value;
+  const maxTemp = document.getElementById("maxTemp").value;
+  const minTemp = document.getElementById("minTemp").value;
+  const maop = document.getElementById("maop").value;
+  const serviceDesc = document.getElementById("serviceDesc").value;
+
+  const nMin = parseFloat(sizeMin) || 0;
+  const nMax = parseFloat(sizeMax) || 0;
+  const nMaxTemp = parseFloat(maxTemp) || 0;
+  const softSeatLimit = 120;
+
+  // Derive sub-type and operator
+  let subType = "", operator = "", standard = "";
+  if (valveType === "Ball") {
+    const features = "Bi-directional seating, Self-relieving seats, Fire safe, Anti-static, Anti blow-out stem, Position indicator";
+    if (nMax <= 4) {
+      subType = `Full Bore, Floating ball, ${features}`;
+      operator = nMax <= 3 ? "Lever operated" : "Lever operated up to 3\", Gear operated 4\" and above";
+    } else {
+      subType = `Full Bore, Trunnion Supported ball, ${features}`;
+      operator = "Gear operated";
+    }
+    standard = "API 6D / ASME B16.34";
+  } else if (valveType === "Gate") {
+    subType = nMax <= 2 ? "Bolted bonnet, Rising stem, OS&Y, Handwheel" : "Bolted bonnet, Rising stem, OS&Y, Flexible wedge";
+    operator = nMax <= 10 ? "Handwheel" : "Gear operated";
+    standard = nMax <= 2 ? "API 602 / ASME B16.34" : "API 600 / ASME B16.34";
+  } else if (valveType === "Globe") {
+    subType = "Bolted bonnet, Plug type disc";
+    operator = nMax <= 8 ? "Handwheel" : "Gear operated";
+    standard = nMax <= 2 ? "API 602 / ASME B16.34" : "API 623 / ASME B16.34";
+  } else if (valveType === "Check") {
+    subType = nMax <= 2 ? "Piston type, Bolted bonnet" : "Swing type, Bolted bonnet";
+    operator = "Self-actuating";
+    standard = "API 594 / ASME B16.34";
+  }
+
+  // Seat
+  let seat = `RTFE (Max. Design Temp. ${softSeatLimit}°C)`;
+  let seatNote = nMaxTemp > softSeatLimit ? `In case the Service Temperature exceeds ${softSeatLimit} Deg.C, Metal Seat Valve will be used.` : "";
+
+  // Special notes
+  const notes = ["1. *Indicates information to be provided by vendor."];
+  if (pc.sour) notes.push(`${notes.length + 1}. All material shall meet requirement of NACE MR-0175/SAES-A-301.`);
+  if (seatNote) notes.push(`${notes.length + 1}. ${seatNote}`);
+  if (pc.lining) notes.push(`${notes.length + 1}. ${pc.lining}`);
+
+  // PIL code
+  const sizeCode = nMax <= 4 ? "2" : "4";
+  const classCode = pc.rating === 150 ? "A" : pc.rating === 300 ? "B" : pc.rating === 600 ? "C" : "D";
+  const typeCode = valveType === "Ball" ? "B" : valveType === "Gate" ? "G" : valveType === "Globe" ? "L" : "K";
+  const matCode = pc.matGroup.includes("SS") ? "S" : pc.matGroup.includes("LINED") ? "F" : "A";
+  const sourCode = pc.sour ? "H" : "N";
+  const pilCode = `V${typeCode}${sizeCode}${classCode}${matCode}RF0${sourCode}`;
+
+  const endConn = `${pc.endConn} Flange to ${pc.flangeStd}, ${pc.flangeFinish}`;
+  const samss = "04-SAMSS-035, 04-SAMSS-048" + (valveType === "Ball" ? ", 04-SAMSS-051" : "");
+
+  // Store current datasheet
+  currentDS = {
+    valveType, standard, subType, pressureClass: String(pc.rating),
+    sizeRange: `${sizeMin}" to ${sizeMax}"`, endConnection: endConn,
+    operatorType: operator, maop, maxTemp, minTemp,
+    firesafe: "Yes", sourService: pc.sour ? "Yes" : "No",
+    service: serviceDesc || pc.service,
+    bodyMaterial: pc.body, stemMaterial: pc.trim,
+    seatMaterial: seat, ballMaterial: pc.trim,
+    packing: pc.packing, bolting: pc.bolting,
+    gaskets: pc.gasket, coatings: pc.lining || "N/A",
+    lockingDevice: "Valves shall be capable of being locked open/closed via permanent bracket (CSO / CSC)",
+    samss, specialNotes: notes.join("\n"), pilCode, pipeClassCode
+  };
+
+  // Populate form
+  const fields = ["valveType","standard","subType","samss","pressureClass","sizeRange","endConnection",
+    "operatorType","maop","lockingDevice","maxTemp","minTemp","firesafe","sourService","service",
+    "bodyMaterial","stemMaterial","seatMaterial","ballMaterial","packing","bolting","gaskets","coatings","specialNotes"];
+
+  for (const f of fields) {
+    const el = document.getElementById("ds_" + f);
+    if (el) {
+      if (f === "pressureClass") el.value = "CLASS " + currentDS[f];
+      else if (el.tagName === "TEXTAREA") el.value = currentDS[f];
+      else el.value = currentDS[f];
+    }
+  }
+
+  document.getElementById("pilBadge").textContent = "PIL: " + pilCode;
+  document.getElementById("pcBadge").textContent = pipeClassCode;
+  document.getElementById("pilRef").textContent = `PIL Valve Datasheet No.: ${pilCode} — Applicable for Pipe Class: ${pipeClassCode}`;
+
+  // Validation
+  runValidation();
+
+  // Labels
+  document.getElementById("lbl_firesafe").className = "pass";
+  document.getElementById("lbl_sourService").className = pc.sour ? "warn" : "";
+
+  // Show section
+  document.getElementById("generated-section").style.display = "block";
+  document.getElementById("generated-section").scrollIntoView({ behavior: "smooth" });
+}
+
+function runValidation() {
+  if (!currentDS) return;
+  const checks = [];
+  const maxT = parseFloat(currentDS.maxTemp);
+
+  // Bolting check
+  const bodyU = currentDS.bodyMaterial.toUpperCase();
+  const boltU = currentDS.bolting.toUpperCase();
+  if (bodyU.includes("WCB") && boltU.includes("B7M")) checks.push({ s:"pass", m:"CS body + B7M/2HM ✓" });
+  else if (bodyU.includes("CF8M") && boltU.includes("B8M")) checks.push({ s:"pass", m:"SS body + B8M/8M ✓" });
+  else checks.push({ s:"fail", m:"Body-bolting mismatch" });
+  document.getElementById("lbl_bolting").className = checks[checks.length-1].s;
+
+  // Seat temp
+  if (!isNaN(maxT) && maxT > 120 && currentDS.seatMaterial.toLowerCase().includes("rtfe")) {
+    checks.push({ s:"warn", m:`RTFE limit 120°C, max temp ${maxT}°C — metal seat note required` });
+    document.getElementById("lbl_seatMaterial").className = "warn";
+  } else {
+    checks.push({ s:"pass", m:"Seat within temp limit" });
+    document.getElementById("lbl_seatMaterial").className = "pass";
+  }
+
+  // Sour bolting
+  if (currentDS.sourService === "Yes") {
+    if (boltU.includes("B7/") || (boltU.includes("B7") && !boltU.includes("B7M"))) {
+      checks.push({ s:"fail", m:"Non-NACE bolting for sour service" });
+    } else {
+      checks.push({ s:"pass", m:"NACE-compliant bolting" });
+    }
+  }
+
+  const p = checks.filter(c => c.s === "pass").length;
+  const w = checks.filter(c => c.s === "warn").length;
+  const f = checks.filter(c => c.s === "fail").length;
+  const warns = checks.filter(c => c.s !== "pass");
+
+  let html = `<span style="font-weight:600; color:var(--green);">Inline validation:</span>
+    <span class="v-pass">${p} pass</span> <span class="v-warn">${w} warn</span> <span class="v-fail">${f} fail</span>`;
+  for (const w of warns) {
+    const col = w.s === "fail" ? "var(--red)" : "var(--amber)";
+    html += `<span class="val-msg" style="color:${col}">| ${w.m}</span>`;
+  }
+  document.getElementById("valBar").innerHTML = html;
+}
+
+function resetAll() {
+  document.getElementById("pipeClass").value = "";
+  document.getElementById("valveType").value = "Ball";
+  ["sizeMin","sizeMax","maxTemp","minTemp","maop","serviceDesc"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("pmsSummary").style.display = "none";
+  document.getElementById("generated-section").style.display = "none";
+  document.getElementById("btnGenerate").disabled = true;
+  document.querySelectorAll(".qf-btn").forEach(b => b.classList.remove("active"));
+  currentDS = null;
+}
+
+// ══════════════════════════════════════════════
+// PDF EXPORT
+// ══════════════════════════════════════════════
+
+function exportPDF() {
+  if (!currentDS) return;
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation:"portrait", unit:"mm", format:"a4" });
+  const W = 210, H = 297;
+  const lm = 14, rm = W - 14, pw = rm - lm;
+  const half = pw / 2;
+  let y = 14;
+
+  const drawBox = (x, y, w, h, fill) => {
+    if (fill) { doc.setFillColor(...fill); doc.rect(x, y, w, h, "F"); }
+    doc.setDrawColor(80); doc.setLineWidth(0.2); doc.rect(x, y, w, h);
+  };
+
+  const drawField = (x, y, w, h, label, value) => {
+    drawBox(x, y, w, h);
+    doc.setFontSize(6.5); doc.setTextColor(60, 60, 100); doc.setFont("helvetica", "bold");
+    doc.text(label, x + 2, y + 3.5);
+    doc.setFontSize(8); doc.setTextColor(20); doc.setFont("helvetica", "normal");
+    const lines = doc.splitTextToSize(String(value || ""), w - 4);
+    doc.text(lines.slice(0, 3), x + 2, y + 7.5);
+  };
+
+  // Title
+  drawBox(lm, y, pw, 18, [235, 230, 195]);
+  doc.setFontSize(14); doc.setFont("helvetica", "bold"); doc.setTextColor(20);
+  doc.text("VALVE DATA SHEET", lm + 4, y + 8);
+  doc.setFontSize(9); doc.setFont("helvetica", "normal");
+  doc.text(`Datasheet for ${currentDS.valveType} Valves`, lm + 4, y + 13);
+  // PIL
+  drawBox(rm - 55, y + 9, 50, 7, [255, 255, 255]);
+  doc.setFontSize(9); doc.setFont("helvetica", "bold"); doc.setTextColor(0, 60, 100);
+  doc.text(`PIL: ${currentDS.pilCode}`, rm - 53, y + 14);
+  y += 20;
+
+  // Notes to purchaser
+  drawBox(lm, y, pw, 12, [244, 244, 238]);
+  doc.setFontSize(6.5); doc.setFont("helvetica", "bold"); doc.setTextColor(20);
+  doc.text("Notes To Purchaser:", lm + 2, y + 4);
+  doc.setFont("helvetica", "normal"); doc.setFontSize(6.5);
+  doc.text("Valves shall be in accordance with 04-SAMSS-035, -048, at minimum, and other 04-SAMSS as applicable.", lm + 2, y + 8);
+  doc.text("Applicable SAMSS: " + currentDS.samss, lm + 2, y + 11);
+  y += 14;
+
+  // Service
+  drawField(lm, y, pw, 10, "Service:", currentDS.service); y += 11;
+
+  // Design header
+  drawBox(lm, y, pw, 7, [235, 230, 195]);
+  doc.setFontSize(9); doc.setFont("helvetica", "bold"); doc.setTextColor(20);
+  doc.text("DESIGN SECTION", lm + 3, y + 5); y += 8;
+
+  // Design fields
+  drawField(lm, y, half - 1, 9, "Valve Type:", currentDS.valveType);
+  drawField(lm + half, y, half, 9, "Industrial Standard:", currentDS.standard); y += 10;
+  drawField(lm, y, pw, 12, "Sub Type:", currentDS.subType); y += 13;
+  drawField(lm, y, pw, 8, "SAMSS:", currentDS.samss); y += 9;
+  drawField(lm, y, half - 1, 9, "Pressure Class:", "CLASS " + currentDS.pressureClass);
+  drawField(lm + half, y, half, 9, "Size / Port:", currentDS.sizeRange); y += 10;
+  drawField(lm, y, half - 1, 9, "End Connections:", currentDS.endConnection);
+  drawField(lm + half, y, half, 9, "Operator Type:", currentDS.operatorType); y += 10;
+  drawField(lm, y, half - 1, 10, "Other:", currentDS.lockingDevice);
+  const third = half / 2;
+  drawField(lm + half, y, third - 1, 10, "MAOP:", currentDS.maop + " BarG");
+  drawField(lm + half + third, y, third, 10, "Fire-safe:", currentDS.firesafe); y += 11;
+  drawField(lm, y, half - 1, 9, "Max Service Temp:", currentDS.maxTemp + " °C");
+  drawField(lm + half, y, half, 9, "Min Service Temp:", currentDS.minTemp + " °C"); y += 11;
+
+  // Materials header
+  drawBox(lm, y, pw, 7, [235, 230, 195]);
+  doc.setFontSize(9); doc.setFont("helvetica", "bold"); doc.setTextColor(20);
+  doc.text("MATERIALS SECTION", lm + 3, y + 5);
+  const sourText = currentDS.sourService === "Yes" ? "YES" : "NO";
+  const sourColor = currentDS.sourService === "Yes" ? [180, 0, 0] : [0, 100, 0];
+  doc.setTextColor(...sourColor);
+  doc.text(`Sour Service: ${sourText}`, rm - 40, y + 5);
+  y += 8;
+
+  drawField(lm, y, half - 1, 9, "Body / Bonnet:", currentDS.bodyMaterial);
+  drawField(lm + half, y, half, 9, "Stem:", currentDS.stemMaterial); y += 10;
+  drawField(lm, y, half - 1, 9, "Seat / Inserts:", currentDS.seatMaterial);
+  drawField(lm + half, y, half, 9, "Ball / Disc / Plug:", currentDS.ballMaterial); y += 10;
+  drawField(lm, y, half - 1, 9, "Packing / O-Rings:", currentDS.packing);
+  drawField(lm + half, y, half, 9, "Bolting:", currentDS.bolting); y += 10;
+  drawField(lm, y, half - 1, 9, "Gaskets / Seals:", currentDS.gaskets);
+  drawField(lm + half, y, half, 9, "Coatings / Linings:", currentDS.coatings); y += 11;
+
+  // Special notes header
+  drawBox(lm, y, pw, 7, [235, 230, 195]);
+  doc.setFontSize(9); doc.setFont("helvetica", "bold"); doc.setTextColor(20);
+  doc.text("SPECIAL NOTES SECTION", lm + 3, y + 5); y += 8;
+
+  const notesLines = (currentDS.specialNotes || "").split("\n");
+  const notesH = Math.max(notesLines.length * 4 + 4, 16);
+  drawBox(lm, y, pw, notesH);
+  doc.setFontSize(7.5); doc.setFont("helvetica", "normal"); doc.setTextColor(20);
+  notesLines.forEach((line, i) => {
+    if (i < 6) doc.text(line.trim(), lm + 2, y + 4 + i * 4);
+  });
+  y += notesH + 2;
+
+  // PIL reference
+  doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(0, 60, 100);
+  doc.text(`PIL Valve Datasheet No.: ${currentDS.pilCode}    |    Pipe Class: ${currentDS.pipeClassCode}`, lm + 2, y + 4);
+
+  // Footer
+  doc.setDrawColor(150); doc.setLineWidth(0.3);
+  doc.line(lm, H - 18, rm, H - 18);
+  doc.setFontSize(7); doc.setFont("helvetica", "normal"); doc.setTextColor(150);
+  doc.text("Generated by PipingPro Academy — Valve Datasheet Creator", lm, H - 14);
+  doc.text("Page 1 of 1", rm - 20, H - 14);
+
+  doc.save(`valve-datasheet-${currentDS.pilCode}.pdf`);
+}
+
+function exportJSON() {
+  if (!currentDS) return;
+  const json = JSON.stringify(currentDS, null, 2);
+  const blob = new Blob([json], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = `valve-datasheet-${currentDS.pilCode}.json`; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// Init on load
+document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>
