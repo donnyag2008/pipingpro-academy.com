@@ -428,12 +428,12 @@ body{ background:#faf6ef; color:#1a1510; }
             <circle cx="46" cy="46" r="10" fill="rgba(255,210,130,0.9)"/>
             <path d="M42 42 H50 L44 46 L50 50 H42" stroke="#2d0d4a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
           </svg>
-          <span class="suite-count">4 calculators</span>
+          <span class="suite-count">7 tools</span>
         </div>
         <div class="suite-body">
           <div class="suite-name">Project Engineering</div>
-          <div class="suite-sub">AACE 18R-97 · ASME B31.3 · SAES-A-004</div>
-          <div class="suite-desc">Hydrostatic &amp; pneumatic test packs, piping work estimation, P&amp;ID material take-off and dia-inch change-order verification.</div>
+          <div class="suite-sub">AACE 18R-97 · ASME B31.3 · SAES-A-004 · API 6D</div>
+          <div class="suite-desc">Hydrostatic &amp; pneumatic test packs, piping work estimation, P&amp;ID MTO, dia-inch change-order — plus the valve datasheet suite: Creator, Verifier, and TBE.</div>
           <button class="suite-btn open">Open Toolkit →</button>
         </div>
       </div>
@@ -585,7 +585,10 @@ const CALCS = {
   fl:{name:'Flange Leakage Check',desc:'PEQ method — flange leakage under combined pressure, bending and axial force per ASME B16.5.',tags:['ASME B16.5','PEQ Method'],file:'flange-leakage-check.html'},
   nl:{name:'Nozzle Loads Checker',desc:'Nozzle load verification per API 610, API 617, API 661 and WRC 107/297.',tags:['API 610','API 617','WRC 107/297'],file:'nozzle-loads-checker.html'},
   vf:{name:'Vibration Fatigue Calculator',desc:'Reciprocating compressor piping — MNFP, allowable span, pulsation per API-618.',tags:['API-618','ASME B31.3'],file:'vibration-fatigue-calculator.html'},
-  im:{name:'Initial Movement Calculator',desc:'Quick-estimate anchor/elbow movements from thermal expansion before full modelling.',tags:['ASME B31.3','Thermal','Movement'],file:'#'}
+  im:{name:'Initial Movement Calculator',desc:'Quick-estimate anchor/elbow movements from thermal expansion before full modelling.',tags:['ASME B31.3','Thermal','Movement'],file:'#'},
+  vdc:{name:'Valve Datasheet Creator',desc:'Auto-generates valve datasheets from pipe class & service conditions — body, trim, bolting, seat, operator, SAMSS references. PDF export.',tags:['API 6D','ASME B16.34','04-SAMSS-051'],file:'valve-datasheet-creator.html'},
+  vdv:{name:'Valve Datasheet Verifier',desc:'Checks valve datasheets against generic codes (ASME B16.34, NACE MR-0175) and owner Criteria Profiles (Aramco, TOTAL, Shell, EPC).',tags:['NACE MR-0175','ASME B16.34','Criteria Profile'],file:'valve-datasheet-verifier.html'},
+  vtbe:{name:'Valve TBE — Technical Bid Evaluation',desc:'Audits vendor compliance claims against verified datasheets. AI-powered vendor PDF extraction. False-comply detection.',tags:['TBE','AI Extraction','Procurement'],file:'valve-tbe-tool.html'}
 };
 
 // ─── COMING SOON ─────────────────────────────────────────────
