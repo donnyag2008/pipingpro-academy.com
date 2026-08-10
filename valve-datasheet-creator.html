@@ -42,6 +42,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 
 <style>
 :root{--bg:#F7F6F3;--surface:#FFFFFF;--border:#E2E0D8;--border-strong:#C8C5BA;--text:#1A1917;--text-2:#5C5A54;--text-3:#9C9A94;--accent:#8b3a1a;--accent-light:#e7f1ee;--accent-border:#A8D4B8;--info:#1A4A7A;--info-light:#E8F0F8;--info-border:#A8C4E0;--warn:#7A4A0A;--warn-light:#FDF3E3;--warn-border:#F0C878;--danger:#7A1A1A;--danger-light:#f6e6df;--danger-border:#F0A0A0;--success:#8b3a1a;--success-light:#e7f1ee;--radius:6px;--radius-lg:10px;--font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace}
@@ -145,10 +146,10 @@ body{background:#faf6ef;color:#1a1510}
   <div class="card card-purple">
     <div class="card-title" style="color:#5b21b6">Step 0 — Project pipe class data (PMS)</div>
     <div class="upload-zone" id="uploadZone" onclick="document.getElementById('pmsFile').click()">
-      <input type="file" id="pmsFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="handlePMSUpload(event)">
+      <input type="file" id="pmsFile" accept=".xlsx,.xls,.csv,.docx" style="display:none" onchange="handlePMSUpload(event)">
       <div style="font-size:24px;margin-bottom:6px">📋</div>
-      <div style="font-size:13px;font-weight:600;color:#5b21b6">Click to upload PMS spreadsheet</div>
-      <div style="font-size:11px;color:var(--text-3);margin-top:4px">Excel (.xlsx, .xls) or CSV — expects columns: Pipe Class, Rating, Body Material, Trim, Bolting, Gasket, End Connection, Sour (Y/N)</div>
+      <div style="font-size:13px;font-weight:600;color:#5b21b6">Click to upload PMS file</div>
+      <div style="font-size:11px;color:var(--text-3);margin-top:4px">Excel (.xlsx, .xls), CSV, or Word (.docx) — expects columns: Pipe Class, Rating, Body Material, Trim, Bolting, Gasket, End Connection, Sour (Y/N)</div>
     </div>
     <div id="pmsStatus" class="upload-status" style="display:none"></div>
     <div id="colMapSection" style="display:none">
@@ -250,7 +251,7 @@ body{background:#faf6ef;color:#1a1510}
   </div>
   <div class="ref-section">
     <div class="ref-title">PMS upload format</div>
-    <p style="margin-bottom:.5rem">Your Excel/CSV should include columns for:</p>
+    <p style="margin-bottom:.5rem">Your Excel, CSV, or Word file should include columns for:</p>
     <p style="margin-bottom:.3rem;padding-left:1rem">• <strong>Pipe Class</strong> — e.g. 1CC1P01, 3SD0P01</p>
     <p style="margin-bottom:.3rem;padding-left:1rem">• <strong>Rating</strong> — e.g. 150, 300, 600</p>
     <p style="margin-bottom:.3rem;padding-left:1rem">• <strong>Body Material</strong> — e.g. ASTM A216 WCB, ASTM A351 CF8M</p>
@@ -259,7 +260,7 @@ body{background:#faf6ef;color:#1a1510}
     <p style="margin-bottom:.3rem;padding-left:1rem">• <strong>Gasket</strong> — e.g. Graphite, Spiral wound</p>
     <p style="margin-bottom:.3rem;padding-left:1rem">• <strong>End Connection</strong> — e.g. RF, RTJ, BW</p>
     <p style="margin-bottom:.3rem;padding-left:1rem">• <strong>Sour</strong> — Y/N or Yes/No</p>
-    <p style="margin-top:.6rem">Column headers are auto-detected. If auto-detection fails, you can manually map each column.</p>
+    <p style="margin-top:.6rem">Column headers are auto-detected. If auto-detection fails, you can manually map each column. For Word files, the tool extracts the largest table in the document. All processing is done in your browser — no data is sent to any server.</p>
   </div>
   <div class="ref-section">
     <div class="ref-title">Applicable standards</div>
@@ -304,28 +305,63 @@ function loadSample(){
 /* ═══════ PMS UPLOAD ═══════ */
 function handlePMSUpload(e){
   var file=e.target.files[0]; if(!file)return;
-  var reader=new FileReader();
-  reader.onload=function(ev){
-    try{
-      var wb=XLSX.read(ev.target.result,{type:'array'});
-      var ws=wb.Sheets[wb.SheetNames[0]];
-      var data=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
-      if(data.length<2){showUploadError('File has no data rows.');return;}
-      uploadedHeaders=data[0].map(function(h){return String(h).trim()});
-      uploadedRows=data.slice(1).filter(function(r){return r.some(function(c){return String(c).trim()!==''})});
-      document.getElementById('uploadZone').classList.add('loaded');
-      document.getElementById('uploadZone').innerHTML='<div style="font-size:24px;margin-bottom:6px">✅</div><div style="font-size:13px;font-weight:600;color:#059669">'+file.name+' loaded — '+uploadedRows.length+' rows</div><div style="font-size:11px;color:var(--text-3);margin-top:4px">Click to upload a different file</div><input type="file" id="pmsFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="handlePMSUpload(event)">';
+  var ext=file.name.split('.').pop().toLowerCase();
 
-      // Try auto-detect columns
-      var map=autoDetectColumns(uploadedHeaders);
-      if(map.pipeClass>=0 && map.body>=0){
-        applyAutoMap(map);
-      } else {
-        showColumnMapper();
-      }
-    }catch(err){showUploadError('Failed to read file: '+err.message);}
-  };
-  reader.readAsArrayBuffer(file);
+  if(ext==='docx'){
+    // Word document — use mammoth to extract tables
+    var reader=new FileReader();
+    reader.onload=function(ev){
+      mammoth.convertToHtml({arrayBuffer:ev.target.result}).then(function(result){
+        var html=result.value;
+        // Parse tables from the HTML
+        var parser=new DOMParser();
+        var doc=parser.parseFromString(html,'text/html');
+        var tables=doc.querySelectorAll('table');
+        if(tables.length===0){showUploadError('No tables found in Word document.');return;}
+        // Find the largest table (likely the PMS)
+        var bestTable=tables[0];
+        for(var i=1;i<tables.length;i++){if(tables[i].rows.length>bestTable.rows.length)bestTable=tables[i];}
+        // Convert table to array format
+        var data=[];
+        for(var r=0;r<bestTable.rows.length;r++){
+          var row=[];
+          for(var c=0;c<bestTable.rows[r].cells.length;c++){
+            row.push(bestTable.rows[r].cells[c].textContent.trim());
+          }
+          data.push(row);
+        }
+        if(data.length<2){showUploadError('Table has no data rows.');return;}
+        uploadedHeaders=data[0];
+        uploadedRows=data.slice(1).filter(function(r){return r.some(function(c){return c!==''})});
+        showUploadSuccess(file.name);
+        var map=autoDetectColumns(uploadedHeaders);
+        if(map.pipeClass>=0&&map.body>=0){applyAutoMap(map);}else{showColumnMapper();}
+      }).catch(function(err){showUploadError('Failed to read Word file: '+err.message);});
+    };
+    reader.readAsArrayBuffer(file);
+  } else {
+    // Excel or CSV — use SheetJS
+    var reader=new FileReader();
+    reader.onload=function(ev){
+      try{
+        var wb=XLSX.read(ev.target.result,{type:'array'});
+        var ws=wb.Sheets[wb.SheetNames[0]];
+        var data=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+        if(data.length<2){showUploadError('File has no data rows.');return;}
+        uploadedHeaders=data[0].map(function(h){return String(h).trim()});
+        uploadedRows=data.slice(1).filter(function(r){return r.some(function(c){return String(c).trim()!==''})});
+        showUploadSuccess(file.name);
+        var map=autoDetectColumns(uploadedHeaders);
+        if(map.pipeClass>=0&&map.body>=0){applyAutoMap(map);}else{showColumnMapper();}
+      }catch(err){showUploadError('Failed to read file: '+err.message);}
+    };
+    reader.readAsArrayBuffer(file);
+  }
+}
+
+function showUploadSuccess(fileName){
+  document.getElementById('uploadZone').classList.add('loaded');
+  document.getElementById('uploadZone').innerHTML='<div style="font-size:24px;margin-bottom:6px">✅</div><div style="font-size:13px;font-weight:600;color:#059669">'+fileName+' loaded — '+uploadedRows.length+' rows</div><div style="font-size:11px;color:var(--text-3);margin-top:4px">Click to upload a different file</div><input type="file" id="pmsFile" accept=".xlsx,.xls,.csv,.docx" style="display:none" onchange="handlePMSUpload(event)">';
 }
 
 function showUploadError(msg){
