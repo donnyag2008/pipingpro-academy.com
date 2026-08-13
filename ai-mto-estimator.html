@@ -429,7 +429,7 @@ tbody tr:hover td{background:#f9f5ee;}
 
 <div class="app-layout" style="padding-top:18px">
   <!-- QUEUE PANEL -->
-  <div class="queue-panel">
+  <div class="queue-panel" style="display:none">
     <div class="queue-header">
       <span class="queue-header-title">DRAWING QUEUE</span>
       <span class="queue-count" id="queue-count">0 drawings</span>
@@ -947,7 +947,7 @@ document.addEventListener('keydown', e => {
 // P&ID MTO — DRAWING QUEUE
 // ══════════════════════════════════════════════════════════════════════════════
 function addDrawingEntry(file, area, label, base64) {
-  document.querySelector('.queue-panel').style.display = 'none'; 
+  document.querySelector('.queue-panel').style.display = ''; 
   const id = Date.now() + Math.random();
   drawings.push({ id, name:file.name, area, label, mediaType:file.type, base64, status:'pending', data:null });
   document.getElementById('empty-state').style.display = 'none';
