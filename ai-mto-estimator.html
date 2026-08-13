@@ -947,6 +947,7 @@ document.addEventListener('keydown', e => {
 // P&ID MTO — DRAWING QUEUE
 // ══════════════════════════════════════════════════════════════════════════════
 function addDrawingEntry(file, area, label, base64) {
+  document.querySelector('.queue-panel').style.display = ''; 
   const id = Date.now() + Math.random();
   drawings.push({ id, name:file.name, area, label, mediaType:file.type, base64, status:'pending', data:null });
   document.getElementById('empty-state').style.display = 'none';
@@ -984,7 +985,7 @@ function toggleArea(h){ h.closest('.area-group').classList.toggle('collapsed'); 
 function removeDrawing(id) {
   drawings=drawings.filter(d=>d.id!==id);
   if(activeId===id) activeId=drawings.length?drawings[drawings.length-1].id:null;
-  if(!drawings.length){document.getElementById('empty-state').style.display='block';document.getElementById('single-view').style.display='none';}
+  if(!drawings.length){document.getElementById('empty-state').style.display='block';document.getElementById('single-view').style.display='none';document.querySelector('.queue-panel').style.display='none';}
   renderQueue();
   if(activeId) selectDrawing(activeId);
 }
