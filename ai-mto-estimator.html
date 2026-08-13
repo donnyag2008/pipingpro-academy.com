@@ -307,12 +307,14 @@ tbody tr:hover td{background:#f9f5ee;}
 .ref-section{margin-top:16px;}
 .ref-title{font-size:10px;font-weight:800;color:#6b5d49;letter-spacing:1.5px;margin-bottom:8px;}
 
-/* ── AI Trust Notice ── */
-.ai-trust-notice{max-width:1040px;margin:0 auto;padding:0 5%;margin-bottom:0;}
-.ai-trust-notice>div:first-child,.ai-trust-notice{background:transparent;}
-.ai-trust-notice{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:6px;padding:1rem 1.2rem;margin:0 auto 1rem;max-width:990px;font-size:.84rem;line-height:1.6;color:var(--muted);}
-.ai-trust-header{display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem;font-weight:700;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:var(--text);}
+/* ── AI Trust Notice (collapsible) ── */
+.ai-trust-notice{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:6px;padding:.7rem 1.2rem;margin:0 auto .6rem;max-width:990px;font-size:.84rem;line-height:1.6;color:var(--muted);}
+.ai-trust-header{display:flex;align-items:center;gap:.5rem;font-weight:700;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:var(--text);}
 .ai-trust-header svg{flex-shrink:0;color:var(--gold);}
+.ai-trust-toggle{margin-left:auto;font-size:.72rem;color:var(--muted2);font-weight:400;letter-spacing:0;text-transform:none;}
+.ai-trust-body{display:none;margin-top:.6rem;}
+.ai-trust-notice.open .ai-trust-body{display:block;}
+.ai-trust-notice.open .ai-trust-toggle{display:none;}
 .ai-trust-notice ul{margin:0;padding:0;list-style:none;}
 .ai-trust-notice li{position:relative;padding-left:1.1rem;margin-bottom:.35rem;}
 .ai-trust-notice li::before{content:'✓';position:absolute;left:0;color:var(--gold);font-weight:700;font-size:.82rem;}
@@ -337,23 +339,26 @@ tbody tr:hover td{background:#f9f5ee;}
   <p>Upload P&amp;IDs for AI-extracted MTO with piping estimation, or estimate pipeline scope parametrically &mdash; all powered by proven engineering methodology</p>
 </div>
 
-<!-- ━━━ DATA TRUST NOTICE ━━━ -->
+<!-- ━━━ DATA TRUST NOTICE (collapsible) ━━━ -->
 <div class="ai-trust-notice">
-  <div class="ai-trust-header">
+  <div class="ai-trust-header" onclick="this.parentElement.classList.toggle('open')" style="cursor:pointer;margin-bottom:0">
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M8 1L2 4v4c0 3.5 2.6 6.4 6 7 3.4-.6 6-3.5 6-7V4L8 1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" fill="none"/>
       <path d="M5.5 8.2L7.1 9.8 10.5 6.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
     Your data is not stored or used for AI training
+    <span class="ai-trust-toggle">details ▸</span>
   </div>
-  <ul>
-    <li>Uploaded files are processed in memory and immediately discarded — nothing is saved on our servers</li>
-    <li>Data is sent via encrypted connection to a commercial API that does not use inputs for model training</li>
-    <li>Check your NDA or employer policy before uploading client-identifiable documents</li>
-    <li>Consider redacting client names and project identifiers before upload</li>
-  </ul>
-  <div class="ai-trust-footer">
-    Full details in <a href="terms-of-use.html#ai-data">Section 13 of our Terms of Use</a>
+  <div class="ai-trust-body">
+    <ul>
+      <li>Uploaded files are processed in memory and immediately discarded — nothing is saved on our servers</li>
+      <li>Data is sent via encrypted connection to a commercial API that does not use inputs for model training</li>
+      <li>Check your NDA or employer policy before uploading client-identifiable documents</li>
+      <li>Consider redacting client names and project identifiers before upload</li>
+    </ul>
+    <div class="ai-trust-footer">
+      Full details in <a href="terms-of-use.html#ai-data">Section 13 of our Terms of Use</a>
+    </div>
   </div>
 </div>
 <!-- ━━━ END TRUST NOTICE ━━━ -->
