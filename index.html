@@ -90,13 +90,8 @@
     .lmodal-logout:hover{background:var(--paper-dark);}
 
     /* ── APP LAYOUT ── */
-    .app-body { display: flex; flex-direction: column; min-height: calc(100vh - 60px); background: var(--ink); position: relative; overflow: hidden; }
-    .app-body::before {
-      content: ''; position: absolute; inset: 0;
-      background: repeating-linear-gradient(90deg,transparent,transparent 79px,rgba(184,134,11,0.07) 79px,rgba(184,134,11,0.07) 80px),
-                  repeating-linear-gradient(0deg,transparent,transparent 79px,rgba(184,134,11,0.07) 79px,rgba(184,134,11,0.07) 80px);
-      pointer-events: none;
-    }
+    .app-body { display: flex; flex-direction: column; min-height: calc(100vh - 60px); background: var(--cream); position: relative; overflow: hidden; }
+    .app-body::before { display: none; }
 
     /* ── CHAT AREA ── */
     .chat-area { flex: 1; overflow-y: auto; padding: 0 5%; position: relative; z-index: 1; }
@@ -105,49 +100,49 @@
     /* ── WELCOME ── */
     .welcome { text-align: center; padding-top: 10vh; padding-bottom: 2rem; }
     .welcome-eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.2rem; opacity:0; animation: fadeUp .6s .1s forwards; }
-    .welcome h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2rem, 4.5vw, 3.2rem); line-height: 1.15; color: #fff; margin-bottom: 1.2rem; opacity:0; animation: fadeUp .7s .25s forwards; }
+    .welcome h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2rem, 4.5vw, 3.2rem); line-height: 1.15; color: var(--ink); margin-bottom: 1.2rem; opacity:0; animation: fadeUp .7s .25s forwards; }
     .welcome h1 em { font-style: italic; color: var(--gold-bright); }
-    .welcome-sub { font-size: 1rem; color: #b0a898; max-width: 520px; margin: 0 auto 2.5rem; font-weight: 300; line-height: 1.7; opacity:0; animation: fadeUp .7s .4s forwards; }
+    .welcome-sub { font-size: 1rem; color: var(--ink-light); max-width: 520px; margin: 0 auto 2.5rem; font-weight: 300; line-height: 1.7; opacity:0; animation: fadeUp .7s .4s forwards; }
 
     .ex-section { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 620px; margin: 0 auto; text-align: left; opacity:0; animation: fadeUp .7s .55s forwards; }
     .ex-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
     .ex-group { display: flex; flex-direction: column; gap: 8px; }
-    .ex-btn { background: rgba(255,255,255,0.04); border: 1px solid rgba(184,134,11,0.2); border-radius: 4px; padding: 12px 14px; font-size: 0.85rem; color: #b0a898; cursor: pointer; text-align: left; line-height: 1.45; font-family: 'DM Sans', sans-serif; transition: border-color .2s, color .2s, background .2s; }
-    .ex-btn:hover { border-color: var(--gold); color: #fff; background: rgba(184,134,11,0.08); }
+    .ex-btn { background: var(--paper); border: 1px solid var(--paper-dark); border-radius: 4px; padding: 12px 14px; font-size: 0.85rem; color: var(--ink-light); cursor: pointer; text-align: left; line-height: 1.45; font-family: 'DM Sans', sans-serif; transition: border-color .2s, color .2s, background .2s; }
+    .ex-btn:hover { border-color: var(--gold); color: var(--ink); background: var(--gold-pale); }
 
     /* ── MESSAGES ── */
     .msg-user { display: flex; justify-content: flex-end; margin-top: 20px; }
     .msg-user .bubble { background: var(--gold); color: var(--ink); padding: 10px 16px; border-radius: 4px; max-width: 80%; font-size: 0.9rem; line-height: 1.55; font-weight: 500; }
     .msg-ai { margin-top: 16px; }
-    .ai-text { font-size: 0.9rem; color: #d4cfc6; line-height: 1.75; }
+    .ai-text { font-size: 0.9rem; color: var(--ink); line-height: 1.75; }
     .ai-text p { margin: 6px 0; }
-    .ai-text strong { font-weight: 600; color: #fff; }
+    .ai-text strong { font-weight: 600; color: var(--ink); }
     .ai-text em { font-style: italic; }
-    .ai-text code { background: rgba(255,255,255,0.08); padding: 1px 5px; border-radius: 3px; font-size: 0.85em; font-family: var(--mono); color: var(--gold-bright); }
-    .ai-text h2 { font-family: 'DM Serif Display', serif; font-size: 1.2rem; color: #fff; margin: 18px 0 8px; }
-    .ai-text h3 { font-size: 0.92rem; font-weight: 700; color: var(--gold-bright); margin: 14px 0 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .ai-text code { background: var(--paper); padding: 1px 5px; border-radius: 3px; font-size: 0.85em; font-family: var(--mono); color: var(--rust); }
+    .ai-text h2 { font-family: 'DM Serif Display', serif; font-size: 1.2rem; color: var(--ink); margin: 18px 0 8px; }
+    .ai-text h3 { font-size: 0.92rem; font-weight: 700; color: var(--gold); margin: 14px 0 6px; text-transform: uppercase; letter-spacing: 0.05em; }
     .ai-text h4 { font-size: 0.85rem; font-weight: 600; color: var(--gold); margin: 12px 0 4px; }
-    .ai-text hr { border: none; border-top: 1px solid rgba(184,134,11,0.25); margin: 14px 0; }
+    .ai-text hr { border: none; border-top: 1px solid var(--paper-dark); margin: 14px 0; }
     .ai-text table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 0.85rem; }
-    .ai-text th { text-align: left; padding: 6px 10px; border-bottom: 2px solid rgba(184,134,11,0.3); font-size: 0.75rem; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 0.06em; }
-    .ai-text td { padding: 5px 10px; border-bottom: 1px solid rgba(255,255,255,0.06); color: #d4cfc6; }
+    .ai-text th { text-align: left; padding: 6px 10px; border-bottom: 2px solid var(--rule); font-size: 0.75rem; font-weight: 700; color: var(--ink-light); text-transform: uppercase; letter-spacing: 0.06em; }
+    .ai-text td { padding: 5px 10px; border-bottom: 1px solid var(--paper-dark); color: var(--ink-light); }
     .ai-text td:last-child, .ai-text th:last-child { text-align: right; }
     .ai-text ul, .ai-text ol { margin: 6px 0; padding-left: 20px; }
-    .ai-text li { margin: 3px 0; line-height: 1.6; color: #d4cfc6; }
+    .ai-text li { margin: 3px 0; line-height: 1.6; color: var(--ink-light); }
     .ai-text li::marker { color: var(--gold); }
-    .ai-text blockquote { border-left: 3px solid var(--gold); padding: 4px 12px; margin: 8px 0; color: #b0a898; background: rgba(184,134,11,0.06); border-radius: 0 4px 4px 0; }
+    .ai-text blockquote { border-left: 3px solid var(--gold); padding: 4px 12px; margin: 8px 0; color: var(--ink-light); background: var(--gold-pale); border-radius: 0 4px 4px 0; }
 
     /* ── RESULT CARDS ── */
-    .result-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(184,134,11,0.25); border-radius: 4px; overflow: hidden; margin-bottom: 10px; }
-    .result-header { padding: 10px 14px; border-bottom: 1px solid rgba(184,134,11,0.15); display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 0.08em; }
-    .code-tag { font-size: 0.65rem; font-weight: 500; color: #888; background: rgba(255,255,255,0.05); padding: 2px 8px; border-radius: 3px; text-transform: none; letter-spacing: 0; }
+    .result-card { background: var(--paper); border: 1px solid var(--paper-dark); border-radius: 4px; overflow: hidden; margin-bottom: 10px; }
+    .result-header { padding: 10px 14px; border-bottom: 1px solid var(--paper-dark); display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 0.08em; }
+    .code-tag { font-size: 0.65rem; font-weight: 500; color: var(--ink-light); background: var(--cream); padding: 2px 8px; border-radius: 3px; text-transform: none; letter-spacing: 0; }
     .result-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 14px; gap: 12px; }
-    .result-key { font-size: 0.78rem; color: #888; text-transform: capitalize; flex-shrink: 0; }
-    .result-val { font-size: 0.82rem; font-weight: 600; color: #d4cfc6; text-align: right; word-break: break-word; }
-    .result-val.mono { font-family: var(--mono); color: var(--gold-bright); }
-    .adequate { background: rgba(45,150,121,0.1); }
-    .not-adequate { background: rgba(185,28,28,0.1); }
-    .result-note { padding: 8px 14px 10px; font-size: 0.72rem; color: #666; font-style: italic; border-top: 1px solid rgba(255,255,255,0.05); }
+    .result-key { font-size: 0.78rem; color: var(--ink-light); text-transform: capitalize; flex-shrink: 0; }
+    .result-val { font-size: 0.82rem; font-weight: 600; color: var(--ink); text-align: right; word-break: break-word; }
+    .result-val.mono { font-family: var(--mono); color: var(--rust); }
+    .adequate { background: #ecfdf5; }
+    .not-adequate { background: #fef2f2; }
+    .result-note { padding: 8px 14px 10px; font-size: 0.72rem; color: var(--ink-light); font-style: italic; border-top: 1px solid var(--paper-dark); }
 
     /* ── LOADING ── */
     .loading { display: flex; align-items: center; gap: 10px; padding: 4px 0; margin-top: 16px; }
@@ -155,11 +150,11 @@
     .dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); animation: dotPulse .9s ease-in-out infinite; }
     .dots span:nth-child(2) { animation-delay: .15s; }
     .dots span:nth-child(3) { animation-delay: .3s; }
-    .load-text { font-size: 0.82rem; color: #666; }
+    .load-text { font-size: 0.82rem; color: var(--ink-light); }
     @keyframes dotPulse { 0%,100% { opacity:.25; transform:scale(.85); } 50% { opacity:1; transform:scale(1); } }
 
     /* ── INPUT BAR ── */
-    .input-bar { flex-shrink: 0; background: rgba(26,21,16,0.95); border-top: 1px solid rgba(184,134,11,0.2); padding: 14px 5%; position: relative; z-index: 1; }
+    .input-bar { flex-shrink: 0; background: var(--ink); border-top: 2px solid var(--gold); padding: 14px 5%; position: relative; z-index: 1; }
     .input-wrap { max-width: 740px; margin: 0 auto; display: flex; gap: 8px; align-items: flex-end; }
     .input-wrap textarea {
       flex: 1; padding: 12px 14px; border-radius: 4px; border: 1px solid rgba(184,134,11,0.3);
@@ -177,7 +172,7 @@
     .send-btn:hover { background: var(--gold-bright); }
     .send-btn:disabled { opacity: .35; cursor: default; }
     .send-btn:active:not(:disabled) { transform: scale(.97); }
-    .input-note { max-width: 740px; margin: 6px auto 0; font-size: 0.68rem; color: #555; text-align: center; }
+    .input-note { max-width: 740px; margin: 6px auto 0; font-size: 0.68rem; color: #888; text-align: center; }
 
     /* ── DIVIDER ── */
     .divider { height: 3px; background: linear-gradient(90deg, var(--gold), var(--gold-pale), var(--gold)); }
@@ -432,81 +427,76 @@
 // ═══════════════════════════════════════════════════════════════════════
 // DATA (Replace with full ppa-*.js data for production)
 // ═══════════════════════════════════════════════════════════════════════
-const MATERIALS = {
-  "A106 Gr.B": { spec:"ASTM A106", grade:"B", type:"Carbon Steel", uns:"K03006", form:"Seamless Pipe", minYield:241, minTensile:414, stress:{38:138,100:138,150:138,200:138,250:134,300:126,350:114,400:103,425:93} },
-  "A312 TP304L": { spec:"ASTM A312", grade:"TP304L", type:"Austenitic SS", uns:"S30403", form:"Seamless Pipe", minYield:172, minTensile:485, stress:{38:115,100:115,150:109,200:102,250:95,300:88,350:83,400:78,425:76} },
-  "A312 TP316L": { spec:"ASTM A312", grade:"TP316L", type:"Austenitic SS", uns:"S31603", form:"Seamless Pipe", minYield:172, minTensile:485, stress:{38:115,100:115,150:110,200:105,250:98,300:93,350:86,400:81,425:79} },
-  "A335 P11": { spec:"ASTM A335", grade:"P11", type:"Alloy Steel (1¼Cr-½Mo)", uns:"K11597", form:"Seamless Pipe", minYield:207, minTensile:414, stress:{38:138,100:138,150:133,200:129,250:126,300:122,350:119,400:116,425:113} },
-  "A335 P22": { spec:"ASTM A335", grade:"P22", type:"Alloy Steel (2¼Cr-1Mo)", uns:"K21590", form:"Seamless Pipe", minYield:207, minTensile:414, stress:{38:138,100:138,150:133,200:129,250:126,300:122,350:119,400:116,425:113} },
-  "A790 S31803": { spec:"ASTM A790", grade:"S31803", type:"Duplex SS", uns:"S31803", form:"Seamless Pipe", minYield:448, minTensile:621, stress:{38:207,100:195,150:183,200:170,250:158,300:148} },
-  "A333 Gr.6": { spec:"ASTM A333", grade:"6", type:"Carbon Steel (Low Temp)", uns:"K03006", form:"Seamless Pipe", minYield:241, minTensile:414, stress:{38:138,100:138,150:138,200:138,250:134,300:126,350:114,400:103,425:93} },
-  "A358 TP316L": { spec:"ASTM A358", grade:"TP316L", type:"Austenitic SS", uns:"S31603", form:"EFW Pipe", minYield:172, minTensile:485, stress:{38:115,100:115,150:110,200:105,250:98,300:93,350:86,400:81,425:79} },
-};
-const PIPE_DATA = {
-  "2":{dn:50,od:60.3,schedules:{"40":3.91,"80":5.54,"STD":3.91,"XS":5.54}},
-  "3":{dn:80,od:88.9,schedules:{"40":5.49,"80":7.62,"STD":5.49,"XS":7.62}},
-  "4":{dn:100,od:114.3,schedules:{"40":6.02,"80":8.56,"STD":6.02,"XS":8.56}},
-  "6":{dn:150,od:168.3,schedules:{"40":7.11,"80":10.97,"STD":7.11,"XS":10.97}},
-  "8":{dn:200,od:219.1,schedules:{"20":6.35,"30":7.04,"40":8.18,"60":10.31,"80":12.70,"STD":8.18,"XS":12.70}},
-  "10":{dn:250,od:273.1,schedules:{"20":6.35,"30":7.80,"40":9.27,"60":12.70,"80":15.09,"STD":9.27,"XS":12.70}},
-  "12":{dn:300,od:323.9,schedules:{"20":6.35,"30":8.38,"40":10.31,"STD":9.53,"XS":12.70}},
-  "16":{dn:400,od:406.4,schedules:{"20":6.35,"30":7.92,"40":12.70,"STD":9.53,"XS":12.70}},
-  "24":{dn:600,od:609.6,schedules:{"20":6.35,"30":9.53,"STD":9.53,"XS":12.70}},
-};
-const FLANGE_B16_5 = {
-  "A105":{group:"1.1",ratings:{"150":{38:19.6,100:17.7,150:15.8,200:13.8,250:12.1,300:10.2,350:8.3,400:6.5},"300":{38:51.1,100:46.6,150:42.1,200:37.6,250:33.0,300:28.5,350:23.9,400:19.4},"600":{38:102.1,100:93.2,150:84.2,200:75.2,250:66.1,300:57.0,350:47.9,400:38.7},"900":{38:153.2,100:139.7,150:126.2,200:112.7,250:99.1,300:85.5,350:71.8,400:58.1}}},
-  "A182 F316":{group:"2.3",ratings:{"150":{38:19.6,100:16.5,150:14.2,200:12.6,250:11.4,300:10.5,350:9.8,400:9.3},"300":{38:51.1,100:43.0,150:37.1,200:32.8,250:29.8,300:27.4,350:25.6,400:24.3},"600":{38:102.1,100:86.0,150:74.1,200:65.6,250:59.5,300:54.9,350:51.3,400:48.6}}},
-};
 
 // ═══════════════════════════════════════════════════════════════════════
 // TOOL IMPLEMENTATIONS + DEFINITIONS + AI LOGIC
 // (Same as previous version — unchanged)
 // ═══════════════════════════════════════════════════════════════════════
-function interpStress(table,t){const temps=Object.keys(table).map(Number).sort((a,b)=>a-b);if(t<temps[0]||t>temps[temps.length-1])return null;if(table[t]!==undefined)return table[t];const lo=temps.filter(x=>x<=t).pop(),hi=temps.filter(x=>x>=t).shift();return Math.round((table[lo]+(table[hi]-table[lo])*(t-lo)/(hi-lo))*100)/100;}
-function execTool(name,inp){if(name==="lookup_allowable_stress"){const m=MATERIALS[inp.material];if(!m)return{error:`Material "${inp.material}" not found. Available: ${Object.keys(MATERIALS).join(", ")}`};const S=interpStress(m.stress,inp.temperature_c);if(S===null)return{error:`Temperature ${inp.temperature_c}°C out of range for ${inp.material}`};return{material:inp.material,spec:m.spec,grade:m.grade,type:m.type,uns:m.uns,temperature_c:inp.temperature_c,allowable_stress_mpa:S,min_yield_mpa:m.minYield,min_tensile_mpa:m.minTensile,code:"ASME B31.3"};}if(name==="calculate_wall_thickness_b313"){const m=MATERIALS[inp.material];if(!m)return{error:`Material "${inp.material}" not found. Available: ${Object.keys(MATERIALS).join(", ")}`};const pipe=PIPE_DATA[String(inp.nps)];if(!pipe)return{error:`NPS ${inp.nps} not found. Available: ${Object.keys(PIPE_DATA).join(", ")}`};const S=interpStress(m.stress,inp.temperature_c);if(S===null)return{error:`Temperature ${inp.temperature_c}°C out of range`};const P=inp.pressure_mpa,D=pipe.od,E=inp.weld_efficiency||1,W=inp.weld_strength_factor||1,Y=inp.y_coefficient||0.4,c=inp.corrosion_allowance_mm??1;const tc=(P*D)/(2*(S*E*W+P*Y)),tmin=tc+c,tmill=tmin/0.875;let rec=null;for(const[sch,wt]of Object.entries(pipe.schedules).sort((a,b)=>a[1]-b[1])){if(wt>=tmill){rec={schedule:sch,wall_mm:wt,margin_mm:Math.round((wt-tmill)*100)/100};break;}}return{nps:inp.nps,od_mm:D,dn:pipe.dn,material:inp.material,design_pressure_mpa:P,design_temperature_c:inp.temperature_c,allowable_stress_mpa:Math.round(S*100)/100,calculated_thickness_mm:Math.round(tc*1000)/1000,corrosion_allowance_mm:c,minimum_thickness_mm:Math.round(tmin*1000)/1000,nominal_thickness_mm:Math.round(tmill*1000)/1000,recommended_schedule:rec,code_reference:"ASME B31.3 Eq. 3a"};}if(name==="lookup_flange_rating_b165"){const f=FLANGE_B16_5[inp.flange_material];if(!f)return{error:`Flange material "${inp.flange_material}" not found. Available: ${Object.keys(FLANGE_B16_5).join(", ")}`};const cls=String(inp.class),ratings=f.ratings[cls];if(!ratings)return{error:`Class ${cls} not available. Available: ${Object.keys(f.ratings).join(", ")}`};const maxP=interpStress(ratings,inp.temperature_c);if(maxP===null)return{error:`Temperature ${inp.temperature_c}°C out of range`};const adequate=inp.design_pressure_mpa?maxP>=inp.design_pressure_mpa:null;return{flange_material:inp.flange_material,material_group:f.group,class:parseInt(cls),temperature_c:inp.temperature_c,max_working_pressure_mpa:maxP,...(inp.design_pressure_mpa?{design_pressure_mpa:inp.design_pressure_mpa,is_adequate:adequate}:{}),code:"ASME B16.5"};}if(name==="calculate_pipe_weight"){const pipe=PIPE_DATA[String(inp.nps)];if(!pipe)return{error:`NPS ${inp.nps} not found`};const sch=String(inp.schedule||"STD").toUpperCase();const wall=pipe.schedules[sch];if(!wall)return{error:`Schedule "${sch}" not available`,available:Object.keys(pipe.schedules)};const len=inp.length_m||1,den=inp.density_kg_m3||7850;const od=pipe.od/1000,wt=wall/1000,idM=od-2*wt;const wpm=(Math.PI/4)*(od*od-idM*idM)*den;return{nps:inp.nps,dn:pipe.dn,od_mm:pipe.od,schedule:sch,wall_mm:wall,id_mm:Math.round((pipe.od-2*wall)*100)/100,weight_per_metre_kg:Math.round(wpm*100)/100,length_m:len,total_weight_kg:Math.round(wpm*len*100)/100,water_fill_kg_per_m:Math.round((Math.PI/4)*idM*idM*1000*100)/100};}if(name==="list_available_data"){return{materials:Object.keys(MATERIALS),pipe_sizes_nps:Object.keys(PIPE_DATA),flange_materials:Object.keys(FLANGE_B16_5),note:"Demo subset — full database: 259+ ASME B31.3 materials, all NPS sizes, B16.5 + B16.47 flanges, gaskets, bolting"};}return{error:"Unknown tool"};}
+function execTool(name, inp) {
+  if (name === "route_to_calculator") {
+    const params = new URLSearchParams(inp.params);
+    params.set('from', 'ai');
+    const url = '/' + inp.calculator + '?' + params.toString();
+    return { calculator: inp.calculator, url: url, params: inp.params, description: inp.description };
+  }
+  return { error: "Unknown tool" };
+}
 
-const TOOLS=[{name:"lookup_allowable_stress",description:"Look up allowable stress for a pipe material at a design temperature per ASME B31.3.",input_schema:{type:"object",properties:{material:{type:"string",description:"e.g. 'A106 Gr.B'"},temperature_c:{type:"number",description:"Design temperature °C"}},required:["material","temperature_c"]}},{name:"calculate_wall_thickness_b313",description:"Calculate minimum wall thickness per ASME B31.3 Eq. 3a.",input_schema:{type:"object",properties:{nps:{type:"number"},material:{type:"string"},pressure_mpa:{type:"number",description:"Design pressure MPa"},temperature_c:{type:"number"},corrosion_allowance_mm:{type:"number",description:"Default 1.0"},weld_efficiency:{type:"number",description:"Default 1.0"},weld_strength_factor:{type:"number",description:"Default 1.0"},y_coefficient:{type:"number",description:"Default 0.4"}},required:["nps","material","pressure_mpa","temperature_c"]}},{name:"lookup_flange_rating_b165",description:"Look up pressure-temperature rating per ASME B16.5.",input_schema:{type:"object",properties:{flange_material:{type:"string",description:"e.g. 'A105','A182 F316'"},class:{type:"number"},temperature_c:{type:"number"},design_pressure_mpa:{type:"number",description:"Optional: check adequacy"}},required:["flange_material","class","temperature_c"]}},{name:"calculate_pipe_weight",description:"Calculate pipe weight for a given size, schedule and length.",input_schema:{type:"object",properties:{nps:{type:"number"},schedule:{type:"string"},length_m:{type:"number",description:"Default 1"},density_kg_m3:{type:"number",description:"Default 7850"}},required:["nps","schedule"]}},{name:"list_available_data",description:"List all materials, pipe sizes, flange data available.",input_schema:{type:"object",properties:{}}}];
+const TOOLS=[{name:"route_to_calculator",description:"Route the user to a PipingPro Academy calculator with pre-filled inputs. Use this when the user wants to perform a calculation. Extract parameters from their question, convert units if needed, and provide the calculator URL with query parameters.",input_schema:{type:"object",properties:{calculator:{type:"string",description:"Calculator filename, e.g. 'pipe-wall-thickness-calculator.html'"},params:{type:"object",description:"Key-value pairs of input field IDs and values to pre-fill, e.g. {nps:'8',pres:'8.5',temp:'250','b313-mat':'A106 Gr.B',ca:'3'}"},description:{type:"string",description:"Brief description of what the calculator will compute"}},required:["calculator","params","description"]}}];
 
-const SYSTEM_PROMPT=`You are PipingPro — the AI engineering assistant on PipingPro Academy, a platform for piping and pipeline engineers.
+const SYSTEM_PROMPT=`You are PipingPro — the AI engineering assistant on PipingPro Academy.
 
-You do TWO things from a single conversation:
+You do TWO things:
 
-1. CALCULATE — When the user needs a number, use your tools. You have ASME B31.3 material databases (259+ materials), pipe dimensional data, and B16.5 flange PT ratings. Use the tools, present results clearly with code references and units.
+1. CALCULATE — When the user needs a calculation, identify which calculator to use, extract the parameters from their question, and direct them to the right calculator with a link. Do NOT compute results yourself. Instead, say something like "Let me open the Wall Thickness calculator with your inputs" and provide the link.
 
-2. TEACH — When the user wants to understand a concept, explain it clearly and concisely with practical examples. Keep explanations focused — aim for the key points an engineer needs, not a textbook chapter.
+Convert units before routing: "85 barg" = 8.5 MPa, "450F" = 232C, "1000 psi" = 6.895 MPa.
 
-Handle both seamlessly. Convert units as needed: "85 barg" = 8.5 MPa, "450F" = ~232C.
+2. TEACH — When the user wants to understand a concept, explain it clearly and concisely (2-3 short paragraphs max). Mention relevant PipingPro calculators or courses at the end.
 
-IMPORTANT — PLATFORM AWARENESS:
-When your answer relates to a topic covered by PipingPro Academy tools or courses, mention them naturally at the end. Here is what the platform offers:
+CALCULATOR ROUTING — use the route_to_calculator tool to send users to the right calculator. Here are the available calculators and their URL parameter field IDs:
 
-Engineering Calculators (at /calculators.html):
-- Pipe Wall Thickness (B31.3, B31.4, B31.8)
-- Flange Rating Verification (B16.5, B16.47)
-- Pipe Support Span and Deflection
-- Expansion Loop Sizing
-- Flexibility / Guided Cantilever Screening
-- Sustained Stress Check
-- Pipe Weight and Properties
-- Flange and Valve Weight Estimation
+PIPE WALL THICKNESS (pipe-wall-thickness-calculator.html):
+  Fields: nps (select: 0.5,0.75,1,...48), pres (MPa), temp (C), ca (mm, default 3), mt (% default 12.5), b313-mat (select: material key from ppa-materials.js e.g. "A106 Gr.B"), fluid (select: liquid/gas/steam)
 
-AI Tools (at /ai-tools.html):
-- Pipe Material Suitability Verification (live)
-- AI MTO and Estimation Tool (live)
-- Piping Stress Output Verification (coming soon)
-- Nozzle Load Summary (coming soon)
-- Flange Leakage Check from CAESAR II (coming soon)
-- Steel Pipe Bid Evaluation (coming soon)
+PIPE WEIGHT (pipe-weight-calculator.html):
+  Fields: nps, schedule
+
+EXPANSION LOOP (expansion-loop-calculator.html):
+  Fields: nps, material, temp1 (install temp C), temp2 (operating temp C)
+
+PIPE SUPPORT SPAN (pipe-support-span-calculator.html):
+  Fields: nps, schedule, material, fluid, insulation
+
+FLANGE LEAKAGE CHECK (flange-leakage-check.html):
+  Fields: nps, class, material, pressure, temperature
+
+MATERIAL DATASHEET (material-datasheet.html):
+  Fields: material, temperature
+
+FLEXIBILITY SCREENING (flexibility-screening-calculator.html):
+  Fields: nps, material, temp
+
+L-BEND STRESS (l-bend-stress.html):
+  Fields: nps, material, temp
+
+VIBRATION FATIGUE (vibration-fatigue-calculator.html):
+  Fields: nps, schedule, span
+
+FLANGE & VALVE WEIGHT (flange-valve-weight-calculator.html):
+  Fields: nps, class, type
+
+UNIT CONVERTER (unit-converter.html)
+
+Other calculators: material-compare.html, pipe-coating-insulation-calculator.html, hydro-pneumo-test-pack.html, nozzle-loads-checker.html, special-pipe-support-calculator.html, stress-critical-line-selector.html, dia-inch-calculator.html, piping-work-estimator.html
 
 Courses (at /courses.html):
-- Introduction to Process Piping Engineering
-- Introduction to Onshore Pipeline Engineering
-- Introduction to Pipe Stress Analysis using CAESAR II
-- Pipeline Wall Thickness Design
+- Introduction to Process Piping Engineering (course-piping-fundamentals.html)
+- Introduction to Onshore Pipeline Engineering (Fundamental-of-Pipeline-Engineering.html)
+- Static Piping Stress Analysis & CAESAR II (course-static-stress.html)
+- Non-Metallic Piping Essential (course-nonmetallic-piping.html)
 
-Example: if someone asks about expansion loops, explain the concept, then mention "You can size your expansion loop using our Expansion Loop calculator at /calculators.html."
-
-Keep responses concise and practical — 2-3 short paragraphs for teaching, not long essays. Engineers want the key points, not a lecture.`;
+Keep teaching responses concise — 2-3 paragraphs max. Engineers want key points, not lectures.`;
 
 // ═══════════════════════════════════════════════════════════════════════
 // APP STATE & DOM
@@ -521,7 +511,7 @@ function scrollToBottom(){chatArea.scrollTop=chatArea.scrollHeight;}
 function resetChat(){messages=[];chatInner.innerHTML='';chatInner.appendChild(welcomeBlock);welcomeBlock.style.display='';newBtn.style.display='none';userInput.value='';userInput.style.height='auto';sendBtn.disabled=true;userInput.focus();}
 
 // ── RENDER ──
-function renderResultCard(tr){const r=tr.result;if(r.error)return'';const labels={lookup_allowable_stress:"Material Stress Lookup",calculate_wall_thickness_b313:"Wall Thickness — B31.3 Eq. 3a",lookup_flange_rating_b165:"Flange Rating — B16.5",calculate_pipe_weight:"Pipe Weight",list_available_data:"Database Contents"};const label=labels[tr.name]||tr.name;const codeRef=r.code||r.code_reference||'';const skip=new Set(['code','code_reference','error']);let rowsHtml='';if(tr.name==='list_available_data'){rowsHtml+=rw('Materials',r.materials?.join(', '));rowsHtml+=rw('Pipe sizes (NPS)',r.pipe_sizes_nps?.join(', '));rowsHtml+=rw('Flange materials',r.flange_materials?.join(', '));if(r.note)rowsHtml+=`<div class="result-note">${esc(r.note)}</div>`;}else{for(const[k,v]of Object.entries(r)){if(skip.has(k))continue;const dk=k.replace(/_/g,' ').replace(/\bmpa\b/gi,'(MPa)').replace(/\bmm\b/gi,'(mm)').replace(/\b(c)\b$/i,'(°C)').replace(/\bkg\b/gi,'(kg)');let dv=v,cls='';if(typeof v==='boolean'){dv=v?'✓ ADEQUATE':'✗ NOT ADEQUATE';cls=v?'adequate':'not-adequate';}else if(v&&typeof v==='object'){dv=Object.entries(v).map(([a,b])=>`${a}: ${b}`).join(', ');}const mono=typeof v==='number'?' mono':'';rowsHtml+=`<div class="result-row ${cls}"><span class="result-key">${esc(dk)}</span><span class="result-val${mono}">${esc(String(dv))}</span></div>`;}}return`<div class="result-card"><div class="result-header"><span>${esc(label)}</span>${codeRef?`<span class="code-tag">${esc(codeRef)}</span>`:''}</div><div>${rowsHtml}</div></div>`;}
+function renderResultCard(tr){const r=tr.result;if(r.error)return'';if(tr.name==='route_to_calculator'&&r.url){const calcName=r.calculator.replace('.html','').replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase());let paramsHtml='';if(r.params){for(const[k,v]of Object.entries(r.params)){const dk=k.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase());paramsHtml+=`<div class="result-row"><span class="result-key">${esc(dk)}</span><span class="result-val">${esc(String(v))}</span></div>`;}}return`<div class="result-card"><div class="result-header"><span>⚙ ${esc(calcName)}</span></div>${paramsHtml?'<div>'+paramsHtml+'</div>':''}<div style="padding:12px 14px"><a href="${r.url}" style="display:block;text-align:center;background:var(--gold);color:var(--ink);padding:12px 20px;border-radius:4px;font-weight:800;font-size:0.88rem;text-decoration:none;text-transform:uppercase;letter-spacing:0.05em;transition:background 0.2s;font-family:DM Sans,sans-serif" onmouseenter="this.style.background=\'var(--gold-bright)\'" onmouseleave="this.style.background=\'var(--gold)\'">Open Calculator →</a></div></div>`;}return'';}
 function rw(k,v){return`<div class="result-row"><span class="result-key">${esc(k)}</span><span class="result-val">${esc(v||'')}</span></div>`;}
 
 function formatAiText(text){const lines=text.split('\n');let html='',i=0,inList=false,listType='';while(i<lines.length){const line=lines[i],trimmed=line.trim();if(!trimmed){if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}i++;continue;}if(/^-{3,}$/.test(trimmed)||/^\*{3,}$/.test(trimmed)){if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}html+='<hr>';i++;continue;}if(trimmed.startsWith('|')&&trimmed.endsWith('|')){if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}const tl=[];while(i<lines.length&&lines[i].trim().startsWith('|')&&lines[i].trim().endsWith('|')){tl.push(lines[i].trim());i++;}html+=renderTable(tl);continue;}const h4=trimmed.match(/^####\s+(.+)/);if(h4){if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}html+=`<h4>${inl(h4[1])}</h4>`;i++;continue;}const h3=trimmed.match(/^###\s+(.+)/);if(h3){if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}html+=`<h3>${inl(h3[1])}</h3>`;i++;continue;}const h2=trimmed.match(/^##\s+(.+)/);if(h2){if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}html+=`<h2>${inl(h2[1])}</h2>`;i++;continue;}if(trimmed.startsWith('>')){if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}html+=`<blockquote>${inl(trimmed.replace(/^>\s*/,''))}</blockquote>`;i++;continue;}if(/^[-•*]\s/.test(trimmed)){if(!inList||listType!=='ul'){if(inList)html+=listType==='ul'?'</ul>':'</ol>';html+='<ul>';inList=true;listType='ul';}html+=`<li>${inl(trimmed.replace(/^[-•*]\s*/,''))}</li>`;i++;continue;}const olM=trimmed.match(/^(\d+)[.)]\s+(.+)/);if(olM){if(!inList||listType!=='ol'){if(inList)html+=listType==='ul'?'</ul>':'</ol>';html+='<ol>';inList=true;listType='ol';}html+=`<li>${inl(olM[2])}</li>`;i++;continue;}if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}html+=`<p>${inl(trimmed)}</p>`;i++;}if(inList)html+=listType==='ul'?'</ul>':'</ol>';return html;}
