@@ -90,7 +90,7 @@
     .lmodal-logout:hover{background:var(--paper-dark);}
 
     /* ── APP LAYOUT ── */
-    .app-body { display: flex; flex-direction: column; min-height: calc(100vh - 60px); background: var(--cream); position: relative; overflow: hidden; }
+    .app-body { display: flex; flex-direction: column; height: calc(100vh - 60px); background: var(--cream); position: relative; overflow: hidden; }
     .app-body::before { display: none; }
 
     /* ── CHAT AREA ── */
@@ -496,7 +496,9 @@ Courses (at /courses.html):
 - Static Piping Stress Analysis & CAESAR II (course-static-stress.html)
 - Non-Metallic Piping Essential (course-nonmetallic-piping.html)
 
-Keep teaching responses concise — 2-3 paragraphs max. Engineers want key points, not lectures.`;
+Keep teaching responses concise — 2-3 paragraphs max. Engineers want key points, not lectures.
+
+CRITICAL: When you use route_to_calculator, your text response must be very short — just one sentence like "I've loaded the Wall Thickness calculator with your inputs — click the button to open it." Do NOT repeat the URL, do NOT repeat the parameters, do NOT show markdown links. The card already shows everything the user needs.`;
 
 // ═══════════════════════════════════════════════════════════════════════
 // APP STATE & DOM
@@ -507,7 +509,7 @@ const chatInner=$('chatInner'),chatArea=$('chatArea'),userInput=$('userInput'),s
 userInput.addEventListener('input',()=>{sendBtn.disabled=!userInput.value.trim()||isLoading;});
 function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px';}
 function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submitQuery();}}
-function scrollToBottom(){chatArea.scrollTop=chatArea.scrollHeight;}
+function scrollToBottom(){const msgs=chatInner.querySelectorAll('.msg-user,.msg-ai,.loading');if(msgs.length){msgs[msgs.length-1].scrollIntoView({behavior:'smooth',block:'start'});}}
 function resetChat(){messages=[];chatInner.innerHTML='';chatInner.appendChild(welcomeBlock);welcomeBlock.style.display='';newBtn.style.display='none';userInput.value='';userInput.style.height='auto';sendBtn.disabled=true;userInput.focus();}
 
 // ── RENDER ──
