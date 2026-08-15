@@ -1,177 +1,307 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PipingPro Academy — Piping & Pipeline Engineering AI Assistant</title>
-<meta name="description" content="Ask any piping or pipeline engineering question. Calculate wall thickness, flange ratings, pipe weight, or learn ASME B31.3, B16.5, and more — powered by 259+ ASME code material databases.">
-<link rel="canonical" href="https://pipingpro-academy.com">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --blue: #1d4ed8;
-    --blue-light: #dbeafe;
-    --blue-pale: #eff6ff;
-    --text: #111827;
-    --text-mid: #6b7280;
-    --text-light: #9ca3af;
-    --bg: #fafbfc;
-    --surface: #ffffff;
-    --border: #e5e7eb;
-    --border-light: #f3f4f6;
-    --green-bg: #ecfdf5;
-    --red-bg: #fef2f2;
-    --mono: 'SF Mono','Fira Code','Consolas',monospace;
-    --sans: -apple-system,'Segoe UI','Inter',sans-serif;
-  }
-  body { font-family: var(--sans); color: var(--text); background: var(--bg); }
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script data-memberstack-app="app_cmq9fsibv00720sujaqjm734o" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
+  <title>PipingPro Academy — Piping & Pipeline Engineering AI Assistant</title>
+  <meta name="description" content="Ask any piping or pipeline engineering question. Calculate wall thickness, flange ratings, pipe weight, or learn ASME B31.3, B16.5, and more — powered by 259+ ASME code databases.">
+  <link rel="canonical" href="https://pipingpro-academy.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* Layout */
-  .app { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
+    :root {
+      --cream:       #faf6ef;
+      --paper:       #f3ede2;
+      --paper-dark:  #e8dfd0;
+      --ink:         #1a1510;
+      --ink-light:   #4a3f30;
+      --gold:        #b8860b;
+      --gold-bright: #d4a017;
+      --gold-pale:   #f5e9c8;
+      --rust:        #8b3a1a;
+      --rule:        #c8b89a;
+      --mono: 'SF Mono','Fira Code','Consolas',monospace;
+    }
 
-  /* Site nav — matches pipingpro-academy.com */
-  .site-nav { background: #0f172a; padding: 0 24px; height: 60px; display: flex; align-items: center; flex-shrink: 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
-  .site-nav-inner { max-width: 1100px; width: 100%; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-  .site-nav .logo-link { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-  .site-nav .logo-link img { height: 32px; }
-  .site-nav .logo-text { color: #fff; font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
-  .site-nav .nav-links { display: flex; align-items: center; gap: 6px; }
-  .site-nav .nav-links a { color: rgba(255,255,255,0.7); font-size: 13px; font-weight: 500; text-decoration: none; padding: 6px 10px; border-radius: 6px; transition: color .15s, background .15s; }
-  .site-nav .nav-links a:hover { color: #fff; background: rgba(255,255,255,0.08); }
-  .site-nav .nav-links .active { color: #fff; background: rgba(59,130,246,0.2); }
-  .new-btn { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; padding: 5px 12px; cursor: pointer; display: none; }
-  .new-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--ink); color: var(--ink); line-height: 1.7; }
 
-  @media (max-width: 768px) {
-    .site-nav .nav-links a { font-size: 12px; padding: 6px 8px; }
-  }
-  @media (max-width: 480px) {
-    .site-nav .nav-links { gap: 2px; }
-    .site-nav .nav-links a { font-size: 11px; padding: 5px 6px; }
-    .site-nav .logo-text { font-size: 13px; }
-  }
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--ink);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%; height: 60px;
+      border-bottom: 2px solid var(--gold);
+    }
+    .nav-logo { font-family: 'DM Serif Display', serif; font-size: 1.15rem; color: var(--gold-bright); letter-spacing: 0.02em; text-decoration: none; }
+    .nav-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 6px; z-index: 1001; flex-direction: column; gap: 5px; }
+    .nav-hamburger span { display: block; width: 24px; height: 2px; background: var(--gold); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .nav-links { display: flex; gap: 1.6rem; align-items: center; }
+    .nav-links a { color: #ccc; text-decoration: none; font-size: 0.82rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--gold-bright); }
+    .nav-cta { background: var(--gold) !important; color: var(--ink) !important; padding: 0.4rem 1.1rem; border-radius: 2px; font-weight: 700 !important; }
+    .nav-cta:hover { background: var(--gold-bright) !important; }
+    .nav-login-btn { background: transparent; color: #ccc; border: 1px solid #555; padding: 0.35rem 1rem; border-radius: 2px; font-size: 0.82rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: border-color 0.2s, color 0.2s; }
+    .nav-login-btn:hover { border-color: var(--gold); color: var(--gold-bright); }
+    .nav-login-btn.logged-in { border-color: #1a6b5a; color: #2d9679; }
+    .nav-badge{font-size:.72rem;font-weight:600;padding:.32rem .7rem;border-radius:20px;letter-spacing:.04em;text-transform:uppercase;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;}
+    .nav-badge-admin{background:rgba(212,160,23,.16);color:var(--gold-bright);border:1px solid var(--gold);}
+    .nav-badge-sub{background:rgba(45,150,121,.18);color:#3fae8c;border:1px solid #2d9679;}
+    .new-chat-btn { color: #ccc; background: transparent; border: 1px solid #555; padding: 0.35rem 1rem; border-radius: 2px; font-size: 0.82rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: border-color 0.2s, color 0.2s; display: none; }
+    .new-chat-btn:hover { border-color: var(--gold); color: var(--gold-bright); }
 
-  /* Main */
-  main { flex: 1; overflow-y: auto; padding: 0 20px; }
-  .main-inner { max-width: 740px; margin: 0 auto; padding-bottom: 24px; }
+    @media (max-width: 768px) {
+      .nav-hamburger { display: flex; position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); }
+      nav { position: relative; }
+      .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: var(--ink); padding: 1rem 1.5rem 1.5rem; gap: 0.2rem; border-bottom: 2px solid var(--gold); z-index: 1000; }
+      .nav-links.open { display: flex; }
+      .nav-links a, .nav-links button { padding: 0.6rem 0; width: 100%; text-align: left; }
+      .nav-cta { margin-top: 0.5rem; text-align: center !important; }
+    }
 
-  /* Welcome */
-  .welcome { text-align: center; padding-top: 64px; padding-bottom: 24px; }
-  .welcome h1 { font-size: 26px; font-weight: 800; line-height: 1.25; letter-spacing: -0.025em; margin-bottom: 12px; }
-  .welcome p { font-size: 15px; color: var(--text-mid); line-height: 1.6; max-width: 480px; margin: 0 auto 32px; }
+    /* ── LOGIN MODAL (from index-old.html) ── */
+    .lmodal-bg{position:fixed;inset:0;background:rgba(26,21,16,.75);z-index:500;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .2s;}
+    .lmodal-bg.show{opacity:1;pointer-events:all;}
+    .lmodal{background:#fff;border-radius:14px;width:100%;max-width:400px;overflow:hidden;transform:translateY(20px);transition:transform .2s;box-shadow:0 24px 80px rgba(0,0,0,.3);}
+    .lmodal-bg.show .lmodal{transform:translateY(0);}
+    .lmodal-header{background:var(--ink);padding:1.6rem 1.8rem 1.4rem;position:relative;text-align:center;}
+    .lmodal-title{font-family:'DM Serif Display',serif;font-size:1.3rem;color:#fff;margin-bottom:.2rem;}
+    .lmodal-sub{font-size:11px;color:rgba(255,255,255,.5);letter-spacing:.06em;text-transform:uppercase;}
+    .lmodal-close{position:absolute;top:12px;right:12px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.15);border:none;cursor:pointer;font-size:15px;color:#fff;display:flex;align-items:center;justify-content:center;}
+    .lmodal-close:hover{background:rgba(255,255,255,.3);}
+    .lmodal-logo{width:44px;height:44px;display:block;margin:0 auto 0.7rem;border-radius:50%;background:#fff;padding:4px;}
+    .lmodal-body{padding:1.6rem 1.8rem;}
+    .lmodal-field{margin-bottom:1rem;}
+    .lmodal-label{display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-light);margin-bottom:.4rem;}
+    .lmodal-input{width:100%;padding:10px 12px;border:1px solid var(--paper-dark);border-radius:4px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);outline:none;transition:border-color .18s;}
+    .lmodal-input:focus{border-color:var(--gold);}
+    .lmodal-err{font-size:11px;color:#b91c1c;margin-top:.5rem;display:none;}
+    .lmodal-submit{width:100%;padding:11px;background:var(--gold);color:var(--ink);font-weight:700;font-size:13px;letter-spacing:.05em;text-transform:uppercase;border:none;border-radius:4px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .18s;margin-top:.4rem;}
+    .lmodal-submit:hover{background:var(--gold-bright);}
+    .lmodal-logout:hover{background:var(--paper-dark);}
 
-  .ex-section { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 620px; margin: 0 auto; text-align: left; }
-  .ex-label { font-size: 11px; font-weight: 600; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
-  .ex-group { display: flex; flex-direction: column; gap: 8px; }
-  .ex-btn { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; font-size: 13px; color: var(--text); cursor: pointer; text-align: left; line-height: 1.45; font-family: var(--sans); transition: border-color .15s; }
-  .ex-btn:hover { border-color: #93c5fd; }
+    /* ── APP LAYOUT ── */
+    .app-body { display: flex; flex-direction: column; min-height: calc(100vh - 60px); background: var(--ink); position: relative; overflow: hidden; }
+    .app-body::before {
+      content: ''; position: absolute; inset: 0;
+      background: repeating-linear-gradient(90deg,transparent,transparent 79px,rgba(184,134,11,0.07) 79px,rgba(184,134,11,0.07) 80px),
+                  repeating-linear-gradient(0deg,transparent,transparent 79px,rgba(184,134,11,0.07) 79px,rgba(184,134,11,0.07) 80px);
+      pointer-events: none;
+    }
 
-  /* Messages */
-  .msg-user { display: flex; justify-content: flex-end; margin-top: 20px; }
-  .msg-user .bubble { background: var(--blue); color: #fff; padding: 10px 16px; border-radius: 16px 16px 4px 16px; max-width: 80%; font-size: 14px; line-height: 1.55; }
-  .msg-ai { margin-top: 16px; }
-  .ai-text { font-size: 14px; color: var(--text); line-height: 1.65; }
-  .ai-text p { margin: 6px 0; }
-  .ai-text strong { font-weight: 600; }
-  .ai-text code { background: #f1f3f5; padding: 1px 5px; border-radius: 3px; font-size: 0.9em; font-family: var(--mono); }
-  .ai-text h2 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--text); }
-  .ai-text h3 { font-size: 14px; font-weight: 700; margin: 14px 0 6px; color: var(--text); }
-  .ai-text h4 { font-size: 13px; font-weight: 600; margin: 12px 0 4px; color: var(--text-mid); text-transform: uppercase; letter-spacing: 0.03em; }
-  .ai-text hr { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
-  .ai-text table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13px; }
-  .ai-text th { text-align: left; padding: 6px 10px; border-bottom: 2px solid var(--border); font-size: 12px; font-weight: 600; color: var(--text-mid); }
-  .ai-text td { padding: 5px 10px; border-bottom: 1px solid var(--border-light); }
-  .ai-text td:last-child, .ai-text th:last-child { text-align: right; }
-  .ai-text ul, .ai-text ol { margin: 6px 0; padding-left: 20px; }
-  .ai-text li { margin: 3px 0; line-height: 1.6; }
-  .ai-text blockquote { border-left: 3px solid var(--blue); padding: 4px 12px; margin: 8px 0; color: var(--text-mid); background: var(--blue-pale); border-radius: 0 6px 6px 0; }
-  .ai-text .emoji { font-size: 15px; }
+    /* ── CHAT AREA ── */
+    .chat-area { flex: 1; overflow-y: auto; padding: 0 5%; position: relative; z-index: 1; }
+    .chat-inner { max-width: 740px; margin: 0 auto; padding-bottom: 24px; }
 
-  /* Result cards */
-  .result-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
-  .result-header { padding: 10px 14px; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 0.04em; }
-  .code-tag { font-size: 10px; font-weight: 500; color: var(--text-mid); background: #f9fafb; padding: 2px 8px; border-radius: 4px; text-transform: none; letter-spacing: 0; }
-  .result-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 14px; gap: 12px; }
-  .result-key { font-size: 12px; color: var(--text-mid); text-transform: capitalize; flex-shrink: 0; }
-  .result-val { font-size: 13px; font-weight: 600; color: var(--text); text-align: right; word-break: break-word; }
-  .result-val.mono { font-family: var(--mono); }
-  .result-note { padding: 8px 14px 10px; font-size: 11px; color: var(--text-light); font-style: italic; border-top: 1px solid var(--border-light); }
-  .adequate { background: var(--green-bg); }
-  .not-adequate { background: var(--red-bg); }
+    /* ── WELCOME ── */
+    .welcome { text-align: center; padding-top: 10vh; padding-bottom: 2rem; }
+    .welcome-eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.2rem; opacity:0; animation: fadeUp .6s .1s forwards; }
+    .welcome h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2rem, 4.5vw, 3.2rem); line-height: 1.15; color: #fff; margin-bottom: 1.2rem; opacity:0; animation: fadeUp .7s .25s forwards; }
+    .welcome h1 em { font-style: italic; color: var(--gold-bright); }
+    .welcome-sub { font-size: 1rem; color: #b0a898; max-width: 520px; margin: 0 auto 2.5rem; font-weight: 300; line-height: 1.7; opacity:0; animation: fadeUp .7s .4s forwards; }
 
-  /* Loading */
-  .loading { display: flex; align-items: center; gap: 10px; padding: 4px 0; margin-top: 16px; }
-  .dots { display: flex; gap: 4px; }
-  .dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--blue); animation: dotPulse .9s ease-in-out infinite; }
-  .dots span:nth-child(2) { animation-delay: .15s; }
-  .dots span:nth-child(3) { animation-delay: .3s; }
-  .load-text { font-size: 13px; color: var(--text-light); }
-  @keyframes dotPulse { 0%,100% { opacity:.25; transform:scale(.85); } 50% { opacity:1; transform:scale(1); } }
+    .ex-section { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 620px; margin: 0 auto; text-align: left; opacity:0; animation: fadeUp .7s .55s forwards; }
+    .ex-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .ex-group { display: flex; flex-direction: column; gap: 8px; }
+    .ex-btn { background: rgba(255,255,255,0.04); border: 1px solid rgba(184,134,11,0.2); border-radius: 4px; padding: 12px 14px; font-size: 0.85rem; color: #b0a898; cursor: pointer; text-align: left; line-height: 1.45; font-family: 'DM Sans', sans-serif; transition: border-color .2s, color .2s, background .2s; }
+    .ex-btn:hover { border-color: var(--gold); color: #fff; background: rgba(184,134,11,0.08); }
 
-  /* Footer input */
-  footer { flex-shrink: 0; border-top: 1px solid var(--border); background: var(--surface); padding: 12px 20px 10px; }
-  .input-wrap { max-width: 740px; margin: 0 auto; display: flex; gap: 8px; align-items: flex-end; }
-  .input-wrap textarea {
-    flex: 1; padding: 12px 14px; border-radius: 12px; border: 1px solid #d1d5db;
-    font-size: 14px; font-family: var(--sans); resize: none; line-height: 1.5;
-    transition: border-color .15s, box-shadow .15s; background: var(--bg); overflow-y: hidden;
-  }
-  .input-wrap textarea:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(29,78,216,.1); }
-  .input-wrap textarea::placeholder { color: var(--text-light); }
-  .send-btn {
-    width: 42px; height: 42px; border-radius: 10px; background: var(--blue); color: #fff;
-    border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: opacity .15s; flex-shrink: 0;
-  }
-  .send-btn:disabled { opacity: .35; cursor: default; }
-  .send-btn:active:not(:disabled) { transform: scale(.97); }
-  .footer-note { max-width: 740px; margin: 6px auto 0; font-size: 11px; color: #c0c4cc; text-align: center; }
+    /* ── MESSAGES ── */
+    .msg-user { display: flex; justify-content: flex-end; margin-top: 20px; }
+    .msg-user .bubble { background: var(--gold); color: var(--ink); padding: 10px 16px; border-radius: 4px; max-width: 80%; font-size: 0.9rem; line-height: 1.55; font-weight: 500; }
+    .msg-ai { margin-top: 16px; }
+    .ai-text { font-size: 0.9rem; color: #d4cfc6; line-height: 1.75; }
+    .ai-text p { margin: 6px 0; }
+    .ai-text strong { font-weight: 600; color: #fff; }
+    .ai-text em { font-style: italic; }
+    .ai-text code { background: rgba(255,255,255,0.08); padding: 1px 5px; border-radius: 3px; font-size: 0.85em; font-family: var(--mono); color: var(--gold-bright); }
+    .ai-text h2 { font-family: 'DM Serif Display', serif; font-size: 1.2rem; color: #fff; margin: 18px 0 8px; }
+    .ai-text h3 { font-size: 0.92rem; font-weight: 700; color: var(--gold-bright); margin: 14px 0 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .ai-text h4 { font-size: 0.85rem; font-weight: 600; color: var(--gold); margin: 12px 0 4px; }
+    .ai-text hr { border: none; border-top: 1px solid rgba(184,134,11,0.25); margin: 14px 0; }
+    .ai-text table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 0.85rem; }
+    .ai-text th { text-align: left; padding: 6px 10px; border-bottom: 2px solid rgba(184,134,11,0.3); font-size: 0.75rem; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 0.06em; }
+    .ai-text td { padding: 5px 10px; border-bottom: 1px solid rgba(255,255,255,0.06); color: #d4cfc6; }
+    .ai-text td:last-child, .ai-text th:last-child { text-align: right; }
+    .ai-text ul, .ai-text ol { margin: 6px 0; padding-left: 20px; }
+    .ai-text li { margin: 3px 0; line-height: 1.6; color: #d4cfc6; }
+    .ai-text li::marker { color: var(--gold); }
+    .ai-text blockquote { border-left: 3px solid var(--gold); padding: 4px 12px; margin: 8px 0; color: #b0a898; background: rgba(184,134,11,0.06); border-radius: 0 4px 4px 0; }
 
-  /* Site footer */
-  .site-footer { background: #0f172a; padding: 20px 24px; flex-shrink: 0; }
-  .site-footer-inner { max-width: 1100px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; }
-  .site-footer-brand { color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 600; }
-  .site-footer-links { display: flex; gap: 16px; }
-  .site-footer-links a { color: rgba(255,255,255,0.4); font-size: 12px; text-decoration: none; transition: color .15s; }
-  .site-footer-links a:hover { color: rgba(255,255,255,0.7); }
-  .site-footer-copy { color: rgba(255,255,255,0.3); font-size: 11px; }
+    /* ── RESULT CARDS ── */
+    .result-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(184,134,11,0.25); border-radius: 4px; overflow: hidden; margin-bottom: 10px; }
+    .result-header { padding: 10px 14px; border-bottom: 1px solid rgba(184,134,11,0.15); display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 0.08em; }
+    .code-tag { font-size: 0.65rem; font-weight: 500; color: #888; background: rgba(255,255,255,0.05); padding: 2px 8px; border-radius: 3px; text-transform: none; letter-spacing: 0; }
+    .result-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 14px; gap: 12px; }
+    .result-key { font-size: 0.78rem; color: #888; text-transform: capitalize; flex-shrink: 0; }
+    .result-val { font-size: 0.82rem; font-weight: 600; color: #d4cfc6; text-align: right; word-break: break-word; }
+    .result-val.mono { font-family: var(--mono); color: var(--gold-bright); }
+    .adequate { background: rgba(45,150,121,0.1); }
+    .not-adequate { background: rgba(185,28,28,0.1); }
+    .result-note { padding: 8px 14px 10px; font-size: 0.72rem; color: #666; font-style: italic; border-top: 1px solid rgba(255,255,255,0.05); }
 
-  /* Mobile */
-  @media (max-width: 600px) {
-    .welcome h1 { font-size: 22px; }
-    .ex-section { grid-template-columns: 1fr; }
-    .welcome { padding-top: 40px; }
-    .msg-user .bubble { max-width: 90%; }
-  }
-</style>
+    /* ── LOADING ── */
+    .loading { display: flex; align-items: center; gap: 10px; padding: 4px 0; margin-top: 16px; }
+    .dots { display: flex; gap: 4px; }
+    .dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); animation: dotPulse .9s ease-in-out infinite; }
+    .dots span:nth-child(2) { animation-delay: .15s; }
+    .dots span:nth-child(3) { animation-delay: .3s; }
+    .load-text { font-size: 0.82rem; color: #666; }
+    @keyframes dotPulse { 0%,100% { opacity:.25; transform:scale(.85); } 50% { opacity:1; transform:scale(1); } }
+
+    /* ── INPUT BAR ── */
+    .input-bar { flex-shrink: 0; background: rgba(26,21,16,0.95); border-top: 1px solid rgba(184,134,11,0.2); padding: 14px 5%; position: relative; z-index: 1; }
+    .input-wrap { max-width: 740px; margin: 0 auto; display: flex; gap: 8px; align-items: flex-end; }
+    .input-wrap textarea {
+      flex: 1; padding: 12px 14px; border-radius: 4px; border: 1px solid rgba(184,134,11,0.3);
+      font-size: 0.9rem; font-family: 'DM Sans', sans-serif; resize: none; line-height: 1.5;
+      background: rgba(255,255,255,0.04); color: #fff; overflow-y: hidden;
+      transition: border-color .15s;
+    }
+    .input-wrap textarea:focus { outline: none; border-color: var(--gold); }
+    .input-wrap textarea::placeholder { color: #666; }
+    .send-btn {
+      width: 44px; height: 44px; border-radius: 4px; background: var(--gold); color: var(--ink);
+      border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background .15s; flex-shrink: 0; font-weight: 700;
+    }
+    .send-btn:hover { background: var(--gold-bright); }
+    .send-btn:disabled { opacity: .35; cursor: default; }
+    .send-btn:active:not(:disabled) { transform: scale(.97); }
+    .input-note { max-width: 740px; margin: 6px auto 0; font-size: 0.68rem; color: #555; text-align: center; }
+
+    /* ── DIVIDER ── */
+    .divider { height: 3px; background: linear-gradient(90deg, var(--gold), var(--gold-pale), var(--gold)); }
+
+    /* ── PRICING SECTION (from site) ── */
+    section { padding: 5rem 8%; }
+    .section-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.75rem; }
+    h2 { font-family: 'DM Serif Display', serif; font-size: clamp(1.8rem, 3vw, 2.6rem); color: var(--ink); line-height: 1.2; margin-bottom: 1rem; }
+    .section-intro { font-size: 1rem; color: var(--ink-light); max-width: 580px; margin-bottom: 3rem; }
+    .pricing-section { background: var(--paper); }
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px,100%),1fr)); gap: 2rem; max-width: 680px; margin-top: 2.5rem; }
+    .pricing-card { background: var(--cream); border: 2px solid var(--paper-dark); border-radius: 4px; padding: 2.2rem 2rem; position: relative; transition: transform 0.2s, box-shadow 0.2s; }
+    .pricing-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+    .pricing-card.featured-plan { border-color: var(--gold); background: var(--ink); }
+    .best-value { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--gold); color: var(--ink); font-size: 0.68rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.25rem 0.8rem; border-radius: 20px; white-space: nowrap; }
+    .plan-name { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
+    .plan-price { font-family: 'DM Serif Display', serif; font-size: 3rem; color: var(--ink); line-height: 1; margin-bottom: 0.3rem; }
+    .featured-plan .plan-price { color: #fff; }
+    .plan-price sup { font-size: 1.3rem; vertical-align: top; margin-top: 0.5rem; display: inline-block; }
+    .plan-period { font-size: 1rem; color: var(--ink-light); margin-bottom: 1.6rem; }
+    .featured-plan .plan-period { color: #999; }
+    .plan-features { list-style: none; margin-bottom: 2rem; }
+    .plan-features li { font-size: 0.88rem; color: var(--ink-light); padding: 0.4rem 0; border-bottom: 1px solid var(--paper-dark); display: flex; align-items: center; gap: 0.5rem; }
+    .featured-plan .plan-features li { color: #b0a898; border-bottom-color: #333; }
+    .plan-features li::before { content: '✓'; color: var(--gold); font-weight: 700; }
+    .plan-cta { display: block; width: 100%; padding: 0.85rem; text-align: center; background: var(--gold); color: var(--ink); font-weight: 800; font-size: 0.9rem; letter-spacing: 0.05em; text-transform: uppercase; border: none; border-radius: 2px; cursor: pointer; text-decoration: none; transition: background 0.2s; font-family: 'DM Sans', sans-serif; }
+    .plan-cta:hover { background: var(--gold-bright); }
+    .plan-note { text-align: center; font-size: 0.75rem; color: #aaa; margin-top: 0.8rem; }
+    .billing-toggle{display:inline-flex;background:var(--cream);border:1px solid var(--rule);border-radius:30px;padding:4px;margin:0 0 2.4rem;gap:4px;}
+    .bt-opt{border:none;background:transparent;color:var(--ink-light);font-family:'DM Sans',sans-serif;font-weight:700;font-size:.82rem;letter-spacing:.03em;padding:.5rem 1.2rem;border-radius:24px;cursor:pointer;transition:background .2s,color .2s;}
+    .bt-opt.active{background:var(--gold);color:var(--ink);}
+    .bt-opt small{font-weight:600;opacity:.8;}
+    .geo-note{font-size:.72rem;color:#aaa;margin-top:.4rem;}
+    .plan-period-lg{font-size:1.05rem;font-weight:600;}
+
+    /* ── FOOTER ── */
+    .site-footer { background: var(--ink); padding: 3rem 8%; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; border-top: 2px solid var(--gold); }
+    .footer-brand { font-family: 'DM Serif Display', serif; font-size: 1.1rem; color: var(--gold-bright); }
+    .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .footer-links a { font-size: 0.8rem; color: #888; text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-copy { font-size: 0.75rem; color: #555; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 700px) {
+      section { padding: 3.5rem 6%; }
+      .ex-section { grid-template-columns: 1fr; }
+      .welcome { padding-top: 6vh; }
+      .msg-user .bubble { max-width: 90%; }
+    }
+  </style>
 </head>
 <body>
 
-<div class="app" id="app">
-  <!-- Site Navigation -->
-  <nav class="site-nav">
-    <div class="site-nav-inner">
-      <a href="/" class="logo-link">
-        <img src="/images/ppa-logo.png" alt="PipingPro Academy">
-        <span class="logo-text">PipingPro Academy</span>
-      </a>
-      <div class="nav-links">
-        <a href="/calculators.html">Engineering Toolkits</a>
-        <a href="/courses.html">Courses</a>
-        <a href="#pricing">Membership Plan</a>
-        <button class="new-btn" id="newBtn" onclick="resetChat()">New question</button>
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">PipingPro Academy</a>
+  <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links" id="nav-links">
+    <a href="/calculators.html">Engineering Toolkits</a>
+    <a href="/courses.html">Courses</a>
+    <a href="#pricing">Membership Plan</a>
+    <button class="new-chat-btn" id="newBtn" onclick="resetChat()">New Question</button>
+    <span id="nav-auth" style="display:inline-flex;align-items:center;gap:.6rem;">
+      <button class="nav-login-btn" id="nav-login-btn" onclick="openLoginModal()">Login</button>
+    </span>
+  </div>
+</nav>
+
+<!-- LOGIN MODAL -->
+<div class="lmodal-bg" id="lmodal-bg" onclick="closeLModalBg(event)">
+  <div class="lmodal">
+    <div class="lmodal-header">
+      <img class="lmodal-logo" src="/images/ppa-logo.png" alt="PipingPro Academy"/>
+      <div class="lmodal-title">Member Login</div>
+      <div class="lmodal-sub">PipingPro Academy</div>
+      <button class="lmodal-close" onclick="closeLModal()">✕</button>
+    </div>
+    <div class="lmodal-body">
+      <div id="lmodal-form-view">
+        <div class="lmodal-field">
+          <label class="lmodal-label">Email</label>
+          <input class="lmodal-input" id="lmodal-email" type="email" placeholder="your@email.com" autocomplete="email"/>
+        </div>
+        <div class="lmodal-field">
+          <label class="lmodal-label">Password</label>
+          <input class="lmodal-input" id="lmodal-password" type="password" placeholder="••••••••••••" autocomplete="current-password"/>
+        </div>
+        <div style="text-align:right;margin-top:-0.5rem;">
+          <a href="#" onclick="closeLModal()" data-ms-modal="forgot-password" style="font-size:12px;color:var(--gold);text-decoration:none;">Forgot password?</a>
+        </div>
+        <div class="lmodal-err" id="lmodal-err">Incorrect email or password. Please try again.</div>
+        <div style="display:flex;align-items:center;gap:.5rem;margin:0.8rem 0 0.2rem;">
+          <input type="checkbox" id="lmodal-remember" style="accent-color:var(--gold);width:14px;height:14px;cursor:pointer;"/>
+          <label for="lmodal-remember" style="font-size:12px;color:var(--ink-light);cursor:pointer;">Remember me on this device</label>
+        </div>
+        <button class="lmodal-submit" onclick="doLogin()">Sign In →</button>
+      </div>
+      <div id="lmodal-member-view" style="display:none;text-align:center;padding:.5rem 0;">
+        <div style="font-size:2.2rem;margin-bottom:.8rem;" id="lmodal-avatar">🛡️</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--ink);margin-bottom:.3rem;" id="lmodal-welcome">Admin Access Active</div>
+        <div style="font-size:11px;color:var(--ink-light);letter-spacing:.06em;text-transform:uppercase;margin-bottom:1.4rem;" id="lmodal-email-display">admin@pipingpro-academy.com</div>
+        <button class="lmodal-logout" onclick="doLogout()">Sign Out</button>
       </div>
     </div>
-  </nav>
+  </div>
+</div>
 
-  <!-- Main -->
-  <main id="mainArea">
-    <div class="main-inner" id="mainInner">
+<!-- APP BODY -->
+<div class="app-body" id="appBody">
+
+  <!-- Chat area -->
+  <div class="chat-area" id="chatArea">
+    <div class="chat-inner" id="chatInner">
 
       <!-- Welcome -->
       <div class="welcome" id="welcomeBlock">
-        <h1>What do you want to learn<br>or calculate today?</h1>
-        <p>Ask anything about piping & pipeline engineering.<br>I'll calculate with ASME code data or explain the concept — or both.</p>
+        <p class="welcome-eyebrow">Piping & Pipeline Engineering AI Assistant</p>
+        <h1>What Do You Want to<br><em>Learn or Calculate</em> Today?</h1>
+        <p class="welcome-sub">Ask any piping engineering question — I'll calculate with ASME code databases or explain the concept. Or both.</p>
         <div class="ex-section">
           <div class="ex-group">
             <div class="ex-label">⚙ Calculate</div>
@@ -189,32 +319,114 @@
       </div>
 
     </div>
-  </main>
+  </div>
 
   <!-- Input bar -->
-  <footer>
+  <div class="input-bar">
     <div class="input-wrap">
       <textarea id="userInput" rows="1" placeholder="What do you want to learn or calculate today?" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
       <button class="send-btn" id="sendBtn" onclick="submitQuery()" disabled>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </button>
     </div>
-    <div class="footer-note">Powered by ASME B31.3 · B16.5 · B16.47 databases — 259+ materials · All NPS sizes · Full PT ratings</div>
-  </footer>
+    <div class="input-note">Powered by ASME B31.3 · B16.5 · B16.47 databases — 259+ materials · All NPS sizes · Full PT ratings</div>
+  </div>
 
-  <!-- Site footer — matches pipingpro-academy.com -->
-  <div class="site-footer">
-    <div class="site-footer-inner">
-      <span class="site-footer-brand">PipingPro Academy</span>
-      <div class="site-footer-links">
-        <a href="/privacy-policy.html">Privacy Policy</a>
-        <a href="/terms-of-use.html">Terms of Use</a>
-        <a href="https://zephrum-konsultan.co.uk">Zephrum Konsultan</a>
-      </div>
-      <span class="site-footer-copy">© 2026 PipingPro Academy. All rights reserved.</span>
+</div>
+
+<!-- DIVIDER -->
+<div class="divider"></div>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <p class="section-label">Membership Plans</p>
+  <h2>Choose Your Access</h2>
+  <p class="section-intro">Free calculators stay free — no account needed. For the full library, pick the plan that fits. Cancel anytime; access runs to the end of your paid period.</p>
+  <div class="billing-toggle" role="tablist" aria-label="Professional billing period">
+    <button id="bt-monthly" class="bt-opt active" onclick="ppaSetBilling('monthly')">Monthly</button>
+    <button id="bt-annual" class="bt-opt" onclick="ppaSetBilling('annual')">Annual <small>· 2 months free</small></button>
+  </div>
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <div class="plan-name">Student</div>
+      <div class="plan-price"><sup>$</sup>20</div>
+      <div class="plan-period plan-period-lg">per year · billed annually</div>
+      <ul class="plan-features">
+        <li>All courses &amp; completion certificates</li>
+        <li>Student calculator set — Flange &amp; Valve Weight, Pipe Support Span, Expansion Loop</li>
+        <li>Bonus engineering ebook (added July)</li>
+        <li>New course content as published</li>
+      </ul>
+      <button class="plan-cta" onclick="ppaCheckout('prc_student-annual-8v16d0ptx')">Get Student Access</button>
+      <p class="plan-note">Valid student status required</p>
+    </div>
+    <div class="pricing-card featured-plan">
+      <div class="best-value">Full Access</div>
+      <div class="plan-name">Professional</div>
+      <div class="plan-price"><sup>$</sup><span id="pro-price">12</span></div>
+      <div class="plan-period" id="pro-period">per month</div>
+      <ul class="plan-features">
+        <li>Everything in Student</li>
+        <li>All engineering calculators (20+)</li>
+        <li>All technical PDF guides</li>
+        <li>New tools &amp; content as published</li>
+      </ul>
+      <button class="plan-cta" id="pro-cta" onclick="ppaBuyPro()">Get Professional Access</button>
+      <p class="plan-note" id="pro-note">Full access · cancel anytime</p>
+      <p class="geo-note" id="geo-note">Pricing shown for your region.</p>
     </div>
   </div>
-</div>
+</section>
+
+<script>
+/* ── PRICING: geo-band detection + billing toggle + Memberstack checkout ── */
+(function(){
+  const BANDS = {
+    headline:{ label:'',         monthly:{id:'prc_professional-monthly-7-day-trial-headline--9i1k06nt', amt:12}, annual:{id:'prc_professional-annual-7-day-trial-headline--781m06sb', amt:120} },
+    mid:     { label:'regional', monthly:{id:'prc_pro-mid-monthly-hd16n0pay',     amt:4},  annual:{id:'prc_pro-mid-annual-p99h0o63',      amt:39}  },
+    lower:   { label:'regional', monthly:{id:'prc_pro-lower-monthly-8tiz0jxn',    amt:3},  annual:{id:'prc_pro-lower-annual-f6j00j4i',    amt:30}  }
+  };
+  const MID_COUNTRIES   = ['IN','ID'];
+  const LOWER_COUNTRIES = ['EG','MA','DZ','TN'];
+  var band = 'headline'; var billing = 'monthly';
+  const TRIAL_BANDS = ['headline'];
+  function paint(){
+    var b = BANDS[band][billing];
+    var priceEl=document.getElementById('pro-price'), periodEl=document.getElementById('pro-period'),
+        geoEl=document.getElementById('geo-note'), noteEl=document.getElementById('pro-note'), ctaEl=document.getElementById('pro-cta');
+    if(priceEl) priceEl.textContent = b.amt;
+    if(periodEl) periodEl.textContent = (billing==='monthly') ? 'per month' : 'per year';
+    if(geoEl) geoEl.textContent = (band==='headline') ? 'Pricing shown for your region.' : 'Regional pricing applied for your country.';
+    var isTrial = (TRIAL_BANDS.indexOf(band)!==-1);
+    if(noteEl){ var per=(billing==='monthly')?'/mo':'/yr'; noteEl.textContent = isTrial ? '7-day free trial, then $'+b.amt+per+' · cancel anytime' : '$'+b.amt+per+' · cancel anytime'; }
+    if(ctaEl) ctaEl.textContent = isTrial ? 'Start 7-Day Free Trial →' : 'Get Professional Access';
+  }
+  window.ppaSetBilling = function(mode){ billing=mode; var m=document.getElementById('bt-monthly'), a=document.getElementById('bt-annual'); if(m)m.classList.toggle('active',mode==='monthly'); if(a)a.classList.toggle('active',mode==='annual'); paint(); };
+  window.ppaBuyPro = function(){ ppaCheckout(BANDS[band][billing].id); };
+  window.ppaCheckout = async function(priceId){
+    var ms=window.$memberstackDom; if(!ms) return;
+    var member=null; try{ var r=await ms.getCurrentMember(); member=r&&r.data?r.data:null; }catch(e){}
+    if(!member){ try{await ms.openModal('SIGNUP');}catch(e){} try{var r2=await ms.getCurrentMember();member=r2&&r2.data?r2.data:null;}catch(e){} }
+    if(!member) return;
+    try{ await ms.purchasePlansWithCheckout({priceId:priceId, successUrl:window.location.origin+'/calculators.html', cancelUrl:window.location.href}); }catch(e){ console.error('PPA checkout error',e); }
+  };
+  fetch('/cdn-cgi/trace').then(function(r){return r.text();}).then(function(t){ var m=t.match(/loc=([A-Z]{2})/); var cc=m?m[1]:''; if(MID_COUNTRIES.indexOf(cc)!==-1) band='mid'; else if(LOWER_COUNTRIES.indexOf(cc)!==-1) band='lower'; else band='headline'; paint(); }).catch(function(){ band='headline'; paint(); });
+  paint();
+})();
+</script>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-brand">PipingPro Academy</div>
+  <div class="footer-links">
+    <a href="privacy-policy.html">Privacy Policy</a>
+    <a href="terms-of-use.html">Terms of Use</a>
+    <a href="https://zephrum-konsultan.co.uk" target="_blank" rel="noopener">Zephrum Konsultan</a>
+    <a href="mailto:donny.bachtiar@pipingpro-academy.com">Contact</a>
+  </div>
+  <div class="footer-copy">© 2026 PipingPro Academy. All rights reserved.</div>
+  <script src="/counter.js"></script>
+</footer>
 
 <script>
 // ═══════════════════════════════════════════════════════════════════════
@@ -230,7 +442,6 @@ const MATERIALS = {
   "A333 Gr.6": { spec:"ASTM A333", grade:"6", type:"Carbon Steel (Low Temp)", uns:"K03006", form:"Seamless Pipe", minYield:241, minTensile:414, stress:{38:138,100:138,150:138,200:138,250:134,300:126,350:114,400:103,425:93} },
   "A358 TP316L": { spec:"ASTM A358", grade:"TP316L", type:"Austenitic SS", uns:"S31603", form:"EFW Pipe", minYield:172, minTensile:485, stress:{38:115,100:115,150:110,200:105,250:98,300:93,350:86,400:81,425:79} },
 };
-
 const PIPE_DATA = {
   "2":{dn:50,od:60.3,schedules:{"40":3.91,"80":5.54,"STD":3.91,"XS":5.54}},
   "3":{dn:80,od:88.9,schedules:{"40":5.49,"80":7.62,"STD":5.49,"XS":7.62}},
@@ -242,418 +453,64 @@ const PIPE_DATA = {
   "16":{dn:400,od:406.4,schedules:{"20":6.35,"30":7.92,"40":12.70,"STD":9.53,"XS":12.70}},
   "24":{dn:600,od:609.6,schedules:{"20":6.35,"30":9.53,"STD":9.53,"XS":12.70}},
 };
-
 const FLANGE_B16_5 = {
   "A105":{group:"1.1",ratings:{"150":{38:19.6,100:17.7,150:15.8,200:13.8,250:12.1,300:10.2,350:8.3,400:6.5},"300":{38:51.1,100:46.6,150:42.1,200:37.6,250:33.0,300:28.5,350:23.9,400:19.4},"600":{38:102.1,100:93.2,150:84.2,200:75.2,250:66.1,300:57.0,350:47.9,400:38.7},"900":{38:153.2,100:139.7,150:126.2,200:112.7,250:99.1,300:85.5,350:71.8,400:58.1}}},
   "A182 F316":{group:"2.3",ratings:{"150":{38:19.6,100:16.5,150:14.2,200:12.6,250:11.4,300:10.5,350:9.8,400:9.3},"300":{38:51.1,100:43.0,150:37.1,200:32.8,250:29.8,300:27.4,350:25.6,400:24.3},"600":{38:102.1,100:86.0,150:74.1,200:65.6,250:59.5,300:54.9,350:51.3,400:48.6}}},
 };
 
 // ═══════════════════════════════════════════════════════════════════════
-// TOOL IMPLEMENTATIONS
+// TOOL IMPLEMENTATIONS + DEFINITIONS + AI LOGIC
+// (Same as previous version — unchanged)
 // ═══════════════════════════════════════════════════════════════════════
-function interpStress(table, t) {
-  const temps = Object.keys(table).map(Number).sort((a,b)=>a-b);
-  if (t < temps[0] || t > temps[temps.length-1]) return null;
-  if (table[t] !== undefined) return table[t];
-  const lo = temps.filter(x=>x<=t).pop(), hi = temps.filter(x=>x>=t).shift();
-  return Math.round((table[lo]+(table[hi]-table[lo])*(t-lo)/(hi-lo))*100)/100;
-}
+function interpStress(table,t){const temps=Object.keys(table).map(Number).sort((a,b)=>a-b);if(t<temps[0]||t>temps[temps.length-1])return null;if(table[t]!==undefined)return table[t];const lo=temps.filter(x=>x<=t).pop(),hi=temps.filter(x=>x>=t).shift();return Math.round((table[lo]+(table[hi]-table[lo])*(t-lo)/(hi-lo))*100)/100;}
+function execTool(name,inp){if(name==="lookup_allowable_stress"){const m=MATERIALS[inp.material];if(!m)return{error:`Material "${inp.material}" not found. Available: ${Object.keys(MATERIALS).join(", ")}`};const S=interpStress(m.stress,inp.temperature_c);if(S===null)return{error:`Temperature ${inp.temperature_c}°C out of range for ${inp.material}`};return{material:inp.material,spec:m.spec,grade:m.grade,type:m.type,uns:m.uns,temperature_c:inp.temperature_c,allowable_stress_mpa:S,min_yield_mpa:m.minYield,min_tensile_mpa:m.minTensile,code:"ASME B31.3"};}if(name==="calculate_wall_thickness_b313"){const m=MATERIALS[inp.material];if(!m)return{error:`Material "${inp.material}" not found. Available: ${Object.keys(MATERIALS).join(", ")}`};const pipe=PIPE_DATA[String(inp.nps)];if(!pipe)return{error:`NPS ${inp.nps} not found. Available: ${Object.keys(PIPE_DATA).join(", ")}`};const S=interpStress(m.stress,inp.temperature_c);if(S===null)return{error:`Temperature ${inp.temperature_c}°C out of range`};const P=inp.pressure_mpa,D=pipe.od,E=inp.weld_efficiency||1,W=inp.weld_strength_factor||1,Y=inp.y_coefficient||0.4,c=inp.corrosion_allowance_mm??1;const tc=(P*D)/(2*(S*E*W+P*Y)),tmin=tc+c,tmill=tmin/0.875;let rec=null;for(const[sch,wt]of Object.entries(pipe.schedules).sort((a,b)=>a[1]-b[1])){if(wt>=tmill){rec={schedule:sch,wall_mm:wt,margin_mm:Math.round((wt-tmill)*100)/100};break;}}return{nps:inp.nps,od_mm:D,dn:pipe.dn,material:inp.material,design_pressure_mpa:P,design_temperature_c:inp.temperature_c,allowable_stress_mpa:Math.round(S*100)/100,calculated_thickness_mm:Math.round(tc*1000)/1000,corrosion_allowance_mm:c,minimum_thickness_mm:Math.round(tmin*1000)/1000,nominal_thickness_mm:Math.round(tmill*1000)/1000,recommended_schedule:rec,code_reference:"ASME B31.3 Eq. 3a"};}if(name==="lookup_flange_rating_b165"){const f=FLANGE_B16_5[inp.flange_material];if(!f)return{error:`Flange material "${inp.flange_material}" not found. Available: ${Object.keys(FLANGE_B16_5).join(", ")}`};const cls=String(inp.class),ratings=f.ratings[cls];if(!ratings)return{error:`Class ${cls} not available. Available: ${Object.keys(f.ratings).join(", ")}`};const maxP=interpStress(ratings,inp.temperature_c);if(maxP===null)return{error:`Temperature ${inp.temperature_c}°C out of range`};const adequate=inp.design_pressure_mpa?maxP>=inp.design_pressure_mpa:null;return{flange_material:inp.flange_material,material_group:f.group,class:parseInt(cls),temperature_c:inp.temperature_c,max_working_pressure_mpa:maxP,...(inp.design_pressure_mpa?{design_pressure_mpa:inp.design_pressure_mpa,is_adequate:adequate}:{}),code:"ASME B16.5"};}if(name==="calculate_pipe_weight"){const pipe=PIPE_DATA[String(inp.nps)];if(!pipe)return{error:`NPS ${inp.nps} not found`};const sch=String(inp.schedule||"STD").toUpperCase();const wall=pipe.schedules[sch];if(!wall)return{error:`Schedule "${sch}" not available`,available:Object.keys(pipe.schedules)};const len=inp.length_m||1,den=inp.density_kg_m3||7850;const od=pipe.od/1000,wt=wall/1000,idM=od-2*wt;const wpm=(Math.PI/4)*(od*od-idM*idM)*den;return{nps:inp.nps,dn:pipe.dn,od_mm:pipe.od,schedule:sch,wall_mm:wall,id_mm:Math.round((pipe.od-2*wall)*100)/100,weight_per_metre_kg:Math.round(wpm*100)/100,length_m:len,total_weight_kg:Math.round(wpm*len*100)/100,water_fill_kg_per_m:Math.round((Math.PI/4)*idM*idM*1000*100)/100};}if(name==="list_available_data"){return{materials:Object.keys(MATERIALS),pipe_sizes_nps:Object.keys(PIPE_DATA),flange_materials:Object.keys(FLANGE_B16_5),note:"Demo subset — full database: 259+ ASME B31.3 materials, all NPS sizes, B16.5 + B16.47 flanges, gaskets, bolting"};}return{error:"Unknown tool"};}
 
-function execTool(name, inp) {
-  if (name === "lookup_allowable_stress") {
-    const m = MATERIALS[inp.material];
-    if (!m) return {error:`Material "${inp.material}" not found. Available: ${Object.keys(MATERIALS).join(", ")}`};
-    const S = interpStress(m.stress, inp.temperature_c);
-    if (S===null) return {error:`Temperature ${inp.temperature_c}°C out of range for ${inp.material}`};
-    return {material:inp.material,spec:m.spec,grade:m.grade,type:m.type,uns:m.uns,temperature_c:inp.temperature_c,allowable_stress_mpa:S,min_yield_mpa:m.minYield,min_tensile_mpa:m.minTensile,code:"ASME B31.3"};
-  }
-  if (name === "calculate_wall_thickness_b313") {
-    const m = MATERIALS[inp.material];
-    if (!m) return {error:`Material "${inp.material}" not found. Available: ${Object.keys(MATERIALS).join(", ")}`};
-    const pipe = PIPE_DATA[String(inp.nps)];
-    if (!pipe) return {error:`NPS ${inp.nps} not found. Available: ${Object.keys(PIPE_DATA).join(", ")}`};
-    const S = interpStress(m.stress, inp.temperature_c);
-    if (S===null) return {error:`Temperature ${inp.temperature_c}°C out of range`};
-    const P=inp.pressure_mpa, D=pipe.od, E=inp.weld_efficiency||1, W=inp.weld_strength_factor||1, Y=inp.y_coefficient||0.4, c=inp.corrosion_allowance_mm??1;
-    const tc=(P*D)/(2*(S*E*W+P*Y)), tmin=tc+c, tmill=tmin/0.875;
-    let rec=null;
-    for (const [sch,wt] of Object.entries(pipe.schedules).sort((a,b)=>a[1]-b[1])) {
-      if (wt>=tmill) { rec={schedule:sch,wall_mm:wt,margin_mm:Math.round((wt-tmill)*100)/100}; break; }
-    }
-    return {nps:inp.nps,od_mm:D,dn:pipe.dn,material:inp.material,design_pressure_mpa:P,design_temperature_c:inp.temperature_c,allowable_stress_mpa:Math.round(S*100)/100,calculated_thickness_mm:Math.round(tc*1000)/1000,corrosion_allowance_mm:c,minimum_thickness_mm:Math.round(tmin*1000)/1000,nominal_thickness_mm:Math.round(tmill*1000)/1000,recommended_schedule:rec,code_reference:"ASME B31.3 Eq. 3a"};
-  }
-  if (name === "lookup_flange_rating_b165") {
-    const f = FLANGE_B16_5[inp.flange_material];
-    if (!f) return {error:`Flange material "${inp.flange_material}" not found. Available: ${Object.keys(FLANGE_B16_5).join(", ")}`};
-    const cls=String(inp.class), ratings=f.ratings[cls];
-    if (!ratings) return {error:`Class ${cls} not available. Available: ${Object.keys(f.ratings).join(", ")}`};
-    const maxP = interpStress(ratings, inp.temperature_c);
-    if (maxP===null) return {error:`Temperature ${inp.temperature_c}°C out of range`};
-    const adequate = inp.design_pressure_mpa ? maxP>=inp.design_pressure_mpa : null;
-    return {flange_material:inp.flange_material,material_group:f.group,class:parseInt(cls),temperature_c:inp.temperature_c,max_working_pressure_mpa:maxP,...(inp.design_pressure_mpa?{design_pressure_mpa:inp.design_pressure_mpa,is_adequate:adequate}:{}),code:"ASME B16.5"};
-  }
-  if (name === "calculate_pipe_weight") {
-    const pipe = PIPE_DATA[String(inp.nps)];
-    if (!pipe) return {error:`NPS ${inp.nps} not found`};
-    const sch = String(inp.schedule||"STD").toUpperCase();
-    const wall = pipe.schedules[sch];
-    if (!wall) return {error:`Schedule "${sch}" not available`,available:Object.keys(pipe.schedules)};
-    const len=inp.length_m||1, den=inp.density_kg_m3||7850;
-    const od=pipe.od/1000, wt=wall/1000, idM=od-2*wt;
-    const wpm=(Math.PI/4)*(od*od-idM*idM)*den;
-    return {nps:inp.nps,dn:pipe.dn,od_mm:pipe.od,schedule:sch,wall_mm:wall,id_mm:Math.round((pipe.od-2*wall)*100)/100,weight_per_metre_kg:Math.round(wpm*100)/100,length_m:len,total_weight_kg:Math.round(wpm*len*100)/100,water_fill_kg_per_m:Math.round((Math.PI/4)*idM*idM*1000*100)/100};
-  }
-  if (name === "list_available_data") {
-    return {materials:Object.keys(MATERIALS),pipe_sizes_nps:Object.keys(PIPE_DATA),flange_materials:Object.keys(FLANGE_B16_5),note:"Demo subset — full database: 259+ ASME B31.3 materials, all NPS sizes, B16.5 + B16.47 flanges, gaskets, bolting"};
-  }
-  return {error:"Unknown tool"};
-}
+const TOOLS=[{name:"lookup_allowable_stress",description:"Look up allowable stress for a pipe material at a design temperature per ASME B31.3.",input_schema:{type:"object",properties:{material:{type:"string",description:"e.g. 'A106 Gr.B'"},temperature_c:{type:"number",description:"Design temperature °C"}},required:["material","temperature_c"]}},{name:"calculate_wall_thickness_b313",description:"Calculate minimum wall thickness per ASME B31.3 Eq. 3a.",input_schema:{type:"object",properties:{nps:{type:"number"},material:{type:"string"},pressure_mpa:{type:"number",description:"Design pressure MPa"},temperature_c:{type:"number"},corrosion_allowance_mm:{type:"number",description:"Default 1.0"},weld_efficiency:{type:"number",description:"Default 1.0"},weld_strength_factor:{type:"number",description:"Default 1.0"},y_coefficient:{type:"number",description:"Default 0.4"}},required:["nps","material","pressure_mpa","temperature_c"]}},{name:"lookup_flange_rating_b165",description:"Look up pressure-temperature rating per ASME B16.5.",input_schema:{type:"object",properties:{flange_material:{type:"string",description:"e.g. 'A105','A182 F316'"},class:{type:"number"},temperature_c:{type:"number"},design_pressure_mpa:{type:"number",description:"Optional: check adequacy"}},required:["flange_material","class","temperature_c"]}},{name:"calculate_pipe_weight",description:"Calculate pipe weight for a given size, schedule and length.",input_schema:{type:"object",properties:{nps:{type:"number"},schedule:{type:"string"},length_m:{type:"number",description:"Default 1"},density_kg_m3:{type:"number",description:"Default 7850"}},required:["nps","schedule"]}},{name:"list_available_data",description:"List all materials, pipe sizes, flange data available.",input_schema:{type:"object",properties:{}}}];
 
-// ═══════════════════════════════════════════════════════════════════════
-// TOOL DEFINITIONS (sent to Claude)
-// ═══════════════════════════════════════════════════════════════════════
-const TOOLS = [
-  {name:"lookup_allowable_stress",description:"Look up allowable stress for a pipe material at a design temperature per ASME B31.3.",input_schema:{type:"object",properties:{material:{type:"string",description:"e.g. 'A106 Gr.B', 'A312 TP316L'"},temperature_c:{type:"number",description:"Design temperature °C"}},required:["material","temperature_c"]}},
-  {name:"calculate_wall_thickness_b313",description:"Calculate minimum wall thickness per ASME B31.3 Eq. 3a.",input_schema:{type:"object",properties:{nps:{type:"number",description:"NPS inches"},material:{type:"string"},pressure_mpa:{type:"number",description:"Design pressure MPa"},temperature_c:{type:"number"},corrosion_allowance_mm:{type:"number",description:"Default 1.0"},weld_efficiency:{type:"number",description:"Default 1.0"},weld_strength_factor:{type:"number",description:"Default 1.0"},y_coefficient:{type:"number",description:"Default 0.4"}},required:["nps","material","pressure_mpa","temperature_c"]}},
-  {name:"lookup_flange_rating_b165",description:"Look up pressure-temperature rating per ASME B16.5.",input_schema:{type:"object",properties:{flange_material:{type:"string",description:"e.g. 'A105','A182 F316'"},class:{type:"number",description:"150,300,600,900"},temperature_c:{type:"number"},design_pressure_mpa:{type:"number",description:"Optional: check adequacy"}},required:["flange_material","class","temperature_c"]}},
-  {name:"calculate_pipe_weight",description:"Calculate pipe weight for a given size, schedule and length.",input_schema:{type:"object",properties:{nps:{type:"number"},schedule:{type:"string",description:"e.g. '40','STD','XS'"},length_m:{type:"number",description:"Default 1"},density_kg_m3:{type:"number",description:"Default 7850"}},required:["nps","schedule"]}},
-  {name:"list_available_data",description:"List all materials, pipe sizes, flange data available.",input_schema:{type:"object",properties:{}}},
-];
-
-const SYSTEM_PROMPT = `You are PipingPro — an expert piping and pipeline engineering assistant on PipingPro Academy.
-
-You do TWO things from a single conversation:
-
-1. CALCULATE — When the user needs a number, use your tools. You have ASME B31.3 material databases, pipe dimensional data, and B16.5 flange PT ratings. Use the tools, present results clearly with code references and units.
-
-2. TEACH — When the user wants to understand a concept, explain clearly with practical examples. Cover theory, code basis, and practical application. Reference ASME B31.3, B31.4, B31.8, B16.5, B16.47, and general piping engineering.
-
-Handle both seamlessly. "What is allowable stress" — teach. "What is the allowable stress of A106 Gr.B at 300°C" — calculate. Both in one question — do both.
-
-Convert units as needed: "85 barg" = 8.5 MPa, "450°F" = ~232°C.
-If material/size not in demo database, mention the full version covers 259+ materials.
-Keep responses focused and professional.`;
+const SYSTEM_PROMPT=`You are PipingPro — an expert piping and pipeline engineering assistant on PipingPro Academy.\n\nYou do TWO things from a single conversation:\n\n1. CALCULATE — When the user needs a number, use your tools. You have ASME B31.3 material databases, pipe dimensional data, and B16.5 flange PT ratings. Use the tools, present results clearly with code references and units.\n\n2. TEACH — When the user wants to understand a concept, explain clearly with practical examples. Cover theory, code basis, and practical application. Reference ASME B31.3, B31.4, B31.8, B16.5, B16.47, and general piping engineering.\n\nHandle both seamlessly. Convert units as needed: "85 barg" = 8.5 MPa, "450°F" = ~232°C.\nIf material/size not in demo database, mention the full version covers 259+ materials.\nKeep responses focused and professional.`;
 
 // ═══════════════════════════════════════════════════════════════════════
 // APP STATE & DOM
 // ═══════════════════════════════════════════════════════════════════════
-let messages = [];     // conversation history for API
-let isLoading = false;
+let messages=[];let isLoading=false;
+const $=id=>document.getElementById(id);
+const chatInner=$('chatInner'),chatArea=$('chatArea'),userInput=$('userInput'),sendBtn=$('sendBtn'),newBtn=$('newBtn'),welcomeBlock=$('welcomeBlock');
+userInput.addEventListener('input',()=>{sendBtn.disabled=!userInput.value.trim()||isLoading;});
+function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px';}
+function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submitQuery();}}
+function scrollToBottom(){chatArea.scrollTop=chatArea.scrollHeight;}
+function resetChat(){messages=[];chatInner.innerHTML='';chatInner.appendChild(welcomeBlock);welcomeBlock.style.display='';newBtn.style.display='none';userInput.value='';userInput.style.height='auto';sendBtn.disabled=true;userInput.focus();}
 
-const $ = id => document.getElementById(id);
-const mainInner = $('mainInner');
-const mainArea = $('mainArea');
-const userInput = $('userInput');
-const sendBtn = $('sendBtn');
-const newBtn = $('newBtn');
-const welcomeBlock = $('welcomeBlock');
+// ── RENDER ──
+function renderResultCard(tr){const r=tr.result;if(r.error)return'';const labels={lookup_allowable_stress:"Material Stress Lookup",calculate_wall_thickness_b313:"Wall Thickness — B31.3 Eq. 3a",lookup_flange_rating_b165:"Flange Rating — B16.5",calculate_pipe_weight:"Pipe Weight",list_available_data:"Database Contents"};const label=labels[tr.name]||tr.name;const codeRef=r.code||r.code_reference||'';const skip=new Set(['code','code_reference','error']);let rowsHtml='';if(tr.name==='list_available_data'){rowsHtml+=rw('Materials',r.materials?.join(', '));rowsHtml+=rw('Pipe sizes (NPS)',r.pipe_sizes_nps?.join(', '));rowsHtml+=rw('Flange materials',r.flange_materials?.join(', '));if(r.note)rowsHtml+=`<div class="result-note">${esc(r.note)}</div>`;}else{for(const[k,v]of Object.entries(r)){if(skip.has(k))continue;const dk=k.replace(/_/g,' ').replace(/\bmpa\b/gi,'(MPa)').replace(/\bmm\b/gi,'(mm)').replace(/\b(c)\b$/i,'(°C)').replace(/\bkg\b/gi,'(kg)');let dv=v,cls='';if(typeof v==='boolean'){dv=v?'✓ ADEQUATE':'✗ NOT ADEQUATE';cls=v?'adequate':'not-adequate';}else if(v&&typeof v==='object'){dv=Object.entries(v).map(([a,b])=>`${a}: ${b}`).join(', ');}const mono=typeof v==='number'?' mono':'';rowsHtml+=`<div class="result-row ${cls}"><span class="result-key">${esc(dk)}</span><span class="result-val${mono}">${esc(String(dv))}</span></div>`;}}return`<div class="result-card"><div class="result-header"><span>${esc(label)}</span>${codeRef?`<span class="code-tag">${esc(codeRef)}</span>`:''}</div><div>${rowsHtml}</div></div>`;}
+function rw(k,v){return`<div class="result-row"><span class="result-key">${esc(k)}</span><span class="result-val">${esc(v||'')}</span></div>`;}
 
-// Enable/disable send
-userInput.addEventListener('input', () => {
-  sendBtn.disabled = !userInput.value.trim() || isLoading;
-});
+function formatAiText(text){const lines=text.split('\n');let html='',i=0,inList=false,listType='';while(i<lines.length){const line=lines[i],trimmed=line.trim();if(!trimmed){if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}i++;continue;}if(/^-{3,}$/.test(trimmed)||/^\*{3,}$/.test(trimmed)){if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}html+='<hr>';i++;continue;}if(trimmed.startsWith('|')&&trimmed.endsWith('|')){if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}const tl=[];while(i<lines.length&&lines[i].trim().startsWith('|')&&lines[i].trim().endsWith('|')){tl.push(lines[i].trim());i++;}html+=renderTable(tl);continue;}const h4=trimmed.match(/^####\s+(.+)/);if(h4){if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}html+=`<h4>${inl(h4[1])}</h4>`;i++;continue;}const h3=trimmed.match(/^###\s+(.+)/);if(h3){if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}html+=`<h3>${inl(h3[1])}</h3>`;i++;continue;}const h2=trimmed.match(/^##\s+(.+)/);if(h2){if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}html+=`<h2>${inl(h2[1])}</h2>`;i++;continue;}if(trimmed.startsWith('>')){if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}html+=`<blockquote>${inl(trimmed.replace(/^>\s*/,''))}</blockquote>`;i++;continue;}if(/^[-•*]\s/.test(trimmed)){if(!inList||listType!=='ul'){if(inList)html+=listType==='ul'?'</ul>':'</ol>';html+='<ul>';inList=true;listType='ul';}html+=`<li>${inl(trimmed.replace(/^[-•*]\s*/,''))}</li>`;i++;continue;}const olM=trimmed.match(/^(\d+)[.)]\s+(.+)/);if(olM){if(!inList||listType!=='ol'){if(inList)html+=listType==='ul'?'</ul>':'</ol>';html+='<ol>';inList=true;listType='ol';}html+=`<li>${inl(olM[2])}</li>`;i++;continue;}if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}html+=`<p>${inl(trimmed)}</p>`;i++;}if(inList)html+=listType==='ul'?'</ul>':'</ol>';return html;}
+function renderTable(tl){if(tl.length<2)return tl.map(l=>`<p>${inl(l)}</p>`).join('');const pr=l=>l.split('|').slice(1,-1).map(c=>c.trim());const hc=pr(tl[0]);const isSep=tl[1]&&/^[\s|:-]+$/.test(tl[1]);const ds=isSep?2:1;let t='<table><thead><tr>';hc.forEach(c=>{t+=`<th>${inl(c)}</th>`;});t+='</tr></thead><tbody>';for(let r=ds;r<tl.length;r++){if(/^[\s|:-]+$/.test(tl[r]))continue;const cells=pr(tl[r]);t+='<tr>';cells.forEach(c=>{t+=`<td>${inl(c)}</td>`;});t+='</tr>';}t+='</tbody></table>';return t;}
+function inl(text){let s=esc(text);s=s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');s=s.replace(/`(.+?)`/g,'<code>$1</code>');s=s.replace(/\*(.+?)\*/g,'<em>$1</em>');return s;}
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 
-function autoResize(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
-}
-
-function handleKey(e) {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitQuery(); }
-}
-
-function scrollToBottom() {
-  mainArea.scrollTop = mainArea.scrollHeight;
-}
-
-function resetChat() {
-  messages = [];
-  mainInner.innerHTML = '';
-  mainInner.appendChild(welcomeBlock);
-  welcomeBlock.style.display = '';
-  newBtn.style.display = 'none';
-  userInput.value = '';
-  userInput.style.height = 'auto';
-  sendBtn.disabled = true;
-  userInput.focus();
-}
+// ── SUBMIT ──
+async function submitQuery(text){const q=(text||userInput.value).trim();if(!q||isLoading)return;userInput.value='';userInput.style.height='auto';sendBtn.disabled=true;isLoading=true;welcomeBlock.style.display='none';newBtn.style.display='';messages.push({role:'user',content:q});chatInner.insertAdjacentHTML('beforeend',`<div class="msg-user"><div class="bubble">${esc(q)}</div></div>`);scrollToBottom();const loadEl=document.createElement('div');loadEl.className='loading';loadEl.innerHTML='<div class="dots"><span></span><span></span><span></span></div><span class="load-text">Working on it...</span>';chatInner.appendChild(loadEl);scrollToBottom();try{let apiMessages=messages.map(m=>({role:m.role,content:m.content}));let finalText='',toolResults=[],iterations=0;while(iterations<6){iterations++;const resp=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1500,system:SYSTEM_PROMPT,tools:TOOLS,messages:apiMessages})});const data=await resp.json();if(data.error){finalText='Sorry, something went wrong. Please try again.';break;}const textBlocks=(data.content||[]).filter(b=>b.type==='text');const toolUseBlocks=(data.content||[]).filter(b=>b.type==='tool_use');if(toolUseBlocks.length>0){const results=toolUseBlocks.map(tu=>{const result=execTool(tu.name,tu.input);toolResults.push({id:tu.id,name:tu.name,input:tu.input,result});return{type:'tool_result',tool_use_id:tu.id,content:JSON.stringify(result)};});apiMessages.push({role:'assistant',content:data.content});apiMessages.push({role:'user',content:results});if(data.stop_reason==='end_turn'){finalText=textBlocks.map(b=>b.text).join('\n');break;}}else{finalText=textBlocks.map(b=>b.text).join('\n');break;}}loadEl.remove();let html='<div class="msg-ai"><div>';if(toolResults.length){html+='<div style="margin-bottom:12px">';toolResults.forEach(tr=>{html+=renderResultCard(tr);});html+='</div>';}html+=`<div class="ai-text">${formatAiText(finalText)}</div></div></div>`;chatInner.insertAdjacentHTML('beforeend',html);messages.push({role:'assistant',content:finalText});}catch(err){loadEl.remove();chatInner.insertAdjacentHTML('beforeend','<div class="msg-ai"><div class="ai-text"><p>Connection error. Please try again.</p></div></div>');}isLoading=false;sendBtn.disabled=!userInput.value.trim();scrollToBottom();userInput.focus();}
 
 // ═══════════════════════════════════════════════════════════════════════
-// RENDER HELPERS
+// MEMBERSTACK AUTH (from index-old.html)
 // ═══════════════════════════════════════════════════════════════════════
-function renderResultCard(tr) {
-  const r = tr.result;
-  if (r.error) return '';
-
-  const labels = {
-    lookup_allowable_stress:"Material Stress Lookup",
-    calculate_wall_thickness_b313:"Wall Thickness — B31.3 Eq. 3a",
-    lookup_flange_rating_b165:"Flange Rating — B16.5",
-    calculate_pipe_weight:"Pipe Weight",
-    list_available_data:"Database Contents",
-  };
-  const label = labels[tr.name] || tr.name;
-  const codeRef = r.code || r.code_reference || '';
-
-  const skip = new Set(['code','code_reference','error']);
-  let rowsHtml = '';
-
-  if (tr.name === 'list_available_data') {
-    rowsHtml += row('Materials', r.materials?.join(', '));
-    rowsHtml += row('Pipe sizes (NPS)', r.pipe_sizes_nps?.join(', '));
-    rowsHtml += row('Flange materials', r.flange_materials?.join(', '));
-    if (r.note) rowsHtml += `<div class="result-note">${esc(r.note)}</div>`;
-  } else {
-    for (const [k,v] of Object.entries(r)) {
-      if (skip.has(k)) continue;
-      const dk = k.replace(/_/g,' ').replace(/\bmpa\b/gi,'(MPa)').replace(/\bmm\b/gi,'(mm)').replace(/\b(c)\b$/i,'(°C)').replace(/\bkg\b/gi,'(kg)');
-      let dv = v, cls = '', extra = '';
-      if (typeof v === 'boolean') { dv = v ? '✓ ADEQUATE' : '✗ NOT ADEQUATE'; cls = v ? 'adequate' : 'not-adequate'; }
-      else if (v && typeof v === 'object') { dv = Object.entries(v).map(([a,b])=>`${a}: ${b}`).join(', '); }
-      const mono = typeof v === 'number' ? ' mono' : '';
-      rowsHtml += `<div class="result-row ${cls}"><span class="result-key">${esc(dk)}</span><span class="result-val${mono}">${esc(String(dv))}</span></div>`;
-    }
-  }
-
-  return `<div class="result-card"><div class="result-header"><span>${esc(label)}</span>${codeRef ? `<span class="code-tag">${esc(codeRef)}</span>` : ''}</div><div>${rowsHtml}</div></div>`;
-}
-
-function row(k, v) {
-  return `<div class="result-row"><span class="result-key">${esc(k)}</span><span class="result-val">${esc(v||'')}</span></div>`;
-}
-
-function formatAiText(text) {
-  const lines = text.split('\n');
-  let html = '';
-  let i = 0;
-  let inList = false;
-  let listType = '';
-
-  while (i < lines.length) {
-    const line = lines[i];
-    const trimmed = line.trim();
-
-    // Empty line
-    if (!trimmed) {
-      if (inList) { html += listType === 'ul' ? '</ul>' : '</ol>'; inList = false; }
-      i++; continue;
-    }
-
-    // Horizontal rule
-    if (/^-{3,}$/.test(trimmed) || /^\*{3,}$/.test(trimmed)) {
-      if (inList) { html += listType === 'ul' ? '</ul>' : '</ol>'; inList = false; }
-      html += '<hr>';
-      i++; continue;
-    }
-
-    // Table: detect by | at start and end
-    if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
-      if (inList) { html += listType === 'ul' ? '</ul>' : '</ol>'; inList = false; }
-      // Collect all table lines
-      const tableLines = [];
-      while (i < lines.length && lines[i].trim().startsWith('|') && lines[i].trim().endsWith('|')) {
-        tableLines.push(lines[i].trim());
-        i++;
-      }
-      html += renderTable(tableLines);
-      continue;
-    }
-
-    // Headers
-    const h4 = trimmed.match(/^####\s+(.+)/);
-    if (h4) { if (inList) { html += listType === 'ul' ? '</ul>' : '</ol>'; inList = false; } html += `<h4>${inline(h4[1])}</h4>`; i++; continue; }
-    const h3 = trimmed.match(/^###\s+(.+)/);
-    if (h3) { if (inList) { html += listType === 'ul' ? '</ul>' : '</ol>'; inList = false; } html += `<h3>${inline(h3[1])}</h3>`; i++; continue; }
-    const h2 = trimmed.match(/^##\s+(.+)/);
-    if (h2) { if (inList) { html += listType === 'ul' ? '</ul>' : '</ol>'; inList = false; } html += `<h2>${inline(h2[1])}</h2>`; i++; continue; }
-
-    // Blockquote
-    if (trimmed.startsWith('>')) {
-      if (inList) { html += listType === 'ul' ? '</ul>' : '</ol>'; inList = false; }
-      html += `<blockquote>${inline(trimmed.replace(/^>\s*/, ''))}</blockquote>`;
-      i++; continue;
-    }
-
-    // Unordered list
-    if (/^[-•*]\s/.test(trimmed)) {
-      if (!inList || listType !== 'ul') {
-        if (inList) html += listType === 'ul' ? '</ul>' : '</ol>';
-        html += '<ul>'; inList = true; listType = 'ul';
-      }
-      html += `<li>${inline(trimmed.replace(/^[-•*]\s*/, ''))}</li>`;
-      i++; continue;
-    }
-
-    // Ordered list
-    const olMatch = trimmed.match(/^(\d+)[.)]\s+(.+)/);
-    if (olMatch) {
-      if (!inList || listType !== 'ol') {
-        if (inList) html += listType === 'ul' ? '</ul>' : '</ol>';
-        html += '<ol>'; inList = true; listType = 'ol';
-      }
-      html += `<li>${inline(olMatch[2])}</li>`;
-      i++; continue;
-    }
-
-    // Regular paragraph
-    if (inList) { html += listType === 'ul' ? '</ul>' : '</ol>'; inList = false; }
-    html += `<p>${inline(trimmed)}</p>`;
-    i++;
-  }
-
-  if (inList) html += listType === 'ul' ? '</ul>' : '</ol>';
-  return html;
-}
-
-function renderTable(tableLines) {
-  if (tableLines.length < 2) return tableLines.map(l => `<p>${inline(l)}</p>`).join('');
-
-  // Parse cells from each row
-  const parseRow = line => line.split('|').slice(1, -1).map(c => c.trim());
-  const headerCells = parseRow(tableLines[0]);
-
-  // Check if second line is separator (---|---)
-  const isSep = tableLines[1] && /^[\s|:-]+$/.test(tableLines[1]);
-  const dataStart = isSep ? 2 : 1;
-
-  let t = '<table><thead><tr>';
-  headerCells.forEach(c => { t += `<th>${inline(c)}</th>`; });
-  t += '</tr></thead><tbody>';
-
-  for (let r = dataStart; r < tableLines.length; r++) {
-    const cells = parseRow(tableLines[r]);
-    if (/^[\s|:-]+$/.test(tableLines[r])) continue; // skip separator rows
-    t += '<tr>';
-    cells.forEach(c => { t += `<td>${inline(c)}</td>`; });
-    t += '</tr>';
-  }
-  t += '</tbody></table>';
-  return t;
-}
-
-function inline(text) {
-  // Escape HTML, then apply inline markdown
-  let s = esc(text);
-  s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-  s = s.replace(/`(.+?)`/g, '<code>$1</code>');
-  s = s.replace(/\*(.+?)\*/g, '<em>$1</em>');
-  // Emojis: ✓ ✗ checkmarks
-  s = s.replace(/✓/g, '<span class="emoji">✓</span>');
-  s = s.replace(/✗/g, '<span class="emoji">✗</span>');
-  return s;
-}
-
-function esc(s) {
-  const d = document.createElement('div');
-  d.textContent = s;
-  return d.innerHTML;
-}
-
-// ═══════════════════════════════════════════════════════════════════════
-// SUBMIT & API CALL
-// ═══════════════════════════════════════════════════════════════════════
-async function submitQuery(text) {
-  const q = (text || userInput.value).trim();
-  if (!q || isLoading) return;
-
-  userInput.value = '';
-  userInput.style.height = 'auto';
-  sendBtn.disabled = true;
-  isLoading = true;
-
-  // Hide welcome, show new btn
-  welcomeBlock.style.display = 'none';
-  newBtn.style.display = '';
-
-  // Add user message
-  messages.push({ role: 'user', content: q });
-  mainInner.insertAdjacentHTML('beforeend', `<div class="msg-user"><div class="bubble">${esc(q)}</div></div>`);
-  scrollToBottom();
-
-  // Show loading
-  const loadEl = document.createElement('div');
-  loadEl.className = 'loading';
-  loadEl.innerHTML = '<div class="dots"><span></span><span></span><span></span></div><span class="load-text">Working on it...</span>';
-  mainInner.appendChild(loadEl);
-  scrollToBottom();
-
-  try {
-    let apiMessages = messages.map(m => ({ role: m.role, content: m.content }));
-    let finalText = '';
-    let toolResults = [];
-    let iterations = 0;
-
-    while (iterations < 6) {
-      iterations++;
-
-      const resp = await fetch('/api/claude', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 1500,
-          system: SYSTEM_PROMPT,
-          tools: TOOLS,
-          messages: apiMessages,
-        }),
-      });
-      const data = await resp.json();
-
-      if (data.error) {
-        finalText = 'Sorry, something went wrong. Please try again.';
-        break;
-      }
-
-      const textBlocks = (data.content || []).filter(b => b.type === 'text');
-      const toolUseBlocks = (data.content || []).filter(b => b.type === 'tool_use');
-
-      if (toolUseBlocks.length > 0) {
-        const results = toolUseBlocks.map(tu => {
-          const result = execTool(tu.name, tu.input);
-          toolResults.push({ id: tu.id, name: tu.name, input: tu.input, result });
-          return { type: 'tool_result', tool_use_id: tu.id, content: JSON.stringify(result) };
-        });
-        apiMessages.push({ role: 'assistant', content: data.content });
-        apiMessages.push({ role: 'user', content: results });
-
-        if (data.stop_reason === 'end_turn') {
-          finalText = textBlocks.map(b => b.text).join('\n');
-          break;
-        }
-      } else {
-        finalText = textBlocks.map(b => b.text).join('\n');
-        break;
-      }
-    }
-
-    // Remove loading
-    loadEl.remove();
-
-    // Render AI response
-    let html = '<div class="msg-ai"><div>';
-    if (toolResults.length) {
-      html += '<div style="margin-bottom:12px">';
-      toolResults.forEach(tr => { html += renderResultCard(tr); });
-      html += '</div>';
-    }
-    html += `<div class="ai-text">${formatAiText(finalText)}</div>`;
-    html += '</div></div>';
-    mainInner.insertAdjacentHTML('beforeend', html);
-
-    // Store assistant response in messages for context
-    messages.push({ role: 'assistant', content: finalText });
-
-  } catch (err) {
-    loadEl.remove();
-    mainInner.insertAdjacentHTML('beforeend', `<div class="msg-ai"><div class="ai-text"><p>Connection error. Please try again.</p></div></div>`);
-  }
-
-  isLoading = false;
-  sendBtn.disabled = !userInput.value.trim();
-  scrollToBottom();
-  userInput.focus();
-}
+const MS_STUDENT_PLAN='pln_student-plan-l416c0pbs';const MS_PRO_PLAN='pln_professional-n2is0jc4';const MS_ADMIN_PLAN='pln_admin-vzd0rgr';window.MS_MEMBER=null;window.MS_PLAN=null;window.MS_IS_ADMIN=false;window.MS_READY=false;
+async function msLoadMember(){try{const ms=window.$memberstackDom;if(ms&&ms.getCurrentMember){const res=await ms.getCurrentMember();const member=(res&&res.data)?res.data:(res||null);window.MS_MEMBER=member;window.MS_PLAN=null;window.MS_IS_ADMIN=false;if(member&&Array.isArray(member.planConnections)){const active=member.planConnections.filter(p=>p.active||p.status==='ACTIVE'||p.status==='TRIALING');const ids=active.map(p=>p.planId);if(ids.includes(MS_PRO_PLAN)||ids.includes(MS_ADMIN_PLAN))window.MS_PLAN='professional';else if(ids.includes(MS_STUDENT_PLAN))window.MS_PLAN='student';window.MS_IS_ADMIN=ids.includes(MS_ADMIN_PLAN);}}}catch(e){console.warn('Memberstack load error',e);}finally{window.MS_READY=true;}}
+function isMember(){return window.MS_PLAN==='professional'||window.MS_PLAN==='student';}
+function memberPlan(){return window.MS_PLAN||null;}
+function openLoginModal(){const loggedIn=isMember();document.getElementById('lmodal-form-view').style.display=loggedIn?'none':'block';document.getElementById('lmodal-member-view').style.display=loggedIn?'block':'none';document.getElementById('lmodal-err').style.display='none';if(loggedIn){const admin=window.MS_IS_ADMIN===true;const email=(window.MS_MEMBER&&window.MS_MEMBER.auth&&window.MS_MEMBER.auth.email)||'Active subscription';document.getElementById('lmodal-avatar').textContent=admin?'🛡️':'✓';document.getElementById('lmodal-welcome').textContent=admin?'Admin Access Active':(memberPlan()==='student'?'Student Access Active':'Professional Access Active');document.getElementById('lmodal-email-display').textContent=email;}else{document.getElementById('lmodal-email').value='';document.getElementById('lmodal-password').value='';}document.getElementById('lmodal-bg').classList.add('show');document.body.style.overflow='hidden';if(!loggedIn)setTimeout(()=>document.getElementById('lmodal-email').focus(),200);}
+function closeLModal(){document.getElementById('lmodal-bg').classList.remove('show');document.body.style.overflow='';}
+function closeLModalBg(e){if(e.target===document.getElementById('lmodal-bg'))closeLModal();}
+function updateNavBtn(){const el=document.getElementById('nav-auth');if(!el)return;const admin=window.MS_IS_ADMIN===true;if(admin){el.innerHTML='<span class="nav-badge nav-badge-admin">🛡️ Admin</span><button class="nav-login-btn logged-in" onclick="doLogout()">Logout</button>';}else if(isMember()){el.innerHTML='<span class="nav-badge nav-badge-sub">✓ Subscriber</span><button class="nav-login-btn logged-in" onclick="doLogout()">Logout</button>';}else{el.innerHTML='<button class="nav-login-btn" id="nav-login-btn" onclick="openLoginModal()">Login</button>';}}
+function doLogin(){const email=document.getElementById('lmodal-email').value.trim();const password=document.getElementById('lmodal-password').value.trim();const err=document.getElementById('lmodal-err');err.style.display='none';const ms=window.$memberstackDom;if(!ms||!ms.loginMemberEmailPassword){err.textContent='Login is temporarily unavailable.';err.style.display='block';return;}ms.loginMemberEmailPassword({email,password}).then(()=>{closeLModal();location.reload();}).catch(()=>{err.textContent='Incorrect email or password. Please try again.';err.style.display='block';});}
+function doLogout(){localStorage.removeItem('ppa_admin');const ms=window.$memberstackDom;const done=()=>{location.href=location.pathname;};if(ms&&ms.logout){ms.logout().then(done).catch(done);}else done();}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLModal();});
+document.addEventListener('keydown',e=>{const bg=document.getElementById('lmodal-bg');if(e.key==='Enter'&&bg&&bg.classList.contains('show'))doLogin();});
+document.addEventListener('DOMContentLoaded',async function(){await msLoadMember();updateNavBtn();});
+function toggleMobileMenu(){document.getElementById('nav-hamburger').classList.toggle('open');document.getElementById('nav-links').classList.toggle('open');}
+document.querySelectorAll('.nav-links a, .nav-links button').forEach(el=>{el.addEventListener('click',()=>{document.getElementById('nav-hamburger').classList.remove('open');document.getElementById('nav-links').classList.remove('open');});});
 </script>
-
 </body>
 </html>
