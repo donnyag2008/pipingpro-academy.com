@@ -240,7 +240,6 @@
   <div class="nav-links" id="nav-links">
     <a href="/calculators.html">Engineering Toolkits</a>
     <a href="/courses.html">Courses</a>
-    <a href="#pricing">Membership Plan</a>
     <button class="new-chat-btn" id="newBtn" onclick="resetChat()">New Question</button>
     <span id="nav-auth" style="display:inline-flex;align-items:center;gap:.6rem;">
       <button class="nav-login-btn" id="nav-login-btn" onclick="openLoginModal()">Login</button>
@@ -331,86 +330,7 @@
 
 </div>
 
-<!-- DIVIDER -->
-<div class="divider"></div>
 
-<!-- PRICING -->
-<section class="pricing-section" id="pricing">
-  <p class="section-label">Membership Plans</p>
-  <h2>Choose Your Access</h2>
-  <p class="section-intro">Free calculators stay free — no account needed. For the full library, pick the plan that fits. Cancel anytime; access runs to the end of your paid period.</p>
-  <div class="billing-toggle" role="tablist" aria-label="Professional billing period">
-    <button id="bt-monthly" class="bt-opt active" onclick="ppaSetBilling('monthly')">Monthly</button>
-    <button id="bt-annual" class="bt-opt" onclick="ppaSetBilling('annual')">Annual <small>· 2 months free</small></button>
-  </div>
-  <div class="pricing-grid">
-    <div class="pricing-card">
-      <div class="plan-name">Student</div>
-      <div class="plan-price"><sup>$</sup>20</div>
-      <div class="plan-period plan-period-lg">per year · billed annually</div>
-      <ul class="plan-features">
-        <li>All courses &amp; completion certificates</li>
-        <li>Student calculator set — Flange &amp; Valve Weight, Pipe Support Span, Expansion Loop</li>
-        <li>Bonus engineering ebook (added July)</li>
-        <li>New course content as published</li>
-      </ul>
-      <button class="plan-cta" onclick="ppaCheckout('prc_student-annual-8v16d0ptx')">Get Student Access</button>
-      <p class="plan-note">Valid student status required</p>
-    </div>
-    <div class="pricing-card featured-plan">
-      <div class="best-value">Full Access</div>
-      <div class="plan-name">Professional</div>
-      <div class="plan-price"><sup>$</sup><span id="pro-price">12</span></div>
-      <div class="plan-period" id="pro-period">per month</div>
-      <ul class="plan-features">
-        <li>Everything in Student</li>
-        <li>All engineering calculators (20+)</li>
-        <li>All technical PDF guides</li>
-        <li>New tools &amp; content as published</li>
-      </ul>
-      <button class="plan-cta" id="pro-cta" onclick="ppaBuyPro()">Get Professional Access</button>
-      <p class="plan-note" id="pro-note">Full access · cancel anytime</p>
-      <p class="geo-note" id="geo-note">Pricing shown for your region.</p>
-    </div>
-  </div>
-</section>
-
-<script>
-/* ── PRICING: geo-band detection + billing toggle + Memberstack checkout ── */
-(function(){
-  const BANDS = {
-    headline:{ label:'',         monthly:{id:'prc_professional-monthly-7-day-trial-headline--9i1k06nt', amt:12}, annual:{id:'prc_professional-annual-7-day-trial-headline--781m06sb', amt:120} },
-    mid:     { label:'regional', monthly:{id:'prc_pro-mid-monthly-hd16n0pay',     amt:4},  annual:{id:'prc_pro-mid-annual-p99h0o63',      amt:39}  },
-    lower:   { label:'regional', monthly:{id:'prc_pro-lower-monthly-8tiz0jxn',    amt:3},  annual:{id:'prc_pro-lower-annual-f6j00j4i',    amt:30}  }
-  };
-  const MID_COUNTRIES   = ['IN','ID'];
-  const LOWER_COUNTRIES = ['EG','MA','DZ','TN'];
-  var band = 'headline'; var billing = 'monthly';
-  const TRIAL_BANDS = ['headline'];
-  function paint(){
-    var b = BANDS[band][billing];
-    var priceEl=document.getElementById('pro-price'), periodEl=document.getElementById('pro-period'),
-        geoEl=document.getElementById('geo-note'), noteEl=document.getElementById('pro-note'), ctaEl=document.getElementById('pro-cta');
-    if(priceEl) priceEl.textContent = b.amt;
-    if(periodEl) periodEl.textContent = (billing==='monthly') ? 'per month' : 'per year';
-    if(geoEl) geoEl.textContent = (band==='headline') ? 'Pricing shown for your region.' : 'Regional pricing applied for your country.';
-    var isTrial = (TRIAL_BANDS.indexOf(band)!==-1);
-    if(noteEl){ var per=(billing==='monthly')?'/mo':'/yr'; noteEl.textContent = isTrial ? '7-day free trial, then $'+b.amt+per+' · cancel anytime' : '$'+b.amt+per+' · cancel anytime'; }
-    if(ctaEl) ctaEl.textContent = isTrial ? 'Start 7-Day Free Trial →' : 'Get Professional Access';
-  }
-  window.ppaSetBilling = function(mode){ billing=mode; var m=document.getElementById('bt-monthly'), a=document.getElementById('bt-annual'); if(m)m.classList.toggle('active',mode==='monthly'); if(a)a.classList.toggle('active',mode==='annual'); paint(); };
-  window.ppaBuyPro = function(){ ppaCheckout(BANDS[band][billing].id); };
-  window.ppaCheckout = async function(priceId){
-    var ms=window.$memberstackDom; if(!ms) return;
-    var member=null; try{ var r=await ms.getCurrentMember(); member=r&&r.data?r.data:null; }catch(e){}
-    if(!member){ try{await ms.openModal('SIGNUP');}catch(e){} try{var r2=await ms.getCurrentMember();member=r2&&r2.data?r2.data:null;}catch(e){} }
-    if(!member) return;
-    try{ await ms.purchasePlansWithCheckout({priceId:priceId, successUrl:window.location.origin+'/calculators.html', cancelUrl:window.location.href}); }catch(e){ console.error('PPA checkout error',e); }
-  };
-  fetch('/cdn-cgi/trace').then(function(r){return r.text();}).then(function(t){ var m=t.match(/loc=([A-Z]{2})/); var cc=m?m[1]:''; if(MID_COUNTRIES.indexOf(cc)!==-1) band='mid'; else if(LOWER_COUNTRIES.indexOf(cc)!==-1) band='lower'; else band='headline'; paint(); }).catch(function(){ band='headline'; paint(); });
-  paint();
-})();
-</script>
 
 <!-- FOOTER -->
 <footer class="site-footer">
@@ -424,7 +344,6 @@
   <div class="footer-copy">© 2026 PipingPro Academy. All rights reserved.</div>
   <script src="/counter.js"></script>
 </footer>
-
 
 <script>
 // ═══════════════════════════════════════════════════════════════════════
@@ -617,7 +536,7 @@ const FREE_DAILY_LIMIT = 7;
 function getQuestionCount(){const key='ppa_q_'+new Date().toISOString().slice(0,10);const v=localStorage.getItem(key);return v?parseInt(v):0;}
 function incQuestionCount(){const key='ppa_q_'+new Date().toISOString().slice(0,10);localStorage.setItem(key,getQuestionCount()+1);}
 function isLimitReached(){if(isMember())return false;return getQuestionCount()>=FREE_DAILY_LIMIT;}
-function showLimitMessage(){welcomeBlock.style.display='none';newBtn.style.display='';chatInner.insertAdjacentHTML('beforeend',`<div class="msg-ai"><div class="ai-text"><p><strong>You've reached your daily limit of ${FREE_DAILY_LIMIT} free questions.</strong></p><p>Become a member to get unlimited access to PipingPro AI, all engineering calculators, courses with certificates, and more.</p><p><a href="#pricing" style="display:inline-block;background:var(--gold);color:var(--ink);padding:10px 24px;border-radius:4px;font-weight:800;text-decoration:none;text-transform:uppercase;letter-spacing:0.05em;font-size:0.85rem;margin-top:8px;">View Membership Plans →</a></p><p style="margin-top:8px;font-size:0.82rem;color:var(--ink-light);">Your free questions reset tomorrow.</p></div></div>`);chatArea.scrollTop=chatArea.scrollHeight;window.scrollTo(0,0);}
+function showLimitMessage(){welcomeBlock.style.display='none';newBtn.style.display='';chatInner.insertAdjacentHTML('beforeend',`<div class="msg-ai"><div class="ai-text"><p><strong>You've reached your daily limit of ${FREE_DAILY_LIMIT} free questions.</strong></p><p>Become a member to get unlimited access to PipingPro AI, all engineering calculators, courses with certificates, and more.</p><p><a href="#" onclick="event.preventDefault();openLoginModal();" style="display:inline-block;background:var(--gold);color:var(--ink);padding:10px 24px;border-radius:4px;font-weight:800;text-decoration:none;text-transform:uppercase;letter-spacing:0.05em;font-size:0.85rem;margin-top:8px;">Login or Sign Up →</a></p><p style="margin-top:8px;font-size:0.82rem;color:var(--ink-light);">Your free questions reset tomorrow.</p></div></div>`);chatArea.scrollTop=chatArea.scrollHeight;window.scrollTo(0,0);}
 
 async function submitQuery(text){const q=(text||userInput.value).trim();if(!q||isLoading)return;if(isLimitReached()){showLimitMessage();return;}userInput.value='';userInput.style.height='auto';sendBtn.disabled=true;isLoading=true;welcomeBlock.style.display='none';newBtn.style.display='';messages.push({role:'user',content:q});chatInner.insertAdjacentHTML('beforeend',`<div class="msg-user"><div class="bubble">${esc(q)}</div></div>`);scrollToBottom();const loadEl=document.createElement('div');loadEl.className='loading';loadEl.innerHTML='<div class="dots"><span></span><span></span><span></span></div><span class="load-text">Working on it...</span>';chatInner.appendChild(loadEl);scrollToBottom();try{let apiMessages=messages.map(m=>({role:m.role,content:m.content}));let finalText='',toolResults=[],iterations=0;while(iterations<6){iterations++;const resp=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1500,system:SYSTEM_PROMPT,tools:TOOLS,messages:apiMessages})});const data=await resp.json();if(data.error){finalText='Sorry, something went wrong. Please try again.';break;}const textBlocks=(data.content||[]).filter(b=>b.type==='text');const toolUseBlocks=(data.content||[]).filter(b=>b.type==='tool_use');if(toolUseBlocks.length>0){const results=toolUseBlocks.map(tu=>{const result=execTool(tu.name,tu.input);toolResults.push({id:tu.id,name:tu.name,input:tu.input,result});return{type:'tool_result',tool_use_id:tu.id,content:JSON.stringify(result)};});apiMessages.push({role:'assistant',content:data.content});apiMessages.push({role:'user',content:results});if(data.stop_reason==='end_turn'){finalText=textBlocks.map(b=>b.text).join('\n');break;}}else{finalText=textBlocks.map(b=>b.text).join('\n');break;}}loadEl.remove();let html='<div class="msg-ai"><div>';if(toolResults.length){html+='<div style="margin-bottom:12px">';toolResults.forEach(tr=>{html+=renderResultCard(tr);});html+='</div>';}html+=`<div class="ai-text">${formatAiText(finalText)}</div></div></div>`;chatInner.insertAdjacentHTML('beforeend',html);messages.push({role:'assistant',content:finalText});incQuestionCount();}catch(err){loadEl.remove();chatInner.insertAdjacentHTML('beforeend','<div class="msg-ai"><div class="ai-text"><p>Connection error. Please try again.</p></div></div>');}isLoading=false;sendBtn.disabled=!userInput.value.trim();scrollToBottom();userInput.focus();}
 
