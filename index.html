@@ -610,7 +610,7 @@ function esc(s){const d=document.createElement('div');d.textContent=s;return d.i
 
 // ── SUBMIT ──
 // ── FREE QUESTION LIMIT ──
-const FREE_DAILY_LIMIT = 3;
+const FREE_DAILY_LIMIT = 7;
 function getQuestionCount(){const key='ppa_q_'+new Date().toISOString().slice(0,10);const v=localStorage.getItem(key);return v?parseInt(v):0;}
 function incQuestionCount(){const key='ppa_q_'+new Date().toISOString().slice(0,10);localStorage.setItem(key,getQuestionCount()+1);}
 function isLimitReached(){if(isMember())return false;return getQuestionCount()>=FREE_DAILY_LIMIT;}
