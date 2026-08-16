@@ -131,6 +131,8 @@
     .ai-text li { margin: 3px 0; line-height: 1.6; color: var(--ink-light); }
     .ai-text li::marker { color: var(--gold); }
     .ai-text blockquote { border-left: 3px solid var(--gold); padding: 4px 12px; margin: 8px 0; color: var(--ink-light); background: var(--gold-pale); border-radius: 0 4px 4px 0; }
+    .ai-text a { color: var(--gold); text-decoration: underline; text-underline-offset: 2px; transition: color 0.2s; }
+    .ai-text a:hover { color: var(--gold-bright); }
 
     /* ── RESULT CARDS ── */
     .result-card { background: var(--paper); border: 1px solid var(--paper-dark); border-radius: 4px; overflow: hidden; margin-bottom: 10px; }
@@ -231,7 +233,7 @@
 
 <!-- NAV -->
 <nav>
-  <a class="nav-logo" href="/index.html">PipingPro Academy</a>
+  <a class="nav-logo" href="/index.html" onclick="event.preventDefault();location.reload();">PipingPro Academy</a>
   <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()">
     <span></span><span></span><span></span>
   </button>
@@ -425,12 +427,7 @@
 
 <script>
 // ═══════════════════════════════════════════════════════════════════════
-// DATA (Replace with full ppa-*.js data for production)
-// ═══════════════════════════════════════════════════════════════════════
-
-// ═══════════════════════════════════════════════════════════════════════
 // TOOL IMPLEMENTATIONS + DEFINITIONS + AI LOGIC
-// (Same as previous version — unchanged)
 // ═══════════════════════════════════════════════════════════════════════
 function execTool(name, inp) {
   if (name === "route_to_calculator") {
@@ -518,7 +515,7 @@ function rw(k,v){return`<div class="result-row"><span class="result-key">${esc(k
 
 function formatAiText(text){const lines=text.split('\n');let html='',i=0,inList=false,listType='';while(i<lines.length){const line=lines[i],trimmed=line.trim();if(!trimmed){if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}i++;continue;}if(/^-{3,}$/.test(trimmed)||/^\*{3,}$/.test(trimmed)){if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}html+='<hr>';i++;continue;}if(trimmed.startsWith('|')&&trimmed.endsWith('|')){if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}const tl=[];while(i<lines.length&&lines[i].trim().startsWith('|')&&lines[i].trim().endsWith('|')){tl.push(lines[i].trim());i++;}html+=renderTable(tl);continue;}const h4=trimmed.match(/^####\s+(.+)/);if(h4){if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}html+=`<h4>${inl(h4[1])}</h4>`;i++;continue;}const h3=trimmed.match(/^###\s+(.+)/);if(h3){if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}html+=`<h3>${inl(h3[1])}</h3>`;i++;continue;}const h2=trimmed.match(/^##\s+(.+)/);if(h2){if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}html+=`<h2>${inl(h2[1])}</h2>`;i++;continue;}if(trimmed.startsWith('>')){if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}html+=`<blockquote>${inl(trimmed.replace(/^>\s*/,''))}</blockquote>`;i++;continue;}if(/^[-•*]\s/.test(trimmed)){if(!inList||listType!=='ul'){if(inList)html+=listType==='ul'?'</ul>':'</ol>';html+='<ul>';inList=true;listType='ul';}html+=`<li>${inl(trimmed.replace(/^[-•*]\s*/,''))}</li>`;i++;continue;}const olM=trimmed.match(/^(\d+)[.)]\s+(.+)/);if(olM){if(!inList||listType!=='ol'){if(inList)html+=listType==='ul'?'</ul>':'</ol>';html+='<ol>';inList=true;listType='ol';}html+=`<li>${inl(olM[2])}</li>`;i++;continue;}if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}html+=`<p>${inl(trimmed)}</p>`;i++;}if(inList)html+=listType==='ul'?'</ul>':'</ol>';return html;}
 function renderTable(tl){if(tl.length<2)return tl.map(l=>`<p>${inl(l)}</p>`).join('');const pr=l=>l.split('|').slice(1,-1).map(c=>c.trim());const hc=pr(tl[0]);const isSep=tl[1]&&/^[\s|:-]+$/.test(tl[1]);const ds=isSep?2:1;let t='<table><thead><tr>';hc.forEach(c=>{t+=`<th>${inl(c)}</th>`;});t+='</tr></thead><tbody>';for(let r=ds;r<tl.length;r++){if(/^[\s|:-]+$/.test(tl[r]))continue;const cells=pr(tl[r]);t+='<tr>';cells.forEach(c=>{t+=`<td>${inl(c)}</td>`;});t+='</tr>';}t+='</tbody></table>';return t;}
-function inl(text){let s=esc(text);s=s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');s=s.replace(/`(.+?)`/g,'<code>$1</code>');s=s.replace(/\*(.+?)\*/g,'<em>$1</em>');return s;}
+function inl(text){let s=esc(text);s=s.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank">$1</a>');s=s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');s=s.replace(/`(.+?)`/g,'<code>$1</code>');s=s.replace(/\*(.+?)\*/g,'<em>$1</em>');return s;}
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 
 // ── SUBMIT ──
