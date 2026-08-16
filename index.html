@@ -56,6 +56,8 @@
     .nav-badge{font-size:.72rem;font-weight:600;padding:.32rem .7rem;border-radius:20px;letter-spacing:.04em;text-transform:uppercase;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;}
     .nav-badge-admin{background:rgba(212,160,23,.16);color:var(--gold-bright);border:1px solid var(--gold);}
     .nav-badge-sub{background:rgba(45,150,121,.18);color:#3fae8c;border:1px solid #2d9679;}
+    .nav-footer-links { display: none; }
+
     .new-chat-btn { color: #ccc; background: transparent; border: 1px solid #555; padding: 0.35rem 1rem; border-radius: 2px; font-size: 0.82rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: border-color 0.2s, color 0.2s; display: none; }
     .new-chat-btn:hover { border-color: var(--gold); color: var(--gold-bright); }
 
@@ -66,6 +68,9 @@
       .nav-links.open { display: flex; }
       .nav-links a, .nav-links button { padding: 0.6rem 0; width: 100%; text-align: left; }
       .nav-cta { margin-top: 0.5rem; text-align: center !important; }
+      .nav-footer-links { display: flex; flex-direction: column; gap: 0.2rem; border-top: 1px solid #333; margin-top: 0.5rem; padding-top: 0.8rem; }
+      .nav-footer-links a { color: #888; text-decoration: none; font-size: 0.78rem; font-weight: 400; letter-spacing: 0.03em; padding: 0.4rem 0; transition: color 0.2s; text-transform: none; }
+      .nav-footer-links a:hover { color: var(--gold); }
     }
 
     /* ── LOGIN MODAL (from index-old.html) ── */
@@ -226,6 +231,8 @@
       .ex-section { grid-template-columns: 1fr; }
       .welcome { padding-top: 6vh; }
       .msg-user .bubble { max-width: 90%; }
+      .footer-brand, .footer-links { display: none; }
+      .site-footer { justify-content: center; padding: 1.5rem 8%; }
     }
   </style>
 </head>
@@ -244,6 +251,12 @@
     <span id="nav-auth" style="display:inline-flex;align-items:center;gap:.6rem;">
       <button class="nav-login-btn" id="nav-login-btn" onclick="openLoginModal()">Login</button>
     </span>
+    <div class="nav-footer-links">
+      <a href="privacy-policy.html">Privacy Policy</a>
+      <a href="terms-of-use.html">Terms of Use</a>
+      <a href="https://zephrum-konsultan.co.uk" target="_blank" rel="noopener">Zephrum Konsultan</a>
+      <a href="mailto:donny.bachtiar@pipingpro-academy.com">Contact</a>
+    </div>
   </div>
 </nav>
 
