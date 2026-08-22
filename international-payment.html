@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PipingPro Academy — International Payment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    background: #f7f8fa;
+    color: #1a1a2e;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+  }
+
+  /* Header */
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 40px;
+  }
+  .brand-icon {
+    width: 40px;
+    height: 40px;
+    background: #0f4c81;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .brand-icon svg { width: 22px; height: 22px; }
+  .brand-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0f4c81;
+    letter-spacing: -0.3px;
+  }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, #0f4c81 0%, #1a6fb5 100%);
+    border-radius: 16px;
+    padding: 40px 32px;
+    color: white;
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 200px;
+    height: 200px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 50%;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(4px);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.25;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+  }
+  .hero p {
+    font-size: 16px;
+    opacity: 0.9;
+    max-width: 480px;
+    line-height: 1.7;
+  }
+  .hero-bonus {
+    margin-top: 18px;
+    background: rgba(255,255,255,0.13);
+    backdrop-filter: blur(4px);
+    border-radius: 10px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .hero-bonus-icon { font-size: 32px; line-height: 1; }
+  .hero-bonus-title { font-weight: 700; font-size: 14px; margin-bottom: 2px; }
+  .hero-bonus-desc { font-size: 13px; opacity: 0.9; }
+
+  /* Flags */
+  .flags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+    justify-content: center;
+  }
+  .flag-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: white;
+    border: 1px solid #e8eaef;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+  }
+
+  /* Price card */
+  .price-card {
+    background: white;
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 20px;
+    border: 1px solid #e8eaef;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .price-card h2 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f4c81;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  .plan-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid #f0f1f4;
+  }
+  .plan-row:last-child { border-bottom: none; }
+
+  .plan-name {
+    font-weight: 600;
+    font-size: 15px;
+    color: #1a1a2e;
+  }
+  .plan-desc {
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: 2px;
+  }
+  .plan-price {
+    text-align: right;
+  }
+  .plan-price .amount {
+    font-size: 20px;
+    font-weight: 800;
+    color: #0f4c81;
+    letter-spacing: -0.5px;
+  }
+  .plan-price .period {
+    font-size: 13px;
+    color: #6b7280;
+    font-weight: 500;
+  }
+  .plan-price .local {
+    font-size: 12px;
+    color: #9ca3af;
+    margin-top: 2px;
+  }
+
+  .savings-tag {
+    display: inline-block;
+    background: #ecfdf5;
+    color: #059669;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-top: 4px;
+  }
+
+  /* Steps */
+  .steps-card {
+    background: white;
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 20px;
+    border: 1px solid #e8eaef;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .steps-card h2 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f4c81;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  .step {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 22px;
+    position: relative;
+  }
+  .step:last-child { margin-bottom: 0; }
+
+  .step-num {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    background: #0f4c81;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    margin-top: 1px;
+  }
+  .step-content h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 4px;
+  }
+  .step-content p {
+    font-size: 14px;
+    color: #6b7280;
+    line-height: 1.6;
+  }
+
+  /* Bank details */
+  .bank-card {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 14px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  .bank-card h2 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1e40af;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+  .bank-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px dashed #bfdbfe;
+  }
+  .bank-row:last-child { border-bottom: none; }
+  .bank-label {
+    font-size: 14px;
+    color: #6b7280;
+    font-weight: 500;
+  }
+  .bank-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1a2e;
+    letter-spacing: 0.3px;
+  }
+
+  /* Payment methods note */
+  .methods-card {
+    background: white;
+    border-radius: 14px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    border: 1px solid #e8eaef;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .methods-card h2 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f4c81;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+  .methods-card p {
+    font-size: 14px;
+    color: #6b7280;
+    line-height: 1.7;
+    margin-bottom: 10px;
+  }
+  .methods-card p:last-child { margin-bottom: 0; }
+
+  /* WhatsApp CTA */
+  .wa-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 16px;
+    background: #25d366;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s;
+    margin-bottom: 20px;
+  }
+  .wa-btn:hover { background: #1fb855; }
+  .wa-btn svg { width: 22px; height: 22px; fill: white; }
+
+  /* Features */
+  .features-card {
+    background: white;
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 20px;
+    border: 1px solid #e8eaef;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .features-card h2 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f4c81;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+  .feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .feature-item:last-child { margin-bottom: 0; }
+  .check {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    background: #ecfdf5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+  }
+  .check svg { width: 12px; height: 12px; }
+  .feature-item span {
+    font-size: 14px;
+    color: #374151;
+    line-height: 1.5;
+  }
+
+  /* Trust */
+  .trust-note {
+    text-align: center;
+    padding: 20px;
+    font-size: 13px;
+    color: #9ca3af;
+    line-height: 1.7;
+  }
+  .trust-note strong {
+    color: #6b7280;
+    font-weight: 600;
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .page { padding: 20px 16px 48px; }
+    .hero { padding: 28px 22px; }
+    .hero h1 { font-size: 24px; }
+    .price-card, .steps-card, .bank-card, .features-card, .methods-card { padding: 22px; }
+    .plan-row { flex-direction: column; align-items: flex-start; gap: 6px; }
+    .plan-price { text-align: left; }
+    .bank-row { flex-direction: column; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Brand -->
+  <div class="brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    </div>
+    <span class="brand-name">PipingPro Academy</span>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-badge">🌍 Special Pricing for Engineers Worldwide</div>
+    <h1>No Credit Card?<br>No Problem.</h1>
+    <p>Full access to all professional piping & pipeline engineering calculators and tools — pay via bank transfer to our Wise (USD) account. No Visa or Mastercard needed.</p>
+    <div class="hero-bonus">
+      <div class="hero-bonus-icon">📘</div>
+      <div>
+        <div class="hero-bonus-title">BONUS: Free Book!</div>
+        <div class="hero-bonus-desc">Every subscriber receives a free PDF copy of <em>"Piping and Pipeline Engineering: Fundamental & Practical Guides"</em> by Donny Setiawan — worth more than a full year's subscription.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Country flags -->
+  <div class="flags">
+    <span class="flag-tag">🇮🇳 India</span>
+    <span class="flag-tag">🇪🇬 Egypt</span>
+    <span class="flag-tag">🇩🇿 Algeria</span>
+    <span class="flag-tag">🇲🇦 Morocco</span>
+    <span class="flag-tag">🇵🇰 Pakistan</span>
+    <span class="flag-tag">🇳🇬 Nigeria</span>
+    <span class="flag-tag">🇧🇩 Bangladesh</span>
+    <span class="flag-tag">🌍 Others</span>
+  </div>
+
+  <!-- Pricing -->
+  <div class="price-card">
+    <h2>Pricing Plans</h2>
+
+    <div class="plan-row">
+      <div>
+        <div class="plan-name">Professional — Monthly</div>
+        <div class="plan-desc">For practicing engineers</div>
+      </div>
+      <div class="plan-price">
+        <div class="amount">$3.00</div>
+        <div class="period">/month</div>
+        <div class="local">≈ ₹250 · ≈ 150 EGP</div>
+      </div>
+    </div>
+
+    <div class="plan-row">
+      <div>
+        <div class="plan-name">Professional — Yearly</div>
+        <div class="plan-desc">For practicing engineers</div>
+        <div class="savings-tag">Save 2 months!</div>
+      </div>
+      <div class="plan-price">
+        <div class="amount">$30.00</div>
+        <div class="period">/year</div>
+        <div class="local">≈ ₹2,500 · ≈ 1,500 EGP</div>
+      </div>
+    </div>
+
+    <div class="plan-row">
+      <div>
+        <div class="plan-name">Student — Monthly</div>
+        <div class="plan-desc">For students &amp; fresh graduates</div>
+      </div>
+      <div class="plan-price">
+        <div class="amount">$1.50</div>
+        <div class="period">/month</div>
+        <div class="local">≈ ₹125 · ≈ 75 EGP</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wise Account Details -->
+  <div class="bank-card">
+    <h2>Payment Details — Wise (USD)</h2>
+    <div class="bank-row">
+      <span class="bank-label">Account Holder</span>
+      <span class="bank-value">[WISE_ACCOUNT_NAME]</span>
+    </div>
+    <div class="bank-row">
+      <span class="bank-label">Account Number</span>
+      <span class="bank-value">[WISE_ACCOUNT_NUMBER]</span>
+    </div>
+    <div class="bank-row">
+      <span class="bank-label">Routing Number (ACH)</span>
+      <span class="bank-value">[WISE_ROUTING_NUMBER]</span>
+    </div>
+    <div class="bank-row">
+      <span class="bank-label">Wire Routing Number</span>
+      <span class="bank-value">[WISE_WIRE_ROUTING]</span>
+    </div>
+    <div class="bank-row">
+      <span class="bank-label">Account Type</span>
+      <span class="bank-value">Checking</span>
+    </div>
+    <div class="bank-row">
+      <span class="bank-label">Bank</span>
+      <span class="bank-value">Wise (via Community Federal Savings Bank)</span>
+    </div>
+    <div class="bank-row">
+      <span class="bank-label">Address</span>
+      <span class="bank-value">30 W. 26th Street, 6th Floor, New York, NY 10010, USA</span>
+    </div>
+  </div>
+
+  <!-- Alternative payment methods -->
+  <div class="methods-card">
+    <h2>How to Send Payment</h2>
+    <p>You can send USD to the Wise account above using your local bank's international transfer, your own Wise account, or any method that supports USD transfers. The recipient is a US-based Wise account — your bank will treat it as a standard international transfer.</p>
+    <p>If you're unable to send USD, contact us via WhatsApp and we'll find a solution that works for your country.</p>
+  </div>
+
+  <!-- Steps -->
+  <div class="steps-card">
+    <h2>How to Subscribe</h2>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>Choose Your Plan</h3>
+        <p>Select Professional (Monthly or Yearly) or Student based on your needs.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>Transfer via Your Bank or Wise</h3>
+        <p>Send the amount in USD to the Wise account details above. Use your local bank's international transfer, your own Wise account, or any USD transfer method available in your country.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h3>Send Proof via WhatsApp</h3>
+        <p>Send a screenshot of your transfer confirmation along with your full name and email address to our WhatsApp.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h3>Account Activated</h3>
+        <p>Your Professional account will be activated within 24 hours (usually much faster!). You'll also receive your free book via WhatsApp.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- WhatsApp Button -->
+  <a href="https://wa.me/[WHATSAPP_NUMBER]?text=Hi%2C%20I%27d%20like%20to%20subscribe%20to%20PipingPro%20Academy%20(Professional%20Plan).%20I%27m%20from%20%5Byour%20country%5D." class="wa-btn">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.553 4.12 1.52 5.856L.057 23.64l5.927-1.476A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.82c-1.97 0-3.837-.528-5.445-1.488l-.39-.232-3.516.876.904-3.416-.255-.404A9.786 9.786 0 012.18 12C2.18 6.58 6.58 2.18 12 2.18S21.82 6.58 21.82 12 17.42 21.82 12 21.82z"/></svg>
+    Contact Us on WhatsApp
+  </a>
+
+  <!-- Features -->
+  <div class="features-card">
+    <h2>What You Get</h2>
+
+    <div class="feature-item">
+      <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+      <span>Full access to all engineering calculators (Pipe Sizing, Wall Thickness, Flexibility, Hydrotest, and more)</span>
+    </div>
+
+    <div class="feature-item">
+      <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+      <span>Tools built on ASME B31.3, B16.5, B16.47, and ASME Section II standards</span>
+    </div>
+
+    <div class="feature-item">
+      <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+      <span>Comprehensive database: 259 ASME materials, flange, gasket, bolting, and pipe dimensional data</span>
+    </div>
+
+    <div class="feature-item">
+      <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+      <span>Course materials from an engineer with 35+ years of international Oil &amp; Gas project experience</span>
+    </div>
+
+    <div class="feature-item">
+      <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+      <span>Regular updates — new tools and content added frequently</span>
+    </div>
+
+    <div class="feature-item">
+      <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+      <span><strong>BONUS:</strong> Free PDF book <em>"Piping and Pipeline Engineering: Fundamental & Practical Guides"</em> — delivered to your WhatsApp after subscribing</span>
+    </div>
+  </div>
+
+  <!-- Trust -->
+  <div class="trust-note">
+    <strong>PipingPro Academy</strong> is developed by Donny Setiawan, CEng MIMechE — Principal Piping & Pipeline Stress Engineer with 35+ years of experience on major international projects including Saudi Aramco's Khursaniyah, Karan, Fadhili, and Al-Hada.<br><br>
+    Questions? Just WhatsApp us directly.
+  </div>
+
+</div>
+</body>
+</html>
