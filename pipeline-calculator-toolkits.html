@@ -339,6 +339,19 @@ body{ background:#faf6ef; color:#1a1510; }
   <div class="main">
     <div class="grid">
 
+    <div class="calc-card" onclick="openModal('mdc')">
+      <div class="card-img bg-accent" style="background:linear-gradient(135deg,#5a1a0a 0%,#a0522d 50%,#c4724d 100%);">
+        <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="14" y="12" width="62" height="66" rx="3" stroke="rgba(255,255,255,0.7)" stroke-width="2" fill="none"/><line x1="22" y1="24" x2="68" y2="24" stroke="rgba(255,255,255,0.4)" stroke-width="1.2"/><line x1="22" y1="32" x2="58" y2="32" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><line x1="22" y1="38" x2="52" y2="38" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><circle cx="45" cy="56" r="14" stroke="rgba(255,220,120,0.9)" stroke-width="2.5" fill="none"/><circle cx="45" cy="56" r="8" stroke="rgba(255,220,120,0.5)" stroke-width="1.5" fill="none"/><line x1="31" y1="56" x2="24" y2="56" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/><polygon points="23,56 28,53 28,59" fill="rgba(255,255,255,0.6)"/><line x1="59" y1="56" x2="66" y2="56" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/><polygon points="67,56 62,53 62,59" fill="rgba(255,255,255,0.6)"/><text x="45" y="60" text-anchor="middle" font-size="8" fill="rgba(255,220,120,0.9)" font-family="monospace">σ</text></svg>
+        <span class="card-badge badge-member" id="badge-mdc">👑 Members</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Pipeline Mechanical Design Calculation</div>
+        <div class="card-desc">Complete 9-section mechanical design report — wall thickness through combined stress to upheaval buckling. All data from ppa-materials.js &amp; ppa-pipe-data.js.</div>
+        <div class="card-tags"><span class="tag">ASME B31.4</span><span class="tag">B31.8</span><span class="tag">ISO 13623</span><span class="tag">9 Sections</span></div>
+        <div class="card-action"><span class="card-btn btn-locked" id="btn-mdc">👑 Members Only</span></div>
+      </div>
+    </div>
+
     <div class="calc-card" onclick="openModal('wt')">
       <div class="card-img bg-accent">
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="45" cy="45" r="28" stroke="rgba(255,255,255,0.8)" stroke-width="7" fill="none"/><line x1="45" y1="17" x2="45" y2="10" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/><line x1="45" y1="73" x2="45" y2="80" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/><line x1="40" y1="10" x2="50" y2="10" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/><line x1="40" y1="80" x2="50" y2="80" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/><line x1="75" y1="45" x2="62" y2="45" stroke="rgba(255,255,255,0.7)" stroke-width="2"/><polygon points="63,45 70,41 70,49" fill="rgba(255,255,255,0.7)"/></svg>
@@ -474,6 +487,7 @@ const CALCS = {
   cp:{name:'Cathodic Protection Design Calculator',desc:'Buried-pipeline CP design to SAES-X-400 — ICCP/galvanic selection, anode & rectifier sizing.',tags:['SAES-X-400','ISO 15589-1'],file:'cp-design-calculator.html'},
   sv:{name:'Sectional Volume Calculator',desc:'Volume of trench or excavation from cross-sectional areas by station. Average end-area and prismoidal methods.',tags:['End-Area','Prismoidal','Earthworks'],file:'sectional-volume-calculator.html'},
   pc:{name:'Pipeline Crossing Calculator',desc:'Road and railway crossing stress analysis per API RP 1102.',tags:['API RP 1102','Road','Rail'],file:'pipeline-crossing-calculator.html'},
+  mdc:{name:'Pipeline Mechanical Design Calculation',desc:'Nine-section mechanical design report — wall thickness, hoop, longitudinal, combined stress, bending radius, hydrotest, anchor force and upheaval buckling.',tags:['ASME B31.4','B31.8','ISO 13623'],file:'onshore-pipeline-mech-design.html'},
   ps:{name:'Pipe Support Span Calculator',desc:'Maximum allowable span — stress, deflection and natural frequency check per M.W. Kellogg / ASME B31.3.',tags:['M.W. Kellogg','ASME B31.3'],file:'pipe-support-span-calculator.html'},
   ss:{name:'Special Pipe Support Calculator',desc:'Structural calculator for special pipe supports — load analysis, member sizing, and connection design.',tags:['Structural','Pipe Support'],file:'special-pipe-support-calculator.html'},
   tr:{name:'Trunnion Support Calculator',desc:'Trunnion pipe support design — local stress at the junction, weld loads, and adequacy check.',tags:['Trunnion','Local Stress'],file:'trunnion-calculator.html'},
