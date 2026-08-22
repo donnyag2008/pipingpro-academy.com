@@ -37,21 +37,19 @@
   // Anything NOT listed defaults to 'professional'.
   // Keep this list as the ONE place access policy lives.
   var CALC_TIER = {
-    // Free — open to everyone, no login.
-    // MUST match the FREE set in calculators.html. Keep both in sync.
-    pw: 'free',
-    wt: 'free',
-    uc: 'free',
-    md: 'free',
-
-    // Student tier (and above) — CONFIRM this list is what you intend.
+    
+      // Student tier (and above)
+    pw: 'student',
+    wt: 'student',
+    uc: 'student',
+    md: 'student',
     vw: 'student',
     ps: 'student',
     el: 'student',
     lb: 'student',
     mc: 'student',
-    sv: 'student',   // moved from Professional
-    bp: 'student'    // moved from Professional
+    sv: 'student',
+    bp: 'student'
     // everything else (fx, scl, fl, pe, di, ss, tr, pc, ub, df, sp, hp, nl, pm, vf, ci, cp)
     // → professional (the default for anything not listed)
   };
