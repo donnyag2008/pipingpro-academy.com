@@ -28,6 +28,7 @@
   var PLAN_TIER = {
     'pln_student-plan-l416c0pbs': 'student',
     'pln_professional-n2is0jc4' : 'professional',
+    'pln_professional-bca-is6m0fay': 'professional',   // ← BCA manual payment plan
     'pln_admin-vzd0rgr'         : 'professional'   // ← Admin plan → full access
   };
 
