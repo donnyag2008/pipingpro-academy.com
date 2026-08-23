@@ -356,5 +356,78 @@ function calcUB(){var rhoC=gv('ub-rhoC'),gamma=gv('ub-gamma'),H=gv('ub-H'),delta
   calcWT();
 })();
 </script>
+  <!-- ═══ PIPINGPRO AI ASSISTANT ═══ -->
+<script src="/ppa-ai-assistant.js"></script>
+<script>
+(function(){
+  // Tab names matching your sidebar nav
+  var TAB_NAMES = [
+    'Wall Thickness',
+    'Hoop Stress',
+    'Longitudinal Stress',
+    'Equivalent Stress',
+    'Min Elastic Bend Radius',
+    'Hydrostatic Test',
+    'Anchor Force',
+    'Combined Stress',
+    'Upheaval Buckling'
+  ];
+
+  function getActiveTab(){
+    var items = document.querySelectorAll('.nav-item');
+    for(var i=0; i<items.length; i++){
+      if(items[i].classList.contains('active')) return TAB_NAMES[i] || 'Pipeline Mechanical Design';
+    }
+    return 'Pipeline Mechanical Design';
+  }
+
+  // Detect tier from Memberstack
+  function initAssistant(tier){
+    PipingProAssistant.init({
+      activeTab: getActiveTab(),
+      tier: tier
+    });
+
+    // Update tab context when user switches tabs
+    document.querySelectorAll('.nav-item').forEach(function(btn, i){
+      btn.addEventListener('click', function(){
+        PipingProAssistant.setActiveTab(TAB_NAMES[i] || 'Pipeline Mechanical Design');
+      });
+    });
+  }
+
+  // Wait for Memberstack then detect tier
+  function whenMS(cb, tries){
+    tries = (tries==null) ? 40 : tries;
+    var ms = window.$memberstackDom;
+    if(ms) return cb(ms);
+    if(tries<=0) return cb(null);
+    setTimeout(function(){ whenMS(cb, tries-1); }, 100);
+  }
+
+  whenMS(function(ms){
+    if(!ms || typeof ms.getCurrentMember !== 'function') return initAssistant('free');
+    ms.getCurrentMember().then(function(res){
+      var tier = 'free';
+      if(res && res.data){
+        var pc = res.data.planConnections || [];
+        var planIds = pc.map(function(p){ return p.planId; });
+        if(planIds.indexOf('pln_admin-vzd0rgr') !== -1){
+          tier = 'admin';
+        } else if(
+          planIds.indexOf('pln_professional-n2is0jc4') !== -1 ||
+          planIds.indexOf('pln_professional-bca-is6m0fay') !== -1
+        ){
+          tier = 'professional';
+        } else if(planIds.indexOf('pln_student-plan-l416c0pbs') !== -1){
+          tier = 'student';
+        }
+      }
+      initAssistant(tier);
+    }).catch(function(){ initAssistant('free'); });
+  });
+})();
+</script>
+
 </body>
 </html>
