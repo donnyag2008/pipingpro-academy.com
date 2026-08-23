@@ -9,8 +9,8 @@
  * 4. Returns the AI response
  * 
  * Environment variables required (set in Cloudflare Dashboard > Settings > Environment Variables):
- *   ANTHROPIC_API_KEY  — your Anthropic API key
- *   MEMBERSTACK_API_KEY — your Memberstack Admin API key
+ *   ANTHROPIC_ASSISTANT_KEY — your Anthropic API key for the AI Assistant
+ *   MEMBERSTACK_SEC — your Memberstack Secret API key (already exists)
  */
 
 // --- System Prompt (embedded) ---
@@ -40,7 +40,15 @@ X56: 56,000 psi | X60: 60,000 psi | X65: 65,000 psi | X70: 70,000 psi | X80: 80,
 - Keep responses concise. Engineers want answers, not essays
 - If a design appears unconservative, explicitly warn the user
 - You assist with calculations and code interpretation. Final engineering sign-off rests with the qualified engineer
-- You are NOT a replacement for engineering judgment`;
+- You are NOT a replacement for engineering judgment
+
+## Formatting Rules (IMPORTANT)
+- NEVER use markdown tables — the chat panel is too narrow for them
+- For tabular data, use simple line-by-line format like: "Class 1 Div 1: F = 0.80" on each line
+- Use **bold** for key values and terms
+- Use short paragraphs, not long blocks of text
+- Use --- for section breaks when needed
+- Keep answers focused and under 200 words where possible`;
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -98,7 +106,7 @@ export async function onRequestPost(context) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': env.ANTHROPIC_API_KEY,
+        'x-api-key': env.ANTHROPIC_ASSISTANT_KEY,
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
@@ -157,7 +165,7 @@ async function checkProfessionalTier(token, env) {
     const response = await fetch('https://admin.memberstack.com/members', {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${env.MEMBERSTACK_API_KEY}`,
+        'Authorization': `Bearer ${env.MEMBERSTACK_SEC}`,
         'Content-Type': 'application/json',
       },
     });
