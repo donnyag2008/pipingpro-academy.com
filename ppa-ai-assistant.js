@@ -1,14 +1,6 @@
 /**
- * PipingPro AI Assistant — Chat Widget
- * 
- * Usage: Add to any calculator page:
- *   <script src="/js/ppa-ai-assistant.js"></script>
- *   <script>
- *     PipingProAssistant.init({ 
- *       activeTab: 'Wall Thickness',   // current calculator tab name
- *       tier: 'professional'           // from Memberstack: 'free', 'student', 'professional'
- *     });
- *   </script>
+ * PipingPro AI Assistant — Chat Widget v1.1
+ * Brand-matched + Markdown rendering
  */
 
 const PipingProAssistant = (() => {
@@ -16,6 +8,34 @@ const PipingProAssistant = (() => {
   let messages = [];
   let isOpen = false;
   let isLoading = false;
+
+  // --- Simple Markdown to HTML ---
+  function md(text) {
+    return text
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      // code blocks
+      .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
+      // inline code
+      .replace(/`([^`]+)`/g, '<code>$1</code>')
+      // headers
+      .replace(/^### (.+)$/gm, '<strong style="display:block;margin:10px 0 4px;font-size:13px;color:#8b3a1a;">$1</strong>')
+      .replace(/^## (.+)$/gm, '<strong style="display:block;margin:10px 0 4px;font-size:14px;color:#1a1510;">$1</strong>')
+      // bold
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      // italic
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+      // tables
+      .replace(/\|[-\s|]+\|/g, '')
+      .replace(/^\|(.+)\|$/gm, function(match, inner) {
+        var cells = inner.split('|').map(function(c){ return c.trim(); });
+        return '<div style="display:flex;gap:8px;padding:2px 0;font-family:var(--mono,monospace);font-size:12px;">' +
+          cells.map(function(c){ return '<span style="min-width:60px;">'+c+'</span>'; }).join('') + '</div>';
+      })
+      // horizontal rules
+      .replace(/^---$/gm, '<hr style="border:none;border-top:1px solid #c8b89a;margin:8px 0;">')
+      // line breaks
+      .replace(/\n/g, '<br>');
+  }
 
   // --- Inject Styles ---
   function injectStyles() {
@@ -31,10 +51,10 @@ const PipingProAssistant = (() => {
         width: 56px;
         height: 56px;
         border-radius: 50%;
-        background: #1a5276;
-        border: none;
+        background: #1a1510;
+        border: 2px solid #b8860b;
         cursor: pointer;
-        box-shadow: 0 4px 16px rgba(26, 82, 118, 0.4);
+        box-shadow: 0 4px 16px rgba(26, 21, 16, 0.5);
         z-index: 9998;
         display: flex;
         align-items: center;
@@ -43,38 +63,40 @@ const PipingProAssistant = (() => {
       }
       #ppa-assistant-btn:hover {
         transform: scale(1.08);
-        box-shadow: 0 6px 24px rgba(26, 82, 118, 0.5);
+        box-shadow: 0 6px 24px rgba(184, 134, 11, 0.4);
       }
       #ppa-assistant-btn svg {
         width: 26px;
         height: 26px;
-        fill: white;
+        fill: #d4a017;
       }
 
       #ppa-assistant-panel {
         position: fixed;
         bottom: 92px;
         right: 24px;
-        width: 380px;
+        width: 400px;
         max-width: calc(100vw - 32px);
-        height: 520px;
+        height: 540px;
         max-height: calc(100vh - 120px);
-        background: #ffffff;
-        border-radius: 16px;
-        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.18);
+        background: #faf6ef;
+        border-radius: 12px;
+        border: 2px solid #b8860b;
+        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.25);
         z-index: 9999;
         display: none;
         flex-direction: column;
         overflow: hidden;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-family: 'DM Sans', system-ui, sans-serif;
       }
       #ppa-assistant-panel.open { display: flex; }
 
       /* Header */
       .ppa-chat-header {
-        background: #1a5276;
-        color: white;
-        padding: 16px 20px;
+        background: #1a1510;
+        border-bottom: 2px solid #b8860b;
+        color: #FFFDF7;
+        padding: 14px 18px;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -86,79 +108,105 @@ const PipingProAssistant = (() => {
         gap: 10px;
       }
       .ppa-chat-header-dot {
-        width: 10px;
-        height: 10px;
+        width: 9px;
+        height: 9px;
         background: #2ecc71;
         border-radius: 50%;
         flex-shrink: 0;
       }
       .ppa-chat-header h3 {
         margin: 0;
-        font-size: 15px;
+        font-size: 14px;
         font-weight: 600;
+        color: #d4a017;
         letter-spacing: 0.01em;
+        font-family: 'DM Serif Display', Georgia, serif;
       }
       .ppa-chat-header small {
         display: block;
-        font-size: 11px;
-        opacity: 0.8;
+        font-size: 10px;
+        color: #6b5d49;
         margin-top: 2px;
+        font-family: 'IBM Plex Mono', monospace;
       }
       .ppa-chat-close {
         background: none;
         border: none;
-        color: white;
+        color: #6b5d49;
         font-size: 22px;
         cursor: pointer;
         padding: 4px 8px;
-        opacity: 0.8;
-        transition: opacity 0.15s;
+        transition: color 0.15s;
       }
-      .ppa-chat-close:hover { opacity: 1; }
+      .ppa-chat-close:hover { color: #d4a017; }
 
       /* Messages area */
       .ppa-chat-messages {
         flex: 1;
         overflow-y: auto;
-        padding: 16px;
+        padding: 14px;
         display: flex;
         flex-direction: column;
-        gap: 12px;
-        background: #f8f9fa;
+        gap: 10px;
+        background: #f3ede2;
       }
       .ppa-chat-messages::-webkit-scrollbar { width: 4px; }
-      .ppa-chat-messages::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 4px; }
+      .ppa-chat-messages::-webkit-scrollbar-thumb { background: #c8b89a; border-radius: 4px; }
 
       .ppa-msg {
-        max-width: 88%;
+        max-width: 90%;
         padding: 10px 14px;
-        border-radius: 12px;
-        font-size: 13.5px;
-        line-height: 1.55;
+        border-radius: 10px;
+        font-size: 13px;
+        line-height: 1.6;
         word-wrap: break-word;
-        white-space: pre-wrap;
       }
       .ppa-msg-user {
         align-self: flex-end;
-        background: #1a5276;
-        color: white;
-        border-bottom-right-radius: 4px;
+        background: #1a1510;
+        color: #FFFDF7;
+        border-bottom-right-radius: 3px;
       }
       .ppa-msg-assistant {
         align-self: flex-start;
-        background: white;
-        color: #2d3748;
-        border: 1px solid #e2e8f0;
-        border-bottom-left-radius: 4px;
+        background: #faf6ef;
+        color: #1a1510;
+        border: 1px solid #c8b89a;
+        border-bottom-left-radius: 3px;
+      }
+      .ppa-msg-assistant pre {
+        background: #1a1510;
+        color: #d4a017;
+        padding: 8px 10px;
+        border-radius: 4px;
+        overflow-x: auto;
+        font-size: 11px;
+        margin: 6px 0;
+        font-family: 'IBM Plex Mono', monospace;
+      }
+      .ppa-msg-assistant code {
+        background: #e8dfd0;
+        padding: 1px 5px;
+        border-radius: 3px;
+        font-size: 12px;
+        font-family: 'IBM Plex Mono', monospace;
+      }
+      .ppa-msg-assistant pre code {
+        background: none;
+        padding: 0;
+      }
+      .ppa-msg-assistant strong {
+        color: #8b3a1a;
       }
       .ppa-msg-system {
         align-self: center;
-        background: #fff3cd;
+        background: #f5e9c8;
         color: #856404;
-        font-size: 12.5px;
+        font-size: 12px;
         text-align: center;
-        border-radius: 8px;
+        border-radius: 6px;
         padding: 8px 14px;
+        border: 1px solid #b8860b;
       }
 
       /* Loading dots */
@@ -167,15 +215,15 @@ const PipingProAssistant = (() => {
         display: flex;
         gap: 5px;
         padding: 14px 18px;
-        background: white;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        border-bottom-left-radius: 4px;
+        background: #faf6ef;
+        border: 1px solid #c8b89a;
+        border-radius: 10px;
+        border-bottom-left-radius: 3px;
       }
       .ppa-loading-dot {
         width: 7px;
         height: 7px;
-        background: #a0aec0;
+        background: #b8860b;
         border-radius: 50%;
         animation: ppaBounce 1.2s infinite ease-in-out;
       }
@@ -188,9 +236,9 @@ const PipingProAssistant = (() => {
 
       /* Input area */
       .ppa-chat-input-area {
-        padding: 12px 16px;
-        border-top: 1px solid #e2e8f0;
-        background: white;
+        padding: 10px 14px;
+        border-top: 1px solid #c8b89a;
+        background: #faf6ef;
         display: flex;
         gap: 8px;
         align-items: flex-end;
@@ -199,23 +247,25 @@ const PipingProAssistant = (() => {
       .ppa-chat-input {
         flex: 1;
         resize: none;
-        border: 1px solid #d1d5db;
-        border-radius: 10px;
-        padding: 10px 14px;
-        font-size: 13.5px;
-        font-family: inherit;
+        border: 1px solid #c8b89a;
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-size: 13px;
+        font-family: 'DM Sans', system-ui, sans-serif;
         line-height: 1.4;
         max-height: 100px;
         outline: none;
+        background: #fff;
+        color: #1a1510;
         transition: border-color 0.15s;
       }
-      .ppa-chat-input:focus { border-color: #1a5276; }
-      .ppa-chat-input::placeholder { color: #a0aec0; }
+      .ppa-chat-input:focus { border-color: #8b3a1a; }
+      .ppa-chat-input::placeholder { color: #6b5d49; }
 
       .ppa-chat-send {
-        background: #1a5276;
+        background: #8b3a1a;
         border: none;
-        border-radius: 10px;
+        border-radius: 8px;
         width: 40px;
         height: 40px;
         cursor: pointer;
@@ -225,9 +275,9 @@ const PipingProAssistant = (() => {
         flex-shrink: 0;
         transition: background 0.15s;
       }
-      .ppa-chat-send:hover { background: #1e6a9c; }
-      .ppa-chat-send:disabled { background: #a0aec0; cursor: not-allowed; }
-      .ppa-chat-send svg { width: 18px; height: 18px; fill: white; }
+      .ppa-chat-send:hover { background: #b04e22; }
+      .ppa-chat-send:disabled { background: #c8b89a; cursor: not-allowed; }
+      .ppa-chat-send svg { width: 18px; height: 18px; fill: #FFFDF7; }
 
       /* Upgrade overlay */
       .ppa-upgrade-overlay {
@@ -238,31 +288,32 @@ const PipingProAssistant = (() => {
         justify-content: center;
         padding: 32px 24px;
         text-align: center;
-        background: #f8f9fa;
+        background: #f3ede2;
       }
       .ppa-upgrade-overlay h4 {
         margin: 0 0 8px;
         font-size: 16px;
-        color: #1a5276;
+        color: #8b3a1a;
+        font-family: 'DM Serif Display', Georgia, serif;
       }
       .ppa-upgrade-overlay p {
-        margin: 0 0 20px;
-        font-size: 13.5px;
-        color: #4a5568;
+        margin: 0 0 16px;
+        font-size: 13px;
+        color: #4a3f30;
         line-height: 1.5;
       }
       .ppa-upgrade-btn {
-        background: #1a5276;
-        color: white;
+        background: #8b3a1a;
+        color: #FFFDF7;
         border: none;
         padding: 10px 24px;
-        border-radius: 8px;
-        font-size: 14px;
+        border-radius: 6px;
+        font-size: 13px;
         font-weight: 600;
         cursor: pointer;
         transition: background 0.15s;
       }
-      .ppa-upgrade-btn:hover { background: #1e6a9c; }
+      .ppa-upgrade-btn:hover { background: #b04e22; }
 
       /* Mobile adjustments */
       @media (max-width: 480px) {
@@ -285,109 +336,98 @@ const PipingProAssistant = (() => {
 
   // --- Build DOM ---
   function buildWidget() {
-    // Floating button
     const btn = document.createElement('button');
     btn.id = 'ppa-assistant-btn';
     btn.setAttribute('aria-label', 'Open AI Assistant');
-    btn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.2L4 17.2V4h16v12z"/><path d="M7 9h10v2H7zm0-3h10v2H7z"/></svg>`;
+    btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.2L4 17.2V4h16v12z"/><path d="M7 9h10v2H7zm0-3h10v2H7z"/></svg>';
     btn.addEventListener('click', togglePanel);
     document.body.appendChild(btn);
 
-    // Chat panel
     const panel = document.createElement('div');
     panel.id = 'ppa-assistant-panel';
-
     const tabLabel = config.activeTab || 'Pipeline Mechanical Design';
 
-    panel.innerHTML = `
-      <div class="ppa-chat-header">
-        <div class="ppa-chat-header-left">
-          <div class="ppa-chat-header-dot"></div>
-          <div>
-            <h3>PipingPro AI Assistant</h3>
-            <small>${tabLabel}</small>
-          </div>
-        </div>
-        <button class="ppa-chat-close" aria-label="Close">&times;</button>
-      </div>
-      ${config.tier === 'professional' || config.tier === 'admin'
-        ? `<div class="ppa-chat-messages" id="ppa-messages"></div>
-           <div class="ppa-chat-input-area">
-             <textarea class="ppa-chat-input" id="ppa-input" rows="1" placeholder="Ask about your pipeline design..."></textarea>
-             <button class="ppa-chat-send" id="ppa-send" aria-label="Send">
-               <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-             </button>
-           </div>`
-        : `<div class="ppa-upgrade-overlay">
-             <h4>AI Assistant</h4>
-             <p>Get expert guidance on pipeline mechanical design calculations, code interpretation, and input selection.</p>
-             <p>Available for <strong>Professional</strong> subscribers.</p>
-             <button class="ppa-upgrade-btn" onclick="window.location.href='/pricing'">Upgrade to Professional</button>
-           </div>`
-      }
-    `;
-    document.body.appendChild(panel);
+    panel.innerHTML =
+      '<div class="ppa-chat-header">' +
+        '<div class="ppa-chat-header-left">' +
+          '<div class="ppa-chat-header-dot"></div>' +
+          '<div>' +
+            '<h3>PipingPro AI Assistant</h3>' +
+            '<small>' + tabLabel + '</small>' +
+          '</div>' +
+        '</div>' +
+        '<button class="ppa-chat-close" aria-label="Close">&times;</button>' +
+      '</div>' +
+      (config.tier === 'professional' || config.tier === 'admin'
+        ? '<div class="ppa-chat-messages" id="ppa-messages"></div>' +
+          '<div class="ppa-chat-input-area">' +
+            '<textarea class="ppa-chat-input" id="ppa-input" rows="1" placeholder="Ask about your pipeline design..."></textarea>' +
+            '<button class="ppa-chat-send" id="ppa-send" aria-label="Send">' +
+              '<svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>' +
+            '</button>' +
+          '</div>'
+        : '<div class="ppa-upgrade-overlay">' +
+            '<h4>AI Assistant</h4>' +
+            '<p>Get expert guidance on pipeline mechanical design calculations, code interpretation, and input selection.</p>' +
+            '<p>Available for <strong>Professional</strong> subscribers.</p>' +
+            '<button class="ppa-upgrade-btn" onclick="window.location.href=\'/pricing\'">Upgrade to Professional</button>' +
+          '</div>'
+      );
 
-    // Event listeners
+    document.body.appendChild(panel);
     panel.querySelector('.ppa-chat-close').addEventListener('click', togglePanel);
 
     if (config.tier === 'professional' || config.tier === 'admin') {
       const input = document.getElementById('ppa-input');
       const sendBtn = document.getElementById('ppa-send');
-
       sendBtn.addEventListener('click', sendMessage);
-      input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-          e.preventDefault();
-          sendMessage();
-        }
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
       });
-
-      // Auto-resize textarea
-      input.addEventListener('input', () => {
+      input.addEventListener('input', function() {
         input.style.height = 'auto';
         input.style.height = Math.min(input.scrollHeight, 100) + 'px';
       });
-
-      // Welcome message
-      addMessage('assistant', `Welcome to PipingPro AI Assistant. I can help you with the ${tabLabel} calculator — from selecting inputs and interpreting results to understanding code requirements.\n\nWhat would you like to know?`);
+      addMessage('assistant', 'Welcome to PipingPro AI Assistant. I can help you with the ' + tabLabel + ' calculator \u2014 from selecting inputs and interpreting results to understanding code requirements.\n\nWhat would you like to know?');
     }
   }
 
-  // --- Toggle panel ---
   function togglePanel() {
     const panel = document.getElementById('ppa-assistant-panel');
     isOpen = !isOpen;
     panel.classList.toggle('open', isOpen);
     if (isOpen) {
       const input = document.getElementById('ppa-input');
-      if (input) setTimeout(() => input.focus(), 100);
+      if (input) setTimeout(function(){ input.focus(); }, 100);
     }
   }
 
-  // --- Add message to chat ---
   function addMessage(role, text) {
     const container = document.getElementById('ppa-messages');
     if (!container) return;
 
     const div = document.createElement('div');
-    div.className = `ppa-msg ppa-msg-${role}`;
-    div.textContent = text;
+    div.className = 'ppa-msg ppa-msg-' + role;
+
+    if (role === 'assistant') {
+      div.innerHTML = md(text);
+    } else {
+      div.textContent = text;
+    }
+
     container.appendChild(div);
     container.scrollTop = container.scrollHeight;
 
     if (role !== 'system') {
-      messages.push({ role, content: text });
+      messages.push({ role: role, content: text });
     }
   }
 
-  // --- Show/hide loading indicator ---
   function setLoading(show) {
     isLoading = show;
     const container = document.getElementById('ppa-messages');
     const sendBtn = document.getElementById('ppa-send');
     if (!container) return;
-
     const existing = container.querySelector('.ppa-loading');
     if (show && !existing) {
       const loader = document.createElement('div');
@@ -401,7 +441,6 @@ const PipingProAssistant = (() => {
     if (sendBtn) sendBtn.disabled = show;
   }
 
-  // --- Send message ---
   async function sendMessage() {
     if (isLoading) return;
     const input = document.getElementById('ppa-input');
@@ -414,7 +453,6 @@ const PipingProAssistant = (() => {
     setLoading(true);
 
     try {
-      // Get Memberstack token
       let msToken = '';
       if (window.$memberstackDom) {
         try {
@@ -431,7 +469,7 @@ const PipingProAssistant = (() => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: messages.map(m => ({ role: m.role, content: m.content })),
+          messages: messages.map(function(m){ return { role: m.role, content: m.content }; }),
           memberstackToken: msToken,
           activeTab: config.activeTab,
         }),
@@ -458,41 +496,23 @@ const PipingProAssistant = (() => {
     }
   }
 
-  // --- Public API ---
   return {
-    init(options = {}) {
-      config = { ...config, ...options };
+    init: function(options) {
+      config = Object.assign(config, options || {});
       if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-          injectStyles();
-          buildWidget();
-        });
+        document.addEventListener('DOMContentLoaded', function() { injectStyles(); buildWidget(); });
       } else {
-        injectStyles();
-        buildWidget();
+        injectStyles(); buildWidget();
       }
     },
-
-    // Allow external code to update the active tab
-    setActiveTab(tabName) {
+    setActiveTab: function(tabName) {
       config.activeTab = tabName;
-      const label = document.querySelector('.ppa-chat-header small');
+      var label = document.querySelector('.ppa-chat-header small');
       if (label) label.textContent = tabName;
     },
-
-    // Programmatically open the assistant
-    open() {
-      if (!isOpen) togglePanel();
-    },
-
-    // Programmatically close the assistant
-    close() {
-      if (isOpen) togglePanel();
-    },
+    open: function() { if (!isOpen) togglePanel(); },
+    close: function() { if (isOpen) togglePanel(); }
   };
 })();
 
-// Export for module environments
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = PipingProAssistant;
-}
+if (typeof module !== 'undefined' && module.exports) { module.exports = PipingProAssistant; }
