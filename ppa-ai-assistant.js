@@ -417,8 +417,14 @@ const PipingProAssistant = (() => {
       // Get Memberstack token
       let msToken = '';
       if (window.$memberstackDom) {
-        const tokenData = await window.$memberstackDom.getMemberJSON();
-        msToken = tokenData?.data ? JSON.stringify(tokenData.data) : '';
+        try {
+          const member = await window.$memberstackDom.getCurrentMember();
+          if (member && member.data) {
+            var pc = member.data.planConnections || [];
+            var planIds = pc.map(function(p){ return p.planId; });
+            msToken = JSON.stringify({ id: member.data.id, planIds: planIds });
+          }
+        } catch(e) { console.log('Memberstack token error:', e); }
       }
 
       const res = await fetch('/api/assistant', {
