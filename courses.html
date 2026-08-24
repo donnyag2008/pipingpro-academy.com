@@ -428,6 +428,7 @@ footer a{color:var(--gold-bright);text-decoration:none;}
   
 </footer>
 
+<script src="/ppa-tier.js"></script>
 <script>
 // ─── COURSE DATA ─────────────────────────────────────────────
 const COURSES = {
@@ -510,44 +511,9 @@ const COMING_SOON = {
 // detected below. The old ?admin=KEY URL bypass and hardcoded login
 // credential have been removed (they were a public backdoor).
 
-// ─── MEMBERSTACK PLAN DETECTION (single source of truth on window) ───
-const MS_STUDENT_PLAN = 'pln_student-plan-l416c0pbs';
-const MS_PRO_PLAN     = 'pln_professional-n2is0jc4';
-const MS_PRO_BCA      = 'pln_professional-bca-is6m0fay';
-const MS_ADMIN_PLAN   = 'pln_admin-vzd0rgr';
-const MS_STUDENT_BCA  = 'pln_student-bca-8mga0fjm';
-
-window.MS_MEMBER = null;
-window.MS_PLAN   = null;   // 'professional' | 'student' | null
-window.MS_READY  = false;
-
-async function msLoadMember(){
-  try{
-    const ms = window.$memberstackDom;
-    if(ms && ms.getCurrentMember){
-      const res = await ms.getCurrentMember();
-      const member = (res && res.data) ? res.data : (res || null);
-      window.MS_MEMBER = member;
-      window.MS_PLAN = null;
-      if(member && Array.isArray(member.planConnections)){
-        console.log('[PPA] planConnections:', member.planConnections);
-        const active = member.planConnections.filter(p =>
-          p.active || p.status === 'ACTIVE' || p.status === 'TRIALING');
-        const ids = active.map(p => p.planId);
-        if(ids.includes(MS_ADMIN_PLAN))        window.MS_PLAN = 'professional';
-        else if(ids.includes(MS_PRO_PLAN))     window.MS_PLAN = 'professional';
-        else if(ids.includes(MS_STUDENT_PLAN) || ids.includes(MS_STUDENT_BCA)) window.MS_PLAN = 'student';
-        else if(ids.includes(MS_STUDENT_PLAN)) window.MS_PLAN = 'student';
-      }
-    }
-  }catch(e){ console.warn('Memberstack load error', e); }
-  finally{ window.MS_READY = true; }
-}
-
-function isMember(){
-  if(localStorage.getItem('ppa_admin')==='1') return true;
-  return window.MS_PLAN === 'professional' || window.MS_PLAN === 'student';
-}
+// ─── MEMBERSTACK PLAN DETECTION — powered by ppa-tier.js ───
+// msLoadMember(), isMember(), memberPlan() are provided by ppa-tier.js
+// Plan IDs are maintained ONLY in ppa-tier.js — no duplication here.
 
 // ─── CARD STATE ──────────────────────────────────────────────
 function initCards(){

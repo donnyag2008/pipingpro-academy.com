@@ -98,13 +98,74 @@
     return RANK[memberTier()] >= RANK[requiredTier(id)];
   }
 
+  // ── Shared member state (replaces per-page MS_* globals) ───────
+  // Every page that needs login awareness now calls PPATIER.msLoadMember()
+  // instead of maintaining its own copy.  Plan IDs are resolved via the
+  // PLAN_TIER map above — add a new payment method there and every page
+  // picks it up automatically.
+
+  window.MS_MEMBER   = null;
+  window.MS_PLAN     = null;   // 'professional' | 'student' | null
+  window.MS_IS_ADMIN = false;
+  window.MS_READY    = false;
+
+  var ADMIN_PLAN_ID = 'pln_admin-vzd0rgr';
+
+  async function msLoadMember() {
+    try {
+      var ms = window.$memberstackDom;
+      if (ms && ms.getCurrentMember) {
+        var res    = await ms.getCurrentMember();
+        var member = (res && res.data) ? res.data : (res || null);
+        window.MS_MEMBER   = member;
+        window.MS_PLAN     = null;
+        window.MS_IS_ADMIN = false;
+        if (member && Array.isArray(member.planConnections)) {
+          var active = member.planConnections.filter(function (p) {
+            return p.active || p.status === 'ACTIVE' || p.status === 'TRIALING';
+          });
+          var best = 'free';
+          active.forEach(function (c) {
+            var t = PLAN_TIER[c.planId];
+            if (t && RANK[t] > RANK[best]) best = t;
+          });
+          if (best !== 'free') window.MS_PLAN = best;
+          window.MS_IS_ADMIN = active.some(function (c) {
+            return c.planId === ADMIN_PLAN_ID;
+          });
+        }
+      }
+    } catch (e) { console.warn('Memberstack load error', e); }
+    finally { window.MS_READY = true; }
+    // Also sync the localStorage tier cache used by calculators
+    localStorage.setItem('ppa_tier', window.MS_PLAN || 'free');
+    return window.MS_PLAN;
+  }
+
+  function isMember() {
+    if (localStorage.getItem('ppa_admin') === '1') return true;
+    return window.MS_PLAN === 'professional' || window.MS_PLAN === 'student';
+  }
+
+  function memberPlan() {
+    return window.MS_PLAN || null;
+  }
+
   // Expose
   window.PPATIER = window.PPATIER || {};
-  window.PPATIER.PLAN_TIER    = PLAN_TIER;
-  window.PPATIER.RANK         = RANK;
-  window.PPATIER.CALC_TIER    = CALC_TIER;
-  window.PPATIER.requiredTier = requiredTier;
-  window.PPATIER.resolveTier  = resolveTier;
-  window.PPATIER.memberTier   = memberTier;
-  window.PPATIER.hasAccess    = hasAccess;
+  window.PPATIER.PLAN_TIER     = PLAN_TIER;
+  window.PPATIER.RANK          = RANK;
+  window.PPATIER.CALC_TIER     = CALC_TIER;
+  window.PPATIER.requiredTier  = requiredTier;
+  window.PPATIER.resolveTier   = resolveTier;
+  window.PPATIER.memberTier    = memberTier;
+  window.PPATIER.hasAccess     = hasAccess;
+  window.PPATIER.msLoadMember  = msLoadMember;
+  window.PPATIER.isMember      = isMember;
+  window.PPATIER.memberPlan    = memberPlan;
+
+  // Also expose as globals for pages that call them directly
+  window.msLoadMember = msLoadMember;
+  window.isMember     = isMember;
+  window.memberPlan   = memberPlan;
 })();
