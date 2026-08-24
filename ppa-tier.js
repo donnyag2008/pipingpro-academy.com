@@ -157,11 +157,14 @@
 
   function isMember() {
     if (localStorage.getItem('ppa_admin') === '1') return true;
-    return window.MS_PLAN === 'professional' || window.MS_PLAN === 'student';
+    if (window.MS_PLAN === 'professional' || window.MS_PLAN === 'student') return true;
+    // Fallback: cached tier from previous page (instant, no async wait)
+    var cached = localStorage.getItem('ppa_tier');
+    return cached === 'professional' || cached === 'student';
   }
 
   function memberPlan() {
-    return window.MS_PLAN || null;
+    return window.MS_PLAN || localStorage.getItem('ppa_tier') || null;
   }
 
   // Expose
@@ -178,6 +181,7 @@
   window.PPATIER.memberPlan    = memberPlan;
 
   // Also expose as globals for pages that call them directly
+  window.waitForMemberstack = waitForMemberstack;
   window.msLoadMember = msLoadMember;
   window.isMember     = isMember;
   window.memberPlan   = memberPlan;
