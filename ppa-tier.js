@@ -111,9 +111,22 @@
 
   var ADMIN_PLAN_ID = 'pln_admin-vzd0rgr';
 
+  // ── Wait for Memberstack SDK to load ─────────────────────────
+  // The external MS script loads async; DOMContentLoaded often fires
+  // before it's ready.  This polls until $memberstackDom appears
+  // (up to 5 seconds), eliminating the "must refresh" problem.
+  async function waitForMemberstack(maxWait) {
+    maxWait = maxWait || 5000;
+    var start = Date.now();
+    while (!window.$memberstackDom && (Date.now() - start) < maxWait) {
+      await new Promise(function (r) { setTimeout(r, 100); });
+    }
+    return window.$memberstackDom || null;
+  }
+
   async function msLoadMember() {
     try {
-      var ms = window.$memberstackDom;
+      var ms = await waitForMemberstack();
       if (ms && ms.getCurrentMember) {
         var res    = await ms.getCurrentMember();
         var member = (res && res.data) ? res.data : (res || null);
