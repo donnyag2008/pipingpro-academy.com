@@ -150,8 +150,12 @@
       }
     } catch (e) { console.warn('Memberstack load error', e); }
     finally { window.MS_READY = true; }
-    // Also sync the localStorage tier cache used by calculators
-    localStorage.setItem('ppa_tier', window.MS_PLAN || 'free');
+    // Only sync the localStorage tier cache when Memberstack actually
+    // responded — otherwise preserve the cached tier from a previous
+    // successful load so cross-page navigation stays logged in.
+    if (window.MS_MEMBER !== null) {
+      localStorage.setItem('ppa_tier', window.MS_PLAN || 'free');
+    }
     return window.MS_PLAN;
   }
 
