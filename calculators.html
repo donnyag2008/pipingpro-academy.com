@@ -351,7 +351,7 @@ body{ background:#faf6ef; color:#1a1510; }
   <div class="suite-landing">
     <div class="suite-intro">
       <h2>Select an Engineering Toolkit</h2>
-      <p>Six specialist toolkits covering the full piping and pipeline engineering lifecycle — mechanical design, pipeline engineering, support engineering, stress analysis, project tools, and integrity assessment.</p>
+      <p>Four specialist toolkits covering the full piping and pipeline engineering lifecycle — mechanical design, pipeline engineering, support engineering, and stress analysis.</p>
     </div>
     <div class="suite-grid">
 
@@ -416,29 +416,7 @@ body{ background:#faf6ef; color:#1a1510; }
         </div>
       </div>
 
-      <!-- 4. Project Engineering -->
-      <div class="suite-card" onclick="window.location.href='pipe-mechanical-design-toolkits.html'">
-        <div class="suite-banner project">
-          <svg class="suite-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M16 8 H40 L50 18 V56 H16 Z" stroke="rgba(255,255,255,0.85)" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
-            <path d="M40 8 V18 H50" stroke="rgba(255,255,255,0.55)" stroke-width="2" fill="none"/>
-            <line x1="22" y1="28" x2="44" y2="28" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
-            <line x1="22" y1="35" x2="44" y2="35" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
-            <line x1="22" y1="42" x2="36" y2="42" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
-            <circle cx="46" cy="46" r="10" fill="rgba(255,210,130,0.9)"/>
-            <path d="M42 42 H50 L44 46 L50 50 H42" stroke="#2d0d4a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-          </svg>
-          <span class="suite-count">7 tools</span>
-        </div>
-        <div class="suite-body">
-          <div class="suite-name">Project Engineering</div>
-          <div class="suite-sub">AACE 18R-97 · ASME B31.3 · SAES-A-004 · API 6D</div>
-          <div class="suite-desc">Hydrostatic &amp; pneumatic test packs, piping work estimation, P&amp;ID MTO, dia-inch change-order — plus the valve datasheet suite: Creator, Verifier, and TBE.</div>
-          <button class="suite-btn open">Open Toolkit →</button>
-        </div>
-      </div>
-
-      <!-- 5. Piping Stress Analysis -->
+      <!-- 4. Piping Stress Analysis -->
       <div class="suite-card" onclick="window.location.href='pipe-stress-calculator-toolkits.html'">
         <div class="suite-banner stress">
           <svg class="suite-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -458,60 +436,11 @@ body{ background:#faf6ef; color:#1a1510; }
         </div>
       </div>
 
-      <!-- 6. Pipeline Integrity -->
-      <div class="suite-card no-action" onclick="openWipModal()">
-        <div class="suite-banner integrity">
-          <svg class="suite-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <line x1="4" y1="32" x2="60" y2="32" stroke="rgba(255,255,255,0.7)" stroke-width="7" stroke-linecap="round"/>
-            <rect x="4" y="25" width="56" height="14" rx="7" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" fill="none"/>
-            <circle cx="22" cy="29" r="3.5" fill="rgba(255,100,80,0.75)"/>
-            <circle cx="38" cy="35" r="2.5" fill="rgba(255,140,80,0.7)"/>
-            <circle cx="50" cy="28" r="3" fill="rgba(255,100,80,0.6)"/>
-            <line x1="32" y1="48" x2="32" y2="40" stroke="rgba(100,220,180,0.9)" stroke-width="2" stroke-linecap="round"/>
-            <polygon points="32,38 28,44 36,44" fill="rgba(100,220,180,0.9)"/>
-          </svg>
-          <span class="suite-count">Coming Soon</span>
-        </div>
-        <div class="suite-body">
-          <div class="suite-name">Pipeline Integrity</div>
-          <div class="suite-sub">ASME B31G · API 579 · DNV-RP-F101</div>
-          <div class="suite-desc">Remaining wall thickness, burst pressure, corrosion fitness-for-service, inspection interval, and corrosion growth rate estimation.</div>
-          <button class="suite-btn soon" onclick="openWipModal()">Learn More →</button>
-        </div>
-      </div>
 
     </div>
   </div>
 </div><!-- /landing-view -->
 
-
-<!-- ═══════════════════ UNDER CONSTRUCTION POPUP ═══════════════════ -->
-<div class="wip-modal-bg" id="wip-modal-bg" onclick="closeWipModalBg(event)">
-  <div class="wip-modal">
-    <button class="wip-modal-close" onclick="closeWipModal()">✕</button>
-    <div class="wip-top">
-      <div style="font-size:2rem;margin-bottom:.4rem;">🔧</div>
-      <div style="font-family:'DM Serif Display',serif;font-size:1rem;color:#fff;line-height:1.3;margin-bottom:.2rem;">Pipeline Integrity Toolkit</div>
-      <div style="font-size:10px;font-family:'DM Mono',monospace;color:rgba(255,255,255,.5);letter-spacing:.1em;text-transform:uppercase;">Under Development</div>
-    </div>
-    <div class="wip-modal-body">
-      <p style="font-size:12px;color:var(--ink2);line-height:1.7;margin-bottom:.9rem;text-align:center;">
-        We're currently building this toolkit — calculators for remaining wall thickness, burst pressure, corrosion fitness-for-service, and inspection intervals are in progress.<br><br>
-        <strong style="color:var(--ink);">Members will get access as each tool goes live.</strong>
-      </p>
-      <div style="background:var(--gold-light);border:1px solid rgba(184,146,42,.25);border-radius:8px;padding:.7rem 1rem;margin-bottom:.8rem;">
-        <div style="font-size:10px;font-family:'DM Mono',monospace;color:var(--gold);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.3rem;">Planned calculators</div>
-        <div style="font-size:11px;color:var(--ink2);line-height:1.8;">
-          📐 Remaining Wall Thickness (ASME B31G)<br>
-          💥 Burst Pressure (Modified B31G / DNV-RP-F101)<br>
-          🔍 Fitness-for-Service Assessment (API 579)<br>
-          📅 Corrosion Growth Rate &amp; Inspection Interval
-        </div>
-      </div>
-      <button onclick="closeWipModal()" style="width:100%;padding:9px;background:var(--accent);color:#fff;border-radius:8px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;">Got it</button>
-    </div>
-  </div>
-</div>
 
 <!-- ═══════════════════ PER-CALCULATOR COMING SOON ═══════════════════ -->
 <div class="wip-modal-bg" id="soon-modal-bg" onclick="closeSoonModalBg(event)">
