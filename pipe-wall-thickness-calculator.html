@@ -1667,23 +1667,7 @@ table.d tr:nth-child(even) td{background:#faf6ef}
   </div>
   <div class="disc"><b>Preliminary engineering output</b> — results must be independently verified by a competent engineer against the governing code edition${R.codeNote?(' ('+R.codeNote+')'):''} and project specifications before use in any design, procurement, or construction package. Issued subject to the PipingPro Academy Terms of Use. © 2026 Zephrum Konsultan Limited.</div>
   <div class="foot">${m.company||'PipingPro Academy'} · Generated with PipingPro Academy Calculator Suite · ${now}</div>
-</div></body></html>`;
-  const w=window.open('','_blank'); w.document.write(html); w.document.close(); ppaCloseReport();
-}
-</script>
-<!-- ════════ end Shared Report Engine ════════ -->
-<script src="/ppa-report-gate.js"></script>
-
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js');
-      });
-    }
-  </script>
-  <script src="/ppa-autofill.js"></script>
-</body>
-
+</div>
 <script>
   window.PPA_AI_CALCULATOR = 'wall-thickness';
   window.PPA_AI_TAB_DETECTOR = function() {
@@ -1710,6 +1694,25 @@ table.d tr:nth-child(even) td{background:#faf6ef}
     PipingProAssistant.init({ tier: tier });
   });
 </script>
+
+</body></html>`;
+  const w=window.open('','_blank'); w.document.write(html); w.document.close(); ppaCloseReport();
+}
+</script>
+<!-- ════════ end Shared Report Engine ════════ -->
+<script src="/ppa-report-gate.js"></script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js');
+      });
+    }
+  </script>
+  <script src="/ppa-autofill.js"></script>
+</body>
+
+
   
 </body>
 </html>
