@@ -1684,7 +1684,32 @@ table.d tr:nth-child(even) td{background:#faf6ef}
   <script src="/ppa-autofill.js"></script>
 </body>
 
-
+<script>
+  window.PPA_AI_CALCULATOR = 'wall-thickness';
+  window.PPA_AI_TAB_DETECTOR = function() {
+    if (document.getElementById('panel-b313')?.classList.contains('active')) return 'ASME B31.3 — Process Piping';
+    if (document.getElementById('panel-b314')?.classList.contains('active')) return 'ASME B31.4 — Liquid Pipelines';
+    if (document.getElementById('panel-b318')?.classList.contains('active')) return 'ASME B31.8 — Gas Transmission';
+    return 'Wall Thickness Calculator';
+  };
+</script>
+<script src="/ppa-ai-assistant.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    let tier = 'free';
+    if (window.$memberstackDom) {
+      try {
+        const member = await window.$memberstackDom.getCurrentMember();
+        if (member && member.data) {
+          const planIds = (member.data.planConnections || []).map(p => p.planId);
+          if (planIds.includes('pln_admin-vzd0rgr')) tier = 'admin';
+          else if (planIds.includes('pln_professional-n2is0jc4') || planIds.includes('pln_professional-bca-is6m0fay')) tier = 'professional';
+        }
+      } catch(e) {}
+    }
+    PipingProAssistant.init({ tier: tier });
+  });
+</script>
   
 </body>
 </html>
