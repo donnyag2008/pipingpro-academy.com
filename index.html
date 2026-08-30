@@ -161,7 +161,8 @@
     @keyframes dotPulse { 0%,100% { opacity:.25; transform:scale(.85); } 50% { opacity:1; transform:scale(1); } }
 
     /* ── INPUT BAR ── */
-    .input-bar { flex-shrink: 0; background: var(--ink); border-top: 2px solid var(--gold); padding: 14px 5%; position: relative; z-index: 1; }
+    .input-bar { flex-shrink: 0; background: var(--ink); border-top: 2px solid var(--gold); padding: 14px 5%; position: relative; z-index: 1; display: none; }
+    .input-bar.active { display: block; }
     .input-wrap { max-width: 740px; margin: 0 auto; display: flex; gap: 8px; align-items: flex-end; }
     .input-wrap textarea {
       flex: 1; padding: 14px 16px; border-radius: 6px; border: 2px solid var(--gold);
@@ -171,6 +172,8 @@
     }
     .input-wrap textarea:focus { outline: none; border-color: var(--gold-bright); box-shadow: 0 0 0 3px rgba(184,134,11,0.25); }
     .input-wrap textarea::placeholder { color: #999; }
+    #welcomeInput:focus { outline: none; border-color: var(--gold-bright); box-shadow: 0 0 0 3px rgba(184,134,11,0.25); }
+    #welcomeInput::placeholder { color: var(--ink-light); }
     .send-btn {
       width: 44px; height: 44px; border-radius: 4px; background: var(--gold); color: var(--ink);
       border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
@@ -312,6 +315,21 @@
         <p class="welcome-eyebrow">Piping & Pipeline Engineering AI Assistant</p>
         <h1>What Do You Want to<br><em>Learn or Calculate</em> Today?</h1>
         <p class="welcome-sub">Ask any piping engineering question — I'll calculate with ASME code databases or explain the concept. Or both.</p>
+
+        <!-- Input moved up into welcome -->
+        <div class="welcome-input-wrap" style="max-width:620px;margin:0 auto 2.5rem;display:flex;gap:8px;align-items:flex-end;opacity:0;animation:fadeUp .7s .45s forwards;">
+          <textarea id="welcomeInput" rows="1" placeholder="What do you want to learn or calculate today?"
+            onkeydown="handleWelcomeKey(event)" oninput="autoResizeWelcome(this)"
+            style="flex:1;padding:14px 16px;border-radius:6px;border:2px solid var(--gold);font-size:0.95rem;font-family:'DM Sans',sans-serif;resize:none;line-height:1.5;background:var(--paper);color:var(--ink);overflow-y:hidden;transition:border-color .15s,box-shadow .15s;"></textarea>
+          <button id="welcomeSendBtn" onclick="submitFromWelcome()" disabled
+            style="width:44px;height:44px;border-radius:4px;background:var(--gold);color:var(--ink);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s;flex-shrink:0;font-weight:700;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+        <div style="max-width:620px;margin:-1.8rem auto 2.5rem;opacity:0;animation:fadeUp .7s .5s forwards;">
+          <div class="input-note" style="color:var(--ink-light);">Powered by ASME B31.3 · B16.5 · B16.47 databases — 259+ materials · All NPS sizes · Full PT ratings</div>
+        </div>
+
         <div class="ex-section">
           <div class="ex-group">
             <div class="ex-label">⚙ Calculate</div>
@@ -539,10 +557,16 @@ let messages=[];let isLoading=false;
 const $=id=>document.getElementById(id);
 const chatInner=$('chatInner'),chatArea=$('chatArea'),userInput=$('userInput'),sendBtn=$('sendBtn'),newBtn=$('newBtn'),welcomeBlock=$('welcomeBlock');
 userInput.addEventListener('input',()=>{sendBtn.disabled=!userInput.value.trim()||isLoading;});
+const welcomeInputEl=$('welcomeInput'),welcomeSendBtnEl=$('welcomeSendBtn'),inputBar=document.querySelector('.input-bar');
+if(welcomeInputEl){welcomeInputEl.addEventListener('input',()=>{welcomeSendBtnEl.disabled=!welcomeInputEl.value.trim();});}
+function autoResizeWelcome(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px';}
+function handleWelcomeKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submitFromWelcome();}}
+function submitFromWelcome(){const q=welcomeInputEl.value.trim();if(!q)return;welcomeInputEl.value='';welcomeInputEl.style.height='auto';welcomeSendBtnEl.disabled=true;submitQuery(q);}
+
 function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px';}
 function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submitQuery();}}
 function scrollToBottom(){chatArea.scrollTop=chatArea.scrollHeight;window.scrollTo(0,0);}
-function resetChat(){messages=[];chatInner.innerHTML='';chatInner.appendChild(welcomeBlock);welcomeBlock.style.display='';newBtn.style.display='none';userInput.value='';userInput.style.height='auto';sendBtn.disabled=true;userInput.focus();}
+function resetChat(){messages=[];chatInner.innerHTML='';chatInner.appendChild(welcomeBlock);welcomeBlock.style.display='';inputBar.classList.remove('active');newBtn.style.display='none';userInput.value='';userInput.style.height='auto';sendBtn.disabled=true;welcomeInputEl.focus();}
 
 // ── RENDER ──
 function renderResultCard(tr){const r=tr.result;if(r.error)return'';if(tr.name==='route_to_calculator'&&r.url){const calcName=r.calculator.replace('.html','').replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase());let paramsHtml='';if(r.params){for(const[k,v]of Object.entries(r.params)){const dk=k.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase());paramsHtml+=`<div class="result-row"><span class="result-key">${esc(dk)}</span><span class="result-val">${esc(String(v))}</span></div>`;}}return`<div class="result-card"><div class="result-header"><span>⚙ ${esc(calcName)}</span></div>${paramsHtml?'<div>'+paramsHtml+'</div>':''}<div style="padding:12px 14px"><a href="${r.url}" style="display:block;text-align:center;background:var(--gold);color:var(--ink);padding:12px 20px;border-radius:4px;font-weight:800;font-size:0.88rem;text-decoration:none;text-transform:uppercase;letter-spacing:0.05em;transition:background 0.2s;font-family:DM Sans,sans-serif" onmouseenter="this.style.background=\'var(--gold-bright)\'" onmouseleave="this.style.background=\'var(--gold)\'">Open Calculator →</a></div></div>`;}return'';}
@@ -561,7 +585,7 @@ function incQuestionCount(){const key='ppa_q_'+new Date().toISOString().slice(0,
 function isLimitReached(){if(isMember())return false;return getQuestionCount()>=FREE_DAILY_LIMIT;}
 function showLimitMessage(){welcomeBlock.style.display='none';newBtn.style.display='';chatInner.insertAdjacentHTML('beforeend',`<div class="msg-ai"><div class="ai-text"><p><strong>You've reached your daily limit of ${FREE_DAILY_LIMIT} free questions.</strong></p><p>Become a member to get unlimited access to PipingPro AI, all engineering calculators, courses with certificates, and more.</p><p><a href="#" onclick="event.preventDefault();openLoginModal();" style="display:inline-block;background:var(--gold);color:var(--ink);padding:10px 24px;border-radius:4px;font-weight:800;text-decoration:none;text-transform:uppercase;letter-spacing:0.05em;font-size:0.85rem;margin-top:8px;">Login or Sign Up →</a></p><p style="margin-top:8px;font-size:0.82rem;color:var(--ink-light);">Your free questions reset tomorrow.</p></div></div>`);chatArea.scrollTop=chatArea.scrollHeight;window.scrollTo(0,0);}
 
-async function submitQuery(text){const q=(text||userInput.value).trim();if(!q||isLoading)return;if(isLimitReached()){showLimitMessage();return;}userInput.value='';userInput.style.height='auto';sendBtn.disabled=true;isLoading=true;welcomeBlock.style.display='none';newBtn.style.display='';messages.push({role:'user',content:q});chatInner.insertAdjacentHTML('beforeend',`<div class="msg-user"><div class="bubble">${esc(q)}</div></div>`);scrollToBottom();const loadEl=document.createElement('div');loadEl.className='loading';loadEl.innerHTML='<div class="dots"><span></span><span></span><span></span></div><span class="load-text">Working on it...</span>';chatInner.appendChild(loadEl);scrollToBottom();try{let apiMessages=messages.map(m=>({role:m.role,content:m.content}));let finalText='',toolResults=[],iterations=0;while(iterations<6){iterations++;const resp=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1500,system:SYSTEM_PROMPT,tools:TOOLS,messages:apiMessages})});const data=await resp.json();if(data.error){finalText='Sorry, something went wrong. Please try again.';break;}const textBlocks=(data.content||[]).filter(b=>b.type==='text');const toolUseBlocks=(data.content||[]).filter(b=>b.type==='tool_use');if(toolUseBlocks.length>0){const results=toolUseBlocks.map(tu=>{const result=execTool(tu.name,tu.input);toolResults.push({id:tu.id,name:tu.name,input:tu.input,result});return{type:'tool_result',tool_use_id:tu.id,content:JSON.stringify(result)};});apiMessages.push({role:'assistant',content:data.content});apiMessages.push({role:'user',content:results});if(data.stop_reason==='end_turn'){finalText=textBlocks.map(b=>b.text).join('\n');break;}}else{finalText=textBlocks.map(b=>b.text).join('\n');break;}}loadEl.remove();let html='<div class="msg-ai"><div>';if(toolResults.length){html+='<div style="margin-bottom:12px">';toolResults.forEach(tr=>{html+=renderResultCard(tr);});html+='</div>';}html+=`<div class="ai-text">${formatAiText(finalText)}</div></div></div>`;chatInner.insertAdjacentHTML('beforeend',html);messages.push({role:'assistant',content:finalText});incQuestionCount();}catch(err){loadEl.remove();chatInner.insertAdjacentHTML('beforeend','<div class="msg-ai"><div class="ai-text"><p>Connection error. Please try again.</p></div></div>');}isLoading=false;sendBtn.disabled=!userInput.value.trim();scrollToBottom();userInput.focus();}
+async function submitQuery(text){const q=(text||userInput.value).trim();if(!q||isLoading)return;if(isLimitReached()){showLimitMessage();return;}userInput.value='';userInput.style.height='auto';sendBtn.disabled=true;isLoading=true;welcomeBlock.style.display='none';inputBar.classList.add('active');newBtn.style.display='';messages.push({role:'user',content:q});chatInner.insertAdjacentHTML('beforeend',`<div class="msg-user"><div class="bubble">${esc(q)}</div></div>`);scrollToBottom();const loadEl=document.createElement('div');loadEl.className='loading';loadEl.innerHTML='<div class="dots"><span></span><span></span><span></span></div><span class="load-text">Working on it...</span>';chatInner.appendChild(loadEl);scrollToBottom();try{let apiMessages=messages.map(m=>({role:m.role,content:m.content}));let finalText='',toolResults=[],iterations=0;while(iterations<6){iterations++;const resp=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1500,system:SYSTEM_PROMPT,tools:TOOLS,messages:apiMessages})});const data=await resp.json();if(data.error){finalText='Sorry, something went wrong. Please try again.';break;}const textBlocks=(data.content||[]).filter(b=>b.type==='text');const toolUseBlocks=(data.content||[]).filter(b=>b.type==='tool_use');if(toolUseBlocks.length>0){const results=toolUseBlocks.map(tu=>{const result=execTool(tu.name,tu.input);toolResults.push({id:tu.id,name:tu.name,input:tu.input,result});return{type:'tool_result',tool_use_id:tu.id,content:JSON.stringify(result)};});apiMessages.push({role:'assistant',content:data.content});apiMessages.push({role:'user',content:results});if(data.stop_reason==='end_turn'){finalText=textBlocks.map(b=>b.text).join('\n');break;}}else{finalText=textBlocks.map(b=>b.text).join('\n');break;}}loadEl.remove();let html='<div class="msg-ai"><div>';if(toolResults.length){html+='<div style="margin-bottom:12px">';toolResults.forEach(tr=>{html+=renderResultCard(tr);});html+='</div>';}html+=`<div class="ai-text">${formatAiText(finalText)}</div></div></div>`;chatInner.insertAdjacentHTML('beforeend',html);messages.push({role:'assistant',content:finalText});incQuestionCount();}catch(err){loadEl.remove();chatInner.insertAdjacentHTML('beforeend','<div class="msg-ai"><div class="ai-text"><p>Connection error. Please try again.</p></div></div>');}isLoading=false;sendBtn.disabled=!userInput.value.trim();scrollToBottom();userInput.focus();}
 
 // ═══════════════════════════════════════════════════════════════════════
 // MEMBERSTACK AUTH — powered by ppa-tier.js (single source of truth)
