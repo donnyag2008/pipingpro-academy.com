@@ -1,6 +1,6 @@
 /**
- * PipingPro AI Assistant — Chat Widget v1.1
- * Brand-matched + Markdown rendering
+ * PipingPro AI Assistant — Chat Widget v1.2
+ * Brand-matched + Markdown rendering + Multi-calculator routing
  */
 
 const PipingProAssistant = (() => {
@@ -8,6 +8,19 @@ const PipingProAssistant = (() => {
   let messages = [];
   let isOpen = false;
   let isLoading = false;
+
+  // --- Multi-calculator support ---
+  function getCalculatorId() {
+    return window.PPA_AI_CALCULATOR || 'pipeline-mech';
+  }
+  function resolveActiveTab() {
+    if (typeof window.PPA_AI_TAB_DETECTOR === 'function') return window.PPA_AI_TAB_DETECTOR();
+    return config.activeTab || 'Calculator';
+  }
+  var CALC_NAMES = {
+    'pipeline-mech': 'Pipeline Mechanical Design',
+    'wall-thickness': 'Pipe Wall Thickness'
+  };
 
   // --- Simple Markdown to HTML ---
   function md(text) {
@@ -345,7 +358,9 @@ const PipingProAssistant = (() => {
 
     const panel = document.createElement('div');
     panel.id = 'ppa-assistant-panel';
-    const tabLabel = config.activeTab || 'Pipeline Mechanical Design';
+    var calcId = getCalculatorId();
+    var calcName = CALC_NAMES[calcId] || 'Calculator';
+    const tabLabel = resolveActiveTab();
 
     panel.innerHTML =
       '<div class="ppa-chat-header">' +
@@ -353,7 +368,7 @@ const PipingProAssistant = (() => {
           '<div class="ppa-chat-header-dot"></div>' +
           '<div>' +
             '<h3>PipingPro AI Assistant</h3>' +
-            '<small>' + tabLabel + '</small>' +
+            '<small id="ppa-header-context">' + tabLabel + '</small>' +
           '</div>' +
         '</div>' +
         '<button class="ppa-chat-close" aria-label="Close">&times;</button>' +
@@ -368,7 +383,7 @@ const PipingProAssistant = (() => {
           '</div>'
         : '<div class="ppa-upgrade-overlay">' +
             '<h4>AI Assistant</h4>' +
-            '<p>Get expert guidance on pipeline mechanical design calculations, code interpretation, and input selection.</p>' +
+            '<p>Get expert guidance on ' + calcName.toLowerCase() + ' calculations, code interpretation, and input selection.</p>' +
             '<p>Available for <strong>Professional</strong> subscribers.</p>' +
             '<button class="ppa-upgrade-btn" onclick="window.location.href=\'/pricing\'">Upgrade to Professional</button>' +
           '</div>'
@@ -388,7 +403,7 @@ const PipingProAssistant = (() => {
         input.style.height = 'auto';
         input.style.height = Math.min(input.scrollHeight, 100) + 'px';
       });
-      addMessage('assistant', 'Welcome to PipingPro AI Assistant. I can help you with the ' + tabLabel + ' calculator \u2014 from selecting inputs and interpreting results to understanding code requirements.\n\nWhat would you like to know?');
+      addMessage('assistant', 'Welcome to PipingPro AI Assistant. I can help you with the ' + calcName + ' calculator \u2014 from selecting inputs and interpreting results to understanding code requirements.\n\nWhat would you like to know?');
     }
   }
 
@@ -397,6 +412,8 @@ const PipingProAssistant = (() => {
     isOpen = !isOpen;
     panel.classList.toggle('open', isOpen);
     if (isOpen) {
+      var ctxLabel = document.getElementById('ppa-header-context');
+      if (ctxLabel) ctxLabel.textContent = resolveActiveTab();
       const input = document.getElementById('ppa-input');
       if (input) setTimeout(function(){ input.focus(); }, 100);
     }
@@ -471,7 +488,8 @@ const PipingProAssistant = (() => {
         body: JSON.stringify({
           messages: messages.map(function(m){ return { role: m.role, content: m.content }; }),
           memberstackToken: msToken,
-          activeTab: config.activeTab,
+          activeTab: resolveActiveTab(),
+          calculator: getCalculatorId(),
         }),
       });
 
@@ -507,7 +525,7 @@ const PipingProAssistant = (() => {
     },
     setActiveTab: function(tabName) {
       config.activeTab = tabName;
-      var label = document.querySelector('.ppa-chat-header small');
+      var label = document.getElementById('ppa-header-context');
       if (label) label.textContent = tabName;
     },
     open: function() { if (!isOpen) togglePanel(); },
