@@ -178,6 +178,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:15p
   .form-grid{grid-template-columns:1fr;}
   .dd-grid{grid-template-columns:1fr 1fr;}
   .dd-readout{grid-template-columns:repeat(3,1fr);}
+
+  /* ── overflow fix ── */
+  .design-data{max-width:100%;overflow:hidden;padding:14px 12px;}
+  .dd-group,.dd-val,.form-group{min-width:0;overflow:hidden;}
+  .dd-group select,.dd-group input{min-width:0;max-width:100%;text-overflow:ellipsis;}
+  .result-table{display:block;overflow-x:auto;}
 }
 </style>
 </head>
