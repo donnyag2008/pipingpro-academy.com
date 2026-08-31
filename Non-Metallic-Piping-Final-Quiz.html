@@ -13,30 +13,26 @@
 <!-- PPA COURSE GATE — unified (members-only: any paid plan, incl. admin) -->
 <script>
 (function(){
-  var STUDENT_PLAN = 'pln_student-plan-l416c0pbs';
-  var PRO_PLAN     = 'pln_professional-n2is0jc4';
-  var ADMIN_PLAN   = 'pln_admin-vzd0rgr';
-  var REDIRECT     = '/membership-plan';   // where non-members are sent
-  if (localStorage.getItem('ppa_admin') === '1') return; // devtools admin bypass
+  var STUDENT_PLAN     = 'pln_student-plan-l416c0pbs';
+  var STUDENT_BCA_PLAN = 'pln_student-bca-8mga0fjm';
+  var PRO_PLAN         = 'pln_professional-n2is0jc4';
+  var PRO_BCA_PLAN     = 'pln_professional-bca-is6m0fay'; //
+  var ADMIN_PLAN       = 'pln_admin-vzd0rgr';
+  var REDIRECT         = '/membership-plan';
+
+  if (localStorage.getItem('ppa_admin') === '1') return;
+
   function hasPaidPlan(member){
     if(!member || !Array.isArray(member.planConnections)) return false;
     return member.planConnections.some(function(p){
       var live = p.active || p.status === 'ACTIVE' || p.status === 'TRIALING';
-      return live && (p.planId === STUDENT_PLAN || p.planId === PRO_PLAN || p.planId === ADMIN_PLAN);
+      return live && (
+        p.planId === STUDENT_PLAN     || p.planId === STUDENT_BCA_PLAN ||
+        p.planId === PRO_PLAN         || p.planId === PRO_BCA_PLAN     ||
+        p.planId === ADMIN_PLAN
+      );
     });
   }
-  function gate(){
-    var ms = window.$memberstackDom;
-    if(!ms || !ms.getCurrentMember){ location.replace(REDIRECT); return; }
-    ms.getCurrentMember().then(function(r){
-      var member = (r && r.data) ? r.data : null;
-      if(!hasPaidPlan(member)){ location.replace(REDIRECT); }
-    }).catch(function(){ location.replace(REDIRECT); });
-  }
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', gate);
-  } else { gate(); }
-})();
 </script>
 <title>Non-Metallic Piping Essentials — Final Assessment — PipingPro Academy</title>
 <meta name="description" content="Final assessment for Course 4: Non-Metallic Piping Essentials. 20 questions, 80% pass mark, with a downloadable completion certificate. By Donny A. Bachtiar."/>
