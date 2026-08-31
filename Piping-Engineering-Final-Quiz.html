@@ -12,7 +12,8 @@
 <!-- PPA COURSE GATE — unified (members-only: any paid plan, incl. admin) -->
 <script>
 (function(){
-  var STUDENT_PLAN = 'pln_student-plan-l416c0pbs';
+   var STUDENT_PLAN = 'pln_student-plan-l416c0pbs';
+  var STUDENT_BCA_PLAN = 'pln_student-bca-8mga0fjm'; 
   var PRO_PLAN     = 'pln_professional-n2is0jc4';
   var ADMIN_PLAN   = 'pln_admin-vzd0rgr';
   var REDIRECT     = '/membership-plan';   // where non-members are sent
@@ -21,7 +22,7 @@
     if(!member || !Array.isArray(member.planConnections)) return false;
     return member.planConnections.some(function(p){
       var live = p.active || p.status === 'ACTIVE' || p.status === 'TRIALING';
-      return live && (p.planId === STUDENT_PLAN || p.planId === PRO_PLAN || p.planId === ADMIN_PLAN);
+     return live && (p.planId === STUDENT_PLAN || p.planId === STUDENT_BCA_PLAN || p.planId === PRO_PLAN || p.planId === ADMIN_PLAN);
     });
   }
   function gate(){
