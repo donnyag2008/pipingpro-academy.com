@@ -52,7 +52,7 @@
     mc: 'student',
     sv: 'student',
     bp: 'student'
-    // everything else (fx, scl, fl, pe, di, ss, tr, pc, ub, df, sp, hp, nl, pm, vf, ci, cp)
+    // everything else (fx, scl, fl, pe, di, ss, tr, pc, ub, df, sp, hp, nl, pm, vf, ci, cp, im)
     // → professional (the default for anything not listed)
   };
 

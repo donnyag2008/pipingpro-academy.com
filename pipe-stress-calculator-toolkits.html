@@ -414,16 +414,16 @@ body{ background:#faf6ef; color:#1a1510; }
       </div>
     </div>
 
-    <div class="calc-card soon" onclick="openSoonModal('im')">
-      <div class="card-img bg-navy">
+    <div class="calc-card" onclick="openModal('im')">
+      <div class="card-img" style="background:linear-gradient(135deg,#2a3a2a 0%,#4a7a3a 100%)">
         <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 70 L14 26 L76 26" stroke="rgba(255,255,255,0.85)" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="8" y="64" width="12" height="8" rx="1" fill="rgba(255,255,255,0.55)"/><rect x="74" y="20" width="8" height="12" rx="1" fill="rgba(255,255,255,0.55)"/><line x1="14" y1="46" x2="30" y2="46" stroke="rgba(255,220,120,0.9)" stroke-width="2" stroke-linecap="round"/><polygon points="32,46 25,43 25,49" fill="rgba(255,220,120,0.9)"/><line x1="42" y1="26" x2="42" y2="42" stroke="rgba(255,220,120,0.9)" stroke-width="2" stroke-linecap="round"/><polygon points="42,44 39,37 45,37" fill="rgba(255,220,120,0.9)"/></svg>
-        <span class="card-badge badge-soon" id="badge-im">Coming Soon</span>
+        <span class="card-badge badge-member" id="badge-im">👑 Members</span>
       </div>
       <div class="card-body">
         <div class="card-name">Initial Movement Calculator</div>
-        <div class="card-desc">Quick-estimate of anchor/elbow movements from thermal expansion — input pipe geometry and temperature to get directional displacements before running a full model.</div>
-        <div class="card-tags"><span class="tag">ASME B31.3</span><span class="tag">Thermal</span><span class="tag">Movement</span></div>
-        <div class="card-action"><span class="card-btn btn-soon" id="btn-im">Coming Soon →</span></div>
+        <div class="card-desc">Calculate initial nozzle/support displacement due to equipment thermal growth — for input into CAESAR II or AutoPIPE stress analysis. Covers vertical/horizontal vessels, pumps, heat exchangers, compressors, air coolers and tanks.</div>
+        <div class="card-tags"><span class="tag">ASME B31.3</span><span class="tag">CAESAR II</span><span class="tag">Thermal Growth</span></div>
+        <div class="card-action"><span class="card-btn btn-locked" id="btn-im">👑 Members Only</span></div>
       </div>
     </div>
 
@@ -532,11 +532,11 @@ const CALCS = {
   fl:{name:'Flange Leakage Check',desc:'PEQ method — flange leakage under combined pressure, bending and axial force per ASME B16.5.',tags:['ASME B16.5','PEQ Method'],file:'flange-leakage-check.html'},
   nl:{name:'Nozzle Loads Checker',desc:'Nozzle load verification per API 610, API 617, API 661 and WRC 107/297.',tags:['API 610','API 617','WRC 107/297'],file:'nozzle-loads-checker.html'},
   vf:{name:'Vibration Fatigue Calculator',desc:'Reciprocating compressor piping — MNFP, allowable span, pulsation per API-618.',tags:['API-618','ASME B31.3'],file:'vibration-fatigue-calculator.html'},
-  im:{name:'Initial Movement Calculator',desc:'Quick-estimate anchor/elbow movements from thermal expansion before full modelling.',tags:['ASME B31.3','Thermal','Movement'],file:'#'}
+  im:{name:'Initial Movement Calculator',desc:'Calculate initial nozzle/support displacement due to equipment thermal growth — vertical/horizontal vessels, pumps, heat exchangers, compressors, air coolers & tanks. For CAESAR II / AutoPIPE input.',tags:['ASME B31.3','CAESAR II','Thermal Growth'],file:'initial-movement.html'}
 };
 
 // ─── COMING SOON ─────────────────────────────────────────────
-const COMING_SOON = new Set(['im']);
+const COMING_SOON = new Set([]);
 
 // ─── FREE (public, no login) ─────────────────────────────────
 const FREE = new Set(['pw','wt','uc','md']);
