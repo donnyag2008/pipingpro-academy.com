@@ -332,7 +332,18 @@ code,pre,.mono,[class*="mono"]{font-family:'IBM Plex Mono',ui-monospace,monospac
 <div class="card">
   <div class="ctitle">Vertical Vessel — Nozzle Movements</div>
   <div class="info-box">
-    Fixed point is the base support or skirt anchor bolt. Displacement is calculated <strong>section by section</strong> between consecutive nozzles. For each section: T<sub>avg</sub> = (T<sub>lower</sub> + T<sub>upper</sub>) / 2, then α is looked up at T<sub>avg</sub>, and section expansion = α × L<sub>section</sub> × (T<sub>avg</sub> − T<sub>install</sub>). The displacement at each nozzle is the <strong>cumulative sum</strong> of all section expansions below it. Each nozzle has its own shell temperature depending on the process stream.
+    Each nozzle is calculated independently: <strong>Δ = e(T<sub>avg</sub>) × H</strong>, where T<sub>avg</sub> = (T<sub>i</sub> + T<sub>above</sub>) / 2 for bottom/middle nozzles, and T<sub>avg</sub> = T<sub>own</sub> for the top nozzle. Nozzle heights are measured from the <strong>Top of Skirt (TOS)</strong>: positive = above TOS, negative = below TOS.
+  </div>
+
+  <div style="background:#fff8ee;border:1px solid #d4a017;border-left:4px solid #d4a017;border-radius:0 8px 8px 0;padding:1rem 1.2rem;margin-bottom:1rem;font-size:12.5px;color:#4a3f30;line-height:1.8;">
+    <div style="font-size:11px;font-weight:700;color:#b8860b;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem;">⚠ Why Top of Skirt (TOS) — not the anchor bolt?</div>
+    A common mistake made by junior engineers is measuring nozzle heights from the <strong>bottom of the skirt</strong> (anchor bolt level). This is incorrect.<br/><br/>
+    The skirt is a structural shell that connects the vessel to the foundation — but it contains <strong>no process fluid</strong>. Because there is no hot (or cold) fluid inside the skirt, the skirt experiences <strong>no thermal expansion</strong>. The thermal growth of the vessel starts only where the vessel shell begins — at the <strong>Top of Skirt (TOS)</strong>, where the skirt is welded to the vessel body.<br/><br/>
+    This means:<br/>
+    <strong style="color:#1a6b5a;">▸ Nozzles above TOS</strong> — the shell grows <em>upward</em> from TOS. These nozzles move <strong>up (+Y)</strong> in hot service.<br/>
+    <strong style="color:#8b3a1a;">▸ Nozzles below TOS</strong> — typically bottom-head nozzles or L-shaped nozzles exiting below the skirt. Since TOS is the fixed point and the bottom head hangs below it, these nozzles move <strong>down (−Y)</strong> in hot service.<br/>
+    <strong style="color:#4a3f30;">▸ Cryogenic service</strong> — the vessel <em>contracts</em> instead of expanding. All directions reverse: nozzles above TOS move down, nozzles below TOS move up.<br/><br/>
+    Getting this reference point right is critical — it determines both the <strong>magnitude</strong> and <strong>direction</strong> of every nozzle displacement you input into CAESAR II or AutoPIPE. An incorrect reference can produce completely wrong stress results and nozzle loads.
   </div>
 
   <div class="eq-diagram">
@@ -344,11 +355,11 @@ code,pre,.mono,[class*="mono"]{font-family:'IBM Plex Mono',ui-monospace,monospac
   <div style="margin-top:1rem;">
     <div class="nozzle-row header">
       <div>Nozzle</div>
-      <div>Height from Base <span id="pv-h-unit">(mm)</span></div>
+      <div>Height from TOS <span id="pv-h-unit">(mm)</span></div>
       <div>Shell Temp <span id="pv-t-unit">(°C)</span></div>
       <div>Sect. T<sub>avg</sub> <span id="pv-ta-unit">(°C)</span></div>
       <div>e <span style="font-size:9px;text-transform:none;">(mm/m)</span></div>
-      <div>Cumul. ΔY <span id="pv-dy-unit">(mm)</span></div>
+      <div>ΔY <span id="pv-dy-unit">(mm)</span></div>
       <div>ΔR Radial <span id="pv-dr-unit">(mm)</span></div>
     </div>
     <div id="pv-nozzle-rows"></div>
@@ -888,14 +899,19 @@ code,pre,.mono,[class*="mono"]{font-family:'IBM Plex Mono',ui-monospace,monospac
   <div class="ref-section">
     <div class="ref-title">Vertical Pressure Vessel</div>
     <div class="ref-formula">
-      <b>Nozzle Movement (section-by-section, cumulative):</b><br/>
-      Δ<sub>Y</sub> = Σ [ e(T<sub>avg,i</sub>) × L<sub>i</sub> ]<br/><br/>
-      For each section between consecutive nozzles:<br/>
-      &nbsp;&nbsp;T<sub>avg,i</sub> = (T<sub>lower</sub> + T<sub>upper</sub>) / 2<br/>
-      &nbsp;&nbsp;e<sub>i</sub> = expansion rate at T<sub>avg,i</sub> (mm/m)<br/>
-      &nbsp;&nbsp;L<sub>i</sub> = section length (m)<br/><br/>
-      Fixed point = base support / skirt anchor bolt.<br/>
-      Each nozzle has its own shell temperature depending on the process stream at that elevation. The displacement at each nozzle is the cumulative sum of all section expansions below it.<br/><br/>
+      <b>Nozzle Movement (independent per nozzle):</b><br/>
+      Δ<sub>Y</sub> = e(T<sub>avg</sub>) × H<br/><br/>
+      <b>Reference point = Top of Skirt (TOS)</b><br/>
+      A common mistake is measuring from the bottom anchor bolt. The skirt is a structural shell connecting the vessel to the foundation — but it contains <b>no process fluid</b>. No fluid means no thermal expansion in the skirt. The thermal growth starts where the hot (or cold) shell begins: at the Top of Skirt, where it is welded to the vessel body.<br/><br/>
+      &nbsp;&nbsp;<b>Positive H</b> (above TOS) → nozzle moves <b>upward</b> in hot service<br/>
+      &nbsp;&nbsp;<b>Negative H</b> (below TOS, e.g. bottom head nozzle) → nozzle moves <b>downward</b> in hot service<br/>
+      &nbsp;&nbsp;<b>Cryogenic service</b>: vessel contracts — all directions reverse<br/><br/>
+      Each nozzle is calculated independently:<br/>
+      &nbsp;&nbsp;Bottom / middle nozzles: T<sub>avg</sub> = (T<sub>i</sub> + T<sub>i+1</sub>) / 2 — average with nozzle above<br/>
+      &nbsp;&nbsp;Top nozzle: T<sub>avg</sub> = T<sub>nozzle</sub> (own temperature, no nozzle above to average with)<br/>
+      &nbsp;&nbsp;e = expansion rate at T<sub>avg</sub> (mm/m)<br/>
+      &nbsp;&nbsp;H = nozzle height from TOS (m, with sign)<br/><br/>
+      The averaging approximates the correct thermal expansion coefficient for the shell zone around that nozzle (unless a Finite Element analysis is performed).<br/><br/>
       <b>Radial:</b> Δ<sub>R</sub> = e(T<sub>nozzle</sub>) × R<sub>mean</sub><br/><br/>
       <b>Support Point (CNode):</b> Y<sub>B</sub> = Y<sub>A</sub> − (e × H)<br/>
       Y<sub>A</sub> = nozzle movement, H = nozzle-to-support distance<br/>
@@ -1116,7 +1132,7 @@ function addPVNozzle() {
   div.id = 'pvnz-' + id;
   div.innerHTML =
     `<div class="nozzle-label">${label} <button class="remove-nozzle" onclick="removePVNozzle(${id})" title="Remove">×</button></div>
-     <input type="number" id="pvnz-h-${id}" placeholder="Height" step="1">
+     <input type="number" id="pvnz-h-${id}" placeholder="+above / −below TOS" step="1">
      <input type="number" id="pvnz-t-${id}" placeholder="Shell T" step="1">
      <input type="text" id="pvnz-ta-${id}" class="auto" readonly placeholder="auto">
      <input type="text" id="pvnz-a-${id}" class="auto" readonly placeholder="auto">
@@ -1131,11 +1147,10 @@ function removePVNozzle(id) {
 
 function calcPVNozzle() {
   const mat = document.getElementById('material').value;
-  const tAmb = parseFloat(document.getElementById('t-amb').value) || 21;
   const isMetric = document.getElementById('unit-sys').value === 'mm';
   const od = parseFloat(document.getElementById('pv-od').value) || 0;
   const thk = parseFloat(document.getElementById('pv-thk').value) || 0;
-  const meanR = (od / 2) - (thk / 2); // mean radius in mm
+  const meanR = (od / 2) - (thk / 2);
   const u = isMetric ? 'mm' : 'in';
   const tu = isMetric ? '°C' : '°F';
 
@@ -1156,87 +1171,63 @@ function calcPVNozzle() {
   // Sort by height (lowest first)
   nozzles.sort((a, b) => a.h - b.h);
 
-  // ── SECTION-BY-SECTION CUMULATIVE CALCULATION ──
-  // Build points array: base (fixed point) + sorted nozzles
-  // Base: height = 0, temperature = T of lowest nozzle (skirt/base nozzle)
-  // Per the diagram: 0 = tangent line, H1 = skirt nozzle with T1
-  const points = [{ h: 0, t: nozzles[0].t, label: 'Base (0)' }];
-  nozzles.forEach(nz => points.push(nz));
-
-  // Calculate cumulative axial displacement section by section
-  let cumDy = 0;
+  // ── INDEPENDENT PER-NOZZLE CALCULATION ──
+  // For each nozzle:
+  //   - Bottom/middle nozzles: T_avg = (T_this + T_above) / 2
+  //   - Top nozzle: T_avg = T_this (own temperature, no nozzle above)
+  //   - Δ = e(T_avg) × H  (height from fixed support)
   let results = [];
-  let sectionDetails = []; // for detailed report
 
-  for (let i = 1; i < points.length; i++) {
-    const lower = points[i - 1];
-    const upper = points[i];
-    const Lsection = upper.h - lower.h; // mm
-    const Tavg = (lower.t + upper.t) / 2; // average section temperature
-    const e = getExpRate(mat, Tavg); // mm/m — total expansion at Tavg
-    const sectionExpansion = e * (Lsection / 1000); // mm
+  for (let i = 0; i < nozzles.length; i++) {
+    const nz = nozzles[i];
+    let Tavg;
+    if (i < nozzles.length - 1) {
+      // Average with the nozzle ABOVE
+      Tavg = (nz.t + nozzles[i + 1].t) / 2;
+    } else {
+      // Top nozzle — use own temperature
+      Tavg = nz.t;
+    }
 
-    cumDy += sectionExpansion;
+    const e = getExpRate(mat, Tavg); // mm/m at T_avg
+    const dy = e * (nz.h / 1000);   // mm — displacement from fixed base
 
-    // Radial expansion at this nozzle (based on nozzle's own shell temperature)
-    const eNz = getExpRate(mat, upper.t); // mm/m at nozzle temp
-    const dr = eNz * (meanR / 1000); // mm
+    // Radial expansion at this nozzle (own temperature)
+    const eNz = getExpRate(mat, nz.t);
+    const dr = eNz * (meanR / 1000);
 
-    sectionDetails.push({
-      from: lower.label || ('H=' + lower.h),
-      to: upper.label,
-      Lsection, Tavg, e, sectionExpansion
-    });
-
-    results.push({
-      ...upper,
-      Tavg,        // average temp of section BELOW this nozzle
-      e,           // expansion rate at that avg temp
-      sectionExp: sectionExpansion,
-      dy: cumDy,   // cumulative axial displacement
-      dr           // radial at this nozzle
-    });
+    results.push({ ...nz, Tavg, e, dy, dr });
 
     // Update row fields
-    const taEl = document.getElementById('pvnz-ta-' + upper.id);
-    const aEl = document.getElementById('pvnz-a-' + upper.id);
-    const dyEl = document.getElementById('pvnz-dy-' + upper.id);
-    const drEl = document.getElementById('pvnz-dr-' + upper.id);
+    const taEl = document.getElementById('pvnz-ta-' + nz.id);
+    const aEl = document.getElementById('pvnz-a-' + nz.id);
+    const dyEl = document.getElementById('pvnz-dy-' + nz.id);
+    const drEl = document.getElementById('pvnz-dr-' + nz.id);
     if (taEl) taEl.value = Tavg.toFixed(1);
     if (aEl) aEl.value = e.toFixed(4);
-    if (dyEl) dyEl.value = cumDy.toFixed(3);
+    if (dyEl) dyEl.value = dy.toFixed(3);
     if (drEl) drEl.value = dr.toFixed(3);
   }
 
   // ── BUILD RESULTS TABLE ──
   let tableHTML = '<table class="res-table">';
-  // Section breakdown
-  tableHTML += '<tr><th colspan="6" style="background:var(--paper3);color:var(--ink);font-size:11px;text-align:left;padding:8px;">Section-by-Section Expansion</th></tr>';
-  tableHTML += '<tr><th>Section</th><th>Length</th><th>T<sub>avg</sub> = (T<sub>i</sub>+T<sub>i+1</sub>)/2</th><th>e at T<sub>avg</sub> (mm/m)</th><th>Section ΔL</th><th>Cumulative ΔY</th></tr>';
+  tableHTML += '<tr><th>Nozzle</th><th>H from TOS</th><th>Shell T</th><th>T<sub>avg</sub></th><th>e (mm/m)</th><th>ΔY Axial</th><th>ΔR Radial</th></tr>';
 
   const reportRows = [];
-  for (let i = 0; i < sectionDetails.length; i++) {
-    const s = sectionDetails[i];
-    const r = results[i];
-    const sLabel = `${s.from} → ${r.label}`;
+  results.forEach((r, i) => {
+    const avgNote = i < results.length - 1
+      ? `(${r.t}+${nozzles[i+1].t})/2`
+      : `own T`;
     tableHTML += `<tr>
-      <td class="lbl">${sLabel}</td>
-      <td class="val">${s.Lsection.toFixed(0)} ${u}</td>
-      <td class="val">${s.Tavg.toFixed(1)} ${tu}</td>
-      <td class="val">${s.e.toFixed(4)}</td>
-      <td class="val">${s.sectionExpansion.toFixed(3)} ${u}</td>
-      <td class="val" style="color:var(--accent);font-weight:700;">${r.dy.toFixed(3)} ${u}</td>
+      <td class="lbl">${r.label}</td>
+      <td class="val">${r.h.toFixed(0)} ${u}</td>
+      <td class="val">${r.t.toFixed(0)} ${tu}</td>
+      <td class="val">${r.Tavg.toFixed(1)} ${tu}</td>
+      <td class="val">${r.e.toFixed(4)}</td>
+      <td class="val" style="color:var(--accent);font-weight:700;font-size:14px;">${r.dy.toFixed(3)} ${u}</td>
+      <td class="val">${r.dr.toFixed(3)} ${u}</td>
     </tr>`;
-    reportRows.push([sLabel, s.Lsection.toFixed(0)+' '+u, s.Tavg.toFixed(1)+' '+tu, s.e.toFixed(4)+' mm/m', s.sectionExpansion.toFixed(3)+' '+u, r.dy.toFixed(3)+' '+u]);
-  }
-
-  // Nozzle summary
-  tableHTML += '<tr><th colspan="7" style="background:var(--paper3);color:var(--ink);font-size:11px;text-align:left;padding:8px;margin-top:4px;">Nozzle Displacement Summary — CAESAR II / AutoPIPE Input</th></tr>';
-  tableHTML += '<tr><th>Nozzle</th><th>Height</th><th>Shell T</th><th colspan="2">ΔY Axial</th><th colspan="2">ΔR Radial</th></tr>';
-  const summaryRows = [];
-  results.forEach(r => {
-    tableHTML += `<tr><td class="lbl">${r.label}</td><td class="val">${r.h.toFixed(0)} ${u}</td><td class="val">${r.t.toFixed(0)} ${tu}</td><td colspan="2" class="val" style="color:var(--accent);font-weight:700;font-size:14px;">${r.dy.toFixed(3)} ${u}</td><td colspan="2" class="val">${r.dr.toFixed(3)} ${u}</td></tr>`;
-    summaryRows.push([r.label, r.h.toFixed(0)+' '+u, r.t.toFixed(0)+' '+tu, r.dy.toFixed(3)+' '+u, r.dr.toFixed(3)+' '+u]);
+    reportRows.push([r.label, r.h.toFixed(0)+' '+u, r.t.toFixed(0)+' '+tu, r.Tavg.toFixed(1)+' '+tu+' '+avgNote, r.e.toFixed(4)+' mm/m', r.dy.toFixed(3)+' '+u, r.dr.toFixed(3)+' '+u]);
   });
   tableHTML += '</table>';
 
@@ -1244,23 +1235,24 @@ function calcPVNozzle() {
 
   // ── FORMULA BOX ──
   document.getElementById('formula-box').innerHTML =
-    `<span style="font-size:14px;font-weight:600;">Cumulative: Δ<sub>Y</sub> = Σ [ e(T<sub>avg,i</sub>) × L<sub>i</sub> ]</span><br>` +
-    `For each section between consecutive nozzles:<br>` +
-    `&nbsp;&nbsp;T<sub>avg,i</sub> = (T<sub>lower</sub> + T<sub>upper</sub>) / 2 &nbsp;← average shell temperature of the section<br>` +
-    `&nbsp;&nbsp;e(T) = thermal expansion rate at T (mm/m), per ASME B31.3 Table C-1<br>` +
-    `&nbsp;&nbsp;L<sub>i</sub> = section length between consecutive nozzles (mm → m)<br>` +
+    `<span style="font-size:14px;font-weight:600;">Δ<sub>Y</sub> = e(T<sub>avg</sub>) × H</span><br>` +
+    `Reference point: <b>Top of Skirt (TOS)</b> — skirt has no fluid, no thermal growth<br>` +
+    `H positive (above TOS) → ΔY upward (hot service) · H negative (below TOS) → ΔY downward<br>` +
+    `For cryogenic service: directions reverse (vessel contracts)<br>` +
+    `&nbsp;&nbsp;Bottom / middle nozzles: T<sub>avg</sub> = (T<sub>i</sub> + T<sub>i+1</sub>) / 2 — average with nozzle above<br>` +
+    `&nbsp;&nbsp;Top nozzle: T<sub>avg</sub> = T<sub>nozzle</sub> (own temperature)<br>` +
     `Radial: Δ<sub>R</sub> = e(T<sub>nozzle</sub>) × R<sub>mean</sub>, R<sub>mean</sub> = ${meanR.toFixed(1)} ${u}`;
 
   const maxDy = Math.max(...results.map(r => Math.abs(r.dy)));
-  document.getElementById('vtitle').textContent = `Vertical Vessel — ${results.length} Nozzle(s), ${sectionDetails.length} Section(s)`;
+  document.getElementById('vtitle').textContent = `Vertical Vessel — ${results.length} Nozzle(s) Calculated`;
   document.getElementById('vsub').textContent = `Max axial: ${maxDy.toFixed(3)} ${u} · Material: ${document.getElementById('material').selectedOptions[0].text}`;
 
   // Notes
   let notes = [];
-  notes.push({ t: `Expansion calculated section-by-section between consecutive nozzles. Each section uses α at the average temperature (T<sub>i</sub>+T<sub>i+1</sub>)/2 of that section — not a single blanket operating temperature.` });
+  notes.push({ t: `Each nozzle is calculated independently: e(T<sub>avg</sub>) × H from Top of Skirt (TOS). The skirt has no fluid — no thermal growth from anchor bolt to TOS. Nozzles above TOS move upward (hot service); nozzles below TOS (e.g. bottom head nozzle) move downward. For cryogenic, directions reverse.` });
   notes.push({ t: `Enter ΔY values as imposed displacements at the nozzle anchor node in CAESAR II (positive upward). ΔR applies as radial displacement if nozzle is oriented radially.` });
   if (maxDy > 5) notes.push({ t: `Significant axial growth (${maxDy.toFixed(2)} ${u}). Consider placing first pipe support close to the nozzle and including support movement via CNode.` });
-  notes.push({ t: `Thermal expansion coefficients interpolated from ASME B31.3 Table C-1 via ppa-materials.js. Verify α against project material specification.` });
+  notes.push({ t: `Thermal expansion coefficients from PPA material database (ppa-materials.js) based on ASME B31.3 Table C-1.` });
   document.getElementById('notes').innerHTML = notes.map(n =>
     `<div class="note"><span class="note-arr">▸</span><span>${n.t}</span></div>`
   ).join('');
@@ -1274,15 +1266,11 @@ function calcPVNozzle() {
         ['Material Group', document.getElementById('material').selectedOptions[0].text, '—'],
         ['Vessel OD', od.toFixed(0), u],
         ['Shell Thickness', thk.toFixed(1), u],
-        ['Mean Radius', meanR.toFixed(1), u],
-        ['Installation Temperature', tAmb.toFixed(0), tu]
+        ['Mean Radius', meanR.toFixed(1), u]
       ]},
-      { title: 'Section-by-Section Expansion', type: 'table',
-        head: ['Section', 'Length', 'T_avg', 'e (mm/m)', 'Section ΔL', 'Cumul. ΔY'],
-        rows: reportRows },
-      { title: 'Nozzle Displacement Summary', type: 'table',
-        head: ['Nozzle', 'Height', 'Shell T', 'ΔY Axial', 'ΔR Radial'],
-        rows: summaryRows }
+      { title: 'Nozzle Displacements', type: 'table',
+        head: ['Nozzle', 'Height', 'Shell T', 'T_avg', 'e (mm/m)', 'ΔY Axial', 'ΔR Radial'],
+        rows: reportRows }
     ]
   };
 
