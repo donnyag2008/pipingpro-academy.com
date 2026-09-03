@@ -2,36 +2,75 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
   <!-- Core pages -->
-  <url><loc>https://www.pipingpro-academy.com/</loc><lastmod>2026-06-08</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://www.pipingpro-academy.com/courses</loc><lastmod>2026-06-08</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://www.pipingpro-academy.com/calculators</loc><lastmod>2026-06-08</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://www.pipingpro-academy.com/membership</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.pipingpro-academy.com/free-course</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/</loc><lastmod>2026-09-03</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/courses/</loc><lastmod>2026-09-03</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/</loc><lastmod>2026-09-03</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/other/membership-plan.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
 
-  <!-- Course pages -->
-  <url><loc>https://www.pipingpro-academy.com/course-piping-fundamentals</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://www.pipingpro-academy.com/course-static-stress</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://www.pipingpro-academy.com/Fundamental-of-Pipeline-Engineering</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://www.pipingpro-academy.com/piping-fundamentals-module-1</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <!-- Courses -->
+  <url><loc>https://www.pipingpro-academy.com/courses/piping-fundamentals/</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/courses/piping-fundamentals/module-1.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/courses/piping-fundamentals/quiz.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/courses/pipeline-engineering/</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/courses/pipeline-engineering/module-1.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/courses/pipeline-engineering/quiz.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/courses/static-stress/</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/courses/static-stress/module-1.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/courses/static-stress/quiz.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/courses/non-metallic-piping/</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/courses/non-metallic-piping/quiz.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
 
-  <!-- Calculators -->
-  <url><loc>https://www.pipingpro-academy.com/pipe-weight-calculator</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://www.pipingpro-academy.com/pipe-wall-thickness-calculator</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://www.pipingpro-academy.com/expansion-loop-calculator</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.pipingpro-academy.com/pipe-support-span-calculator</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.pipingpro-academy.com/special-pipe-support-calculator</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.pipingpro-academy.com/trunnion-calculator</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.pipingpro-academy.com/nozzle-loads-checker</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.pipingpro-academy.com/flange-leakage-check</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.pipingpro-academy.com/vibration-fatigue-calculator</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.pipingpro-academy.com/pipe-coating-insulation-calculator</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.pipingpro-academy.com/pid-mto-calculator</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.pipingpro-academy.com/hydro-pneumo-test-pack</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.pipingpro-academy.com/test-pack-generator</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.pipingpro-academy.com/caesar2-prescreener</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.pipingpro-academy.com/ductile-fracture-calculator</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.pipingpro-academy.com/subsea-pipeline-calculator</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.pipingpro-academy.com/pipeline-crossing-calculator</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://www.pipingpro-academy.com/upheaval-buckling-calculator</loc><lastmod>2026-06-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <!-- Basic Calculators -->
+  <url><loc>https://www.pipingpro-academy.com/calculators/basic/pipe-wall-thickness.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/basic/pipe-weight.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/basic/unit-converter.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/basic/flange-valve-weight.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/basic/expansion-loop.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/basic/l-bend-stress.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/basic/flexibility-screening.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/basic/pipe-coating-insulation.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/basic/piping-estimation.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/basic/pid-mto.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/basic/pipe-support-span.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/basic/initial-movement.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+
+  <!-- Basic — Technical References -->
+  <url><loc>https://www.pipingpro-academy.com/calculators/basic/piping-estimation-guide.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+
+  <!-- Advanced Calculators -->
+  <url><loc>https://www.pipingpro-academy.com/calculators/advanced/material-compare.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/advanced/onshore-pipeline-mech.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/advanced/buried-pipe-soil.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/advanced/upheaval-buckling.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/advanced/ductile-fracture.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/advanced/cathodic-protection.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/advanced/sectional-volume.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/advanced/pipeline-crossing.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/advanced/special-pipe-support.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/advanced/trunnion.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/advanced/dia-inch-estimator.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/advanced/stress-critical-line.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/advanced/flange-leakage.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/advanced/nozzle-loads.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/advanced/vibration-fatigue.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/advanced/subsea-pipeline.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+
+  <!-- Advanced — Technical References -->
+  <url><loc>https://www.pipingpro-academy.com/calculators/advanced/cathodic-protection-guide.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/advanced/onshore-pipeline-estimation-guide.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/advanced/subsea-pipeline-guide.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+
+  <!-- Datasheets -->
+  <url><loc>https://www.pipingpro-academy.com/calculators/datasheets/material-datasheet.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/calculators/datasheets/valve-datasheet-creator.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+
+  <!-- AI Tools -->
+  <url><loc>https://www.pipingpro-academy.com/ai/</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/ai/mto-estimator.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/ai/ai-for-engineering.html</loc><lastmod>2026-09-03</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+
+  <!-- Legal -->
+  <url><loc>https://www.pipingpro-academy.com/legal/terms-of-use.html</loc><lastmod>2026-09-03</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://www.pipingpro-academy.com/legal/privacy-policy.html</loc><lastmod>2026-09-03</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
 
 </urlset>

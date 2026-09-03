@@ -2,7 +2,7 @@
   "name": "PipingPro Academy — Engineering Calculators",
   "short_name": "PipingPro",
   "description": "Piping & pipeline engineering calculators — works offline at site.",
-  "start_url": "/calculators.html",
+  "start_url": "/calculators/",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#0f172a",

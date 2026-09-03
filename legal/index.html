@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legal — PipingPro Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F7F6F3;--surface:#FFFFFF;--border:#E2E0D8;
+  --text:#1A1917;--text-2:#5C5A54;--text-3:#9C9A94;
+  --accent:#1A5C3A;--accent-light:#E8F4EE;--accent-border:#A8D4B8;
+  --radius:6px;--radius-lg:10px;
+  --font:'IBM Plex Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.7;min-height:100vh}
+.header{background:var(--accent);color:#fff;padding:1.5rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem}
+.header-title{font-size:20px;font-weight:600;letter-spacing:-0.02em}
+.header-title:hover{opacity:0.85}
+.header-sub{font-size:12px;opacity:0.75;margin-top:2px}
+.header-badge{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:500}
+.container{max-width:860px;margin:0 auto;padding:2rem 1.5rem}
+
+/* TAB NAV */
+.tab-nav{display:flex;gap:0;margin-bottom:2rem;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--surface)}
+.tab-btn{flex:1;padding:11px 16px;font-size:13px;font-weight:500;border:none;background:transparent;color:var(--text-2);cursor:pointer;font-family:var(--font);transition:all 0.15s;border-right:1px solid var(--border)}
+.tab-btn:last-child{border-right:none}
+.tab-btn.on{background:var(--accent);color:#fff;font-weight:600}
+.tab-btn:hover:not(.on){background:var(--accent-light);color:var(--accent)}
+
+.panel{display:none}
+.panel.active{display:block}
+
+/* LEGAL DOC STYLING */
+.legal-doc{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2.5rem 3rem}
+@media(max-width:600px){.legal-doc{padding:1.5rem 1.25rem}}
+.legal-header{border-bottom:2px solid var(--accent);padding-bottom:1.25rem;margin-bottom:2rem}
+.legal-brand{font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px}
+.legal-title{font-size:22px;font-weight:600;color:var(--text);letter-spacing:-0.01em;margin-bottom:6px}
+.legal-meta{font-size:12px;color:var(--text-3)}
+.legal-company{background:var(--accent-light);border:1px solid var(--accent-border);border-radius:var(--radius);padding:0.75rem 1rem;margin-bottom:2rem;font-size:12px;color:var(--text-2);line-height:1.7}
+.legal-company strong{color:var(--accent);font-weight:600}
+
+h2{font-size:14px;font-weight:600;color:var(--text);margin:1.75rem 0 0.5rem;padding-bottom:4px;border-bottom:1px solid var(--border)}
+h2:first-of-type{margin-top:0}
+p{margin-bottom:0.75rem;color:var(--text-2);font-size:13px}
+ul,ol{margin:0.5rem 0 0.75rem 1.5rem;color:var(--text-2);font-size:13px}
+li{margin-bottom:0.35rem;line-height:1.6}
+strong{color:var(--text);font-weight:600}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+
+.highlight-box{background:var(--accent-light);border-left:3px solid var(--accent);border-radius:0 var(--radius) var(--radius) 0;padding:0.75rem 1rem;margin:1rem 0;font-size:12px;color:var(--text-2);line-height:1.7}
+
+.footer{text-align:center;padding:2rem 1rem;font-size:11px;color:var(--text-3)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <a href="/" style="text-decoration:none;color:#fff;">
+      <div class="header-title">PipingPro Academy</div>
+      <div class="header-sub">Legal Documents — Terms, Privacy &amp; Refunds</div>
+    </a>
+  </div>
+  <div class="header-badge">Zephrum Konsultan Limited</div>
+</div>
+
+<div class="container">
+
+  <div class="tab-nav">
+    <button class="tab-btn on" id="tab-tc" onclick="setTab('tc')">Terms &amp; Conditions</button>
+    <button class="tab-btn" id="tab-pp" onclick="setTab('pp')">Privacy Policy</button>
+    <button class="tab-btn" id="tab-rp" onclick="setTab('rp')">Refund Policy</button>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- TERMS & CONDITIONS -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="panel active" id="panel-tc">
+    <div class="legal-doc">
+      <div class="legal-header">
+        <div class="legal-brand">PipingPro Academy</div>
+        <div class="legal-title">Terms &amp; Conditions</div>
+        <div class="legal-meta">Last updated: May 2026 &nbsp;·&nbsp; Version 1.0</div>
+      </div>
+
+      <div class="legal-company">
+        <strong>PipingPro Academy</strong> is a trading name of <strong>Zephrum Konsultan Limited</strong>, registered in England and Wales, Company Number <strong>13537626</strong>.<br>
+        Registered office: as recorded at Companies House.<br>
+        Contact: <a href="mailto:admin@zephrum-konsultan.co.uk">admin@zephrum-konsultan.co.uk</a>
+      </div>
+
+      <h2>1. Introduction</h2>
+      <p>These Terms and Conditions ("Terms") govern your access to and use of the PipingPro Academy website at pipingpro-academy.com ("the Platform") and all associated products, services, courses, and engineering calculators (collectively, "the Services") provided by Zephrum Konsultan Limited ("we", "us", "our").</p>
+      <p>By accessing or using the Platform, you confirm that you have read, understood, and agree to be bound by these Terms. If you do not agree, please do not use the Platform.</p>
+
+      <h2>2. About PipingPro Academy</h2>
+      <p>PipingPro Academy is an online engineering education platform providing:</p>
+      <ul>
+        <li>Online courses in piping and pipeline engineering</li>
+        <li>Engineering calculators and software tools</li>
+        <li>Technical PDF guides and reference materials</li>
+        <li>Free and paid content for engineering professionals</li>
+      </ul>
+
+      <h2>3. Eligibility</h2>
+      <p>You must be at least 18 years of age to purchase paid products or create an account. By using the Platform you confirm you meet this requirement. The Platform is intended for use by engineering professionals and students — you are responsible for ensuring that any use of the Services is appropriate for your level of professional competence.</p>
+
+      <h2>4. User Accounts</h2>
+      <p>Some features of the Platform may require you to create an account. You are responsible for maintaining the confidentiality of your account credentials and for all activity that occurs under your account. You must notify us immediately at <a href="mailto:admin@zephrum-konsultan.co.uk">admin@zephrum-konsultan.co.uk</a> if you suspect any unauthorised use of your account.</p>
+
+      <h2>5. Paid Products &amp; Access</h2>
+      <p>PipingPro Academy offers paid courses, engineering calculators, and PDF guides. Upon successful payment, you will receive access to the purchased product(s) as described at the time of purchase. Access is granted to the individual purchaser only and is non-transferable.</p>
+      <p>We reserve the right to modify, update, or discontinue any product or service at any time. Where material changes are made to a product you have purchased, we will make reasonable efforts to notify you.</p>
+
+      <h2>6. Engineering Disclaimer</h2>
+      <div class="highlight-box">
+        <strong>Important:</strong> All engineering calculators, tools, and technical content provided on PipingPro Academy are for <strong>preliminary engineering assessment and educational purposes only</strong>. Results must be independently verified by a competent, professionally qualified engineer before use in any final design, procurement, specification, or construction package.
+      </div>
+      <p>Zephrum Konsultan Limited accepts no liability for any engineering decisions, project outcomes, losses, damages, injuries, or costs arising from reliance on outputs generated by any calculator, tool, or content provided on this Platform. The user assumes full professional responsibility for the verification and application of any results.</p>
+      <p>Nothing on this Platform constitutes professional engineering advice. If you require certified engineering calculations or professional sign-off, please engage a qualified engineer directly.</p>
+
+      <h2>7. Intellectual Property</h2>
+      <p>All content on the Platform — including but not limited to course materials, engineering calculators, PDF guides, text, graphics, code, and branding — is the intellectual property of Zephrum Konsultan Limited unless otherwise stated, and is protected by UK and international copyright law.</p>
+      <p>You may access and use content for your own personal, non-commercial, professional development purposes only. You must not:</p>
+      <ul>
+        <li>Reproduce, distribute, or resell any content without our written permission</li>
+        <li>Share login credentials or course access with third parties</li>
+        <li>Reverse engineer, copy, or replicate any calculator or software tool</li>
+        <li>Remove or alter any copyright, trademark, or proprietary notices</li>
+      </ul>
+      <p>"PipingPro Academy" is a trademark of Zephrum Konsultan Limited (UK trademark application pending). Unauthorised use of this name or associated branding is prohibited.</p>
+
+      <h2>8. Acceptable Use</h2>
+      <p>You agree to use the Platform only for lawful purposes and in a manner that does not infringe the rights of others. You must not use the Platform to:</p>
+      <ul>
+        <li>Upload or transmit any harmful, offensive, or unlawful content</li>
+        <li>Attempt to gain unauthorised access to any part of the Platform or its systems</li>
+        <li>Use automated tools to scrape, crawl, or extract content</li>
+        <li>Impersonate any person or entity</li>
+      </ul>
+
+      <h2>9. Limitation of Liability</h2>
+      <p>To the fullest extent permitted by applicable law, Zephrum Konsultan Limited shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of, or inability to use, the Platform or any of its Services.</p>
+      <p>Our total liability to you for any claim arising out of or in connection with these Terms or your use of the Platform shall not exceed the amount you paid to us in the 12 months preceding the claim.</p>
+      <p>Nothing in these Terms limits our liability for death or personal injury caused by negligence, fraud, or any other liability that cannot be excluded under applicable law.</p>
+
+      <h2>10. Third-Party Links &amp; Services</h2>
+      <p>The Platform may contain links to third-party websites or services. We are not responsible for the content, accuracy, or practices of any third-party sites. Links are provided for convenience only and do not constitute endorsement.</p>
+
+      <h2>11. Changes to Terms</h2>
+      <p>We reserve the right to update these Terms at any time. Material changes will be notified via email to registered users or by prominent notice on the Platform. Continued use of the Platform following notification constitutes your acceptance of the revised Terms.</p>
+
+      <h2>12. Governing Law</h2>
+      <p>These Terms are governed by the laws of England and Wales. Any disputes arising from or in connection with these Terms shall be subject to the exclusive jurisdiction of the courts of England and Wales.</p>
+
+      <h2>13. Contact</h2>
+      <p>For any questions regarding these Terms, please contact us at:<br>
+      <strong>Zephrum Konsultan Limited</strong> — trading as PipingPro Academy<br>
+      Email: <a href="mailto:admin@zephrum-konsultan.co.uk">admin@zephrum-konsultan.co.uk</a><br>
+      Company No. 13537626 — Registered in England &amp; Wales</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- PRIVACY POLICY -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="panel" id="panel-pp">
+    <div class="legal-doc">
+      <div class="legal-header">
+        <div class="legal-brand">PipingPro Academy</div>
+        <div class="legal-title">Privacy Policy</div>
+        <div class="legal-meta">Last updated: May 2026 &nbsp;·&nbsp; Version 1.0 &nbsp;·&nbsp; GDPR Compliant</div>
+      </div>
+
+      <div class="legal-company">
+        <strong>Data Controller:</strong> Zephrum Konsultan Limited, Company No. 13537626, registered in England and Wales.<br>
+        <strong>Trading as:</strong> PipingPro Academy &nbsp;·&nbsp; <strong>Website:</strong> pipingpro-academy.com<br>
+        <strong>Contact:</strong> <a href="mailto:admin@zephrum-konsultan.co.uk">admin@zephrum-konsultan.co.uk</a>
+      </div>
+
+      <h2>1. Introduction</h2>
+      <p>Zephrum Konsultan Limited ("we", "us", "our"), trading as PipingPro Academy, is committed to protecting your personal data. This Privacy Policy explains how we collect, use, store, and protect your information when you use pipingpro-academy.com ("the Platform").</p>
+      <p>This policy complies with the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018.</p>
+
+      <h2>2. Data We Collect</h2>
+      <p>We may collect the following categories of personal data:</p>
+      <ul>
+        <li><strong>Identity data:</strong> name, username</li>
+        <li><strong>Contact data:</strong> email address</li>
+        <li><strong>Transaction data:</strong> details of products purchased</li>
+        <li><strong>Technical data:</strong> IP address, browser type, device type, pages visited, time spent on pages (via analytics)</li>
+        <li><strong>Marketing data:</strong> your preferences for receiving communications from us</li>
+        <li><strong>Professional data:</strong> job title, industry, country — only where voluntarily provided</li>
+      </ul>
+      <p>We do not collect sensitive personal data (such as health, financial account, or biometric data) and we do not store payment card information — payments are processed by third-party payment processors.</p>
+
+      <h2>3. How We Collect Data</h2>
+      <ul>
+        <li><strong>Direct interactions:</strong> when you register, purchase a product, subscribe to our newsletter, or contact us</li>
+        <li><strong>Automated technologies:</strong> cookies and analytics tools when you browse the Platform</li>
+        <li><strong>Third parties:</strong> payment processors, email marketing platforms (Brevo)</li>
+      </ul>
+
+      <h2>4. Legal Basis for Processing</h2>
+      <p>We process your personal data on the following legal bases:</p>
+      <ul>
+        <li><strong>Contract:</strong> to fulfil your purchase and provide access to products you have bought</li>
+        <li><strong>Legitimate interests:</strong> to improve our Platform, prevent fraud, and communicate about relevant products</li>
+        <li><strong>Consent:</strong> to send you marketing emails — you can withdraw consent at any time</li>
+        <li><strong>Legal obligation:</strong> to comply with applicable laws and regulations</li>
+      </ul>
+
+      <h2>5. How We Use Your Data</h2>
+      <ul>
+        <li>To process and fulfil your orders and grant access to purchased products</li>
+        <li>To create and manage your account</li>
+        <li>To send transactional emails (order confirmations, access credentials)</li>
+        <li>To send marketing emails where you have consented</li>
+        <li>To improve and develop the Platform and its content</li>
+        <li>To comply with legal and regulatory obligations</li>
+      </ul>
+
+      <h2>6. Email Marketing</h2>
+      <p>If you subscribe to our mailing list or purchase a product, we may send you emails about new courses, calculators, and engineering content. Every marketing email includes an unsubscribe link. You can also opt out at any time by emailing <a href="mailto:admin@zephrum-konsultan.co.uk">admin@zephrum-konsultan.co.uk</a>.</p>
+      <p>We use <strong>Brevo</strong> (formerly Sendinblue) to manage email communications. Your email address is stored on Brevo's servers in accordance with their privacy policy.</p>
+
+      <h2>7. Data Sharing</h2>
+      <p>We do not sell your personal data to third parties. We may share your data with:</p>
+      <ul>
+        <li><strong>Payment processors</strong> — to process transactions securely</li>
+        <li><strong>Email marketing platform (Brevo)</strong> — to deliver communications</li>
+        <li><strong>Analytics providers</strong> — to understand Platform usage (data is anonymised where possible)</li>
+        <li><strong>Legal authorities</strong> — where required by law</li>
+      </ul>
+      <p>All third-party processors are required to handle your data securely and in accordance with applicable data protection law.</p>
+
+      <h2>8. International Transfers</h2>
+      <p>Some of our third-party service providers may process data outside the UK or European Economic Area (EEA). Where this occurs, we ensure appropriate safeguards are in place, such as Standard Contractual Clauses approved by the relevant authority.</p>
+
+      <h2>9. Data Retention</h2>
+      <p>We retain your personal data only for as long as necessary for the purposes described in this policy, or as required by law. Specifically:</p>
+      <ul>
+        <li>Account and purchase data: retained for 7 years for tax and accounting purposes</li>
+        <li>Marketing data: retained until you unsubscribe or request deletion</li>
+        <li>Technical/analytics data: typically retained for 26 months</li>
+      </ul>
+
+      <h2>10. Your Rights</h2>
+      <p>Under UK GDPR, you have the following rights regarding your personal data:</p>
+      <ul>
+        <li><strong>Right of access</strong> — to request a copy of the data we hold about you</li>
+        <li><strong>Right to rectification</strong> — to request correction of inaccurate data</li>
+        <li><strong>Right to erasure</strong> — to request deletion of your data ("right to be forgotten")</li>
+        <li><strong>Right to restrict processing</strong> — to request we limit how we use your data</li>
+        <li><strong>Right to data portability</strong> — to receive your data in a structured, machine-readable format</li>
+        <li><strong>Right to object</strong> — to object to processing based on legitimate interests or for marketing</li>
+        <li><strong>Right to withdraw consent</strong> — at any time where processing is based on consent</li>
+      </ul>
+      <p>To exercise any of these rights, please contact us at <a href="mailto:admin@zephrum-konsultan.co.uk">admin@zephrum-konsultan.co.uk</a>. We will respond within 30 days. You also have the right to lodge a complaint with the UK Information Commissioner's Office (ICO) at <a href="https://ico.org.uk" target="_blank">ico.org.uk</a>.</p>
+
+      <h2>11. Cookies</h2>
+      <p>We use cookies to improve your experience on the Platform. Cookies are small text files stored on your device. We use:</p>
+      <ul>
+        <li><strong>Essential cookies:</strong> necessary for the Platform to function</li>
+        <li><strong>Analytics cookies:</strong> to understand how visitors use the Platform (e.g. Google Analytics)</li>
+        <li><strong>Marketing cookies:</strong> only where you have given consent</li>
+      </ul>
+      <p>You can control cookies through your browser settings. Disabling cookies may affect the functionality of certain parts of the Platform.</p>
+
+      <h2>12. Security</h2>
+      <p>We implement appropriate technical and organisational measures to protect your personal data against unauthorised access, loss, destruction, or alteration. However, no method of internet transmission or electronic storage is 100% secure, and we cannot guarantee absolute security.</p>
+
+      <h2>13. Changes to This Policy</h2>
+      <p>We may update this Privacy Policy from time to time. Material changes will be communicated via email or prominent notice on the Platform. We encourage you to review this policy periodically.</p>
+
+      <h2>14. Contact &amp; Complaints</h2>
+      <p>For any privacy-related queries or to exercise your rights:<br>
+      <strong>Zephrum Konsultan Limited</strong> — trading as PipingPro Academy<br>
+      Email: <a href="mailto:admin@zephrum-konsultan.co.uk">admin@zephrum-konsultan.co.uk</a><br>
+      Company No. 13537626 — Registered in England &amp; Wales</p>
+      <p>If you are not satisfied with our response, you may contact the ICO at <a href="https://ico.org.uk/make-a-complaint" target="_blank">ico.org.uk/make-a-complaint</a> or call 0303 123 1113.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- REFUND POLICY -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="panel" id="panel-rp">
+    <div class="legal-doc">
+      <div class="legal-header">
+        <div class="legal-brand">PipingPro Academy</div>
+        <div class="legal-title">Refund Policy</div>
+        <div class="legal-meta">Last updated: May 2026 &nbsp;·&nbsp; Version 1.0</div>
+      </div>
+
+      <div class="legal-company">
+        <strong>PipingPro Academy</strong> is a trading name of <strong>Zephrum Konsultan Limited</strong>, Company No. <strong>13537626</strong>, registered in England and Wales.<br>
+        Contact: <a href="mailto:admin@zephrum-konsultan.co.uk">admin@zephrum-konsultan.co.uk</a>
+      </div>
+
+      <h2>1. Our Commitment</h2>
+      <p>We want you to be satisfied with your purchase from PipingPro Academy. This Refund Policy sets out the terms under which refunds may be requested and processed.</p>
+
+      <h2>2. Digital Products — General Policy</h2>
+      <p>All products sold on PipingPro Academy — including online courses, engineering calculators, PDF guides, and bundle packages — are <strong>digital products delivered immediately upon purchase</strong>.</p>
+      <div class="highlight-box">
+        Under UK Consumer Contracts Regulations 2013, you have a statutory right to cancel a digital product purchase within <strong>14 days</strong>, <strong>unless you have already started accessing or downloading the digital content</strong> and agreed to waive your cancellation right at the point of purchase.
+      </div>
+      <p>By completing your purchase and immediately accessing digital content, you acknowledge and agree that your right to cancel under the Consumer Contracts Regulations is waived from the moment access is granted.</p>
+
+      <h2>3. Refund Eligibility</h2>
+      <p>We will consider a refund request in the following circumstances:</p>
+      <ul>
+        <li><strong>Technical failure:</strong> you purchased a product but were unable to access it due to a technical error on our Platform, and we were unable to resolve the issue within 5 business days</li>
+        <li><strong>Duplicate purchase:</strong> you were charged twice for the same product due to a payment processing error</li>
+        <li><strong>Product materially different:</strong> the content delivered is materially different from what was described at the time of purchase</li>
+      </ul>
+      <p>Refunds will <strong>not</strong> be issued in the following circumstances:</p>
+      <ul>
+        <li>You have accessed or downloaded the content and changed your mind</li>
+        <li>You no longer require the product</li>
+        <li>You found the same content available elsewhere</li>
+        <li>You did not meet the technical requirements to access the Platform (browser, internet connection)</li>
+        <li>More than 14 days have passed since purchase</li>
+      </ul>
+
+      <h2>4. How to Request a Refund</h2>
+      <p>To request a refund, please email <a href="mailto:admin@zephrum-konsultan.co.uk">admin@zephrum-konsultan.co.uk</a> within <strong>14 days of purchase</strong> with the following information:</p>
+      <ul>
+        <li>Your full name and email address used for purchase</li>
+        <li>The product purchased and date of purchase</li>
+        <li>Your order or transaction reference number</li>
+        <li>The reason for your refund request</li>
+      </ul>
+      <p>We will acknowledge your request within 2 business days and aim to resolve it within 5 business days.</p>
+
+      <h2>5. Refund Processing</h2>
+      <p>Approved refunds will be processed to the original payment method within <strong>5–10 business days</strong>, depending on your payment provider. We will notify you by email once the refund has been issued.</p>
+      <p>Upon approval of a refund, your access to the relevant product(s) will be revoked.</p>
+
+      <h2>6. Bundles</h2>
+      <p>If you purchased a bundle (e.g. the Full Access Bundle) and request a refund for a specific component, we reserve the right to calculate the refund based on the individual product price rather than the bundle price, where access to other components has been used.</p>
+
+      <h2>7. Statutory Rights</h2>
+      <p>Nothing in this Refund Policy affects your statutory rights under UK consumer law, including your rights under the Consumer Rights Act 2015 and the Consumer Contracts Regulations 2013.</p>
+
+      <h2>8. Contact</h2>
+      <p>For all refund enquiries:<br>
+      <strong>Zephrum Konsultan Limited</strong> — trading as PipingPro Academy<br>
+      Email: <a href="mailto:admin@zephrum-konsultan.co.uk">admin@zephrum-konsultan.co.uk</a><br>
+      Company No. 13537626 — Registered in England &amp; Wales</p>
+      <p>If you are not satisfied with how we handle your refund request, you may refer the matter to an Alternative Dispute Resolution (ADR) provider or contact the Citizens Advice consumer helpline on 0808 223 1133.</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  PipingPro Academy is a trading name of Zephrum Konsultan Limited · Registered in England &amp; Wales · Company No. 13537626<br>
+  © 2026 Zephrum Konsultan Limited · All rights reserved
+</div>
+
+<script>
+function setTab(tab){
+  ['tc','pp','rp'].forEach(t=>{
+    document.getElementById('panel-'+t).classList.toggle('active', t===tab);
+    document.getElementById('tab-'+t).classList.toggle('on', t===tab);
+  });
+  window.location.hash = tab;
+}
+// On load, check hash and open correct tab
+window.addEventListener('DOMContentLoaded',()=>{
+  const hash = window.location.hash.replace('#','');
+  if(['tc','pp','rp'].includes(hash)) setTab(hash);
+});
+</script>
+</body>
+</html>

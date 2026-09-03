@@ -1,0 +1,2439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <!-- Memberstack -->
+<script data-memberstack-app="app_cmq9fsibv00720sujaqjm734o" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
+
+<!-- PPA COURSE GATE — powered by ppa-tier.js (single source of truth) -->
+<script src="/js/ppa-tier.js"></script>
+<script>
+(function(){
+  var REDIRECT = '/membership-plan';
+  if (localStorage.getItem('ppa_admin') === '1') return;
+  // Instant check from cached tier (no async wait needed)
+  if (isMember()) return;
+  // If not cached, wait for Memberstack and check
+  function gate(){
+    waitForMemberstack().then(function(ms){
+      if(!ms || !ms.getCurrentMember){ location.replace(REDIRECT); return; }
+      ms.getCurrentMember().then(function(r){
+        var member = (r && r.data) ? r.data : null;
+        if(!member || !Array.isArray(member.planConnections)){ location.replace(REDIRECT); return; }
+        var active = member.planConnections.filter(function(p){
+          return p.active || p.status === 'ACTIVE' || p.status === 'TRIALING';
+        });
+        var hasPlan = active.some(function(c){ return !!PPATIER.PLAN_TIER[c.planId]; });
+        if(!hasPlan) location.replace(REDIRECT);
+      }).catch(function(){ location.replace(REDIRECT); });
+    });
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', gate);
+  } else { gate(); }
+})();
+</script>
+
+  
+<title>Course 1: Piping Engineering Fundamentals — PipingPro Academy</title>
+<meta name="description" content="Piping Engineering Fundamentals — a 5-module course covering pipe properties, materials, supports, codes and standards, and fittings/flanges/gaskets/bolting. By Donny A. Bachtiar."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNiIgZmlsbD0iI0M0NUMyQSIvPjxjaXJjbGUgY3g9IjE2IiBjeT0iMTYiIHI9IjEwIiBmaWxsPSJub25lIiBzdHJva2U9IiNmNWYyZWIiIHN0cm9rZS13aWR0aD0iMy41Ii8+PGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZjVmMmViIiBzdHJva2Utd2lkdGg9IjIiLz48dGV4dCB4PSIxNiIgeT0iMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjkiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjZjVmMmViIj5QUDwvdGV4dD48L3N2Zz4="/>
+<style>
+  :root {
+    --ink: #1a1a18; --ink2: #4a4a44; --ink3: #8a8a80;
+    --paper: #f5f2eb; --paper2: #ede9de; --paper3: #e3dfd2;
+    --accent: #c45c2a; --accent2: #e8a06a; --accent-light: #f7ede3;
+    --teal: #1a6b5a; --teal-light: #e0f0eb;
+    --amber: #b5781a; --amber-light: #faf0dd;
+    --rule: rgba(26,26,24,0.12);
+    --rule2: rgba(26,26,24,0.07);
+    --shadow-sm: 0 2px 8px rgba(26,26,24,0.06);
+    --shadow-md: 0 8px 32px rgba(26,26,24,0.10);
+    --sidebar-w: 312px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', -apple-system, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.68;
+    font-size: 16.5px;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* subtle paper texture */
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background-image: radial-gradient(rgba(26,26,24,0.018) 1px, transparent 1px);
+    background-size: 4px 4px;
+  }
+
+  /* ============ TOP BAR ============ */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; gap: 16px;
+    padding: 14px 26px;
+    background: rgba(245,242,235,0.86);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--rule);
+  }
+  .brand { display: flex; align-items: center; gap: 11px; text-decoration: none; color: var(--ink); }
+  .brand-mark {
+    width: 34px; height: 34px; border-radius: 8px; background: var(--accent);
+    display: grid; place-items: center; flex-shrink: 0; box-shadow: var(--shadow-sm);
+  }
+  .brand-mark svg { width: 22px; height: 22px; }
+  .brand-name { font-family: 'DM Serif Display', serif; font-size: 1.18rem; letter-spacing: -0.01em; line-height: 1; }
+  .brand-sub { font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink3); margin-top: 3px; }
+  .topbar-spacer { flex: 1; }
+  .progress-wrap { display: flex; align-items: center; gap: 11px; min-width: 0; }
+  .progress-label { font-size: 0.72rem; letter-spacing: 0.04em; color: var(--ink3); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .progress-track { width: 120px; height: 5px; border-radius: 3px; background: var(--paper3); overflow: hidden; }
+  .progress-fill { height: 100%; width: 20%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 3px; transition: width .4s ease; }
+  .menu-toggle { display: none; background: none; border: 1px solid var(--rule); border-radius: 8px; padding: 8px 10px; cursor: pointer; color: var(--ink); }
+
+  /* ============ LAYOUT ============ */
+  .layout { display: flex; align-items: flex-start; }
+  .sidebar {
+    position: sticky; top: 63px; align-self: flex-start;
+    width: var(--sidebar-w); flex-shrink: 0;
+    height: calc(100vh - 63px); overflow-y: auto;
+    padding: 26px 18px 60px 26px;
+    border-right: 1px solid var(--rule);
+    background: linear-gradient(180deg, var(--paper2), var(--paper));
+  }
+  .sidebar::-webkit-scrollbar { width: 8px; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--paper3); border-radius: 4px; }
+  .course-eyebrow { font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  .course-title-sb { font-family: 'DM Serif Display', serif; font-size: 1.42rem; line-height: 1.12; margin: 8px 0 4px; letter-spacing: -0.015em; }
+  .course-byline { font-size: 0.78rem; color: var(--ink3); margin-bottom: 22px; }
+  .nav-mod { margin-bottom: 4px; }
+  .nav-mod-btn {
+    display: flex; align-items: center; gap: 11px; width: 100%;
+    background: none; border: none; cursor: pointer; text-align: left;
+    padding: 11px 12px; border-radius: 9px; color: var(--ink2);
+    font-family: 'DM Sans', sans-serif; font-size: 0.93rem; font-weight: 500;
+    transition: background .18s, color .18s;
+  }
+  .nav-mod-btn:hover { background: var(--paper3); color: var(--ink); }
+  .nav-mod-btn.active { background: var(--ink); color: var(--paper); box-shadow: var(--shadow-sm); }
+  .nav-mod-btn.active .nav-num { background: var(--accent); color: #fff; }
+  .nav-mod-btn.active .nav-mod-sub { color: rgba(245,242,235,0.6); }
+  .nav-num {
+    width: 26px; height: 26px; border-radius: 7px; background: var(--paper3); color: var(--ink2);
+    display: grid; place-items: center; font-size: 0.82rem; font-weight: 700; flex-shrink: 0;
+    font-variant-numeric: tabular-nums; transition: background .18s, color .18s;
+  }
+  .nav-mod-label { display: flex; flex-direction: column; min-width: 0; }
+  .nav-mod-title { line-height: 1.2; }
+  .nav-mod-sub { font-size: 0.68rem; color: var(--ink3); letter-spacing: 0.02em; }
+  .nav-lessons { list-style: none; margin: 2px 0 8px 0; padding-left: 49px; display: none; }
+  .nav-mod.open .nav-lessons { display: block; }
+  .nav-lessons a {
+    display: block; padding: 5px 8px; font-size: 0.8rem; color: var(--ink3);
+    text-decoration: none; border-radius: 6px; border-left: 2px solid var(--rule2);
+    transition: color .15s, border-color .15s, background .15s;
+  }
+  .nav-lessons a:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-light); }
+
+  /* ============ CONTENT ============ */
+  main { flex: 1; min-width: 0; padding: 0 0 80px; }
+  .module { display: none; animation: fade .45s ease; }
+  .module.active { display: block; }
+  @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .content { max-width: 820px; margin: 0 auto; padding: 0 40px; }
+
+  /* module hero */
+  .mod-hero { padding: 56px 0 30px; border-bottom: 1px solid var(--rule); margin-bottom: 38px; position: relative; }
+  .mod-hero-eyebrow { display: inline-flex; align-items: center; gap: 9px; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 16px; }
+  .mod-hero-eyebrow::before { content: ""; width: 28px; height: 2px; background: var(--accent); }
+  .mod-hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2rem, 4.4vw, 3rem); line-height: 1.04; letter-spacing: -0.02em; }
+  .mod-hero .lead { font-size: 1.08rem; color: var(--ink2); margin-top: 18px; max-width: 70ch; }
+  .mod-hero-meta { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 24px; font-size: 0.8rem; color: var(--ink3); }
+  .mod-hero-meta span { display: inline-flex; align-items: center; gap: 7px; }
+  .mod-hero-meta b { color: var(--ink2); font-weight: 600; }
+
+  h2.lesson { font-family: 'DM Serif Display', serif; font-size: 1.74rem; letter-spacing: -0.015em; margin: 52px 0 6px; scroll-margin-top: 80px; line-height: 1.12; }
+  h2.lesson .l-tag { display: block; font-family: 'DM Mono', monospace; font-size: 0.74rem; letter-spacing: 0.1em; color: var(--accent); text-transform: uppercase; margin-bottom: 7px; font-weight: 500; }
+  h3 { font-size: 1.14rem; font-weight: 700; margin: 34px 0 10px; letter-spacing: -0.01em; }
+  h4 { font-size: 1rem; font-weight: 700; margin: 24px 0 6px; color: var(--ink); }
+  p { margin: 13px 0; }
+  ul, ol { margin: 13px 0 13px 4px; padding-left: 24px; }
+  li { margin: 7px 0; }
+  ul.clean { list-style: none; padding-left: 0; }
+  ul.clean > li { position: relative; padding-left: 26px; }
+  ul.clean > li::before { content: ""; position: absolute; left: 4px; top: 12px; width: 7px; height: 7px; border-radius: 2px; background: var(--accent); transform: rotate(45deg); }
+  strong { font-weight: 700; }
+  em { font-style: italic; }
+
+  /* learning objectives box */
+  .objectives { background: var(--paper2); border: 1px solid var(--rule); border-radius: 14px; padding: 26px 30px; margin: 30px 0; }
+  .objectives h4 { margin: 0 0 14px; font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+  .objectives ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  .objectives li { position: relative; padding-left: 30px; margin: 0; font-size: 0.95rem; color: var(--ink2); }
+  .objectives li::before {
+    content: ""; position: absolute; left: 0; top: 4px; width: 17px; height: 17px;
+    background: var(--accent); border-radius: 5px;
+    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='white' d='M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/></svg>") center/14px no-repeat;
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='white' d='M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/></svg>") center/14px no-repeat;
+  }
+
+  /* ============ CALLOUTS ============ */
+  .callout { border-radius: 13px; padding: 19px 22px 19px 22px; margin: 24px 0; font-size: 0.95rem; position: relative; }
+  .callout p:first-child { margin-top: 0; } .callout p:last-child { margin-bottom: 0; }
+  .callout .c-label { font-size: 0.7rem; letter-spacing: 0.13em; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 6px; }
+
+  /* author / field note */
+  .author { background: linear-gradient(135deg, var(--paper2), var(--paper3)); border: 1px solid var(--rule); padding-left: 70px; }
+  .author::before {
+    content: "DB"; position: absolute; left: 20px; top: 19px;
+    width: 38px; height: 38px; border-radius: 50%; background: var(--ink); color: var(--paper);
+    display: grid; place-items: center; font-family: 'DM Serif Display', serif; font-size: 0.92rem;
+  }
+  .author .c-label { color: var(--ink3); }
+
+  .note { background: var(--teal-light); border-left: 4px solid var(--teal); }
+  .note .c-label { color: var(--teal); }
+  .important { background: var(--amber-light); border-left: 4px solid var(--amber); }
+  .important .c-label { color: var(--amber); }
+  .takeaway { background: var(--accent-light); border-left: 4px solid var(--accent); }
+  .takeaway .c-label { color: var(--accent); }
+
+  /* figure placeholder */
+  .figure { border: 1.5px dashed var(--rule); border-radius: 13px; padding: 36px 20px; text-align: center; margin: 26px 0; background: var(--paper2); color: var(--ink3); }
+  .figure svg { width: 36px; height: 36px; opacity: 0.4; margin-bottom: 10px; }
+  .figure .fig-cap { font-size: 0.85rem; font-weight: 600; color: var(--ink2); }
+  .figure .fig-note { font-size: 0.74rem; margin-top: 4px; }
+
+  /* real figure image */
+  .fig-img { margin: 28px 0; text-align: center; }
+  .fig-img img { max-width: 100%; height: auto; border: 1px solid var(--rule); border-radius: 13px; background: #fff; box-shadow: var(--shadow-sm); }
+  .fig-img figcaption { font-size: 0.82rem; color: var(--ink3); margin-top: 10px; font-style: italic; }
+
+  /* ============ FORMULA ============ */
+  .formula { background: var(--ink); color: var(--paper); border-radius: 12px; padding: 22px 26px; margin: 22px 0; text-align: center; box-shadow: var(--shadow-sm); }
+  .formula .eq { font-family: 'DM Mono', monospace; font-size: 1.18rem; letter-spacing: 0.01em; }
+  .formula .eq small { color: var(--accent2); }
+  .formula .where { font-family: 'DM Sans', sans-serif; font-size: 0.78rem; color: rgba(245,242,235,0.6); margin-top: 10px; }
+  .formula-name { font-size: 0.72rem; letter-spacing: 0.13em; text-transform: uppercase; color: var(--accent2); margin-bottom: 10px; font-weight: 600; }
+  code.inl { font-family: 'DM Mono', monospace; font-size: 0.88em; background: var(--paper3); padding: 1px 6px; border-radius: 5px; }
+
+  /* worked example */
+  .worked { border: 1px solid var(--rule); border-radius: 14px; margin: 26px 0; overflow: hidden; background: #fff7; }
+  .worked-head { background: var(--ink); color: var(--paper); padding: 13px 22px; font-size: 0.78rem; letter-spacing: 0.13em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 9px; }
+  .worked-head .wx { background: var(--accent); width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center; color: #fff; font-size: 0.8rem; }
+  .worked-body { padding: 20px 24px; }
+  .worked-body .step { font-weight: 700; color: var(--accent); font-size: 0.82rem; letter-spacing: 0.04em; text-transform: uppercase; margin-top: 16px; }
+  .worked-body .calc { font-family: 'DM Mono', monospace; font-size: 0.9rem; background: var(--paper2); border-radius: 8px; padding: 10px 14px; margin: 8px 0; overflow-x: auto; }
+  .worked-body .result { font-family: 'DM Mono', monospace; font-weight: 500; color: var(--teal); }
+
+  /* ============ TABLES ============ */
+  .tbl-wrap { overflow-x: auto; margin: 22px 0; border-radius: 12px; border: 1px solid var(--rule); -webkit-overflow-scrolling: touch; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.86rem; min-width: 420px; background: #fffdfa; }
+  caption { caption-side: top; text-align: left; font-size: 0.76rem; color: var(--ink3); padding: 0 0 9px 2px; font-style: italic; }
+  thead th { background: var(--ink); color: var(--paper); font-weight: 600; text-align: left; padding: 11px 14px; font-size: 0.78rem; letter-spacing: 0.02em; vertical-align: bottom; }
+  tbody td { padding: 10px 14px; border-bottom: 1px solid var(--rule2); vertical-align: top; }
+  tbody tr:nth-child(even) { background: var(--paper2); }
+  tbody tr:last-child td { border-bottom: none; }
+  td strong, th strong { font-weight: 700; }
+  .mono { font-family: 'DM Mono', monospace; font-size: 0.92em; }
+
+  /* ============ SUMMARY / KEY TAKEAWAYS ============ */
+  .summary-block { background: var(--paper2); border: 1px solid var(--rule); border-radius: 16px; padding: 34px 36px; margin: 50px 0 24px; }
+  .summary-block h2 { font-family: 'DM Serif Display', serif; font-size: 1.5rem; margin: 0 0 6px; letter-spacing: -0.015em; }
+  .summary-block .sum-intro { color: var(--ink2); font-size: 0.95rem; margin-bottom: 18px; }
+  ul.keytakeaways { list-style: none; padding: 0; margin: 0; display: grid; gap: 11px; }
+  ul.keytakeaways li { position: relative; padding-left: 32px; font-size: 0.93rem; margin: 0; }
+  ul.keytakeaways li::before {
+    content: ""; position: absolute; left: 0; top: 3px; width: 19px; height: 19px; border-radius: 6px; background: var(--accent);
+    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='white' d='M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/></svg>") center/15px no-repeat;
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='white' d='M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/></svg>") center/15px no-repeat;
+  }
+
+  /* self assessment */
+  .self-assess { border: 1px solid var(--rule); border-radius: 14px; padding: 28px 32px; margin: 28px 0; }
+  .self-assess h3 { margin: 0 0 16px; display: flex; align-items: center; gap: 10px; }
+  .self-assess h3::before { content: "?"; width: 28px; height: 28px; border-radius: 8px; background: var(--teal); color: #fff; display: grid; place-items: center; font-family: 'DM Serif Display', serif; }
+  ol.questions { counter-reset: q; list-style: none; padding: 0; margin: 0; }
+  ol.questions li { counter-increment: q; position: relative; padding: 12px 0 12px 44px; border-bottom: 1px solid var(--rule2); font-size: 0.92rem; }
+  ol.questions li:last-child { border-bottom: none; }
+  ol.questions li::before { content: counter(q); position: absolute; left: 0; top: 11px; width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--accent); color: var(--accent); display: grid; place-items: center; font-weight: 700; font-size: 0.82rem; }
+
+  /* prev / next */
+  .mod-foot { max-width: 820px; margin: 56px auto 0; padding: 0 40px; }
+  .mod-nav-row { display: flex; gap: 14px; justify-content: space-between; border-top: 1px solid var(--rule); padding-top: 26px; }
+  .mod-nav-btn {
+    flex: 1; max-width: 340px; text-align: left; background: var(--paper2); border: 1px solid var(--rule);
+    border-radius: 12px; padding: 14px 18px; cursor: pointer; transition: transform .18s, box-shadow .18s, background .18s;
+    font-family: 'DM Sans', sans-serif; color: var(--ink);
+  }
+  .mod-nav-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); background: #fff; }
+  .mod-nav-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
+  .mod-nav-btn .dir { font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink3); }
+  .mod-nav-btn .nm { font-weight: 600; font-size: 0.95rem; margin-top: 3px; }
+  .mod-nav-btn.next { text-align: right; }
+
+  .course-complete { text-align: center; background: var(--ink); color: var(--paper); border-radius: 16px; padding: 36px; margin: 40px auto 0; max-width: 820px; }
+  .course-complete h3 { font-family: 'DM Serif Display', serif; color: var(--accent2); font-size: 1.5rem; margin: 0 0 6px; }
+  .course-complete p { color: rgba(245,242,235,0.7); margin: 6px 0 0; font-size: 0.92rem; }
+
+  /* footer */
+  footer.site { text-align: center; padding: 40px 20px 50px; border-top: 1px solid var(--rule); margin-top: 40px; color: var(--ink3); font-size: 0.82rem; }
+  footer.site .f-logo { font-family: 'DM Serif Display', serif; color: var(--ink); font-size: 1.05rem; }
+  footer.site a { color: var(--accent); text-decoration: none; }
+  footer.site .f-zk { font-size: 0.74rem; margin-top: 8px; opacity: 0.8; }
+
+  .scrim { display: none; }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 940px) {
+    :root { --sidebar-w: 280px; }
+    .sidebar {
+      position: fixed; top: 0; left: 0; height: 100vh; z-index: 200;
+      transform: translateX(-104%); transition: transform .3s ease; box-shadow: var(--shadow-md);
+      width: 300px; padding-top: 22px;
+    }
+    .sidebar.open { transform: none; }
+    .menu-toggle { display: inline-flex; }
+    .scrim.show { display: block; position: fixed; inset: 0; background: rgba(26,26,24,0.4); z-index: 150; }
+    .content, .mod-foot { padding-left: 22px; padding-right: 22px; }
+    .progress-track { width: 80px; }
+  }
+  @media (max-width: 600px) {
+    body { font-size: 16px; }
+    .content, .mod-foot { padding-left: 18px; padding-right: 18px; }
+    .mod-hero { padding-top: 36px; }
+    .brand-sub { display: none; }
+    .mod-nav-row { flex-direction: column; }
+    .mod-nav-btn { max-width: none; }
+    .author { padding-left: 22px; }
+    .author::before { display: none; }
+    .summary-block, .self-assess { padding: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ TOP BAR ============ -->
+<header class="topbar">
+  <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <a class="brand" href="https://pipingpro-academy.com">
+    <span class="brand-mark">
+      <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="10" fill="none" stroke="#f5f2eb" stroke-width="3.2"/><circle cx="16" cy="16" r="4.6" fill="none" stroke="#f5f2eb" stroke-width="2"/></svg>
+    </span>
+    <span>
+      <span class="brand-name">PipingPro Academy</span>
+      <span class="brand-sub">Engineering Education</span>
+    </span>
+  </a>
+  <div class="topbar-spacer"></div>
+  <div class="progress-wrap">
+    <span class="progress-label" id="progLabel">Module 1 of 5</span>
+    <div class="progress-track"><div class="progress-fill" id="progFill"></div></div>
+  </div>
+</header>
+
+<div class="scrim" id="scrim"></div>
+
+<div class="layout">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="course-eyebrow">Course 1</div>
+    <div class="course-title-sb">Piping Engineering Fundamentals</div>
+    <div class="course-byline">By Donny A. Bachtiar · 5 Modules</div>
+    <nav id="modnav"></nav>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main id="main">
+    <section class="module" data-mod="1">
+      <div class="content">
+        <div class="mod-hero">
+          <span class="mod-hero-eyebrow">Module 1</span>
+          <h1>Pipe Properties</h1>
+
+<figure class="fig-img">
+          <img src="images/pipe-properties-header.png" alt="Piping System" loading="lazy"/>
+          <figcaption>Picture  — Piping System</figcaption>
+        </figure>
+
+          
+          <p class="lead">In the long history of human civilisation, the design of piping networks has been practised for thousands of years — bamboo irrigation pipes were used in China as early as 3000–2000&nbsp;BC. Rapid development came in the 19th century, with a major advance in pipe stress theory in 1934 when R.&nbsp;H.&nbsp;Tingey published <em>"Method of Calculating Thermal Expansion Stresses in Piping"</em>.</p>
+          <p class="lead">Today, a piping system is pipe sections joined with fittings, valves, and equipment, supported by hangers and supports. Pipe is just <em>one element</em> of the complete system. This module covers the fundamental properties of pipe and the materials used in Oil&nbsp;&amp;&nbsp;Gas.</p>
+          <div class="mod-hero-meta">
+            <span><b>5</b> lessons</span>
+            <span>Based on <b>Piping &amp; Pipeline Engineering — Fundamental &amp; Practical Guides</b></span>
+            <span>by <b>Donny A. Bachtiar</b></span>
+          </div>
+        </div>
+
+        <div class="objectives">
+          <h4>What You Will Learn</h4>
+          <ul>
+            <li>The classification of pipe materials — metallic and non-metallic</li>
+            <li>Pipe sizes — NPS, DN, OD, inside diameter, schedule numbers</li>
+            <li>Key pipe formulas: wall thickness, weight, moment of inertia, section modulus</li>
+            <li>Worked examples for pipe property calculations</li>
+            <li>Key mechanical, physical, and electrical properties of pipe materials</li>
+            <li>Post Weld Heat Treatment (PWHT) — purpose and code requirements</li>
+          </ul>
+        </div>
+
+        <!-- LESSON 1.1 -->
+        <h2 class="lesson" id="m1l1"><span class="l-tag">Lesson 1.1</span>Pipe Material Classification</h2>
+
+        <h3>1.1.1&nbsp;&nbsp;The Two Main Categories</h3>
+        <p>Materials widely used for pipes and their components fall into two main categories:</p>
+        <ul class="clean">
+          <li><strong>Metallic</strong> — divided into <em>Ferrous</em> and <em>Non-Ferrous</em>. Ferrous groups into cast iron and steel; non-ferrous covers aluminium, nickel, copper, etc.</li>
+          <li><strong>Non-metallic</strong> — <em>Plastic pipes</em> (thermoplastic and thermosetting) and <em>non-plastic pipes</em> (typically concrete and glass).</li>
+        </ul>
+
+        <div class="callout author">
+          <span class="c-label">From the field</span>
+          <p>When I started my career in 1990, joining an engineering firm in Jakarta on a Middle East oil refinery project, I was thrown in at the deep end with very limited knowledge of piping materials. There was no book like this to help me. Carbon steel was the dominant material, but knowing <em>when</em> to use stainless, alloy, or non-metallic pipe is a skill that took years to develop. This module gives you that foundation from day one.</p>
+        </div>
+
+        <figure class="fig-img">
+          <img src="images/piping-material-diagram.png" alt="Piping material classification diagram — metallic and non-metallic pipe materials" loading="lazy"/>
+          <figcaption>Picture 1 — Piping Material Classification</figcaption>
+        </figure>
+
+        <h3>1.1.2&nbsp;&nbsp;Ferrous Metallic Pipe — Cast Iron</h3>
+        <p>Cast iron is an alloy of iron and carbon with carbon content above 2&nbsp;wt%, often combined with silicon, nickel, or chromium to improve corrosion resistance. It is strong in compression but low in ductility and malleability, and very brittle — unsuitable for pressure piping. The most common types are white and grey cast iron; magnesium and cerium are added to increase ductility.</p>
+        <ul class="clean">
+          <li><strong>Application:</strong> sewer systems — <em>not</em> Oil &amp; Gas process piping.</li>
+          <li><strong>Key specifications:</strong> ASTM A-74 (cast iron soil pipe), ASTM A-888 (hubless cast iron), ANSI B16.45 (cast iron fittings).</li>
+        </ul>
+
+        <h3>1.1.3&nbsp;&nbsp;Ferrous Metallic Pipe — Ductile Iron</h3>
+        <p>Ductile iron is stronger and tougher than cast iron — a high-carbon magnesium-treated product containing graphite as spheroids, giving significantly better impact resistance and ductility than grey cast iron.</p>
+        <ul class="clean">
+          <li><strong>Application:</strong> sewage service and potable water distribution — not used for process hydrocarbon piping.</li>
+          <li><strong>Key specifications:</strong> ASTM A716, ASTM A746, AWWA C150.</li>
+        </ul>
+
+        <h3>1.1.4&nbsp;&nbsp;Carbon Steel Pipe — The Workhorse of Oil &amp; Gas</h3>
+        <p>Carbon steel is the most popular and widely used pipe material in Oil &amp; Gas — wide availability, high strength, and a huge range of connection systems and fittings. Steel is an alloy of iron with no more than 2&nbsp;wt% carbon.</p>
+        <p>By the amount of oxygen removed during steelmaking (deoxidising), steel is categorised as <strong>Killed Steel</strong> (fully deoxidised), <strong>Semi-Killed Steel</strong> (partially deoxidised), and <strong>Rimmed Steel</strong> (no deoxidising agent, carbon 0.12–0.15%).</p>
+        <p>Three general groups by carbon content:</p>
+        <ul class="clean">
+          <li><strong>Low Carbon Steel:</strong> 0.05–0.25% carbon</li>
+          <li><strong>Medium Carbon Steel:</strong> 0.25–0.50% carbon</li>
+          <li><strong>High Carbon Steel:</strong> 0.50% and greater</li>
+        </ul>
+
+        <h4>Manufacturing Methods &amp; Their Impact on Pipe Quality</h4>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Type</th><th>Description</th><th>Weld Joint Factor (E<sub>j</sub>)</th><th>Typical Use</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Seamless (SMLS)</strong></td><td>No welding. Produced by piercing a solid billet. Homogeneous, no weld stress — the strongest type.</td><td class="mono">1.0</td><td>High-pressure, high-temperature, sour service, critical process lines</td></tr>
+              <tr><td><strong>Electric Resistance Weld (ERW)</strong></td><td>Coil formed into a cylinder, seam welded by high-frequency electrical resistance at ~2600°F. Weld heat-treated to remove residual stress.</td><td class="mono">1.0 <span style="color:var(--ink3)">(with full NDE)</span></td><td>General purpose, utility lines, moderate pressure</td></tr>
+              <tr><td><strong>Double Submerged Arc Weld (DSAW)</strong></td><td>Plate formed into a cylinder, welded inside and outside by submerged arc. 100% wall penetration.</td><td class="mono">1.0 <span style="color:var(--ink3)">(with full NDE)</span></td><td>Large bore NPS 16+, high-pressure pipelines, plant headers</td></tr>
+              <tr><td><strong>Spiral Welded</strong></td><td>Coil rolled at an angle, spiral seam welded. Historically low pressure; now available for high pressure with advanced welding.</td><td class="mono">0.8–1.0</td><td>Large diameter lower-pressure applications, casings</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout note">
+          <span class="c-label">Note</span>
+          <p>The Longitudinal Weld Joint Quality Factor (E<sub>j</sub>) must be included in all wall thickness calculations — see Module&nbsp;5, Lesson&nbsp;5.1. A lower E<sub>j</sub> means a thicker wall for the same pressure. This is why seamless pipe is specified for critical high-pressure service.</p>
+        </div>
+
+        <h4>Key Carbon Steel Specifications</h4>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Spec</th><th>Description</th><th>Grade / Strength</th><th>Temp Range</th></tr></thead>
+            <tbody>
+              <tr><td><strong>ASTM A106</strong></td><td>Seamless CS pipe for HIGH-temperature service. The most widely specified process pipe in O&amp;G.</td><td>Gr. A: 30/48 ksi · Gr. B: 35/60 ksi · Gr. C: 40/70 ksi (SMYS/SMTS)</td><td class="mono">−29 to 427°C</td></tr>
+              <tr><td><strong>ASTM A53</strong></td><td>Seamless &amp; ERW, black and hot-dipped galvanised. Type F (furnace butt-weld), E (ERW), S (seamless). Type F is Category D fluid service only.</td><td>Gr. A &amp; B — same as A106 Gr. A &amp; B</td><td class="mono">−29 to 343°C</td></tr>
+              <tr><td><strong>ASTM A333</strong></td><td>Seamless &amp; welded CS pipe for LOW-temperature service. 11 grades with differing chemistry and impact toughness.</td><td>Gr. 6: 35 ksi SMYS to −45°C · Gr. 1: 30 ksi to −45°C</td><td class="mono">Down to −45°C (Gr. 6)</td></tr>
+              <tr><td><strong>API 5L</strong></td><td>Seamless &amp; welded line pipe for gas, water, oil pipelines. PSL 1 (basic) and PSL 2 (stringent, with impact testing).</td><td>X42 to X80 (yield in ksi)</td><td class="mono">−29 to 121°C (std)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout author">
+          <span class="c-label">From the field</span>
+          <p>ASTM A106 Grade B seamless is the pipe I have specified more than any other in my career. It's the default for O&amp;G process piping from −29°C to 427°C. When someone says "carbon steel pipe" on a project, they almost always mean A106 Gr.&nbsp;B seamless. Know this grade inside out.</p>
+        </div>
+
+        <h3>1.1.5&nbsp;&nbsp;Alloying Steel — Why Elements Are Added</h3>
+        <p>Carbon steel is alloyed with other elements to improve properties for specific service. Common alloying elements and their effects:</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Element</th><th>Effect on Steel Properties</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Carbon</strong></td><td>Higher C = higher strength and hardness, but lower ductility, toughness, and weldability. Lower C = better weldability.</td></tr>
+              <tr><td><strong>Chromium (Cr)</strong></td><td>Hardening element. Increases oxidation, abrasion, and high-temperature hydrogen attack resistance. With Nickel gives superior properties.</td></tr>
+              <tr><td><strong>Molybdenum (Mo)</strong></td><td>Increases creep resistance and high-temperature strength; improves pitting resistance. Key in chrome-moly steels (P11, P22, P91).</td></tr>
+              <tr><td><strong>Nickel (Ni)</strong></td><td>Ferrite strengthener and toughener. Increases strength, toughness, fatigue resistance. Key in stainless and low-temperature alloys.</td></tr>
+              <tr><td><strong>Manganese (Mn)</strong></td><td>Present in all commercial steels. With sulphur, improves impact toughness.</td></tr>
+              <tr><td><strong>Copper (Cu)</strong></td><td>Increases atmospheric corrosion resistance and yield strength; scavenges sulphur.</td></tr>
+              <tr><td><strong>Silicon (Si)</strong></td><td>Deoxidiser — captures dissolved oxygen, avoids porosity, improves castability.</td></tr>
+              <tr><td><strong>Aluminium (Al)</strong></td><td>Widely used as a deoxidiser and for controlling grain size.</td></tr>
+              <tr><td><strong>Boron (B)</strong></td><td>Improves hardenability — increases depth of hardening during quenching.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>1.1.6&nbsp;&nbsp;Stainless Steel Pipe</h3>
+        <p>Stainless steel is used wherever corrosion resistance is needed. A minimum of <strong>10.5% chromium</strong> is required for a material to be called stainless. Three types:</p>
+        <ul class="clean">
+          <li><strong>Austenitic (300 series — 304, 316, 316L):</strong> max 0.15% C, min 16% Cr, plus Ni and/or Mn. Excellent strength, ductility, and corrosion resistance. Non-magnetic. The most common stainless in O&amp;G piping.</li>
+          <li><strong>Ferritic (400 series):</strong> Cr 14–27%. Magnetic.</li>
+          <li><strong>Martensitic:</strong> Cr 11.5–18%. Magnetic. Stronger than austenitic but lower corrosion resistance.</li>
+        </ul>
+        <p>Low-carbon austenitic grades carry the <strong>"L"</strong> suffix (e.g. 316L). Lower carbon prevents sensitisation during welding (chromium-carbide precipitation at grain boundaries), eliminating the need for PWHT in most cases.</p>
+        <ul class="clean">
+          <li><strong>Application:</strong> food, beverage, pharmaceutical, offshore, chloride-rich environments. Never installed underground. Generally no external coating needed.</li>
+          <li><strong>Key specifications:</strong> ASTM A312 (seamless/welded austenitic), ASTM A790 (ferritic/austenitic duplex).</li>
+        </ul>
+
+        <!-- LESSON 1.2 -->
+        <h2 class="lesson" id="m1l2"><span class="l-tag">Lesson 1.2</span>Pipe Sizes, Schedules &amp; Key Formulas</h2>
+
+        <figure class="fig-img">
+          <img src="images/pipe-od-and-id-schematic.png" alt="Pipe OD and ID Schematic" loading="lazy"/>
+          <figcaption>Picture  — Pipe OD and ID Schematic </figcaption>
+        </figure>
+
+
+
+        
+        <h3>1.2.1&nbsp;&nbsp;NPS and DN — The Size Designation Systems</h3>
+        <p>A pipe is a tube with a round cross-section having an outside diameter (OD), a wall thickness, and a resulting inside diameter (ID). Pipe sizes conform to <strong>ASME B36.10M-2022</strong> (welded &amp; seamless wrought steel) and <strong>ASME B36.19M-2022</strong> (stainless steel).</p>
+        <ul class="clean">
+          <li><strong>NPS (Nominal Pipe Size):</strong> a dimensionless designator. For NPS 14 and above, NPS = OD in inches. For NPS 12 and below, OD is always larger than the NPS number.</li>
+          <li><strong>DN (Diamètre Nominal):</strong> the metric equivalent — approximate ID in millimetres (e.g. DN 50 ≈ 50 mm ID).</li>
+        </ul>
+        <p>Pipes are grouped as: <strong>Large Bore</strong> (&gt; 2 in), <strong>Small Bore</strong> (≤ 2 in), and <strong>Tubing</strong> (up to 4 in, thinner walls than standard pipe).</p>
+
+        <div class="callout note">
+          <span class="c-label">Note</span>
+          <p>NPS differs from OD below NPS 14 because in the 1930s pipes were made on inner diameter with a 1/16-inch wall, so the OD became larger by 1/8 inch. This legacy is why NPS 6 has an OD of 6.625 in, not 6.000 in.</p>
+        </div>
+
+        <h3>1.2.2&nbsp;&nbsp;Schedule Numbers</h3>
+        <p>Wall thickness once had only three designations: Standard (STD), Extra Strong (XS), and Double Extra Strong (XXS). Schedule numbers were later added: 5S, 10S, 10, 20, 30, 40, 60, 80, 100, 120, 140, 160. The suffix "S" indicates availability in stainless steel.</p>
+        <div class="callout note">
+          <span class="c-label">Note</span>
+          <p>Schedule 40 = STD for NPS 1/8 through NPS 10. For NPS 12 and above, STD = 9.53 mm wall regardless of schedule. Schedule 80 = XS for NPS 8 and below; all larger XS = 12.70 mm (½ in) wall.</p>
+        </div>
+
+        <h3>1.2.3&nbsp;&nbsp;Pipe Formulas — per ASME B36.10M-2022</h3>
+        <p>From ASME B36.10M-2022 and the Piping Handbook (Mohinder L. Nayyar, 7th ed.). These are formulas you will use throughout your career:</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Property</th><th>Formula (US Customary)</th><th>Formula (SI)</th><th>Units</th></tr></thead>
+            <tbody>
+              <tr><td>Inside Diameter</td><td class="mono">ID = OD − 2t</td><td class="mono">ID = OD − 2t</td><td>in / mm</td></tr>
+              <tr><td>Pipe Weight per foot</td><td class="mono">W = 10.6802 × (D − t) × t</td><td>—</td><td>lb/ft</td></tr>
+              <tr><td>Pipe Weight per metre</td><td>—</td><td class="mono">W = 0.0246615 × (D − t) × t</td><td>kg/m</td></tr>
+              <tr><td>Weight of Water per foot</td><td class="mono">Ww = 0.3405 × ID²</td><td>—</td><td>lb/ft</td></tr>
+              <tr><td>Area of Metal</td><td class="mono">Am = 0.7854 × (OD² − ID²)</td><td class="mono">Am = 0.7854 × (OD² − ID²)</td><td>in² / mm²</td></tr>
+              <tr><td>Flow Area (Inside)</td><td class="mono">Ai = 0.7854 × ID²</td><td class="mono">Ai = 0.7854 × ID²</td><td>in² / mm²</td></tr>
+              <tr><td>Moment of Inertia</td><td class="mono">I = 0.0491 × (OD⁴ − ID⁴)</td><td class="mono">I = 0.0491 × (OD⁴ − ID⁴)</td><td>in⁴ / mm⁴</td></tr>
+              <tr><td>Section Modulus</td><td class="mono">Z = 0.0982 × (OD⁴ − ID⁴) / OD</td><td class="mono">Z = 0.0982 × (OD⁴ − ID⁴) / OD</td><td>in³ / mm³</td></tr>
+              <tr><td>Radius of Gyration</td><td class="mono">r = 0.25 × √(OD² + ID²)</td><td class="mono">r = 0.25 × √(OD² + ID²)</td><td>in / mm</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="worked">
+          <div class="worked-head"><span class="wx">1</span>Worked Example — NPS 10, Schedule 40</div>
+          <div class="worked-body">
+            <p><strong>Given:</strong> NPS 10, Schedule 40 carbon steel pipe. Find A<sub>i</sub>, A<sub>m</sub>, and W. <em>(ASME B36.10M-2022, Table 2-1, p.7: OD = 10.75 in; t = 0.365 in)</em></p>
+            <div class="step">Inside Diameter</div>
+            <div class="calc">ID = 10.75 − (2 × 0.365) = <span class="result">10.02 in</span></div>
+            <div class="step">Flow Area</div>
+            <div class="calc">Ai = 0.7854 × 10.02² = <span class="result">78.85 in²</span></div>
+            <div class="step">Metal Area</div>
+            <div class="calc">Am = 0.7854 × (10.75² − 10.02²) = <span class="result">11.908 in²</span></div>
+            <div class="step">Pipe Weight</div>
+            <div class="calc">W = 10.6802 × (10.75 − 0.365) × 0.365 = <span class="result">40.52 lb/ft</span></div>
+            <p style="margin-top:14px;">✓ Cross-check: ASME B36.10M-2022 Table 2-1 shows 40.52 lb/ft for NPS 10 SCH 40. <strong>Calculation confirmed.</strong></p>
+          </div>
+        </div>
+
+        <div class="callout author">
+          <span class="c-label">From the field</span>
+          <p>Always cross-check your calculated pipe weight against the ASME B36.10 table. If they match, your input data is correct. If they don't, find the error before proceeding. This 2-minute check has saved me from hours of incorrect results.</p>
+        </div>
+
+        <div class="worked">
+          <div class="worked-head"><span class="wx">2</span>Worked Example — NPS 14, Schedule 40</div>
+          <div class="worked-body">
+            <p>For NPS 14, Schedule 40 does <strong>not</strong> equal Schedule STD — a distinction that catches many engineers off guard. <em>(Table 2-1, p.8: OD = 14.000 in — the crossover point where OD = NPS; t<sub>SCH40</sub> = 0.438 in, ≠ STD = 0.375 in)</em></p>
+            <div class="step">Pipe Weight</div>
+            <div class="calc">W = 10.6802 × (14.000 − 0.438) × 0.438 = <span class="result">63.50 lb/ft</span></div>
+            <p style="margin-top:14px;">✓ Cross-check: Table 2-1 p.8 confirms 63.50 lb/ft.</p>
+             <p style="margin-top:14px;"> Please note that this calculations are available at the calculator suites, for more pipe sizes.</p>
+          </div>
+        </div>
+
+        <h3>1.2.6&nbsp;&nbsp;Standard Pipe Data Reference</h3>
+        <p>Representative data for common carbon steel sizes (ASME B36.10M-2022). Always refer to the current edition for complete data.</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>NPS</th><th>OD (in)</th><th>SCH / Grade</th><th>Wall t (in)</th><th>Plain End Wt (lb/ft)</th></tr></thead>
+            <tbody>
+              <tr><td>½</td><td class="mono">0.840</td><td>SCH 10</td><td class="mono">0.083</td><td class="mono">0.67</td></tr>
+              <tr><td>2</td><td class="mono">2.375</td><td>SCH 40 / STD</td><td class="mono">0.154</td><td class="mono">3.66</td></tr>
+              <tr><td>2</td><td class="mono">2.375</td><td>SCH 80 / XS</td><td class="mono">0.218</td><td class="mono">5.03</td></tr>
+              <tr><td>4</td><td class="mono">4.500</td><td>SCH 40 / STD</td><td class="mono">0.237</td><td class="mono">10.80</td></tr>
+              <tr><td>4</td><td class="mono">4.500</td><td>SCH 80 / XS</td><td class="mono">0.337</td><td class="mono">15.00</td></tr>
+              <tr><td>6</td><td class="mono">6.625</td><td>SCH 40 / STD</td><td class="mono">0.280</td><td class="mono">18.99</td></tr>
+              <tr><td>6</td><td class="mono">6.625</td><td>SCH 80 / XS</td><td class="mono">0.432</td><td class="mono">28.60</td></tr>
+              <tr><td>8</td><td class="mono">8.625</td><td>SCH 40 / STD</td><td class="mono">0.322</td><td class="mono">28.58</td></tr>
+              <tr><td>8</td><td class="mono">8.625</td><td>SCH 80 / XS</td><td class="mono">0.500</td><td class="mono">43.43</td></tr>
+              <tr><td>10</td><td class="mono">10.750</td><td>SCH 40 / STD</td><td class="mono">0.365</td><td class="mono">40.52</td></tr>
+              <tr><td>12</td><td class="mono">12.750</td><td>SCH STD</td><td class="mono">0.375</td><td class="mono">49.61</td></tr>
+              <tr><td>14</td><td class="mono">14.000</td><td>SCH 30 / STD</td><td class="mono">0.375</td><td class="mono">54.62</td></tr>
+              <tr><td>14</td><td class="mono">14.000</td><td>SCH 40</td><td class="mono">0.438</td><td class="mono">63.50</td></tr>
+              <tr><td>16</td><td class="mono">16.000</td><td>SCH 30 / STD</td><td class="mono">0.375</td><td class="mono">62.64</td></tr>
+              <tr><td>20</td><td class="mono">20.000</td><td>SCH 20 / STD</td><td class="mono">0.375</td><td class="mono">78.67</td></tr>
+              <tr><td>24</td><td class="mono">24.000</td><td>SCH 20 / STD</td><td class="mono">0.375</td><td class="mono">94.71</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout takeaway">
+          <span class="c-label">Key point</span>
+          <p>From NPS 14 onwards, OD = NPS in inches. For NPS 12 and below, OD is always larger than NPS. SCH 40 ≠ STD for NPS 14 and above. Always verify from ASME B36.10M-2022 tables.</p>
+        </div>
+
+        <!-- LESSON 1.3 -->
+        <h2 class="lesson" id="m1l3"><span class="l-tag">Lesson 1.3</span>Mechanical Properties</h2>
+
+        <h3>1.3.1&nbsp;&nbsp;Modulus of Elasticity (Young's Modulus)</h3>
+        <p>The Modulus of Elasticity (E) is the ratio of normal stress to corresponding strain in the elastic region (Hooke's Law) — a measure of material stiffness. E varies with temperature: the higher the temperature, the softer the material and the lower its E. This matters for stress analysis:</p>
+        <ul class="clean">
+          <li>For <strong>high-temperature</strong> piping — use E at the cold (ambient) temperature for sustained and expansion stress calculations, per ASME B31.3.</li>
+          <li>For <strong>low/cold</strong> lines — use E at the minimum temperature.</li>
+        </ul>
+        <div class="tbl-wrap">
+          <table>
+            <caption>Source: ASME B31.3-2024 Appendix C, Table C-5 — E in ×10⁶ psi</caption>
+            <thead><tr><th>Material</th><th>70°F</th><th>200°F</th><th>300°F</th><th>400°F</th><th>500°F</th></tr></thead>
+            <tbody>
+              <tr><td>Carbon Steel C &lt; 0.30%</td><td class="mono">29.4</td><td class="mono">28.8</td><td class="mono">28.3</td><td class="mono">27.4</td><td class="mono">27.3</td></tr>
+              <tr><td>Carbon Steel C &gt; 0.30%</td><td class="mono">29.2</td><td class="mono">28.6</td><td class="mono">28.1</td><td class="mono">27.7</td><td class="mono">27.1</td></tr>
+              <tr><td>Austenitic SS T304 (18Cr-8Ni)</td><td class="mono">28.3</td><td class="mono">27.5</td><td class="mono">27.0</td><td class="mono">26.4</td><td class="mono">25.9</td></tr>
+              <tr><td>Austenitic SS T316 (16Cr-12Ni-2Mo)</td><td class="mono">28.3</td><td class="mono">27.5</td><td class="mono">27.0</td><td class="mono">26.4</td><td class="mono">25.9</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>1.3.2&nbsp;&nbsp;Yield Strength &amp; Ultimate Tensile Strength</h3>
+        <p>Strength is the ability to resist deformation or failure under applied force. Two key values:</p>
+        <ul class="clean">
+          <li><strong>Yield Strength (SMYS):</strong> the maximum stress maintaining elastic behaviour before plastic deformation begins. Determined by the 0.2% offset method.</li>
+          <li><strong>Ultimate Tensile Strength (SMTS):</strong> the maximum applied load ÷ original cross-sectional area sustained before breaking — the highest point on the stress-strain curve.</li>
+        </ul>
+        <div class="formula">
+          <div class="formula-name">Elastic region (Hooke's Law)</div>
+          <div class="eq">σ = E × ε</div>
+          <div class="where">Stress = Young's Modulus × Strain. Beyond the yield point the material deforms plastically and the relationship is no longer linear.</div>
+        </div>
+
+<figure class="fig-img">
+          <img src="images/stress-strain-curve-with-offset-line.png" alt="Stress-Strain Curve with 0.2% offset line" loading="lazy"/>
+          <figcaption>Picture  — Stress-Strain Curve with 0.2% offset line</figcaption>
+        </figure>
+        
+
+
+        
+        <h3>1.3.3&nbsp;&nbsp;Elongation, Reduction of Area, Hardness &amp; Toughness</h3>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Property</th><th>Definition</th><th>Relevance to Piping</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Elongation (%)</strong></td><td>Plastic stretch before rupture — a ductility measure. % = ((L<sub>final</sub> − L<sub>orig</sub>) / L<sub>orig</sub>) × 100</td><td>Ductile materials warn before failure; brittle materials fail suddenly. O&amp;G prefers ductile materials.</td></tr>
+              <tr><td><strong>Reduction of Area (%)</strong></td><td>Decrease in cross-section at the fracture point — also a ductility measure.</td><td>Higher RA = more ductile. Required in some specs for critical service.</td></tr>
+              <tr><td><strong>Hardness</strong></td><td>Resistance to surface deformation. Brinell (HBW) or Rockwell (HRC). Higher = harder.</td><td>Critical for sour service — NACE MR0175 limits CS hardness to HRC 22 max to prevent SSC.</td></tr>
+              <tr><td><strong>Toughness</strong></td><td>Resistance to fracture under rapid loading. Charpy Impact (ASTM E23), Drop Weight (ASTM E208). In ft-lb or Joules.</td><td>Essential for low-temperature service. Required by ASTM A333 and API 5L PSL 2.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- LESSON 1.4 -->
+        <h2 class="lesson" id="m1l4"><span class="l-tag">Lesson 1.4</span>Physical Properties</h2>
+
+        <h3>1.4.1&nbsp;&nbsp;Thermal Conductivity</h3>
+        <p>Thermal conductivity (k) is the ability to transmit heat from a high- to a low-temperature region. Units: Btu·ft / (hr·ft²·°F). For carbon steel, k decreases as temperature increases; for austenitic stainless, k increases with temperature.</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Material</th><th>Thermal Conductivity k</th><th>Temperature (°F)</th></tr></thead>
+            <tbody>
+              <tr><td>Gray Cast Iron</td><td class="mono">27</td><td class="mono">70</td></tr>
+              <tr><td>Carbon-½ Mo</td><td class="mono">25.8</td><td class="mono">212</td></tr>
+              <tr><td>1¼ Cr – ½ Mo (P11)</td><td class="mono">17.9</td><td class="mono">212</td></tr>
+              <tr><td>Type 304 Wrought SS</td><td class="mono">9.4</td><td class="mono">212</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>1.4.2&nbsp;&nbsp;Density</h3>
+        <p>Density is the ratio of mass to volume: ρ = m/V. A key input for pipe weight and fluid weight in stress analysis.</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Material</th><th>Density (lb/in³)</th></tr></thead>
+            <tbody>
+              <tr><td>Gray Cast Iron</td><td class="mono">0.251–0.265</td></tr>
+              <tr><td>Carbon Steel (typical)</td><td class="mono">0.283</td></tr>
+              <tr><td>Type 304 Wrought SS</td><td class="mono">0.290</td></tr>
+              <tr><td>Aluminium 1100</td><td class="mono">0.098</td></tr>
+              <tr><td>Titanium</td><td class="mono">0.163</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>1.4.3&nbsp;&nbsp;Thermal Expansion</h3>
+        <p>Most metals expand proportionally in all directions (linear expansion) when heated. The change in length:</p>
+        <div class="formula">
+          <div class="formula-name">Linear Thermal Expansion</div>
+          <div class="eq">ΔL = α × L × ΔT</div>
+          <div class="where">ΔL = change in length · α = coeff. of thermal expansion (1/°F or 1/°C) · L = original length · ΔT = temperature change</div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Material</th><th>Mean Coeff. (10⁻⁶ in/in/°F) @ 70°F</th><th>@ 400°F</th><th>Linear Exp. (in/100ft) @ 70°F</th><th>@ 400°F</th></tr></thead>
+            <tbody>
+              <tr><td>Carbon &amp; Low Alloy Steel</td><td class="mono">6.4</td><td class="mono">7.1</td><td class="mono">0</td><td class="mono">1.0</td></tr>
+              <tr><td>Austenitic SS (304, 316)</td><td class="mono">8.5</td><td class="mono">9.5</td><td class="mono">0</td><td class="mono">3.8</td></tr>
+              <tr><td>Aluminium Alloys</td><td class="mono">12.1</td><td class="mono">13.6</td><td class="mono">0</td><td class="mono">5.4</td></tr>
+              <tr><td>Duplex — 27% Cr</td><td class="mono">5.0</td><td class="mono">5.3</td><td class="mono">0</td><td class="mono">2.1</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout author">
+          <span class="c-label">From the field</span>
+          <p>Thermal expansion coefficient and Modulus of Elasticity are the two most critical material properties in pipe stress analysis. Get them wrong in your CAESAR II model and <em>every</em> stress result is wrong. Always use the values from ASME B31.3 Appendix C for the specific material and temperature — do not use generic values.</p>
+        </div>
+
+        <!-- LESSON 1.5 -->
+        <h2 class="lesson" id="m1l5"><span class="l-tag">Lesson 1.5</span>Post Weld Heat Treatment (PWHT)</h2>
+
+        <h3>1.5.1&nbsp;&nbsp;Purpose of PWHT</h3>
+        <p>PWHT is applied to a weld to improve mechanical properties, corrosion resistance, microstructure, and environmental cracking resistance, and to reduce residual stress. Residual welding stresses can cause stress corrosion cracking (SCC), hydrogen-induced cracking (HIC), and premature fatigue failure — particularly in sour service.</p>
+
+        <h3>1.5.2&nbsp;&nbsp;When PWHT Is Required</h3>
+        <p>The requirement depends on code, material, wall thickness, and carbon content:</p>
+        <ul class="clean">
+          <li><strong>ASME B31.4 &amp; B31.8 (2025):</strong> PWHT for carbon steel above certain wall thickness limits — e.g. &gt; 1.25 in (32 mm) in some cases. Depends on carbon content, carbon equivalent, and wall thickness.</li>
+          <li><strong>ASME B31.3 &amp; B31.1:</strong> PWHT on shop/field girth welds based on material P-group, wall thickness, carbon content, and UTS. E.g. P-1 carbon steel requires PWHT above 19 mm (¾ in) nominal wall for most applications.</li>
+          <li><strong>Sour service (NACE MR0175):</strong> PWHT mandatory for all carbon steel welds in H₂S service to reduce HAZ hardness below HRC 22.</li>
+          <li><strong>Chrome-moly (P11, P22, P91):</strong> PWHT mandatory for all welds — no exceptions. Without it, brittle martensite forms in the HAZ and the risk of hydrogen cracking rises sharply.</li>
+        </ul>
+        <div class="callout important">
+          <span class="c-label">Important</span>
+          <p>PWHT requirements vary by code edition, material group, wall thickness, and carbon equivalent. Always check the project-specific code edition — do not rely on memory or previous project experience. The consequence of missing a PWHT requirement is a weld that can fail in service.</p>
+        </div>
+        <div class="callout takeaway">
+          <span class="c-label">Key point</span>
+          <p>PWHT is not optional when required by code. It is a controlled, documented process performed by qualified welders and witnessed or verified by inspection. On Aramco projects, PWHT is a mandatory hold point in the Inspection and Test Plan (ITP).</p>
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="summary-block">
+          <h2>Module 1 — Summary &amp; Key Takeaways</h2>
+          <p class="sum-intro">This module establishes the foundation for everything else in the course. Pipe materials, their properties, and dimensional standards are the starting point for every engineering decision you will make.</p>
+          <ul class="keytakeaways">
+            <li>Pipe materials are <strong>Metallic</strong> (Ferrous: CS, Alloy, SS; Non-Ferrous: Al, Cu) and <strong>Non-Metallic</strong> (Plastic: HDPE, TCP, FRP; Non-Plastic: concrete, glass).</li>
+            <li>Carbon Steel <strong>ASTM A106 Gr. B seamless</strong> is the most widely used pipe in O&amp;G. Valid −29°C to 427°C. Know it inside out.</li>
+            <li>Pipe weight per ASME B36.10M: <span class="mono">W = 10.6802 × (D − t) × t</span> (lb/ft) or <span class="mono">0.0246615 × (D − t) × t</span> (kg/m). Always cross-check the table.</li>
+            <li>From NPS 14 onwards, OD = NPS in inches. For NPS 12 and below, OD &gt; NPS.</li>
+            <li>Thermal expansion coefficient (α) and Modulus of Elasticity (E) are the two most critical properties in stress analysis. Use ASME B31.3 Appendix C values.</li>
+            <li>Longitudinal Weld Joint Quality Factor (E<sub>j</sub>) affects wall thickness — seamless = 1.0; ERW = 1.0 with full NDE; furnace butt-weld = 0.6.</li>
+            <li>PWHT is mandatory for sour service, chrome-moly steels, and above certain wall thickness thresholds. Always check the project-specific code edition.</li>
+          </ul>
+        </div>
+
+        <div class="self-assess">
+          <h3>Self-Assessment Questions</h3>
+          <ol class="questions">
+            <li>What is the plain end weight per foot of NPS 6, SCH 80 (XS) pipe? (OD = 6.625 in, t = 0.432 in). Use the ASME B36.10 formula and cross-check the table.</li>
+            <li>A process line operates at 350°C. What Modulus of Elasticity value would you use for carbon steel (C &lt; 0.30%) in your CAESAR II model?</li>
+            <li>What is the difference between ASTM A106 and ASTM A333 Grade 6, and when would you specify each?</li>
+            <li>Why is the "L" suffix important in stainless steel grades (e.g. 316L vs 316)? What failure mode does it prevent?</li>
+            <li>PWHT is required for carbon steel weld in sour service. What hardness limit must the HAZ meet, and which standard governs this?</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="mod-foot">
+        <div class="mod-nav-row">
+          <button class="mod-nav-btn prev" disabled><span class="dir">← Previous</span><span class="nm">Start of course</span></button>
+          <button class="mod-nav-btn next" data-nav="2"><span class="dir">Next →</span><span class="nm">Module 2 · Pipe Materials</span></button>
+        </div>
+      </div>
+    </section>
+    <section class="module" data-mod="2">
+      <div class="content">
+        <div class="mod-hero">
+          <span class="mod-hero-eyebrow">Module 2</span>
+          <h1>Pipe Materials</h1>
+          <p class="lead">Selecting the right pipe material is one of the most critical decisions in piping engineering. The wrong choice can lead to catastrophic failure, unplanned shutdowns, or costly rework. This module covers the complete range of metallic and non-metallic pipe materials used in Oil &amp; Gas.</p>
+          <p class="lead">We also address non-metallic materials — HDPE, TCP, and FRP — which are gaining traction with operators for low maintenance cost, easy installation, and high corrosion resistance, especially in sour or seawater service.</p>
+          <div class="mod-hero-meta"><span><b>7</b> lessons</span><span>Aligned with Chapter 1 of the source text</span></div>
+        </div>
+
+        <div class="objectives">
+          <h4>What You Will Learn</h4>
+          <ul>
+            <li>Carbon steel grades and temperature limits — the materials you will use most</li>
+            <li>Stainless steel types — Austenitic, Ferritic, Martensitic, Duplex</li>
+            <li>Alloy steels — chrome-moly for high temperature service (P11, P22, P91)</li>
+            <li>Non-ferrous metals — aluminium and copper</li>
+            <li>Non-metallic pipes — HDPE, TCP (with PEEK), FRP</li>
+            <li>CRA (Corrosion Resistant Alloy) — clad and lined pipe for sour and corrosive service</li>
+            <li>Material selection logic — sour service, NACE MR0175, temperature limits</li>
+          </ul>
+        </div>
+
+        <!-- 2.1 -->
+        <h2 class="lesson" id="m2l1"><span class="l-tag">Lesson 2.1</span>Carbon Steel: Grades, Standards, Temperature Limits</h2>
+        <h3>2.1.1&nbsp;&nbsp;Why Carbon Steel Dominates</h3>
+        <p>Carbon steel is the workhorse of Oil &amp; Gas — the most widely used pipe material thanks to availability, strength, and the vast range of connection systems and fittings. Understanding its grades and limitations is fundamental to daily work.</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Standard</th><th>Type</th><th>Grade</th><th>SMYS / SMTS</th><th>Temp Range</th><th>Typical Use</th></tr></thead>
+            <tbody>
+              <tr><td><strong>ASTM A106</strong></td><td>Seamless CS</td><td>Gr. A, B, C</td><td>Gr. B: 35 / 60 ksi</td><td class="mono">−29 to 427°C</td><td>HIGH-temp process piping — the default O&amp;G process pipe</td></tr>
+              <tr><td><strong>ASTM A53</strong></td><td>Seamless &amp; ERW</td><td>Gr. A, B</td><td>Same as A106 Gr. A, B</td><td class="mono">−29 to 343°C</td><td>General purpose. Type F for Category D only.</td></tr>
+              <tr><td><strong>ASTM A333</strong></td><td>Seamless &amp; Welded</td><td>Gr. 6, Gr. 1</td><td>Gr. 6: 35 ksi SMYS</td><td class="mono">to −45°C (Gr.6)</td><td>LOW-temp service — LNG, cryogenic, cold climate</td></tr>
+              <tr><td><strong>API 5L</strong></td><td>Seamless &amp; SAW</td><td>X42 to X80</td><td>X65: 65 ksi SMYS</td><td class="mono">−29 to 121°C</td><td>Gas/liquid PIPELINES — PSL 1 basic, PSL 2 with impact testing</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout author">
+          <span class="c-label">From the field</span>
+          <p>ASTM A106 Grade B seamless is the pipe I have specified more than any other across 35 years in Indonesia, Singapore, UAE, Saudi Arabia, and the UK. It is your default process pipe. Know its limits: −29°C minimum, 427°C maximum. Outside this range you must change material — and getting this wrong has caused accidents in the industry.</p>
+        </div>
+        <div class="callout important">
+          <span class="c-label">Important</span>
+          <p>Never specify standard ASTM A106 Gr. B for cryogenic service (LNG, propylene refrigeration, CO₂ injection below −29°C). This is a safety-critical material selection error. Use ASTM A333 Gr. 6 down to −45°C, or stainless / nickel alloys for lower temperatures.</p>
+        </div>
+
+        <h3>2.1.2&nbsp;&nbsp;API 5L — Pipeline Steel</h3>
+        <p>API 5L specifies seamless and welded steel line pipe for pipeline transportation. Grades range A25 to X80, where the number after X is minimum yield strength in ksi (X65 = 65,000 psi min yield). Two Product Specification Levels:</p>
+        <ul class="clean">
+          <li><strong>PSL 1:</strong> basic level — minimum chemical and mechanical requirements.</li>
+          <li><strong>PSL 2:</strong> more stringent — mandatory Charpy impact testing, stricter chemistry (carbon equivalent), mandatory NDE. Almost always required for critical pipelines.</li>
+        </ul>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>API 5L Grade</th><th>Min. Yield</th><th>Min. Tensile</th><th>Typical Application</th></tr></thead>
+            <tbody>
+              <tr><td>X42</td><td class="mono">290 MPa (42 ksi)</td><td class="mono">414 MPa (60 ksi)</td><td>Low-pressure gathering lines</td></tr>
+              <tr><td>X52</td><td class="mono">359 MPa (52 ksi)</td><td class="mono">455 MPa (66 ksi)</td><td>General transmission pipelines</td></tr>
+              <tr><td>X60</td><td class="mono">414 MPa (60 ksi)</td><td class="mono">517 MPa (75 ksi)</td><td>High-pressure gas transmission</td></tr>
+              <tr><td>X65</td><td class="mono">448 MPa (65 ksi)</td><td class="mono">531 MPa (77 ksi)</td><td>Offshore trunk lines, major gas pipelines</td></tr>
+              <tr><td>X70</td><td class="mono">483 MPa (70 ksi)</td><td class="mono">565 MPa (82 ksi)</td><td>Ultra-high pressure long-distance pipelines</td></tr>
+              <tr><td>X80</td><td class="mono">552 MPa (80 ksi)</td><td class="mono">621 MPa (90 ksi)</td><td>Highest grade — major gas transmission</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout takeaway">
+          <span class="c-label">Key point</span>
+          <p>ASTM A106 Gr. B for process plant piping. API 5L for pipelines. They are governed by different design codes (B31.3 vs B31.4/B31.8) with different design philosophies.</p>
+        </div>
+
+        <!-- 2.2 -->
+        <h2 class="lesson" id="m2l2"><span class="l-tag">Lesson 2.2</span>Stainless Steel: Austenitic, Duplex &amp; Special Grades</h2>
+        <h3>2.2.1&nbsp;&nbsp;Why Stainless Steel?</h3>
+        <p>Stainless steel is used wherever corrosion resistance is needed. A minimum of 10.5% chromium forms a passive chromium-oxide layer that resists rust and staining — and this layer self-heals when damaged in the presence of oxygen.</p>
+
+        <h3>2.2.2&nbsp;&nbsp;Austenitic Stainless Steel — 300 Series</h3>
+        <p>Identified by the 300 series: max 0.15% C, min 16% Cr, plus Ni and/or Mn. Excellent strength, ductility, and corrosion resistance; non-magnetic when annealed.</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Grade</th><th>ASTM</th><th>Key Composition</th><th>Corrosion Resistance</th><th>Typical O&amp;G Use</th></tr></thead>
+            <tbody>
+              <tr><td><strong>SS 304</strong></td><td>A312 TP304</td><td>18Cr, 8Ni</td><td>Good — general corrosion</td><td>Low-chloride process, utility, chemical injection</td></tr>
+              <tr><td><strong>SS 316</strong></td><td>A312 TP316</td><td>16Cr, 10Ni, 2Mo</td><td>Better — chloride &amp; acid (Mo addition)</td><td>Offshore, seawater-contaminated, acid service</td></tr>
+              <tr><td><strong>SS 316L</strong></td><td>A312 TP316L</td><td>16Cr, 10Ni, 2Mo, low C (≤0.03%)</td><td>Best for weld decay prevention — no sensitisation</td><td>Welded SS piping — the default austenitic choice</td></tr>
+              <tr><td><strong>SS 304L</strong></td><td>A312 TP304L</td><td>18Cr, 8Ni, low C</td><td>As 304 but weld-safe</td><td>Where 304 is acceptable but welding is involved</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The "L" in 316L/304L means <strong>Low Carbon</strong> (max 0.03% vs 0.08%). This prevents sensitisation during welding — chromium carbides forming at grain boundaries, depleting surrounding chromium and creating susceptibility to intergranular corrosion.</p>
+        <div class="callout important">
+          <span class="c-label">Important</span>
+          <p>Always specify 316L (not 316) for welded stainless piping unless you intend to perform post-weld solution annealing. Using standard 316 for welded pipe without heat treatment is a common specification error that leads to intergranular corrosion in service.</p>
+        </div>
+
+        <h3>2.2.3&nbsp;&nbsp;Ferritic &amp; Martensitic Stainless Steel</h3>
+        <ul class="clean">
+          <li><strong>Ferritic (400 series):</strong> Cr 14–27%, magnetic. Lower cost than austenitic but limited corrosion resistance and lower sub-zero toughness.</li>
+          <li><strong>Martensitic:</strong> Cr 11.5–18%, magnetic. Higher strength than austenitic but much lower corrosion resistance. Used for valve trim, shafts, wear parts — not pipe.</li>
+        </ul>
+
+        <h3>2.2.4&nbsp;&nbsp;Duplex Stainless Steel</h3>
+        <p>Duplex has a mixed microstructure of ~50% austenite and 50% ferrite. This two-phase structure gives much higher strength than standard austenitic grades and excellent SCC and chloride-pitting resistance — the material of choice for aggressive offshore and sour environments.</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Grade</th><th>UNS</th><th>Key Properties</th><th>Typical O&amp;G Application</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Duplex 2205</strong></td><td>S31803 / S32205</td><td>22Cr, 5Ni, 3Mo, N — high strength, excellent SCC resistance. ~2× the strength of 316L.</td><td>Offshore process piping, topside manifolds, injection lines, sour service</td></tr>
+              <tr><td><strong>Super Duplex 2507</strong></td><td>S32750</td><td>25Cr, 7Ni, 4Mo — superior chloride/pitting resistance. PREN &gt; 40.</td><td>Seawater handling, subsea systems, highly corrosive service</td></tr>
+              <tr><td><strong>Lean Duplex 2101</strong></td><td>S32101</td><td>21Cr, 1.5Ni, 0.3Mo — lower cost, moderate performance.</td><td>Storage tanks, non-critical structures, lower corrosivity</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout takeaway">
+          <span class="c-label">Key point</span>
+          <p>Use 316L for standard stainless service. Step up to Duplex 2205 for high chloride, offshore, or sour service. The higher strength of duplex allows thinner walls and lighter weight than 316L for the same pressure rating.</p>
+        </div>
+
+        <!-- 2.3 -->
+        <h2 class="lesson" id="m2l3"><span class="l-tag">Lesson 2.3</span>Alloy Steel: Chrome-Moly for High Temperature</h2>
+        <h3>2.3.1&nbsp;&nbsp;When Alloy Steel Is Needed</h3>
+        <p>When process temperatures exceed 427°C — the upper limit for carbon steel — you must step up to alloy steels. The primary additions are Chromium and Molybdenum, improving creep resistance, oxidation resistance, and elevated-temperature strength. These chrome-moly (Cr-Mo) steels are specified under ASTM A335 for seamless pipe.</p>
+        <p><em>Creep</em> is the slow, time-dependent plastic deformation under sustained stress at elevated temperature. It causes permanent deformation, loss of bolt preload at flanges, and ultimately failure. Chrome-moly steels resist creep where carbon steel would deform unacceptably.</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Grade</th><th>ASTM</th><th>Cr %</th><th>Mo %</th><th>Max Temp</th><th>O&amp;G Application</th></tr></thead>
+            <tbody>
+              <tr><td>P5</td><td>A335 P5</td><td class="mono">4–6</td><td class="mono">0.45–0.65</td><td class="mono">593°C</td><td>Moderate high-temp service, refineries</td></tr>
+              <tr><td>P11</td><td>A335 P11</td><td class="mono">1–1.5</td><td class="mono">0.44–0.65</td><td class="mono">538°C</td><td>Steam lines, fired-heater outlet, exchangers, reformers</td></tr>
+              <tr><td>P22</td><td>A335 P22</td><td class="mono">1.9–2.6</td><td class="mono">0.87–1.13</td><td class="mono">566°C</td><td>Steam generation, boiler piping, hot hydrogen service</td></tr>
+              <tr><td>P91</td><td>A335 P91</td><td class="mono">8–9.5</td><td class="mono">0.85–1.05</td><td class="mono">649°C</td><td>Ultra-high temperature — power plants, advanced petrochem</td></tr>
+              <tr><td>P92</td><td>A335 P92</td><td class="mono">8.5–9.5</td><td class="mono">0.30–0.60</td><td class="mono">650°C+</td><td>Supercritical steam, advanced power plants</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>2.3.2&nbsp;&nbsp;Preheat &amp; PWHT — Mandatory for All P-Grade Steels</h3>
+        <p>Chrome-moly steels are much harder to weld than carbon steel. Higher alloy content increases hardenability — the tendency to form hard, brittle martensite in the HAZ. Two heat-treatment steps are mandatory:</p>
+        <ol>
+          <li><strong>Preheat</strong> — the pipe is heated before welding to slow cooling and prevent martensite. Minimums: P11 ≈ 150°C; P22 ≈ 200°C; P91 ≈ 200–250°C.</li>
+          <li><strong>PWHT</strong> — after welding, the joint is held at tempering temperature to relieve residual stress and temper the HAZ. Temperatures: P11 = 677–746°C; P22 = 677–760°C; P91 = 730–800°C.</li>
+        </ol>
+        <div class="callout important">
+          <span class="c-label">Important</span>
+          <p>P91 is notoriously difficult to weld. Incorrect PWHT — insufficient hold temperature or time — produces Type IV cracking, which has caused multiple catastrophic failures globally. Always ensure WPS/PQR and PWHT records are fully controlled and verified by a qualified welding engineer.</p>
+        </div>
+        <div class="callout takeaway">
+          <span class="c-label">Key point</span>
+          <p>Above 427°C: specify P11 or P22. Above 566°C: P91. Preheat and PWHT are mandatory — no exceptions for any chrome-moly weld. This is both a code requirement and a safety requirement.</p>
+        </div>
+
+        <!-- 2.4 -->
+        <h2 class="lesson" id="m2l4"><span class="l-tag">Lesson 2.4</span>Non-Ferrous Metallic Pipes</h2>
+        <h3>2.4.1&nbsp;&nbsp;Aluminium Alloy Pipe</h3>
+        <p>Aluminium alloys are ~1/3 the density of steel, malleable, readily weldable, and corrosion-resistant. Uncommon in O&amp;G piping, but found in compressed gas and cryogenic service.</p>
+        <ul class="clean">
+          <li><strong>Key standards:</strong> ASTM B210 (drawn seamless tube), ASTM B241 (seamless pipe and extruded tube).</li>
+          <li>Not widely used in O&amp;G process piping due to cost and limited pressure/temperature capability vs steel.</li>
+        </ul>
+        <h3>2.4.2&nbsp;&nbsp;Copper Tubing</h3>
+        <p>Copper, bronze, and brass have long been used for piping due to excellent corrosion resistance, particularly for water. Copper tubing is most common in plumbing, hydronics, and refrigeration.</p>
+        <ul class="clean">
+          <li><strong>Key standards:</strong> ANSI B16.15 (cast copper alloy threaded fittings), ANSI B16.22 (wrought copper solder-joint pressure fittings).</li>
+          <li>In O&amp;G, primarily instrument air, utility water, and HVAC within plant buildings — not process hydrocarbon piping.</li>
+        </ul>
+
+        <!-- 2.5 -->
+        <h2 class="lesson" id="m2l5"><span class="l-tag">Lesson 2.5</span>Non-Metallic Pipe: Plastic Pipes</h2>
+        <h3>2.5.1&nbsp;&nbsp;Growing Importance in Oil &amp; Gas</h3>
+        <p>Non-metallic pipes attract increasing attention for low maintenance, easy installation, and high corrosion resistance — especially in sour or seawater service. Two forms: <strong>Thermoplastics</strong> (repeatedly softened/hardened by heating/cooling without affecting properties) and <strong>Thermosetting</strong> (irreversibly hardened during manufacture — cannot be reshaped once cured).</p>
+
+        <h3>2.5.2&nbsp;&nbsp;High Density Polyethylene (HDPE)</h3>
+        <p>HDPE is a thermoplastic (polyolefin family), flexible but tough, with excellent chemical resistance. Increasingly accepted for produced water, seawater injection, and low-pressure gas.</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Property</th><th>HDPE Characteristics</th></tr></thead>
+            <tbody>
+              <tr><td>Standards</td><td>API 15LE, ASTM D3350, AWWA C906, AWWA M55</td></tr>
+              <tr><td>Temperature range</td><td class="mono">−34 to 60°C for pressure service</td></tr>
+              <tr><td>Sizing system</td><td>SDR (Standard Dimension Ratio) = OD / Wall. Common: 64, 51, 41, 32.5, 26, 21, 17, 13.5</td></tr>
+              <tr><td>Pressure rating</td><td class="mono">P = 2S / (SDR − 1)</td></tr>
+              <tr><td>Density class</td><td>PE4710: density &gt;0.947 g/cc, HDS 1000 psi @ 73°F — highest-performance class</td></tr>
+              <tr><td>Joining</td><td>Butt fusion, electrofusion, flanged adaptors — not threaded or solvent cement</td></tr>
+              <tr><td>Key advantage</td><td>Immune to galvanic corrosion, no cathodic protection, lightweight, flexible, excellent chemical resistance</td></tr>
+              <tr><td>Key limitation</td><td>Limited to ~60°C; not suitable for most hydrocarbon service (swell/permeation); UV degradation if unprotected</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p><strong>Viscoelasticity</strong> is important for HDPE — it shows both viscous and elastic behaviour. Under constant stress it creeps (deforms over time), so time under load (design life) must be considered. The Hydrostatic Design Basis (HDB) is determined by long-term rupture tests per ASTM D2837.</p>
+
+        <h3>2.5.3&nbsp;&nbsp;Thermoplastic Composite Pipe (TCP)</h3>
+        <p>TCP differs from RTP (Reinforced Thermoplastic Pipe) in manufacture and application. It uses higher-performing resins — such as <strong>PEEK</strong> — and higher-strength reinforcement like carbon fibre. TCP layers are bonded by melt-fusing, yielding higher performance than RTP from the same materials.</p>
+        <p>PEEK is a high-performance semi-crystalline engineering thermoplastic with outstanding chemical resistance, very low moisture uptake, excellent strength across a broad temperature range, and hydrolysis resistance. It maintains stiffness at high temperatures, suitable for continuous use up to 170°C.</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Feature</th><th>TCP vs Standard Plastic Pipe</th></tr></thead>
+            <tbody>
+              <tr><td>Temperature capability</td><td>TCP with PEEK: up to 100–170°C (far above HDPE's ~60°C)</td></tr>
+              <tr><td>Pressure capability</td><td>Higher than HDPE or standard RTP — bonded composite layers</td></tr>
+              <tr><td>Corrosion resistance</td><td>Maintained, as for standard thermoplastic</td></tr>
+              <tr><td>Weight</td><td>Much lighter than steel — weight saving for offshore</td></tr>
+              <tr><td>Advantage over RTP</td><td>Bonded layers give higher performance — stronger, more durable bond</td></tr>
+              <tr><td>Application</td><td>Offshore flowlines, umbilicals, high-pressure injection lines, sour service</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout author">
+          <span class="c-label">From the field</span>
+          <p>TCP is a relatively new material in Oil &amp; Gas, but it's gaining traction on offshore projects where weight and corrosion are both critical. I've seen it specified on Southeast Asian and Middle East offshore projects. Worth knowing well — it will become more common in your career.</p>
+        </div>
+
+        <h3>2.5.4&nbsp;&nbsp;Fiberglass Reinforced Plastic (FRP) / GRE</h3>
+        <p>Fiberglass piping (FRP, or GRE — Glass Reinforced Epoxy) has been used successfully for over fifty years — glass fibre filaments wound in an epoxy or polyester resin matrix, available in a wide range of types, sizes, and wall thicknesses.</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Property</th><th>FRP / GRE Characteristics</th></tr></thead>
+            <tbody>
+              <tr><td>Standards</td><td>API 14LR, API 15HR, ISO 14692, ASTM D2996</td></tr>
+              <tr><td>Pressure rating</td><td class="mono">up to ~250 bar (class-dependent)</td></tr>
+              <tr><td>Temperature range</td><td class="mono">up to ~95°C (std); ~150°C (high-temp grades)</td></tr>
+              <tr><td>Weight vs CS</td><td>~25% of equivalent steel</td></tr>
+              <tr><td>Chemical resistance</td><td>Excellent — acids, brines, seawater, produced water</td></tr>
+              <tr><td>Installation</td><td>Butt-and-strap joints, adhesive bonded joints, flanged connections</td></tr>
+              <tr><td>Typical O&amp;G use</td><td>Produced water injection, seawater lift, cooling water, fire water, chemical drain</td></tr>
+              <tr><td>Key limitation</td><td>Brittle — sensitive to impact; no field repairs without specialist materials; UV degradation</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout note">
+          <span class="c-label">Note</span>
+          <p>On Saudi Aramco projects, GRE piping systems are governed by SAES-L-610. Always reference this standard when specifying GRE for seawater or produced water service on Aramco work.</p>
+        </div>
+        <div class="callout important">
+          <span class="c-label">Important</span>
+          <p>FRP and GRE are strictly prohibited in hydrocarbon process service and in electrically classified hazardous areas on most O&amp;G projects. They do not comply with fire safety requirements — FRP melts and releases toxic fumes in a fire. Always check area classification before specifying any non-metallic pipe.</p>
+        </div>
+
+        <!-- 2.6 -->
+        <h2 class="lesson" id="m2l6"><span class="l-tag">Lesson 2.6</span>Corrosion Resistant Alloy (CRA) Pipe</h2>
+        <h3>2.6.1&nbsp;&nbsp;Why CRA Is Growing in Demand</h3>
+        <p>Pipeline material with internal cladding is increasingly replacing carbon steel with high corrosion allowance. Demand for CRA clad and lined pipe rises with higher water cuts and increasing CO₂ and H₂S in produced fluids — fluids that must be transported over long distances, at higher pressures, and responsibly.</p>
+        <h3>2.6.2&nbsp;&nbsp;Types of CRA Pipe</h3>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Type</th><th>Description</th><th>Advantages</th><th>Key Consideration</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Solid CRA / Clad Line Pipe</strong></td><td>A carbon steel mother pipe with an inner alloy layer (typically SS 316L, Inconel 625/825), bonded by explosive bonding.</td><td>Full corrosion protection; high pressure rating inherited from CS backing.</td><td>Higher cost than CS. Inhomogeneous material complicates fracture assessment — inner CRA has much lower yield stress than backing CS.</td></tr>
+              <tr><td><strong>CRA Weld Overlay</strong></td><td>Alloy welding rod overlaid onto the internal surface of a CS pipe, creating a protective layer.</td><td>Can be applied to complex geometries — bends, fittings. More economical for some applications.</td><td>Weld metal properties may only be partly overmatching. Quality control of overlay thickness is critical.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>CRA clad pipe combines the structural strength of carbon steel with the corrosion resistance of alloy steel — the best of both worlds for aggressive service, at a cost between solid CS and solid CRA.</p>
+        <div class="callout takeaway">
+          <span class="c-label">Key point</span>
+          <p>For sour gas, high CO₂, or seawater-contaminated service where carbon steel corrosion allowance becomes impractically large, CRA clad or lined pipe is the engineered solution. Not cheap — but cheaper than frequent replacement or catastrophic failure.</p>
+        </div>
+
+        <!-- 2.7 -->
+        <h2 class="lesson" id="m2l7"><span class="l-tag">Lesson 2.7</span>Material Selection for Service Conditions</h2>
+        <h3>2.7.1&nbsp;&nbsp;The Material Selection Process</h3>
+        <p>Material selection follows a systematic process based on fluid composition, operating temperature, operating pressure, and environment. The piping engineer works with the process engineer (who provides the process data sheet) and the materials/corrosion engineer for the final selection. Key questions for any line:</p>
+        <ol>
+          <li>What is the fluid? — hydrocarbon, water, acid, steam, gas, chemical?</li>
+          <li>What is the design temperature? — below −29°C? above 427°C?</li>
+          <li>What is the design pressure? — determines pressure class and minimum wall.</li>
+          <li>Is there H₂S present? — sour service triggers NACE MR0175.</li>
+          <li>Is there CO₂ present? — carbonic acid corrosion in water-wet systems.</li>
+          <li>What is the chloride content? — drives SS grade and SCC risk.</li>
+          <li>What is the flow velocity? — high velocity can cause erosion, especially with sand or solids.</li>
+        </ol>
+
+        <h3>2.7.2&nbsp;&nbsp;Sour Service — NACE MR0175 / ISO 15156</h3>
+        <p>Sour service is any system containing H₂S at or above the NACE MR0175 threshold. H₂S causes Sulphide Stress Cracking (SSC) — hydrogen embrittlement where H₂S promotes hydrogen diffusion into the steel lattice, causing cracking under tensile stress. NACE MR0175 / ISO 15156 defines:</p>
+        <ul class="clean">
+          <li>Maximum hardness limits for carbon and low-alloy steels (HRC 22 max for most applications).</li>
+          <li>Restrictions on high-strength steels above certain yield limits.</li>
+          <li>PWHT requirements on carbon steel welds in sour service.</li>
+          <li>Specific qualification requirements for stainless steels and nickel alloys.</li>
+        </ul>
+        <div class="callout important">
+          <span class="c-label">Important</span>
+          <p>On any project with H₂S in the process fluid — even trace amounts above the NACE threshold — sour service requirements apply to ALL wetted components: pipe, fittings, valves, flanges. This must be captured in your piping material class from day one.</p>
+        </div>
+
+        <h3>2.7.3&nbsp;&nbsp;Material Selection Summary</h3>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Service Condition</th><th>Recommended Material</th><th>Standard / Code</th></tr></thead>
+            <tbody>
+              <tr><td>General hydrocarbon, −29 to 427°C</td><td>ASTM A106 Gr. B seamless CS</td><td>ASME B31.3</td></tr>
+              <tr><td>Below −29°C (low temperature)</td><td>ASTM A333 Gr. 6 (to −45°C) or SS316L</td><td>ASME B31.3, ASTM A333</td></tr>
+              <tr><td>427 to 538°C</td><td>ASTM A335 P11 (chrome-moly)</td><td>ASME B31.3, A335</td></tr>
+              <tr><td>538 to 566°C</td><td>ASTM A335 P22</td><td>ASME B31.3, A335</td></tr>
+              <tr><td>Above 566°C</td><td>ASTM A335 P91 (9Cr-1Mo-V)</td><td>ASME B31.3, A335</td></tr>
+              <tr><td>Sour service (H₂S)</td><td>CS + NACE MR0175 (HRC ≤22, PWHT)</td><td>NACE MR0175 / ISO 15156</td></tr>
+              <tr><td>Chloride-rich, moderate temp</td><td>SS 316L (A312 TP316L)</td><td>ASME B31.3, A312</td></tr>
+              <tr><td>High chloride, SCC risk, offshore</td><td>Duplex 2205 (S31803)</td><td>ASME B31.3, A790</td></tr>
+              <tr><td>Produced water, seawater injection</td><td>GRE / FRP or Duplex SS</td><td>ISO 14692, SAES-L-610</td></tr>
+              <tr><td>Onshore water utility</td><td>HDPE (PE100) or coated CS</td><td>ASTM D3350, AWWA C906</td></tr>
+              <tr><td>Cryogenic (LNG, −165°C)</td><td>9% Ni steel or SS304/316</td><td>ASME B31.3, API 620</td></tr>
+              <tr><td>High CO₂, high water cut, long distance</td><td>CRA clad/lined (CS + 316L or Inconel 625)</td><td>Project-specific + B31.3/B31.4</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout takeaway">
+          <span class="c-label">Key point</span>
+          <p>Material selection is a team exercise — piping, process, and materials/corrosion engineers. Your job is to translate process data (temperature, pressure, composition) into the correct material spec on the piping material class. When in doubt, involve the materials engineer.</p>
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="summary-block">
+          <h2>Module 2 — Summary &amp; Key Takeaways</h2>
+          <p class="sum-intro">You have completed the full range of metallic and non-metallic pipe materials used in Oil &amp; Gas.</p>
+          <ul class="keytakeaways">
+            <li>Carbon steel (ASTM A106 Gr. B) is the default O&amp;G process pipe — −29°C to 427°C. Outside this range, change material.</li>
+            <li>Always specify 316L (not 316) for welded stainless piping — the "L" prevents sensitisation.</li>
+            <li>Duplex 2205 is the step-up from 316L for offshore, high chloride, or sour service — ~2× the strength of 316L.</li>
+            <li>P91 chrome-moly for ultra-high temperature above 566°C — treat every weld with extreme care; preheat and PWHT non-negotiable.</li>
+            <li>Non-metallic pipes (HDPE, TCP, FRP) are gaining traction for corrosion-immune service. Know their temperature and pressure limits.</li>
+            <li>CRA clad/lined pipe — the solution for highly corrosive service where CS corrosion allowance becomes impractical.</li>
+            <li>Sour service triggers NACE MR0175 — hardness limits, PWHT, and material restrictions apply to ALL wetted components. Capture from day one.</li>
+          </ul>
+        </div>
+
+        <div class="self-assess">
+          <h3>Self-Assessment Questions</h3>
+          <ol class="questions">
+            <li>What is the maximum operating temperature for ASTM A106 Gr. B? The minimum? What material replaces it beyond each limit?</li>
+            <li>A process line at 280°C carries 45,000 ppm chloride brine. What stainless steel grade would you specify and why?</li>
+            <li>What is Sulphide Stress Cracking (SSC), which standard governs sour service material selection, and what is the hardness limit for carbon steel?</li>
+            <li>What is the key difference between HDPE and TCP in terms of temperature capability and application?</li>
+            <li>When is CRA clad/lined pipe specified instead of standard carbon steel with a generous corrosion allowance?</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="mod-foot">
+        <div class="mod-nav-row">
+          <button class="mod-nav-btn prev" data-nav="1"><span class="dir">← Previous</span><span class="nm">Module 1 · Pipe Properties</span></button>
+          <button class="mod-nav-btn next" data-nav="3"><span class="dir">Next →</span><span class="nm">Module 3 · Pipe Supports</span></button>
+        </div>
+      </div>
+    </section>
+    <section class="module" data-mod="3">
+      <div class="content">
+        <div class="mod-hero">
+          <span class="mod-hero-eyebrow">Module 3</span>
+          <h1>Pipe Supports</h1>
+
+<figure class="fig-img">
+          <img src="images/pipe-support-header.png" alt="Piping Supports" loading="lazy"/>
+          <figcaption>Picture  — Pipe Supports</figcaption>
+        </figure>
+
+
+
+          
+          <p class="lead">Pipe support is critical for safe operation. Because piping is slender, it often cannot be self-supporting and may need restraint or bracing against thermal expansion, vibration, and dynamic loads. Selecting optimal support locations and economical support types is challenging, and the difficulty scales with project complexity.</p>
+          <p class="lead">A piping designer must understand pipe support standards, practices, and commercially available components. This produces good layout and well-considered support design.</p>
+          <div class="mod-hero-meta"><span><b>5</b> lessons</span><span>Terminology from M.W. Kellogg's <em>Design of Piping Systems</em></span></div>
+        </div>
+
+        <div class="callout author">
+          <span class="c-label">From the field</span>
+          <p>The involvement of a piping stress engineer at the early stage — FEED and early detail design — is crucial. Collaborating with the piping designer to identify optimal support types and locations for lines on compressors, gas turbines, and other critical equipment early saves significant rework later. I've seen many projects where late stress involvement caused costly layout changes during detailed design.</p>
+        </div>
+
+        <div class="objectives">
+          <h4>What You Will Learn</h4>
+          <ul>
+            <li>The formal terminology of pipe supports — from M.W. Kellogg's <em>Design of Piping Systems</em></li>
+            <li>Codes and standards governing pipe support design</li>
+            <li>Support material, corrosion protection, and allowable pipe span</li>
+            <li>Standard support types: shoes, guide, line stop, anchor, trunnion, spring hangers</li>
+            <li>Span calculation method with a worked example from the book</li>
+            <li>Special pipe supports — when standard types are not sufficient</li>
+          </ul>
+        </div>
+
+        <!-- 3.1 -->
+        <h2 class="lesson" id="m3l1"><span class="l-tag">Lesson 3.1</span>Pipe Support Terminology</h2>
+        <h3>3.1.1&nbsp;&nbsp;Why Terminology Matters</h3>
+        <p>Before designing or specifying supports, you must use the right terminology — consistently. The classic reference is M.W. Kellogg's <em>Design of Piping Systems</em>. These definitions are used throughout the industry:</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Term</th><th>Definition (per M.W. Kellogg)</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Restraint</strong></td><td>A device that prevents, resists, holds, or limits pipe movement due to thermal expansion.</td></tr>
+              <tr><td><strong>Support</strong></td><td>A device used to sustain a portion of the weight of the piping system plus superimposed vertical loadings.</td></tr>
+              <tr><td><strong>Brace</strong></td><td>A device intended to resist displacement from forces other than thermal expansion or gravity. A damping device is a kind of brace.</td></tr>
+              <tr><td><strong>Anchor</strong></td><td>Also called rigid restraint — substantially full fixation. Prevents movement in all directions.</td></tr>
+              <tr><td><strong>Stop</strong></td><td>Permits rotation but prevents translatory movement in at least one direction along any axis. Both directions on the same axis = double-acting stop.</td></tr>
+              <tr><td><strong>Two-Axis Stop</strong></td><td>Prevents translatory movement in one direction along each of two axes.</td></tr>
+              <tr><td><strong>Limit Stop</strong></td><td>Restricts translatory movement to a limited amount in one direction along any single axis.</td></tr>
+              <tr><td><strong>Guide</strong></td><td>Prevents rotation about one or more axes due to bending or torsion. Also commonly used to mean lateral restraint (preventing lateral movement while allowing axial).</td></tr>
+              <tr><td><strong>Hanger</strong></td><td>A support by which piping is suspended from a structure, carrying the load in tension.</td></tr>
+              <tr><td><strong>Resting / Sliding Support</strong></td><td>Supports from below but offers no resistance other than friction to horizontal motion.</td></tr>
+              <tr><td><strong>Rigid (Solid) Support</strong></td><td>Provides stiffness in at least one direction, comparable to that of pipe.</td></tr>
+              <tr><td><strong>Resilient Support</strong></td><td>Includes one or more largely elastic members — e.g. a spring.</td></tr>
+              <tr><td><strong>Duckfoot</strong></td><td>Transfers the axial load in a vertical pipeline at its lower extremity to a foundation or fixture.</td></tr>
+              <tr><td><strong>Sleeper</strong></td><td>A support, usually placed on the ground in a pipe track or corridor.</td></tr>
+              <tr><td><strong>Turnbuckle</strong></td><td>Uses left- and right-hand screw threads to provide axial adjustments.</td></tr>
+              <tr><td><strong>Constant Effort Support</strong></td><td>Applies a relatively constant force across its operating range — e.g. counterweight or compensating spring.</td></tr>
+              <tr><td><strong>Damping Device</strong></td><td>A dashpot or frictional device increasing system damping — high resistance to rapid dynamic displacement, free movement under gradual displacement.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout author">
+          <span class="c-label">From the field</span>
+          <p>These definitions are the vocabulary of pipe support engineering. When you write a support specification, a stress sketch, or communicate support loads to a structural engineer — use these terms precisely. Vague language leads to misunderstandings and wrong support installations.</p>
+        </div>
+
+        <!-- 3.2 -->
+        <h2 class="lesson" id="m3l2"><span class="l-tag">Lesson 3.2</span>Codes, Standards &amp; Materials</h2>
+        <h3>3.2.1&nbsp;&nbsp;Applicable Codes and Standards</h3>
+        <ul class="clean">
+          <li><strong>MSS SP-58 (2025):</strong> Pipe Hangers and Supports — Materials, Design, Manufacture, Selection, Application, and Installation. The primary standard for all pipe support engineering. <em>SP-69 is now incorporated into SP-58-2025.</em></li>
+          <li><strong>MSS SP-77:</strong> Guidelines for Pipe Support Contractual Relationships</li>
+          <li><strong>MSS SP-89:</strong> Fabrication and Installation of Pipe Support</li>
+          <li><strong>MSS SP-90:</strong> Guidelines on Terminology for Pipe Hangers and Supports</li>
+          <li><strong>MSS SP-127:</strong> Bracing for Piping Systems — Seismic, Wind, Dynamic</li>
+          <li><strong>PFI ES-26:</strong> Welding Attachments Between Pipes and Supports</li>
+          <li><strong>BS-3974:</strong> Older British standard for hangers, sliders, and rollers — for European-standard projects</li>
+        </ul>
+        <div class="callout note">
+          <span class="c-label">Note</span>
+          <p>Always use the latest editions. MSS SP-58-2025 supersedes prior versions and consolidates related standards. On Aramco projects, the applicable support standard is referenced in SAES-L-310 (Plant Piping Spacing Requirements) and SAES-B-055.</p>
+        </div>
+        <h3>3.2.2&nbsp;&nbsp;Pipe Support Materials</h3>
+        <p>Most pipe support materials are structural carbon steel:</p>
+        <ul class="clean">
+          <li><strong>ASTM A36</strong> — Mild Carbon Steel, min yield 36 ksi for shapes up to 8 in</li>
+          <li><strong>ASTM A529</strong> — Stronger Carbon Steel, min yield 42 ksi</li>
+          <li><strong>ASTM A572</strong> — High strength, low alloy columbium-vanadium structural steel</li>
+          <li><strong>ASTM A53 Gr. B</strong> — for pipe sections in fabricated supports and trunnions</li>
+        </ul>
+        <h3>3.2.3&nbsp;&nbsp;Corrosion Protection</h3>
+        <p>Supports must be protected from rust and corrosion — except stainless or &gt;9% Cr alloys. Two types:</p>
+        <ul class="clean">
+          <li><strong>Metallic coatings:</strong> Electroplating (ASTM B633), Pre-Galvanised (A653), Hot Dip Galvanising (A153 or A123 — most common on O&amp;G projects), Mechanical Plating (B695).</li>
+          <li><strong>Non-metallic coatings:</strong> applied per manufacturer's recommendation for specific purposes; must have good adhesive quality.</li>
+        </ul>
+
+        <!-- 3.3 -->
+        <h2 class="lesson" id="m3l3"><span class="l-tag">Lesson 3.3</span>Allowable Pipe Span</h2>
+        <h3>3.3.1&nbsp;&nbsp;Why Span Matters</h3>
+        <p>The maximum allowable distance between supports — the Allowable Pipe Span — is critical for:</p>
+        <ul class="clean">
+          <li>Protecting against excessive stress (overstress) — keeping bending stress within material limits.</li>
+          <li>Protecting against excessive deflection — avoiding pockets in liquid lines and interference with other pipes.</li>
+          <li>Controlling natural frequency — avoiding vibration resonance.</li>
+        </ul>
+        <h3>3.3.2&nbsp;&nbsp;The Two Span Formulas</h3>
+        <p>Two methods determine the maximum span — one based on bending stress, one on deflection. The controlling (smaller) value governs.</p>
+        <div class="formula">
+          <div class="formula-name">Formula 1 — Maximum Bending Stress</div>
+          <div class="eq">σ = 1.2 × (w × L²) / Z</div>
+          <div class="where">σ in psi</div>
+        </div>
+        <div class="formula">
+          <div class="formula-name">Formula 2 — Maximum Deflection</div>
+          <div class="eq">δ = 17.1 × (w × L⁴) / (E × I)</div>
+          <div class="where">δ in inches · w = unit weight (lb/ft): pipe + fluid + insulation · L = span (ft) · E = Modulus (psi) · I = moment of inertia (in⁴) · Z = section modulus (in³)</div>
+        </div>
+        <p style="font-size:0.84rem;color:var(--ink3)">Source: <em>Design of Piping Systems</em>, The M.W. Kellogg Company, Revised 2nd Ed., 1965.</p>
+        <p>For power piping, some designers limit deflection to as little as 1/8 in. The practical limit for average process piping is ½ to 1 in. The main reason to limit deflection is to make the pipe stiff enough — high enough natural frequency — to avoid large-amplitude response under slight forces.</p>
+        <ul class="clean">
+          <li>General process piping: a natural frequency of <strong>4 Hz</strong> is reasonably satisfactory.</li>
+          <li>Lines on compressors / reciprocating equipment: <strong>8 Hz or higher</strong> may be desirable, depending on the compressor.</li>
+        </ul>
+        <h3>3.3.3&nbsp;&nbsp;Span Correction Factors for Special Configurations</h3>
+        <p>The span formula applies to a straight run with supports at both ends. For other configurations — corners before elbows, expansion loops — multiply the calculated span L by a correction factor:</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Configuration</th><th>Correction Factor</th></tr></thead>
+            <tbody>
+              <tr><td>Straight pipe continuous run</td><td class="mono">L × 1.0</td></tr>
+              <tr><td>At corner before elbow (direction change)</td><td class="mono">L × 0.8</td></tr>
+              <tr><td>At expansion loop — leg perpendicular to main run</td><td class="mono">L × 0.75</td></tr>
+              <tr><td>At expansion loop — leg parallel to main run (cantilever)</td><td class="mono">L × 0.65</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+<figure class="fig-img">
+          <img src="images/065-span.png" alt="Pipe Support Span at overhang configuration" loading="lazy"/>
+          <figcaption>Picture  — Pipe Support Span at overhang configuration</figcaption>
+        </figure>
+
+<figure class="fig-img">
+          <img src="images/075-span.png" alt="Pipe Support Span at Branch configuration" loading="lazy"/>
+          <figcaption>Picture  — Pipe Support Span at Branch configuration</figcaption>
+        </figure>
+
+
+        
+        <div class="callout note">
+          <span class="c-label">Note</span>
+          <p>These factors reflect reduced effective span stiffness when the pipe changes direction. An elbow or loop adds flexibility at the corner, reducing the effective support of the pipe at that location.</p>
+        </div>
+
+        <div class="worked">
+          <div class="worked-head"><span class="wx">★</span>Worked Example — NPS 4, SCH 40 (from the book)</div>
+          <div class="worked-body">
+            <p><strong>Given:</strong> NPS 4, Schedule 40 carbon steel pipe, full of water. Maximum deflection allowed: 1 in.</p>
+            <div class="step">Step 1 — Pipe Properties</div>
+            <div class="calc">OD = 4.500 in · t = 0.237 in
+ID = 4.500 − (2 × 0.237) = <span class="result">4.026 in</span></div>
+            <div class="step">Step 2 — Weights</div>
+            <div class="calc">wp = 10.6802 × (4.500 − 0.237) × 0.237 = 10.80 lb/ft
+ww = 0.3405 × 4.026² = 5.52 lb/ft
+w  = 10.80 + 5.52 = <span class="result">16.32 lb/ft</span></div>
+            <div class="step">Step 3 — Moment of Inertia</div>
+            <div class="calc">I = 0.0491 × (4.500⁴ − 4.026⁴) = <span class="result">7.23 in⁴</span></div>
+            <div class="step">Step 4 — Modulus of Elasticity</div>
+            <div class="calc">Carbon Steel (C &lt; 0.30%) @ 200°F: E = <span class="result">28.8 × 10⁶ psi</span> (ASME B31.3-2024 App. C)</div>
+            <div class="step">Step 5 — Maximum Span (deflection limit 1 in)</div>
+            <div class="calc">L⁴ = (δ × E × I) / (17.1 × w)
+L⁴ = (1 × 28.8e6 × 7.23) / (17.1 × 16.32)
+L = <span class="result">29.40 ft = 8.97 m</span></div>
+            <p style="margin-top:14px;">For a corner before an elbow, apply the 0.8 factor: 29.40 × 0.8 = <strong>23.52 ft (7.17 m)</strong>.</p>
+          </div>
+        </div>
+        <div class="callout author">
+          <span class="c-label">From the field</span>
+          <p>In practice, most companies maintain standard span tables derived from this formula for common sizes and services. You rarely calculate from first principles on every line — instead you reference the project span table and calculate specifically only for unusual cases such as heavy valves, large-diameter lines, or non-standard fluid densities.</p>
+        </div>
+
+        <!-- 3.4 -->
+        <h2 class="lesson" id="m3l4"><span class="l-tag">Lesson 3.4</span>Standard Pipe Support Types</h2>
+        <h3>3.4.1&nbsp;&nbsp;Welded Shoe</h3>
+        <p>A welded shoe sits between the bottom of the pipe and the support structure, carrying the load and weight of the pipe and contents. Two types: for uninsulated and insulated lines. Shoes are generally the same material as the pipe (carbon steel). For non-CS pipe (e.g. SS), the shoe is still typically CS but must <em>not</em> be welded directly — it is clamped instead. If welding directly would overstress the wall (large-bore thin-wall pipes), a <strong>Reinforcing Pad</strong> is used between shoe and pipe wall.</p>
+        
+<figure class="fig-img">
+          <img src="images/welded-shoe-with-pad.png" alt="Welded Shoe with Pad" loading="lazy"/>
+          <figcaption>Picture  — Welded Shoe with Pad</figcaption>
+        </figure>
+        
+               
+        <h3>3.4.2&nbsp;&nbsp;Clamped Shoe</h3>
+        <p>Used where no welding to the main pipe is allowed — different material or insulation. The standard choice for:</p>
+        <ul class="clean">
+          <li>Stainless steel pipes — CS shoe welded directly to SS is unacceptable (dissimilar metals).</li>
+          <li>Alloy steel pipes (P11, P22, P91) — shoe material differs from pipe material.</li>
+          <li>Any case where PWHT would be disrupted by the shoe weld.</li>
+        </ul>
+        <div class="callout note">
+          <span class="c-label">Note</span>
+          <p>Although primarily associated with non-CS pipe, the clamped shoe is also widely used on carbon steel on many EPC projects as a standard approach to avoid the risk of weld defects on the pipe body.</p>
+        </div>
+
+<figure class="fig-img">
+          <img src="images/clamp-shoe.png" alt="Clamp Shoe" loading="lazy"/>
+          <figcaption>Picture  — Clamp Shoe</figcaption>
+        </figure>
+
+        
+        <h3>3.4.3&nbsp;&nbsp;Cold Shoe (Cryogenic &amp; Cold Service)</h3>
+        <p>Cold shoes serve lines with fluid temperatures between −195°C and +82°C — cryogenic or cold insulation service. They differ fundamentally from hot shoes by including Polyurethane Foam (PUF) inside the shoe body, acting as both a load-retention element and a thermal break. A cold shoe assembly typically has:</p>
+        <ul class="clean">
+          <li>Metal protection jacket (usually aluminium) — outer protective layer</li>
+          <li>PUF insert — thermal insulation and load distribution</li>
+          <li>Vapour barrier — prevents moisture ingress and condensation on the cold surface</li>
+        </ul>
+
+<figure class="fig-img">
+          <img src="images/cold-shoe.png" alt="Cold Shoe" loading="lazy"/>
+          <figcaption>Picture  — Cold Shoe for Cryogenic Services</figcaption>
+        </figure>
+
+
+        
+        <div class="callout important">
+          <span class="c-label">Important</span>
+          <p>Cold shoes must be manufactured by a specialist with cryogenic experience. PUF material selection and jacket design are critical — incorrect cold shoe design causes ice formation on support steel, cold bridging to structure, and potential structural damage.</p>
+        </div>
+        
+        <h3>3.4.4&nbsp;&nbsp;Guide</h3>
+        <p>A guide prevents lateral movement while allowing axial (along-pipe) thermal expansion. Usually structural steel cut to size; used for bare or insulated pipe. Placement on critical lines is determined by the stress engineer; for rack lines the piping designer places guides per normal practice. Like all standard supports, guides have an allowable load limit per designation.</p>
+        
+        <figure class="fig-img">
+          <img src="images/guide-support-for-no-shoe.png" alt="Guide Support for No Shoe" loading="lazy"/>
+          <figcaption>Picture  — Guie Support for Uninsulated Lines</figcaption>
+        </figure>
+        
+     <figure class="fig-img">
+          <img src="images/guide-support-for-shoe.png" alt="Guide Support for Shoe" loading="lazy"/>
+          <figcaption>Picture  — Guie Support for Insulated Lines</figcaption>
+        </figure>   
+        
+        <h3>3.4.5&nbsp;&nbsp;Line Stop (Limit Stop)</h3>
+        <p>A Line Stop (Axial Stop) prevents or limits axial movement. Because it must withstand axial thermal force, it must be welded to the pipe (uninsulated) or to the shoe (insulated). If the force exceeds the standard line stop allowable, a <strong>Special Support</strong> must be designed — typically handled by the Civil/Structural group.</p>
+
+        <figure class="fig-img">
+          <img src="images/line-stop-for-shoe.png" alt="Line Stop for Shoe" loading="lazy"/>
+          <figcaption>Picture  — Line Stop or Limit Stp for Insulated Lines</figcaption>
+        </figure>
+        
+<figure class="fig-img">
+          <img src="images/line-stop-for-pad-no-shoe.png" alt="Line Stop for pad No Shoe" loading="lazy"/>
+          <figcaption>Picture  — Line Stop or Limit Stp for Uninsulated Lines</figcaption>
+        </figure>        
+        
+        <h3>3.4.6&nbsp;&nbsp;Anchor</h3>
+        <p>The Anchor (Full Fixation) allows no movement in any direction — vertical, lateral, axial, or rotational. Placed at strategic locations:</p>
+        <ul class="clean">
+          <li>Mid-way between two expansion loops — to control expansion direction to each loop.</li>
+          <li>Near equipment connections — to limit forces and moments reaching the nozzle.</li>
+          <li>At pipe rack tiers — to divide the rack into independent expansion segments.</li>
+        </ul>
+        <div class="callout author">
+          <span class="c-label">From the field</span>
+          <p>Near equipment, be very careful with rigid welded anchors. In my experience it's often better to use a combination of guide + line stop + shoe (and a hold-up support if needed) rather than a single rigid welded anchor. This is more easily adjustable and causes less stress concentration at the support attachment weld. Many EPC companies prefer this combination method — full fixation function without the rigidity risk.</p>
+        </div>
+        <h3>3.4.7&nbsp;&nbsp;Adjustable Support</h3>
+    
+        <figure class="fig-img">
+          <img src="images/duck-foot.png" alt="Adjustable Support" loading="lazy"/>
+          <figcaption>Picture  — Adjustable Support in the form of trunnion with adjustable bolts.</figcaption>
+        </figure>
+        
+        
+        <p>Often used near pump nozzles (or elsewhere per the stress engineer), its height can be adjusted to accommodate elevation changes — e.g. when a pump nozzle moves during installation or settlement occurs. It consists of a trunnion (short pipe stub) welded to the pipe, a base plate, and adjustable nuts and bolts. Particularly valuable near rotating equipment for fine elevation control to match nozzle alignment.</p>
+        <h3>3.4.8&nbsp;&nbsp;Reinforcing Pad</h3>
+     
+          <figure class="fig-img">
+          <img src="images/wear-pad.png" alt="Reinforcing Pad" loading="lazy"/>
+          <figcaption>Picture  — Reinforcing Pad or Wear Pad.</figcaption>
+        </figure>
+        
+        
+        <p>Additional wall thickness added externally to provide structural integrity and prevent buckling — particularly for large-bore thin-wall pipes. Used either as a standalone load-bearing attachment point, or in combination with a shoe or trunnion to strengthen the pipe wall against vertical and lateral loads.</p>
+        <h3>3.4.9&nbsp;&nbsp;Trunnion Support</h3>
+        <p>A trunnion uses pipe material as the support member itself. Used at elbows, on vertical runs, and on horizontal runs for large or heavy lines. It transfers load to the structure via the short pipe stub rather than through the pipe wall directly.</p>
+        <div class="formula">
+          <div class="formula-name">Rule of Thumb — Trunnion Size (from the book)</div>
+          <div class="eq">Trunnion Size = (Main Pipe NPS ÷ 2) <small>↑ next standard size</small></div>
+          <div class="where">Example: Main pipe NPS 10 → 10 ÷ 2 = 5 → round up to NPS 6. Minimum trunnion size = NPS 6.</div>
+        </div>
+        <p>For loads within the catalogue allowable, select a standard trunnion. For loads exceeding it, perform a formal trunnion strength calculation (method shown in the book's Exhibits 4 and 5).</p>
+      
+          <figure class="fig-img">
+          <img src="images/duck-foot.png" alt="Adjustable Support" loading="lazy"/>
+          <figcaption>Picture  — Trunnion Support at Elbow or also called as Duck Foot.</figcaption>
+        </figure>
+        
+        
+        
+        <h3>3.4.10&nbsp;&nbsp;Spring Hangers — Variable &amp; Constant</h3>
+        <p>Spring hangers (Resilient Supports) use helical springs to support pipe while allowing vertical movement under thermal expansion. Two types:</p>
+        <h4>Variable Spring Hanger</h4>
+        <p>A coil spring that compresses/extends as the pipe moves. Support load varies with deflection (F = k·x). Used where vertical movement is small and load variation acceptable.</p>
+        <div class="formula">
+          <div class="formula-name">Variability Factor</div>
+          <div class="eq">VF = (Travel × Spring Rate) / Operating Load × 100%</div>
+          <div class="where">equivalently: VF = (Operating Load − Installation Load) / Operating Load × 100%</div>
+        </div>
+        <ul class="clean">
+          <li>General standard: Variability Factor ≤ <strong>25%</strong></li>
+          <li>Pipes connected to rotating equipment: Variability Factor ≤ <strong>12%</strong></li>
+        </ul>
+        <p>If VF exceeds 25%, use a Constant Spring Support instead.</p>
+       
+          <figure class="fig-img">
+          <img src="images/spring-hanger.jpg" alt="Spring Hanger Support" loading="lazy"/>
+          <figcaption>Picture  — Variable Spring Hanger Support.</figcaption>
+        </figure>
+        
+             
+                <h4>Constant Effort (Constant Load) Spring Hanger</h4>
+      
+          <figure class="fig-img">
+          <img src="images/constant-spring.jpg" alt="Constant Spring Support" loading="lazy"/>
+          <figcaption>Picture  — Constant Spring Support.</figcaption>
+        </figure>
+        
+        
+        
+        <p>A spring operated through a lever mechanism so that as load and displacement increase, the lever compensates — maintaining an approximately constant force regardless of vertical position. Used for:</p>
+        <ul class="clean">
+          <li>Hot lines with large vertical thermal movement (where variable VF would exceed 25%).</li>
+          <li>Pipes on sensitive rotating equipment where support load must not change between cold and hot.</li>
+          <li>Very heavy pipes with large movements requiring consistent support load.</li>
+        </ul>
+        <div class="callout author">
+          <span class="c-label">From the field</span>
+          <p>When selecting spring hangers, always ensure enough vertical space exists — above or below the pipe — to fit not only the spring but also any rod, shoe, trunnion, or other components. I've seen spring selections that were technically correct but couldn't be physically installed because the space calculation wasn't done. Check the space first.</p>
+        </div>
+        <div class="callout note">
+          <span class="c-label">Note</span>
+          <p>Spring variability ≤ 25% general; ≤ 12% for rotating equipment. These are industry-standard practice, not a code requirement — but violating them causes unacceptable load shifts between cold and hot conditions that can damage equipment nozzles.</p>
+        </div>
+
+        <!-- 3.5 -->
+        <h2 class="lesson" id="m3l5"><span class="l-tag">Lesson 3.5</span>Special Pipe Supports</h2>
+        <h3>3.5.1&nbsp;&nbsp;When Standard Supports Are Not Sufficient</h3>
+        <p>Special supports are designed where standard supports cannot be used, because:</p>
+        <ul class="clean">
+          <li>The imposed force exceeds the allowable for a standard support at the given pipe size.</li>
+          <li>The pipe location makes a standard support impossible — e.g. far from existing structural steel.</li>
+        </ul>
+        <p>Special supports may use standard supports as a design basis, modified to suit. Their design is not regulated directly by ASME B31.1 or B31.3 — engineers use experience, MSS SP-58, and structural principles. For complex special supports, the work is typically handed to the Civil/Structural group, who design using structural codes (AISC, BS 5950, or equivalent).</p>
+        <div class="callout takeaway">
+          <span class="c-label">Key point</span>
+          <p>Always try a standard support first. Special supports take more engineering time, more approval steps, and more fabrication cost. Use them only when you have genuinely exhausted all standard options.</p>
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="summary-block">
+          <h2>Module 3 — Summary &amp; Key Takeaways</h2>
+          <p class="sum-intro">You have completed the full range of support types, terminology, span calculation, and design principles.</p>
+          <ul class="keytakeaways">
+            <li>Proper support design directly impacts stress analysis results — incorrect type or location can cause overstress or equipment overload.</li>
+            <li>Allowable span is the smaller of the bending-stress and deflection criteria. Worked example: NPS 4 SCH 40 water-filled — max span 29.40 ft (8.97 m).</li>
+            <li>Cold shoes are mandatory for cryogenic and cold insulated lines to prevent cold bridging to the support structure.</li>
+            <li>Spring variability: ≤ 25% general; ≤ 12% rotating equipment. Constant springs for large vertical movement or sensitive equipment.</li>
+            <li>Trunnion size rule of thumb: Main NPS ÷ 2, rounded up to next standard size.</li>
+            <li>For near-equipment anchors, prefer Guide + Line Stop + Shoe over a single rigid welded anchor — equivalent fixation with less risk.</li>
+            <li>Stress engineer involvement at FEED and early detail design is essential for critical equipment lines.</li>
+          </ul>
+
+          <h3 style="margin-top:26px;">Support Type Quick Reference</h3>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Support Type</th><th>Vertical</th><th>Axial</th><th>Lateral</th><th>Typical Use</th></tr></thead>
+              <tbody>
+                <tr><td>Resting / Sliding Shoe</td><td>✓ Weight</td><td>Free</td><td>Free</td><td>Standard horizontal pipe on racks/sleepers</td></tr>
+                <tr><td>Clamped Shoe</td><td>✓ Weight</td><td>Free</td><td>Free</td><td>Non-CS pipe or no welding permitted</td></tr>
+                <tr><td>Cold Shoe</td><td>✓ Weight</td><td>Free</td><td>Free</td><td>Cryogenic/cold service — PUF thermal break</td></tr>
+                <tr><td>Guide</td><td>Free / combined</td><td>Free</td><td>✓ Restrained</td><td>Directs thermal expansion axially</td></tr>
+                <tr><td>Line Stop</td><td>Free</td><td>✓ Restrained</td><td>Free</td><td>Controls axial movement</td></tr>
+                <tr><td>Anchor (Full Fixation)</td><td>✓</td><td>✓</td><td>✓</td><td>Divides expansion segments; equipment (carefully)</td></tr>
+                <tr><td>Adjustable Support</td><td>✓ Weight (adj.)</td><td>Free</td><td>Free</td><td>Near pump nozzles — fine elevation</td></tr>
+                <tr><td>Trunnion</td><td>✓ Weight</td><td>Free</td><td>Free / Guided</td><td>Large-bore heavy pipe at elbows/vertical runs</td></tr>
+                <tr><td>Variable Spring Hanger</td><td>Spring (varies)</td><td>Free</td><td>Free</td><td>Hot lines, moderate movement, VF ≤ 25%</td></tr>
+                <tr><td>Constant Effort Hanger</td><td>Constant load</td><td>Free</td><td>Free</td><td>Hot lines, large movement; sensitive equipment</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="self-assess">
+          <h3>Self-Assessment Questions</h3>
+          <ol class="questions">
+            <li>Using the span formula, calculate the maximum span for NPS 6, SCH 40 carbon steel pipe, water-filled, max deflection 1 in. (OD = 6.625 in, t = 0.280 in, E = 28.8 × 10⁶ psi @ 200°F)</li>
+            <li>What is the minimum trunnion size for an NPS 16 main pipe per the rule of thumb?</li>
+            <li>Explain why a Flat-Top Eccentric Reducer is used at pump suction and what happens if a Concentric Reducer is used instead. <em>(Reducers are covered in Module 5.)</em></li>
+            <li>A spring hanger has operating load 25 kN, travel 35 mm, spring rate 5 N/mm. Calculate the variability factor. Variable or constant spring required?</li>
+            <li>What is the difference between a Line Stop and an Anchor? When would you use Guide + Line Stop instead of a single welded Anchor?</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="mod-foot">
+        <div class="mod-nav-row">
+          <button class="mod-nav-btn prev" data-nav="2"><span class="dir">← Previous</span><span class="nm">Module 2 · Pipe Materials</span></button>
+          <button class="mod-nav-btn next" data-nav="4"><span class="dir">Next →</span><span class="nm">Module 4 · Codes &amp; Standards</span></button>
+        </div>
+      </div>
+    </section>
+    <section class="module" data-mod="4">
+      <div class="content">
+        <div class="mod-hero">
+          <span class="mod-hero-eyebrow">Module 4</span>
+          <h1>Codes &amp; Standards</h1>
+          <p class="lead">"Codes and standards" is a phrase every piping engineer must know well. A <em>standard</em> is a technical definition or directive addressed to designers, manufacturers, operators, or users of equipment. A <em>code</em> is a standard that has been adopted by a regulatory authority and given legal force.</p>
+          <p class="lead">Together, they establish the minimum requirements for safe construction. Their primary purpose is to protect public safety — defining rules for materials, design, fabrication, examination, inspection, and testing. Failure to follow these rules increases the risk of accidents.</p>
+          <div class="mod-hero-meta"><span><b>7</b> lessons</span><span>ASME · API · the B31 family · fluid service categories</span></div>
+        </div>
+
+        <div class="callout author">
+          <span class="c-label">From the field</span>
+          <p>Remember: Codes and Standards are general guides for designers. They are not detailed handbooks that tell you exactly how to design every component. Their job is to set the minimum safety floor — your job as an engineer is to apply judgment on top of that floor.</p>
+        </div>
+
+        <div class="objectives">
+          <h4>What You Will Learn</h4>
+          <ul>
+            <li>The four categories of standards organisations and what each produces</li>
+            <li>ASME — the most important standards body for piping engineers — and its key codes</li>
+            <li>API standards and how they govern Oil &amp; Gas piping and equipment</li>
+            <li>The ASME B31 Pressure Piping Code family — which code applies to which system</li>
+            <li>ASME B31.3 Fluid Service categories — Normal, D, M, High Pressure, High Purity</li>
+            <li>Other standards you will encounter: AWWA, MSS, NACE, NEMA, PFI</li>
+          </ul>
+        </div>
+
+        <!-- 4.1 -->
+        <h2 class="lesson" id="m4l1"><span class="l-tag">Lesson 4.1</span>What Are Codes and Standards?</h2>
+        <h3>4.1.1&nbsp;&nbsp;The Distinction Between a Code and a Standard</h3>
+        <p>Engineers often use "code" and "standard" interchangeably — but there is an important technical distinction:</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Term</th><th>Definition</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Standard</strong></td><td>A technical document defining requirements for materials, design, fabrication, testing, or operation. Published by a standards organisation. Compliance voluntary unless mandated by law or contract.</td><td>ASME B36.10 — Welded and Seamless Wrought Steel Pipe (defines pipe dimensions)</td></tr>
+              <tr><td><strong>Code</strong></td><td>A standard adopted by a regulatory authority and given legal force. Compliance mandatory where adopted.</td><td>ASME B31.3 — Process Piping Code (mandated by law in most jurisdictions for process plant piping)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>On any O&amp;G project, both codes and standards apply — some because they are legally required, others because the contract or client specification mandates them.</p>
+
+        <h3>4.1.2&nbsp;&nbsp;What Codes and Standards Do — and Do NOT Do</h3>
+        <p>Perfect materials and flawless fabrication are rare. Experience shows that meeting the code's minimum requirements and safety factors dramatically reduces the likelihood of failure and protects lives. Codes use simplified methods for common problems; experienced designers may use more advanced analysis, but any alternative method must still satisfy the code's requirements for design, construction, inspection, examination, and testing.</p>
+        <div class="callout author">
+          <span class="c-label">From the field</span>
+          <p>From my own experience: it is not easy to convince a client that a method different from what the Code prescribes is safe — even if your engineering justification is sound. The Code carries legal authority. If you deviate, you need strong validation and client written approval. Always document it.</p>
+        </div>
+        <div class="callout important">
+          <span class="c-label">Important</span>
+          <p>Codes and Standards set the minimum floor for safety. They do not tell you how to achieve the best or most efficient design — they tell you the minimum that is acceptable. Good engineers design above the minimum, using judgment, experience, and analysis to find the best solution within the code framework.</p>
+        </div>
+
+        <!-- 4.2 -->
+        <h2 class="lesson" id="m4l2"><span class="l-tag">Lesson 4.2</span>Categories of Standards Organisations</h2>
+        <p>As noted by George Antaki in <em>Piping and Pipeline Engineering</em>, standards divide into four categories. Knowing which category an organisation belongs to helps you understand the type of standards it produces.</p>
+        <h3>4.2.1&nbsp;&nbsp;Professional Societies</h3>
+        <p>Publish standards on design, construction, and maintenance for their profession; governments may adopt them as codes. Driven by technical experts and academia in the public interest.</p>
+        <p class="mono" style="font-size:0.88rem;color:var(--ink2)">ASME · ASCE · AIChE · AISC · ACI</p>
+        <h3>4.2.2&nbsp;&nbsp;Trade Associations</h3>
+        <p>Associations of equipment or product manufacturers — standards explain how to use members' products safely and effectively. Highly practical and product-specific.</p>
+        <p class="mono" style="font-size:0.88rem;color:var(--ink2)">API · AWWA · AISI · NIDI</p>
+        <h3>4.2.3&nbsp;&nbsp;Testing and Certification Organisations</h3>
+        <p>Certify that products meet defined safety requirements. They do not typically write design codes, but their certification marks tell you equipment has been independently tested.</p>
+        <p class="mono" style="font-size:0.88rem;color:var(--ink2)">UL · FM · ICBO Evaluation Services</p>
+        <h3>4.2.4&nbsp;&nbsp;Standard Developing Organisations</h3>
+        <p>Create consensus standards improving reliability, safety, and interoperability. <strong>ASTM International</strong> is the most important example for piping engineers — it develops the material specifications for virtually every pipe, fitting, and component you will specify.</p>
+        <div class="callout takeaway">
+          <span class="c-label">Key point</span>
+          <p>When you see ASTM on a pipe specification (e.g. ASTM A106 Gr. B), you are referencing an ASTM material standard. When you see ASME on a design document (e.g. ASME B31.3), you are referencing a design code. Both are essential and both appear constantly in daily work.</p>
+        </div>
+
+        <!-- 4.3 -->
+        <h2 class="lesson" id="m4l3"><span class="l-tag">Lesson 4.3</span>ASME: The Most Important Standards Body</h2>
+        <h3>4.3.1&nbsp;&nbsp;About ASME</h3>
+        <p>The American Society of Mechanical Engineers (ASME) governs the majority of piping engineering work in O&amp;G worldwide. Originally US-based, ASME standards are now specified globally — from Saudi Arabia to Indonesia to the UK. Two Boards matter most to piping engineers: the <strong>Board on Pressure Technology</strong> (B16 flanges/fittings, B31 pressure piping, Boiler &amp; Pressure Vessel codes, Post Construction) and the <strong>Board on Nuclear Codes and Standards</strong>.</p>
+        <h3>4.3.2&nbsp;&nbsp;Key ASME Standards Every Piping Engineer Must Know</h3>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Standard</th><th>Title</th><th>What Piping Engineers Use It For</th></tr></thead>
+            <tbody>
+              <tr><td><strong>ASME B36.10</strong></td><td>Welded &amp; Seamless Wrought Steel Pipe</td><td>OD, wall thickness (schedules), plain-end weight tables for CS/alloy pipe</td></tr>
+              <tr><td><strong>ASME B36.19</strong></td><td>Wrought Stainless-Steel Pipe</td><td>SS pipe dimensions — same OD as B36.10, different schedules (S-suffix)</td></tr>
+              <tr><td><strong>ASME B16.5</strong></td><td>Pipe Flanges &amp; Flanged Fittings NPS ½–24</td><td>Flange dimensions, P-T ratings, bores, bolt patterns</td></tr>
+              <tr><td><strong>ASME B16.47</strong></td><td>Large Diameter Steel Flanges NPS 26–60</td><td>Large-bore flange dimensions for tie-ins and equipment</td></tr>
+              <tr><td><strong>ASME B16.9</strong></td><td>Factory-Made Wrought Butt-Welding Fittings</td><td>Elbow, tee, reducer dimensions — all butt-weld fittings</td></tr>
+              <tr><td><strong>ASME B16.11</strong></td><td>Socket-Welding &amp; Threaded Forged Fittings</td><td>Small-bore socket-weld and threaded fitting dimensions</td></tr>
+              <tr><td><strong>ASME B16.20</strong></td><td>Metallic Gaskets for Pipe Flanges</td><td>Spiral wound, ring joint gasket dimensions/materials</td></tr>
+              <tr><td><strong>ASME B16.25</strong></td><td>Buttwelding Ends</td><td>Weld end preparations — bevel angles, fit-up dimensions</td></tr>
+              <tr><td><strong>ASME B16.34</strong></td><td>Valves — Flanged, Threaded, Welding Ends</td><td>Valve P-T ratings and face-to-face dimensions</td></tr>
+              <tr><td><strong>ASME B31.3</strong></td><td>Process Piping</td><td>The primary design code for process plant piping — most important</td></tr>
+              <tr><td><strong>ASME B31.4</strong></td><td>Liquid Pipeline Transportation</td><td>Onshore liquid pipeline design</td></tr>
+              <tr><td><strong>ASME B31.8</strong></td><td>Gas Transmission &amp; Distribution</td><td>Onshore and offshore gas pipeline design</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout author">
+          <span class="c-label">From the field</span>
+          <p>In my 35 years, ASME B31.3 is the code I have used more than any other. If you work in process plant piping — refineries, gas plants, petrochemical facilities — this is your bible. Get a copy. Read it. Keep it on your desk.</p>
+        </div>
+
+        <!-- 4.4 -->
+        <h2 class="lesson" id="m4l4"><span class="l-tag">Lesson 4.4</span>API Standards</h2>
+        <h3>4.4.1&nbsp;&nbsp;About API</h3>
+        <p>The American Petroleum Institute (API) represents the US oil and gas industry and has issued more than 200,000 technical standards worldwide — helping users improve efficiency and cost savings while complying with law, maintaining public safety and health, and protecting the environment. API also guides maintenance, inspection, and fitness-for-service.</p>
+        <h3>4.4.2&nbsp;&nbsp;Key API Standards for Piping Engineers</h3>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Standard</th><th>Title</th><th>Relevance</th></tr></thead>
+            <tbody>
+              <tr><td><strong>API 5L</strong></td><td>Specification for Line Pipe</td><td>Primary material spec for pipeline steel — X42 to X80</td></tr>
+              <tr><td><strong>API 6D</strong></td><td>Pipeline Valves</td><td>Ball, gate, check, plug valves for pipeline service</td></tr>
+              <tr><td><strong>API 510</strong></td><td>Pressure Vessel Inspection Code</td><td>Inspection, repair, rerating of in-service pressure equipment</td></tr>
+              <tr><td><strong>API 520 I &amp; II</strong></td><td>Sizing &amp; Installation of Relieving Devices</td><td>PRV sizing and reaction force — every relief valve stress analysis</td></tr>
+              <tr><td><strong>API 570</strong></td><td>Piping Inspection Code</td><td>In-service inspection of process piping</td></tr>
+              <tr><td><strong>API 610</strong></td><td>Centrifugal Pumps</td><td>Pump design and nozzle load allowables — checked on every pump</td></tr>
+              <tr><td><strong>API 617</strong></td><td>Centrifugal Compressors</td><td>Compressor design and nozzle load allowables</td></tr>
+              <tr><td><strong>API 618</strong></td><td>Reciprocating Compressors</td><td>Dynamic loads, pulsation analysis</td></tr>
+              <tr><td><strong>API 650</strong></td><td>Welded Steel Tanks</td><td>Tank design — nozzle movement and settlement data</td></tr>
+              <tr><td><strong>API 661</strong></td><td>Air-Cooled Heat Exchangers</td><td>Air cooler design and nozzle load allowables</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout note">
+          <span class="c-label">Note</span>
+          <p>API 610, 617, and 661 are particularly important for stress engineers because they define allowable nozzle loads. If your CAESAR II analysis shows nozzle loads exceeding these allowables, the analysis fails — regardless of whether the pipe stresses pass code.</p>
+        </div>
+
+        <!-- 4.5 -->
+        <h2 class="lesson" id="m4l5"><span class="l-tag">Lesson 4.5</span>Other Standards You Will Encounter</h2>
+        <h3>4.5.1&nbsp;&nbsp;MSS — Manufacturer Standardization Society</h3>
+        <ul class="clean">
+          <li><strong>MSS SP-58 (2025):</strong> Pipe Hangers and Supports — the primary support standard. SP-69 now incorporated.</li>
+          <li><strong>MSS SP-44:</strong> Steel Pipeline Flanges — large-bore pipeline flanges.</li>
+          <li><strong>MSS SP-25:</strong> Standard Marking System for Valves, Fittings, Flanges and Unions.</li>
+        </ul>
+        <h3>4.5.2&nbsp;&nbsp;NACE / AMPP — Corrosion Standards</h3>
+        <p>NACE International is now part of AMPP. NACE MR0175 / ISO 15156 is one of the most important standards on any sour-service project:</p>
+        <ul class="clean">
+          <li><strong>NACE MR0175 / ISO 15156:</strong> material requirements for H₂S environments — hardness limits, material restrictions, PWHT for sour service.</li>
+          <li><strong>NACE RP0169:</strong> Control of External Corrosion on Underground or Submerged Metallic Piping.</li>
+        </ul>
+        <div class="callout important">
+          <span class="c-label">Important</span>
+          <p>On any project where H₂S is present — even trace amounts — NACE MR0175 applies to ALL wetted piping components. Capture this in your piping material class from the start of the project.</p>
+        </div>
+        <h3>4.5.3&nbsp;&nbsp;NEMA — National Electrical Manufacturers Association</h3>
+        <p><strong>NEMA SM-23</strong> defines allowable nozzle loads for steam turbines — among the most sensitive rotating equipment. Exceeding the SM-23 allowables can cause catastrophic internal damage. Evaluation requires both individual nozzle allowables AND a cumulative equipment allowable.</p>
+        <h3>4.5.4&nbsp;&nbsp;AWWA — American Water Works Association</h3>
+        <ul class="clean">
+          <li><strong>AWWA C906:</strong> Polyethylene (PE) Pressure Pipe and Fittings.</li>
+          <li><strong>AWWA M55:</strong> PE Pipe — Design and Installation.</li>
+          <li><strong>AWWA C207:</strong> Steel Pipe Flanges.</li>
+        </ul>
+        <h3>4.5.5&nbsp;&nbsp;PFI — Pipe Fabrication Institute</h3>
+        <ul class="clean">
+          <li><strong>PFI ES-4:</strong> Hydrostatic Testing of Fabricated Piping.</li>
+          <li><strong>PFI ES-5:</strong> Cleaning of Fabricated Piping.</li>
+          <li><strong>PFI ES-26:</strong> Welding Attachments Between Pipes and Supports.</li>
+        </ul>
+        <div class="callout takeaway">
+          <span class="c-label">Key point</span>
+          <p>You do not need to memorise every standard — you need to know which applies to each situation and where to find it. Minimum personal library for any process piping engineer: ASME B31.3, B36.10, B16.5, API 5L, API 610, and MSS SP-58.</p>
+        </div>
+
+        <!-- 4.6 -->
+        <h2 class="lesson" id="m4l6"><span class="l-tag">Lesson 4.6</span>The ASME B31 Pressure Piping Code Family</h2>
+        <h3>4.6.1&nbsp;&nbsp;Overview</h3>
+        <p>In the US and most O&amp;G projects worldwide, pressure piping is governed by the ASME B31 series. Selecting the correct code is one of the first decisions on any project — it determines design equations, allowable stresses, fabrication requirements, examination levels, and inspection requirements. Consider: the code section's scope limitations, the legal requirements of the jurisdiction, and any other codes/standards that must also be met.</p>
+        <h3>4.6.2&nbsp;&nbsp;The Key B31 Codes</h3>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Code</th><th>Title</th><th>Scope</th><th>Typical O&amp;G Use</th></tr></thead>
+            <tbody>
+              <tr><td><strong>B31.1</strong></td><td>Power Piping</td><td>Steam, condensate, feedwater, utility in power/geothermal plants</td><td>Steam generation, utility steam, boiler feedwater</td></tr>
+              <tr><td><strong>B31.3</strong></td><td>Process Piping</td><td>Refineries, chemical/pharma plants, gas plants, semicon, food processing</td><td>The primary code for ALL process piping — most widely used</td></tr>
+              <tr><td><strong>B31.4</strong></td><td>Pipeline Transportation — Liquids &amp; Slurries</td><td>Liquid pipelines between fields, tank farms, terminals, pump stations</td><td>Onshore crude/product pipelines</td></tr>
+              <tr><td><strong>B31.5</strong></td><td>Refrigeration Piping</td><td>Refrigerant and secondary coolant systems</td><td>LNG refrigeration, propylene refrigeration</td></tr>
+              <tr><td><strong>B31.8</strong></td><td>Gas Transmission &amp; Distribution</td><td>Gas pipeline facilities — design, fab, install, inspect, test</td><td>Onshore/offshore gas transmission, distribution</td></tr>
+              <tr><td><strong>B31.9</strong></td><td>Building Services Piping</td><td>High-rise, public/industrial buildings, multi-storey housing</td><td>HVAC piping in plant buildings and offices</td></tr>
+              <tr><td><strong>B31.11</strong></td><td>Slurry Transportation Piping</td><td>Coal, mineral, and similar slurry transport</td><td>Mining and mineral processing pipelines</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout author">
+          <span class="c-label">From the field</span>
+          <p>From my experience in Saudi Arabia, UAE, Indonesia, and the UK: ASME B31.3 is the code you'll use every day for process plant piping. B31.4 and B31.8 come into play the moment you step outside the plant fence into onshore pipeline design. Know which code governs your specific lines — the stress equations, allowable stresses, and design requirements differ between them.</p>
+        </div>
+
+        <!-- 4.7 -->
+        <h2 class="lesson" id="m4l7"><span class="l-tag">Lesson 4.7</span>ASME B31.3 Fluid Service Categories</h2>
+        <h3>4.7.1&nbsp;&nbsp;Why Fluid Service Categories Matter</h3>
+        <p>ASME B31.3 does not treat all systems the same. It categorises piping by the combination of fluid properties, operating conditions, and risk profile. The category directly determines the level of examination (NDE), the joint types permitted, fabrication quality, leak test requirements, and the design/inspection philosophy. You will find the fluid service category on the Line Designation Table (LDT) or piping material class index for every line.</p>
+        <h3>4.7.2&nbsp;&nbsp;The Fluid Service Categories</h3>
+        <h4>Normal Fluid Service</h4>
+        <p>The most common category — the vast majority of process piping. Not subject to the special rules of Category D, M, Elevated Temperature, High Pressure, or High Purity. Standard B31.3 requirements apply.</p>
+        <h4>Category D Fluid Service</h4>
+        <p>A less demanding category for low-risk utility and non-hazardous lines. <strong>ALL</strong> of the following must apply:</p>
+        <ul class="clean">
+          <li>Fluid is non-flammable, non-toxic, and not damaging to human tissues</li>
+          <li>Design gauge pressure ≤ 150 psi (1,035 kPa)</li>
+          <li>Design temperature ≤ 186°C (366°F)</li>
+          <li>Fluid temperature (other than from atmospheric conditions) not less than −29°C (−20°F)</li>
+        </ul>
+        <p>Category D allows simplified examination — threaded and socket weld joints may be used more freely, and examination requirements are less stringent than Normal.</p>
+        <div class="callout note">
+          <span class="c-label">Note</span>
+          <p>Typical Category D lines in a gas plant: instrument air, plant air, low-temperature cooling water returns, low-pressure inert gas. Note the word ALL — if any one condition is not met, the line cannot be Category D.</p>
+        </div>
+        <h4>Category M Fluid Service</h4>
+        <p>The most demanding category — highly hazardous fluids where a single exposure to a very small quantity can cause serious irreversible harm even with prompt medical response. <strong>Both</strong> must apply:</p>
+        <ul class="clean">
+          <li>The fluid is so highly toxic that a single small-quantity leak exposure can produce serious irreversible harm on breathing or bodily contact, even with prompt restorative measures</li>
+          <li>The owner determines, after considering design, experience, service conditions, and location, that Normal Fluid Service requirements do not sufficiently provide the leak-tightness needed to protect personnel</li>
+        </ul>
+        <p>Category M carries the most stringent examination and leak-testing requirements. Design rules are in Chapter VIII of B31.3.</p>
+        <div class="callout author">
+          <span class="c-label">From the field</span>
+          <p>It is the owner's responsibility to determine if a fluid service is Category M — not the EPC contractor. ASME B31.3 Appendix M provides a logic flowchart for the owner. On Aramco projects, the category is typically defined in the Process Hazards Analysis (PHA) and confirmed in the Line Designation Table.</p>
+        </div>
+        <h4>Elevated Temperature Fluid Service</h4>
+        <p>Applies when the metal temperature is sustained at or above the creep threshold (T<sub>cr</sub>) in B31.3 Table 302.3.5. Additional design requirements apply to prevent creep failure over the design life.</p>
+        <div class="callout note">
+          <span class="c-label">Note</span>
+          <p>For carbon steel, T<sub>cr</sub> ≈ 371°C (700°F). For chrome-moly steels (P11, P22, P91), the creep regime starts at higher temperatures. Always check Table 302.3.5 for the specific material.</p>
+        </div>
+        <h4>High Pressure Fluid Service</h4>
+        <p>Applies when the owner specifies Chapter IX of B31.3 for piping exceeding the pressure ratings of ASME B16.5 Class 2500 — the most stringent design, fabrication, and examination requirements of all normal categories.</p>
+        <h4>High Purity Fluid Service</h4>
+        <p>For systems requiring alternative methods of fabrication, inspection, examination, and testing to produce a controlled level of cleanliness — high purity, ultra-high purity, hygienic, or aseptic systems. Most common in pharma, semiconductor, and food processing rather than O&amp;G.</p>
+
+        <h3>4.7.3&nbsp;&nbsp;How to Determine the Category — Practical Approach</h3>
+        <ol>
+          <li>Review the fluid composition from Process Data Sheets / LDT — flammable, toxic, hazardous?</li>
+          <li>Check design pressure and temperature against the Category D thresholds.</li>
+          <li>For potentially toxic fluids, apply the B31.3 Appendix M logic flowchart.</li>
+          <li>Consult process and safety engineers for Category M — a formal owner decision.</li>
+          <li>Document the category in the piping material class index and Line Designation Table.</li>
+        </ol>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Category</th><th>Pressure Limit</th><th>Temperature Limit</th><th>Fluid Type</th><th>Exam Level</th></tr></thead>
+            <tbody>
+              <tr><td>Category D</td><td class="mono">≤ 150 psi</td><td class="mono">−29 to 186°C</td><td>Non-flammable, non-toxic, not tissue-damaging</td><td>Least stringent</td></tr>
+              <tr><td>Normal</td><td>Per pressure class</td><td>Per material limits</td><td>General process fluids</td><td>Standard B31.3</td></tr>
+              <tr><td>Category M</td><td>Per pressure class</td><td>Per material limits</td><td>Highly toxic — single exposure causes irreversible harm</td><td>Most stringent</td></tr>
+              <tr><td>Elevated Temp</td><td>Per pressure class</td><td class="mono">≥ T<sub>cr</sub></td><td>Any — temperature governs</td><td>Standard + creep rules</td></tr>
+              <tr><td>High Pressure</td><td class="mono">&gt; Class 2500</td><td>Per material limits</td><td>Any</td><td>Most stringent</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout takeaway">
+          <span class="c-label">Key point</span>
+          <p>Never assume Normal Fluid Service by default. Check the fluid, the pressure, and the temperature, and verify with process and safety engineers. A wrong classification leads to under-specified examination — a serious safety and liability risk.</p>
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="summary-block">
+          <h2>Module 4 — Summary &amp; Key Takeaways</h2>
+          <p class="sum-intro">Codes and standards are the framework within which all your piping engineering work takes place — every calculation, material selection, support design, and stress analysis is governed by it.</p>
+          <ul class="keytakeaways">
+            <li>A code is a standard given legal force. A standard sets minimum requirements. Follow both — the code because it's mandatory, standards because they're contractually required and technically correct.</li>
+            <li>ASME is the most important body for piping engineers. B31.3 (Process Piping) is the code you'll use most in O&amp;G process plant work.</li>
+            <li>API standards govern equipment: API 5L (line pipe), 610 (pumps), 617 (compressors), 661 (air coolers), 570 (in-service inspection).</li>
+            <li>Correct B31 code depends on service: B31.3 process plant, B31.4 liquid pipelines, B31.8 gas pipelines.</li>
+            <li>B31.3 fluid service categories set examination/fabrication requirements: Category D (least), Normal, Elevated Temp, High Pressure, Category M (most).</li>
+            <li>Determining the Fluid Service Category is the owner's responsibility — not the EPC contractor's. Confirm before specifying the pipe class.</li>
+            <li>Always use the project-mandated edition. Current as of 2026: B31.3-2024, B31.4-2025, B31.8-2025.</li>
+          </ul>
+
+          <h3 style="margin-top:26px;">Key Standards Quick Reference</h3>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Standard</th><th>Org</th><th>Covers</th></tr></thead>
+              <tbody>
+                <tr><td>ASME B31.3-2024</td><td>ASME</td><td>Process piping design — primary O&amp;G process plant code</td></tr>
+                <tr><td>ASME B31.4-2025</td><td>ASME</td><td>Liquid pipeline design</td></tr>
+                <tr><td>ASME B31.8-2025</td><td>ASME</td><td>Gas pipeline design</td></tr>
+                <tr><td>ASME B36.10-2022</td><td>ASME</td><td>CS/alloy pipe dimensions (OD, schedule, weight)</td></tr>
+                <tr><td>ASME B36.19-2022</td><td>ASME</td><td>Stainless steel pipe dimensions</td></tr>
+                <tr><td>ASME B16.5-2020</td><td>ASME</td><td>Flanges &amp; flanged fittings NPS ½–24</td></tr>
+                <tr><td>API 5L-2018</td><td>API</td><td>Line pipe specification</td></tr>
+                <tr><td>API 610 / 617 / 661</td><td>API</td><td>Pump / compressor / air cooler nozzle load allowables</td></tr>
+                <tr><td>NACE MR0175 / ISO 15156</td><td>AMPP/ISO</td><td>Sour service (H₂S) material requirements</td></tr>
+                <tr><td>MSS SP-58-2025</td><td>MSS</td><td>Pipe hangers and supports</td></tr>
+                <tr><td>NEMA SM-23</td><td>NEMA</td><td>Steam turbine nozzle load allowables</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="self-assess">
+          <h3>Self-Assessment Questions</h3>
+          <ol class="questions">
+            <li>What is the difference between a "code" and a "standard"? Give one example of each from your work.</li>
+            <li>A line carries non-flammable cooling water at 0.5 barg and 30°C. Which ASME B31.3 fluid service category applies?</li>
+            <li>You're starting a stress analysis for a 6-inch line on a centrifugal pump in a gas plant. Which B31 code applies? Which API standard governs the nozzle load check?</li>
+            <li>A system carries a highly toxic chemical where single exposure causes irreversible harm. What fluid service category applies and what does it mean for examination?</li>
+            <li>Name three API standards a stress engineer references for equipment nozzle loads, and which equipment each governs.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="mod-foot">
+        <div class="mod-nav-row">
+          <button class="mod-nav-btn prev" data-nav="3"><span class="dir">← Previous</span><span class="nm">Module 3 · Pipe Supports</span></button>
+          <button class="mod-nav-btn next" data-nav="5"><span class="dir">Next →</span><span class="nm">Module 5 · Fittings &amp; Flanges</span></button>
+        </div>
+      </div>
+    </section>
+    <section class="module" data-mod="5">
+      <div class="content">
+        <div class="mod-hero">
+          <span class="mod-hero-eyebrow">Module 5</span>
+          <h1>Fittings, Flanges, Gaskets &amp; Bolting</h1>
+          <p class="lead">A piping system is not pipe alone. Every time a pipe changes direction, reduces in size, branches, connects to a vessel or pump, or must be isolated or disassembled for maintenance — it needs fittings, flanges, gaskets, and bolting. This module covers all of these in practical detail.</p>
+          <p class="lead">Getting them wrong — the wrong flange class for the operating pressure, the wrong gasket for the temperature, the wrong reducer orientation at a pump suction — leads to leaks, equipment damage, or costly rework.</p>
+          <div class="mod-hero-meta"><span><b>6</b> lessons</span><span>The components you specify every day</span></div>
+        </div>
+
+        <div class="objectives">
+          <h4>What You Will Learn</h4>
+          <ul>
+            <li>Pipe sizing — NPS, DN, OD, schedules, and the key formulas you use every day</li>
+            <li>Pipe fittings — elbows, caps, reducers (concentric/eccentric), tees, stub-ins, olets</li>
+            <li>Pipe flanges — standards, face types, flange types, and pressure-temperature ratings</li>
+            <li>Gaskets — types, material selection, and when to use each</li>
+            <li>Bolts and nuts — grades, standards, and selection criteria</li>
+            <li>Thermal insulation — types and design criteria</li>
+          </ul>
+        </div>
+
+        <!-- 5.1 -->
+        <h2 class="lesson" id="m5l1"><span class="l-tag">Lesson 5.1</span>Pipe Sizing, Formulas &amp; Worked Examples</h2>
+        <h3>5.1.1&nbsp;&nbsp;Pipe Size Designation — NPS and DN</h3>
+        <p>A pipe is a tube with a round cross-section — an OD, a wall thickness, and a resulting ID. Pipe size, wall thickness, weights, and masses must conform to ASME B36.10-2022 (Welded and Seamless Wrought Steel Pipe) and ASME B36.19-2022 (Stainless Steel Pipe).</p>
+        <ul class="clean">
+          <li><strong>NPS (Nominal Pipe Size):</strong> a dimensionless size designator — e.g. NPS 1½, NPS 12.</li>
+          <li><strong>DN (Diamètre Nominal):</strong> the metric equivalent — approximate ID in mm (DN 50 ≈ 50 mm).</li>
+        </ul>
+        <p>Grouped as Large Bore (&gt; 2 in), Small Bore (≤ 2 in), and Tubing (up to 4 in, thinner walls).</p>
+        <div class="callout note">
+          <span class="c-label">Note</span>
+          <p>For NPS 14 and larger, OD = NPS in inches. For NPS 12 and below, OD is larger than the nominal size — a legacy of 1930s manufacturing where pipes were made on inner diameter with a 1/16-inch wall, making the OD larger by 1/8 inch.</p>
+        </div>
+
+        <h3>5.1.2&nbsp;&nbsp;Schedule Numbers and Wall Thickness</h3>
+        <p>Originally only STD, XS, and XXS. As stronger, corrosion-resistant materials enabled thinner pipes, the Schedule system was added for precise ordering: 5/5S, 10/10S, then 20, 30, 40, then 60, 80, 100, 120, 140, 160. The "S" suffix indicates stainless availability.</p>
+        <div class="callout note">
+          <span class="c-label">Note</span>
+          <p>Schedule 40 = STD for NPS ⅛ to 10 inclusive. Schedule 80 = XS for pipes up to NPS 8 inclusive. All larger XS = ½ in (12.70 mm) wall.</p>
+        </div>
+
+        <h3>5.1.3&nbsp;&nbsp;Key Pipe Formulas</h3>
+        <p>From Piping Handbook, 7th Edition (Mohinder L. Nayyar, PE):</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Property</th><th>Formula</th><th>Units</th></tr></thead>
+            <tbody>
+              <tr><td>Inside Diameter</td><td class="mono">ID = OD − 2t</td><td>in</td></tr>
+              <tr><td>Area of Metal</td><td class="mono">Am = 0.7854 (OD² − ID²)</td><td>in²</td></tr>
+              <tr><td>Flow Area</td><td class="mono">Ai = 0.7854 × ID²</td><td>in²</td></tr>
+              <tr><td>Moment of Inertia</td><td class="mono">I = 0.0491 (OD⁴ − ID⁴)</td><td>in⁴</td></tr>
+              <tr><td>Weight of Water</td><td class="mono">Ww = 0.3405 × ID²</td><td>lb/ft</td></tr>
+              <tr><td>Pipe Weight (US)</td><td class="mono">Wpe = 10.6802 × t × (D − t)</td><td>lb/ft</td></tr>
+              <tr><td>Pipe Weight (SI)</td><td class="mono">Wpe = 0.0246615 × (D − t) × t</td><td>kg/m</td></tr>
+              <tr><td>Section Modulus</td><td class="mono">Z = 0.0982 (D⁴ − d⁴) / D</td><td>in³</td></tr>
+              <tr><td>Radius of Gyration</td><td class="mono">r = 0.25 √(D² + d²)</td><td>in</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="worked">
+          <div class="worked-head"><span class="wx">1</span>Worked Example — NPS 10, Schedule 40</div>
+          <div class="worked-body">
+            <p><strong>Given:</strong> NPS 10, SCH 40. <em>(ASME B36.10-2022 Table 2-1: OD = 10.75 in; t = 0.365 in)</em></p>
+            <div class="step">Inside Diameter</div>
+            <div class="calc">ID = 10.75 − (2 × 0.365) = <span class="result">10.02 in</span></div>
+            <div class="step">Flow Area</div>
+            <div class="calc">Ai = 0.7854 × 10.02² = <span class="result">78.85 in²</span></div>
+            <div class="step">Metal Area</div>
+            <div class="calc">Am = 0.7854 × (10.75² − 10.02²) = <span class="result">11.908 in²</span></div>
+            <div class="step">Pipe Weight</div>
+            <div class="calc">Wpe = 10.6802 × (10.75 − 0.365) × 0.365 = <span class="result">40.52 lb/ft</span></div>
+            <p style="margin-top:14px;">✓ Table 2-1 p.7 shows 40.52 lb/ft. Calculation matches.</p>
+          </div>
+        </div>
+
+        <div class="worked">
+          <div class="worked-head"><span class="wx">2</span>Worked Example — NPS 14, Schedule 40</div>
+          <div class="worked-body">
+            <p>For NPS 14, SCH 40 ≠ STD — this catches many engineers out. <em>(OD = 14.000 in — the crossover point; t = 0.438 in)</em></p>
+            <div class="step">Pipe Weight</div>
+            <div class="calc">Wpe = 10.6802 × (14.000 − 0.438) × 0.438 = <span class="result">63.50 lb/ft</span></div>
+            <p style="margin-top:14px;">✓ Table 2-1 p.8 confirms 63.50 lb/ft.</p>
+          </div>
+        </div>
+        <div class="callout takeaway">
+          <span class="c-label">Key point</span>
+          <p>From NPS 14 onwards, OD = NPS in inches. Below NPS 14, OD is always larger than the NPS number. A fundamental fact every piping engineer must know.</p>
+        </div>
+
+        <!-- 5.2 -->
+        <h2 class="lesson" id="m5l2"><span class="l-tag">Lesson 5.2</span>Pipe Fittings</h2>
+        <h3>5.2.1&nbsp;&nbsp;What Are Pipe Fittings?</h3>
+        <p>A piping system requires components such as elbows, flanges, weldolets, threadolets, tees, reducers, and caps — collectively "fittings." They are made of the same material as the pipe and are governed primarily by ASME B16.9 (butt-welding fittings) and ASME B16.11 (socket-weld and threaded forged fittings).</p>
+        <h3>5.2.2&nbsp;&nbsp;Elbows</h3>
+        <p>An elbow changes the direction of flow — 45° or 90°. Two types:</p>
+
+          <figure class="fig-img">
+          <img src="images/elbow.png" alt="Elbow" loading="lazy"/>
+          <figcaption>Picture  — 45 and 90 Deg Elbow.</figcaption>
+        </figure>
+        
+      
+        
+        <ul class="clean">
+          <li><strong>Short Radius (SR):</strong> bend radius R = 1.0 × D. Higher pressure drop and higher stress intensification — use with caution.</li>
+          <li><strong>Long Radius (LR):</strong> bend radius R = 1.5 × D. Preferred for all standard applications — lower pressure drop, lower SIF, better flow.</li>
+        </ul>
+        <p>A <strong>Reducing Elbow</strong> has different inlet/outlet diameters — used where a direction change and size reduction occur together.</p>
+        <div class="callout author">
+          <span class="c-label">From the field</span>
+          <p>In 35 years I have used long radius elbows as the default for virtually all applications. Short radius elbows are specified only where space is genuinely too restricted — and even then, the stress engineer must check the higher SIF carefully.</p>
+        </div>
+        <h3>5.2.3&nbsp;&nbsp;Caps</h3>
+       
+         <figure class="fig-img">
+          <img src="images/cap.png" alt="Cap" loading="lazy"/>
+          <figcaption>Picture  — Cap.</figcaption>
+        </figure>
+        
+        <p>A cap closes the end of a pipe (same function as a plug) — permanently or temporarily, e.g. at future tie-in points or during pressure testing.</p>
+        <h3>5.2.4&nbsp;&nbsp;Reducers — Concentric and Eccentric</h3>
+        <p>A reducer transitions between a larger and smaller diameter. Two types:</p>
+        <ul class="clean">
+          <li><strong>Concentric Reducer:</strong> upstream and downstream share the same centreline. Used anywhere only a size change is needed and centreline alignment isn't a concern.</li>
+          <li><strong>Eccentric Reducer:</strong> offset centrelines, with a flat side. Two orientations below.</li>
+        </ul>
+      
+         <figure class="fig-img">
+          <img src="images/concentric-reducer.png" alt="Concentric Reducer" loading="lazy"/>
+          <figcaption>Picture  — Concentric Reducer.</figcaption>
+        </figure>
+        
+       <figure class="fig-img">
+          <img src="images/reducer.png" alt="Reducer" loading="lazy"/>
+          <figcaption>Picture  — Reducer.</figcaption>
+        </figure> 
+        
+        <ul class="clean">
+          <li><strong>Flat-Bottom (BOE):</strong> flat at the bottom. Used in pipe racks so the pipe rests at the same support elevation — the most common orientation for horizontal rack pipe.</li>
+          <li><strong>Flat-Top (TOE):</strong> flat at the top. The most common application is at pump suction nozzles, to prevent air pockets that could cause cavitation.</li>
+        </ul>
+        <div class="callout author">
+          <span class="c-label">From the field</span>
+          <p>The Flat-Top Eccentric Reducer at pump suction is one of the most important details in piping design. Installing a concentric reducer or a Flat-Bottom at pump suction causes air entrainment and pump cavitation. Always check this detail personally on any pump suction line.</p>
+        </div>
+        <h3>5.2.5&nbsp;&nbsp;Tees</h3>
+        <ul class="clean">
+          <li><strong>Equal (Straight) Tee:</strong> inlet and both outlets the same diameter — the most-used configuration.</li>
+          <li><strong>Reducing Tee:</strong> branch outlet smaller than the run pipe. Used when branch flow is significantly less than main run flow.</li>
+        </ul>
+
+ <figure class="fig-img">
+          <img src="images/straight-reducing-tee.png" alt="tee" loading="lazy"/>
+          <figcaption>Picture  — Straight-Reducing-tee.</figcaption>
+        </figure>
+
+        
+        <h3>5.2.6&nbsp;&nbsp;Stub-In Connections</h3>
+
+<figure class="fig-img">
+          <img src="images/stubin-reinforcing-pad.png" alt="Stubin" loading="lazy"/>
+          <figcaption>Picture  — Stub-in-Reinforcing-pad</figcaption>
+        </figure> 
+        
+        <p>A stub-in branches by cutting a hole in the run pipe and welding the branch pipe directly — without a Tee. Cheaper and easier to install, popular for medium and lower pressure. May be installed with or without a reinforcing pad; whether a pad is required is determined by the branch reinforcement calculation (ASME B31.3 para 304.3).</p>
+        <h3>5.2.7&nbsp;&nbsp;Olets</h3>
+
+         <figure class="fig-img">
+          <img src="images/olet-fitting.png" alt="Olet" loading="lazy"/>
+          <figcaption>Picture  — Olet</figcaption>
+        </figure> 
+        
+        
+       
+        
+        <p>An Olet branches at 90° or 45° from a straight pipe. The choice between Tee and Olet depends on the size relationship:</p>
+        <ul class="clean">
+          <li>Branch drops only one pipe size from the run — use a <strong>Reducing Tee</strong>.</li>
+          <li>Branch drops two or more sizes — use an <strong>Olet</strong>.</li>
+        </ul>
+        <p>General practice: if a normal Tee connection is available, prefer the Tee — especially for high pressure/temperature — because Tees are forged with better mechanical integrity than field-fabricated olet connections. Three types by end connection: <strong>Weldolet</strong> (butt-weld), <strong>Sockolet</strong> (socket-weld, small bore), <strong>Threadolet</strong> (threaded, instrument/utility, low pressure only).</p>
+        <div class="callout takeaway">
+          <span class="c-label">Key point</span>
+          <p>Branch selection is a daily decision. The rule: one size drop = Reducing Tee; two or more drops = Olet; same size = Equal Tee. Always confirm with your piping material class — some clients prohibit stub-ins in certain services.</p>
+        </div>
+
+        <!-- 5.3 -->
+        <h2 class="lesson" id="m5l3"><span class="l-tag">Lesson 5.3</span>Pipe Flanges</h2>
+        
+         <figure class="fig-img">
+          <img src="images/flange.jpg" alt="Flange" loading="lazy"/>
+          <figcaption>Picture  — Flanges.</figcaption>
+        </figure>
+        
+                
+        <h3>5.3.1&nbsp;&nbsp;What Is a Pipe Flange?</h3>
+        <p>A flange joins a pipe to another pipe, or to equipment nozzles, valves, or components where regular assembly/disassembly is needed. Unlike welded connections, flanges can be opened and re-made repeatedly. Unlike elbows/tees/reducers, flanges are generally forged then machined to precise tolerances — giving superior mechanical properties to castings.</p>
+        <h3>5.3.2&nbsp;&nbsp;Flange Standards</h3>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Standard</th><th>Coverage</th></tr></thead>
+            <tbody>
+              <tr><td><strong>ASME B16.5</strong></td><td>Pipe Flanges &amp; Flanged Fittings NPS ½–24 — the most common flange standard in O&amp;G</td></tr>
+              <tr><td><strong>ASME B16.47</strong></td><td>Large Diameter Steel Flanges NPS 26–60</td></tr>
+              <tr><td><strong>ASME B16.1</strong></td><td>Gray Iron Pipe Flanges — Classes 25, 125, 250</td></tr>
+              <tr><td><strong>ASME B16.42</strong></td><td>Ductile Iron Pipe Flanges — Classes 150, 300</td></tr>
+              <tr><td><strong>MSS SP-44</strong></td><td>Steel Pipeline Flanges — large bore pipeline</td></tr>
+              <tr><td><strong>ASME B31.8 Table I-1</strong></td><td>Lightweight Flanges — low-pressure gas pipeline service</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>5.3.3&nbsp;&nbsp;Flange Face Types</h3>
+    
+         <figure class="fig-img">
+          <img src="images/flat-face-flanges.png" alt="face" loading="lazy"/>
+          <figcaption>Picture  — Flat face Flanges.</figcaption>
+        </figure>
+        
+        
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Face Type</th><th>Description</th><th>Typical Application</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Flat Face (FF)</strong></td><td>Entire face flat — no raised portion. Typically cast iron, Classes 125/250. Distributes compressive stress to avoid cracking the cast iron.</td><td>Low-pressure water, pump casings, cast iron equipment</td></tr>
+              <tr><td><strong>Raised Face (RF)</strong></td><td>Most common in O&amp;G. Face rises above bolt circle — 0.06 in (Class 150/300) or 0.25 in (Class 400+). Gasket sits on the raised portion, concentrating sealing stress.</td><td>Standard for all process piping — Class 150 to 2500</td></tr>
+              <tr><td><strong>Ring Type Joint (RTJ)</strong></td><td>A metal ring seats in a precision-machined groove and deforms plastically when bolted — a very tight seal for high pressure/temperature.</td><td>High-pressure pipeline, wellheads, Class 900+ critical service</td></tr>
+              <tr><td><strong>Lap Joint (LJ)</strong></td><td>Like RF but uses a separate backing flange behind a stub end; backing flange rotates for bolt alignment. Only the stub end needs expensive alloy.</td><td>SS/alloy systems where bolt-hole alignment is difficult</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+          <figure class="fig-img">
+          <img src="images/slipon-flanges.png" alt="SO" loading="lazy"/>
+          <figcaption>Picture  — Slip On Flanges.</figcaption>
+        </figure>
+
+          <figure class="fig-img">
+          <img src="images/wn-flanges.png" alt="WN" loading="lazy"/>
+          <figcaption>Picture  — Weld Neck Flanges.</figcaption>
+            </figure>
+
+<figure class="fig-img">
+          <img src="images/socketweld-flanges.png" alt="SW" loading="lazy"/>
+          <figcaption>Picture  — Socket Weld Flanges.</figcaption>
+            </figure>
+
+
+<figure class="fig-img">
+          <img src="images/threadedweld-flanges.png" alt="TW" loading="lazy"/>
+          <figcaption>Picture  — Threaded Weld Flanges.</figcaption>
+            </figure>
+
+<figure class="fig-img">
+          <img src="images/blind-flanges.png" alt="Blind" loading="lazy"/>
+          <figcaption>Picture  — Blind Flanges.</figcaption>
+            </figure>
+
+
+        
+        <h3>5.3.4&nbsp;&nbsp;Flange Types — Construction</h3>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Flange Type</th><th>Description</th><th>When to Use</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Welding Neck (WN)</strong></td><td>Long tapered hub butt-welded to the pipe — structurally superior; hub distributes stress gradually, reducing concentration. Bore must match pipe ID.</td><td>Preferred for all high-pressure, high-temperature, critical service. Standard above Class 150.</td></tr>
+              <tr><td><strong>Slip-On (SO)</strong></td><td>Ring over the pipe end, fillet-welded front and back. Easier to install but weaker — fillet welds add stress concentrations.</td><td>Lower pressure/temperature. Not for high-cycle, severe, or corrosive service.</td></tr>
+              <tr><td><strong>Socket Weld (SW)</strong></td><td>Pipe slides into a socket and is fillet-welded at the end. Leave ~1/16 in (1.6 mm) gap at the socket bottom for weld shrinkage.</td><td>Small bore NPS 2 and below, high pressure where butt welding is impractical.</td></tr>
+              <tr><td><strong>Threaded (THD)</strong></td><td>Pipe screws into a threaded bore. No welding, lower integrity. Sometimes seal-welded to prevent leaks.</td><td>Low-pressure utility, instrument, temporary. Not for high temperature or cyclic service.</td></tr>
+              <tr><td><strong>Blind (BL)</strong></td><td>Solid disc closing a pipe end or nozzle — no bore.</td><td>End caps, future tie-in isolation, pressure test blanks, vessel manways.</td></tr>
+              <tr><td><strong>Orifice Flange</strong></td><td>Tappings for pressure measurement across an orifice plate; jack screws to separate flanges for plate removal.</td><td>Flow measurement wherever an orifice plate meter is installed.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout author">
+          <span class="c-label">From the field</span>
+          <p>Weld Neck flanges are my default for any critical or high-pressure line. The extra cost over Slip-On is small, but the integrity improvement is significant. On Aramco projects, Weld Neck flanges are generally mandatory for all Class 600 and above, and for all lines in sour service.</p>
+        </div>
+        <h3>5.3.5&nbsp;&nbsp;Flange Pressure-Temperature Ratings</h3>
+        <p>Flanges are grouped into pressure Classes: 150, 300, 400, 600, 900, 1500, 2500. These are P-T ratings — the maximum allowable working pressure at a given temperature for a specific material group. ASME B16.5 provides the ratings. The temperature shown is the component temperature, equal to the contained fluid temperature.</p>
+        <p>Example — Carbon Steel flange (Group 1.1, e.g. ASTM A105), per ASME B16.5-2020 Table 2-1.1C:</p>
+        <ul class="clean">
+          <li>Class 150 at 100°F (38°C) → <strong>285 psig</strong></li>
+          <li>Class 150 at 500°F (260°C) → <strong>170 psig</strong></li>
+          <li>Class 300 at 100°F (38°C) → <strong>740 psig</strong></li>
+        </ul>
+        <div class="callout important">
+          <span class="c-label">Important</span>
+          <p>Pressure rating DECREASES as temperature INCREASES. Always check the P-T rating at your actual design temperature — not at ambient. One of the most common errors made by junior engineers. A Class 150 flange at 260°C has significantly less than 285 psig capacity.</p>
+        </div>
+        <h3>5.3.6&nbsp;&nbsp;Working Pressure Equation</h3>
+        <p>ASME B16.5 Appendix A-2 gives the working pressure for materials at any temperature within the tables. For Class 300 and higher:</p>
+        <div class="formula">
+          <div class="formula-name">Working Pressure at Temperature T</div>
+          <div class="eq">p<small>t</small> = (C₁ × S₁ / 8750) × p<small>r</small>&nbsp;&nbsp;≤&nbsp;&nbsp;p<small>c</small></div>
+          <div class="where">p<sub>t</sub> = rated working pressure at T · C₁ = 10 (S₁ in MPa → bar) or 1 (S₁ in psi → psi) · S₁ = allowable stress at T · p<sub>r</sub> = class index (300, 600, …) · p<sub>c</sub> = ceiling pressure at T per Table A-1</div>
+        </div>
+        <div class="callout takeaway">
+          <span class="c-label">Key point</span>
+          <p>Flanges are pressure-temperature rated, not pressure-only rated. The Class number is not the design pressure in psi. A Class 300 flange gives 740 psig at 100°F but may give only ~490 psig at 600°F. Always look up the P-T table for your specific material and temperature.</p>
+        </div>
+
+        <!-- 5.4 -->
+        <h2 class="lesson" id="m5l4"><span class="l-tag">Lesson 5.4</span>Gaskets</h2>
+
+
+        <h3>5.4.1&nbsp;&nbsp;Why Gaskets Are Critical</h3>
+        <p>Gaskets and bolting ensure the integrity of the connection between two flanges and prevent leakage. Leak performance depends on the gasket stress in operation — the higher the gasket stress, the higher the leak-tightness. Flange faces are never perfectly smooth, and rust and imperfections develop in service; the gasket fills these imperfections when compressed by bolt load. When choosing a gasket consider: compatibility with the process fluid, operating temperature and pressure, compressibility, and suitability for the flange material.</p>
+        <h3>5.4.2&nbsp;&nbsp;Gasket Properties</h3>
+        <p>An ideal gasket has <strong>compressibility</strong> (conforms to surface finish, fills imperfections), <strong>resilience</strong> (moves with dynamic pressure/temperature cycles, maintaining seating stress), and <strong>stability</strong> (no significant thickness change under cyclic load or sustained elevated temperature — creep resistance).</p>
+        <h3>5.4.3&nbsp;&nbsp;Types of Gaskets</h3>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Type</th><th>Description</th><th>Class</th><th>Max Temp</th><th>Typical O&amp;G Use</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Non-Metallic (Soft)</strong></td><td>Composite sheet — non-asbestos fibre, PTFE, elastomer, flexible graphite. Flat-face/low-pressure. Per ASME B16.21.</td><td>150–300</td><td class="mono">390–1000°F (material-dependent)</td><td>Low-pressure water, utilities, chemical injection</td></tr>
+              <tr><td><strong>Spiral Wound (Semi-Metallic)</strong></td><td>Alternating metal strip (SS 316) and filler (graphite/PTFE) wound into a ring; outer ring centres, inner ring prevents over-compression. Per ASME B16.20.</td><td>150–2500</td><td class="mono">750°F (400°C) graphite</td><td>Standard for all RF process piping — the default</td></tr>
+              <tr><td><strong>Metal Jacketed (Semi-Metallic)</strong></td><td>Soft filler encased in a metal jacket (SS, monel, inconel). Good for rough/damaged faces.</td><td>300–1500</td><td>Per jacket metal</td><td>Exchanger heads, high-temp steam, imperfect older faces</td></tr>
+              <tr><td><strong>Ring Joint (RTJ, Metallic)</strong></td><td>Solid metal ring (oval/octagonal) seats in a machined groove and deforms when bolted. Per API 6A / ASME B16.20.</td><td>600–2500+</td><td class="mono">650°F (343°C), higher for exotics</td><td>High-pressure pipeline, wellheads, subsea, Class 900+</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout note">
+          <span class="c-label">Note</span>
+          <p>Above 650°F (343°C), gasket selection becomes even more critical — many gaskets perform well cold but fail leak-tightness when hot. Always consult the manufacturer's data for the specific temperature and fluid service.</p>
+        </div>
+        <h3>5.4.4&nbsp;&nbsp;Insulating Gaskets</h3>
+        <p>Insulating gaskets prevent galvanic corrosion where dissimilar metals connect (e.g. CS flange to SS flange) and provide electrical isolation where aboveground connects to underground piping for cathodic protection. A kit consists of the insulating gasket body, insulating sleeves around each stud, and insulating + steel washers under each nut.</p>
+        <div class="callout important">
+          <span class="c-label">Important</span>
+          <p>Insulating gaskets are generally considered unreliable — minimise their use to areas where absolutely necessary, and only when agreed with the engineering team and client. Incorrect installation can defeat the corrosion protection entirely.</p>
+        </div>
+        <div class="callout takeaway">
+          <span class="c-label">Key point</span>
+          <p>Spiral wound (SS/graphite) is the default for RF process piping (Class 150–2500). RTJ metallic ring joints for high-pressure pipeline and wellhead connections. Soft gaskets for low-pressure utilities only.</p>
+        </div>
+
+        <!-- 5.5 -->
+        <h2 class="lesson" id="m5l5"><span class="l-tag">Lesson 5.5</span>Bolts and Nuts</h2>
+        <h3>5.5.1&nbsp;&nbsp;The Role of Bolting</h3>
+        <p>Bolts and nuts provide the clamping force that compresses the gasket and maintains the seal. Correct grade, size, and tightening procedure are essential — the wrong grade or incorrect torque is one of the most common causes of flange leaks.</p>
+        <h3>5.5.2&nbsp;&nbsp;Types of Bolts</h3>
+        <ul class="clean">
+          <li><strong>Stud Bolts:</strong> threaded at both ends or full length — the most common for pressure piping; tightened from both ends, easier to remove if corroded.</li>
+          <li><strong>Machine Bolts:</strong> integral head, threaded one end. More common for structural connections.</li>
+        </ul>
+        <p>By strength: Low (min yield ≤ 30 ksi), Medium (30–105 ksi), High (≥ 105 ksi).</p>
+        <h3>5.5.3&nbsp;&nbsp;Common Bolt &amp; Nut Material Specifications</h3>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Spec</th><th>Description</th><th>Temp Range</th><th>Nut Grade</th></tr></thead>
+            <tbody>
+              <tr><td><strong>A193 B7</strong></td><td>1% Cr-Mo steel studs, tensile 125 ksi. The standard for most process piping flanges.</td><td class="mono">−100 to +400°C</td><td>A194 2H</td></tr>
+              <tr><td><strong>A193 B7M</strong></td><td>Low-hardness B7 for sour service (NACE MR0175). Hardness ≤ HRC 26.</td><td class="mono">−100 to +400°C</td><td>A194 2HM</td></tr>
+              <tr><td><strong>A193 B16</strong></td><td>1% Cr-Mo-V steel — higher temperature capability than B7.</td><td class="mono">0 to +520°C</td><td>A194 4, 7, or 8</td></tr>
+              <tr><td><strong>A193 B8/B8M</strong></td><td>Austenitic Cr-Ni (18/8) stainless — cryogenic and corrosive service. Lower tensile than B7.</td><td class="mono">−250 to +575°C</td><td>A194 8 or 8F</td></tr>
+              <tr><td><strong>A320 L7</strong></td><td>Low-temperature alloy steel studs, impact tested to −100°C.</td><td class="mono">−100 to +340°C</td><td>A194 4</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout note">
+          <span class="c-label">Note</span>
+          <p>For sour service, NACE MR0175 requires A193 B7M (not standard B7) due to the hardness limit. The "M" means modified for sulphide stress cracking resistance — a mandatory requirement. Do not substitute B7 for B7M on sour service flanges.</p>
+        </div>
+        <h3>5.5.4&nbsp;&nbsp;Types of Nuts</h3>
+        <ul class="clean">
+          <li><strong>Heavy Series (A194 2H):</strong> the standard nut with A193 B7 studs for pressure piping.</li>
+          <li><strong>Lock Nuts:</strong> self-locking (nylon insert or mechanical feature) — for piping subject to vibration and shock.</li>
+          <li><strong>Flat Washers:</strong> minimise nut embedment into the flange and aid torquing.</li>
+        </ul>
+        <div class="callout takeaway">
+          <span class="c-label">Key point</span>
+          <p>A193 B7 studs with A194 2H heavy hex nuts is the standard combination for CS process piping. Sour service: B7M / 2HM. Cryogenic: A320 L7. Always check your piping material class — the bolting spec is defined there for every line.</p>
+        </div>
+
+        <!-- 5.6 -->
+        <h2 class="lesson" id="m5l6"><span class="l-tag">Lesson 5.6</span>Thermal Insulation</h2>
+        <h3>5.6.1&nbsp;&nbsp;Purpose of Thermal Insulation</h3>
+        <p>Insulation maintains the fluid temperature for process requirements by reducing heat flow between surfaces — reducing heat loss on hot piping and heat gain on cold piping. Three common design criteria:</p>
+        <ul class="clean">
+          <li>Controlling heat loss (hot) or heat gain (cold)</li>
+          <li>Personnel protection — preventing burns from hot surfaces (typically above 60°C surface temperature)</li>
+          <li>Fire protection — passive fire protection on structural members and supports</li>
+        </ul>
+        <h3>5.6.2&nbsp;&nbsp;Design Considerations</h3>
+        <p>Insulation thickness is normally based on the normal operating temperature of the contained fluid, with additional considerations:</p>
+        <ul class="clean">
+          <li>Non-jacketed piping with heat tracing — consider only the heated fluid's normal operating temperature.</li>
+          <li>Jacketed piping — the heating fluid temperature governs thickness selection.</li>
+          <li>Vertical vessels may vary in thickness top to bottom per the operating temperature profile.</li>
+          <li>Heat exchangers — use the higher of inlet/outlet temperatures for each side.</li>
+        </ul>
+        <div class="callout note">
+          <span class="c-label">Note</span>
+          <p>Insulation weight must be included in your pipe stress analysis — it adds to the distributed weight load, affecting both support spacing and the sustained stress check. Confirm insulation type and density from the project insulation specification before inputting into CAESAR II.</p>
+        </div>
+        <div class="callout takeaway">
+          <span class="c-label">Key point</span>
+          <p>Insulation is not just a process requirement — it directly affects your stress analysis inputs (weight per metre) and support design (shoe height must accommodate insulation thickness). Always get the insulation specification before starting stress analysis.</p>
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="summary-block">
+          <h2>Module 5 — Summary &amp; Key Takeaways</h2>
+          <p class="sum-intro">These are the components you will specify and work with every day as a piping engineer.</p>
+          <ul class="keytakeaways">
+            <li>From NPS 14 onwards, OD = NPS in inches. For NPS 12 and below, OD is always larger than the NPS number.</li>
+            <li>Long radius elbows (R = 1.5D) are the default — lower SIF, lower pressure drop. Short radius only where space genuinely prohibits long radius.</li>
+            <li>Eccentric reducer at pump suction: always Flat-Top (TOE) to prevent air pocket formation and pump cavitation.</li>
+            <li>One size drop at a branch: Reducing Tee. Two or more drops: Olet (Weldolet for butt-weld, Sockolet for socket-weld).</li>
+            <li>Weld Neck flanges for high-pressure/critical service. Slip-On for lower pressure non-critical. Blind for end closures and future tie-ins.</li>
+            <li>Flange pressure rating DECREASES with increasing temperature. Always check the B16.5 P-T table at your actual design temperature, not ambient.</li>
+            <li>Spiral wound gaskets (SS/graphite) for RF flanges in standard O&amp;G service. RTJ for high-pressure pipeline and Class 900+ critical service.</li>
+            <li>A193 B7 / A194 2H is standard bolting. Sour service: B7M / 2HM (NACE MR0175). Cryogenic: A320 L7.</li>
+          </ul>
+
+          <h3 style="margin-top:26px;">Quick Reference — Pipe Weight Formulas</h3>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Formula</th><th>Description</th><th>Units</th></tr></thead>
+              <tbody>
+                <tr><td class="mono">Wpe = 10.6802 × (D − t) × t</td><td>Pipe weight per foot</td><td>lb/ft</td></tr>
+                <tr><td class="mono">Wpe = 0.0246615 × (D − t) × t</td><td>Pipe weight per metre</td><td>kg/m</td></tr>
+                <tr><td class="mono">ID = OD − 2t</td><td>Inside diameter</td><td>in / mm</td></tr>
+                <tr><td class="mono">Ai = 0.7854 × ID²</td><td>Flow area</td><td>in² / mm²</td></tr>
+                <tr><td class="mono">Am = 0.7854 × (OD² − ID²)</td><td>Metal cross-section area</td><td>in² / mm²</td></tr>
+                <tr><td class="mono">I = 0.0491 × (OD⁴ − ID⁴)</td><td>Moment of inertia</td><td>in⁴</td></tr>
+                <tr><td class="mono">Z = 0.0982 × (OD⁴ − ID⁴) / OD</td><td>Section modulus</td><td>in³</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="self-assess">
+          <h3>Self-Assessment Questions</h3>
+          <ol class="questions">
+            <li>Calculate the weight per foot of NPS 6, SCH 80 pipe (OD = 6.625 in, t = 0.432 in). Cross-check against ASME B36.10.</li>
+            <li>A pipe runs horizontally from a feed drum to a centrifugal pump suction. What type and orientation of reducer is required at the pump nozzle, and why?</li>
+            <li>A branch pipe of NPS 4 connects to an NPS 10 header. What type of fitting should be used for the branch connection?</li>
+            <li>A carbon steel Class 300 flange operates at 400°F (204°C). Using ASME B16.5, what is the approximate allowable working pressure?</li>
+            <li>You're specifying gaskets for high-pressure sour gas service with RF Class 900 flanges at 200°C. What gasket type do you select and why?</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="course-complete">
+        <h3>Course 1 — All 5 Modules Complete</h3>
+        <p>You've completed Piping Engineering Fundamentals: pipe properties, materials, supports, codes &amp; standards, and fittings/flanges/gaskets/bolting.</p>
+        <p style="margin-top:14px;">Next: <strong style="color:var(--paper)">Course 2 — Pipe Stress Engineering</strong> · <strong style="color:var(--paper)">Course 3 — Onshore Pipeline Engineering</strong></p>
+      </div>
+
+      <div class="mod-foot">
+        <div class="mod-nav-row">
+          <button class="mod-nav-btn prev" data-nav="4"><span class="dir">← Previous</span><span class="nm">Module 4 · Codes &amp; Standards</span></button>
+          <button class="mod-nav-btn next" data-nav="1"><span class="dir">↺ Restart</span><span class="nm">Back to Module 1</span></button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div style="max-width:820px;margin:0 auto;padding:28px 40px 0;text-align:center;">
+  <a href="/courses/piping-fundamentals/quiz.html"
+     style="display:inline-flex;align-items:center;gap:10px;background:var(--accent);color:#fff;
+            text-decoration:none;font-weight:600;border-radius:11px;padding:14px 28px;">
+    Take the Final Assessment →
+  </a>
+  <p style="color:rgba(245,242,235,0.7);font-size:0.86rem;margin-top:10px;">
+    20 questions · 80% pass mark · earn your certificate
+  </p>
+</div>
+
+
+  
+<footer class="site">
+  <div class="f-logo">PipingPro Academy</div>
+  <div style="margin-top:6px;"><a href="https://pipingpro-academy.com">pipingpro-academy.com</a> · Course 1: Piping Engineering Fundamentals</div>
+  <div class="f-zk">A product of <a href="https://zephrum-konsultan.co.uk">Zephrum Konsultan Limited</a> · Engineering &amp; AI</div>
+
+ 
+<script src="/js/counter.js"></script>
+
+  
+</footer>
+
+<script>
+  // Module + lesson navigation data
+  const MODULES = [
+    { n: 1, title: "Pipe Properties", sub: "Materials, sizes &amp; formulas", lessons: [
+      ["m1l1","1.1 — Pipe Material Classification"],
+      ["m1l2","1.2 — Sizes, Schedules &amp; Formulas"],
+      ["m1l3","1.3 — Mechanical Properties"],
+      ["m1l4","1.4 — Physical Properties"],
+      ["m1l5","1.5 — Post Weld Heat Treatment"]
+    ]},
+    { n: 2, title: "Pipe Materials", sub: "Metallic &amp; non-metallic", lessons: [
+      ["m2l1","2.1 — Carbon Steel"],
+      ["m2l2","2.2 — Stainless &amp; Duplex"],
+      ["m2l3","2.3 — Alloy / Chrome-Moly"],
+      ["m2l4","2.4 — Non-Ferrous Metals"],
+      ["m2l5","2.5 — Plastic Pipes"],
+      ["m2l6","2.6 — CRA Clad &amp; Lined"],
+      ["m2l7","2.7 — Material Selection"]
+    ]},
+    { n: 3, title: "Pipe Supports", sub: "Types, spans &amp; design", lessons: [
+      ["m3l1","3.1 — Support Terminology"],
+      ["m3l2","3.2 — Codes &amp; Materials"],
+      ["m3l3","3.3 — Allowable Pipe Span"],
+      ["m3l4","3.4 — Standard Support Types"],
+      ["m3l5","3.5 — Special Supports"]
+    ]},
+    { n: 4, title: "Codes &amp; Standards", sub: "ASME, API, B31 family", lessons: [
+      ["m4l1","4.1 — Codes vs Standards"],
+      ["m4l2","4.2 — Standards Organisations"],
+      ["m4l3","4.3 — ASME"],
+      ["m4l4","4.4 — API Standards"],
+      ["m4l5","4.5 — Other Standards"],
+      ["m4l6","4.6 — The B31 Family"],
+      ["m4l7","4.7 — Fluid Service Categories"]
+    ]},
+    { n: 5, title: "Fittings &amp; Flanges", sub: "Gaskets, bolting, insulation", lessons: [
+      ["m5l1","5.1 — Sizing &amp; Formulas"],
+      ["m5l2","5.2 — Pipe Fittings"],
+      ["m5l3","5.3 — Pipe Flanges"],
+      ["m5l4","5.4 — Gaskets"],
+      ["m5l5","5.5 — Bolts &amp; Nuts"],
+      ["m5l6","5.6 — Thermal Insulation"]
+    ]}
+  ];
+
+  const modnav = document.getElementById('modnav');
+  MODULES.forEach(m => {
+    const wrap = document.createElement('div');
+    wrap.className = 'nav-mod';
+    wrap.dataset.mod = m.n;
+    wrap.innerHTML =
+      '<button class="nav-mod-btn" data-goto="' + m.n + '">' +
+        '<span class="nav-num">' + m.n + '</span>' +
+        '<span class="nav-mod-label"><span class="nav-mod-title">' + m.title + '</span>' +
+        '<span class="nav-mod-sub">' + m.sub + '</span></span>' +
+      '</button>' +
+      '<ul class="nav-lessons">' +
+        m.lessons.map(l => '<li><a href="#' + l[0] + '">' + l[1] + '</a></li>').join('') +
+      '</ul>';
+    modnav.appendChild(wrap);
+  });
+
+  const sidebar = document.getElementById('sidebar');
+  const scrim = document.getElementById('scrim');
+  const progFill = document.getElementById('progFill');
+  const progLabel = document.getElementById('progLabel');
+
+  function showModule(n) {
+    document.querySelectorAll('.module').forEach(el => el.classList.toggle('active', el.dataset.mod == n));
+    document.querySelectorAll('.nav-mod-btn').forEach(b => b.classList.toggle('active', b.dataset.goto == n));
+    document.querySelectorAll('.nav-mod').forEach(w => w.classList.toggle('open', w.dataset.mod == n));
+    progFill.style.width = (n / MODULES.length * 100) + '%';
+    progLabel.textContent = 'Module ' + n + ' of ' + MODULES.length;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    history.replaceState(null, '', '#module-' + n);
+    closeSidebar();
+  }
+
+  document.addEventListener('click', (e) => {
+    const goBtn = e.target.closest('[data-goto]');
+    if (goBtn) { showModule(+goBtn.dataset.goto); return; }
+    const navBtn = e.target.closest('[data-nav]');
+    if (navBtn) { showModule(+navBtn.dataset.nav); return; }
+    const lessonLink = e.target.closest('.nav-lessons a');
+    if (lessonLink) { setTimeout(closeSidebar, 50); }
+  });
+
+  function openSidebar() { sidebar.classList.add('open'); scrim.classList.add('show'); }
+  function closeSidebar() { sidebar.classList.remove('open'); scrim.classList.remove('show'); }
+  document.getElementById('menuToggle').addEventListener('click', () => {
+    sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+  });
+  scrim.addEventListener('click', closeSidebar);
+
+  // open from hash
+  const hashMatch = location.hash.match(/module-(\d)/);
+  showModule(hashMatch ? +hashMatch[1] : 1);
+</script>
+</body>
+</html>

@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Memberstack -->
+<script data-memberstack-app="app_cmq9fsibv00720sujaqjm734o" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
+<script src="/js/ppa-tier.js"></script>
+<!-- PPA ACCESS GATE -->
+<script>
+(function(){
+  var THIS_CALC = 'mdc';
+  var UPGRADE   = '/membership-plan.html';
+  var ADMIN_PLAN_IDS   = ['pln_admin-vzd0rgr'];
+  var ADMIN_PERMISSION = 'admin';
+  var EMERGENCY_LOCAL_ADMIN = false;
+
+  function memberIsAdmin(m){
+    if(!m) return false;
+    var cf = m.customFields || {};
+    if(cf.admin === 'true' || cf.admin === true || cf.role === 'admin') return true;
+    var perms = m.permissions || [];
+    if(perms.indexOf(ADMIN_PERMISSION) !== -1) return true;
+    var pc = m.planConnections || [];
+    for(var i=0;i<pc.length;i++){
+      if(pc[i] && ADMIN_PLAN_IDS.indexOf(pc[i].planId) !== -1){
+        var st = (pc[i].status || '').toString().toUpperCase();
+        if(st !== 'CANCELED' && st !== 'CANCELLED' && st !== 'EXPIRED' && st !== 'INACTIVE') return true;
+      }
+    }
+    return false;
+  }
+  function whenMS(cb, tries){
+    tries = (tries==null) ? 40 : tries;
+    var ms = window.$memberstackDom;
+    if(ms) return cb(ms);
+    if(tries<=0) return cb(null);
+    setTimeout(function(){ whenMS(cb, tries-1); }, 100);
+  }
+  function getMember(){
+    return new Promise(function(resolve){
+      whenMS(function(ms){
+        if(!ms || typeof ms.getCurrentMember !== 'function') return resolve(null);
+        ms.getCurrentMember().then(function(res){ resolve(res ? res.data : null); }).catch(function(){ resolve(null); });
+      });
+    });
+  }
+
+  if(EMERGENCY_LOCAL_ADMIN){ return; }
+
+  var FREE = ['md','uc','wt'];
+  if(FREE.indexOf(THIS_CALC) !== -1) return;
+
+  getMember().then(function(m){
+    if(m){
+      if(memberIsAdmin(m)) return;
+      if(window.PPATIER && window.PPATIER.hasAccess && window.PPATIER.hasAccess(THIS_CALC)) return;
+    }
+    window.location.replace(UPGRADE);
+  });
+})();
+</script>
+
+<title>Onshore Pipeline Mechanical Design Calculation — PipingPro Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- ===== PipingPro Brand Bridge v1.0 ===== -->
+<style id="pp-brand-bridge">
+:root{
+  --bg:#faf6ef;--cream:#faf6ef;--paper:#f3ede2;--surface:#f3ede2;--paper2:#f3ede2;
+  --paper3:#e8dfd0;--ink:#1a1510;--text:#1a1510;--ink2:#4a3f30;--ink3:#6b5d49;
+  --accent:#8b3a1a;--accent2:#b8860b;--accent-light:#f6e6df;
+  --gold:#b8860b;--gold-light:#f5e9c8;--rule:#c8b89a;--border:#c8b89a;
+  --pass:#1a6b5a;--pass-bg:#e7f1ee;--fail:#8b3a1a;--fail-bg:#f6e6df;
+  --warn:#b8860b;--warn-bg:#f5e9c8;
+  --serif:'DM Serif Display',Georgia,serif;
+  --font:'DM Sans',system-ui,sans-serif;--sans:'DM Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --radius:4px;--radius-lg:6px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6;min-height:100vh;}
+</style>
+
+<style>
+/* ─── NAV ─── */
+.ppa-nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;height:56px;padding:0 5%;background:#1a1510;border-bottom:2px solid var(--gold);}
+.ppa-nav-logo{font-family:var(--serif);font-size:1.15rem;color:#d4a017;letter-spacing:.02em;text-decoration:none;}
+.ppa-nav-logo span{color:var(--gold);}
+.ppa-nav-back{color:#ccc;font-size:.82rem;font-weight:500;letter-spacing:.05em;text-transform:uppercase;text-decoration:none;}
+.ppa-nav-back:hover{color:#d4a017;}
+
+/* ─── LAYOUT: SIDEBAR + MAIN ─── */
+.app-wrap{display:flex;min-height:calc(100vh - 56px);}
+
+.sidebar{width:260px;background:#1a1510;color:#BDB0A0;display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;}
+.sidebar-header{padding:20px 18px 14px;border-bottom:2px solid var(--gold);}
+.sidebar-header .brand{font-family:var(--mono);font-size:9px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
+.sidebar-header h2{font-family:var(--serif);font-size:15px;font-weight:400;color:#FFFDF7;line-height:1.3;margin-bottom:3px;}
+.sidebar-header .codes{font-size:10px;color:#6b5d49;font-family:var(--mono);}
+
+.nav-item{padding:11px 18px;cursor:pointer;border-left:4px solid transparent;transition:all .15s;display:flex;align-items:flex-start;gap:9px;font-size:12.5px;line-height:1.3;font-family:var(--font);}
+.nav-item:hover{background:rgba(255,255,255,.04);border-left-color:var(--gold);}
+.nav-item.active{background:rgba(139,58,26,.18);border-left-color:var(--accent);color:#FFFDF7;}
+.nav-item .seq{font-family:var(--mono);font-size:10px;color:var(--accent);font-weight:500;min-width:22px;padding-top:1px;}
+
+.sidebar-footer{margin-top:auto;padding:14px 18px;border-top:1px solid #2C2418;font-size:9px;color:#4a3f30;font-family:var(--mono);text-align:center;}
+
+/* ─── MAIN CONTENT ─── */
+.main-content{flex:1;padding:28px 36px 56px;max-width:880px;}
+
+.panel{display:none;}.panel.active{display:block;}
+.panel-title{font-family:var(--serif);font-size:1.4rem;font-weight:400;color:var(--ink);margin-bottom:3px;}
+.panel-subtitle{font-size:12px;color:var(--ink3);margin-bottom:18px;font-family:var(--mono);}
+
+/* ─── GLOBAL DESIGN DATA BANNER ─── */
+.design-data{background:#2C2418;border:2px solid var(--gold);border-radius:var(--radius-lg);padding:18px 22px;margin-bottom:24px;color:#e8dfd0;}
+.design-data h3{font-size:14px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;font-family:var(--mono);}
+.dd-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 18px;}
+.dd-group{display:flex;flex-direction:column;}
+.dd-group label{font-size:12px;color:#c8b89a;margin-bottom:2px;font-family:var(--font);}
+.dd-group select,.dd-group input{padding:6px 8px;border:1px solid #5a4d3a;border-radius:var(--radius);font-size:11px;font-family:var(--mono);background:#1a1510;color:#FFFDF7;}
+.dd-group select:focus,.dd-group input:focus{outline:2px solid var(--gold);border-color:var(--gold);}
+.dd-readout{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid #5a4d3a;}
+.dd-val{text-align:center;}
+.dd-val .lbl{font-size:10px;color:#c8b89a;text-transform:uppercase;letter-spacing:.5px;font-family:var(--mono);}
+.dd-val .num{font-size:14px;font-weight:500;color:var(--accent2);font-family:var(--mono);}
+.dd-val .unit{font-size:10px;color:#9a8b73;font-family:var(--mono);}
+.dd-source{font-size:10px;color:#9a8b73;font-family:var(--mono);margin-top:6px;text-align:right;font-style:italic;}
+
+/* ─── FORMULA BOX ─── */
+.formula-box{background:var(--paper);border:1px solid var(--rule);border-radius:var(--radius-lg);padding:14px 18px;margin-bottom:20px;}
+.formula-box h4{font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;font-family:var(--mono);}
+.formula-box .formula{font-family:var(--mono);font-size:13px;color:var(--ink);line-height:1.8;}
+.formula-box .note{font-size:11px;color:var(--ink2);margin-top:6px;line-height:1.5;}
+
+/* ─── FORM ─── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px;margin-bottom:20px;}
+.form-group{display:flex;flex-direction:column;}
+.form-group label{font-size:11px;font-weight:600;color:var(--ink2);margin-bottom:3px;}
+.form-group .unit{font-size:9px;color:var(--ink3);font-family:var(--mono);}
+.form-group input,.form-group select{padding:7px 9px;border:1px solid var(--rule);border-radius:var(--radius);font-size:12px;font-family:var(--mono);background:#fff;color:var(--ink);}
+.form-group input:focus,.form-group select:focus{outline:2px solid var(--accent);border-color:var(--accent);}
+
+/* ─── BUTTONS ─── */
+.btn{padding:9px 22px;border:none;border-radius:var(--radius);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .15s;}
+.btn-calc{background:var(--accent);color:#fff;}.btn-calc:hover{background:#b04e22;}
+.btn-clear{background:var(--paper);color:var(--ink3);border:1px solid var(--rule);margin-left:8px;}
+.btn-row{margin-bottom:20px;}
+
+/* ─── RESULTS ─── */
+.results{display:none;}.results.show{display:block;}
+.result-table{width:100%;border-collapse:collapse;margin-bottom:14px;}
+.result-table th{text-align:left;font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;padding:7px 10px;border-bottom:2px solid var(--rule);font-family:var(--mono);}
+.result-table td{padding:7px 10px;font-size:12px;border-bottom:1px solid var(--paper3);font-family:var(--mono);}
+.status-pass{color:var(--pass);font-weight:700;}.status-fail{color:var(--fail);font-weight:700;}
+.util-bar-wrap{width:100px;height:7px;background:var(--paper3);border-radius:4px;overflow:hidden;display:inline-block;vertical-align:middle;margin-right:6px;}
+.util-bar{height:100%;border-radius:4px;transition:width .4s;}
+.result-summary{padding:12px 16px;border-radius:var(--radius-lg);margin-top:14px;font-size:12px;font-weight:600;}
+.result-summary.pass{background:var(--pass-bg);color:var(--pass);border:1px solid var(--pass);}
+.result-summary.fail{background:var(--fail-bg);color:var(--fail);border:1px solid var(--fail);}
+
+/* ─── FOOTER ─── */
+.ppa-footer{background:#1a1510;color:rgba(245,242,235,0.5);text-align:center;padding:1.8rem;font-size:12px;}
+.ppa-footer a{color:var(--accent2);text-decoration:none;}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:800px){
+  .sidebar{width:100%;height:auto;position:relative;top:0;}
+  .app-wrap{flex-direction:column;}
+  .main-content{padding:18px 14px 36px;}
+  .form-grid{grid-template-columns:1fr;}
+  .dd-grid{grid-template-columns:1fr 1fr;}
+  .dd-readout{grid-template-columns:repeat(3,1fr);}
+
+  /* ── overflow fix ── */
+  .design-data{max-width:100%;overflow:hidden;padding:14px 12px;}
+  .dd-group,.dd-val,.form-group{min-width:0;overflow:hidden;}
+  .dd-group select,.dd-group input{min-width:0;max-width:100%;text-overflow:ellipsis;}
+  .result-table{display:block;overflow-x:auto;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ PPA NAV ═══ -->
+<nav class="ppa-nav">
+  <a href="/" class="ppa-nav-logo">Piping<span>Pro</span> Academy</a>
+  <a href="/calculators/" class="ppa-nav-back">← Pipeline Toolkits</a>
+</nav>
+
+<div class="app-wrap">
+
+<!-- ═══ SIDEBAR ═══ -->
+<div class="sidebar">
+  <div class="sidebar-header">
+    <div class="brand">Pipeline Mechanical Design</div>
+    <h2>Onshore Pipeline Mechanical Design Calculation</h2>
+    <div class="codes">ASME B31.4 / B31.8 / ISO 13623</div>
+  </div>
+  <div>
+    <div class="nav-item active" onclick="showTab(0)"><span class="seq">1.0</span> Wall Thickness</div>
+    <div class="nav-item" onclick="showTab(1)"><span class="seq">2.0</span> Hoop Stress</div>
+    <div class="nav-item" onclick="showTab(2)"><span class="seq">3.0</span> Longitudinal Stress</div>
+    <div class="nav-item" onclick="showTab(3)"><span class="seq">4.0</span> Equivalent Stress</div>
+    <div class="nav-item" onclick="showTab(4)"><span class="seq">5.0</span> Min Elastic Bend Radius</div>
+    <div class="nav-item" onclick="showTab(5)"><span class="seq">6.0</span> Hydrostatic Test</div>
+    <div class="nav-item" onclick="showTab(6)"><span class="seq">7.0</span> Anchor Force</div>
+    <div class="nav-item" onclick="showTab(7)"><span class="seq">8.0</span> Combined Stress</div>
+    <div class="nav-item" onclick="showTab(8)"><span class="seq">9.0</span> Upheaval Buckling</div>
+  </div>
+  <div class="sidebar-footer">pipingpro-academy.com<br>Data: ppa-materials.js · ppa-pipe-data.js</div>
+</div>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main-content">
+
+<!-- GLOBAL DESIGN DATA -->
+<div class="design-data">
+  <h3>Pipeline Design Data — Global Inputs (from ppa-materials.js &amp; ppa-pipe-data.js)</h3>
+  <div class="dd-grid">
+    <div class="dd-group"><label>Pipe Size (NPS)</label><select id="dd-nps" onchange="onNpsChange()"></select></div>
+    <div class="dd-group"><label>Wall Thickness (mm)</label><select id="dd-wt" onchange="cascadeAll()"></select></div>
+    <div class="dd-group"><label>Material Grade</label><select id="dd-grade" onchange="cascadeAll()"></select></div>
+    <div class="dd-group"><label>Design Code</label><select id="dd-code" onchange="cascadeAll()"><option value="B318" selected>ASME B31.8 (Gas)</option><option value="B314">ASME B31.4 (Liquid)</option><option value="ISO">ISO 13623</option></select></div>
+    <div class="dd-group"><label>Design Pressure (MPa)</label><input type="number" id="dd-P" value="10.0" step="0.1" onchange="cascadeAll()"></div>
+    <div class="dd-group"><label>Design Temp (°C)</label><input type="number" id="dd-T2" value="65" step="1" onchange="cascadeAll()"></div>
+    <div class="dd-group"><label>Install Temp (°C)</label><input type="number" id="dd-T1" value="25" step="1" onchange="cascadeAll()"></div>
+    <div class="dd-group"><label>Location Class / F</label><select id="dd-locclass" onchange="cascadeAll()"><option value="0.80">Class 1 Div 1 (F=0.80)</option><option value="0.72" selected>Class 1 Div 2 (F=0.72)</option><option value="0.60">Class 2 (F=0.60)</option><option value="0.50">Class 3 (F=0.50)</option><option value="0.40">Class 4 (F=0.40)</option></select></div>
+    <div class="dd-group"><label>Corrosion Allowance (mm)</label><input type="number" id="dd-CA" value="3.0" step="0.1" onchange="cascadeAll()"></div>
+    <div class="dd-group"><label>Mfg Tolerance (%)</label><input type="number" id="dd-Tol" value="12.5" step="0.5" onchange="cascadeAll()"></div>
+    <div class="dd-group"><label>Joint Factor, E<sub>j</sub></label><select id="dd-Ej" onchange="cascadeAll()"><option value="1.00" selected>1.00 — Seamless / SAW 100%RT</option><option value="0.85">0.85 — ERW</option><option value="0.60">0.60 — Furnace Butt Weld</option></select></div>
+    <div class="dd-group"><label>Temp Derating, T</label><input type="number" id="dd-Td" value="1.0" step="0.01" onchange="cascadeAll()"></div>
+  </div>
+  <div class="dd-readout">
+    <div class="dd-val"><div class="lbl">OD</div><div class="num" id="ro-od">—</div><div class="unit">mm</div></div>
+    <div class="dd-val"><div class="lbl">WT</div><div class="num" id="ro-wt">—</div><div class="unit">mm</div></div>
+    <div class="dd-val"><div class="lbl">SMYS</div><div class="num" id="ro-smys">—</div><div class="unit">MPa</div></div>
+    <div class="dd-val"><div class="lbl">SMTS</div><div class="num" id="ro-smts">—</div><div class="unit">MPa</div></div>
+    <div class="dd-val"><div class="lbl">E</div><div class="num" id="ro-E">—</div><div class="unit">MPa</div></div>
+    <div class="dd-val"><div class="lbl">α</div><div class="num" id="ro-alpha">—</div><div class="unit">×10⁻⁶/°C</div></div>
+  </div>
+  <div class="dd-source" id="ro-source"></div>
+</div>
+
+<!-- TAB 1 --> <div class="panel active" id="panel-0"><h2 class="panel-title">1.0 — Wall Thickness Calculation</h2><p class="panel-subtitle">Per design code selected above</p><div class="formula-box"><h4>Design Formula</h4><div class="formula">t<sub>min</sub> = P × D / (2 × S × F × E<sub>j</sub> × T)<br>t<sub>nom</sub> = (t<sub>min</sub> + CA) / (1 − Tol/100)</div></div><div class="btn-row"><button class="btn btn-calc" onclick="calcWT()">Calculate</button><button class="btn btn-clear" onclick="clearR('wt-results')">Clear</button></div><div class="results" id="wt-results"><table class="result-table"><tr><th>Parameter</th><th>Value</th><th>Unit</th></tr><tbody id="wt-tbody"></tbody></table><div id="wt-summary" class="result-summary"></div></div></div>
+<!-- TAB 2 --> <div class="panel" id="panel-1"><h2 class="panel-title">2.0 — Hoop Stress Assessment</h2><p class="panel-subtitle">Barlow Formula</p><div class="formula-box"><h4>Formula</h4><div class="formula">σ<sub>h</sub> = P × D / (2 × t<sub>min</sub>)<br>Allowable: S × F × E<sub>j</sub> × T</div></div><div class="btn-row"><button class="btn btn-calc" onclick="calcHS()">Calculate</button><button class="btn btn-clear" onclick="clearR('hs-results')">Clear</button></div><div class="results" id="hs-results"><table class="result-table"><tr><th>Parameter</th><th>Value</th><th>Unit</th></tr><tbody id="hs-tbody"></tbody></table><div id="hs-summary" class="result-summary"></div></div></div>
+<!-- TAB 3 --> <div class="panel" id="panel-2"><h2 class="panel-title">3.0 — Longitudinal Stress (Restrained)</h2><p class="panel-subtitle">ASME B31.4 §419.6.4 / B31.8 §833.6</p><div class="formula-box"><h4>Formula</h4><div class="formula">σ<sub>L</sub> = ν × σ<sub>h</sub> − E<sub>s</sub> × α × ΔT + E<sub>s</sub> × D / (2R)</div></div><div class="form-grid"><div class="form-group"><label>Field Bend Radius, R <span class="unit">(m, 0=straight)</span></label><input type="number" id="ls-R" value="0" step="0.1"></div></div><div class="btn-row"><button class="btn btn-calc" onclick="calcLS()">Calculate</button><button class="btn btn-clear" onclick="clearR('ls-results')">Clear</button></div><div class="results" id="ls-results"><table class="result-table"><tr><th>Parameter</th><th>Value</th><th>Unit</th></tr><tbody id="ls-tbody"></tbody></table><div id="ls-summary" class="result-summary"></div></div></div>
+<!-- TAB 4 --> <div class="panel" id="panel-3"><h2 class="panel-title">4.0 — Equivalent (Von Mises) Stress</h2><p class="panel-subtitle">ASME B31.8 §833.4 / B31.4 §402.7</p><div class="formula-box"><h4>Von Mises Criterion</h4><div class="formula">σ<sub>eq</sub> = √( σ<sub>h</sub>² − σ<sub>h</sub>σ<sub>L</sub> + σ<sub>L</sub>² + 3τ² )</div></div><div class="form-grid"><div class="form-group"><label>Shear Stress, τ <span class="unit">(MPa)</span></label><input type="number" id="eq-tau" value="0" step="1"></div><div class="form-group"><label>Combined Factor, k</label><select id="eq-k"><option value="0.90" selected>0.90 — B31.8 (restrained)</option><option value="1.00">1.00 — B31.4</option></select></div></div><div class="btn-row"><button class="btn btn-calc" onclick="calcEQ()">Calculate</button><button class="btn btn-clear" onclick="clearR('eq-results')">Clear</button></div><div class="results" id="eq-results"><table class="result-table"><tr><th>Parameter</th><th>Value</th><th>Unit</th></tr><tbody id="eq-tbody"></tbody></table><div id="eq-summary" class="result-summary"></div></div></div>
+<!-- TAB 5 --> <div class="panel" id="panel-4"><h2 class="panel-title">5.0 — Minimum Elastic Bending Radius</h2><p class="panel-subtitle">ASME B31.8 §833.6(b)</p><div class="formula-box"><h4>Formula</h4><div class="formula">R<sub>min</sub> = E<sub>s</sub> × D / (2 × σ<sub>b,allow</sub>)</div></div><div class="form-grid"><div class="form-group"><label>Bending Stress Factor <span class="unit">(× SMYS)</span></label><input type="number" id="br-factor" value="0.80" step="0.01"></div><div class="form-group"><label>Project Min Bend <span class="unit">(× D)</span></label><input type="number" id="br-minD" value="40" step="1"></div></div><div class="btn-row"><button class="btn btn-calc" onclick="calcBR()">Calculate</button><button class="btn btn-clear" onclick="clearR('br-results')">Clear</button></div><div class="results" id="br-results"><table class="result-table"><tr><th>Parameter</th><th>Value</th><th>Unit</th></tr><tbody id="br-tbody"></tbody></table><div id="br-summary" class="result-summary"></div></div></div>
+<!-- TAB 6 --> <div class="panel" id="panel-5"><h2 class="panel-title">6.0 — Hydrostatic Test Stress Check</h2><p class="panel-subtitle">ASME B31.8 §841.3 / B31.4 §437</p><div class="formula-box"><h4>Formula</h4><div class="formula">P<sub>test</sub> = Factor × P<sub>design</sub> , σ<sub>h,test</sub> = P<sub>test</sub> × D / (2 × t<sub>nom</sub>)</div></div><div class="form-grid"><div class="form-group"><label>Test Factor</label><select id="ht-factor"><option value="1.25" selected>1.25 — B31.8 Cl.1 / B31.4</option><option value="1.40">1.40 — B31.8 Cl.3/4</option><option value="1.50">1.50 — Project</option></select></div></div><div class="btn-row"><button class="btn btn-calc" onclick="calcHT()">Calculate</button><button class="btn btn-clear" onclick="clearR('ht-results')">Clear</button></div><div class="results" id="ht-results"><table class="result-table"><tr><th>Parameter</th><th>Value</th><th>Unit</th></tr><tbody id="ht-tbody"></tbody></table><div id="ht-summary" class="result-summary"></div></div></div>
+<!-- TAB 7 --> <div class="panel" id="panel-6"><h2 class="panel-title">7.0 — Anchor Force Assessment</h2><p class="panel-subtitle">Fully Restrained Buried Pipeline</p><div class="formula-box"><h4>Formula</h4><div class="formula">F<sub>anchor</sub> = A<sub>s</sub>(ν·σ<sub>h</sub> − E·α·ΔT) + P·A<sub>i</sub></div></div><div class="btn-row"><button class="btn btn-calc" onclick="calcAF()">Calculate</button><button class="btn btn-clear" onclick="clearR('af-results')">Clear</button></div><div class="results" id="af-results"><table class="result-table"><tr><th>Parameter</th><th>Value</th><th>Unit</th></tr><tbody id="af-tbody"></tbody></table><div id="af-summary" class="result-summary"></div></div></div>
+<!-- TAB 8 --> <div class="panel" id="panel-7"><h2 class="panel-title">8.0 — Combined Stress Check</h2><p class="panel-subtitle">Consolidated — Hoop + Long + Von Mises</p><div class="formula-box"><h4>Three-Way Check</h4><div class="formula">σ<sub>h</sub> ≤ S×F×E<sub>j</sub>×T , |σ<sub>L</sub>| ≤ 0.9×S×T , σ<sub>eq</sub> ≤ k×S×T</div></div><div class="form-grid"><div class="form-group"><label>Bend Radius <span class="unit">(m, 0=straight)</span></label><input type="number" id="cs-R" value="0" step="0.1"></div><div class="form-group"><label>Shear τ <span class="unit">(MPa)</span></label><input type="number" id="cs-tau" value="0" step="1"></div><div class="form-group"><label>Combined Factor k</label><input type="number" id="cs-k" value="0.90" step="0.01"></div></div><div class="btn-row"><button class="btn btn-calc" onclick="calcCS()">Calculate</button><button class="btn btn-clear" onclick="clearR('cs-results')">Clear</button></div><div class="results" id="cs-results"><table class="result-table"><tr><th>Parameter</th><th>Value</th><th>Unit</th><th>Status</th></tr><tbody id="cs-tbody"></tbody></table><div id="cs-summary" class="result-summary"></div></div></div>
+<!-- TAB 9 --> <div class="panel" id="panel-8"><h2 class="panel-title">9.0 — Upheaval Buckling Analysis</h2><p class="panel-subtitle">Palmer &amp; Richards Method</p><div class="formula-box"><h4>Formulae</h4><div class="formula">S<sub>eff</sub> = A<sub>s</sub>(ν·σ<sub>h</sub> − E·α·ΔT) + P·A<sub>i</sub></div></div><div class="form-grid"><div class="form-group"><label>Content Density <span class="unit">(kg/m³)</span></label><input type="number" id="ub-rhoC" value="800" step="10"></div><div class="form-group"><label>Soil Density γ <span class="unit">(kN/m³)</span></label><input type="number" id="ub-gamma" value="18" step="0.5"></div><div class="form-group"><label>Depth of Cover H <span class="unit">(m)</span></label><input type="number" id="ub-H" value="1.2" step="0.1"></div><div class="form-group"><label>Imperfection δ <span class="unit">(m)</span></label><input type="number" id="ub-delta" value="0.05" step="0.01"></div><div class="form-group"><label>Safety Factor</label><input type="number" id="ub-SF" value="1.2" step="0.1"></div></div><div class="btn-row"><button class="btn btn-calc" onclick="calcUB()">Calculate</button><button class="btn btn-clear" onclick="clearR('ub-results')">Clear</button></div><div class="results" id="ub-results"><table class="result-table"><tr><th>Parameter</th><th>Value</th><th>Unit</th></tr><tbody id="ub-tbody"></tbody></table><div id="ub-summary" class="result-summary"></div></div></div>
+
+</div><!-- .main-content -->
+</div><!-- .app-wrap -->
+
+<footer class="ppa-footer">
+  <div style="font-family:var(--serif);font-size:1.1rem;color:var(--paper);margin-bottom:.4rem;">Piping<span style="color:var(--accent);">Pro</span> Academy</div>
+  <div>© 2026 PipingPro Academy · Zephrum Konsultan Limited. All rights reserved.</div>
+  <script src="/js/counter.js"></script>
+</footer>
+
+<!-- ═══ PPA SHARED LIBRARIES ═══ -->
+<script src="/js/ppa-materials.js"></script>
+<script src="/js/ppa-pipe-data.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════════ */
+/*  DATA SOURCING — all from PPA shared libraries, zero inline data       */
+/* ═══════════════════════════════════════════════════════════════════════ */
+const API5L_KEYS = ["API5LA","API5LB","API5LX42","API5LX46","API5LX52","API5LX56","API5LX60","API5LX65","API5LX70","API5LX80"];
+const PIPELINE_NPS_MIN = 2;
+let G = {};
+const NU = 0.3, RHO_STEEL = 7850, IN2MM = 25.4;
+
+function gv(id){ return parseFloat(document.getElementById(id).value)||0; }
+function sv(id){ return document.getElementById(id).value; }
+function txt(id,v){ document.getElementById(id).textContent=v; }
+function r2(v){ return Math.round(v*100)/100; }
+function smysSI(m){ return m.smys*6.895; }
+function smtsSI(m){ return m.smts*6.895; }
+function getE_MPa(k,tC){ var tF=PPA.convert.c2f(tC),r=PPA.getE(k,tF); return r?r.v*6895:207000; }
+function getAlpha_perC(k,tC){ var tF=PPA.convert.c2f(tC),r=PPA.getAlpha(k,tF); return r?r.v*1.8e-6:11.7e-6; }
+
+function onNpsChange(){
+  var nps=sv('dd-nps'),p=PPA_B36_10[nps]; if(!p) return;
+  var sel=document.getElementById('dd-wt'),wtSet=new Set();
+  Object.keys(p.s).forEach(function(k){ wtSet.add(r2(p.s[k]*IN2MM)); });
+  var wtArr=[...wtSet].sort(function(a,b){return a-b;});
+  var best=0,bd=9999; wtArr.forEach(function(w,i){var d=Math.abs(w-12.7);if(d<bd){bd=d;best=i;}});
+  sel.innerHTML=wtArr.map(function(w,i){
+    var sn=Object.keys(p.s).filter(function(k){return r2(p.s[k]*IN2MM)===w;});
+    return '<option value="'+w+'"'+(i===best?' selected':'')+'>'+w.toFixed(2)+' mm'+(sn.length?' ('+sn.join('/')+')':'')+'</option>';
+  }).join('');
+  cascadeAll();
+}
+
+function cascadeAll(){
+  var nps=sv('dd-nps'),p=PPA_B36_10[nps],mk=sv('dd-grade'),m=PPA.MATERIALS[mk];
+  if(!p||!m) return;
+  var OD=r2(p.od*IN2MM),T2=gv('dd-T2'),S=smysSI(m),SMTS=smtsSI(m),Es=getE_MPa(mk,T2),al=getAlpha_perC(mk,T2);
+  G={D:OD,t:gv('dd-wt'),P:gv('dd-P'),T1:gv('dd-T1'),T2:T2,CA:gv('dd-CA'),Tol:gv('dd-Tol'),
+     F:parseFloat(sv('dd-locclass')),Ej:parseFloat(sv('dd-Ej')),Td:gv('dd-Td'),
+     S:S,SMTS:SMTS,Es:Es,alpha:al,nu:NU,rho:RHO_STEEL,matKey:mk};
+  G.dT=G.T2-G.T1; G.d=G.D-2*G.t; G.tmin=G.t*(1-G.Tol/100)-G.CA;
+  G.As=Math.PI/4*(G.D*G.D-G.d*G.d); G.Ai=Math.PI/4*G.d*G.d;
+  G.I=Math.PI/64*(Math.pow(G.D,4)-Math.pow(G.d,4));
+  txt('ro-od',G.D.toFixed(1)); txt('ro-wt',G.t.toFixed(2));
+  txt('ro-smys',Math.round(S)); txt('ro-smts',Math.round(SMTS));
+  txt('ro-E',Math.round(Es).toLocaleString()); txt('ro-alpha',(al*1e6).toFixed(1));
+  txt('ro-source',m.name+' · '+m.spec+' '+m.grade+' · P-No:'+m.pNo+' · E:'+m.eGrp+' (C-6) · α:'+m.aGrp+' (C-1) · OD:'+p.od+'" (B36.10)');
+}
+
+/* ═══ NAV ═══ */
+function showTab(i){document.querySelectorAll('.panel').forEach(function(p,j){p.classList.toggle('active',j===i)});document.querySelectorAll('.nav-item').forEach(function(n,j){n.classList.toggle('active',j===i)});}
+function clearR(id){document.getElementById(id).classList.remove('show');}
+function utilBar(p){var c=p>100?'var(--fail)':p>85?'var(--warn)':'var(--pass)';return '<span class="util-bar-wrap"><span class="util-bar" style="width:'+Math.min(p,100)+'%;background:'+c+'"></span></span>'+p.toFixed(1)+'%';}
+function statT(p){return p?'<span class="status-pass">✓ PASS</span>':'<span class="status-fail">✗ FAIL</span>';}
+function showR(id,rows,sid,pass,msg){
+  document.getElementById(id.replace('-results','-tbody')).innerHTML=rows.map(function(r){return '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td>'+(r.length>3?'<td>'+r[3]+'</td>':'')+'</tr>';}).join('');
+  var s=document.getElementById(sid);s.className='result-summary '+(pass?'pass':'fail');s.innerHTML=msg;
+  document.getElementById(id).classList.add('show');
+}
+
+/* ═══ CALCULATIONS ═══ */
+function calcWT(){var tp=(G.P*G.D)/(2*G.S*G.F*G.Ej*G.Td),tt=tp+G.CA,tr=tt/(1-G.Tol/100),u=(tr/G.t)*100,p=G.t>=tr;showR('wt-results',[['Min WT (pressure)',tp.toFixed(2),'mm'],['Min WT + CA',tt.toFixed(2),'mm'],['Required t_nom',tr.toFixed(2),'mm'],['Selected t_nom',G.t.toFixed(2),'mm'],['Effective t (corroded)',G.tmin.toFixed(2),'mm'],['D/t ratio',(G.D/G.t).toFixed(1),'—'],['Utilisation',utilBar(u),'—']],'wt-summary',p,p?'✓ PASS — '+G.t+' mm ≥ '+tr.toFixed(2)+' mm ('+u.toFixed(1)+'%)':'✗ FAIL — '+G.t+' mm < '+tr.toFixed(2)+' mm');}
+function calcHS(){var sh=(G.P*G.D)/(2*G.tmin),a=G.S*G.F*G.Ej*G.Td,u=(sh/a)*100,p=sh<=a;showR('hs-results',[['Effective wall',G.tmin.toFixed(2),'mm'],['Hoop Stress σ_h',sh.toFixed(1),'MPa'],['Allowable',a.toFixed(1),'MPa'],['Utilisation',utilBar(u),'—']],'hs-summary',p,p?'✓ PASS — σ_h='+sh.toFixed(1)+' ≤ '+a.toFixed(1)+' MPa ('+u.toFixed(1)+'%)':'✗ FAIL — σ_h='+sh.toFixed(1)+' > '+a.toFixed(1)+' MPa');}
+function calcLS(){var sh=(G.P*G.D)/(2*G.tmin),R=gv('ls-R'),slP=G.nu*sh,slT=G.Es*G.alpha*G.dT,slB=R>0?(G.Es*(G.D/1000))/(2*R):0,sl=slP-slT+slB,a=0.9*G.S*G.Td,u=(Math.abs(sl)/a)*100,p=Math.abs(sl)<=a;showR('ls-results',[['Poisson (ν·σ_h)',slP.toFixed(1),'MPa'],['Thermal (E·α·ΔT)',slT.toFixed(1),'MPa'],['Bending (E·D/2R)',slB.toFixed(1),'MPa'],['Total σ_L',sl.toFixed(1),'MPa'],['Nature',sl>=0?'Tensile':'Compressive','—'],['Allowable (0.9·S·T)',a.toFixed(1),'MPa'],['Utilisation',utilBar(u),'—']],'ls-summary',p,p?'✓ PASS — |σ_L|='+Math.abs(sl).toFixed(1)+' ≤ '+a.toFixed(1)+' MPa':'✗ FAIL — |σ_L|='+Math.abs(sl).toFixed(1)+' > '+a.toFixed(1)+' MPa');}
+function calcEQ(){var sh=(G.P*G.D)/(2*G.tmin),sl=G.nu*sh-G.Es*G.alpha*G.dT,tau=gv('eq-tau'),k=parseFloat(sv('eq-k')),seq=Math.sqrt(sh*sh-sh*sl+sl*sl+3*tau*tau),a=k*G.S*G.Td,u=(seq/a)*100,p=seq<=a;showR('eq-results',[['Hoop σ_h',sh.toFixed(1),'MPa'],['Long. σ_L',sl.toFixed(1),'MPa'],['Shear τ',tau.toFixed(1),'MPa'],['Von Mises σ_eq',seq.toFixed(1),'MPa'],['Allowable (k·S·T)',a.toFixed(1),'MPa'],['Utilisation',utilBar(u),'—']],'eq-summary',p,p?'✓ PASS — σ_eq='+seq.toFixed(1)+' ≤ '+a.toFixed(1)+' MPa':'✗ FAIL — σ_eq='+seq.toFixed(1)+' > '+a.toFixed(1)+' MPa');}
+function calcBR(){var f=gv('br-factor'),mD=gv('br-minD'),sb=f*G.S,Re=(G.Es*(G.D/1000))/(2*sb),Rp=mD*G.D/1000,Rg=Math.max(Re,Rp),Rd=Rg/(G.D/1000);showR('br-results',[['Allow. bending stress',sb.toFixed(1),'MPa'],['Elastic limit radius',Re.toFixed(2),'m'],['Project min ('+mD+'D)',Rp.toFixed(2),'m'],['Governing radius',Rg.toFixed(2),'m'],['R/D ratio',Rd.toFixed(1),'× D']],'br-summary',true,'Min bend radius = '+Rg.toFixed(2)+' m ('+Rd.toFixed(0)+'D). '+(Re>Rp?'Governed by elastic limit.':'Governed by project minimum.'));}
+function calcHT(){var fac=parseFloat(sv('ht-factor')),Pt=fac*G.P,sh=(Pt*G.D)/(2*G.t),u1=(sh/G.S)*100,u2=(sh/G.SMTS)*100,p1=sh<=0.9*G.S,p2=sh<=0.95*G.SMTS,p=p1&&p2;showR('ht-results',[['Test Pressure',Pt.toFixed(2),'MPa'],['Test Hoop Stress',sh.toFixed(1),'MPa'],['90% SMYS',(0.9*G.S).toFixed(1),'MPa'],['% SMYS',utilBar(u1),'—'],['95% SMTS',(0.95*G.SMTS).toFixed(1),'MPa'],['% SMTS',utilBar(u2),'—']],'ht-summary',p,p?'✓ PASS — Test hoop '+sh.toFixed(1)+' MPa within limits':'✗ FAIL — exceeds yield/UTS limits');}
+function calcAF(){var sh=(G.P*G.D)/(2*G.t),Fp=G.As*G.nu*sh,Ft=G.As*G.Es*G.alpha*G.dT,Fe=G.P*G.Ai,F=Fp-Ft+Fe,FkN=F/1000;showR('af-results',[['Steel area A_s',G.As.toFixed(0),'mm²'],['Bore area A_i',G.Ai.toFixed(0),'mm²'],['Poisson force',(Fp/1000).toFixed(1),'kN'],['Thermal force',(Ft/1000).toFixed(1),'kN'],['End-cap force',(Fe/1000).toFixed(1),'kN'],['Total Anchor Force',FkN.toFixed(1),'kN'],['Equivalent',(Math.abs(FkN)/9.81).toFixed(1),'tonnes'],['Direction',F>=0?'Tensile':'Compressive','—']],'af-summary',true,'Anchor Force = '+FkN.toFixed(1)+' kN ('+(Math.abs(FkN)/9.81).toFixed(0)+' t). '+(F>=0?'Tensile.':'Compressive — thermal dominates.'));}
+function calcCS(){var R=gv('cs-R'),tau=gv('cs-tau'),k=gv('cs-k'),sh=(G.P*G.D)/(2*G.tmin),aH=G.S*G.F*G.Ej*G.Td,uH=(sh/aH)*100,slP=G.nu*sh,slT=G.Es*G.alpha*G.dT,slB=R>0?(G.Es*(G.D/1000))/(2*R):0,sl=slP-slT+slB,aL=0.9*G.S*G.Td,uL=(Math.abs(sl)/aL)*100,seq=Math.sqrt(sh*sh-sh*sl+sl*sl+3*tau*tau),aE=k*G.S*G.Td,uE=(seq/aE)*100,pH=sh<=aH,pL=Math.abs(sl)<=aL,pE=seq<=aE,pa=pH&&pL&&pE;var rows=[['Effective wall',G.tmin.toFixed(2),'mm',''],['Hoop σ_h',sh.toFixed(1),'MPa',statT(pH)],['Allow. Hoop',aH.toFixed(1),'MPa',utilBar(uH)],['Poisson',slP.toFixed(1),'MPa',''],['Thermal','-'+slT.toFixed(1),'MPa',''],['Bending',slB.toFixed(1),'MPa',''],['Total σ_L',sl.toFixed(1),'MPa',statT(pL)],['Allow. Long.',aL.toFixed(1),'MPa',utilBar(uL)],['Von Mises σ_eq',seq.toFixed(1),'MPa',statT(pE)],['Allow. Combined',aE.toFixed(1),'MPa',utilBar(uE)]];document.getElementById('cs-tbody').innerHTML=rows.map(function(r){return '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td><td>'+r[3]+'</td></tr>';}).join('');var s=document.getElementById('cs-summary');s.className='result-summary '+(pa?'pass':'fail');s.innerHTML=pa?'✓ ALL CHECKS PASS — Hoop '+uH.toFixed(1)+'%, Long. '+uL.toFixed(1)+'%, Combined '+uE.toFixed(1)+'%':'✗ FAIL — '+(!pH?'Hoop '+uH.toFixed(1)+'%. ':'')+(!pL?'Long. '+uL.toFixed(1)+'%. ':'')+(!pE?'Combined '+uE.toFixed(1)+'%. ':'');document.getElementById('cs-results').classList.add('show');}
+function calcUB(){var rhoC=gv('ub-rhoC'),gamma=gv('ub-gamma'),H=gv('ub-H'),delta=gv('ub-delta'),SF=gv('ub-SF'),sh=(G.P*G.D)/(2*G.t),Seff=G.As*(G.nu*sh-G.Es*G.alpha*G.dT)+G.P*G.Ai,Dm=G.D/1000,dm=G.d/1000,Ws=G.rho*9.81*Math.PI/4*(Dm*Dm-dm*dm),Wc=rhoC*9.81*Math.PI/4*dm*dm,Wp=Ws+Wc,Wsoil=gamma*1000*H*Dm,Wt=Wp+Wsoil,EI=G.Es*G.I,wreq=Math.abs(Seff)>0?(Seff*Seff*(delta*1000))/(Math.PI*Math.PI*EI)*1000:0,wdes=wreq*SF,ratio=Wt/(wdes>0?wdes:1),pass=Seff>=0||Wt>=wdes,Hmin=(wdes-Wp)>0?(wdes-Wp)/(gamma*1000*Dm):0;showR('ub-results',[['Eff. axial force',(Seff/1000).toFixed(1),'kN'],['Nature',Seff>=0?'Tensile (no UB risk)':'Compressive','—'],['Pipe weight',Wp.toFixed(1),'N/m'],['Soil download',Wsoil.toFixed(1),'N/m'],['Total download',Wt.toFixed(1),'N/m'],['Required (SF='+SF+')',wdes.toFixed(1),'N/m'],['Ratio',ratio.toFixed(2),'—'],['Min cover',Hmin.toFixed(2),'m']],'ub-summary',Seff>=0||pass,Seff>=0?'✓ NO UB RISK — tensile.':pass?'✓ PASS — download '+Wt.toFixed(0)+' ≥ '+wdes.toFixed(0)+' N/m':'✗ FAIL — increase cover to ≥ '+Hmin.toFixed(2)+' m');}
+
+/* ═══ INIT ═══ */
+(function(){
+  var nSel=document.getElementById('dd-nps');
+  var labels=(typeof PPA_NPS_LABELS!=='undefined')?PPA_NPS_LABELS:{};
+  Object.keys(PPA_B36_10).forEach(function(nps){
+    if(parseFloat(nps)<PIPELINE_NPS_MIN) return;
+    var p=PPA_B36_10[nps],lbl=labels[nps]||nps,od=r2(p.od*IN2MM);
+    var o=document.createElement('option');o.value=nps;
+    o.textContent='NPS '+lbl+'" — OD '+od.toFixed(1)+' mm';
+    if(nps==='12') o.selected=true; nSel.appendChild(o);
+  });
+  var gSel=document.getElementById('dd-grade');
+  API5L_KEYS.forEach(function(k){
+    var m=PPA.MATERIALS[k]; if(!m) return;
+    var o=document.createElement('option');o.value=k;
+    o.textContent=m.name+' — SMYS '+Math.round(m.smys*6.895)+' MPa ('+m.smys+' ksi)';
+    if(k==='API5LX65') o.selected=true; gSel.appendChild(o);
+  });
+  onNpsChange();
+  calcWT();
+})();
+</script>
+  <!-- ═══ PIPINGPRO AI ASSISTANT ═══ -->
+<script src="/js/ppa-ai-assistant.js"></script>
+<script>
+(function(){
+  // Tab names matching your sidebar nav
+  var TAB_NAMES = [
+    'Wall Thickness',
+    'Hoop Stress',
+    'Longitudinal Stress',
+    'Equivalent Stress',
+    'Min Elastic Bend Radius',
+    'Hydrostatic Test',
+    'Anchor Force',
+    'Combined Stress',
+    'Upheaval Buckling'
+  ];
+
+  function getActiveTab(){
+    var items = document.querySelectorAll('.nav-item');
+    for(var i=0; i<items.length; i++){
+      if(items[i].classList.contains('active')) return TAB_NAMES[i] || 'Pipeline Mechanical Design';
+    }
+    return 'Pipeline Mechanical Design';
+  }
+
+  // Detect tier from Memberstack
+  function initAssistant(tier){
+    PipingProAssistant.init({
+      activeTab: getActiveTab(),
+      tier: tier
+    });
+
+    // Update tab context when user switches tabs
+    document.querySelectorAll('.nav-item').forEach(function(btn, i){
+      btn.addEventListener('click', function(){
+        PipingProAssistant.setActiveTab(TAB_NAMES[i] || 'Pipeline Mechanical Design');
+      });
+    });
+  }
+
+  // Wait for Memberstack then detect tier
+  function whenMS(cb, tries){
+    tries = (tries==null) ? 40 : tries;
+    var ms = window.$memberstackDom;
+    if(ms) return cb(ms);
+    if(tries<=0) return cb(null);
+    setTimeout(function(){ whenMS(cb, tries-1); }, 100);
+  }
+
+  whenMS(function(ms){
+    if(!ms || typeof ms.getCurrentMember !== 'function') return initAssistant('free');
+    ms.getCurrentMember().then(function(res){
+      var tier = 'free';
+      if(res && res.data){
+        var pc = res.data.planConnections || [];
+        var planIds = pc.map(function(p){ return p.planId; });
+        if(planIds.indexOf('pln_admin-vzd0rgr') !== -1){
+          tier = 'admin';
+        } else if(
+          planIds.indexOf('pln_professional-n2is0jc4') !== -1 ||
+          planIds.indexOf('pln_professional-bca-is6m0fay') !== -1
+        ){
+          tier = 'professional';
+        } else if(planIds.indexOf('pln_student-plan-l416c0pbs') !== -1){
+          tier = 'student';
+        }
+      }
+      initAssistant(tier);
+    }).catch(function(){ initAssistant('free'); });
+  });
+})();
+</script>
+
+</body>
+</html>

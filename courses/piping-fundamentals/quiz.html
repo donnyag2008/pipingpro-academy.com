@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<!-- Memberstack -->
+<script data-memberstack-app="app_cmq9fsibv00720sujaqjm734o" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
+
+<!-- PPA COURSE GATE — unified (members-only: any paid plan, incl. admin) -->
+<script>
+(function(){
+  var STUDENT_PLAN     = 'pln_student-plan-l416c0pbs';
+  var STUDENT_BCA_PLAN = 'pln_student-bca-8mga0fjm';
+  var PRO_PLAN         = 'pln_professional-n2is0jc4';
+  var PRO_BCA_PLAN     = 'pln_professional-bca-is6m0fay'; //
+  var ADMIN_PLAN       = 'pln_admin-vzd0rgr';
+  var REDIRECT         = '/membership-plan';
+
+  if (localStorage.getItem('ppa_admin') === '1') return;
+
+  function hasPaidPlan(member){
+    if(!member || !Array.isArray(member.planConnections)) return false;
+    return member.planConnections.some(function(p){
+      var live = p.active || p.status === 'ACTIVE' || p.status === 'TRIALING';
+      return live && (
+        p.planId === STUDENT_PLAN     || p.planId === STUDENT_BCA_PLAN ||
+        p.planId === PRO_PLAN         || p.planId === PRO_BCA_PLAN     ||
+        p.planId === ADMIN_PLAN
+      );
+    });
+  }
+</script>
+  
+<title>Course 1 Assessment — Piping Engineering Fundamentals | PipingPro Academy</title>
+<meta name="description" content="Final assessment for Course 1: Piping Engineering Fundamentals. 20 questions, 80% pass mark, leading to your PipingPro Academy certificate. By Donny A. Bachtiar."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNiIgZmlsbD0iI0M0NUMyQSIvPjxjaXJjbGUgY3g9IjE2IiBjeT0iMTYiIHI9IjEwIiBmaWxsPSJub25lIiBzdHJva2U9IiNmNWYyZWIiIHN0cm9rZS13aWR0aD0iMy41Ii8+PGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZjVmMmViIiBzdHJva2Utd2lkdGg9IjIiLz48dGV4dCB4PSIxNiIgeT0iMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjkiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjZjVmMmViIj5QUDwvdGV4dD48L3N2Zz4="/>
+<style>
+  :root {
+    --ink: #1a1a18; --ink2: #4a4a44; --ink3: #8a8a80;
+    --paper: #f5f2eb; --paper2: #ede9de; --paper3: #e3dfd2;
+    --accent: #c45c2a; --accent2: #e8a06a; --accent-light: #f7ede3;
+    --teal: #1a6b5a; --teal-light: #e0f0eb;
+    --amber: #b5781a; --amber-light: #faf0dd;
+    --red: #b03a2e; --red-light: #f7e4e1;
+    --rule: rgba(26,26,24,0.12);
+    --rule2: rgba(26,26,24,0.07);
+    --shadow-sm: 0 2px 8px rgba(26,26,24,0.06);
+    --shadow-md: 0 8px 32px rgba(26,26,24,0.10);
+    --shadow-lg: 0 18px 60px rgba(26,26,24,0.18);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', -apple-system, sans-serif;
+    background: var(--paper); color: var(--ink);
+    line-height: 1.68; font-size: 16.5px; -webkit-font-smoothing: antialiased; min-height: 100vh;
+  }
+  body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background-image: radial-gradient(rgba(26,26,24,0.018) 1px, transparent 1px); background-size: 4px 4px; }
+
+  .topbar { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; gap: 16px;
+    padding: 14px 26px; background: rgba(245,242,235,0.86); backdrop-filter: blur(12px); border-bottom: 1px solid var(--rule); }
+  .brand { display: flex; align-items: center; gap: 11px; text-decoration: none; color: var(--ink); }
+  .brand-mark { width: 34px; height: 34px; border-radius: 8px; background: var(--accent); display: grid; place-items: center; flex-shrink: 0; box-shadow: var(--shadow-sm); }
+  .brand-mark svg { width: 22px; height: 22px; }
+  .brand-name { font-family: 'DM Serif Display', serif; font-size: 1.18rem; letter-spacing: -0.01em; line-height: 1; }
+  .brand-sub { font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink3); margin-top: 3px; }
+  .topbar-spacer { flex: 1; }
+  .topbar-link { font-size: 0.82rem; color: var(--ink2); text-decoration: none; border: 1px solid var(--rule); border-radius: 8px; padding: 7px 14px; transition: background .18s, color .18s; }
+  .topbar-link:hover { background: var(--paper3); color: var(--ink); }
+  .quiz-prog { display: none; align-items: center; gap: 11px; }
+  .quiz-prog.show { display: flex; }
+  .quiz-prog-label { font-size: 0.72rem; letter-spacing: 0.04em; color: var(--ink3); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .quiz-prog-track { width: 120px; height: 5px; border-radius: 3px; background: var(--paper3); overflow: hidden; }
+  .quiz-prog-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 3px; transition: width .4s ease; }
+  @media (max-width: 600px){ .quiz-prog-track{ width:70px; } .brand-sub{ display:none; } }
+
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 26px 90px; }
+  .screen { display: none; animation: fade .45s ease; }
+  .screen.active { display: block; }
+  @keyframes fade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  .eyebrow { display: inline-flex; align-items: center; gap: 9px; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  .eyebrow::before { content: ""; width: 28px; height: 2px; background: var(--accent); }
+
+  .intro-hero { padding: 60px 0 18px; }
+  .intro-hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2.1rem, 5vw, 3.1rem); line-height: 1.04; letter-spacing: -0.02em; margin-top: 16px; }
+  .intro-hero .lead { font-size: 1.08rem; color: var(--ink2); margin-top: 18px; max-width: 64ch; }
+  .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 34px 0 30px; }
+  @media (max-width: 560px){ .info-grid{ grid-template-columns: 1fr; } }
+  .info-card { background: var(--paper2); border: 1px solid var(--rule); border-radius: 14px; padding: 20px 22px; }
+  .info-card .ic-num { font-family: 'DM Serif Display', serif; font-size: 1.9rem; color: var(--accent); line-height: 1; }
+  .info-card .ic-lab { font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink3); margin-top: 8px; }
+  .rules { background: var(--paper2); border: 1px solid var(--rule); border-radius: 14px; padding: 24px 28px; margin-bottom: 30px; }
+  .rules h4 { font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+  .rules ul { list-style: none; display: grid; gap: 10px; }
+  .rules li { position: relative; padding-left: 28px; font-size: 0.95rem; color: var(--ink2); }
+  .rules li::before { content: ""; position: absolute; left: 2px; top: 9px; width: 8px; height: 8px; border-radius: 2px; background: var(--accent); transform: rotate(45deg); }
+
+  .btn { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 1rem; border: none; border-radius: 11px; padding: 15px 30px; cursor: pointer; transition: transform .16s, box-shadow .16s, background .18s, opacity .18s; display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+  .btn-primary { background: var(--accent); color: #fff; box-shadow: var(--shadow-sm); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); background: #b35124; }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-ghost { background: var(--paper2); color: var(--ink); border: 1px solid var(--rule); }
+  .btn-ghost:hover { background: #fff; transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+  .btn-ink { background: var(--ink); color: var(--paper); }
+  .btn-ink:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .btn-teal { background: var(--teal); color: #fff; box-shadow: var(--shadow-sm); }
+  .btn-teal:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); background: #155a4b; }
+  .btn-lg { padding: 17px 36px; font-size: 1.05rem; }
+
+  .q-head { padding: 36px 0 4px; display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .q-count { font-family: 'DM Mono', monospace; font-size: 0.8rem; letter-spacing: 0.08em; color: var(--accent); text-transform: uppercase; }
+  .q-mod { font-size: 0.74rem; color: var(--ink3); letter-spacing: 0.04em; }
+  .q-text { font-family: 'DM Serif Display', serif; font-size: 1.5rem; line-height: 1.25; letter-spacing: -0.01em; margin: 10px 0 26px; }
+  .opts { display: grid; gap: 12px; }
+  .opt { display: flex; align-items: flex-start; gap: 14px; width: 100%; text-align: left; background: #fffdfa; border: 1.5px solid var(--rule); border-radius: 13px; padding: 16px 18px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 0.98rem; color: var(--ink); transition: border-color .15s, background .15s, transform .12s; }
+  .opt:hover { border-color: var(--accent2); background: var(--accent-light); }
+  .opt.selected { border-color: var(--accent); background: var(--accent-light); box-shadow: 0 0 0 1px var(--accent) inset; }
+  .opt .key { flex-shrink: 0; width: 28px; height: 28px; border-radius: 8px; background: var(--paper3); color: var(--ink2); display: grid; place-items: center; font-weight: 700; font-size: 0.85rem; transition: background .15s, color .15s; }
+  .opt.selected .key { background: var(--accent); color: #fff; }
+  .q-nav { display: flex; justify-content: space-between; gap: 14px; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--rule); }
+
+  .score-ring { width: 168px; height: 168px; margin: 0 auto 18px; position: relative; }
+  .score-ring svg { transform: rotate(-90deg); }
+  .score-ring .track { stroke: var(--paper3); }
+  .score-ring .meter { stroke-linecap: round; transition: stroke-dashoffset 1.1s cubic-bezier(.2,.8,.2,1); }
+  .score-ring .pct { position: absolute; inset: 0; display: grid; place-items: center; }
+  .score-ring .pct b { font-family: 'DM Serif Display', serif; font-size: 2.6rem; line-height: 1; }
+  .score-ring .pct span { display: block; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink3); margin-top: 4px; }
+
+  .congrats-hero { padding: 56px 0 6px; text-align: center; }
+  .congrats-badge { width: 96px; height: 96px; margin: 0 auto 22px; }
+  .congrats-badge svg { width: 100%; height: 100%; }
+  .congrats-badge .tick { stroke-dasharray: 60; stroke-dashoffset: 60; animation: draw .7s .3s ease forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .congrats-kicker { font-size: 0.74rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--teal); font-weight: 600; }
+  .congrats-hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2.2rem, 5.4vw, 3.3rem); line-height: 1.05; letter-spacing: -0.02em; margin: 8px 0 16px; }
+  .congrats-hero .lead { font-size: 1.06rem; color: var(--ink2); max-width: 54ch; margin: 0 auto; }
+  .congrats-score { display: inline-flex; align-items: center; gap: 10px; margin-top: 22px; background: var(--teal-light); color: var(--teal); border-radius: 999px; padding: 9px 20px; font-weight: 600; font-size: 0.95rem; }
+  .congrats-actions { display: flex; gap: 14px; justify-content: center; margin-top: 34px; flex-wrap: wrap; }
+
+  .fail-hero { padding: 50px 0 10px; text-align: center; }
+  .fail-hero .result-title { font-family: 'DM Serif Display', serif; font-size: 2rem; letter-spacing: -0.015em; color: var(--red); }
+  .fail-hero .result-sub { color: var(--ink2); margin-top: 8px; max-width: 52ch; margin-left: auto; margin-right: auto; }
+  .fail-actions { display: flex; gap: 14px; justify-content: center; margin-top: 28px; flex-wrap: wrap; }
+
+  .review { margin-top: 46px; }
+  .review h3 { font-family: 'DM Serif Display', serif; font-size: 1.4rem; margin-bottom: 16px; }
+  .rev-item { border: 1px solid var(--rule); border-radius: 13px; padding: 18px 20px; margin-bottom: 14px; background: #fffdfa; }
+  .rev-item .rq { font-weight: 600; margin-bottom: 12px; }
+  .rev-row { display: flex; gap: 10px; align-items: flex-start; font-size: 0.92rem; padding: 5px 0; }
+  .rev-row .tag { flex-shrink: 0; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700; padding: 3px 8px; border-radius: 6px; margin-top: 1px; }
+  .tag-correct { background: var(--teal-light); color: var(--teal); }
+  .tag-yours { background: var(--red-light); color: var(--red); }
+  .rev-item.is-correct { border-left: 4px solid var(--teal); }
+  .rev-item.is-wrong { border-left: 4px solid var(--red); }
+  .rev-expl { font-size: 0.88rem; color: var(--ink2); margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--rule2); }
+
+  .cert-gate { margin-top: 40px; background: var(--ink); color: var(--paper); border-radius: 16px; padding: 34px 36px; }
+  .cert-gate h3 { font-family: 'DM Serif Display', serif; color: var(--accent2); font-size: 1.5rem; margin-bottom: 6px; }
+  .cert-gate p { color: rgba(245,242,235,0.72); font-size: 0.94rem; }
+  .name-field { margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .name-field input { flex: 1; min-width: 220px; font-family: 'DM Sans', sans-serif; font-size: 1rem; color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 11px; padding: 14px 16px; outline: none; }
+  .name-field input:focus { box-shadow: 0 0 0 2px var(--accent2); }
+
+  .locked { margin-top: 40px; background: linear-gradient(135deg, var(--paper2), var(--paper3)); border: 1px solid var(--rule); border-radius: 16px; padding: 36px; text-align: center; }
+  .locked .lock-ic { width: 56px; height: 56px; border-radius: 14px; background: var(--accent); display: grid; place-items: center; margin: 0 auto 18px; box-shadow: var(--shadow-sm); }
+  .locked .lock-ic svg { width: 28px; height: 28px; }
+  .locked h3 { font-family: 'DM Serif Display', serif; font-size: 1.55rem; letter-spacing: -0.015em; }
+  .locked p { color: var(--ink2); max-width: 50ch; margin: 10px auto 0; font-size: 0.96rem; }
+  .price-row { display: flex; gap: 14px; justify-content: center; margin: 22px 0 6px; flex-wrap: wrap; }
+  .price-chip { background: #fffdfa; border: 1px solid var(--rule); border-radius: 12px; padding: 14px 22px; }
+  .price-chip b { font-family: 'DM Serif Display', serif; font-size: 1.4rem; }
+  .price-chip span { display: block; font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink3); margin-top: 2px; }
+  .locked-actions { display: flex; gap: 14px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+  .locked .perks { list-style: none; display: inline-grid; gap: 8px; margin: 22px auto 0; text-align: left; }
+  .locked .perks li { position: relative; padding-left: 26px; font-size: 0.9rem; color: var(--ink2); }
+  .locked .perks li::before { content: ""; position: absolute; left: 0; top: 6px; width: 15px; height: 15px; background: var(--teal); border-radius: 4px;
+    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='white' d='M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/></svg>") center/12px no-repeat;
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='white' d='M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/></svg>") center/12px no-repeat; }
+
+  .cert-stage { margin-top: 40px; }
+  .certificate { position: relative; background: #fbf8f1; color: var(--ink); border: 1px solid var(--rule); border-radius: 8px; padding: 54px 56px 46px; box-shadow: var(--shadow-lg); overflow: hidden; min-height: 640px; display: flex; flex-direction: column; }
+  .certificate::before { content: ""; position: absolute; inset: 14px; border: 1.5px solid var(--accent); border-radius: 4px; pointer-events: none; }
+  .certificate::after { content: ""; position: absolute; inset: 19px; border: 0.75px solid rgba(196,92,42,0.4); border-radius: 3px; pointer-events: none; }
+  .cert-inner { position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column; }
+  .cert-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .cert-logo { display: flex; align-items: center; gap: 11px; }
+  .cert-logo .m { width: 38px; height: 38px; border-radius: 9px; background: var(--accent); display: grid; place-items: center; }
+  .cert-logo .m svg { width: 24px; height: 24px; }
+  .cert-logo .t { font-family: 'DM Serif Display', serif; font-size: 1.15rem; line-height: 1; }
+  .cert-logo .t small { display: block; font-family: 'DM Sans', sans-serif; font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink3); margin-top: 4px; }
+  .cert-seal { width: 74px; height: 74px; flex-shrink: 0; }
+  .cert-body { flex: 1; display: flex; flex-direction: column; justify-content: center; text-align: center; padding: 8px 0; }
+  .cert-kicker { font-size: 0.72rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  .cert-h { font-family: 'DM Serif Display', serif; font-size: clamp(1.5rem, 3.4vw, 2.3rem); letter-spacing: -0.01em; margin: 4px 0 18px; }
+  .cert-presented { font-size: 0.84rem; color: var(--ink3); letter-spacing: 0.04em; }
+  .cert-name { font-family: 'DM Serif Display', serif; font-style: italic; font-size: clamp(1.8rem, 4.6vw, 2.9rem); color: var(--ink); margin: 8px 0; line-height: 1.1; }
+  .cert-name-rule { width: min(420px, 70%); height: 1px; background: var(--rule); margin: 0 auto 18px; }
+  .cert-course { font-size: 0.98rem; color: var(--ink2); max-width: 60ch; margin: 0 auto; }
+  .cert-course b { font-weight: 700; }
+  .cert-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-top: 18px; }
+  .cert-sig { text-align: center; flex: 1; }
+  .cert-sig .sig-name { font-family: 'DM Serif Display', serif; font-size: 1.05rem; border-bottom: 1px solid var(--ink2); padding-bottom: 6px; margin-bottom: 6px; display: inline-block; min-width: 180px; }
+  .cert-sig .sig-role { font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink3); }
+  .cert-meta { text-align: center; flex: 1; }
+  .cert-meta .mv { font-family: 'DM Mono', monospace; font-size: 0.92rem; }
+  .cert-meta .ml { font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink3); margin-top: 2px; }
+  .cert-issuer { text-align: center; margin-top: 16px; font-size: 0.66rem; letter-spacing: 0.06em; color: var(--ink3); }
+  .cert-actions { display: flex; gap: 14px; justify-content: center; margin-top: 28px; flex-wrap: wrap; }
+  @media (max-width: 640px){
+    .certificate { aspect-ratio: auto; padding: 34px 26px; }
+    .cert-seal { width: 56px; height: 56px; }
+    .cert-foot { flex-direction: column; align-items: stretch; gap: 18px; }
+  }
+
+  footer.site { text-align: center; padding: 38px 20px 46px; border-top: 1px solid var(--rule); margin-top: 30px; color: var(--ink3); font-size: 0.82rem; }
+  footer.site .f-logo { font-family: 'DM Serif Display', serif; color: var(--ink); font-size: 1.05rem; }
+  footer.site a { color: var(--accent); text-decoration: none; }
+  footer.site .f-zk { font-size: 0.74rem; margin-top: 8px; opacity: 0.85; }
+
+  @media print {
+    @page { size: A4 landscape; margin: 12mm; }
+    body { background: #fff; } body::before { display: none; }
+    .topbar, footer.site, .cert-gate, .cert-actions, .cert-hint, .congrats-hero, .review, #screen-intro, #screen-quiz, #screen-fail { display: none !important; }
+    .wrap { max-width: none; padding: 0; }
+    #screen-congrats { display: block !important; }
+    .cert-stage { margin: 0; }
+    .certificate { box-shadow: none; border: none; aspect-ratio: auto !important; width: 100% !important; height: auto !important; min-height: 0 !important; display: block !important; padding: 10mm 14mm !important; overflow: visible !important; page-break-inside: avoid; break-inside: avoid; }
+    .cert-inner { display: block !important; flex: none !important; }
+    .cert-body { display: block !important; flex: none !important; justify-content: flex-start !important; padding: 4px 0 !important; }
+    .cert-h { font-size: 28px !important; }
+    .cert-name { font-size: 32px !important; }
+  }
+  .cert-hint{text-align:center;font-size:0.82rem;color:var(--ink3);margin:14px 0 0;}
+</style>
+
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="https://pipingpro-academy.com">
+    <span class="brand-mark"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="10" fill="none" stroke="#f5f2eb" stroke-width="3.2"/><circle cx="16" cy="16" r="4.6" fill="none" stroke="#f5f2eb" stroke-width="2"/></svg></span>
+    <span><span class="brand-name">PipingPro Academy</span><span class="brand-sub">Engineering Education</span></span>
+  </a>
+  <div class="topbar-spacer"></div>
+  <div class="quiz-prog" id="quizProg">
+    <span class="quiz-prog-label" id="progLabel">Q1 / 20</span>
+    <div class="quiz-prog-track"><div class="quiz-prog-fill" id="progFill"></div></div>
+  </div>
+  <a class="topbar-link" href="/courses/piping-fundamentals/" id="backLink">← Course</a>
+</header>
+
+<div class="wrap">
+
+  <!-- ============ INTRO ============ -->
+  <section class="screen active" id="screen-intro">
+    <div class="intro-hero">
+      <span class="eyebrow">Course 1 · Final Assessment</span>
+      <h1>Piping Engineering Fundamentals — Knowledge Check</h1>
+      <p class="lead">This assessment confirms you've mastered the five modules of Course 1: pipe properties, materials, supports, codes &amp; standards, and fittings/flanges/gaskets/bolting. Pass at <strong>80% or higher</strong> to unlock your PipingPro Academy certificate of completion.</p>
+    </div>
+    <div class="info-grid">
+      <div class="info-card"><div class="ic-num">20</div><div class="ic-lab">Questions</div></div>
+      <div class="info-card"><div class="ic-num">80%</div><div class="ic-lab">Pass mark (16 / 20)</div></div>
+      <div class="info-card"><div class="ic-num">∞</div><div class="ic-lab">Retakes allowed</div></div>
+    </div>
+    <div class="rules">
+      <h4>Before you begin</h4>
+      <ul>
+        <li>Each question has one correct answer, drawn directly from the Course 1 material.</li>
+        <li>You can move backwards and change answers before submitting — nothing is locked until you press <em>Submit</em>.</li>
+        <li>Questions span all five modules, weighted across materials, codes, supports, and components.</li>
+        <li>The certificate of completion is available to PipingPro Academy members on passing.</li>
+      </ul>
+    </div>
+    <button class="btn btn-primary btn-lg" id="startBtn">Start the assessment
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </button>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section class="screen" id="screen-quiz">
+    <div class="q-head">
+      <span class="q-count" id="qCount">Question 1 of 20</span>
+      <span class="q-mod" id="qMod"></span>
+    </div>
+    <h2 class="q-text" id="qText"></h2>
+    <div class="opts" id="qOpts"></div>
+    <div class="q-nav">
+      <button class="btn btn-ghost" id="prevBtn">← Previous</button>
+      <button class="btn btn-primary" id="nextBtn" disabled>Next →</button>
+    </div>
+  </section>
+
+  <!-- ============ CONGRATULATIONS (pass) ============ -->
+  <section class="screen" id="screen-congrats">
+    <div class="congrats-hero">
+      <div class="congrats-badge">
+        <svg viewBox="0 0 96 96" fill="none">
+          <circle cx="48" cy="48" r="44" fill="var(--teal-light)" stroke="var(--teal)" stroke-width="2.5"/>
+          <path class="tick" d="M30 49 L43 62 L67 35" fill="none" stroke="var(--teal)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="congrats-kicker">Course 1 Complete</div>
+      <h1>Congratulations!</h1>
+      <p class="lead">You've passed the final assessment for <strong>Piping Engineering Fundamentals</strong>. Generate your certificate of completion below.</p>
+      <div class="congrats-score" id="congratsScore">Score: 0 / 20</div>
+      <div class="congrats-actions">
+        <button class="btn btn-teal btn-lg" id="genStartBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 15a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 20l4-3M20 20l-4-3M12 3v2"/></svg>
+          Generate my certificate
+        </button>
+        <button class="btn btn-ghost" id="reviewToggle">Review answers</button>
+      </div>
+    </div>
+
+    <!-- members: name entry -->
+    <div class="cert-gate" id="certGate" style="display:none;">
+      <h3>Generate your certificate</h3>
+      <p>Enter your full name exactly as you'd like it to appear on the certificate.</p>
+      <div class="name-field">
+        <input type="text" id="nameInput" placeholder="e.g. Donny A. Bachtiar" autocomplete="name" maxlength="60"/>
+        <button class="btn btn-primary" id="genCertBtn" disabled>Issue certificate</button>
+      </div>
+    </div>
+
+    <!-- the certificate -->
+    <div class="cert-stage" id="certStage" style="display:none;">
+      <div class="certificate" id="certificate">
+        <div class="cert-inner">
+          <div class="cert-top">
+            <div class="cert-logo">
+              <span class="m"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="10" fill="none" stroke="#fbf8f1" stroke-width="3.2"/><circle cx="16" cy="16" r="4.6" fill="none" stroke="#fbf8f1" stroke-width="2"/></svg></span>
+              <span class="t">PipingPro Academy<small>Engineering Education</small></span>
+            </div>
+            <svg class="cert-seal" viewBox="0 0 100 100" fill="none">
+              <circle cx="50" cy="50" r="46" stroke="#c45c2a" stroke-width="2"/>
+              <circle cx="50" cy="50" r="38" stroke="#c45c2a" stroke-width="0.8"/>
+              <circle cx="50" cy="50" r="22" fill="#c45c2a"/>
+              <circle cx="50" cy="50" r="11" fill="none" stroke="#fbf8f1" stroke-width="2"/>
+              <circle cx="50" cy="50" r="5" fill="none" stroke="#fbf8f1" stroke-width="1.4"/>
+              <path id="sealArc" d="M50,12 A38,38 0 1,1 49.9,12" fill="none"/>
+              <text font-family="'DM Mono', monospace" font-size="6.4" letter-spacing="1.6" fill="#c45c2a">
+                <textPath href="#sealArc" startOffset="2%">CERTIFIED · PIPINGPRO ACADEMY · COURSE 1 ·</textPath>
+              </text>
+            </svg>
+          </div>
+          <div class="cert-body">
+            <div class="cert-kicker">Certificate of Completion</div>
+            <div class="cert-h">Piping Engineering Fundamentals</div>
+            <div class="cert-presented">This is to certify that</div>
+            <div class="cert-name" id="certName">—</div>
+            <div class="cert-name-rule"></div>
+            <p class="cert-course">has successfully completed all five modules and passed the final assessment of <b>Course 1 — Piping Engineering Fundamentals</b>, covering pipe properties, materials, supports, codes &amp; standards, and fittings, flanges, gaskets &amp; bolting.</p>
+          </div>
+          <div class="cert-foot">
+            <div class="cert-sig">
+              <div class="sig-name">Donny A. Bachtiar</div>
+              <div class="sig-role">CEO &amp; Founder, Zephrum Konsultan Limited</div>
+            </div>
+            <div class="cert-meta">
+              <div class="mv" id="certScore">—</div>
+              <div class="ml">Assessment Score</div>
+            </div>
+            <div class="cert-sig">
+              <div class="sig-name" id="certDate">—</div>
+              <div class="sig-role">Date of Issue</div>
+            </div>
+          </div>
+          <div class="cert-issuer">Certificate ID <span id="certId">—</span> · Issued by PipingPro Academy, a product of Zephrum Konsultan Limited</div>
+        </div>
+      </div>
+      <div class="cert-actions">
+        <button class="btn btn-ink" id="downloadBtn">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
+          Download / Print PDF
+        </button>
+        <button class="btn btn-ghost" id="editNameBtn">Edit name</button>
+      </div>
+      <p class="cert-hint">In the print dialog, set the destination to <strong>Save as PDF</strong> to download your certificate.</p>
+    </div>
+
+    <div class="review" id="reviewPass" style="display:none;"></div>
+  </section>
+
+  <!-- ============ FAIL ============ -->
+  <section class="screen" id="screen-fail">
+    <div class="fail-hero">
+      <div class="score-ring">
+        <svg width="168" height="168" viewBox="0 0 168 168">
+          <circle class="track" cx="84" cy="84" r="74" fill="none" stroke-width="13"/>
+          <circle class="meter" id="meterFail" cx="84" cy="84" r="74" fill="none" stroke-width="13" stroke="var(--red)"/>
+        </svg>
+        <div class="pct"><div><b id="pctValFail">0%</b><span id="pctScoreFail">0 / 20</span></div></div>
+      </div>
+      <h2 class="result-title">Not quite — keep going</h2>
+      <p class="result-sub" id="failSub"></p>
+      <div class="fail-actions">
+        <button class="btn btn-primary" id="retakeBtn">Retake assessment</button>
+        <a class="btn btn-ghost" href="/courses/piping-fundamentals/">Back to course material</a>
+      </div>
+    </div>
+    <div class="review" id="reviewFail"></div>
+  </section>
+</div>
+
+<footer class="site">
+  <div class="f-logo">PipingPro Academy</div>
+  <div style="margin-top:6px;"><a href="https://pipingpro-academy.com">pipingpro-academy.com</a> · Course 1 Assessment</div>
+  <div class="f-zk">A product of <a href="https://zephrum-konsultan.co.uk">Zephrum Konsultan Limited</a> · Engineering &amp; AI</div>
+</footer>
+
+<script>
+/* ============================================================
+   COURSE 1 ASSESSMENT — question bank. `a` = correct opt index.
+   ============================================================ */
+const PASS_PCT = 80;
+
+const QUESTIONS = [
+  { mod: "Module 1 · Pipe Properties",
+    q: "What is the approved operating temperature range for ASTM A106 Grade B seamless carbon steel pipe?",
+    opts: ["0 °C to 500 °C", "−29 °C to 427 °C", "−45 °C to 343 °C", "−100 °C to 600 °C"],
+    a: 1, e: "A106 Gr. B is the default O&G process pipe, valid from −29 °C to 427 °C. Outside this range you must change material (e.g. A333 Gr. 6 for low temperature)." },
+  { mod: "Module 1 · Pipe Properties",
+    q: "Which weight-per-foot formula corresponds to ASME B36.10M for steel pipe (US units)?",
+    opts: ["W = 0.0246615 × (D − t) × t", "W = 0.3405 × ID²", "W = 10.6802 × (D − t) × t", "W = 0.7854 × (OD² − ID²)"],
+    a: 2, e: "W = 10.6802 × (D − t) × t gives lb/ft. The 0.0246615 constant is the SI version (kg/m); 0.3405 × ID² is the weight of contained water." },
+  { mod: "Module 1 · Pipe Properties",
+    q: "Why is the 'L' suffix (e.g. 316L) specified for welded stainless steel piping?",
+    opts: ["It increases the chromium content above 18%", "Low carbon prevents sensitisation (chromium-carbide precipitation) during welding", "It makes the steel magnetic for easier inspection", "It raises the maximum allowable temperature"],
+    a: 1, e: "The 'L' means low carbon (≤0.03%), which prevents sensitisation — chromium carbides forming at grain boundaries during welding, which would cause intergranular corrosion." },
+  { mod: "Module 1 · Pipe Properties",
+    q: "Which two material properties are the most critical inputs to a pipe stress analysis?",
+    opts: ["Density and hardness", "Yield strength and elongation", "Coefficient of thermal expansion (α) and Modulus of Elasticity (E)", "Thermal conductivity and Poisson's ratio"],
+    a: 2, e: "Get α and E wrong in your CAESAR II model and every stress result is wrong. Always use ASME B31.3 Appendix C values for the specific material and temperature." },
+  { mod: "Module 1 · Pipe Properties",
+    q: "For which nominal pipe sizes does the outside diameter (OD) numerically equal the NPS in inches?",
+    opts: ["All sizes", "NPS 12 and below", "NPS 14 and above", "Only NPS 6"],
+    a: 2, e: "From NPS 14 onwards, OD = NPS in inches. For NPS 12 and below the OD is always larger than the NPS number (e.g. NPS 6 has OD 6.625 in)." },
+  { mod: "Module 2 · Pipe Materials",
+    q: "Which carbon steel specification is used for low-temperature service down to about −45 °C?",
+    opts: ["ASTM A106 Gr. B", "ASTM A333 Gr. 6", "API 5L X65", "ASTM A53 Type F"],
+    a: 1, e: "ASTM A333 Gr. 6 is the impact-tested low-temperature carbon steel, suitable to −45 °C. A106 is limited to −29 °C." },
+  { mod: "Module 2 · Pipe Materials",
+    q: "Compared with 316L, what is the key advantage of Duplex 2205 for offshore and high-chloride service?",
+    opts: ["It is cheaper than 316L", "It has roughly twice the strength plus better SCC and chloride-pitting resistance", "It can be used above 600 °C", "It requires no welding qualification"],
+    a: 1, e: "Duplex 2205 (~50% austenite / 50% ferrite) has about twice the strength of 316L and excellent stress-corrosion-cracking and chloride-pitting resistance — ideal for aggressive offshore/sour environments." },
+  { mod: "Module 2 · Pipe Materials",
+    q: "Above 566 °C, which chrome-moly grade would you typically specify?",
+    opts: ["ASTM A335 P11", "ASTM A335 P22", "ASTM A335 P91", "ASTM A53 Gr. B"],
+    a: 2, e: "P11 covers up to ~538 °C and P22 up to ~566 °C; above 566 °C, specify P91 (9Cr-1Mo-V). All P-grade welds require mandatory preheat and PWHT." },
+  { mod: "Module 2 · Pipe Materials",
+    q: "Which standard governs material requirements for sour (H₂S) service?",
+    opts: ["ASME B16.5", "NACE MR0175 / ISO 15156", "API 610", "ASTM A312"],
+    a: 1, e: "NACE MR0175 / ISO 15156 sets hardness limits (HRC 22 max for most CS), material restrictions and PWHT requirements for sour service — applying to ALL wetted components." },
+  { mod: "Module 2 · Pipe Materials",
+    q: "What is the approximate upper temperature limit for HDPE in pressure service?",
+    opts: ["About 60 °C", "About 170 °C", "About 250 °C", "About 400 °C"],
+    a: 0, e: "HDPE is limited to roughly 60 °C for pressure service. Thermoplastic Composite Pipe (TCP) with PEEK extends this well beyond, up to ~100–170 °C." },
+  { mod: "Module 3 · Pipe Supports",
+    q: "Using the rule of thumb, what is the minimum trunnion size for an NPS 16 main pipe?",
+    opts: ["NPS 6", "NPS 8", "NPS 10", "NPS 16"],
+    a: 1, e: "Rule of thumb: main NPS ÷ 2, rounded up to the next standard size. 16 ÷ 2 = 8 → NPS 8 (and never smaller than the NPS 6 minimum)." },
+  { mod: "Module 3 · Pipe Supports",
+    q: "What is the general maximum acceptable variability factor for a variable spring hanger NOT on rotating equipment?",
+    opts: ["5%", "12%", "25%", "50%"],
+    a: 2, e: "Variability factor ≤ 25% is the general limit; ≤ 12% for lines connected to rotating equipment. Beyond 25%, use a constant-effort (constant load) spring." },
+  { mod: "Module 3 · Pipe Supports",
+    q: "What distinguishes a cold shoe from a standard hot shoe?",
+    opts: ["It is made entirely of stainless steel", "It contains Polyurethane Foam (PUF) acting as a load element and thermal break", "It allows no axial movement", "It is only used above 200 °C"],
+    a: 1, e: "Cold shoes (≈ −195 °C to +82 °C service) include a PUF insert plus vapour barrier and a metal jacket, preventing cold bridging to the support steel." },
+  { mod: "Module 3 · Pipe Supports",
+    q: "When checking allowable pipe span using the bending-stress and deflection criteria, which value governs?",
+    opts: ["The larger of the two spans", "The smaller (more limiting) of the two spans", "Always the bending-stress span", "The average of the two"],
+    a: 1, e: "The controlling span is the smaller value — whichever of the bending-stress or deflection limit is more restrictive governs the support spacing." },
+  { mod: "Module 4 · Codes & Standards",
+    q: "What is the technical distinction between a 'code' and a 'standard'?",
+    opts: ["A code is older than a standard", "A code is a standard adopted by a regulatory authority and given legal force", "A standard is always mandatory; a code is voluntary", "There is no difference"],
+    a: 1, e: "A standard sets technical requirements (often voluntary); a code is a standard that a regulatory authority has adopted and made legally mandatory — e.g. ASME B31.3." },
+  { mod: "Module 4 · Codes & Standards",
+    q: "Which ASME B31 code governs process plant piping in refineries and gas plants?",
+    opts: ["B31.1 Power Piping", "B31.3 Process Piping", "B31.4 Liquid Pipeline", "B31.8 Gas Transmission"],
+    a: 1, e: "B31.3 (Process Piping) is the primary code for process plant piping. B31.4 covers liquid pipelines and B31.8 covers gas pipelines outside the plant fence." },
+  { mod: "Module 4 · Codes & Standards",
+    q: "Which set of limits ALL must be met for a line to qualify as ASME B31.3 Category D fluid service?",
+    opts: ["≤ 150 psi, ≤ 186 °C, ≥ −29 °C, non-flammable/non-toxic", "≤ 600 psi, ≤ 400 °C, any fluid", "Any pressure, ≤ 100 °C, toxic fluids only", "> Class 2500 pressure"],
+    a: 0, e: "Category D requires ALL of: non-flammable/non-toxic/non-tissue-damaging fluid, ≤ 150 psi gauge, ≤ 186 °C, and fluid temperature not below −29 °C. If any one fails, it cannot be Category D." },
+  { mod: "Module 4 · Codes & Standards",
+    q: "Whose responsibility is it to determine whether a fluid service is Category M under ASME B31.3?",
+    opts: ["The EPC detailed-engineering contractor", "The owner", "The pipe fabricator", "The third-party inspector"],
+    a: 1, e: "Determining Category M is the owner's responsibility (B31.3 Appendix M provides the logic flowchart). It is typically confirmed via the PHA and the Line Designation Table." },
+  { mod: "Module 5 · Fittings & Flanges",
+    q: "Which eccentric reducer orientation is required at a centrifugal pump suction nozzle, and why?",
+    opts: ["Flat-bottom, to keep rack elevation constant", "Flat-top (TOE), to prevent air pockets that cause cavitation", "Concentric, for symmetric flow", "Either orientation is acceptable"],
+    a: 1, e: "A flat-top (top-of-eccentric) reducer at pump suction prevents trapped air pockets that would cause cavitation. A concentric or flat-bottom reducer there risks pump damage." },
+  { mod: "Module 5 · Fittings & Flanges",
+    q: "How does a flange's pressure rating change as the operating temperature increases?",
+    opts: ["It increases with temperature", "It stays constant — the Class number is the pressure in psi", "It decreases with increasing temperature", "It only matters below ambient"],
+    a: 2, e: "Pressure rating decreases as temperature increases. The Class number is not the design pressure in psi — always read the B16.5 P-T table at your actual design temperature." }
+];
+
+/* ----------- state ----------- */
+let order = [], current = 0, answers = {};
+const LETTERS = ['A','B','C','D'];
+function shuffle(arr){ for (let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+const screens = {
+  intro:    document.getElementById('screen-intro'),
+  quiz:     document.getElementById('screen-quiz'),
+  congrats: document.getElementById('screen-congrats'),
+  fail:     document.getElementById('screen-fail')
+};
+const quizProg = document.getElementById('quizProg');
+const progLabel = document.getElementById('progLabel');
+const progFill = document.getElementById('progFill');
+
+function show(name){
+  Object.values(screens).forEach(s => s.classList.remove('active'));
+  screens[name].classList.add('active');
+  quizProg.classList.toggle('show', name === 'quiz');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.getElementById('startBtn').addEventListener('click', startQuiz);
+document.getElementById('retakeBtn').addEventListener('click', startQuiz);
+function startQuiz(){
+  order = shuffle([...Array(QUESTIONS.length).keys()]);
+  current = 0; answers = {};
+  document.getElementById('certGate').style.display = 'none';
+  document.getElementById('certStage').style.display = 'none';
+  document.getElementById('reviewPass').style.display = 'none';
+  document.getElementById('reviewToggle').textContent = 'Review answers';
+  renderQuestion();
+  show('quiz');
+}
+
+function renderQuestion(){
+  const qi = order[current], Q = QUESTIONS[qi];
+  document.getElementById('qCount').textContent = 'Question ' + (current + 1) + ' of ' + QUESTIONS.length;
+  document.getElementById('qMod').textContent = Q.mod;
+  document.getElementById('qText').textContent = Q.q;
+  progLabel.textContent = 'Q' + (current + 1) + ' / ' + QUESTIONS.length;
+  progFill.style.width = (current / QUESTIONS.length * 100) + '%';
+  const wrap = document.getElementById('qOpts'); wrap.innerHTML = '';
+  Q.opts.forEach((text, idx) => {
+    const b = document.createElement('button');
+    b.className = 'opt' + (answers[qi] === idx ? ' selected' : '');
+    b.innerHTML = '<span class="key">' + LETTERS[idx] + '</span><span>' + text + '</span>';
+    b.addEventListener('click', () => {
+      answers[qi] = idx;
+      wrap.querySelectorAll('.opt').forEach(o => o.classList.remove('selected'));
+      b.classList.add('selected');
+      document.getElementById('nextBtn').disabled = false;
+    });
+    wrap.appendChild(b);
+  });
+  document.getElementById('prevBtn').style.visibility = current === 0 ? 'hidden' : 'visible';
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.disabled = answers[qi] === undefined;
+  nextBtn.textContent = (current === QUESTIONS.length - 1) ? 'Submit assessment' : 'Next →';
+}
+
+document.getElementById('prevBtn').addEventListener('click', () => { if (current > 0){ current--; renderQuestion(); } });
+document.getElementById('nextBtn').addEventListener('click', () => {
+  if (current < QUESTIONS.length - 1){ current++; renderQuestion(); } else { finish(); }
+});
+
+function finish(){
+  let correct = 0;
+  QUESTIONS.forEach((Q, qi) => { if (answers[qi] === Q.a) correct++; });
+  const total = QUESTIONS.length, pct = Math.round(correct / total * 100), passed = pct >= PASS_PCT;
+  if (passed){
+    document.getElementById('congratsScore').textContent = 'Score: ' + correct + ' / ' + total + '  (' + pct + '%)';
+    document.getElementById('certScore').textContent = pct + '%  (' + correct + '/' + total + ')';
+    buildReview('reviewPass');
+    show('congrats');
+  } else {
+    document.getElementById('pctValFail').textContent = pct + '%';
+    document.getElementById('pctScoreFail').textContent = correct + ' / ' + total;
+    document.getElementById('failSub').textContent =
+      'You scored ' + pct + '%. The pass mark is 80% (16 / 20). Review the worked answers below, then retake the assessment.';
+    const meter = document.getElementById('meterFail'), C = 2 * Math.PI * 74;
+    meter.style.strokeDasharray = C; meter.style.strokeDashoffset = C;
+    buildReview('reviewFail');
+    show('fail');
+    requestAnimationFrame(() => requestAnimationFrame(() => { meter.style.strokeDashoffset = C * (1 - pct / 100); }));
+  }
+}
+
+function buildReview(targetId){
+  const box = document.getElementById(targetId);
+  box.innerHTML = '<h3>Answer review</h3>';
+  order.forEach(qi => {
+    const Q = QUESTIONS[qi], chosen = answers[qi], ok = chosen === Q.a;
+    const item = document.createElement('div');
+    item.className = 'rev-item ' + (ok ? 'is-correct' : 'is-wrong');
+    let html = '<div class="rq">' + Q.q + '</div>';
+    html += '<div class="rev-row"><span class="tag tag-correct">Correct</span><span>' + LETTERS[Q.a] + '. ' + Q.opts[Q.a] + '</span></div>';
+    if (!ok){
+      const yourText = chosen === undefined ? '(no answer)' : (LETTERS[chosen] + '. ' + Q.opts[chosen]);
+      html += '<div class="rev-row"><span class="tag tag-yours">Your answer</span><span>' + yourText + '</span></div>';
+    }
+    html += '<div class="rev-expl">' + Q.e + '</div>';
+    item.innerHTML = html;
+    box.appendChild(item);
+  });
+}
+
+/* ----------- congrats actions ----------- */
+document.getElementById('reviewToggle').addEventListener('click', () => {
+  const r = document.getElementById('reviewPass');
+  const open = r.style.display !== 'none';
+  r.style.display = open ? 'none' : 'block';
+  document.getElementById('reviewToggle').textContent = open ? 'Review answers' : 'Hide answers';
+  if (!open) r.scrollIntoView({ behavior: 'smooth' });
+});
+
+document.getElementById('genStartBtn').addEventListener('click', () => {
+  document.getElementById('certGate').style.display = 'block';
+  document.getElementById('certGate').scrollIntoView({ behavior: 'smooth' });
+  document.getElementById('nameInput').focus();
+});
+
+/* ----------- certificate ----------- */
+const nameInput = document.getElementById('nameInput');
+const genCertBtn = document.getElementById('genCertBtn');
+nameInput.addEventListener('input', () => { genCertBtn.disabled = nameInput.value.trim().length < 2; });
+nameInput.addEventListener('keydown', e => { if (e.key === 'Enter' && !genCertBtn.disabled) genCertBtn.click(); });
+genCertBtn.addEventListener('click', () => {
+  const name = nameInput.value.trim();
+  if (name.length < 2) return;
+  document.getElementById('certName').textContent = name;
+  const d = new Date(), months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('certDate').textContent = d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+  document.getElementById('certId').textContent = 'PPA-C1-' + d.getFullYear() + '-' + Math.random().toString(36).slice(2, 7).toUpperCase();
+  document.getElementById('certStage').style.display = 'block';
+  document.getElementById('certStage').scrollIntoView({ behavior: 'smooth' });
+});
+document.getElementById('editNameBtn').addEventListener('click', () => {
+  document.getElementById('certGate').scrollIntoView({ behavior: 'smooth' });
+  nameInput.focus();
+});
+document.getElementById('downloadBtn').addEventListener('click', () => window.print());
+</script>
+</body>
+</html>

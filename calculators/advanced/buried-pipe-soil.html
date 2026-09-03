@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Memberstack -->
+<script data-memberstack-app="app_cmq9fsibv00720sujaqjm734o" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
+<script src="/js/ppa-tier.js"></script>
+<!-- PPA ACCESS GATE (canonical Block A) -->
+<script>
+(function(){
+  var THIS_CALC = window.THIS_CALC = 'bp';                       // ← buried pipe; register in ppa-tier.js requiredTier() + calculators grid
+  window.PPA_STANDARDS = 'ASME B31.4 (liquid) / B31.8 (gas) pipeline codes and the ASCE/ALA 2001 Guidelines for the Design of Buried Steel Pipe (soil springs; Boussinesq live load)';
+  var UPGRADE   = '/membership-plan.html';    // non-members land here
+
+  var ADMIN_PLAN_IDS   = ['pln_admin-vzd0rgr'];
+  var ADMIN_PERMISSION = 'admin';
+  var EMERGENCY_LOCAL_ADMIN = false;          // ← LOCAL testing only; MUST be false in production
+
+  function memberIsAdmin(m){
+    if(!m) return false;
+    var cf = m.customFields || {};
+    if(cf.admin === 'true' || cf.admin === true || cf.role === 'admin') return true;
+    var perms = m.permissions || [];
+    if(perms.indexOf(ADMIN_PERMISSION) !== -1) return true;
+    var pc = m.planConnections || [];
+    for(var i=0;i<pc.length;i++){
+      if(pc[i] && ADMIN_PLAN_IDS.indexOf(pc[i].planId) !== -1){
+        var st = (pc[i].status || '').toString().toUpperCase();
+        if(st !== 'CANCELED' && st !== 'CANCELLED' && st !== 'EXPIRED' && st !== 'INACTIVE') return true;
+      }
+    }
+    return false;
+  }
+  function whenMS(cb, tries){
+    tries = (tries==null) ? 40 : tries;
+    var ms = window.$memberstackDom;
+    if(ms) return cb(ms);
+    if(tries<=0) return cb(null);
+    setTimeout(function(){ whenMS(cb, tries-1); }, 100);
+  }
+  function getMember(){
+    return new Promise(function(resolve){
+      whenMS(function(ms){
+        if(!ms || typeof ms.getCurrentMember !== 'function') return resolve(null);
+        ms.getCurrentMember().then(function(res){ resolve(res ? res.data : null); })
+                             .catch(function(){ resolve(null); });
+      });
+    });
+  }
+  function gate(){
+    if(EMERGENCY_LOCAL_ADMIN){
+      try{ if(localStorage.getItem('ppa_admin') === '1') return; }catch(e){}
+    }
+    getMember().then(function(member){
+      if(memberIsAdmin(member)) return;
+      if(!window.PPATIER) return;
+      if(window.PPATIER.requiredTier(THIS_CALC) === 'free') return;
+      return window.PPATIER.resolveTier().then(function(){
+        if(!memberIsAdmin(member) && !window.PPATIER.hasAccess(THIS_CALC)) location.replace(UPGRADE);
+      });
+    }).catch(function(){ /* leave page as-is on error */ });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', gate);
+  else gate();
+})();
+</script>
+
+<title>Buried Pipe — Soil-Pipe Interaction &amp; Flexibility — PipingPro Academy</title>
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --ink:#1c1917;--ink2:#57534e;--ink3:#a8a29e;
+  --paper:#f5f4f0;--paper2:#edeae2;--paper3:#e3dfd5;
+  --steel:#2d3748;--steel2:#1a202c;--steel3:#4a5568;
+  --teal:#0d9488;--teal2:#0f766e;--teal-bg:rgba(13,148,136,0.08);--teal-bd:rgba(13,148,136,0.25);
+  --blue:#1d4ed8;--blue-bg:rgba(29,78,216,0.08);--blue-bd:rgba(29,78,216,0.2);
+  --red:#8b3a1a;--red-bg:rgba(220,38,38,0.08);--red-bd:rgba(220,38,38,0.25);
+  --amber:#b8860b;--amber-bg:rgba(217,119,6,0.08);--amber-bd:rgba(217,119,6,0.25);
+  --pass:#065f46;--pass-bg:#d1fae5;--pass-bd:#6ee7b7;
+  --serif:'DM Serif Display',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'DM Mono',monospace;
+}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);min-height:100vh;padding:0 0 4rem;}
+
+/* Top bar */
+.topbar{
+  background:var(--steel2);color:#e2e8f0;padding:.6rem 2rem;font-size:11px;
+  display:flex;align-items:center;justify-content:space-between;letter-spacing:.05em;
+}
+.topbar-left{display:flex;align-items:center;gap:8px;font-family:var(--mono);}
+.topbar-dot{width:7px;height:7px;border-radius:50%;background:#10b981;}
+.topbar-right{font-size:10px;color:#718096;}
+
+/* Main layout */
+.main{max-width:820px;margin:0 auto;padding:2rem 1.5rem;}
+
+/* Cards */
+.card{
+  background:#fff;border:1px solid rgba(26,32,44,0.1);border-radius:12px;
+  box-shadow:0 2px 12px rgba(26,32,44,0.06);padding:1.5rem;margin-bottom:1.25rem;
+  animation:fadeUp .4s ease both;
+}
+.card:nth-child(2){animation-delay:.06s;}
+.card:nth-child(3){animation-delay:.12s;}
+.card:nth-child(4){animation-delay:.18s;}
+.ctitle{
+  font-family:var(--serif);font-size:1.05rem;color:var(--ink);
+  margin-bottom:1rem;padding-bottom:.65rem;border-bottom:2px solid var(--paper2);
+  display:flex;align-items:center;gap:8px;
+}
+.ctitle-icon{font-size:1rem;}
+.csub{font-size:12px;color:var(--ink3);margin:-.6rem 0 1rem;line-height:1.6;}
+
+/* Toggles */
+.seg-row{display:flex;flex-wrap:wrap;gap:1.25rem;}
+.seg-grp{flex:1;min-width:220px;}
+.seg-grp > span{display:block;font-size:10.5px;font-weight:700;color:#7a7068;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;}
+.test-toggle{display:flex;gap:0;border-radius:8px;overflow:hidden;border:1.5px solid var(--paper3);}
+.tt-btn{
+  flex:1;padding:10px;text-align:center;cursor:pointer;font-size:13px;font-weight:600;
+  font-family:var(--sans);background:#fff;color:var(--ink3);border:none;transition:all .2s;
+}
+.tt-btn.active{background:var(--teal);color:#fff;}
+.tt-btn:not(.active):hover{background:var(--paper2);}
+
+/* Form */
+.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:600px){.fg3{grid-template-columns:1fr 1fr;}.fg2{grid-template-columns:1fr;}}
+.field{display:flex;flex-direction:column;}
+.gap{margin-top:12px;}
+label{font-size:10.5px;font-weight:700;color:#7a7068;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;}
+label .uu{color:var(--ink3);font-weight:600;}
+select,input[type=number],input[type=text]{
+  width:100%;padding:9px 12px;border:1.5px solid #d4cfc5;border-radius:7px;background:#fffef9;
+  font-family:var(--sans);font-size:13.5px;color:var(--ink);outline:none;
+  transition:border-color .2s,box-shadow .2s;-webkit-appearance:none;appearance:none;
+}
+select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%230d9488' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;background-color:#fffef9;
+}
+select:focus,input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,148,136,.12);}
+
+/* Headline numbers (dark gradient) */
+.pres-display{
+  background:linear-gradient(135deg,var(--steel2),var(--steel));border-radius:10px;
+  padding:1.1rem 1.3rem;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:4px;
+}
+@media(max-width:500px){.pres-display{grid-template-columns:1fr;}}
+.pd-block{text-align:center;}
+.pd-val{font-family:var(--serif);font-size:1.6rem;color:#f1f5f9;line-height:1;}
+.pd-unit{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.07em;margin-top:3px;}
+.pd-label{font-size:10px;color:#c8b89a;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-top:4px;}
+.pd-block.flag-over .pd-val{color:#fca5a5;}
+.pd-block.flag-ok .pd-val{color:#5eead4;}
+
+/* Meta grid */
+.pack-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+@media(max-width:500px){.pack-meta{grid-template-columns:1fr 1fr;}}
+.meta-block{background:var(--paper,#fff);border:1px solid var(--paper3);border-radius:8px;padding:10px 12px;}
+.meta-val{font-family:var(--mono);font-size:1.02rem;color:var(--ink);font-weight:600;}
+.meta-val small{font-size:11px;color:var(--ink3);font-weight:400;}
+.meta-label{font-size:10px;color:var(--ink3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-top:3px;}
+
+/* Result table */
+.ptable{width:100%;border-collapse:collapse;font-size:12.5px;}
+.ptable th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);padding:8px 10px;text-align:left;border-bottom:2px solid var(--paper2);}
+.ptable th.r,.ptable td.r{text-align:right;}
+.ptable td{padding:9px 10px;border-bottom:1px solid var(--paper2);color:var(--ink2);}
+.ptable tr:last-child td{border-bottom:none;}
+.ptable tr:hover td{background:var(--paper);}
+.ptable td.k{font-weight:600;color:var(--ink);}
+.ptable td.k small{display:block;font-weight:400;color:var(--ink3);font-size:11px;}
+.ptable td.v{font-family:var(--mono);font-weight:600;color:var(--teal2);text-align:right;white-space:nowrap;}
+.ptable td.u{font-family:var(--mono);color:var(--ink3);font-size:11px;width:1%;white-space:nowrap;}
+.ptable tr.major td{background:#fcfbf7;}
+.ptable td.dir{font-weight:600;}
+.ptable td.dir small{display:block;font-weight:400;color:var(--ink3);font-size:10.5px;}
+
+/* formula note */
+.fnote{
+  background:var(--paper2);border-left:3px solid var(--accent,#8b3a1a);border-radius:0 8px 8px 0;
+  padding:.8rem 1rem;font-size:11.5px;color:var(--ink2);line-height:1.9;font-family:var(--mono);margin-top:12px;
+}
+.fnote b{color:var(--accent,#8b3a1a);}
+
+/* copy block */
+.copywrap{margin-top:12px;background:var(--paper2);border:1px solid var(--paper3);border-radius:8px;padding:12px 14px;}
+.copywrap .crow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;}
+.copywrap .crow span{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);font-weight:700;}
+.cbtn{font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border,#c8b89a);background:#fff;color:var(--ink);padding:6px 12px;border-radius:6px;}
+.cbtn:hover{border-color:var(--accent,#8b3a1a);color:var(--accent,#8b3a1a);}
+pre.fe{margin:0;font-family:var(--mono);font-size:11.5px;color:var(--ink);background:#fff;border:1px solid var(--paper3);border-radius:6px;padding:10px 12px;overflow-x:auto;line-height:1.55;white-space:pre;}
+
+/* disclaimer */
+.disc{font-size:11.5px;color:var(--ink3);line-height:1.65;}
+.disc b{color:var(--accent,#8b3a1a);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+/* THEORY tab */
+.ref-section{background:#fff;border:1px solid var(--rule,rgba(26,26,24,0.12));border-radius:12px;padding:1.4rem 1.6rem;margin-bottom:1.1rem;}
+.ref-title{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3,#8a8a80);margin-bottom:.9rem;padding-bottom:.4rem;border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));}
+.ref-formula{background:var(--paper2,#ede9de);border-left:3px solid var(--accent,#8b3a1a);border-radius:0 8px 8px 0;padding:1rem 1.2rem;font-size:13px;color:var(--ink2,#4a4a44);line-height:2;margin-bottom:.8rem;font-family:monospace;}
+.ref-formula b{font-family:monospace;color:var(--ink,#1a1510);}
+.fx-grid{display:grid;grid-template-columns:max-content 1fr;column-gap:14px;row-gap:8px;align-items:baseline;}
+.fx-lbl{font-family:var(--sans,'DM Sans',sans-serif);font-weight:600;color:var(--ink,#1a1510);white-space:nowrap;}
+.fx-eq{font-family:monospace;color:var(--ink2,#4a4a44);}
+.fx-eq .u{color:var(--ink3,#8a8a80);}
+.fx-where{grid-column:1 / -1;font-family:monospace;font-size:12px;color:var(--ink3,#8a8a80);line-height:1.7;margin-top:2px;}
+.fx-rule{grid-column:1 / -1;border-top:1px dashed var(--rule,rgba(26,26,24,.18));margin:4px 0;}
+@media(max-width:520px){.fx-grid{grid-template-columns:1fr;row-gap:3px;}.fx-lbl{margin-top:6px;}}
+.ref-note{background:var(--teal-light,#e7f1ee);border:1px solid rgba(26,107,90,.15);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--teal,#1a6b5a);line-height:1.7;margin-top:.5rem;}
+.ref-warn{background:var(--warn-light,#f5e9c8);border:1px solid var(--warn-border,#b8860b);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:#6e2e14;line-height:1.7;margin-top:.5rem;}
+.ref-prose{font-size:13px;color:var(--ink2,#4a4a44);line-height:1.75;margin-bottom:.6rem;}
+.ref-prose strong{color:var(--ink,#1a1510);}
+.ref-table-wrap{overflow-x:auto;margin-top:.5rem;}
+.ref-table{width:100%;border-collapse:collapse;font-size:12px;}
+.ref-table th{background:var(--paper3,#e3dfd2);padding:7px 10px;text-align:left;font-weight:600;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2,#4a4a44);border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));}
+.ref-table td{padding:6px 10px;border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));color:var(--ink,#1a1510);vertical-align:top;}
+.ref-table td:first-child{font-weight:600;font-family:monospace;font-size:11px;white-space:nowrap;}
+.ref-table tr:last-child td{border-bottom:none;}
+
+/* THEORY tab nav */
+.calc-tabs{display:flex;background:var(--paper2,#ede9de);border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));overflow-x:auto;margin-bottom:0;}
+.calc-tab{padding:.85rem 1.5rem;font-size:13px;font-weight:500;color:var(--ink3,#8a8a80);border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;font-family:'DM Sans',sans-serif;transition:color .2s,border-color .2s;white-space:nowrap;}
+.calc-tab.active{color:var(--accent,#8b3a1a);border-bottom-color:var(--accent,#8b3a1a);}
+.calc-tab:hover:not(.active){color:var(--ink,#1a1510);}
+.calc-panel{display:none;}
+.calc-panel.active{display:block;}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+
+<style id="ppa-shared">
+:root{
+  --ink:#1a1510;--ink2:#4a4a44;--ink3:#8a8a80;
+  --paper:#f5f2eb;--paper2:#ede9de;--paper3:#e3dfd2;
+  --accent:#8b3a1a;--accent2:#d4a017;--accent-light:#f7ede3;
+  --teal:#1a6b5a;--teal-light:#e7f1ee;
+  --rule:rgba(26,26,24,0.12);
+  --gold:#b8860b;--gold-light:#f5e9c8;
+  --font:'DM Sans',sans-serif;--serif:'DM Serif Display',serif;--mono:'DM Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:15px;line-height:1.6;min-height:100vh;}
+.ppa-nav{background:rgba(245,242,235,0.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--rule);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:200;}
+.ppa-nav-logo{font-family:var(--serif);font-size:17px;color:var(--ink);text-decoration:none;}
+.ppa-nav-logo span{color:var(--accent);}
+.ppa-nav-back{font-size:13px;color:var(--ink2);text-decoration:none;display:flex;align-items:center;gap:5px;}
+.ppa-nav-back:hover{color:var(--accent);}
+.ppa-hero{background:var(--ink);color:var(--paper);padding:2.8rem 2rem 2.4rem;text-align:center;border-bottom:3px solid var(--accent);position:relative;overflow:hidden;}
+.ppa-hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 60px),repeating-linear-gradient(0deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 60px);}
+.ppa-hero-eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);margin-bottom:.7rem;font-family:var(--mono);position:relative;}
+.ppa-hero h1{font-family:var(--serif);font-size:clamp(1.7rem,4vw,2.6rem);line-height:1.1;margin-bottom:.7rem;position:relative;}
+.ppa-hero p{font-size:14px;color:rgba(245,242,235,0.6);max-width:540px;margin:0 auto;position:relative;}
+.ppa-footer{background:var(--ink);color:rgba(245,242,235,0.5);text-align:center;padding:2rem;font-size:13px;margin-top:3rem;}
+.ppa-footer a{color:var(--accent2);text-decoration:none;}
+.ppa-footer-logo{font-family:var(--serif);font-size:1.1rem;color:var(--paper);margin-bottom:.4rem;}
+.ppa-footer-logo span{color:var(--accent);}
+</style>
+
+<!-- ===== PipingPro Brand Bridge v1.0 ===== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style id="pp-brand-bridge">
+:root{
+  --bg:#faf6ef; --cream:#faf6ef;
+  --paper:#f3ede2; --surface:#f3ede2; --paper2:#f3ede2; --bg2:#f3ede2;
+  --paper3:#e8dfd0; --bg3:#e8dfd0;
+  --ink:#1a1510; --text:#1a1510;
+  --ink2:#4a3f30; --text-2:#4a3f30; --muted:#4a3f30;
+  --ink3:#6b5d49; --text-3:#6b5d49; --muted2:#6b5d49;
+  --accent:#8b3a1a; --accent2:#b8860b;
+  --accent-light:#f6e6df; --accent-border:#c8b89a;
+  --teal:#8b3a1a; --teal2:#8b3a1a; --teal-light:#f6e6df;
+  --blue:#8b3a1a; --purple:#8b3a1a;
+  --gold:#b8860b; --gold2:#b8860b; --gold-light:#f5e9c8; --orange:#b8860b; --yellow:#b8860b;
+  --rule:#c8b89a; --border:#c8b89a; --border2:#c8b89a; --border-strong:#b8a87f;
+  --serif:'DM Serif Display',Georgia,serif;
+  --font:'DM Sans',system-ui,sans-serif; --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --radius:4px; --radius-lg:6px;
+  --pass:#1a6b5a; --success:#1a6b5a; --green:#1a6b5a;
+  --pass-bg:#e7f1ee; --success-light:#e7f1ee; --pass-bd:#1a6b5a;
+  --fail:#8b3a1a; --danger:#8b3a1a; --red:#8b3a1a;
+  --fail-bg:#f6e6df; --danger-light:#f6e6df; --red-bg:#f6e6df;
+  --danger-border:#8b3a1a; --fail-bd:#8b3a1a;
+  --warn:#b8860b; --warn-light:#f5e9c8; --warn-bg:#f5e9c8;
+  --warn-border:#b8860b; --warn-bd:#b8860b;
+  --info:#1a6b5a; --info-light:#e7f1ee; --info-border:#1a6b5a;
+}
+body, p, div, span, td, th, li, label, input, select, textarea, button{ font-family:'DM Sans',system-ui,sans-serif; }
+h1,h2,h3,h4,h5,.calc-card-name,.card-title{ font-family:'DM Serif Display',Georgia,serif; }
+code,pre,.mono,[class*="mono"]{ font-family:'IBM Plex Mono',ui-monospace,monospace; }
+body{ background:#faf6ef; color:#1a1510; }
+.ppa-nav{position:sticky; top:0; z-index:100; display:flex; align-items:center; justify-content:space-between; height:60px; padding:0 5%; margin:0; background:#1a1510; border-bottom:2px solid #b8860b;}
+.ppa-nav-logo{font-family:'DM Serif Display',Georgia,serif; font-size:1.15rem; color:#d4a017 !important; letter-spacing:.02em; text-decoration:none;}
+.ppa-nav-logo span{ color:#b8860b; }
+.ppa-nav-back{color:#ccc !important; font-family:'DM Sans',sans-serif; font-size:.82rem; font-weight:500; letter-spacing:.05em; text-transform:uppercase; text-decoration:none;}
+.ppa-nav-back:hover{ color:#d4a017 !important; }
+.ppa-hero{max-width:1040px; margin:0 auto; padding:2.2rem 5% 1.5rem; background:transparent; border:none; text-align:left;}
+.ppa-hero-eyebrow{font-family:'IBM Plex Mono',ui-monospace,monospace; font-size:.72rem; font-weight:500; text-transform:uppercase; letter-spacing:.12em; color:#b8860b; margin:0 0 .5rem; display:block; background:none; padding:0; border:none;}
+.ppa-hero h1{font-family:'DM Serif Display',Georgia,serif; font-weight:400; font-size:2rem; line-height:1.15; color:#1a1510; margin:0 0 .55rem;}
+.ppa-hero h1 em{font-style:normal; color:#8b3a1a;}
+.ppa-hero p{font-family:'DM Sans',sans-serif; font-size:.95rem; line-height:1.6; color:#4a3f30; max-width:66ch; margin:0;}
+</style>
+<!-- ===== end PipingPro Brand Bridge ===== -->
+
+<!-- ===== shared flag / pill / table components ===== -->
+<style id="pp-tplus">
+.lz-flag{display:flex;gap:10px;align-items:flex-start;padding:11px 13px;border-radius:6px;margin:8px 0;font-size:12.5px;line-height:1.55;border:1px solid;}
+.lz-flag .lz-ic{font-family:var(--mono);font-weight:600;flex-shrink:0;}
+.lz-ok{background:var(--pass-bg);border-color:var(--pass-bd);color:#13503f;}
+.lz-warn{background:var(--warn-bg);border-color:var(--warn-bd);color:#6b4e1f;}
+.lz-stop{background:var(--red-bg);border-color:var(--red-bd);color:var(--red);}
+.lz-info{background:var(--accent-light);border-color:var(--accent-border);color:var(--accent);}
+.lz-flag b{color:var(--ink);}
+.pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;}
+.pill-rec{background:var(--pass-bg);color:#13503f;}
+.pill-acc{background:var(--accent-light);color:var(--accent);}
+.pill-pro{background:var(--red-bg);color:var(--red);}
+</style>
+<!-- ===== end components ===== -->
+</head>
+<body>
+<nav class="ppa-nav">
+  <a href="/" class="ppa-nav-logo">Piping<span>Pro</span> Academy</a>
+  <a href="/calculators/" class="ppa-nav-back">← Back to Calculators</a>
+</nav>
+<div class="ppa-hero">
+  <div class="ppa-hero-eyebrow">Members · Engineering Calculator Suite</div>
+  <h1>Buried Pipe <em>Soil-Pipe Interaction</em></h1>
+  <p>Bi-linear soil restraint springs, fully-restrained thermal stress, virtual anchor length &amp; movement at bends — per ALA <i>Guidelines for the Design of Buried Steel Pipe</i> (2001) Appendix B and Peng soil-pipe interaction, checked to ASME B31.4 / B31.8.</p>
+</div>
+
+<div class="topbar">
+  <div class="topbar-left"><span class="topbar-dot"></span>PipingPro Academy · Calculator Suite</div>
+  <div class="topbar-right">ALA 2001 App. B · Peng 1978 · ASME B31.4 / B31.8</div>
+</div>
+
+<div class="calc-tabs">
+  <button class="calc-tab active" onclick="showCalcTab('calculator')">⚙ Soil-Pipe &amp; Flexibility</button>
+  <button class="calc-tab" onclick="showCalcTab('struct')">🛡 Structural Check (ALA §4)</button>
+  <button class="calc-tab" onclick="showCalcTab('theory')">📚 Theory &amp; Reference</button>
+</div>
+
+<!-- ════════════ CALCULATOR PANEL ════════════ -->
+<div class="calc-panel active" id="calctab-calculator">
+<div class="main">
+
+  <!-- Units & Code -->
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">⚖️</span>Units &amp; Code Basis</div>
+    <div class="seg-row">
+      <div class="seg-grp"><span>Units</span>
+        <div class="test-toggle" id="unitSeg">
+          <button class="tt-btn active" data-u="us">US customary</button>
+          <button class="tt-btn" data-u="si">SI (metric)</button>
+        </div>
+      </div>
+      <div class="seg-grp"><span>Code stress check</span>
+        <div class="test-toggle" id="codeSeg">
+          <button class="tt-btn active" data-c="b314">B31.4 liquid</button>
+          <button class="tt-btn" data-c="b318">B31.8 gas</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pipe & material -->
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">🛢️</span>Pipe &amp; Material</div>
+    <div class="fg3">
+      <div class="field"><label>Outside dia, D <span class="uu" data-u="L">(in)</span></label><input id="D" type="number" step="any" value="20"></div>
+      <div class="field"><label>Wall thk, t <span class="uu" data-u="L">(in)</span></label><input id="t" type="number" step="any" value="0.375"></div>
+      <div class="field"><label>SMYS <span class="uu" data-u="P">(psi)</span></label><input id="smys" type="number" step="any" value="52000"></div>
+      <div class="field"><label>Young's mod, E <span class="uu" data-u="P">(psi)</span></label><input id="E" type="number" step="any" value="29000000"></div>
+      <div class="field"><label>Thermal exp, α <span class="uu" data-u="aL">(/°F)</span></label><input id="alpha" type="number" step="any" value="6.5e-6"></div>
+      <div class="field"><label>Poisson, ν</label><input id="nu" type="number" step="any" value="0.30"></div>
+    </div>
+  </div>
+
+  <!-- Operating -->
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">🌡️</span>Operating Conditions</div>
+    <div class="fg3">
+      <div class="field"><label>Design press, p <span class="uu" data-u="P">(psi)</span></label><input id="p" type="number" step="any" value="1200"></div>
+      <div class="field"><label>Install temp, T₁ <span class="uu" data-u="T">(°F)</span></label><input id="T1" type="number" step="any" value="50"></div>
+      <div class="field"><label>Operating temp, T₂ <span class="uu" data-u="T">(°F)</span></label><input id="T2" type="number" step="any" value="180"></div>
+    </div>
+  </div>
+
+  <!-- Burial & soil -->
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">⛰️</span>Burial &amp; Soil</div>
+    <div class="fg3">
+      <div class="field"><label>Cover to top, C <span class="uu" data-u="H">(ft)</span></label><input id="C" type="number" step="any" value="4"></div>
+      <div class="field"><label>Unit weight, γ <span class="uu" data-u="G">(pcf)</span></label><input id="gamma" type="number" step="any" value="120"></div>
+      <div class="field"><label>Soil model</label>
+        <select id="soilType">
+          <option value="sand" selected>Cohesionless (sand)</option>
+          <option value="clay">Cohesive (clay)</option>
+          <option value="cphi">c–φ (mixed)</option>
+        </select>
+      </div>
+      <div class="field"><label>Friction angle, φ (deg)</label><input id="phi" type="number" step="any" value="32"></div>
+      <div class="field"><label>Cohesion, c <span class="uu" data-u="S">(psf)</span></label><input id="c" type="number" step="any" value="0"></div>
+      <div class="field"><label>At-rest, K₀</label><input id="K0" type="number" step="any" value="1.0"></div>
+    </div>
+  </div>
+
+  <!-- Coating & design factor -->
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">🎚️</span>Coating &amp; Design Factor</div>
+    <div class="fg2">
+      <div class="field"><label>External coating (δ = f<sub>c</sub>φ)</label>
+        <select id="coating">
+          <option value="1.0">Concrete (1.0)</option>
+          <option value="0.9">Coal tar (0.9)</option>
+          <option value="0.8">Rough steel (0.8)</option>
+          <option value="0.7">Smooth steel (0.7)</option>
+          <option value="0.6" selected>FBE / PE (0.6)</option>
+        </select>
+      </div>
+      <div class="field"><label>Hoop design factor, F</label><input id="dfac" type="number" step="any" value="0.72"></div>
+    </div>
+    <div class="fg2 gap" id="classRow" style="display:none">
+      <div class="field"><label>B31.8 location class</label>
+        <select id="locClass">
+          <option value="0.80">Class 1 Div 1 (0.80)</option>
+          <option value="0.72" selected>Class 1 Div 2 (0.72)</option>
+          <option value="0.60">Class 2 (0.60)</option>
+          <option value="0.50">Class 3 (0.50)</option>
+          <option value="0.40">Class 4 (0.40)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== RESULTS ===== -->
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">📊</span>Headline Results</div>
+    <div class="pres-display" id="headline"></div>
+      <div style="text-align:center;margin:1rem 0 .2rem"><button onclick="ppaOpenReportBP()" style="background:#b8860b;color:#1a1510;border:none;padding:.7rem 1.5rem;font-size:.9rem;font-weight:700;border-radius:4px;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.02em">⬇ Download PDF Report</button></div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">📐</span>Pipe Section</div>
+    <div class="pack-meta" id="sectMeta"></div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">🌀</span>Soil Restraint Springs <span id="springHd" style="margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--ink3);font-weight:400;"></span></div>
+    <div class="csub">Ultimate (yield) force per unit length with elastic-perfectly-plastic behaviour — direct input to a Winkler-foundation buried model (CAESAR II, AutoPIPE, PIPLIN).</div>
+    <table class="ptable" id="springTab"></table>
+    <div class="fnote" id="springFx"></div>
+    <div class="copywrap">
+      <div class="crow"><span>FE model input (per unit length)</span><button class="cbtn" id="copyFE">⧉ Copy</button></div>
+      <pre class="fe" id="feBlock"></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">📏</span>Restrained Longitudinal Stress</div>
+    <table class="ptable" id="stressTab"></table>
+  </div>
+
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">⚓</span>Virtual Anchor &amp; Movement</div>
+    <table class="ptable" id="moveTab"></table>
+    <div class="fnote" id="moveFx"></div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">⚠️</span>Validity &amp; Notes</div>
+    <div id="flags"></div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">📋</span>Engineering Disclaimer</div>
+    <div class="disc"><b>For preliminary sizing and verification.</b> This tool implements published hand-calculation methods (ALA 2001; Peng, <i>Pipe Line Industry</i>, 1978). The beam-on-elastic-foundation bend solution is a conservative idealisation assuming a rigid non-rotating corner and elastic-perfectly-plastic springs. Rigorous evaluation of restrained buried pipe — non-linear soil behaviour, cable action, large displacement and combined load cases — requires a non-linear pipe-soil finite element analysis. Results must be reviewed by a competent pipeline stress engineer against the governing code and project specification.</div>
+  </div>
+
+</div>
+</div><!-- /calctab-calculator -->
+
+<!-- ════════════ STRUCTURAL CHECK PANEL (ALA §3–4) ════════════ -->
+<div class="calc-panel" id="calctab-struct">
+<div class="main">
+
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">🪨</span>Earth &amp; Surface Live Load</div>
+    <div class="csub">Shares pipe geometry, material &amp; cover from the Soil-Pipe tab. Add the surface load below. Prism earth load (ALA §3) + Boussinesq concentrated live load (ALA §4).</div>
+    <div class="fg3">
+      <div class="field"><label>Surface load, P<sub>s</sub> <span class="uu" data-u="F">(lbf)</span></label><input id="Ps" type="number" step="any" value="10000"></div>
+      <div class="field"><label>Offset from ⌀, d <span class="uu" data-u="H">(ft)</span></label><input id="doff" type="number" step="any" value="0"></div>
+      <div class="field"><label>Impact factor, F′</label>
+        <select id="impact">
+          <option value="1.50">Highway 0–1 ft cover (1.50)</option>
+          <option value="1.35">Highway 1–2 ft (1.35)</option>
+          <option value="1.15" selected>Highway &gt;3 ft / general (1.15)</option>
+          <option value="1.75">Railway 0–1 ft (1.75)</option>
+          <option value="1.00">Runway (1.00)</option>
+        </select>
+      </div>
+      <div class="field"><label>Soil reaction, E′ <span class="uu" data-u="P">(psi)</span></label><input id="Eprime" type="number" step="any" value="500"></div>
+      <div class="field"><label>Deflection lag, D<sub>l</sub></label><input id="Dl" type="number" step="any" value="1.5"></div>
+      <div class="field"><label>Bedding constant, K</label><input id="Kb" type="number" step="any" value="0.1"></div>
+      <div class="field"><label>Water above pipe, h<sub>w</sub> <span class="uu" data-u="H">(ft)</span></label><input id="hw" type="number" step="any" value="0"></div>
+      <div class="field"><label>Ovality limit (% of D)</label><input id="ovlim" type="number" step="any" value="3"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">📊</span>Headline — Structural</div>
+    <div class="pres-display" id="sHeadline"></div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">⬇️</span>Vertical Pressure on Pipe</div>
+    <table class="ptable" id="loadTab"></table>
+    <div class="fnote" id="loadFx"></div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">🥚</span>Ovality &amp; Wall Stress</div>
+    <table class="ptable" id="ovalTab"></table>
+  </div>
+
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">⭕</span>Ring Buckling &amp; Crushing</div>
+    <table class="ptable" id="buckTab"></table>
+    <div class="fnote" id="buckFx"></div>
+  </div>
+
+  <div class="card">
+    <div class="ctitle"><span class="ctitle-icon">⚠️</span>Validity &amp; Notes</div>
+    <div id="sFlags"></div>
+  </div>
+
+</div>
+</div><!-- /calctab-struct -->
+
+<!-- ════════════ THEORY PANEL ════════════ -->
+<div class="calc-panel" id="calctab-theory">
+<div style="max-width:920px;margin:0 auto;padding:2rem 1.5rem;">
+  <div style="background:var(--accent-light,#f7ede3);border:1px solid rgba(196,92,42,.2);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--accent,#8b3a1a);margin-bottom:1.2rem;line-height:1.7;">
+    📚 Theory, formulae and code references for soil-pipe interaction of buried steel pipe, after ALA <i>Guidelines for the Design of Buried Steel Pipe</i> (Jul 2001) and Peng, <i>Stress Analysis Methods for Underground Pipe Lines</i> (Pipe Line Industry, 1978). For full course content and worked examples, see <strong>PipingPro Academy</strong> courses.
+  </div>
+
+  <div class="ref-section">
+    <div class="ref-title">Soil restraint springs — ALA Appendix B</div>
+    <div class="ref-formula">
+      <div class="fx-grid">
+        <div class="fx-lbl">Axial (friction), T<sub>u</sub></div>
+        <div class="fx-eq">πDαc + πDH·γ̄·½(1+K₀)·tanδ <span class="u">[F/L]</span></div>
+        <div class="fx-lbl">Lateral (horizontal), P<sub>u</sub></div>
+        <div class="fx-eq">N<sub>ch</sub>cD + N<sub>qh</sub>γ̄HD <span class="u">[F/L]</span></div>
+        <div class="fx-lbl">Vertical uplift, Q<sub>u</sub></div>
+        <div class="fx-eq">N<sub>cv</sub>cD + N<sub>qv</sub>γ̄HD <span class="u">[F/L]</span></div>
+        <div class="fx-lbl">Vertical bearing, Q<sub>d</sub></div>
+        <div class="fx-eq">N<sub>c</sub>cD + N<sub>q</sub>γ̄HD + N<sub>γ</sub>γ̄D²/2 <span class="u">[F/L]</span></div>
+        <div class="fx-rule"></div>
+        <div class="fx-where">
+          H = depth to pipe centreline = C + D/2 &nbsp;·&nbsp; γ̄ = effective unit weight<br/>
+          δ = f<sub>c</sub>φ, interface friction angle (f<sub>c</sub> from coating) &nbsp;·&nbsp; α = adhesion factor (curve fit, c in ksf)<br/>
+          N<sub>ch</sub>, N<sub>qh</sub> = horizontal bearing factors (closed-form fits, fn. of H/D, φ)<br/>
+          N<sub>cv</sub> = 2(H/D) ≤ 10 ; N<sub>qv</sub> = (φ/44)(H/D) ≤ N<sub>q</sub> (shallow burial)<br/>
+          N<sub>q</sub> = e<sup>π·tanφ</sup>tan²(45+φ/2) ; N<sub>c</sub> = (N<sub>q</sub>−1)cotφ ; N<sub>γ</sub> = e<sup>(0.18φ−2.5)</sup>
+        </div>
+      </div>
+    </div>
+    <div class="ref-table-wrap"><table class="ref-table">
+      <tr><th>Direction</th><th>Yield displacement Δ (representative)</th></tr>
+      <tr><td>Axial Δ<sub>t</sub></td><td>3 mm dense sand · 5 mm loose sand · 8 mm stiff clay · 10 mm soft clay</td></tr>
+      <tr><td>Lateral Δ<sub>p</sub></td><td>0.04(H + D/2), capped 0.10–0.15 D</td></tr>
+      <tr><td>Uplift Δ<sub>qu</sub></td><td>0.01–0.02 H sand (≤0.1 D) · 0.1–0.2 H clay (≤0.2 D)</td></tr>
+      <tr><td>Bearing Δ<sub>qd</sub></td><td>0.1 D granular · 0.2 D cohesive</td></tr>
+    </table></div>
+    <div class="ref-note">Springs are bi-linear (elastic–perfectly-plastic). Axial springs use backfill properties; lateral/vertical generally use native soil. The lateral secant stiffness K = P<sub>u</sub>/Δ<sub>p</sub> feeds the bend (beam-on-elastic-foundation) solution.</div>
+  </div>
+
+  <div class="ref-section">
+    <div class="ref-title">Restrained longitudinal stress — ALA §7 / B31.4 §403, B31.8 §833</div>
+    <div class="ref-formula">
+      <div class="fx-grid">
+        <div class="fx-lbl">Hoop stress</div><div class="fx-eq">S<sub>h</sub> = pD/2t</div>
+        <div class="fx-lbl">Restrained longitudinal</div><div class="fx-eq">S<sub>L</sub> = νS<sub>h</sub> − EαΔT <span class="u">(− = compressive)</span></div>
+        <div class="fx-lbl">Equivalent (Tresca)</div><div class="fx-eq">S<sub>e</sub> = |S<sub>h</sub> − S<sub>L</sub>|</div>
+        <div class="fx-rule"></div>
+        <div class="fx-where">
+          Hoop check: S<sub>h</sub> ≤ F·SMYS (B31.4 F = 0.72; B31.8 F by location class)<br/>
+          Combined check: S<sub>e</sub> ≤ 0.9·SMYS &nbsp;·&nbsp; ΔT = T₂ − T₁
+        </div>
+      </div>
+    </div>
+    <div class="ref-warn"><strong>Don't conflate S<sub>L</sub> with the anchor force.</strong> S<sub>L</sub> drives the code stress check; the <em>potential expansion force</em> F = A[(0.5−ν)S<sub>h</sub> + EαΔT] (which adds the pressure end-force from the unrestrained side) drives the virtual anchor length and movement.</div>
+  </div>
+
+  <div class="ref-section">
+    <div class="ref-title">Virtual anchor &amp; movement at a bend — Peng (1978)</div>
+    <div class="ref-formula">
+      <div class="fx-grid">
+        <div class="fx-lbl">Potential expansion force</div><div class="fx-eq">F = A[(0.5−ν)S<sub>h</sub> + EαΔT]</div>
+        <div class="fx-lbl">Virtual anchor (free end, Q=0)</div><div class="fx-eq">L₀ = F/f ; y₀ = F²/2AEf</div>
+        <div class="fx-lbl">Bend resistance</div><div class="fx-eq">Q = C − √(C²−F²), C = F + βAEf/K</div>
+        <div class="fx-lbl">Beam-on-elastic-foundation</div><div class="fx-eq">β = (K/4EI)<sup>¼</sup></div>
+        <div class="fx-lbl">Bend movement / moment</div><div class="fx-eq">y = Qβ/K ; M = Q/2β ; S<sub>b</sub> = M/Z</div>
+        <div class="fx-rule"></div>
+        <div class="fx-where">
+          f = axial friction per unit length = T<sub>u</sub> &nbsp;·&nbsp; K = lateral stiffness = P<sub>u</sub>/Δ<sub>p</sub><br/>
+          A = metal area · I, Z = section properties · total movement ∝ F², inversely ∝ f
+        </div>
+      </div>
+    </div>
+    <div class="ref-note">The guided-cantilever / beam-on-elastic-foundation model assumes a rigid non-rotating corner and elastic springs — it <strong>overestimates the moment</strong> (conservative for the bend) while <strong>underestimating deflection</strong>. Use it for screening; confirm governing cases with non-linear pipe-soil FE.</div>
+  </div>
+
+  <div class="ref-section">
+    <div class="ref-title">Earth / live load &amp; ring response — ALA §3–4</div>
+    <div class="ref-formula">
+      <div class="fx-grid">
+        <div class="fx-lbl">Prism earth load</div><div class="fx-eq">P<sub>v</sub> = γC <span class="u">(above water table)</span></div>
+        <div class="fx-lbl">Live load (Boussinesq)</div><div class="fx-eq">P<sub>p</sub> = 3P<sub>s</sub>/2πC² · [1/(1+(d/C)²)]<sup>2.5</sup></div>
+        <div class="fx-lbl">Ovality (modified Iowa)</div><div class="fx-eq">Δy/D = D<sub>l</sub>KP / (E·I<sub>eq</sub>/R³ + 0.061E′)</div>
+        <div class="fx-lbl">Through-wall bending</div><div class="fx-eq">σ<sub>bw</sub> = 4E(t/D)(Δy/D)</div>
+        <div class="fx-lbl">Ring buckling (critical)</div><div class="fx-eq">P<sub>c</sub> = √(32 R<sub>w</sub> B′ E′ E·I<sub>eq</sub> / D³)</div>
+        <div class="fx-lbl">Support coefficient</div><div class="fx-eq">B′ = 1/(1 + 4e<sup>−0.065(C/D)</sup>)</div>
+        <div class="fx-rule"></div>
+        <div class="fx-where">
+          C = cover to top · P = P<sub>v</sub> + F′·P<sub>p</sub> · I<sub>eq</sub> = t³/12 per inch · R = D/2<br/>
+          R<sub>w</sub> = 1 − 0.33(h<sub>w</sub>/C) · FS = 2.5 (C/D&gt;2) or 3.0 (C/D&lt;2)<br/>
+          Acceptance (App. A): σ<sub>bw</sub> &lt; 0.5σ<sub>y</sub> · ring compression &lt; 0.5σ<sub>y</sub> · ovality ≤ ~3% (API RP-1102)
+        </div>
+      </div>
+    </div>
+    <div class="ref-note">For steel with D/t &lt; 100 and σ<sub>y</sub> &gt; 30 ksi, ALA notes sidewall crushing and ring buckling are <strong>rarely governing</strong> — these checks mainly matter at road/rail crossings, very shallow cover, or large heavy surface loads.</div>
+  </div>
+
+  <div class="ref-section">
+    <div class="ref-title">Coating interface factor — ALA Table B.1</div>
+    <div class="ref-table-wrap"><table class="ref-table">
+      <tr><th>External coating</th><th>f<sub>c</sub> (δ = f<sub>c</sub>φ)</th></tr>
+      <tr><td>Concrete</td><td>1.0</td></tr>
+      <tr><td>Coal tar</td><td>0.9</td></tr>
+      <tr><td>Rough steel</td><td>0.8</td></tr>
+      <tr><td>Smooth steel</td><td>0.7</td></tr>
+      <tr><td>Fusion-bonded epoxy / Polyethylene</td><td>0.6</td></tr>
+    </table></div>
+    <div class="ref-note">References: ALA, <i>Guidelines for the Design of Buried Steel Pipe</i>, ASCE/FEMA, Jul 2001 (with addenda to Feb 2005). L.-C. Peng, <i>Stress Analysis Methods for Underground Pipe Lines</i>, Pipe Line Industry, Parts 1 &amp; 2, 1978. Codes: ASME B31.4, B31.8.</div>
+  </div>
+</div>
+</div><!-- /calctab-theory -->
+
+<footer class="ppa-footer">
+  <div class="ppa-footer-logo">Piping<span>Pro</span> Academy</div>
+  <p>PipingPro Academy is a trademark of <strong style="color:var(--accent2);">Zephrum Konsultan Limited</strong>, registered in England &amp; Wales. Co. No. 13537626.</p>
+  <p style="margin-top:.3rem">© 2026 Zephrum Konsultan Limited. All rights reserved. &nbsp;·&nbsp; <a href="/calculators/">Calculator Suite</a></p>
+</footer>
+
+<script>
+/* ── tab switching ── */
+function showCalcTab(name){
+  ['calculator','struct','theory'].forEach(function(t){
+    var btn = document.querySelector('.calc-tab[onclick*="' + t + '"]');
+    var panel = document.getElementById('calctab-' + t);
+    if(btn) btn.classList.toggle('active', t===name);
+    if(panel) panel.classList.toggle('active', t===name);
+  });
+}
+</script>
+
+<script>
+"use strict";
+/* ============================================================
+   Buried Pipe — Soil-Pipe Interaction & Flexibility engine
+   Canonical internal units: US customary.
+   Verified vs ALA (2001) and Peng (1978) worked examples.
+   ============================================================ */
+const $ = id => document.getElementById(id);
+let UNIT = "us", CODE = "b314";
+
+const C = {
+  L:{si:1/25.4},  H:{si:1/0.3048},  P:{si:145.0377},
+  G:{si:6.36588}, S:{si:20.885},    aL:{si:1/1.8},   F:{si:224.809}
+};
+function inUS(id, kind){
+  let v = parseFloat($(id).value);
+  if(!isFinite(v)) return NaN;
+  if(UNIT==="us" || !kind) return v;
+  return v * C[kind].si;
+}
+function tempF(id){
+  let v = parseFloat($(id).value);
+  if(!isFinite(v)) return NaN;
+  return UNIT==="us" ? v : v*9/5+32;
+}
+function fmt(x,dp){ if(!isFinite(x)) return "—"; return Number(x).toLocaleString("en-US",{minimumFractionDigits:dp,maximumFractionDigits:dp}); }
+function oLen(x){ return UNIT==="us"?{v:x,u:"in"}:{v:x*25.4,u:"mm"}; }
+function oArea(x){ return UNIT==="us"?{v:x,u:"in²"}:{v:x*645.16,u:"mm²"}; }
+function oI(x){ return UNIT==="us"?{v:x,u:"in⁴"}:{v:x*416231,u:"mm⁴"}; }
+function oZ(x){ return UNIT==="us"?{v:x,u:"in³"}:{v:x*16387,u:"mm³"}; }
+function oStr(x){ return UNIT==="us"?{v:x,u:"psi",dp:0}:{v:x/145.0377,u:"MPa",dp:1}; }
+function oPress(x){ return UNIT==="us"?{v:x,u:"psi",dp:2}:{v:x*6.89476,u:"kPa",dp:1}; }
+function oForce(x){ return UNIT==="us"?{v:x,u:"lbf",dp:0}:{v:x*0.0044482,u:"kN",dp:1}; }
+function oFpl(x){ return UNIT==="us"?{v:x,u:"lb/ft",dp:1}:{v:x*0.0145939,u:"kN/m",dp:2}; }
+function oDisp(x){ return UNIT==="us"?{v:x,u:"in",dp:3}:{v:x*25.4,u:"mm",dp:2}; }
+function oMom(x){ return UNIT==="us"?{v:x,u:"lb·in",dp:0}:{v:x*0.000112985,u:"kN·m",dp:2}; }
+
+const rad = d => d*Math.PI/180;
+function bearingFactors(phi){
+  const ph=Math.max(phi,1e-6);
+  const Nq=Math.exp(Math.PI*Math.tan(rad(ph)))*Math.pow(Math.tan(rad(45+ph/2)),2);
+  const Nc=(phi<0.01)?5.14:(Nq-1)/Math.tan(rad(ph));
+  const Ng=Math.exp(0.18*phi-2.5);
+  return {Nq,Nc,Ng};
+}
+function Nch_factor(x){const a=6.752,b=0.065,cc=-11.063,d=7.119;let v=a+b*x+cc/Math.pow(x+1,2)+d/Math.pow(x+1,3);return Math.min(Math.max(v,0),9);}
+const NQH={20:[2.399,0.439,-0.03,1.059e-3,-1.754e-5],25:[3.332,0.839,-0.090,5.606e-3,-1.319e-4],30:[4.565,1.234,-0.089,4.275e-3,-9.159e-5],35:[6.816,2.019,-0.146,7.651e-3,-1.683e-4],40:[10.959,1.783,0.045,-5.425e-3,-1.153e-4],45:[17.658,3.309,0.048,-6.443e-3,-1.299e-4]};
+function nqhAt(k,x){const c=NQH[k];return c[0]+c[1]*x+c[2]*x*x+c[3]*x*x*x+c[4]*x*x*x*x;}
+function Nqh_factor(phi,x){if(phi<=20)return Math.max(nqhAt(20,x),0);if(phi>=45)return Math.max(nqhAt(45,x),0);const lo=Math.floor((phi-20)/5)*5+20,hi=lo+5,f=(phi-lo)/5;return Math.max(nqhAt(lo,x)*(1-f)+nqhAt(hi,x)*f,0);}
+function upliftFactors(phi,HD,Nq){return{Ncv:Math.min(2*HD,10),Nqv:Math.min((phi/44)*HD,Nq)};}
+function adhesion(c){const a=0.608-0.123*c-0.274/(c*c+1)+0.695/(Math.pow(c,3)+1);return Math.min(Math.max(a,0),1);}
+
+function compute(){
+  const D=inUS("D","L"), t=inUS("t","L"), E=inUS("E","P");
+  const alpha=(UNIT==="us")?parseFloat($("alpha").value):parseFloat($("alpha").value)/1.8;
+  const nu=parseFloat($("nu").value), SMYS=inUS("smys","P"), p=inUS("p","P");
+  const dT=tempF("T2")-tempF("T1");
+  const Cov=inUS("C","H"), gamma=inUS("gamma","G");
+  const soil=$("soilType").value, phi=parseFloat($("phi").value), c_psf=inUS("c","S");
+  const K0=parseFloat($("K0").value), fc=parseFloat($("coating").value), Fd=parseFloat($("dfac").value);
+
+  const Di=D-2*t, A=Math.PI/4*(D*D-Di*Di), I=Math.PI/64*(Math.pow(D,4)-Math.pow(Di,4)), Z=I/(D/2), Dt=D/t;
+  const Dft=D/12, H_ft=Cov+Dft/2, H_in=H_ft*12, HD=H_ft/Dft;
+
+  let cEff=c_psf, phiEff=phi;
+  if(soil==="sand") cEff=0;
+  if(soil==="clay") phiEff=0;
+
+  // springs (lb/ft)
+  const alphaAdh=adhesion(cEff/1000), delta=fc*phiEff;
+  const Tu=Math.PI*Dft*alphaAdh*cEff+Math.PI*Dft*H_ft*gamma*((1+K0)/2)*Math.tan(rad(delta));
+  const dt_disp=(phiEff>0?0.2:0.4);
+  const Nch=(cEff>0)?Nch_factor(HD):0, Nqh=(phiEff>0)?Nqh_factor(phiEff,HD):0;
+  const Pu=Nch*cEff*Dft+Nqh*gamma*H_ft*Dft;
+  let dp=Math.min(0.04*(H_in+D/2),0.15*D);
+  const Klat_ft=Pu/dp, Klat_in=(Pu/12)/dp;
+  const bf=bearingFactors(phiEff), upf=upliftFactors(phiEff,HD,bf.Nq);
+  const Qu=upf.Ncv*cEff*Dft+upf.Nqv*gamma*H_ft*Dft;
+  let dqu=(phiEff>0)?Math.min(0.015*H_in,0.1*D):Math.min(0.15*H_in,0.2*D);
+  const Qd=bf.Nc*cEff*Dft+bf.Nq*gamma*H_ft*Dft+bf.Ng*gamma*Dft*Dft/2;
+  const dqd=(phiEff>0)?0.1*D:0.2*D;
+
+  // restrained stress
+  const Sh=p*D/(2*t), SL=nu*Sh-E*alpha*dT, Se=Math.abs(Sh-SL), Fax=SL*A;
+  const hoopAllow=Fd*SMYS, combAllow=0.9*SMYS;
+  const hoopOK=Sh<=hoopAllow, combOK=Se<=combAllow;
+
+  // anchor & movement
+  const Fexp=A*((0.5-nu)*Sh+E*alpha*dT), f_in=Tu/12;
+  const Lfree=(f_in>0)?Fexp/f_in:NaN, yfree=(f_in>0)?Fexp*Fexp/(2*A*E*f_in):NaN;
+  const beta=Math.pow(Klat_in/(4*E*I),0.25), Cc=Fexp+beta*A*E*f_in/Klat_in;
+  const Q=Cc-Math.sqrt(Math.max(Cc*Cc-Fexp*Fexp,0));
+  const Lact=(f_in>0)?(Fexp-Q)/f_in:NaN, ybend=Q*beta/Klat_in, Mbend=Q/(2*beta), Sbend=Mbend/Z;
+
+  /* ---- render headline ---- */
+  const seO=oStr(Se), L0=(UNIT==="us"?{v:Lfree/12,u:"ft",dp:1}:{v:Lfree*0.0254,u:"m",dp:2}), yb=oDisp(ybend);
+  $("headline").innerHTML =
+    `<div class="pd-block ${combOK?'flag-ok':'flag-over'}"><div class="pd-val">${fmt(seO.v,seO.dp)}</div><div class="pd-unit">${seO.u}</div><div class="pd-label">Equiv stress S<sub>e</sub></div></div>`+
+    `<div class="pd-block"><div class="pd-val">${fmt(L0.v,L0.dp)}</div><div class="pd-unit">${L0.u}</div><div class="pd-label">Virtual anchor L₀</div></div>`+
+    `<div class="pd-block"><div class="pd-val">${fmt(yb.v,yb.dp)}</div><div class="pd-unit">${yb.u}</div><div class="pd-label">Bend movement y</div></div>`;
+
+  /* ---- section ---- */
+  function meta(label,o,dp){const d=(o.dp!=null?o.dp:dp);return `<div class="meta-block"><div class="meta-val">${fmt(o.v,d)} <small>${o.u}</small></div><div class="meta-label">${label}</div></div>`;}
+  $("sectMeta").innerHTML =
+    meta("Metal area A",oArea(A),2)+meta("Inertia I",oI(I),1)+meta("Modulus Z",oZ(Z),1)+
+    meta("D/t",{v:Dt,u:""},1)+meta("Depth H",(UNIT==="us"?{v:H_ft,u:"ft"}:{v:H_ft*0.3048,u:"m"}),2)+meta("H/D",{v:HD,u:""},2);
+
+  /* ---- springs ---- */
+  function sRow(dir,sub,F,disp){const of=oFpl(F),od=oDisp(disp);return `<tr><td class="dir">${dir}<small>${sub}</small></td><td class="v">${fmt(of.v,of.dp)}</td><td class="u">${of.u}</td><td class="v">${fmt(od.v,od.dp)}</td><td class="u">${od.u}</td></tr>`;}
+  $("springTab").innerHTML =
+    `<thead><tr><th>Direction</th><th class="r">Yield force F<sub>u</sub></th><th></th><th class="r">Yield disp Δ</th><th></th></tr></thead><tbody>`+
+    sRow("Axial","T<sub>u</sub> · friction",Tu,dt_disp)+
+    sRow("Lateral","P<sub>u</sub> · horizontal",Pu,dp)+
+    sRow("Uplift","Q<sub>u</sub> · vertical up",Qu,dqu)+
+    sRow("Bearing","Q<sub>d</sub> · vertical down",Qd,dqd)+`</tbody>`;
+  $("springHd").textContent = `H/D=${HD.toFixed(2)} · δ=${delta.toFixed(1)}° · K_lat=${fmt(Klat_in,1)} lb/in²`;
+  $("springFx").innerHTML =
+    `<b>T<sub>u</sub></b>=πDαc+πDHγ·½(1+K₀)·tanδ &nbsp;|&nbsp; α=${alphaAdh.toFixed(2)}, δ=${delta.toFixed(1)}°<br>`+
+    `<b>P<sub>u</sub></b>=N<sub>ch</sub>cD+N<sub>qh</sub>γHD &nbsp;|&nbsp; N<sub>ch</sub>=${Nch.toFixed(2)}, N<sub>qh</sub>=${Nqh.toFixed(2)}<br>`+
+    `<b>Q<sub>u</sub></b>=N<sub>cv</sub>cD+N<sub>qv</sub>γHD &nbsp;|&nbsp; N<sub>cv</sub>=${upf.Ncv.toFixed(2)}, N<sub>qv</sub>=${upf.Nqv.toFixed(2)}<br>`+
+    `<b>Q<sub>d</sub></b>=N<sub>c</sub>cD+N<sub>q</sub>γHD+N<sub>γ</sub>γD²/2 &nbsp;|&nbsp; N<sub>c</sub>=${bf.Nc.toFixed(1)}, N<sub>q</sub>=${bf.Nq.toFixed(1)}, N<sub>γ</sub>=${bf.Ng.toFixed(1)}`;
+
+  // FE block
+  const uF=UNIT==="us"?"lb/in":"N/m", uX=UNIT==="us"?"in":"mm";
+  const toFin=v=>UNIT==="us"?v/12:v*14.5939, xOut=v=>UNIT==="us"?v:v*25.4;
+  $("feBlock").textContent =
+`! Buried pipe soil springs (per unit length)
+! D=${fmt(oLen(D).v,2)}${oLen(D).u}  H=${fmt(UNIT==="us"?H_ft:H_ft*0.3048,2)}${UNIT==="us"?"ft":"m"}  soil=${soil}
+AXIAL    Fu=${fmt(toFin(Tu),2)} ${uF}   yield=${fmt(xOut(dt_disp),3)} ${uX}
+LATERAL  Fu=${fmt(toFin(Pu),2)} ${uF}   yield=${fmt(xOut(dp),3)} ${uX}
+UPLIFT   Fu=${fmt(toFin(Qu),2)} ${uF}   yield=${fmt(xOut(dqu),3)} ${uX}
+BEARING  Fu=${fmt(toFin(Qd),2)} ${uF}   yield=${fmt(xOut(dqd),3)} ${uX}`;
+
+  /* ---- stress ---- */
+  function pill(ok){return ok?`<span class="pill pill-rec">PASS</span>`:`<span class="pill pill-pro">OVER</span>`;}
+  const shO=oStr(Sh),slO=oStr(SL),haO=oStr(hoopAllow),caO=oStr(combAllow),fO=oForce(Fax);
+  $("stressTab").innerHTML =
+    `<tr class="major"><td class="k">Hoop stress S<sub>h</sub> = pD/2t</td><td class="v">${fmt(shO.v,shO.dp)}</td><td class="u">${shO.u}</td></tr>`+
+    `<tr><td class="k">Hoop allowable F·SMYS</td><td class="v">${fmt(haO.v,haO.dp)}</td><td class="u">${pill(hoopOK)}</td></tr>`+
+    `<tr class="major"><td class="k">Restrained longitudinal S<sub>L</sub><small>νS<sub>h</sub> − EαΔT (${SL<0?"compressive":"tensile"})</small></td><td class="v">${fmt(slO.v,slO.dp)}</td><td class="u">${slO.u}</td></tr>`+
+    `<tr><td class="k">Axial restraint force |S<sub>L</sub>|·A</td><td class="v">${fmt(Math.abs(fO.v),fO.dp)}</td><td class="u">${fO.u}</td></tr>`+
+    `<tr class="major"><td class="k">Equivalent stress S<sub>e</sub> = |S<sub>h</sub>−S<sub>L</sub>|</td><td class="v">${fmt(oStr(Se).v,oStr(Se).dp)}</td><td class="u">${oStr(Se).u}</td></tr>`+
+    `<tr><td class="k">Combined allowable 0.9·SMYS</td><td class="v">${fmt(caO.v,caO.dp)}</td><td class="u">${pill(combOK)}</td></tr>`;
+
+  /* ---- movement ---- */
+  const FexpO=oForce(Fexp),QO=oForce(Q),MO=oMom(Mbend),SbO=oStr(Sbend);
+  const LfO=v=>UNIT==="us"?{v:v/12,u:"ft",dp:1}:{v:v*0.0254,u:"m",dp:2};
+  const lf=LfO(Lfree),la=LfO(Lact),yf=oDisp(yfree),ybd=oDisp(ybend);
+  $("moveTab").innerHTML =
+    `<tr class="major"><td class="k">Potential expansion force F<small>A[(0.5−ν)S<sub>h</sub> + EαΔT]</small></td><td class="v">${fmt(FexpO.v,FexpO.dp)}</td><td class="u">${FexpO.u}</td></tr>`+
+    `<tr><td class="k">Axial friction f = T<sub>u</sub></td><td class="v">${fmt(oFpl(Tu).v,1)}</td><td class="u">${oFpl(Tu).u}</td></tr>`+
+    `<tr class="major"><td class="k">Virtual anchor length L₀<small>free end, Q=0</small></td><td class="v">${fmt(lf.v,lf.dp)}</td><td class="u">${lf.u}</td></tr>`+
+    `<tr><td class="k">Free-end movement y₀</td><td class="v">${fmt(yf.v,yf.dp)}</td><td class="u">${yf.u}</td></tr>`+
+    `<tr class="major"><td class="k">Bend end resistance Q<small>beam on elastic foundation</small></td><td class="v">${fmt(QO.v,QO.dp)}</td><td class="u">${QO.u}</td></tr>`+
+    `<tr><td class="k">Active length at bend L</td><td class="v">${fmt(la.v,la.dp)}</td><td class="u">${la.u}</td></tr>`+
+    `<tr><td class="k">Lateral movement at bend y</td><td class="v">${fmt(ybd.v,ybd.dp)}</td><td class="u">${ybd.u}</td></tr>`+
+    `<tr><td class="k">Bend moment M = Q/2β</td><td class="v">${fmt(MO.v,MO.dp)}</td><td class="u">${MO.u}</td></tr>`+
+    `<tr class="major"><td class="k">Bend bending stress S<sub>b</sub> = M/Z</td><td class="v">${fmt(SbO.v,SbO.dp)}</td><td class="u">${SbO.u}</td></tr>`;
+  $("moveFx").innerHTML =
+    `β=(K/4EI)<sup>¼</sup>=${beta.toExponential(2)} in⁻¹ &nbsp;|&nbsp; K=P<sub>u</sub>/Δ<sub>p</sub>=${fmt(Klat_in,1)} lb/in²<br>`+
+    `Q=C−√(C²−F²), C=F+βAEf/K &nbsp;|&nbsp; <b>free-end y₀=F²/2AEf</b>`;
+
+  /* ---- flags ---- */
+  const fl=[];
+  if(Dt>100) fl.push(["warn","D/t &gt; 100 — thin-wall ovality / ring-buckling checks (ALA §4, not in this tool) may govern; verify ring stability separately."]);
+  if(HD>10 && soil!=="clay") fl.push(["warn",`H/D = ${HD.toFixed(1)} &gt; 10 — ALA uplift factor N<sub>qv</sub> fit is for shallow burial; treat the uplift spring with caution.`]);
+  if(phiEff>0 && phi<20) fl.push(["info","φ &lt; 20° — lateral N<sub>qh</sub> clamped to the 20° fit (ALA tabulated range 20–45°)."]);
+  if(phiEff>0 && phi>45) fl.push(["info","φ &gt; 45° — lateral N<sub>qh</sub> clamped to the 45° fit."]);
+  if(SL<0) fl.push(["info","Restrained line is in net longitudinal compression — confirm upheaval / lateral-buckling margin at low cover."]);
+  if(!combOK) fl.push(["stop","Equivalent stress exceeds 0.9·SMYS — relieve restraint (anchor, offset, soft backfill) or revisit wall thickness."]);
+  if(Math.abs(Sbend)>combAllow) fl.push(["warn","Bend bending stress is high — the guided-cantilever idealisation is conservative; confirm with FE before acting."]);
+  fl.push(["info","Spring values are ultimate (yield) per unit length, elastic-perfectly-plastic — ready for Winkler-foundation FE input."]);
+  const ic={ok:"✓",warn:"▲",stop:"■",info:"●"};
+  $("flags").innerHTML = fl.map(x=>`<div class="lz-flag lz-${x[0]}"><span class="lz-ic">${ic[x[0]]}</span><div>${x[1]}</div></div>`).join("");
+
+  /* ---- capture results for PDF report ---- */
+  window.PPA_BP={ unit:UNIT, code:CODE, soil:soil,
+    D:oLen(D), t:oLen(t), Dt:Dt, A:oArea(A), I:oI(I), Z:oZ(Z),
+    H:(UNIT==="us"?{v:H_ft,u:"ft",dp:2}:{v:H_ft*0.3048,u:"m",dp:2}), HD:HD,
+    Sh:oStr(Sh), hoopAllow:oStr(hoopAllow), hoopOK:hoopOK,
+    SL:oStr(SL), Se:oStr(Se), combAllow:oStr(combAllow), combOK:combOK,
+    Tu:oFpl(Tu), Pu:oFpl(Pu), Qu:oFpl(Qu), Qd:oFpl(Qd),
+    Fexp:oForce(Fexp),
+    Lfree:(UNIT==="us"?{v:Lfree/12,u:"ft",dp:1}:{v:Lfree*0.0254,u:"m",dp:2}),
+    Lact:(UNIT==="us"?{v:Lact/12,u:"ft",dp:1}:{v:Lact*0.0254,u:"m",dp:2}),
+    ybend:oDisp(ybend), Mbend:oMom(Mbend), Sbend:oStr(Sbend) };
+
+  computeStruct();
+}
+
+/* ============================================================
+   STRUCTURAL CHECK — ALA §3–4 (earth/live load, ovality,
+   through-wall bending, ring compression, ring buckling)
+   Reuses shared pipe/material/cover inputs; verified vs ALA §4.
+   ============================================================ */
+function computeStruct(){
+  if(!$("Ps")) return;
+  // shared (US canonical)
+  const D=inUS("D","L"), t=inUS("t","L"), E=inUS("E","P"), sy=inUS("smys","P");
+  const Cov=inUS("C","H"), gamma=inUS("gamma","G");
+  // local
+  const Ps=inUS("Ps","F"), doff=inUS("doff","H"), impact=parseFloat($("impact").value);
+  const Ep=inUS("Eprime","P"), Dl=parseFloat($("Dl").value), Kb=parseFloat($("Kb").value);
+  const hw=inUS("hw","H"), ovlim=parseFloat($("ovlim").value);
+
+  const R=D/2, Ieq=Math.pow(t,3)/12, Cin=Cov*12, doffin=doff*12;
+  const Rw=(Cov>0)?Math.max(1-0.33*(hw/Cov),0):1;
+
+  // loads (psi)
+  const Pv=(gamma*Rw*Cov + 62.4*hw)/144;
+  const Pp=(3*Ps)/(2*Math.PI*Cin*Cin)*Math.pow(1/(1+Math.pow(doffin/Cin,2)),2.5);
+  const PpF=impact*Pp;
+  const Ptot=Pv+PpF;
+
+  // ovality & stresses
+  const oval=(Dl*Kb*Ptot)/(E*Ieq/Math.pow(R,3)+0.061*Ep);   // fraction
+  const ovalPct=oval*100;
+  const sbw=4*E*(t/D)*oval;                                 // through-wall bending
+  const sc=Ptot*D/(2*t);                                    // ring compression
+  // ring buckling
+  const CD=Cin/D, Bp=1/(1+4*Math.exp(-0.065*CD)), FS=(CD>2)?2.5:3.0;
+  const Pc=Math.sqrt(32*Rw*Bp*Ep*E*Ieq/Math.pow(D,3));
+  const Pca=Pc/FS, buckUtil=Ptot/Pca;
+
+  const halfSy=0.5*sy;
+  const ovalOK=ovalPct<=ovlim, sbwOK=sbw<halfSy, scOK=sc<halfSy, buckOK=Ptot<=Pca;
+
+  function pill(ok){return ok?`<span class="pill pill-rec">PASS</span>`:`<span class="pill pill-pro">OVER</span>`;}
+
+  // headline
+  const sbwO=oStr(sbw);
+  $("sHeadline").innerHTML =
+    `<div class="pd-block ${ovalOK?'flag-ok':'flag-over'}"><div class="pd-val">${fmt(ovalPct,2)}</div><div class="pd-unit">% of D</div><div class="pd-label">Ovality Δy/D</div></div>`+
+    `<div class="pd-block ${sbwOK?'flag-ok':'flag-over'}"><div class="pd-val">${fmt(sbwO.v,sbwO.dp)}</div><div class="pd-unit">${sbwO.u}</div><div class="pd-label">Through-wall σ<sub>bw</sub></div></div>`+
+    `<div class="pd-block ${buckOK?'flag-ok':'flag-over'}"><div class="pd-val">${fmt(buckUtil*100,0)}</div><div class="pd-unit">% of allow</div><div class="pd-label">Ring-buckling util</div></div>`;
+
+  // loads
+  const pvO=oPress(Pv),ppO=oPress(Pp),ppfO=oPress(PpF),ptO=oPress(Ptot);
+  $("loadTab").innerHTML =
+    `<tr><td class="k">Prism earth load P<sub>v</sub><small>γC (R<sub>w</sub>=${Rw.toFixed(2)})</small></td><td class="v">${fmt(pvO.v,pvO.dp)}</td><td class="u">${pvO.u}</td></tr>`+
+    `<tr><td class="k">Live load P<sub>p</sub> (Boussinesq)</td><td class="v">${fmt(ppO.v,ppO.dp)}</td><td class="u">${ppO.u}</td></tr>`+
+    `<tr><td class="k">Live load × impact F′</td><td class="v">${fmt(ppfO.v,ppfO.dp)}</td><td class="u">${ppfO.u}</td></tr>`+
+    `<tr class="major"><td class="k">Total pressure on pipe, P</td><td class="v">${fmt(ptO.v,ptO.dp)}</td><td class="u">${ptO.u}</td></tr>`;
+  $("loadFx").innerHTML = `P<sub>p</sub> = 3P<sub>s</sub>/2πC² · [1/(1+(d/C)²)]<sup>2.5</sup> &nbsp;|&nbsp; P = P<sub>v</sub> + F′·P<sub>p</sub>`;
+
+  // ovality & stress
+  const scO=oStr(sc),hsO=oStr(halfSy);
+  $("ovalTab").innerHTML =
+    `<tr class="major"><td class="k">Ovality, Δy/D</td><td class="v">${fmt(ovalPct,3)}</td><td class="u">%</td></tr>`+
+    `<tr><td class="k">Ovality limit</td><td class="v">${fmt(ovlim,1)}</td><td class="u">${pill(ovalOK)}</td></tr>`+
+    `<tr class="major"><td class="k">Through-wall bending σ<sub>bw</sub><small>4E(t/D)(Δy/D)</small></td><td class="v">${fmt(sbwO.v,sbwO.dp)}</td><td class="u">${sbwO.u}</td></tr>`+
+    `<tr><td class="k">Allowable 0.5σ<sub>y</sub></td><td class="v">${fmt(hsO.v,hsO.dp)}</td><td class="u">${pill(sbwOK)}</td></tr>`+
+    `<tr class="major"><td class="k">Ring compression σ<sub>c</sub><small>PD/2t</small></td><td class="v">${fmt(scO.v,scO.dp)}</td><td class="u">${scO.u}</td></tr>`+
+    `<tr><td class="k">Allowable 0.5σ<sub>y</sub></td><td class="v">${fmt(hsO.v,hsO.dp)}</td><td class="u">${pill(scOK)}</td></tr>`;
+
+  // ring buckling
+  const pcO=oPress(Pc),pcaO=oPress(Pca);
+  $("buckTab").innerHTML =
+    `<tr><td class="k">Support coeff B′</td><td class="v">${fmt(Bp,3)}</td><td class="u">–</td></tr>`+
+    `<tr><td class="k">Factor of safety FS<small>C/D=${CD.toFixed(2)}</small></td><td class="v">${fmt(FS,1)}</td><td class="u">–</td></tr>`+
+    `<tr class="major"><td class="k">Critical buckling P<sub>c</sub></td><td class="v">${fmt(pcO.v,pcO.dp)}</td><td class="u">${pcO.u}</td></tr>`+
+    `<tr><td class="k">Allowable P<sub>c</sub>/FS</td><td class="v">${fmt(pcaO.v,pcaO.dp)}</td><td class="u">${pcaO.u}</td></tr>`+
+    `<tr class="major"><td class="k">Applied vs allowable</td><td class="v">${fmt(buckUtil*100,0)}%</td><td class="u">${pill(buckOK)}</td></tr>`;
+  $("buckFx").innerHTML = `P<sub>c</sub> = √(32 R<sub>w</sub> B′ E′ E·I<sub>eq</sub>/D³), B′ = 1/(1+4e<sup>−0.065(C/D)</sup>)`;
+
+  // flags
+  const fl=[];
+  const Dt=D/t;
+  if(Dt<100 && sy>30000) fl.push(["info","D/t &lt; 100 and σ<sub>y</sub> &gt; 30 ksi — ALA notes sidewall crushing &amp; ring buckling are rarely the governing failure mode for steel."]);
+  if(!ovalOK) fl.push(["stop",`Ovality ${ovalPct.toFixed(2)}% exceeds the ${ovlim}% limit — increase cover, improve compaction (raise E′), or use a stiffer wall.`]);
+  if(!sbwOK) fl.push(["stop","Through-wall bending exceeds 0.5σ<sub>y</sub> — reduce ovality or revisit wall thickness."]);
+  if(!buckOK) fl.push(["stop","Applied pressure exceeds the ring-buckling allowable — increase cover/compaction or wall thickness."]);
+  if(hw>0) fl.push(["info",`Water table modelled ${(UNIT==="us"?hw.toFixed(1)+" ft":(hw*0.3048).toFixed(2)+" m")} above pipe — R<sub>w</sub>=${Rw.toFixed(2)} reduces earth load and buckling resistance.`]);
+  fl.push(["info","Live load via Boussinesq concentrated load; for standard vehicles use AASHTO HS-20 / Cooper E-80 tabulated values. I<sub>eq</sub> taken as bare-pipe wall (add lining/coating stiffness if significant)."]);
+  const ic={ok:"✓",warn:"▲",stop:"■",info:"●"};
+  $("sFlags").innerHTML = fl.map(x=>`<div class="lz-flag lz-${x[0]}"><span class="lz-ic">${ic[x[0]]}</span><div>${x[1]}</div></div>`).join("");
+
+  window.PPA_BP_STRUCT={
+    Pv:oPress(Pv), Pp:oPress(Pp), PpF:oPress(PpF), Ptot:oPress(Ptot),
+    ovalPct:ovalPct, ovlim:ovlim, ovalOK:ovalOK,
+    sbw:oStr(sbw), sc:oStr(sc), halfSy:oStr(halfSy), sbwOK:sbwOK, scOK:scOK,
+    Pc:oPress(Pc), Pca:oPress(Pca), buckUtil:buckUtil, buckOK:buckOK };
+
+  if(typeof buildReport==="function") buildReport();
+}
+
+/* ===== PDF REPORT (shared engine) ===== */
+function buildReport(){
+  var bp=window.PPA_BP; if(!bp) return;
+  var st=window.PPA_BP_STRUCT;
+  var P=(o,dp)=>fmt(o.v,(dp!=null?dp:(o.dp!=null?o.dp:2)));
+  var codeLbl=bp.code==='b318'?'ASME B31.8 (gas)':'ASME B31.4 (liquid)';
+  var sections=[
+    {title:'Design Basis', type:'table', head:['Parameter','Value','Unit'], rows:[
+      ['Pipe outside diameter', P(bp.D,2), bp.D.u],
+      ['Wall thickness', P(bp.t,3), bp.t.u],
+      ['D / t', fmt(bp.Dt,1), 'off'],
+      ['Cover to top of pipe', P(bp.H), bp.H.u],
+      ['H / D', fmt(bp.HD,2), 'off'],
+      ['Soil type', bp.soil, 'off'],
+      ['Design code', codeLbl, 'off'] ]},
+    {title:'Section Properties', type:'table', head:['Property','Value','Unit'], rows:[
+      ['Metal area  A', P(bp.A,2), bp.A.u],
+      ['Moment of inertia  I', P(bp.I,1), bp.I.u],
+      ['Section modulus  Z', P(bp.Z,1), bp.Z.u] ]},
+    {title:'Soil Springs \u2014 ultimate, per unit length', badge:'ALA 2001 (ASCE)', type:'table', head:['Direction','Yield force','Unit'], rows:[
+      ['Axial  Tu', P(bp.Tu), bp.Tu.u],
+      ['Lateral  Pu', P(bp.Pu), bp.Pu.u],
+      ['Uplift  Qu', P(bp.Qu), bp.Qu.u],
+      ['Bearing  Qd', P(bp.Qd), bp.Qd.u] ]},
+    {title:'Restrained Stress', badge:codeLbl, type:'table', head:['Item','Value','Result'], rows:[
+      ['Hoop stress  Sh = pD/2t', P(bp.Sh)+' '+bp.Sh.u, ''],
+      ['Hoop allowable  F\u00b7SMYS', P(bp.hoopAllow)+' '+bp.hoopAllow.u, bp.hoopOK?'PASS':'OVER'],
+      ['Longitudinal  SL = \u03bdSh \u2212 E\u03b1\u0394T', P(bp.SL)+' '+bp.SL.u, ''],
+      ['Equivalent stress  Se = |Sh \u2212 SL|', P(bp.Se)+' '+bp.Se.u, ''],
+      ['Combined allowable  0.9\u00b7SMYS', P(bp.combAllow)+' '+bp.combAllow.u, bp.combOK?'PASS':'OVER'] ]},
+    {title:'Anchor & Thermal Movement', type:'table', head:['Item','Value','Unit'], rows:[
+      ['Potential expansion force  F', P(bp.Fexp), bp.Fexp.u],
+      ['Virtual anchor length  L\u2080', P(bp.Lfree), bp.Lfree.u],
+      ['Active length at bend  L', P(bp.Lact), bp.Lact.u],
+      ['Lateral movement at bend  y', P(bp.ybend), bp.ybend.u],
+      ['Bend moment  M = Q/2\u03b2', P(bp.Mbend), bp.Mbend.u],
+      ['Bend bending stress  Sb = M/Z', P(bp.Sbend), bp.Sbend.u] ]}
+  ];
+  if(st){
+    sections.push(
+      {title:'Earth & Live Load (ALA \u00a73\u20134)', badge:'ALA 2001', type:'table', head:['Load','Value','Unit'], rows:[
+        ['Prism earth load  Pv', P(st.Pv), st.Pv.u],
+        ['Live load (Boussinesq)  Pp', P(st.Pp), st.Pp.u],
+        ['Live load \u00d7 impact  F\u2032', P(st.PpF), st.PpF.u],
+        ['Total pressure on pipe  P', P(st.Ptot), st.Ptot.u] ]},
+      {title:'Ovality, Through-wall & Ring Checks', type:'table', head:['Item','Value','Result'], rows:[
+        ['Ovality  \u0394y/D', fmt(st.ovalPct,3)+' %', ''],
+        ['Ovality limit', fmt(st.ovlim,1)+' %', st.ovalOK?'PASS':'OVER'],
+        ['Through-wall bending  \u03c3bw', P(st.sbw)+' '+st.sbw.u, st.sbwOK?'PASS':'OVER'],
+        ['Ring compression  \u03c3c', P(st.sc)+' '+st.sc.u, st.scOK?'PASS':'OVER'],
+        ['Allowable  0.5\u00b7\u03c3y', P(st.halfSy)+' '+st.halfSy.u, ''],
+        ['Critical ring-buckling  Pc', P(st.Pc), st.Pc.u],
+        ['Allowable  Pc / FS', P(st.Pca)+' '+st.Pca.u, st.buckOK?'PASS':'OVER'] ]}
+    );
+  }
+  var allOK = bp.combOK && bp.hoopOK && (!st || (st.ovalOK && st.sbwOK && st.scOK && st.buckOK));
+  window.PPA_REPORT={
+    docType:'Buried Pipe \u2014 Soil-Pipe Interaction',
+    codeNote:codeLbl+' \u00b7 ALA 2001 soil springs',
+    sections:sections,
+    verdict:{ status: allOK?'pass':'fail',
+      text: allOK
+        ? 'All code checks within allowable. Soil springs are ultimate (elastic-perfectly-plastic) values for Winkler-foundation FE input \u2014 verify against the governing code edition and project geotechnical data.'
+        : 'One or more checks exceed allowable (see the OVER rows). Relieve restraint, revisit wall thickness or burial depth / compaction, and confirm with finite-element analysis before use.' }
+  };
+}
+function ppaOpenReportBP(){ buildReport(); if(typeof ppaOpenReport==='function') ppaOpenReport(); }
+
+/* ── unit / code switching ── */
+const UL={L:{us:"(in)",si:"(mm)"},H:{us:"(ft)",si:"(m)"},P:{us:"(psi)",si:"(MPa)"},G:{us:"(pcf)",si:"(kN/m³)"},S:{us:"(psf)",si:"(kPa)"},T:{us:"(°F)",si:"(°C)"},aL:{us:"(/°F)",si:"(/°C)"},F:{us:"(lbf)",si:"(kN)"}};
+const DEF={us:{D:20,t:0.375,E:29000000,alpha:"6.5e-6",nu:0.30,smys:52000,p:1200,T1:50,T2:180,C:4,gamma:120,phi:32,c:0,K0:1.0,Ps:10000,doff:0,Eprime:500,hw:0},
+           si:{D:508,t:9.53,E:200000,alpha:"11.7e-6",nu:0.30,smys:359,p:8.27,T1:10,T2:82,C:1.22,gamma:18.85,phi:32,c:0,K0:1.0,Ps:44.5,doff:0,Eprime:3.45,hw:0}};
+function applyLabels(){document.querySelectorAll("[data-u]").forEach(el=>{const k=el.getAttribute("data-u");if(UL[k])el.textContent=UL[k][UNIT];});}
+function setUnits(u){if(u===UNIT)return;UNIT=u;const d=DEF[u];for(const k in d){if($(k))$(k).value=d[k];}applyLabels();compute();}
+function setCode(cd){
+  CODE=cd;const liq=cd==="b314";
+  $("classRow").style.display=liq?"none":"grid";
+  if(liq)$("dfac").value=0.72; else $("dfac").value=$("locClass").value;
+  compute();
+}
+document.querySelectorAll("#unitSeg .tt-btn").forEach(b=>b.onclick=()=>{document.querySelectorAll("#unitSeg .tt-btn").forEach(x=>x.classList.remove("active"));b.classList.add("active");setUnits(b.dataset.u);});
+document.querySelectorAll("#codeSeg .tt-btn").forEach(b=>b.onclick=()=>{document.querySelectorAll("#codeSeg .tt-btn").forEach(x=>x.classList.remove("active"));b.classList.add("active");setCode(b.dataset.c);});
+$("locClass").addEventListener("change",()=>{if(CODE==="b318"){$("dfac").value=$("locClass").value;compute();}});
+$("soilType").addEventListener("change",()=>{const s=$("soilType").value;if(s==="clay"&&parseFloat($("c").value)===0)$("c").value=(UNIT==="us"?1500:72);if(s==="sand")$("c").value=0;compute();});
+document.querySelectorAll("input,select").forEach(el=>el.addEventListener("input",compute));
+$("copyFE").onclick=()=>{navigator.clipboard.writeText($("feBlock").textContent).then(()=>{const b=$("copyFE");const o=b.textContent;b.textContent="✓ Copied";setTimeout(()=>b.textContent=o,1300);});};
+
+applyLabels();
+compute();
+</script>
+
+<!-- ════════ PipingPro Shared Report Engine v1.0 ════════
+     Inject before </body>. Each calculator sets window.PPA_REPORT = {...} on
+     calculate(), then a button calls ppaOpenReport(). One template, all calcs. -->
+<div id="ppa-rpt-modal" style="display:none;position:fixed;inset:0;background:rgba(26,21,16,.55);z-index:10000;align-items:center;justify-content:center;padding:1rem">
+  <div style="background:#faf6ef;border-radius:8px;max-width:560px;width:100%;padding:1.6rem 1.8rem;box-shadow:0 10px 40px rgba(26,21,16,.3);font-family:'DM Sans',sans-serif">
+    <h3 style="font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:1.3rem;color:#1a1510;margin:0 0 .3rem">Report Details</h3>
+    <p style="font-size:.82rem;color:#4a3f30;margin:0 0 1.1rem">Project information for the report header. All fields optional.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.7rem .9rem">
+      <div><label class="ppa-rl">Your Company</label><input id="ppa-rpt-company" type="text" placeholder="e.g. Zephrum Konsultan" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Client</label><input id="ppa-rpt-client" type="text" placeholder="e.g. Saudi Aramco" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Project</label><input id="ppa-rpt-project" type="text" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Project No.</label><input id="ppa-rpt-projectno" type="text" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Line / Tag</label><input id="ppa-rpt-line" type="text" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Revision</label><input id="ppa-rpt-rev" type="text" placeholder="0" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Prepared by</label><input id="ppa-rpt-engineer" type="text" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Checked by</label><input id="ppa-rpt-checker" type="text" class="ppa-ri"></div>
+    </div>
+    <div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1.3rem">
+      <button onclick="ppaCloseReport()" style="background:transparent;color:#4a3f30;border:1px solid #c8b89a;padding:.6rem 1.2rem;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600">Cancel</button>
+      <button onclick="ppaGenerateReport()" style="background:#b8860b;color:#1a1510;border:none;padding:.6rem 1.5rem;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:700">Generate Report →</button>
+    </div>
+  </div>
+</div>
+<style>
+.ppa-rl{display:block;font-size:.72rem;font-weight:600;color:#4a3f30;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.25rem}
+.ppa-ri{width:100%;padding:.5rem;border:1px solid #c8b89a;border-radius:4px;background:#fff;font-size:.85rem;font-family:'DM Sans',sans-serif}
+</style>
+<script>
+function ppaOpenReport(){
+  if(!window.PPA_REPORT){ alert('Please run a calculation first.'); return; }
+  try{ const s=JSON.parse(localStorage.getItem('ppa_report_meta')||'{}');
+    [['ppa-rpt-company','company'],['ppa-rpt-client','client'],['ppa-rpt-project','project'],
+     ['ppa-rpt-projectno','projectNo'],['ppa-rpt-engineer','engineer'],['ppa-rpt-checker','checker']]
+     .forEach(([id,k])=>{const el=document.getElementById(id); if(el&&!el.value&&s[k]) el.value=s[k];});
+  }catch(e){}
+  document.getElementById('ppa-rpt-modal').style.display='flex';
+}
+function ppaCloseReport(){ document.getElementById('ppa-rpt-modal').style.display='none'; }
+function ppaGenerateReport(){
+  const R=window.PPA_REPORT; if(!R){ alert('Please run a calculation first.'); return; }
+  const g=id=>(document.getElementById(id)?.value||'').trim();
+  const m={company:g('ppa-rpt-company'),client:g('ppa-rpt-client'),project:g('ppa-rpt-project'),
+    projectNo:g('ppa-rpt-projectno'),line:g('ppa-rpt-line'),engineer:g('ppa-rpt-engineer'),
+    checker:g('ppa-rpt-checker'),rev:g('ppa-rpt-rev')||'0'};
+  try{ localStorage.setItem('ppa_report_meta',JSON.stringify({company:m.company,client:m.client,
+    project:m.project,projectNo:m.projectNo,engineer:m.engineer,checker:m.checker})); }catch(e){}
+  const now=new Date().toLocaleDateString('en-GB');
+
+  // Build sections from R.sections: [{title, type:'table'|'steps'|'text', ...}]
+  let bodyHtml='';
+  (R.sections||[]).forEach((s,i)=>{
+    bodyHtml+=`<h3>${i+1}. ${s.title}</h3>`;
+    if(s.badge) bodyHtml+=`<div class="code-badge">${s.badge}</div>`;
+    if(s.type==='table'){
+      const head=s.head||['Parameter','Value','Unit'];
+      bodyHtml+=`<table class="d"><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr>`+
+        s.rows.map(r=>`<tr>${r.map((c,ci)=>`<td class="${ci>0&&ci<r.length-1||head[ci]==='Value'?'num':''}">${c}</td>`).join('')}</tr>`).join('')+`</table>`;
+    } else if(s.type==='steps'){
+      bodyHtml+=`<div class="steps">${s.html}</div>`;
+    } else if(s.type==='text'){
+      bodyHtml+=`<div class="ptext">${s.html}</div>`;
+    }
+  });
+  let v=''; if(R.verdict){ const c=R.verdict.status; v=`<div class="verdict ${c}">${R.verdict.text}</div>`; }
+
+  const html=`<!DOCTYPE html><html><head><meta charset="utf-8"/>
+<title>${R.docType||'Calculation'} Report — ${m.project||'PipingPro'}</title>
+<style>
+@page{margin:18mm 16mm}*{box-sizing:border-box}
+body{font-family:'Helvetica Neue',Arial,sans-serif;font-size:10.5pt;color:#1a1510;margin:0;line-height:1.5}
+.sheet{max-width:780px;margin:0 auto}
+.head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #b8860b;padding-bottom:12px}
+.logo{font-family:Georgia,serif;font-size:19pt;color:#1a1510;font-weight:bold;line-height:1.15}
+.logo span.sub{display:block;font-family:Arial;font-size:8pt;color:#6b5d49;letter-spacing:.08em;font-weight:normal;margin-top:3px}
+.logo span.sub b{font-weight:bold;color:#b8860b}
+.doctype{text-align:right;font-size:8.5pt;color:#4a3f30}
+.doctype b{display:block;font-size:11pt;color:#1a1510;font-family:Georgia,serif}
+.meta{width:100%;border-collapse:collapse;font-size:8.5pt;margin:14px 0 6px}
+.meta td{border:1px solid #c8b89a;padding:4px 8px}
+.meta td.l{background:#f5e9c8;color:#4a3f30;font-weight:bold;width:18%;text-transform:uppercase;font-size:7.5pt;letter-spacing:.04em}
+h3{font-family:Georgia,serif;font-size:12pt;color:#1a1510;border-bottom:1.5px solid #b8860b;padding-bottom:4px;margin:22px 0 8px}
+.code-badge{display:inline-block;background:#1a1510;color:#d4a017;font-family:monospace;font-size:9pt;padding:3px 10px;border-radius:3px;margin-bottom:4px}
+table.d{width:100%;border-collapse:collapse;font-size:9.5pt}
+table.d th{background:#1a1510;color:#d4a017;padding:6px 9px;text-align:left;font-size:8.5pt;text-transform:uppercase;letter-spacing:.03em}
+table.d td{padding:5px 9px;border-bottom:1px solid #e8dfd0}
+table.d td.num{text-align:right;font-family:'IBM Plex Mono',monospace}
+table.d tr:nth-child(even) td{background:#faf6ef}
+.verdict{padding:12px 16px;border-radius:5px;font-weight:bold;font-size:11pt;margin:16px 0;border:1px solid}
+.verdict.pass{background:#e7f1ee;color:#1a6b5a;border-color:#1a6b5a}
+.verdict.fail{background:#f6e6df;color:#8b3a1a;border-color:#8b3a1a}
+.verdict.warn{background:#f5e9c8;color:#6b4e00;border-color:#b8860b}
+.steps{font-family:'IBM Plex Mono',monospace;font-size:8.5pt;background:#faf6ef;border:1px solid #e8dfd0;border-left:3px solid #b8860b;padding:10px 14px;line-height:1.85}
+.ptext{font-size:9.5pt;line-height:1.65;color:#1a1510;white-space:pre-wrap}
+.sig{display:flex;gap:30px;margin-top:26px}
+.sig div{flex:1;border-top:1px solid #1a1510;padding-top:5px;font-size:8pt;color:#4a3f30}
+.disc{font-size:7.5pt;color:#6b5d49;margin-top:22px;line-height:1.55;border-top:1px solid #e8dfd0;padding-top:10px}
+.foot{margin-top:14px;font-size:7.5pt;color:#6b5d49;text-align:center}
+@media print{.noprint{display:none}}
+.noprint{text-align:center;margin:16px 0}
+.noprint button{background:#b8860b;color:#1a1510;border:none;padding:10px 22px;font-size:11pt;font-weight:bold;border-radius:3px;cursor:pointer;font-family:Arial}
+</style></head><body>
+<div class="noprint"><button onclick="window.print()">⬇ Print / Save as PDF</button></div>
+<div class="sheet">
+  <div class="head">
+    <div class="logo">${m.company||'Engineering Calculation'}<span class="sub">Powered by Piping<b>Pro</b> Academy · Calculator Suite</span></div>
+    <div class="doctype"><b>${(R.docType||'CALCULATION').toUpperCase()}</b>Calculation Report<br/>Doc Rev. ${m.rev} &nbsp;·&nbsp; ${now}</div>
+  </div>
+  <table class="meta">
+    <tr><td class="l">Client</td><td>${m.client||'—'}</td><td class="l">Project</td><td>${m.project||'—'}</td></tr>
+    <tr><td class="l">Project No.</td><td>${m.projectNo||'—'}</td><td class="l">Line / Tag</td><td>${m.line||'—'}</td></tr>
+    <tr><td class="l">Prepared by</td><td>${m.engineer||'—'}</td><td class="l">Checked by</td><td>${m.checker||'—'}</td></tr>
+  </table>
+  ${bodyHtml}
+  ${v}
+  <div class="sig">
+    <div>Prepared: ${m.engineer||'________________'}<br/>Date: ${now}</div>
+    <div>Checked: ${m.checker||'________________'}<br/>Date: ________________</div>
+  </div>
+  <div class="disc"><b>Preliminary engineering output</b> — results must be independently verified by a competent engineer against the governing code edition${R.codeNote?(' ('+R.codeNote+')'):''} and project specifications before use in any design, procurement, or construction package. Issued subject to the PipingPro Academy Terms of Use. © 2026 Zephrum Konsultan Limited.</div>
+  <div class="foot">${m.company||'PipingPro Academy'} · Generated with PipingPro Academy Calculator Suite · ${now}</div>
+</div></body></html>`;
+  const w=window.open('','_blank'); w.document.write(html); w.document.close(); ppaCloseReport();
+}
+</script>
+<!-- ════════ end Shared Report Engine ════════ -->
+<script src="/js/ppa-disclaimer.js"></script>
+<script src="/js/ppa-report-gate.js"></script>
+</body>
+</html>

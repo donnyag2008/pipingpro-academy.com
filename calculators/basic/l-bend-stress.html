@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ 
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Memberstack -->
+<script data-memberstack-app="app_cmq9fsibv00720sujaqjm734o" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
+<script src="/js/ppa-tier.js"></script>
+<!-- PPA ACCESS GATE (canonical Block A) -->
+<script>
+(function(){
+  var THIS_CALC = window.THIS_CALC = 'lb';                       // ← change per page
+  var UPGRADE   = '/membership-plan.html';    // non-members land here
+
+  /* Admin is decided by the logged-in Memberstack member — not a browser flag.
+     Grant admin by ANY ONE of these (set whichever you use; leave the others):
+       • membership of an Admin plan  → put its id in ADMIN_PLAN_IDS
+       • a Memberstack permission     → ADMIN_PERMISSION (attached to a plan)
+       • a custom field  admin = true → set on the member in the dashboard      */
+  var ADMIN_PLAN_IDS   = ['pln_admin-vzd0rgr'];
+  var ADMIN_PERMISSION = 'admin';
+  var EMERGENCY_LOCAL_ADMIN = false;   // ← set true for LOCAL testing only; MUST be false in production
+
+  function memberIsAdmin(m){
+    if(!m) return false;
+    var cf = m.customFields || {};
+    if(cf.admin === 'true' || cf.admin === true || cf.role === 'admin') return true;
+    var perms = m.permissions || [];
+    if(perms.indexOf(ADMIN_PERMISSION) !== -1) return true;
+    var pc = m.planConnections || [];
+    for(var i=0;i<pc.length;i++){
+      if(pc[i] && ADMIN_PLAN_IDS.indexOf(pc[i].planId) !== -1){
+        var st = (pc[i].status || '').toString().toUpperCase();
+        if(st !== 'CANCELED' && st !== 'CANCELLED' && st !== 'EXPIRED' && st !== 'INACTIVE') return true;
+      }
+    }
+    return false;
+  }
+
+  function whenMS(cb, tries){                  // wait for Memberstack to attach (~4 s max)
+    tries = (tries==null) ? 40 : tries;
+    var ms = window.$memberstackDom;
+    if(ms) return cb(ms);
+    if(tries<=0) return cb(null);
+    setTimeout(function(){ whenMS(cb, tries-1); }, 100);
+  }
+  function getMember(){
+    return new Promise(function(resolve){
+      whenMS(function(ms){
+        if(!ms || typeof ms.getCurrentMember !== 'function') return resolve(null);
+        ms.getCurrentMember().then(function(res){ resolve(res ? res.data : null); })
+                             .catch(function(){ resolve(null); });
+      });
+    });
+  }
+
+  /* Emergency local override — keep commented; uncomment only if you lock yourself
+     out before the Memberstack admin marker is set:
+     // if(localStorage.getItem('ppa_admin') === '1') return; */
+
+  function gate(){
+    if(EMERGENCY_LOCAL_ADMIN){
+      try{ if(localStorage.getItem('ppa_admin') === '1') return; }catch(e){}
+    }
+    getMember().then(function(member){
+      if(memberIsAdmin(member)) return;        // admin → full access, no redirect
+      if(!window.PPATIER) return;
+      if(window.PPATIER.requiredTier(THIS_CALC) === 'free') return;
+      return window.PPATIER.resolveTier().then(function(){
+        if(!memberIsAdmin(member) && !window.PPATIER.hasAccess(THIS_CALC)) location.replace(UPGRADE);
+      });
+    }).catch(function(){ /* leave page as-is on error */ });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', gate);
+  else gate();
+})();
+</script>
+
+<title>L-Bend Two-Anchor Stress &amp; Anchor Loads — ASME B31.3 | PipingPro Academy</title>
+<meta name="description" content="Free thermal flexibility calculator for an L-shaped pipe run anchored at both ends. ASME B31.3 displacement stress range, stress ratio, longitudinal and vertical elbow movement, and anchor forces — full frame flexibility solution with step-by-step working."/>
+<meta name="robots" content="index, follow"/>
+<link rel="canonical" href="https://pipingpro-academy.com/l-bend-two-anchor-stress-calculator"/>
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="Free L-Bend Two-Anchor Stress Calculator — ASME B31.3 | PipingPro Academy"/>
+<meta property="og:description" content="Thermal flexibility of an L-shaped pipe run fixed at both ends: stress range, stress ratio, elbow movement and anchor loads, with full worked calculation."/>
+<meta property="og:url" content="https://pipingpro-academy.com/l-bend-two-anchor-stress-calculator"/>
+<meta property="og:image" content="https://pipingpro-academy.com/og-image.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<style>
+:root{
+  --bg:#F7F6F3;--surface:#FFFFFF;--border:#E2E0D8;--border-strong:#C8C5BA;
+  --text:#1A1917;--text-2:#5C5A54;--text-3:#9C9A94;
+  --accent:#8b3a1a;--accent-light:#e7f1ee;--accent-border:#A8D4B8;
+  --info:#1A4A7A;--info-light:#E8F0F8;--info-border:#A8C4E0;
+  --warn:#7A4A0A;--warn-light:#FDF3E3;--warn-border:#F0C878;
+  --danger:#7A1A1A;--danger-light:#f6e6df;--danger-border:#F0A0A0;
+  --success:#8b3a1a;--success-light:#e7f1ee;
+  --radius:6px;--radius-lg:10px;
+  --font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.6;min-height:100vh}
+.container{max-width:980px;margin:0 auto;padding:1.5rem 1rem}
+.disclaimer{background:var(--warn-light);border:1px solid var(--warn-border);border-radius:var(--radius);padding:0.75rem 1rem;margin-bottom:1.5rem;font-size:12px;color:var(--warn);line-height:1.6}
+.disclaimer strong{font-weight:600}
+.code-bar{display:flex;gap:0;margin-bottom:1.5rem;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--surface)}
+.code-btn{flex:1;padding:11px 16px;font-size:13px;font-weight:500;border:none;background:transparent;color:var(--text-2);cursor:pointer;font-family:var(--font);transition:all 0.15s;border-right:1px solid var(--border);line-height:1.3}
+.code-btn:last-child{border-right:none}
+.code-btn.on{background:var(--accent);color:#fff;font-weight:600}
+.code-btn:hover:not(.on){background:var(--accent-light);color:var(--accent)}
+.code-desc{font-size:10px;opacity:0.8;display:block;margin-top:1px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1rem;overflow:hidden;min-width:0}
+.card-title{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 16px}
+.grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 16px}
+.grid2>*,.grid3>*,.grid4>*{min-width:0}
+@media(max-width:700px){.grid2,.grid3,.grid4{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:11px;font-weight:500;color:var(--text-2)}
+.field input,.field select{font-size:13px;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius);background:#FAFAF8;color:var(--text);outline:none;transition:border-color 0.15s;font-family:var(--mono);width:100%;min-width:0;box-sizing:border-box}
+.field input:focus,.field select:focus{border-color:var(--accent);background:#fff}
+.field .hint{font-size:10px;color:var(--text-3)}
+.field .auto{background:#F0F4F0;color:var(--accent);font-weight:500;cursor:default}
+.hr{border:none;border-top:1px solid var(--border);margin:1rem 0}
+.formula-box{background:var(--info-light);border:1px solid var(--info-border);border-radius:var(--radius);padding:0.75rem 1rem;margin-bottom:1rem;font-family:var(--mono);font-size:13px;color:var(--info);line-height:1.8}
+.formula-box .eq{font-size:15px;font-weight:600;margin-bottom:4px}
+.formula-box .vars{font-size:11px;color:var(--text-2);font-family:var(--font);line-height:1.7}
+.result-hero{background:var(--accent);border-radius:var(--radius-lg);padding:1.5rem 2rem;margin-bottom:1rem;color:#fff;display:flex;gap:2rem;flex-wrap:wrap;align-items:center}
+.hero-main{flex:1;min-width:200px}
+.hero-label{font-size:11px;opacity:0.7;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px}
+.hero-val{font-size:36px;font-weight:600;font-family:var(--mono);letter-spacing:-0.02em;line-height:1}
+.hero-unit{font-size:13px;opacity:0.85;margin-top:6px}
+.hero-divider{width:1px;background:rgba(255,255,255,0.2);align-self:stretch}
+.hero-sub{display:flex;flex-direction:column;gap:0.75rem}
+.hero-item-label{font-size:10px;opacity:0.65;text-transform:uppercase;letter-spacing:0.06em}
+.hero-item-val{font-size:16px;font-weight:600;font-family:var(--mono)}
+.pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:20px}
+.pill.pass{background:#e7f1ee;color:#1a6b5a}
+.pill.fail{background:#1a1510;color:#f5e9c8}
+.sched-table{width:100%;border-collapse:collapse;font-size:12px}
+.sched-table th{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.06em;text-align:left;padding:5px 8px;border-bottom:2px solid var(--border);background:var(--bg)}
+.sched-table td{padding:6px 8px;border-bottom:1px solid var(--border);font-family:var(--mono)}
+.sched-table tr:last-child td{border-bottom:none}
+.sched-table .label-col{font-family:var(--font);color:var(--text-2);font-weight:600}
+.rs{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1rem}
+.rs-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:0.5rem}
+.rs-title{font-size:13px;font-weight:600;color:var(--text)}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:0.25rem}
+.metric{background:var(--bg);border-radius:var(--radius);padding:0.6rem 0.75rem}
+.m-label{font-size:10px;font-weight:500;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px}
+.m-val{font-size:15px;font-weight:600;color:var(--text);font-family:var(--mono)}
+.m-unit{font-size:10px;color:var(--text-3);margin-top:1px}
+.wt-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;padding:0.5rem 0.75rem;background:var(--info-light);border:1px solid var(--info-border);border-radius:var(--radius);margin-top:0.25rem;user-select:none}
+.wt-toggle:hover{background:#D0E4F5}
+.wt-label{font-size:12px;font-weight:600;color:var(--info);flex:1}
+.wt-icon{font-size:14px;color:var(--info);transition:transform 0.2s}
+.wt-toggle.open .wt-icon{transform:rotate(180deg)}
+.wb{display:none;margin-top:0.75rem;border:1px solid var(--info-border);border-radius:var(--radius);overflow:hidden}
+.wb.open{display:block}
+.step{display:grid;grid-template-columns:30px 1fr;border-bottom:1px solid var(--border)}
+.step:last-child{border-bottom:none}
+.step-n{background:var(--info-light);color:var(--info);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--info-border)}
+.step-c{padding:0.55rem 0.85rem;background:#fff}
+.step-name{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px}
+.step-formula{font-family:var(--mono);font-size:12px;color:var(--info);background:var(--info-light);padding:2px 7px;border-radius:3px;display:inline-block;margin-bottom:4px;word-break:break-word}
+.step-sub{font-family:var(--mono);font-size:11px;color:var(--text-2);margin-bottom:3px;line-height:1.6}
+.step-result{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent)}
+.footer{text-align:center;padding:2rem 1rem;font-size:11px;color:var(--text-3)}
+.info-box{font-size:12px;color:var(--info);background:var(--info-light);border:1px solid var(--info-border);border-radius:var(--radius);padding:0.6rem 0.75rem;margin-top:0.75rem;line-height:1.7}
+.ref-formula{background:var(--paper2,#ede9de);border-left:3px solid var(--accent,#8b3a1a);border-radius:0 8px 8px 0;padding:1rem 1.2rem;font-size:13px;color:var(--ink2,#4a4a44);line-height:2;margin-bottom:.8rem;font-family:monospace;}
+.ref-formula b{font-family:monospace;color:var(--ink,#1a1510);}
+.ref-note{background:var(--teal-light,#e7f1ee);border:1px solid rgba(26,107,90,.15);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--teal,#1a6b5a);line-height:1.7;margin-top:.5rem;}
+.ref-table-wrap{overflow-x:auto;margin-top:.5rem;}
+.ref-table{width:100%;border-collapse:collapse;font-size:12px;}
+.ref-table th{background:var(--paper3,#e3dfd2);padding:7px 10px;text-align:left;font-weight:600;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2,#4a4a44);border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));}
+.ref-table td{padding:6px 10px;border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));color:var(--ink,#1a1510);vertical-align:top;}
+.ref-table td:first-child{font-weight:600;font-family:monospace;font-size:11px;white-space:nowrap;}
+.ref-table tr:last-child td{border-bottom:none;}
+.calc-tabs{display:flex;background:var(--paper2,#ede9de);border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));overflow-x:auto;margin-bottom:0;}
+.calc-tab{padding:.85rem 1.5rem;font-size:13px;font-weight:500;color:var(--ink3,#8a8a80);border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;font-family:'DM Sans',sans-serif;transition:color .2s,border-color .2s;white-space:nowrap;}
+.calc-tab.active{color:var(--accent,#8b3a1a);border-bottom-color:var(--accent,#8b3a1a);}
+.calc-tab:hover:not(.active){color:var(--ink,#1a1510);}
+.calc-panel{display:none;}
+.calc-panel.active{display:block;}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style id="ppa-shared">
+:root{
+  --ink:#1a1510;--ink2:#4a4a44;--ink3:#8a8a80;
+  --paper:#f5f2eb;--paper2:#ede9de;--paper3:#e3dfd2;
+  --accent:#8b3a1a;--accent2:#d4a017;--accent-light:#f7ede3;
+  --teal:#1a6b5a;--teal-light:#e7f1ee;
+  --rule:rgba(26,26,24,0.12);
+  --gold:#b8860b;--gold-light:#f5e9c8;
+  --font:'DM Sans',sans-serif;--serif:'DM Serif Display',serif;--mono:'DM Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:15px;line-height:1.6;min-height:100vh;}
+.ppa-nav{background:rgba(245,242,235,0.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--rule);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:200;}
+.ppa-nav-logo{font-family:var(--serif);font-size:17px;color:var(--ink);text-decoration:none;}
+.ppa-nav-logo span{color:var(--accent);}
+.ppa-nav-back{font-size:13px;color:var(--ink2);text-decoration:none;display:flex;align-items:center;gap:5px;}
+.ppa-nav-back:hover{color:var(--accent);}
+.ppa-hero{background:var(--ink);color:var(--paper);padding:2.8rem 2rem 2.4rem;text-align:center;border-bottom:3px solid var(--accent);position:relative;overflow:hidden;}
+.ppa-hero h1{font-family:var(--serif);font-size:clamp(1.7rem,4vw,2.6rem);line-height:1.1;margin-bottom:.7rem;position:relative;}
+.ppa-hero p{font-size:14px;color:rgba(245,242,235,0.6);max-width:560px;margin:0 auto;position:relative;}
+.ppa-footer{background:var(--ink);color:rgba(245,242,235,0.5);text-align:center;padding:2rem;font-size:13px;margin-top:3rem;}
+.ppa-footer a{color:var(--accent2);text-decoration:none;}
+.ppa-footer-logo{font-family:var(--serif);font-size:1.1rem;color:var(--paper);margin-bottom:.4rem;}
+.ppa-footer-logo span{color:var(--accent);}
+</style>
+<style id="pp-brand-bridge">
+:root{
+  --bg:#faf6ef; --cream:#faf6ef;
+  --paper:#f3ede2; --surface:#f3ede2; --paper2:#f3ede2; --bg2:#f3ede2;
+  --paper3:#e8dfd0; --bg3:#e8dfd0;
+  --ink:#1a1510; --text:#1a1510;
+  --ink2:#4a3f30; --text-2:#4a3f30; --muted:#4a3f30;
+  --ink3:#6b5d49; --text-3:#6b5d49; --muted2:#6b5d49;
+  --accent:#8b3a1a; --accent2:#b8860b;
+  --accent-light:#f6e6df; --accent-border:#c8b89a;
+  --teal:#8b3a1a; --teal2:#8b3a1a; --teal-light:#f6e6df;
+  --blue:#8b3a1a; --purple:#8b3a1a;
+  --gold:#b8860b; --gold2:#b8860b; --gold-light:#f5e9c8; --orange:#b8860b; --yellow:#b8860b;
+  --rule:#c8b89a; --border:#c8b89a; --border2:#c8b89a; --border-strong:#b8a87f;
+  --serif:'DM Serif Display',Georgia,serif;
+  --font:'DM Sans',system-ui,sans-serif; --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --radius:4px; --radius-lg:6px;
+  --pass:#1a6b5a; --success:#1a6b5a; --green:#1a6b5a;
+  --pass-bg:#e7f1ee; --success-light:#e7f1ee; --pass-bd:#1a6b5a;
+  --fail:#8b3a1a; --danger:#8b3a1a; --red:#8b3a1a;
+  --fail-bg:#f6e6df; --danger-light:#f6e6df; --red-bg:#f6e6df;
+  --danger-border:#8b3a1a; --fail-bd:#8b3a1a;
+  --warn:#b8860b; --warn-light:#f5e9c8; --warn-bg:#f5e9c8;
+  --warn-border:#b8860b; --warn-bd:#b8860b;
+  --info:#1a6b5a; --info-light:#e7f1ee; --info-border:#1a6b5a;
+}
+body, p, div, span, td, th, li, label, input, select, textarea, button{ font-family:'DM Sans',system-ui,sans-serif; }
+h1,h2,h3,h4,h5,.card-title{ font-family:'DM Serif Display',Georgia,serif; }
+code,pre,.mono,[class*="mono"]{ font-family:'IBM Plex Mono',ui-monospace,monospace; }
+body{ background:#faf6ef; color:#1a1510; }
+.ppa-nav{ position:sticky; top:0; z-index:100; display:flex; align-items:center; justify-content:space-between; height:60px; padding:0 5%; margin:0; background:#1a1510; border-bottom:2px solid #b8860b; }
+.ppa-nav-logo{ font-family:'DM Serif Display',Georgia,serif; font-size:1.15rem; color:#d4a017 !important; letter-spacing:.02em; text-decoration:none; }
+.ppa-nav-logo span{ color:#b8860b; }
+.ppa-nav-back{ color:#ccc !important; font-family:'DM Sans',sans-serif; font-size:.82rem; font-weight:500; letter-spacing:.05em; text-transform:uppercase; text-decoration:none; }
+.ppa-nav-back:hover{ color:#d4a017 !important; }
+.ppa-hero{ max-width:1040px; margin:0 auto; padding:2.2rem 5% 1.5rem; background:transparent; border:none; text-align:left; }
+.ppa-hero-eyebrow{ font-family:'IBM Plex Mono',ui-monospace,monospace; font-size:.72rem; font-weight:500; text-transform:uppercase; letter-spacing:.12em; color:#b8860b; margin:0 0 .5rem; display:block; }
+.ppa-hero h1{ font-family:'DM Serif Display',Georgia,serif; font-weight:400; font-size:2rem; line-height:1.15; color:#1a1510; margin:0 0 .55rem; }
+.ppa-hero h1 em{ font-style:normal; color:#8b3a1a; }
+.ppa-hero p{ font-family:'DM Sans',sans-serif; font-size:.95rem; line-height:1.6; color:#4a3f30; max-width:66ch; margin:0; }
+</style>
+<style id="lb-extra">
+.svgwrap{border:1px solid var(--border);border-radius:var(--radius-lg);background:
+  repeating-linear-gradient(0deg,transparent 0,transparent 23px,rgba(26,21,16,.045) 24px),
+  repeating-linear-gradient(90deg,transparent 0,transparent 23px,rgba(26,21,16,.045) 24px),
+  #fbf8f2;padding:6px}
+.svgwrap svg{display:block;width:100%;height:auto}
+.legend{font-size:11.5px;color:var(--text-2);margin-top:8px;line-height:1.6}
+.legend b{font-weight:600}
+.anchor-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:560px){.anchor-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="ppa-nav">
+  <a href="/" class="ppa-nav-logo">Piping<span>Pro</span> Academy</a>
+  <a href="/calculators/" class="ppa-nav-back">← Back to Calculators</a>
+</nav>
+<div class="ppa-hero">
+  <div class="ppa-hero-eyebrow">Free · Engineering Calculator Suite · PipingPro Academy</div>
+  <h1>L-Bend Two-Anchor <em>Stress</em></h1>
+  <p>Thermal flexibility of an L-shaped pipe run fixed at both ends — displacement stress range, stress ratio, longitudinal &amp; vertical elbow movement, and the force &amp; moment at each anchor. Solved as a full planar-frame flexibility problem, not a guided-cantilever approximation.</p>
+</div>
+
+<div class="calc-tabs">
+  <button class="calc-tab active" onclick="showCalcTab('calculator')">⚙ Calculator</button>
+  <button class="calc-tab" onclick="showCalcTab('theory')">📚 Theory &amp; Reference</button>
+</div>
+
+<!-- ══════════ CALCULATOR ══════════ -->
+<div class="calc-panel active" id="calctab-calculator">
+<div class="container">
+
+  <div class="disclaimer"><strong>Screening tool.</strong> Material property and allowable-stress values are indicative and must be verified against the governing edition of ASME B31.3 (Table A-1 / Appendix C) before use in design. Bending-flexibility model with a rigid corner — not a substitute for a full CAESAR II flexibility analysis.</div>
+
+  <div class="card">
+    <div class="card-title">Geometry &amp; Conditions — both ends anchored, Leg 1 horizontal, Leg 2 vertical</div>
+    <div class="field" style="margin-bottom:1rem">
+      <label>Units</label>
+      <div class="code-bar" style="margin-bottom:0">
+        <button type="button" class="code-btn on" id="uSI" onclick="setUnits('SI')">Metric<span class="code-desc">mm · °C · MPa · N</span></button>
+        <button type="button" class="code-btn" id="uUS" onclick="setUnits('US')">US<span class="code-desc">in · °F · ksi · lbf</span></button>
+      </div>
+    </div>
+    <div class="grid4">
+      <div class="field"><label>Leg 1 — L₁ <span class="hint">horizontal (<span class="ul">mm</span>)</span></label><input id="L1" type="number" value="6000" step="any"></div>
+      <div class="field"><label>Leg 2 — L₂ <span class="hint">vertical (<span class="ul">mm</span>)</span></label><input id="L2" type="number" value="4000" step="any"></div>
+      <div class="field"><label>Size (NPS)</label><select id="nps"></select></div>
+      <div class="field"><label>Schedule</label><select id="sched"></select></div>
+    </div>
+    <hr class="hr">
+    <div class="field"><label>Material</label><select id="mat"></select></div>
+    <div class="grid4" style="margin-top:10px">
+      <div class="field"><label>Operating temp (<span class="ut">°C</span>)</label><input id="Top" type="number" value="200" step="any"></div>
+      <div class="field"><label>Install temp (<span class="ut">°C</span>)</label><input id="Tin" type="number" value="21" step="any"></div>
+      <div class="field"><label>Thermal cycles, N</label><input id="cyc" type="number" value="7000" step="1"></div>
+      <div class="field"><label>&nbsp;</label><div style="font-size:10px;color:var(--text-3);padding-top:9px">f = 6·N⁻⁰·² ≤ 1.0</div></div>
+    </div>
+    <hr class="hr">
+    <div class="grid2">
+      <div class="field"><label>Custom OD <span class="hint">optional override (<span class="ul">mm</span>)</span></label><input id="odc" type="number" placeholder="use NPS / Sched" step="any"></div>
+      <div class="field"><label>Custom wall <span class="hint">optional override (<span class="ul">mm</span>)</span></label><input id="tc" type="number" placeholder="use NPS / Sched" step="any"></div>
+    </div>
+  </div>
+
+  <!-- RESULT HERO -->
+  <div class="result-hero">
+    <div class="hero-main">
+      <div class="hero-label">Stress ratio · S<sub>E</sub> ÷ S<sub>A</sub></div>
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div class="hero-val" id="ratioVal">—</div>
+        <span class="pill" id="verdictPill">—</span>
+      </div>
+      <div class="hero-unit" id="verdictText">ASME B31.3 displacement (secondary) stress range check</div>
+    </div>
+    <div class="hero-divider"></div>
+    <div class="hero-sub">
+      <div class="hero-item"><div class="hero-item-label">Expansion stress, S<sub>E</sub></div><div class="hero-item-val" id="hSE">—</div></div>
+      <div class="hero-item"><div class="hero-item-label">Allowable range, S<sub>A</sub></div><div class="hero-item-val" id="hSA">—</div></div>
+      <div class="hero-item"><div class="hero-item-label">Max moment @ <span id="hLoc">—</span></div><div class="hero-item-val" id="hMmax">—</div></div>
+    </div>
+  </div>
+
+  <div class="disclaimer" id="cryoNote" style="display:none;background:var(--warn-light);border-color:var(--warn-border);color:var(--warn)"></div>
+
+  <!-- SCHEMATIC -->
+  <div class="rs">
+    <div class="rs-head"><div class="rs-title">Schematic — installed vs thermally displaced shape</div></div>
+    <div class="svgwrap"><svg id="svg" viewBox="0 0 560 360" xmlns="http://www.w3.org/2000/svg" aria-label="L-bend schematic"></svg></div>
+    <p class="legend">
+      <b style="color:#8b3a1a">Solid</b> = installed position ·
+      <b style="color:#1a6b5a">dotted</b> = thermally displaced shape (exaggerated), elbow shifts to C′ ·
+      <b style="color:#b8860b">gold arrows</b> = anchor resultant force, F<sub>r</sub>
+    </p>
+  </div>
+
+  <!-- ANCHOR REACTIONS + ELBOW MOVEMENT -->
+  <div class="rs">
+    <div class="rs-head"><div class="rs-title">Anchor reactions &amp; elbow movement</div></div>
+    <table class="sched-table" style="margin-bottom:1rem">
+      <thead><tr><th>Anchor</th><th>F<sub>x</sub></th><th>F<sub>y</sub></th><th>Resultant |F|</th><th>Moment M<sub>z</sub></th></tr></thead>
+      <tbody>
+        <tr><td class="label-col">A — L₁ end</td><td id="aFx">—</td><td id="aFy">—</td><td id="aFr">—</td><td id="aM">—</td></tr>
+        <tr><td class="label-col">B — L₂ end</td><td id="bFx">—</td><td id="bFy">—</td><td id="bFr">—</td><td id="bM">—</td></tr>
+      </tbody>
+    </table>
+    <div class="metrics">
+      <div class="metric"><div class="m-label">Longitudinal δ<sub>L</sub> (along Leg 1)</div><div class="m-val" id="mCL">—</div></div>
+      <div class="metric"><div class="m-label">Vertical δ<sub>V</sub> (along Leg 2)</div><div class="m-val" id="mCV">—</div></div>
+      <div class="metric"><div class="m-label">Resultant |δ|</div><div class="m-val" id="mCR">—</div></div>
+      <div class="metric"><div class="m-label">Direction</div><div class="m-val" id="mCdir">—</div></div>
+    </div>
+  </div>
+
+  <!-- SECTION & STRESS DETAIL -->
+  <div class="rs">
+    <div class="rs-head"><div class="rs-title">Section properties &amp; stress detail</div></div>
+    <div class="metrics">
+      <div class="metric"><div class="m-label">OD × wall</div><div class="m-val" id="mGeom">—</div></div>
+      <div class="metric"><div class="m-label">Section modulus, Z</div><div class="m-val" id="mZ">—</div></div>
+      <div class="metric"><div class="m-label">Moment of inertia, I</div><div class="m-val" id="mI">—</div></div>
+      <div class="metric"><div class="m-label">Free growth ΔL₁ / ΔL₂</div><div class="m-val" id="mDelta">—</div></div>
+      <div class="metric"><div class="m-label">Cold allowable, S<sub>c</sub></div><div class="m-val" id="mSc">—</div></div>
+      <div class="metric"><div class="m-label">Hot allowable, S<sub>h</sub></div><div class="m-val" id="mSh">—</div></div>
+      <div class="metric"><div class="m-label">Ratio vs S<sub>h</sub></div><div class="m-val" id="mShR">—</div></div>
+      <div class="metric"><div class="m-label">Reduction factor, f</div><div class="m-val" id="mf">—</div></div>
+    </div>
+
+    <div class="wt-toggle" id="wtToggle" onclick="toggleWork()">
+      <span class="wt-label">▸ Show step-by-step calculation</span>
+      <span class="wt-icon">▾</span>
+    </div>
+    <div class="wb" id="wb"><div id="stepsBody"></div></div>
+  </div>
+
+  <!-- DOWNLOAD -->
+  <div class="card" style="background:var(--accent);border-color:var(--accent)">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.6rem">
+      <div>
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.75);font-weight:600">Calculation outcome</div>
+        <div id="dlSummary" style="font-size:22px;font-weight:700;color:#fff;font-family:var(--mono);margin-top:2px">—</div>
+      </div>
+      <button onclick="ppaOpenReport()" style="background:#fff;color:var(--accent);border:none;padding:.8rem 1.6rem;font-size:.9rem;font-weight:700;border-radius:4px;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.02em">⬇ Download PDF Report</button>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════ THEORY ══════════ -->
+<div class="calc-panel" id="calctab-theory">
+<div class="container">
+
+  <div class="card">
+    <div class="card-title">Method</div>
+    <p style="margin-bottom:.8rem">The L-bend is a statically indeterminate planar frame. One anchor (B) is released, the 3×3 bending-flexibility matrix [f] of the released cantilever is formed in closed form, and the released anchor is held to zero net displacement against the free thermal growth (the force / compatibility method). The anchor reactions then follow from equilibrium, and the internal bending moments give the displacement stress range.</p>
+    <div class="formula-box">
+      <div class="eq">[f] · {F<sub>x</sub>, F<sub>y</sub>, M}ᵀ = {−ΔL₁, −ΔL₂, 0}ᵀ</div>
+      <div class="vars">Free growth per leg: ΔL = α·ΔT·L. Solve for the restraint forces F<sub>x</sub>, F<sub>y</sub> and corner couple M, then evaluate the internal moments at A, the corner, and B.</div>
+    </div>
+    <div class="ref-formula">
+      S<sub>E</sub> = |M|<sub>max</sub> / Z<br>
+      S<sub>A</sub> = <b>f</b> ( 1.25 S<sub>c</sub> + 0.25 S<sub>h</sub> ) &nbsp;— B31.3 §302.3.5<br>
+      f = min(1.0, 6·N⁻⁰·²) &nbsp;— stress-range reduction factor
+    </div>
+    <div class="ref-formula">
+      Elbow movement (corner node):<br>
+      δ<sub>L</sub> (longitudinal, along Leg 1) = α·ΔT·L₁<br>
+      δ<sub>V</sub> (vertical, along Leg 2) = ( M<sub>corner</sub>·L₁²/2 + F<sub>y</sub>·L₁³/3 ) / EI
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Assumptions &amp; limits</div>
+    <p style="margin-bottom:.7rem"><strong>Bending flexibility only.</strong> Axial and shear flexibility are neglected (standard hand-calc simplification). The corner is a rigid welded joint — no elbow flexibility factor (k) or stress-intensification factor (i) is applied. Ignoring the SIF is non-conservative on local stress, partly offset by the conservatism of the rigid corner; apply the SIF separately for detailed work.</p>
+    <p style="margin-bottom:.7rem"><strong>Modulus.</strong> The cold reference modulus E<sub>a</sub> is used for the stress range per B31.3 §319.4.4.</p>
+    <p style="margin-bottom:.7rem"><strong>Elbow movement.</strong> Longitudinal δ<sub>L</sub> is the free axial growth of the horizontal run; vertical δ<sub>V</sub> is the transverse bending deflection of Leg 1 under the restraint forces. Axial shortening under load is neglected, so for near-straight runs (very short second leg) the movement is an approximation. Assumes a vertical-plane bend; for a horizontal-plane bend read δ<sub>L</sub>/δ<sub>V</sub> as the two in-plane axes.</p>
+    <div class="ref-note">Material allowable-stress and expansion values are indicative and curated for screening. Always confirm against the governing ASME B31.3 edition before design use.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Materials covered</div>
+    <div class="ref-table-wrap">
+      <table class="ref-table">
+        <thead><tr><th>Material</th><th>Type</th><th>E (cold)</th></tr></thead>
+        <tbody>
+          <tr><td>A106 Gr B / A53 Gr B</td><td>Carbon steel</td><td>203 400 MPa</td></tr>
+          <tr><td>A333 Gr 6</td><td>Low-temp carbon steel</td><td>203 400 MPa</td></tr>
+          <tr><td>A335 P11</td><td>1¼Cr-½Mo low alloy</td><td>206 000 MPa</td></tr>
+          <tr><td>A312 TP316/316L</td><td>Austenitic stainless</td><td>195 100 MPa</td></tr>
+          <tr><td>A312 TP304/304L</td><td>Austenitic stainless</td><td>195 100 MPa</td></tr>
+          <tr><td>A790 S31803</td><td>Duplex 2205</td><td>200 000 MPa</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<div class="ppa-footer">
+  <div class="ppa-footer-logo">Piping<span>Pro</span> Academy</div>
+  Engineering Calculator Suite · For educational &amp; preliminary screening use
+   <script src="/js/counter.js"></script>
+</div>
+  <script>
+/* ===================== DATA ===================== */
+const PIPE = {
+  '1"'  :{od:33.4 ,s:{40:3.38 ,80:4.55 ,160:6.35 }},
+  '1½"' :{od:48.3 ,s:{40:3.68 ,80:5.08 ,160:7.14 }},
+  '2"'  :{od:60.3 ,s:{40:3.91 ,80:5.54 ,160:8.74 }},
+  '3"'  :{od:88.9 ,s:{40:5.49 ,80:7.62 ,160:11.13}},
+  '4"'  :{od:114.3,s:{40:6.02 ,80:8.56 ,160:13.49}},
+  '6"'  :{od:168.3,s:{40:7.11 ,80:10.97,160:18.26}},
+  '8"'  :{od:219.1,s:{40:8.18 ,80:12.70,160:23.01}},
+  '10"' :{od:273.1,s:{40:9.27 ,80:15.09,160:28.58}},
+  '12"' :{od:323.9,s:{40:10.31,80:17.48,160:33.32}},
+  '14"' :{od:355.6,s:{40:11.13,80:19.05,160:35.71}},
+  '16"' :{od:406.4,s:{40:12.70,80:21.44,160:40.49}},
+  '18"' :{od:457.2,s:{40:14.27,80:23.83,160:45.24}},
+  '20"' :{od:508.0,s:{40:15.09,80:26.19,160:50.01}},
+  '24"' :{od:609.6,s:{40:17.48,80:30.96,160:59.54}}
+};
+const SCHEDS=[40,80,160];
+const MAT={
+  'A106 Gr B / A53 Gr B — Carbon Steel':{E:203400,a:[[20,11.5],[100,11.9],[200,12.6],[300,13.1],[400,13.7]],S:[[40,137.9],[100,137.9],[150,137.9],[200,137.9],[250,135],[300,130],[350,121],[400,111],[450,97]]},
+  'A333 Gr 6 — Low-Temp Carbon Steel':{E:203400,a:[[-45,11.0],[20,11.5],[100,11.9],[200,12.6],[300,13.1]],S:[[-45,137.9],[40,137.9],[100,137.9],[200,137.9],[250,135],[300,130]]},
+  'A335 P11 — 1¼Cr-½Mo':{E:206000,a:[[20,11.2],[100,11.6],[200,12.2],[300,12.8],[400,13.3],[500,13.8]],S:[[40,137.9],[200,137.9],[300,134],[400,130],[450,128],[500,120]]},
+  'A312 TP316/316L — Austenitic SS':{E:195100,a:[[20,15.9],[100,16.2],[200,16.9],[300,17.4],[400,17.8]],S:[[40,137.9],[100,131],[150,122],[200,115],[250,108],[300,103],[350,99],[400,96],[450,94]]},
+  'A312 TP304/304L — Austenitic SS':{E:195100,a:[[20,16.5],[100,16.9],[200,17.5],[300,18.0],[400,18.4]],S:[[40,137.9],[100,124],[150,115],[200,108],[250,103],[300,99],[350,96],[400,94]]},
+  'A790 S31803 — Duplex 2205':{E:200000,a:[[20,13.0],[100,13.5],[200,14.0],[300,14.5]],S:[[40,172],[100,160],[150,150],[200,143],[250,138],[300,134]]}
+};
+
+/* ===================== UNITS / HELPERS ===================== */
+let U='SI';
+const C={len:25.4,force:4.44822,Nm_to_ftlb:0.737562,MPa_to_ksi:0.145038};
+const fToC=f=>(f-32)/1.8, cToF=c=>c*1.8+32;
+const el=id=>document.getElementById(id);
+function interp(tbl,x){
+  if(x<=tbl[0][0])return tbl[0][1];
+  if(x>=tbl[tbl.length-1][0])return tbl[tbl.length-1][1];
+  for(let i=0;i<tbl.length-1;i++){const [x0,y0]=tbl[i],[x1,y1]=tbl[i+1];if(x>=x0&&x<=x1)return y0+(y1-y0)*(x-x0)/(x1-x0);}
+  return tbl[tbl.length-1][1];
+}
+function solve3(A,b){
+  const M=[[...A[0],b[0]],[...A[1],b[1]],[...A[2],b[2]]];
+  for(let c=0;c<3;c++){let p=c;for(let r=c+1;r<3;r++)if(Math.abs(M[r][c])>Math.abs(M[p][c]))p=r;[M[c],M[p]]=[M[p],M[c]];const pv=M[c][c];for(let k=c;k<4;k++)M[c][k]/=pv;for(let r=0;r<3;r++){if(r===c)continue;const f=M[r][c];for(let k=c;k<4;k++)M[r][k]-=f*M[c][k];}}
+  return [M[0][3],M[1][3],M[2][3]];
+}
+function fLen(mm){return U==='US'?(mm/C.len).toFixed(1)+' in':Math.round(mm)+' mm';}
+function fStress(MPa){return U==='US'?(MPa*C.MPa_to_ksi).toFixed(2)+' ksi':MPa.toFixed(1)+' MPa';}
+function fForce(N){if(U==='US'){const lb=N/C.force;return Math.abs(lb)>=1000?(lb/1000).toFixed(2)+' kip':lb.toFixed(0)+' lbf';}return Math.abs(N)>=1000?(N/1000).toFixed(2)+' kN':N.toFixed(0)+' N';}
+function fMom(Nmm){const Nm=Nmm/1000;if(U==='US'){const fl=Nm*C.Nm_to_ftlb;return Math.abs(fl)>=1000?(fl/1000).toFixed(2)+' k·ft':fl.toFixed(0)+' ft·lbf';}return Math.abs(Nm)>=1000?(Nm/1000).toFixed(2)+' kN·m':Nm.toFixed(0)+' N·m';}
+function fDisp(mm){return U==='US'?(mm/C.len).toFixed(3)+' in':mm.toFixed(2)+' mm';}
+
+/* ===================== POPULATE ===================== */
+function fill(sel,items,keep){const prev=keep&&items.includes(sel.value)?sel.value:items[0];sel.innerHTML=items.map(i=>`<option value="${i}">${i}</option>`).join('');sel.value=prev;}
+Object.keys(PIPE).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent='NPS '+k;el('nps').appendChild(o);});
+el('nps').value='6"';
+SCHEDS.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent='Sch '+s;el('sched').appendChild(o);});
+el('sched').value='40';
+Object.keys(MAT).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=k;el('mat').appendChild(o);});
+
+/* ===================== COMPUTE ===================== */
+let last=null;
+function compute(){
+  let L1=parseFloat(el('L1').value), L2=parseFloat(el('L2').value);
+  let Top=parseFloat(el('Top').value), Tin=parseFloat(el('Tin').value);
+  const cyc=Math.max(1,parseFloat(el('cyc').value)||7000);
+  let odc=parseFloat(el('odc').value), tc=parseFloat(el('tc').value);
+  if(U==='US'){L1*=C.len;L2*=C.len;Top=fToC(Top);Tin=fToC(Tin);if(!isNaN(odc))odc*=C.len;if(!isNaN(tc))tc*=C.len;}
+  let od,t,custom=false;
+  if(!isNaN(odc)&&!isNaN(tc)&&odc>0&&tc>0&&tc<odc/2){od=odc;t=tc;custom=true;}
+  else{const p=PIPE[el('nps').value];od=p.od;t=p.s[el('sched').value];}
+  const idd=od-2*t;
+  const I=Math.PI/64*(Math.pow(od,4)-Math.pow(idd,4));
+  const Z=I/(od/2);
+  const m=MAT[el('mat').value];
+  const E=m.E, alpha=interp(m.a,Top)*1e-6, Sc=interp(m.S,Tin), Sh=interp(m.S,Top);
+  const f=Math.min(1.0,6.0*Math.pow(cyc,-0.2));
+  const SA=f*(1.25*Sc+0.25*Sh);
+  if(!(L1>0&&L2>0)){last=null;render(null);return;}
+  const dT=Top-Tin, eps=alpha*dT, dx=eps*L1, dy=eps*L2, EI=E*I;
+  const A=[
+    [(L1*L2*L2+L2*L2*L2/3)/EI,(-L1*L1*L2/2)/EI,(-L1*L2-L2*L2/2)/EI],
+    [(-L1*L1*L2/2)/EI,(L1*L1*L1/3)/EI,(L1*L1/2)/EI],
+    [(-L1*L2-L2*L2/2)/EI,(L1*L1/2)/EI,(L1+L2)/EI]
+  ];
+  const [Fx,Fy,Mz]=solve3(A,[-dx,-dy,0]);
+  const M_A=Mz+L1*Fy-L2*Fx, M_corner=Mz-L2*Fx, M_B=Mz;
+  const cands=[['Anchor A',Math.abs(M_A)],['Corner',Math.abs(M_corner)],['Anchor B',Math.abs(M_B)]].sort((p,q)=>q[1]-p[1]);
+  const Mmax=cands[0][1], loc=cands[0][0];
+  const SE=Mmax/Z, ratio=SE/SA, ratioSh=SE/Sh, Fres=Math.hypot(Fx,Fy);
+  const dCx=eps*L1, dCy=(M_corner*L1*L1/2+Fy*L1*L1*L1/3)/EI, dCres=Math.hypot(dCx,dCy), dCang=Math.atan2(dCy,dCx)*180/Math.PI;
+  last={od,t,idd,custom,I,Z,E,alpha,eps,EI,dT,cyc,Sc,Sh,SA,f,SE,ratio,ratioSh,Mmax,Mcorner:M_corner,loc,Fx,Fy,Mz,M_A,M_B,Fres,dx,dy,L1,L2,Top,Tin,dCx,dCy,dCres,dCang,
+    anchorA:{Fx:-Fx,Fy:-Fy,Fr:Fres,M:M_A},anchorB:{Fx:Fx,Fy:Fy,Fr:Fres,M:M_B}};
+  render(last);
+}
+
+/* ===================== STEP-BY-STEP ===================== */
+function buildSteps(r){
+  const n0=v=>Math.round(v).toLocaleString('en-US'), n1=v=>v.toFixed(1), n2=v=>v.toFixed(2);
+  const sci=v=>{let p=v.toExponential(3).split('e');return p[0]+'×10<sup>'+p[1].replace('+','')+'</sup>';};
+  const mom=v=>n0(v)+' N·mm ('+(v/1e6).toFixed(2)+' kN·m)';
+  const verdict=r.ratio<=1?'<span style="color:#1a6b5a">PASS</span>':'<span style="color:#8b3a1a">EXCEEDS</span>';
+  const S=(n,name,formula,sub,result)=>`<div class="step"><div class="step-n">${n}</div><div class="step-c"><div class="step-name">${name}</div>${formula?`<div class="step-formula">${formula}</div>`:''}${sub?`<div class="step-sub">${sub}</div>`:''}<div class="step-result">${result}</div></div></div>`;
+  return [
+    S(1,'Pipe section properties','I = (π/64)(OD⁴ − ID⁴) · Z = I ÷ (OD/2)','ID = OD − 2t = '+n2(r.od)+' − 2('+n2(r.t)+') = '+n2(r.idd)+' mm','I = '+n0(r.I)+' mm⁴ · Z = '+n0(r.Z)+' mm³'),
+    S(2,'Material properties','','E = '+n0(r.E)+' MPa · α = '+(r.alpha*1e6).toFixed(2)+'×10⁻⁶/°C','Sᴄ = '+n1(r.Sc)+' MPa · Sʜ = '+n1(r.Sh)+' MPa'),
+    S(3,'Free thermal expansion','ΔL = α·ΔT·L','ΔT = '+n0(r.Top)+' − '+n0(r.Tin)+' = '+n0(r.dT)+' °C · ε = '+(r.eps*1000).toFixed(3)+'×10⁻³','ΔL₁ = '+n2(r.dx)+' mm · ΔL₂ = '+n2(r.dy)+' mm'),
+    S(4,'Anchor forces — compatibility','[f]·{Fx,Fy,M} = {−ΔL₁,−ΔL₂,0}','EI = '+sci(r.EI)+' N·mm² · 3×3 solve','Fx = '+n0(r.Fx)+' N · Fy = '+n0(r.Fy)+' N · M = '+n0(r.Mz)+' N·mm'),
+    S(5,'Internal bending moments','Mₐ = M + L₁Fy − L₂Fx','Mₐ = '+mom(r.M_A)+' · M_corner = '+mom(r.Mcorner)+' · M_B = '+mom(r.M_B),'|M|max = '+mom(r.Mmax)+' @ '+r.loc),
+    S(6,'Displacement stress range','S_E = |M|max ÷ Z',n0(r.Mmax)+' ÷ '+n0(r.Z),'S_E = '+n1(r.SE)+' MPa'),
+    S(7,'Allowable stress range (B31.3 §302.3.5)','S_A = f(1.25Sᴄ + 0.25Sʜ)','f = min(1, 6·N⁻⁰·²) = '+r.f.toFixed(3)+' (N = '+n0(r.cyc)+')','S_A = '+n1(r.SA)+' MPa'),
+    S(8,'Stress ratio','S_E ÷ S_A',n1(r.SE)+' ÷ '+n1(r.SA),'ratio = '+r.ratio.toFixed(2)+' → '+verdict),
+    S(9,'Elbow movement','δ_L = α·ΔT·L₁ · δ_V = (M_corner·L₁²/2 + Fy·L₁³/3)/EI','longitudinal '+n2(r.dCx)+' mm · vertical '+n2(r.dCy)+' mm','resultant |δ| = '+n2(r.dCres)+' mm'),
+    S(10,'Anchor reactions','','Anchor A: Fx '+n0(-r.Fx)+' N, Fy '+n0(-r.Fy)+' N · Anchor B: Fx '+n0(r.Fx)+' N, Fy '+n0(r.Fy)+' N','|F| = '+n0(r.Fres)+' N at each anchor')
+  ].join('');
+}
+
+/* ===================== RENDER ===================== */
+function render(r){
+  const blanks=['ratioVal','hSE','hSA','hLoc','hMmax','aFx','aFy','aFr','aM','bFx','bFy','bFr','bM','mCL','mCV','mCR','mCdir','mGeom','mZ','mI','mDelta','mSc','mSh','mShR','mf','dlSummary'];
+  if(!r){blanks.forEach(i=>el(i).textContent='—');el('verdictPill').textContent='—';el('verdictPill').className='pill';el('stepsBody').innerHTML='<div style="padding:1rem;font-size:12px;color:var(--text-2)">Enter valid leg lengths to see the working.</div>';drawSVG(null);window.PPA_REPORT=null;return;}
+
+  el('ratioVal').textContent=r.ratio.toFixed(2);
+  const pass=r.ratio<=1.0;
+  el('verdictPill').className='pill '+(pass?'pass':'fail');
+  el('verdictPill').textContent=pass?'PASS':'EXCEEDS';
+  el('verdictText').textContent=pass?'Within ASME B31.3 allowable displacement stress range':'Exceeds allowable — increase flexibility (longer legs, loop, or expansion device)';
+ // ── Low-temperature material & data check (B31.3 §323.2.2 / Table A-1) ──
+  (function(){
+    var warn = el('cryoNote'); if(!warn) return;
+    var matName = el('mat').value, m = MAT[matName];
+    var tLow = Math.min(r.Top, r.Tin);                 // °C
+    var isCarbon = /A106|A53|P11/.test(matName);       // CS & low-alloy
+    var tabMin = Math.min(m.a[0][0], m.S[0][0]);
+    var CS_MDMT = -29;                                 // CS limit without impact testing
+    var show = false, danger = false, html = '';
+    if(isCarbon && tLow < CS_MDMT){
+      show = true; danger = true;
+      html = '<strong style="color:#ff0000;text-transform:uppercase">Material not permitted at this temperature.</strong> Carbon and low-alloy '
+        + 'steels (A106 / A53 / P11) are subject to brittle fracture below their minimum design '
+        + 'metal temperature (≈ −29 °C without impact testing, ASME B31.3 §323.2.2). Low-temperature '
+        + 'and cryogenic service requires an impact-tested grade — A333 Gr 6 (to ≈ −46 °C), '
+        + 'A333 Gr 8 / 9% Ni, or austenitic stainless (304 / 304L / 316 / 316L). The stress result '
+        + 'below is not a valid basis for material selection here.';
+    } else if(tLow < tabMin){
+      show = true;
+      var tShow = U==='US' ? cToF(tLow).toFixed(0)+' °F' : tLow.toFixed(0)+' °C';
+      var clampShow = U==='US' ? cToF(tabMin).toFixed(0)+' °F' : tabMin+' °C';
+      html = '<strong>Below tabulated range.</strong> At '+tShow+', α and cold allowable '
+        + 'S<sub>c</sub> are held at their lowest tabulated values ('+clampShow+'), not extrapolated '
+        + '— results are slightly conservative. Verify α, S<sub>c</sub> and the material minimum '
+        + 'design metal temperature against ASME B31.3 Chapter IX / Appendix C before design use.';
+    }
+    warn.style.display = show ? 'block' : 'none';
+    if(show){
+      warn.style.background  = danger ? 'var(--danger-light)'  : 'var(--warn-light)';
+      warn.style.borderColor = danger ? 'var(--danger-border)' : 'var(--warn-border)';
+      warn.style.color       = danger ? 'var(--danger)'        : 'var(--warn)';
+      warn.innerHTML = html;
+    }
+  })();
+  el('hSE').textContent=fStress(r.SE);
+  el('hSA').textContent=fStress(r.SA);
+  el('hLoc').textContent=r.loc;
+  el('hMmax').textContent=fMom(r.Mmax);
+
+  const A=r.anchorA,B=r.anchorB;
+  el('aFx').textContent=fForce(A.Fx);el('aFy').textContent=fForce(A.Fy);el('aFr').textContent=fForce(A.Fr);el('aM').textContent=fMom(A.M);
+  el('bFx').textContent=fForce(B.Fx);el('bFy').textContent=fForce(B.Fy);el('bFr').textContent=fForce(B.Fr);el('bM').textContent=fMom(B.M);
+
+  el('mCL').textContent=fDisp(r.dCx);
+  el('mCV').textContent=fDisp(r.dCy);
+  el('mCR').textContent=fDisp(r.dCres);
+  el('mCdir').textContent=r.dCang.toFixed(0)+'° from Leg 1';
+
+  el('mGeom').textContent=fLen(r.od)+' × '+(U==='US'?(r.t/C.len).toFixed(3)+' in':r.t.toFixed(2)+' mm');
+  el('mZ').textContent=U==='US'?(r.Z/Math.pow(C.len,3)).toFixed(2)+' in³':(r.Z/1000).toFixed(1)+' cm³';
+  el('mI').textContent=U==='US'?(r.I/Math.pow(C.len,4)).toFixed(2)+' in⁴':(r.I/1e4).toFixed(1)+' cm⁴';
+  el('mDelta').textContent=U==='US'?(r.dx/C.len).toFixed(2)+' / '+(r.dy/C.len).toFixed(2)+' in':r.dx.toFixed(1)+' / '+r.dy.toFixed(1)+' mm';
+  el('mSc').textContent=fStress(r.Sc);
+  el('mSh').textContent=fStress(r.Sh);
+  el('mShR').textContent=r.ratioSh.toFixed(2);
+  el('mf').textContent=r.f.toFixed(3);
+
+  el('dlSummary').textContent='Stress ratio '+r.ratio.toFixed(2)+' — '+(pass?'PASS':'EXCEEDS');
+
+  el('stepsBody').innerHTML=buildSteps(r);
+  drawSVG(r);
+  buildReport(r);
+}
+
+/* ===================== SVG ===================== */
+function drawSVG(r){
+  const svg=el('svg'), W=560,H=360,pad=66;
+  const L1=r?r.L1:6000, L2=r?r.L2:4000;
+  const sc=Math.min((W-2*pad)/L1,(H-2*pad)/L2);
+  const l1=L1*sc, l2=L2*sc;
+  const Ax=pad, Ay=H-pad, Cx=Ax+l1, Cy=Ay, Bx=Cx, By=Cy-l2;
+  const rust='#8b3a1a', gold='#b8860b', teal='#1a6b5a', ink='#1a1510', ink2='#4a3f30', soft='#9c9a94';
+  let s='';
+  s+=`<defs>
+    <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" stroke="${ink}" stroke-width="1.4"/></pattern>
+    <marker id="arr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="${gold}"/></marker>
+    <marker id="arrD" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="${teal}"/></marker>
+  </defs>`;
+  s+=`<line x1="${Ax}" y1="${Ay}" x2="${Cx}" y2="${Cy}" stroke="${rust}" stroke-width="6" stroke-linecap="round"/>`;
+  s+=`<line x1="${Cx}" y1="${Cy}" x2="${Bx}" y2="${By}" stroke="${rust}" stroke-width="6" stroke-linecap="round"/>`;
+  s+=`<circle cx="${Cx}" cy="${Cy}" r="5" fill="${ink}"/>`;
+  s+=`<rect x="${Ax-14}" y="${Ay-22}" width="12" height="44" fill="url(#hatch)" stroke="${ink}" stroke-width="1.2"/><line x1="${Ax-2}" y1="${Ay-22}" x2="${Ax-2}" y2="${Ay+22}" stroke="${ink}" stroke-width="2"/>`;
+  s+=`<rect x="${Bx-22}" y="${By-14}" width="44" height="12" fill="url(#hatch)" stroke="${ink}" stroke-width="1.2"/><line x1="${Bx-22}" y1="${By-2}" x2="${Bx+22}" y2="${By-2}" stroke="${ink}" stroke-width="2"/>`;
+  s+=`<text x="${Ax-20}" y="${Ay+26}" font-family="DM Sans" font-size="14" font-weight="700" fill="${ink}">A</text>`;
+  s+=`<text x="${Bx+14}" y="${By-8}" font-family="DM Sans" font-size="14" font-weight="700" fill="${ink}">B</text>`;
+  const dy1=Ay+34;
+  s+=`<line x1="${Ax}" y1="${dy1}" x2="${Cx}" y2="${dy1}" stroke="${soft}" stroke-width="1"/><line x1="${Ax}" y1="${dy1-5}" x2="${Ax}" y2="${dy1+5}" stroke="${soft}" stroke-width="1"/><line x1="${Cx}" y1="${dy1-5}" x2="${Cx}" y2="${dy1+5}" stroke="${soft}" stroke-width="1"/><text x="${(Ax+Cx)/2}" y="${dy1+15}" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="${ink2}">L₁ = ${fLen(L1)}</text>`;
+  const dx2=Cx+34;
+  s+=`<line x1="${dx2}" y1="${Cy}" x2="${dx2}" y2="${By}" stroke="${soft}" stroke-width="1"/><line x1="${dx2-5}" y1="${Cy}" x2="${dx2+5}" y2="${Cy}" stroke="${soft}" stroke-width="1"/><line x1="${dx2-5}" y1="${By}" x2="${dx2+5}" y2="${By}" stroke="${soft}" stroke-width="1"/><text x="${dx2+8}" y="${(Cy+By)/2}" font-family="IBM Plex Mono" font-size="12" fill="${ink2}" transform="rotate(90 ${dx2+8} ${(Cy+By)/2})" text-anchor="middle">L₂ = ${fLen(L2)}</text>`;
+  if(r){
+    const aLen=42;
+    function arrow(cx,cy,fx,fy){
+      const mag=Math.hypot(fx,fy)||1, ux=fx/mag, uy=-fy/mag, ex=cx+ux*aLen, ey=cy+uy*aLen;
+      const lx=ex+ux*7, ly=ey+uy*7+(uy<0?-3:11), anc=ux>=0?'start':'end';
+      return `<line x1="${cx}" y1="${cy}" x2="${ex.toFixed(1)}" y2="${ey.toFixed(1)}" stroke="${gold}" stroke-width="2.4" marker-end="url(#arr)"/>`
+        +`<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${anc}" font-family="IBM Plex Mono" font-size="10.5" font-weight="600" fill="${gold}">F<tspan font-size="8" dy="2">r</tspan><tspan dy="-2"> = ${fForce(mag)}</tspan></text>`;
+    }
+    s+=arrow(Ax,Ay,r.anchorA.Fx,r.anchorA.Fy);
+    s+=arrow(Bx,By,r.anchorB.Fx,r.anchorB.Fy);
+    const vmag=Math.hypot(r.dCx,r.dCy)||1e-9, disp=30, fpx=disp/vmag;
+    const Cpx=Cx+r.dCx*fpx, Cpy=Cy-r.dCy*fpx;
+    s+=`<line x1="${Ax}" y1="${Ay}" x2="${Cpx.toFixed(1)}" y2="${Cpy.toFixed(1)}" stroke="${teal}" stroke-width="2" stroke-dasharray="1.5 4" stroke-linecap="round" opacity="0.9"/>`;
+    s+=`<line x1="${Cpx.toFixed(1)}" y1="${Cpy.toFixed(1)}" x2="${Bx}" y2="${By}" stroke="${teal}" stroke-width="2" stroke-dasharray="1.5 4" stroke-linecap="round" opacity="0.9"/>`;
+    s+=`<line x1="${Cx}" y1="${Cy}" x2="${Cpx.toFixed(1)}" y2="${Cpy.toFixed(1)}" stroke="${teal}" stroke-width="1.5" marker-end="url(#arrD)"/>`;
+    s+=`<circle cx="${Cpx.toFixed(1)}" cy="${Cpy.toFixed(1)}" r="3.5" fill="#fff" stroke="${teal}" stroke-width="1.6"/>`;
+    s+=`<text x="${(Cpx+7).toFixed(1)}" y="${(Cpy+(r.dCy>=0?14:-6)).toFixed(1)}" font-family="IBM Plex Mono" font-size="11" font-weight="600" fill="${teal}">C′</text>`;
+  }
+  svg.innerHTML=s;
+}
+
+/* ===================== REPORT ===================== */
+function buildReport(r){
+  if(!r){window.PPA_REPORT=null;return;}
+  const pipe=r.custom?('Custom '+fLen(r.od)+' OD × '+(U==='US'?(r.t/C.len).toFixed(3)+' in':r.t.toFixed(2)+' mm')):('NPS '+el('nps').value+' Sch '+el('sched').value);
+  const tU=U==='US'?'°F':'°C', Top=U==='US'?cToF(r.Top).toFixed(0):r.Top.toFixed(0), Tin=U==='US'?cToF(r.Tin).toFixed(0):r.Tin.toFixed(0);
+  const stepsTxt=buildSteps(r).replace(/<div class="step">/g,'').replace(/<div class="step-n">\d+<\/div>/g,'').replace(/<div class="step-c">/g,'').replace(/<div class="step-name">/g,'<b>').replace(/<\/div>\s*<div class="step-formula">/g,'</b> — ').replace(/<div class="step-formula">/g,' ').replace(/<div class="step-sub">/g,' · ').replace(/<div class="step-result">/g,' ⇒ ').replace(/<\/div>/g,'').replace(/<span[^>]*>/g,'').replace(/<\/span>/g,'')+'';
+  window.PPA_REPORT={
+    docType:'L-Bend Two-Anchor Stress',
+    codeNote:'ASME B31.3 §302.3.5 / §319 — displacement stress range',
+    sections:[
+      {title:'Geometry & Conditions', badge:'Both ends anchored · Leg 1 horizontal · Leg 2 vertical', type:'table', head:['Parameter','Value','Unit'],
+       rows:[['Leg 1 length, L₁',fLen(r.L1),''],['Leg 2 length, L₂',fLen(r.L2),''],['Pipe',pipe,''],['Material',el('mat').value,''],['Operating temperature',Top,tU],['Installation temperature',Tin,tU],['Thermal cycles, N',String(r.cyc),'off']]},
+      {title:'Section Properties', type:'table', head:['Parameter','Value','Unit'],
+       rows:[['Outside diameter',fLen(r.od),''],['Wall thickness',(U==='US'?(r.t/C.len).toFixed(3)+' in':r.t.toFixed(2)+' mm'),''],['Inside diameter',fLen(r.idd),''],['Moment of inertia, I',(U==='US'?(r.I/Math.pow(C.len,4)).toFixed(2)+' in⁴':(r.I/1e4).toFixed(1)+' cm⁴'),''],['Section modulus, Z',(U==='US'?(r.Z/Math.pow(C.len,3)).toFixed(2)+' in³':(r.Z/1000).toFixed(1)+' cm³'),'']]},
+      {title:'Thermal & Stress Results', type:'table', head:['Parameter','Value','Unit'],
+       rows:[['Free growth ΔL₁ / ΔL₂',(U==='US'?(r.dx/C.len).toFixed(2)+' / '+(r.dy/C.len).toFixed(2)+' in':r.dx.toFixed(1)+' / '+r.dy.toFixed(1)+' mm'),''],['Max bending moment',fMom(r.Mmax)+' @ '+r.loc,''],['Displacement stress range, S_E',fStress(r.SE),''],['Cold allowable, S_c',fStress(r.Sc),''],['Hot allowable, S_h',fStress(r.Sh),''],['Reduction factor, f',r.f.toFixed(3),'off'],['Allowable range, S_A',fStress(r.SA),''],['Stress ratio S_E/S_A',r.ratio.toFixed(2),'off'],['Ratio vs hot allowable S_h',r.ratioSh.toFixed(2),'off']]},
+      {title:'Anchor Reactions', type:'table', head:['Location','Value','Unit'],
+       rows:[['Anchor A · Fx',fForce(r.anchorA.Fx),''],['Anchor A · Fy',fForce(r.anchorA.Fy),''],['Anchor A · Resultant |F|',fForce(r.anchorA.Fr),''],['Anchor A · Moment',fMom(r.anchorA.M),''],['Anchor B · Fx',fForce(r.anchorB.Fx),''],['Anchor B · Fy',fForce(r.anchorB.Fy),''],['Anchor B · Resultant |F|',fForce(r.anchorB.Fr),''],['Anchor B · Moment',fMom(r.anchorB.M),'']]},
+      {title:'Elbow Movement', type:'table', head:['Parameter','Value','Unit'],
+       rows:[['Longitudinal, δ_L (along Leg 1)',fDisp(r.dCx),''],['Vertical, δ_V (along Leg 2)',fDisp(r.dCy),''],['Resultant, |δ|',fDisp(r.dCres),''],['Direction',r.dCang.toFixed(0)+'° from Leg 1','off']]},
+      {title:'Calculation Steps (SI units)', type:'steps', html:stepsTxt}
+    ],
+    verdict:{status:r.ratio<=1?'pass':'fail', text:'S_E / S_A = '+r.ratio.toFixed(2)+(r.ratio<=1?' — within ASME B31.3 allowable displacement stress range.':' — EXCEEDS allowable; add flexibility (longer legs, expansion loop, or device).')}
+  };
+}
+
+/* ===================== UI ===================== */
+function setUnits(sys){
+  if(sys===U)return;
+  const conv=(id,fn)=>{const v=parseFloat(el(id).value);if(!isNaN(v))el(id).value=fn(v);};
+  if(sys==='US'){conv('L1',v=>(v/C.len).toFixed(1));conv('L2',v=>(v/C.len).toFixed(1));conv('Top',v=>cToF(v).toFixed(0));conv('Tin',v=>cToF(v).toFixed(0));conv('odc',v=>(v/C.len).toFixed(3));conv('tc',v=>(v/C.len).toFixed(3));}
+  else{conv('L1',v=>(v*C.len).toFixed(0));conv('L2',v=>(v*C.len).toFixed(0));conv('Top',v=>fToC(v).toFixed(0));conv('Tin',v=>fToC(v).toFixed(0));conv('odc',v=>(v*C.len).toFixed(2));conv('tc',v=>(v*C.len).toFixed(2));}
+  U=sys;
+  el('uSI').classList.toggle('on',U==='SI');el('uUS').classList.toggle('on',U==='US');
+  document.querySelectorAll('.ul').forEach(e=>e.textContent=U==='US'?'in':'mm');
+  document.querySelectorAll('.ut').forEach(e=>e.textContent=U==='US'?'°F':'°C');
+  compute();
+}
+function toggleWork(){
+  el('wtToggle').classList.toggle('open');
+  el('wb').classList.toggle('open');
+  const open=el('wb').classList.contains('open');
+  el('wtToggle').querySelector('.wt-label').textContent=(open?'▾ Hide':'▸ Show')+' step-by-step calculation';
+}
+function showCalcTab(name){
+  document.querySelectorAll('.calc-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.calc-tab').forEach(b=>b.classList.remove('active'));
+  el('calctab-'+name).classList.add('active');
+  if(window.event&&window.event.target)window.event.target.classList.add('active');
+}
+
+/* ===================== INIT ===================== */
+['L1','L2','nps','sched','mat','Top','Tin','cyc','odc','tc'].forEach(id=>{el(id).addEventListener('input',compute);el(id).addEventListener('change',compute);});
+compute();
+</script>
+
+<!-- ════════ PipingPro Shared Report Engine v1.0 ════════ -->
+<div id="ppa-rpt-modal" style="display:none;position:fixed;inset:0;background:rgba(26,21,16,.55);z-index:10000;align-items:center;justify-content:center;padding:1rem">
+  <div style="background:#faf6ef;border-radius:8px;max-width:560px;width:100%;padding:1.6rem 1.8rem;box-shadow:0 10px 40px rgba(26,21,16,.3);font-family:'DM Sans',sans-serif">
+    <h3 style="font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:1.3rem;color:#1a1510;margin:0 0 .3rem">Report Details</h3>
+    <p style="font-size:.82rem;color:#4a3f30;margin:0 0 1.1rem">Project information for the report header. All fields optional.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.7rem .9rem">
+      <div><label class="ppa-rl">Your Company</label><input id="ppa-rpt-company" type="text" placeholder="e.g. Zephrum Konsultan" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Client</label><input id="ppa-rpt-client" type="text" placeholder="e.g. Saudi Aramco" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Project</label><input id="ppa-rpt-project" type="text" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Project No.</label><input id="ppa-rpt-projectno" type="text" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Line / Tag</label><input id="ppa-rpt-line" type="text" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Revision</label><input id="ppa-rpt-rev" type="text" placeholder="0" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Prepared by</label><input id="ppa-rpt-engineer" type="text" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Checked by</label><input id="ppa-rpt-checker" type="text" class="ppa-ri"></div>
+    </div>
+    <div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1.3rem">
+      <button onclick="ppaCloseReport()" style="background:transparent;color:#4a3f30;border:1px solid #c8b89a;padding:.6rem 1.2rem;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600">Cancel</button>
+      <button onclick="ppaGenerateReport()" style="background:#b8860b;color:#1a1510;border:none;padding:.6rem 1.5rem;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:700">Generate Report →</button>
+    </div>
+  </div>
+</div>
+<style>
+.ppa-rl{display:block;font-size:.72rem;font-weight:600;color:#4a3f30;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.25rem}
+.ppa-ri{width:100%;padding:.5rem;border:1px solid #c8b89a;border-radius:4px;background:#fff;font-size:.85rem;font-family:'DM Sans',sans-serif}
+</style>
+<script>
+function ppaOpenReport(){
+  if(!window.PPA_REPORT){ alert('Please enter valid inputs first.'); return; }
+  try{ const s=JSON.parse(localStorage.getItem('ppa_report_meta')||'{}');
+    [['ppa-rpt-company','company'],['ppa-rpt-client','client'],['ppa-rpt-project','project'],
+     ['ppa-rpt-projectno','projectNo'],['ppa-rpt-engineer','engineer'],['ppa-rpt-checker','checker']]
+     .forEach(([id,k])=>{const e=document.getElementById(id); if(e&&!e.value&&s[k]) e.value=s[k];});
+  }catch(e){}
+  document.getElementById('ppa-rpt-modal').style.display='flex';
+}
+function ppaCloseReport(){ document.getElementById('ppa-rpt-modal').style.display='none'; }
+function ppaGenerateReport(){
+  const R=window.PPA_REPORT; if(!R){ alert('Please enter valid inputs first.'); return; }
+  const g=id=>(document.getElementById(id)?.value||'').trim();
+  const m={company:g('ppa-rpt-company'),client:g('ppa-rpt-client'),project:g('ppa-rpt-project'),
+    projectNo:g('ppa-rpt-projectno'),line:g('ppa-rpt-line'),engineer:g('ppa-rpt-engineer'),
+    checker:g('ppa-rpt-checker'),rev:g('ppa-rpt-rev')||'0'};
+  try{ localStorage.setItem('ppa_report_meta',JSON.stringify({company:m.company,client:m.client,
+    project:m.project,projectNo:m.projectNo,engineer:m.engineer,checker:m.checker})); }catch(e){}
+  const now=new Date().toLocaleDateString('en-GB');
+  let bodyHtml='';
+  (R.sections||[]).forEach((s,i)=>{
+    bodyHtml+=`<h3>${i+1}. ${s.title}</h3>`;
+    if(s.badge) bodyHtml+=`<div class="code-badge">${s.badge}</div>`;
+    if(s.type==='table'){
+      const head=s.head||['Parameter','Value','Unit'];
+      bodyHtml+=`<table class="d"><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr>`+
+        s.rows.map(r=>`<tr>${r.map((c,ci)=>`<td class="${(ci>0&&ci<r.length-1)||head[ci]==='Value'?'num':''}">${c}</td>`).join('')}</tr>`).join('')+`</table>`;
+    } else if(s.type==='steps'){ bodyHtml+=`<div class="steps">${s.html}</div>`; }
+    else if(s.type==='text'){ bodyHtml+=`<div class="ptext">${s.html}</div>`; }
+  });
+  let v=''; if(R.verdict){ v=`<div class="verdict ${R.verdict.status}">${R.verdict.text}</div>`; }
+  const html=`<!DOCTYPE html><html><head><meta charset="utf-8"/>
+<title>${R.docType||'Calculation'} Report — ${m.project||'PipingPro'}</title>
+<style>
+.cryo-warning{
+  border:1px solid #c0392b;
+  background:#fdecea;
+  color:#a02216;
+  border-radius:8px;
+  padding:.7rem .9rem;
+  margin:.75rem 0;
+  font-weight:600;
+  font-family:'DM Sans',sans-serif;
+  display:flex;
+  gap:.55rem;
+  align-items:flex-start;
+}
+.cryo-warning .ico{font-size:1.1rem;line-height:1.3}
+
+/* Option A — tasteful slow pulse (recommended) */
+.cryo-warning.pulse{ animation:cryoPulse 1.6s ease-in-out infinite; }
+@keyframes cryoPulse{
+  0%,100%{ box-shadow:0 0 0 0 rgba(192,57,43,0); }
+  50%   { box-shadow:0 0 0 4px rgba(192,57,43,.25); }
+}
+
+/* Option B — actual flash (the word blinks) */
+.cryo-warning .flash{ color:#c0392b; animation:cryoBlink 1s steps(1) infinite; }
+@keyframes cryoBlink{ 50%{ opacity:.25; } }
+
+/* Accessibility: respect users who disable motion */
+@media (prefers-reduced-motion: reduce){
+  .cryo-warning.pulse{ animation:none; }
+  .cryo-warning .flash{ animation:none; }
+}
+@page{margin:18mm 16mm}*{box-sizing:border-box}
+body{font-family:'Helvetica Neue',Arial,sans-serif;font-size:10.5pt;color:#1a1510;margin:0;line-height:1.5}
+.sheet{max-width:780px;margin:0 auto}
+.head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #b8860b;padding-bottom:12px}
+.logo{font-family:Georgia,serif;font-size:19pt;color:#1a1510;font-weight:bold;line-height:1.15}
+.logo span.sub{display:block;font-family:Arial;font-size:8pt;color:#6b5d49;letter-spacing:.08em;font-weight:normal;margin-top:3px}
+.logo span.sub b{font-weight:bold;color:#b8860b}
+.doctype{text-align:right;font-size:8.5pt;color:#4a3f30}
+.doctype b{display:block;font-size:11pt;color:#1a1510;font-family:Georgia,serif}
+.meta{width:100%;border-collapse:collapse;font-size:8.5pt;margin:14px 0 6px}
+.meta td{border:1px solid #c8b89a;padding:4px 8px}
+.meta td.l{background:#f5e9c8;color:#4a3f30;font-weight:bold;width:18%;text-transform:uppercase;font-size:7.5pt;letter-spacing:.04em}
+h3{font-family:Georgia,serif;font-size:12pt;color:#1a1510;border-bottom:1.5px solid #b8860b;padding-bottom:4px;margin:22px 0 8px}
+.code-badge{display:inline-block;background:#1a1510;color:#d4a017;font-family:monospace;font-size:9pt;padding:3px 10px;border-radius:3px;margin-bottom:4px}
+table.d{width:100%;border-collapse:collapse;font-size:9.5pt}
+table.d th{background:#1a1510;color:#d4a017;padding:6px 9px;text-align:left;font-size:8.5pt;text-transform:uppercase;letter-spacing:.03em}
+table.d td{padding:5px 9px;border-bottom:1px solid #e8dfd0}
+table.d td.num{text-align:right;font-family:'IBM Plex Mono',monospace}
+table.d tr:nth-child(even) td{background:#faf6ef}
+.verdict{padding:12px 16px;border-radius:5px;font-weight:bold;font-size:11pt;margin:16px 0;border:1px solid}
+.verdict.pass{background:#e7f1ee;color:#1a6b5a;border-color:#1a6b5a}
+.verdict.fail{background:#f6e6df;color:#8b3a1a;border-color:#8b3a1a}
+.verdict.warn{background:#f5e9c8;color:#6b4e00;border-color:#b8860b}
+.steps{font-family:'IBM Plex Mono',monospace;font-size:8.5pt;background:#faf6ef;border:1px solid #e8dfd0;border-left:3px solid #b8860b;padding:10px 14px;line-height:1.95}
+.ptext{font-size:9.5pt;line-height:1.65;color:#1a1510;white-space:pre-wrap}
+.sig{display:flex;gap:30px;margin-top:26px}
+.sig div{flex:1;border-top:1px solid #1a1510;padding-top:5px;font-size:8pt;color:#4a3f30}
+.disc{font-size:7.5pt;color:#6b5d49;margin-top:22px;line-height:1.55;border-top:1px solid #e8dfd0;padding-top:10px}
+.foot{margin-top:14px;font-size:7.5pt;color:#6b5d49;text-align:center}
+@media print{.noprint{display:none}}
+.noprint{text-align:center;margin:16px 0}
+.noprint button{background:#b8860b;color:#1a1510;border:none;padding:10px 22px;font-size:11pt;font-weight:bold;border-radius:3px;cursor:pointer;font-family:Arial}
+</style></head><body>
+<div class="noprint"><button onclick="window.print()">⬇ Print / Save as PDF</button></div>
+<div class="sheet">
+  <div class="head">
+    <div class="logo">${m.company||'Engineering Calculation'}<span class="sub">Powered by Piping<b>Pro</b> Academy · Calculator Suite</span></div>
+    <div class="doctype"><b>${(R.docType||'CALCULATION').toUpperCase()}</b>Calculation Report<br/>Doc Rev. ${m.rev} &nbsp;·&nbsp; ${now}</div>
+  </div>
+  <table class="meta">
+    <tr><td class="l">Client</td><td>${m.client||'—'}</td><td class="l">Project</td><td>${m.project||'—'}</td></tr>
+    <tr><td class="l">Project No.</td><td>${m.projectNo||'—'}</td><td class="l">Line / Tag</td><td>${m.line||'—'}</td></tr>
+    <tr><td class="l">Prepared by</td><td>${m.engineer||'—'}</td><td class="l">Checked by</td><td>${m.checker||'—'}</td></tr>
+  </table>
+  ${bodyHtml}
+  ${v}
+  <div class="sig">
+    <div>Prepared: ${m.engineer||'________________'}<br/>Date: ${now}</div>
+    <div>Checked: ${m.checker||'________________'}<br/>Date: ________________</div>
+  </div>
+  <div class="disc"><b>Preliminary engineering output</b> — results must be independently verified by a competent engineer against the governing code edition${R.codeNote?(' ('+R.codeNote+')'):''} and project specifications before use in any design, procurement, or construction package. Issued subject to the PipingPro Academy Terms of Use. © 2026 Zephrum Konsultan Limited.</div>
+  <div class="foot">${m.company||'PipingPro Academy'} · Generated with PipingPro Academy Calculator Suite · ${now}</div>
+</div></body></html>`;
+  const w=window.open('','_blank'); w.document.write(html); w.document.close(); ppaCloseReport();
+}
+</script>
+<!-- ════════ end Shared Report Engine ════════ -->
+<script src="/js/ppa-report-gate.js"></script>
+
+
+ 
+
+</body>
+</html>

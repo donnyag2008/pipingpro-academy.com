@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  <link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<!-- Memberstack -->
+<script data-memberstack-app="app_cmq9fsibv00720sujaqjm734o" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
+<script src="/js/ppa-tier.js"></script>
+<!-- PPA ACCESS GATE (canonical Block A) -->
+<script>
+(function(){
+  var THIS_CALC = window.THIS_CALC = 'di';                       // ← change per page
+  var UPGRADE   = '/membership-plan.html';    // non-members land here
+
+  /* Admin is decided by the logged-in Memberstack member — not a browser flag.
+     Grant admin by ANY ONE of these (set whichever you use; leave the others):
+       • membership of an Admin plan  → put its id in ADMIN_PLAN_IDS
+       • a Memberstack permission     → ADMIN_PERMISSION (attached to a plan)
+       • a custom field  admin = true → set on the member in the dashboard      */
+  var ADMIN_PLAN_IDS   = ['pln_admin-vzd0rgr'];
+  var ADMIN_PERMISSION = 'admin';
+  var EMERGENCY_LOCAL_ADMIN = false;   // ← set true for LOCAL testing only; MUST be false in production
+
+  function memberIsAdmin(m){
+    if(!m) return false;
+    var cf = m.customFields || {};
+    if(cf.admin === 'true' || cf.admin === true || cf.role === 'admin') return true;
+    var perms = m.permissions || [];
+    if(perms.indexOf(ADMIN_PERMISSION) !== -1) return true;
+    var pc = m.planConnections || [];
+    for(var i=0;i<pc.length;i++){
+      if(pc[i] && ADMIN_PLAN_IDS.indexOf(pc[i].planId) !== -1){
+        var st = (pc[i].status || '').toString().toUpperCase();
+        if(st !== 'CANCELED' && st !== 'CANCELLED' && st !== 'EXPIRED' && st !== 'INACTIVE') return true;
+      }
+    }
+    return false;
+  }
+
+  function whenMS(cb, tries){                  // wait for Memberstack to attach (~4 s max)
+    tries = (tries==null) ? 40 : tries;
+    var ms = window.$memberstackDom;
+    if(ms) return cb(ms);
+    if(tries<=0) return cb(null);
+    setTimeout(function(){ whenMS(cb, tries-1); }, 100);
+  }
+  function getMember(){
+    return new Promise(function(resolve){
+      whenMS(function(ms){
+        if(!ms || typeof ms.getCurrentMember !== 'function') return resolve(null);
+        ms.getCurrentMember().then(function(res){ resolve(res ? res.data : null); })
+                             .catch(function(){ resolve(null); });
+      });
+    });
+  }
+
+  /* Emergency local override — keep commented; uncomment only if you lock yourself
+     out before the Memberstack admin marker is set:
+     // if(localStorage.getItem('ppa_admin') === '1') return; */
+
+  function gate(){
+    if(EMERGENCY_LOCAL_ADMIN){
+      try{ if(localStorage.getItem('ppa_admin') === '1') return; }catch(e){}
+    }
+    getMember().then(function(member){
+      if(memberIsAdmin(member)) return;        // admin → full access, no redirect
+      if(!window.PPATIER) return;
+      if(window.PPATIER.requiredTier(THIS_CALC) === 'free') return;
+      return window.PPATIER.resolveTier().then(function(){
+        if(!memberIsAdmin(member) && !window.PPATIER.hasAccess(THIS_CALC)) location.replace(UPGRADE);
+      });
+    }).catch(function(){ /* leave page as-is on error */ });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', gate);
+  else gate();
+})();
+</script>
+  
+<title>Dia-Inch &amp; Change-Order Estimator — PipingPro Academy</title>
+<style>
+:root{
+  --bg:#F7F6F3;--surface:#FFFFFF;--border:#E2E0D8;--border-strong:#C8C5BA;
+  --text:#1A1917;--text-2:#5C5A54;--text-3:#9C9A94;
+  --accent:#8b3a1a;--accent-light:#e7f1ee;--accent-border:#A8D4B8;
+  --info:#1A4A7A;--info-light:#E8F0F8;--info-border:#A8C4E0;
+  --warn:#7A4A0A;--warn-light:#FDF3E3;--warn-border:#F0C878;
+  --danger:#7A1A1A;--danger-light:#f6e6df;--danger-border:#F0A0A0;
+  --success:#8b3a1a;--success-light:#e7f1ee;
+  --radius:6px;--radius-lg:10px;
+  --font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.6;min-height:100vh}
+.header{background:var(--accent);color:#fff;padding:1.5rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem}
+.header-title{font-size:20px;font-weight:600;letter-spacing:-0.02em}
+.header-sub{font-size:12px;opacity:0.75;margin-top:2px}
+.header-badge{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:500}
+.container{max-width:980px;margin:0 auto;padding:1.5rem 1rem}
+.disclaimer{background:var(--warn-light);border:1px solid var(--warn-border);border-radius:var(--radius);padding:0.75rem 1rem;margin-bottom:1.5rem;font-size:12px;color:var(--warn);line-height:1.6}
+.disclaimer strong{font-weight:600}
+
+/* CODE TABS */
+.code-bar{display:flex;gap:0;margin-bottom:1.5rem;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--surface)}
+.code-btn{flex:1;padding:11px 16px;font-size:13px;font-weight:500;border:none;background:transparent;color:var(--text-2);cursor:pointer;font-family:var(--font);transition:all 0.15s;border-right:1px solid var(--border);line-height:1.3}
+.code-btn:last-child{border-right:none}
+.code-btn.on{background:var(--accent);color:#fff;font-weight:600}
+.code-btn:hover:not(.on){background:var(--accent-light);color:var(--accent)}
+.code-desc{font-size:10px;opacity:0.8;display:block;margin-top:1px}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1rem;overflow:hidden;min-width:0}
+.card-title{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 16px}
+.grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px 16px}
+.grid2>*,.grid3>*,.grid4>*{min-width:0}
+@media(max-width:700px){.grid2,.grid3,.grid4{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:11px;font-weight:500;color:var(--text-2)}
+.field input,.field select{font-size:13px;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius);background:#FAFAF8;color:var(--text);outline:none;transition:border-color 0.15s;font-family:var(--mono);width:100%;min-width:0;box-sizing:border-box}
+.field input:focus,.field select:focus{border-color:var(--accent);background:#fff}
+.field .hint{font-size:10px;color:var(--text-3)}
+.field .auto{background:#F0F4F0;color:var(--accent);font-weight:500;cursor:default}
+.hr{border:none;border-top:1px solid var(--border);margin:1rem 0}
+
+/* FORMULA DISPLAY */
+.formula-box{background:var(--info-light);border:1px solid var(--info-border);border-radius:var(--radius);padding:0.75rem 1rem;margin-bottom:1rem;font-family:var(--mono);font-size:13px;color:var(--info);line-height:1.8}
+.formula-box .eq{font-size:15px;font-weight:600;margin-bottom:4px}
+.formula-box .vars{font-size:11px;color:var(--text-2);font-family:var(--font);line-height:1.7}
+
+.calcbtn{width:100%;padding:13px;font-size:14px;font-weight:600;border:none;border-radius:var(--radius);background:var(--accent);color:#fff;cursor:pointer;margin-top:0.75rem;transition:opacity 0.15s;font-family:var(--font);letter-spacing:0.01em}
+.calcbtn:hover{opacity:0.88}
+
+/* RESULTS */
+.results{display:none;margin-top:1.5rem}
+
+/* RESULT HERO */
+.result-hero{background:var(--accent);border-radius:var(--radius-lg);padding:1.5rem 2rem;margin-bottom:1rem;color:#fff;display:flex;gap:2rem;flex-wrap:wrap;align-items:center}
+.hero-main{flex:1;min-width:160px}
+.hero-label{font-size:11px;opacity:0.7;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px}
+.hero-val{font-size:36px;font-weight:600;font-family:var(--mono);letter-spacing:-0.02em;line-height:1}
+.hero-unit{font-size:14px;opacity:0.8;margin-top:4px}
+.hero-divider{width:1px;background:rgba(255,255,255,0.2);align-self:stretch}
+.hero-sub{display:flex;flex-direction:column;gap:0.75rem}
+.hero-item{}
+.hero-item-label{font-size:10px;opacity:0.65;text-transform:uppercase;letter-spacing:0.06em}
+.hero-item-val{font-size:16px;font-weight:600;font-family:var(--mono)}
+
+/* SCHEDULE TABLE */
+.sched-table{width:100%;border-collapse:collapse;font-size:12px}
+.sched-table th{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.06em;text-align:left;padding:5px 8px;border-bottom:2px solid var(--border);background:var(--bg)}
+.sched-table td{padding:6px 8px;border-bottom:1px solid var(--border);font-family:var(--mono)}
+.sched-table tr:last-child td{border-bottom:none}
+.sched-table .label-col{font-family:var(--font);color:var(--text-2)}
+.sched-table tbody tr.clickable-row{cursor:pointer;transition:background 0.1s}
+.sched-table tbody tr.clickable-row:hover td{background:var(--accent-light)}
+.sched-table tbody tr.selected-row td{background:var(--accent-light);font-weight:600}
+.sched-table tbody tr.selected-row .label-col{color:var(--accent)}
+.sched-table tbody tr.thin-row td{opacity:0.55}
+.min-req-marker td{background:#FFF8E1;font-size:10px;color:#7A5C00;font-family:var(--font);padding:3px 8px;border-bottom:2px dashed #E0C040;letter-spacing:0.03em}
+.pass-tag{display:inline-block;background:var(--success-light);color:var(--success);font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px;margin-left:6px}
+.fail-tag{display:inline-block;background:var(--danger-light);color:var(--danger);font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px;margin-left:6px}
+
+.rs{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1rem}
+.rs-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;padding-bottom:0.6rem;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:0.5rem}
+.rs-title{font-size:13px;font-weight:600;color:var(--text)}
+
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:0.75rem}
+.metric{background:var(--bg);border-radius:var(--radius);padding:0.6rem 0.75rem}
+.m-label{font-size:10px;font-weight:500;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px}
+.m-val{font-size:15px;font-weight:600;color:var(--text);font-family:var(--mono)}
+.m-unit{font-size:10px;color:var(--text-3);margin-top:1px}
+
+/* WORKINGS */
+.wt-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;padding:0.5rem 0.75rem;background:var(--info-light);border:1px solid var(--info-border);border-radius:var(--radius);margin-top:0.75rem;user-select:none}
+.wt-toggle:hover{background:#D0E4F5}
+.wt-label{font-size:12px;font-weight:600;color:var(--info);flex:1}
+.wt-icon{font-size:14px;color:var(--info);transition:transform 0.2s}
+.wt-toggle.open .wt-icon{transform:rotate(180deg)}
+.wb{display:none;margin-top:0.75rem;border:1px solid var(--info-border);border-radius:var(--radius);overflow:hidden}
+.wb.open{display:block}
+.step{display:grid;grid-template-columns:30px 1fr;border-bottom:1px solid var(--border)}
+.step:last-child{border-bottom:none}
+.step-n{background:var(--info-light);color:var(--info);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--info-border)}
+.step-c{padding:0.55rem 0.85rem;background:#fff}
+.step-name{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px}
+.step-formula{font-family:var(--mono);font-size:12px;color:var(--info);background:var(--info-light);padding:2px 7px;border-radius:3px;display:inline-block;margin-bottom:4px;word-break:break-all}
+.step-sub{font-family:var(--mono);font-size:11px;color:var(--text-2);margin-bottom:3px;line-height:1.5}
+.step-result{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent)}
+
+.refs{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-top:1.5rem}
+.refs-title{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem}
+.ref-item{font-size:12px;color:var(--text-2);margin-bottom:0.4rem;padding-left:1rem;position:relative;line-height:1.5}
+.ref-item::before{content:'—';position:absolute;left:0;color:var(--text-3)}
+.footer{text-align:center;padding:2rem 1rem;font-size:11px;color:var(--text-3)}
+.info-box{font-size:12px;color:var(--info);background:var(--info-light);border:1px solid var(--info-border);border-radius:var(--radius);padding:0.6rem 0.75rem;margin-top:0.75rem;line-height:1.7;word-break:break-word;overflow-wrap:break-word;width:100%;box-sizing:border-box}
+.warn-box{font-size:12px;color:var(--warn);background:var(--warn-light);border:1px solid var(--warn-border);border-radius:var(--radius);padding:0.6rem 0.75rem;margin-top:0.5rem;line-height:1.6}
+
+/* code-specific panels */
+.panel{display:none}
+.panel.active{display:block}
+
+/* ─── THEORY & REFERENCE TAB ─── */
+.ref-section{background:#fff;border:1px solid var(--rule, rgba(26,26,24,0.12));border-radius:12px;padding:1.4rem 1.6rem;margin-bottom:1.1rem;}
+.ref-title{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3,#8a8a80);margin-bottom:.9rem;padding-bottom:.4rem;border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));}
+.ref-formula{background:var(--paper2,#ede9de);border-left:3px solid var(--accent,#8b3a1a);border-radius:0 8px 8px 0;padding:1rem 1.2rem;font-size:13px;color:var(--ink2,#4a4a44);line-height:2;margin-bottom:.8rem;font-family:monospace;}
+.ref-formula b{font-family:monospace;color:var(--ink,#1a1510);}
+.ref-note{background:var(--teal-light,#e7f1ee);border:1px solid rgba(26,107,90,.15);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--teal,#1a6b5a);line-height:1.7;margin-top:.5rem;}
+.ref-table-wrap{overflow-x:auto;margin-top:.5rem;}
+.ref-table{width:100%;border-collapse:collapse;font-size:12px;}
+.ref-table th{background:var(--paper3,#e3dfd2);padding:7px 10px;text-align:left;font-weight:600;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2,#4a4a44);border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));}
+.ref-table td{padding:6px 10px;border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));color:var(--ink,#1a1510);vertical-align:top;}
+.ref-table td:first-child{font-weight:600;font-family:monospace;font-size:11px;white-space:nowrap;}
+.ref-table tr:last-child td{border-bottom:none;}
+
+
+/* ─── THEORY TAB NAV ─── */
+.calc-tabs{display:flex;background:var(--paper2,#ede9de);border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));overflow-x:auto;margin-bottom:0;}
+.calc-tab{padding:.85rem 1.5rem;font-size:13px;font-weight:500;color:var(--ink3,#8a8a80);border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;font-family:'DM Sans',sans-serif;transition:color .2s,border-color .2s;white-space:nowrap;}
+.calc-tab.active{color:var(--accent,#8b3a1a);border-bottom-color:var(--accent,#8b3a1a);}
+.calc-tab:hover:not(.active){color:var(--ink,#1a1510);}
+.calc-panel{display:none;}
+.calc-panel.active{display:block;}
+
+</style>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style id="ppa-shared">
+:root{
+  --ink:#1a1510;--ink2:#4a4a44;--ink3:#8a8a80;
+  --paper:#f5f2eb;--paper2:#ede9de;--paper3:#e3dfd2;
+  --accent:#8b3a1a;--accent2:#d4a017;--accent-light:#f7ede3;
+  --teal:#1a6b5a;--teal-light:#e7f1ee;
+  --rule:rgba(26,26,24,0.12);
+  --gold:#b8860b;--gold-light:#f5e9c8;
+  --font:'DM Sans',sans-serif;
+  --serif:'DM Serif Display',serif;
+  --mono:'DM Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--paper);color:var(--ink);font-size:15px;line-height:1.6;min-height:100vh;}
+/* ── NAV ── */
+.ppa-nav{background:rgba(245,242,235,0.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--rule);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:200;}
+.ppa-nav-logo{font-family:var(--serif);font-size:17px;color:var(--ink);text-decoration:none;}
+.ppa-nav-logo span{color:var(--accent);}
+.ppa-nav-back{font-size:13px;color:var(--ink2);text-decoration:none;display:flex;align-items:center;gap:5px;}
+.ppa-nav-back:hover{color:var(--accent);}
+/* ── HERO ── */
+.ppa-hero{background:var(--ink);color:var(--paper);padding:2.8rem 2rem 2.4rem;text-align:center;border-bottom:3px solid var(--accent);position:relative;overflow:hidden;}
+.ppa-hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 60px),repeating-linear-gradient(0deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 60px);}
+.ppa-hero-eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);margin-bottom:.7rem;font-family:var(--mono);position:relative;}
+.ppa-hero h1{font-family:var(--serif);font-size:clamp(1.7rem,4vw,2.6rem);line-height:1.1;margin-bottom:.7rem;position:relative;}
+.ppa-hero p{font-size:14px;color:rgba(245,242,235,0.6);max-width:540px;margin:0 auto;position:relative;}
+/* ── SHARED CARD ── */
+.ppa-card{background:#fff;border:1px solid var(--rule);border-radius:12px;padding:1.8rem 2rem;margin-bottom:1.4rem;}
+.ppa-card-title{font-family:var(--serif);font-size:1.15rem;color:var(--ink);margin-bottom:.25rem;}
+.ppa-card-sub{font-size:12px;color:var(--ink3);margin-bottom:1.2rem;}
+/* ── FOOTER ── */
+.ppa-footer{background:var(--ink);color:rgba(245,242,235,0.5);text-align:center;padding:2rem;font-size:13px;margin-top:3rem;}
+.ppa-footer a{color:var(--accent2);text-decoration:none;}
+.ppa-footer-logo{font-family:var(--serif);font-size:1.1rem;color:var(--paper);margin-bottom:.4rem;}
+.ppa-footer-logo span{color:var(--accent);}
+</style>
+<!-- ===== PipingPro Brand Bridge v1.0 — injected before </head> ===== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style id="pp-brand-bridge">
+/* Redefines every token name used across the suite to the PipingPro brand.
+   Placed last in <head> so it overrides each file's own :root. No markup/JS touched. */
+:root{
+  /* surfaces */
+  --bg:#faf6ef; --cream:#faf6ef;
+  --paper:#f3ede2; --surface:#f3ede2; --paper2:#f3ede2; --bg2:#f3ede2;
+  --paper3:#e8dfd0; --bg3:#e8dfd0;
+  /* text */
+  --ink:#1a1510; --text:#1a1510;
+  --ink2:#4a3f30; --text-2:#4a3f30; --muted:#4a3f30;
+  --ink3:#6b5d49; --text-3:#6b5d49; --muted2:#6b5d49;
+  /* primary accent = rust (legible on light & as button bg) */
+  --accent:#8b3a1a; --accent2:#b8860b;
+  --accent-light:#f6e6df; --accent-border:#c8b89a;
+  --teal:#8b3a1a; --teal2:#8b3a1a; --teal-light:#f6e6df;
+  --blue:#8b3a1a; --purple:#8b3a1a;
+  /* gilt accents */
+  --gold:#b8860b; --gold2:#b8860b; --gold-light:#f5e9c8; --orange:#b8860b; --yellow:#b8860b;
+  /* rules / borders */
+  --rule:#c8b89a; --border:#c8b89a; --border2:#c8b89a; --border-strong:#b8a87f;
+  /* fonts */
+  --serif:'DM Serif Display',Georgia,serif;
+  --font:'DM Sans',system-ui,sans-serif; --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  /* geometry */
+  --radius:4px; --radius-lg:6px;
+  /* states */
+  --pass:#1a6b5a; --success:#1a6b5a; --green:#1a6b5a;
+  --pass-bg:#e7f1ee; --success-light:#e7f1ee; --pass-bd:#1a6b5a;
+  --fail:#8b3a1a; --danger:#8b3a1a; --red:#8b3a1a;
+  --fail-bg:#f6e6df; --danger-light:#f6e6df; --red-bg:#f6e6df;
+  --danger-border:#8b3a1a; --fail-bd:#8b3a1a;
+  --warn:#b8860b; --warn-light:#f5e9c8; --warn-bg:#f5e9c8;
+  --warn-border:#b8860b; --warn-bd:#b8860b;
+  --info:#1a6b5a; --info-light:#e7f1ee; --info-border:#1a6b5a;
+}
+/* Enforce brand fonts even where files hardcoded font-family (not via token) */
+body, p, div, span, td, th, li, label, input, select, textarea, button{
+  font-family:'DM Sans',system-ui,sans-serif;
+}
+h1,h2,h3,h4,h5,.calc-card-name,.card-title{ font-family:'DM Serif Display',Georgia,serif; }
+code,pre,.mono,[class*="mono"]{ font-family:'IBM Plex Mono',ui-monospace,monospace; }
+body{ background:#faf6ef; color:#1a1510; }
+
+/* ---- Canonical header: overrides each file's own .ppa-nav / .ppa-hero rules ---- */
+.ppa-nav{
+  position:sticky; top:0; z-index:100; display:flex; align-items:center; justify-content:space-between;
+  height:60px; padding:0 5%; margin:0; background:#1a1510; border-bottom:2px solid #b8860b;
+}
+.ppa-nav-logo{ font-family:'DM Serif Display',Georgia,serif; font-size:1.15rem; color:#d4a017 !important; letter-spacing:.02em; text-decoration:none; }
+.ppa-nav-logo span{ color:#b8860b; }
+.ppa-nav-back{ color:#ccc !important; font-family:'DM Sans',sans-serif; font-size:.82rem; font-weight:500; letter-spacing:.05em; text-transform:uppercase; text-decoration:none; }
+.ppa-nav-back:hover{ color:#d4a017 !important; }
+.ppa-hero{
+  max-width:1040px; margin:0 auto; padding:2.2rem 5% 1.5rem; background:transparent; border:none; text-align:left;
+}
+.ppa-hero-eyebrow{
+  font-family:'IBM Plex Mono',ui-monospace,monospace; font-size:.72rem; font-weight:500;
+  text-transform:uppercase; letter-spacing:.12em; color:#b8860b; margin:0 0 .5rem; display:block; background:none; padding:0; border:none;
+}
+.ppa-hero h1{ font-family:'DM Serif Display',Georgia,serif; font-weight:400; font-size:2rem; line-height:1.15; color:#1a1510; margin:0 0 .55rem; }
+.ppa-hero h1 em{ font-style:normal; color:#8b3a1a; }
+.ppa-hero p{ font-family:'DM Sans',sans-serif; font-size:.95rem; line-height:1.6; color:#4a3f30; max-width:66ch; margin:0; }
+</style>
+<!-- ===== end PipingPro Brand Bridge ===== -->
+
+<style id="di-extra">
+.wtab{width:100%;border-collapse:collapse;font-size:12px;min-width:680px;}
+.wtab th{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;text-align:left;padding:5px 8px;border-bottom:2px solid var(--border);background:var(--bg);white-space:nowrap;}
+.wtab th.num{text-align:right;}
+.wtab td{padding:4px 6px;border-bottom:1px solid var(--border);}
+.wtab td.num{text-align:right;}
+.wtab tr:last-child td{border-bottom:none;}
+.wtab .rownum{font-family:var(--mono);color:var(--text-3);font-size:11px;width:24px;}
+.wtab input,.wtab select{font-size:12px;padding:6px 8px;border:1px solid var(--border);border-radius:var(--radius);background:#FAFAF8;color:var(--text);font-family:var(--mono);width:100%;outline:none;}
+.wtab input:focus,.wtab select:focus{border-color:var(--accent);background:#fff;}
+.wtab td.num input{text-align:right;}
+.wtab .di-out{font-family:var(--mono);font-weight:600;color:var(--accent);}
+.wt-del{border:none;background:transparent;color:var(--text-3);cursor:pointer;font-size:16px;padding:2px 6px;border-radius:4px;}
+.wt-del:hover{color:var(--danger);background:var(--danger-light);}
+.tscroll{overflow-x:auto;}
+.minibtn{background:#fff;border:1px solid var(--border-strong);color:var(--accent);font-family:var(--font);font-weight:600;font-size:12px;padding:7px 13px;border-radius:var(--radius);cursor:pointer;}
+.minibtn:hover{background:var(--accent-light);}
+.minibtn.ghost{color:var(--text-2);}
+.pill-rack{display:inline-block;width:8px;height:8px;border-radius:50%;background:#1A4A7A;margin-right:5px;vertical-align:middle;}
+.pill-equip{display:inline-block;width:8px;height:8px;border-radius:50%;background:#7A4A0A;margin-right:5px;vertical-align:middle;}
+</style>
+
+</head>
+<body>
+
+<nav class="ppa-nav">
+  <a href="/" class="ppa-nav-logo">Piping<span>Pro</span> Academy</a>
+  <a href="/calculators/" class="ppa-nav-back">← Back to Calculators</a>
+</nav>
+<div class="ppa-hero">
+  <div class="ppa-hero-eyebrow">Members · Engineering Calculator Suite</div>
+  <h1>Dia-Inch &amp; Change-Order <em>Estimator</em></h1>
+  <p>Weld diameter-inch take-off → welding man-hours → labour cost — an independent OE check on a contractor's change-order claim.</p>
+</div>
+
+<div class="calc-tabs">
+  <button class="calc-tab active" onclick="showCalcTab('calculator')">⚙ Calculator</button>
+  <button class="calc-tab" onclick="showCalcTab('theory')">📚 Theory &amp; Reference</button>
+</div>
+
+<div class="calc-panel active" id="calctab-calculator">
+<div class="container">
+
+  <div class="formula-box">
+    <div class="eq">Dia-Inch = Σ (NPS × welds) &nbsp;·&nbsp; Man-hours = DI × rate &nbsp;·&nbsp; Cost = MH × cost/hr</div>
+    <div class="vars">One weld of an NPS-n pipe = n dia-inches. Pipe rack and equipment area each carry their own welding productivity rate (mh/DI); the labour rate is an all-in cost per man-hour.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">1 — Weld Schedule</div>
+    <div class="tscroll"><table class="wtab"><thead id="thead"></thead><tbody id="rows"></tbody></table></div>
+    <div style="display:flex;gap:.5rem;margin-top:.8rem;flex-wrap:wrap;">
+      <button class="minibtn" onclick="addRow()">+ Add weld line</button>
+      <button class="minibtn ghost" onclick="clearAll()">Clear all</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">2 — Rates &amp; Labour Cost</div>
+    <div class="grid3">
+      <div class="field">
+        <label><span class="pill-rack"></span>Pipe Rack — Productivity (mh/DI)</label>
+        <input type="number" id="rackRate" value="1.0" min="0" step="0.1">
+        <span class="hint">Repetitive straight-run; ≈ 0.8–1.2</span>
+      </div>
+      <div class="field">
+        <label><span class="pill-equip"></span>Equipment Area — Productivity (mh/DI)</label>
+        <input type="number" id="equipRate" value="1.5" min="0" step="0.1">
+        <span class="hint">Congested / small-bore; ≈ 1.3–2.0</span>
+      </div>
+      <div class="field">
+        <label>Labour Rate — Cost / Hour</label>
+        <div style="display:flex;gap:6px;">
+          <select id="ccy" style="flex:0 0 auto;width:auto;">
+            <option value="$">USD $</option><option value="SAR ">SAR</option>
+            <option value="£">GBP £</option><option value="€">EUR €</option>
+          </select>
+          <input type="number" id="costRate" value="45" min="0" step="1">
+        </div>
+        <span class="hint">All-in: welder + fitter + helper + overhead</span>
+      </div>
+    </div>
+    <button class="calcbtn" onclick="calculate()">Calculate Estimate</button>
+  </div>
+
+  <div class="results" id="results">
+    <div class="result-hero">
+      <div class="hero-main">
+        <div class="hero-label">Estimated Labour Cost</div>
+        <div class="hero-val" id="h-cost">—</div>
+        <div class="hero-unit">Independent OE estimate — benchmark vs contractor claim</div>
+      </div>
+      <div class="hero-divider"></div>
+      <div class="hero-sub">
+        <div class="hero-item"><div class="hero-item-label">Total Dia-Inch</div><div class="hero-item-val"><span id="h-di">—</span> DI</div></div>
+        <div class="hero-item"><div class="hero-item-label">Total Man-hours</div><div class="hero-item-val"><span id="h-mh">—</span> mh</div></div>
+        <div class="hero-item"><div class="hero-item-label">Total Welds</div><div class="hero-item-val" id="h-welds">—</div></div>
+      </div>
+    </div>
+
+    <div class="rs">
+      <div class="rs-head"><div class="rs-title">Dia-Inch, Man-hours &amp; Cost by Zone</div></div>
+      <div class="metrics">
+        <div class="metric"><div class="m-label">Rack Dia-Inch</div><div class="m-val" id="m-rdi">—</div><div class="m-unit">DI</div></div>
+        <div class="metric"><div class="m-label">Equip Dia-Inch</div><div class="m-val" id="m-edi">—</div><div class="m-unit">DI</div></div>
+        <div class="metric"><div class="m-label">Rack Man-hours</div><div class="m-val" id="m-rmh">—</div><div class="m-unit">mh</div></div>
+        <div class="metric"><div class="m-label">Equip Man-hours</div><div class="m-val" id="m-emh">—</div><div class="m-unit">mh</div></div>
+        <div class="metric"><div class="m-label">Rack Cost</div><div class="m-val" id="m-rcost">—</div><div class="m-unit">labour</div></div>
+        <div class="metric"><div class="m-label">Equip Cost</div><div class="m-val" id="m-ecost">—</div><div class="m-unit">labour</div></div>
+      </div>
+      <div class="tscroll"><table class="wtab" style="min-width:0;">
+        <thead><tr><th>Zone</th><th class="num">Dia-Inch</th><th class="num">Man-hours</th><th class="num">Labour cost</th></tr></thead>
+        <tbody id="zoneRows"></tbody>
+      </table></div>
+    </div>
+
+    <div class="rs">
+      <div class="rs-head"><div class="rs-title">Breakdown by Size &amp; Location</div></div>
+      <div class="tscroll"><table class="wtab" style="min-width:0;">
+        <thead><tr><th>NPS</th><th class="num"><span class="pill-rack"></span>Rack welds</th><th class="num">Rack DI</th><th class="num"><span class="pill-equip"></span>Equip welds</th><th class="num">Equip DI</th><th class="num">Total DI</th></tr></thead>
+        <tbody id="sizeRows"></tbody>
+      </table></div>
+    </div>
+
+    <div class="rs">
+      <div class="rs-head"><div class="rs-title">Engineering Notes</div></div>
+      <div id="notes"></div>
+      <div style="display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:1rem;">
+        <button class="calcbtn" style="width:auto;margin-top:0;" onclick="ppaOpenReportDI()">⬇ Download PDF Report</button>
+        <button class="minibtn" onclick="exportCsv()">Export CSV</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div><!-- /calctab-calculator -->
+
+<div class="calc-panel" id="calctab-theory">
+<div class="container">
+  <div class="ref-section">
+    <div class="ref-title">Dia-Inch (Diameter-Inch)</div>
+    <div class="ref-formula"><b>Dia-Inch = Σ ( NPS × number of welds )</b><br>One butt weld of an NPS-n pipe = n dia-inches · e.g. 8 welds on 6" pipe = 48 DI</div>
+    <div class="ref-note">The standard unit for estimating fabrication, welding and NDE effort. It scales weld count by pipe size. Weld type (butt, socket, branch) is recorded for the breakdown only and does not change the DI value.</div>
+  </div>
+  <div class="ref-section">
+    <div class="ref-title">Man-Hours by Zone Productivity</div>
+    <div class="ref-formula"><b>Man-hours = Dia-Inch × productivity (mh / DI)</b><br>Pipe rack ≈ 0.8–1.2 mh/DI · Equipment area ≈ 1.3–2.0 mh/DI</div>
+    <div class="ref-note">Splitting scope by location is where most estimates go soft. Rack welding is repetitive with good access; equipment-area welding is congested and tie-in heavy, so it runs materially slower per dia-inch.</div>
+  </div>
+  <div class="ref-section">
+    <div class="ref-title">Labour Cost &amp; Change-Order Check</div>
+    <div class="ref-formula"><b>Labour cost = man-hours × all-in rate (cost / hr)</b><br>All-in rate = welder + fitter + helper + overhead</div>
+    <div class="ref-note">As Owner's Engineer, build the weld scope independently, compute DI → man-hours → cost, and benchmark against the contractor's claim. A large gap is the prompt to interrogate the claimed weld count, productivity or rate.</div>
+  </div>
+  <div class="ref-section">
+    <div class="ref-title">Reference</div>
+    <div class="ref-table-wrap"><table class="ref-table">
+      <tr><th>Topic</th><th>Application</th></tr>
+      <tr><td>Dia-Inch</td><td>Welding / fabrication / NDE effort estimating unit</td></tr>
+      <tr><td>Productivity</td><td>Shop vs field, rack vs equipment-area welding rates (mh/DI)</td></tr>
+      <tr><td>Change Order</td><td>Independent estimate to benchmark contractor claims</td></tr>
+    </table></div>
+  </div>
+</div>
+</div><!-- /calctab-theory -->
+
+<footer class="ppa-footer">
+  <div class="ppa-footer-logo">Piping<span>Pro</span> Academy</div>
+  <div>Engineering Calculator Suite · Dia-Inch &amp; Change-Order Estimator · © Zephrum Konsultan Limited</div>
+</footer>
+
+<script>
+function showCalcTab(name){
+  ['calculator','theory'].forEach(function(t){
+    var b=document.querySelector('.calc-tab[onclick*="'+t+'"]'); var p=document.getElementById('calctab-'+t);
+    if(b)b.classList.toggle('active',t===name); if(p)p.classList.toggle('active',t===name);
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function ppaOpenReportDI(){ if(!window.DI_R){alert('Please run a calculation first.');return;} window.PPA_REPORT=window.DI_R; ppaOpenReport(); }
+</script>
+<!-- ════════ PipingPro Shared Report Engine v1.0 ════════
+     Inject before </body>. Each calculator sets window.PPA_REPORT = {...} on
+     calculate(), then a button calls ppaOpenReport(). One template, all calcs. -->
+<div id="ppa-rpt-modal" style="display:none;position:fixed;inset:0;background:rgba(26,21,16,.55);z-index:10000;align-items:center;justify-content:center;padding:1rem">
+  <div style="background:#faf6ef;border-radius:8px;max-width:560px;width:100%;padding:1.6rem 1.8rem;box-shadow:0 10px 40px rgba(26,21,16,.3);font-family:'DM Sans',sans-serif">
+    <h3 style="font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:1.3rem;color:#1a1510;margin:0 0 .3rem">Report Details</h3>
+    <p style="font-size:.82rem;color:#4a3f30;margin:0 0 1.1rem">Project information for the report header. All fields optional.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.7rem .9rem">
+      <div><label class="ppa-rl">Your Company</label><input id="ppa-rpt-company" type="text" placeholder="e.g. Zephrum Konsultan" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Client</label><input id="ppa-rpt-client" type="text" placeholder="e.g. Saudi Aramco" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Project</label><input id="ppa-rpt-project" type="text" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Project No.</label><input id="ppa-rpt-projectno" type="text" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Line / Tag</label><input id="ppa-rpt-line" type="text" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Revision</label><input id="ppa-rpt-rev" type="text" placeholder="0" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Prepared by</label><input id="ppa-rpt-engineer" type="text" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Checked by</label><input id="ppa-rpt-checker" type="text" class="ppa-ri"></div>
+    </div>
+    <div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1.3rem">
+      <button onclick="ppaCloseReport()" style="background:transparent;color:#4a3f30;border:1px solid #c8b89a;padding:.6rem 1.2rem;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600">Cancel</button>
+      <button onclick="ppaGenerateReport()" style="background:#b8860b;color:#1a1510;border:none;padding:.6rem 1.5rem;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:700">Generate Report →</button>
+    </div>
+  </div>
+</div>
+<style>
+.ppa-rl{display:block;font-size:.72rem;font-weight:600;color:#4a3f30;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.25rem}
+.ppa-ri{width:100%;padding:.5rem;border:1px solid #c8b89a;border-radius:4px;background:#fff;font-size:.85rem;font-family:'DM Sans',sans-serif}
+</style>
+<script>
+function ppaOpenReport(){
+  if(!window.PPA_REPORT){ alert('Please run a calculation first.'); return; }
+  try{ const s=JSON.parse(localStorage.getItem('ppa_report_meta')||'{}');
+    [['ppa-rpt-company','company'],['ppa-rpt-client','client'],['ppa-rpt-project','project'],
+     ['ppa-rpt-projectno','projectNo'],['ppa-rpt-engineer','engineer'],['ppa-rpt-checker','checker']]
+     .forEach(([id,k])=>{const el=document.getElementById(id); if(el&&!el.value&&s[k]) el.value=s[k];});
+  }catch(e){}
+  document.getElementById('ppa-rpt-modal').style.display='flex';
+}
+function ppaCloseReport(){ document.getElementById('ppa-rpt-modal').style.display='none'; }
+function ppaGenerateReport(){
+  const R=window.PPA_REPORT; if(!R){ alert('Please run a calculation first.'); return; }
+  const g=id=>(document.getElementById(id)?.value||'').trim();
+  const m={company:g('ppa-rpt-company'),client:g('ppa-rpt-client'),project:g('ppa-rpt-project'),
+    projectNo:g('ppa-rpt-projectno'),line:g('ppa-rpt-line'),engineer:g('ppa-rpt-engineer'),
+    checker:g('ppa-rpt-checker'),rev:g('ppa-rpt-rev')||'0'};
+  try{ localStorage.setItem('ppa_report_meta',JSON.stringify({company:m.company,client:m.client,
+    project:m.project,projectNo:m.projectNo,engineer:m.engineer,checker:m.checker})); }catch(e){}
+  const now=new Date().toLocaleDateString('en-GB');
+
+  // Build sections from R.sections: [{title, type:'table'|'steps'|'text', ...}]
+  let bodyHtml='';
+  (R.sections||[]).forEach((s,i)=>{
+    bodyHtml+=`<h3>${i+1}. ${s.title}</h3>`;
+    if(s.badge) bodyHtml+=`<div class="code-badge">${s.badge}</div>`;
+    if(s.type==='table'){
+      const head=s.head||['Parameter','Value','Unit'];
+      bodyHtml+=`<table class="d"><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr>`+
+        s.rows.map(r=>`<tr>${r.map((c,ci)=>`<td class="${ci>0&&ci<r.length-1||head[ci]==='Value'?'num':''}">${c}</td>`).join('')}</tr>`).join('')+`</table>`;
+    } else if(s.type==='steps'){
+      bodyHtml+=`<div class="steps">${s.html}</div>`;
+    } else if(s.type==='text'){
+      bodyHtml+=`<div class="ptext">${s.html}</div>`;
+    }
+  });
+  let v=''; if(R.verdict){ const c=R.verdict.status; v=`<div class="verdict ${c}">${R.verdict.text}</div>`; }
+
+  const html=`<!DOCTYPE html><html><head><meta charset="utf-8"/>
+<title>${R.docType||'Calculation'} Report — ${m.project||'PipingPro'}</title>
+<style>
+@page{margin:18mm 16mm}*{box-sizing:border-box}
+body{font-family:'Helvetica Neue',Arial,sans-serif;font-size:10.5pt;color:#1a1510;margin:0;line-height:1.5}
+.sheet{max-width:780px;margin:0 auto}
+.head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #b8860b;padding-bottom:12px}
+.logo{font-family:Georgia,serif;font-size:19pt;color:#1a1510;font-weight:bold;line-height:1.15}
+.logo span.sub{display:block;font-family:Arial;font-size:8pt;color:#6b5d49;letter-spacing:.08em;font-weight:normal;margin-top:3px}
+.logo span.sub b{font-weight:bold;color:#b8860b}
+.doctype{text-align:right;font-size:8.5pt;color:#4a3f30}
+.doctype b{display:block;font-size:11pt;color:#1a1510;font-family:Georgia,serif}
+.meta{width:100%;border-collapse:collapse;font-size:8.5pt;margin:14px 0 6px}
+.meta td{border:1px solid #c8b89a;padding:4px 8px}
+.meta td.l{background:#f5e9c8;color:#4a3f30;font-weight:bold;width:18%;text-transform:uppercase;font-size:7.5pt;letter-spacing:.04em}
+h3{font-family:Georgia,serif;font-size:12pt;color:#1a1510;border-bottom:1.5px solid #b8860b;padding-bottom:4px;margin:22px 0 8px}
+.code-badge{display:inline-block;background:#1a1510;color:#d4a017;font-family:monospace;font-size:9pt;padding:3px 10px;border-radius:3px;margin-bottom:4px}
+table.d{width:100%;border-collapse:collapse;font-size:9.5pt}
+table.d th{background:#1a1510;color:#d4a017;padding:6px 9px;text-align:left;font-size:8.5pt;text-transform:uppercase;letter-spacing:.03em}
+table.d td{padding:5px 9px;border-bottom:1px solid #e8dfd0}
+table.d td.num{text-align:right;font-family:'IBM Plex Mono',monospace}
+table.d tr:nth-child(even) td{background:#faf6ef}
+.verdict{padding:12px 16px;border-radius:5px;font-weight:bold;font-size:11pt;margin:16px 0;border:1px solid}
+.verdict.pass{background:#e7f1ee;color:#1a6b5a;border-color:#1a6b5a}
+.verdict.fail{background:#f6e6df;color:#8b3a1a;border-color:#8b3a1a}
+.verdict.warn{background:#f5e9c8;color:#6b4e00;border-color:#b8860b}
+.steps{font-family:'IBM Plex Mono',monospace;font-size:8.5pt;background:#faf6ef;border:1px solid #e8dfd0;border-left:3px solid #b8860b;padding:10px 14px;line-height:1.85}
+.ptext{font-size:9.5pt;line-height:1.65;color:#1a1510;white-space:pre-wrap}
+.sig{display:flex;gap:30px;margin-top:26px}
+.sig div{flex:1;border-top:1px solid #1a1510;padding-top:5px;font-size:8pt;color:#4a3f30}
+.disc{font-size:7.5pt;color:#6b5d49;margin-top:22px;line-height:1.55;border-top:1px solid #e8dfd0;padding-top:10px}
+.foot{margin-top:14px;font-size:7.5pt;color:#6b5d49;text-align:center}
+@media print{.noprint{display:none}}
+.noprint{text-align:center;margin:16px 0}
+.noprint button{background:#b8860b;color:#1a1510;border:none;padding:10px 22px;font-size:11pt;font-weight:bold;border-radius:3px;cursor:pointer;font-family:Arial}
+</style></head><body>
+<div class="noprint"><button onclick="window.print()">⬇ Print / Save as PDF</button></div>
+<div class="sheet">
+  <div class="head">
+    <div class="logo">${m.company||'Engineering Calculation'}<span class="sub">Powered by Piping<b>Pro</b> Academy · Calculator Suite</span></div>
+    <div class="doctype"><b>${(R.docType||'CALCULATION').toUpperCase()}</b>Calculation Report<br/>Doc Rev. ${m.rev} &nbsp;·&nbsp; ${now}</div>
+  </div>
+  <table class="meta">
+    <tr><td class="l">Client</td><td>${m.client||'—'}</td><td class="l">Project</td><td>${m.project||'—'}</td></tr>
+    <tr><td class="l">Project No.</td><td>${m.projectNo||'—'}</td><td class="l">Line / Tag</td><td>${m.line||'—'}</td></tr>
+    <tr><td class="l">Prepared by</td><td>${m.engineer||'—'}</td><td class="l">Checked by</td><td>${m.checker||'—'}</td></tr>
+  </table>
+  ${bodyHtml}
+  ${v}
+  <div class="sig">
+    <div>Prepared: ${m.engineer||'________________'}<br/>Date: ${now}</div>
+    <div>Checked: ${m.checker||'________________'}<br/>Date: ________________</div>
+  </div>
+  <div class="disc"><b>Preliminary engineering output</b> — results must be independently verified by a competent engineer against the governing code edition${R.codeNote?(' ('+R.codeNote+')'):''} and project specifications before use in any design, procurement, or construction package. Issued subject to the PipingPro Academy Terms of Use. © 2026 Zephrum Konsultan Limited.</div>
+  <div class="foot">${m.company||'PipingPro Academy'} · Generated with PipingPro Academy Calculator Suite · ${now}</div>
+</div></body></html>`;
+  const w=window.open('','_blank'); w.document.write(html); w.document.close(); ppaCloseReport();
+}
+</script>
+<!-- ════════ end Shared Report Engine ════════ -->
+<script src="/js/ppa-report-gate.js"></script>
+
+<script>
+var NPS_LIST=[0.5,0.75,1,1.5,2,3,4,6,8,10,12,14,16,18,20,24,26,30,36,42,48];
+var LOCS=["Pipe Rack","Equipment Area"];
+var WELDS=["Butt Weld (BW)","Socket Weld (SW)","Branch / Stub-in","Flange weld","Other"];
+var state=[];
+var fmt=function(v,d){d=(d==null?1:d);if(!isFinite(v))v=0;return v.toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d});};
+var ccy=function(){return document.getElementById('ccy').value;};
+var money=function(v){return ccy()+v.toLocaleString(undefined,{maximumFractionDigits:0});};
+function npsOpts(s){return NPS_LIST.map(function(n){return '<option value="'+n+'"'+(n===s?' selected':'')+'>'+n+'"</option>';}).join('');}
+function locOpts(s){return LOCS.map(function(l){return '<option'+(l===s?' selected':'')+'>'+l+'</option>';}).join('');}
+function weldOpts(s){return WELDS.map(function(w){return '<option'+(w===s?' selected':'')+'>'+w+'</option>';}).join('');}
+
+function renderHead(){document.getElementById('thead').innerHTML='<tr><th class="rownum">#</th><th>Line / Spec ref</th><th>NPS (in)</th><th>Location</th><th>Weld type</th><th class="num">Welds</th><th class="num">Dia-Inch</th><th style="width:28px;"></th></tr>';}
+
+function renderRows(){
+  var tb=document.getElementById('rows');tb.innerHTML='';
+  state.forEach(function(r,i){
+    var di=(parseFloat(r.nps)||0)*(parseFloat(r.welds)||0);
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td class="rownum">'+(i+1)+'</td>'+
+      '<td><input type="text" class="f-ref" placeholder="e.g. 10&quot;-P-1001" value="'+(r.ref||'')+'"></td>'+
+      '<td><select class="f-nps">'+npsOpts(r.nps||6)+'</select></td>'+
+      '<td><select class="f-loc">'+locOpts(r.loc||LOCS[0])+'</select></td>'+
+      '<td><select class="f-type">'+weldOpts(r.type||WELDS[0])+'</select></td>'+
+      '<td class="num"><input type="number" class="f-welds" min="0" step="1" value="'+(r.welds!=null?r.welds:'')+'" placeholder="0"></td>'+
+      '<td class="num di-out f-di">'+(di?fmt(di,1):'0')+'</td>'+
+      '<td><button class="wt-del" title="Remove">\u00d7</button></td>';
+    tb.appendChild(tr);
+    tr.querySelector('.wt-del').addEventListener('click',function(){state.splice(i,1);renderRows();});
+    tr.querySelectorAll('input,select').forEach(function(el){el.addEventListener('input',function(){
+      readRow(tr,i);var d=(parseFloat(state[i].nps)||0)*(parseFloat(state[i].welds)||0);tr.querySelector('.f-di').textContent=d?fmt(d,1):'0';
+    });});
+  });
+}
+function readRow(tr,i){
+  state[i].ref=tr.querySelector('.f-ref').value;
+  state[i].nps=parseFloat(tr.querySelector('.f-nps').value);
+  state[i].loc=tr.querySelector('.f-loc').value;
+  state[i].type=tr.querySelector('.f-type').value;
+  var w=tr.querySelector('.f-welds').value;state[i].welds=(w!==''?parseFloat(w):null);
+}
+function addRow(d){state.push(d||{});renderRows();}
+function clearAll(){if(confirm('Clear all weld lines?')){state=[];addRow();}}
+
+function calculate(){
+  var totalDI=0,totalWelds=0,rackDI=0,equipDI=0,bySize={};
+  state.forEach(function(r){
+    var nps=parseFloat(r.nps)||0,w=parseFloat(r.welds)||0,di=nps*w;totalDI+=di;totalWelds+=w;
+    var rk=(r.loc===LOCS[0]); if(rk)rackDI+=di;else equipDI+=di;
+    if(w>0){if(!bySize[nps])bySize[nps]={rw:0,rdi:0,ew:0,edi:0};if(rk){bySize[nps].rw+=w;bySize[nps].rdi+=di;}else{bySize[nps].ew+=w;bySize[nps].edi+=di;}}
+  });
+  if(totalDI<=0){alert('Add at least one weld line with a size and weld count.');return;}
+  var rRate=parseFloat(document.getElementById('rackRate').value)||0;
+  var eRate=parseFloat(document.getElementById('equipRate').value)||0;
+  var cRate=parseFloat(document.getElementById('costRate').value)||0;
+  var rackMH=rackDI*rRate,equipMH=equipDI*eRate,totalMH=rackMH+equipMH;
+  var rackCost=rackMH*cRate,equipCost=equipMH*cRate,totalCost=totalMH*cRate;
+  var set=function(id,v){document.getElementById(id).textContent=v;};
+  set('h-cost',money(totalCost));set('h-di',fmt(totalDI));set('h-mh',fmt(totalMH,0));set('h-welds',totalWelds.toLocaleString());
+  set('m-rdi',fmt(rackDI));set('m-edi',fmt(equipDI));set('m-rmh',fmt(rackMH,0));set('m-emh',fmt(equipMH,0));
+  set('m-rcost',money(rackCost));set('m-ecost',money(equipCost));
+
+  var zEl=document.getElementById('zoneRows');zEl.innerHTML='';
+  [['Pipe Rack','pill-rack',rackDI,rackMH,rackCost],['Equipment Area','pill-equip',equipDI,equipMH,equipCost]].forEach(function(z){
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td><span class="'+z[1]+'"></span>'+z[0]+'</td><td class="num">'+fmt(z[2])+'</td><td class="num">'+fmt(z[3],0)+'</td><td class="num">'+money(z[4])+'</td>';
+    zEl.appendChild(tr);
+  });
+  var sEl=document.getElementById('sizeRows');sEl.innerHTML='';
+  Object.keys(bySize).map(Number).sort(function(a,b){return a-b;}).forEach(function(nps){
+    var s=bySize[nps];var tr=document.createElement('tr');
+    tr.innerHTML='<td>'+nps+'"</td><td class="num">'+s.rw.toLocaleString()+'</td><td class="num">'+fmt(s.rdi)+'</td><td class="num">'+s.ew.toLocaleString()+'</td><td class="num">'+fmt(s.edi)+'</td><td class="num">'+fmt(s.rdi+s.edi)+'</td>';
+    sEl.appendChild(tr);
+  });
+
+  var notes='';
+  function nb(txt){return '<div class="info-box">'+txt+'</div>';}
+  notes+=nb('Zone split \u2014 rack '+fmt(rackDI)+' DI at '+rRate+' mh/DI, equipment area '+fmt(equipDI)+' DI at '+eRate+' mh/DI. Adjust the rates to your project norms.');
+  notes+=nb('This is your independent estimate. Compare it line-for-line with the contractor\u2019s claimed dia-inch, man-hours and cost; investigate any material gap before agreeing the change order.');
+  document.getElementById('notes').innerHTML=notes;
+
+  var schedRows=state.filter(function(r){return (parseFloat(r.welds)||0)>0;}).map(function(r){
+    var nps=parseFloat(r.nps)||0,w=parseFloat(r.welds)||0;
+    return [r.ref||'\u2014',nps+'"',r.loc||LOCS[0],r.type||WELDS[0],String(w),fmt(nps*w,1)];
+  });
+  window.DI_R={docType:'Dia-Inch Change-Order Estimate',codeNote:'dia-inch = \u03a3 NPS \u00d7 welds',
+    sections:[
+      {title:'Weld Schedule',type:'table',head:['Line / Spec ref','NPS','Location','Weld type','Welds','Dia-Inch'],rows:schedRows},
+      {title:'By Zone',type:'table',head:['Zone','Value','Unit'],rows:[
+        ['Pipe Rack \u2014 dia-inch',fmt(rackDI),'DI'],['Pipe Rack \u2014 man-hours',fmt(rackMH,0),'mh'],['Pipe Rack \u2014 labour cost',money(rackCost),''],
+        ['Equipment Area \u2014 dia-inch',fmt(equipDI),'DI'],['Equipment Area \u2014 man-hours',fmt(equipMH,0),'mh'],['Equipment Area \u2014 labour cost',money(equipCost),'']]},
+      {title:'Totals',type:'table',head:['Quantity','Value','Unit'],rows:[
+        ['Total Dia-Inch',fmt(totalDI),'DI'],['Total Welds',totalWelds.toLocaleString(),'no.'],['Total Man-hours',fmt(totalMH,0),'mh'],
+        ['Labour Rate',ccy()+cRate,'/hr'],['Total Labour Cost',money(totalCost),'']]}
+    ],
+    verdict:{status:'warn',text:'Estimated labour cost \u2248 '+money(totalCost)+'  \u00b7  '+fmt(totalMH,0)+' man-hours  \u00b7  '+fmt(totalDI)+' dia-inch'}};
+
+  document.getElementById('results').style.display='block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function exportCsv(){
+  var csv='Line/Spec ref,NPS (in),Location,Weld type,No. of welds,Dia-Inch\n';
+  state.forEach(function(r){var nps=parseFloat(r.nps)||0,w=parseFloat(r.welds)||0;var ref=(r.ref||'').replace(/,/g,';');
+    csv+=ref+','+nps+','+(r.loc||LOCS[0])+','+(r.type||WELDS[0])+','+w+','+(nps*w)+'\n';});
+  csv+='\nTotal Dia-Inch,'+document.getElementById('h-di').textContent+'\n';
+  csv+='Total Man-hours,'+document.getElementById('h-mh').textContent+'\n';
+  csv+='Total Labour Cost,'+document.getElementById('h-cost').textContent+'\n';
+  var b=new Blob([csv],{type:'text/csv'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='dia-inch-change-order.csv';a.click();
+}
+
+renderHead();
+state=[{nps:8,loc:'Pipe Rack',type:WELDS[0],welds:10},{nps:6,loc:'Pipe Rack',type:WELDS[0],welds:8},{nps:4,loc:'Equipment Area',type:WELDS[0],welds:14},{nps:2,loc:'Equipment Area',type:WELDS[1],welds:22}];
+renderRows();
+</script>
+
+</body>
+</html>

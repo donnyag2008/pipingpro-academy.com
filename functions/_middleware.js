@@ -49,32 +49,32 @@ const TIER_RANK       = { FREE: 0, STUDENT: 1, PROFESSIONAL: 2 };
 const ACTIVE_STATUSES = new Set(['ACTIVE', 'TRIALING']);
 
 const PROTECTED = [
-  { path: '/flange-valve-weight-calculator.html', minTier: 'STUDENT' }, // vw
-  { path: '/pipe-support-span-calculator.html',   minTier: 'STUDENT' }, // ps
-  { path: '/expansion-loop-calculator.html',      minTier: 'STUDENT' }, // el
-  { path: '/l-bend-stress.html',                  minTier: 'STUDENT' }, // lb
-  { path: '/course-piping-fundamentals.html',        minTier: 'STUDENT' },
-  { path: '/course-static-stress.html',              minTier: 'STUDENT' },
-  { path: '/Fundamental-of-Pipeline-Engineering.html', minTier: 'STUDENT' },
-  { path: '/course-nonmetallic-piping.html',         minTier: 'STUDENT' },
-  { path: '/flexibility-screening-calculator.html',    minTier: 'PROFESSIONAL' }, // fx
-  { path: '/stress-critical-line-selector.html',       minTier: 'PROFESSIONAL' }, // scl
-  { path: '/pipeline-crossing-calculator.html',        minTier: 'PROFESSIONAL' }, // pc
-  { path: '/upheaval-buckling-calculator.html',        minTier: 'PROFESSIONAL' }, // ub
-  { path: '/ductile-fracture-calculator.html',         minTier: 'PROFESSIONAL' }, // df
-  { path: '/subsea-pipeline-calculator.html',          minTier: 'PROFESSIONAL' }, // sp
-  { path: '/flange-leakage-check.html',                minTier: 'PROFESSIONAL' }, // fl
-  { path: '/hydro-pneumo-test-pack.html',              minTier: 'PROFESSIONAL' }, // hp
-  { path: '/nozzle-loads-checker.html',                minTier: 'PROFESSIONAL' }, // nl
-  { path: '/pid-mto-calculator.html',                  minTier: 'PROFESSIONAL' }, // pm
-  { path: '/special-pipe-support-calculator.html',     minTier: 'PROFESSIONAL' }, // ss
-  { path: '/trunnion-calculator.html',                 minTier: 'PROFESSIONAL' }, // tr
-  { path: '/vibration-fatigue-calculator.html',        minTier: 'PROFESSIONAL' }, // vf
-  { path: '/pipe-coating-insulation-calculator.html',  minTier: 'PROFESSIONAL' }, // ci
-  { path: '/dia-inch-calculator.html',                 minTier: 'PROFESSIONAL' }, // di
-  { path: '/piping-work-estimator.html',               minTier: 'PROFESSIONAL' }, // pe
-  { path: '/sectional-volume-calculator.html',         minTier: 'PROFESSIONAL' }, // sv
-  { path: '/cp-design-calculator.html',                minTier: 'PROFESSIONAL' }, // cp
+  { path: '/calculators/basic/flange-valve-weight.html', minTier: 'STUDENT' }, // vw
+  { path: '/calculators/basic/pipe-support-span.html',   minTier: 'STUDENT' }, // ps
+  { path: '/calculators/basic/expansion-loop.html',      minTier: 'STUDENT' }, // el
+  { path: '/calculators/basic/l-bend-stress.html',                  minTier: 'STUDENT' }, // lb
+  { path: '/courses/piping-fundamentals/',        minTier: 'STUDENT' },
+  { path: '/courses/static-stress/',              minTier: 'STUDENT' },
+  { path: '/courses/pipeline-engineering/', minTier: 'STUDENT' },
+  { path: '/courses/non-metallic-piping/',         minTier: 'STUDENT' },
+  { path: '/calculators/basic/flexibility-screening.html',    minTier: 'PROFESSIONAL' }, // fx
+  { path: '/calculators/advanced/stress-critical-line.html',       minTier: 'PROFESSIONAL' }, // scl
+  { path: '/calculators/advanced/pipeline-crossing.html',        minTier: 'PROFESSIONAL' }, // pc
+  { path: '/calculators/advanced/upheaval-buckling.html',        minTier: 'PROFESSIONAL' }, // ub
+  { path: '/calculators/advanced/ductile-fracture.html',         minTier: 'PROFESSIONAL' }, // df
+  { path: '/parked/subsea-pipeline-calculator.html',          minTier: 'PROFESSIONAL' }, // sp
+  { path: '/calculators/advanced/flange-leakage.html',                minTier: 'PROFESSIONAL' }, // fl
+  { path: '/parked/hydro-pneumo-test-pack.html',              minTier: 'PROFESSIONAL' }, // hp
+  { path: '/calculators/advanced/nozzle-loads.html',                minTier: 'PROFESSIONAL' }, // nl
+  { path: '/calculators/basic/pid-mto.html',                  minTier: 'PROFESSIONAL' }, // pm
+  { path: '/calculators/advanced/special-pipe-support.html',     minTier: 'PROFESSIONAL' }, // ss
+  { path: '/calculators/advanced/trunnion.html',                 minTier: 'PROFESSIONAL' }, // tr
+  { path: '/calculators/advanced/vibration-fatigue.html',        minTier: 'PROFESSIONAL' }, // vf
+  { path: '/calculators/basic/pipe-coating-insulation.html',  minTier: 'PROFESSIONAL' }, // ci
+  { path: '/calculators/advanced/dia-inch-estimator.html',                 minTier: 'PROFESSIONAL' }, // di
+  { path: '/calculators/basic/piping-estimation.html',               minTier: 'PROFESSIONAL' }, // pe
+  { path: '/calculators/advanced/sectional-volume.html',         minTier: 'PROFESSIONAL' }, // sv
+  { path: '/calculators/advanced/cathodic-protection.html',                minTier: 'PROFESSIONAL' }, // cp
 ];
 
 const MS_BASE = 'https://admin.memberstack.com';

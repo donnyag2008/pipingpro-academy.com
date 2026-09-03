@@ -1,0 +1,103 @@
+# PipingPro Academy — URL Redirects (Cloudflare Pages)
+# Generated during repo restructure, September 2026
+# 301 = Permanent redirect (tells Google to update index)
+
+# ── COURSES ──
+/courses.html                                     /courses/                                          301
+/course-piping-fundamentals.html                  /courses/piping-fundamentals/                      301
+/course-static-stress.html                        /courses/static-stress/                            301
+/course-nonmetallic-piping.html                   /courses/non-metallic-piping/                      301
+/Fundamental-of-Pipeline-Engineering.html         /courses/pipeline-engineering/                      301
+/piping-fundamentals-module-1.html                /courses/piping-fundamentals/module-1.html          301
+/pipeline-engineering-module-1.html               /courses/pipeline-engineering/module-1.html          301
+/static-stress-module-1.html                      /courses/static-stress/module-1.html                301
+/Piping-Engineering-Final-Quiz.html               /courses/piping-fundamentals/quiz.html              301
+/Pipeline-Fundamentals-Final-Quiz.html            /courses/pipeline-engineering/quiz.html              301
+/Static-Stress-Final-Quiz.html                    /courses/static-stress/quiz.html                    301
+/Non-Metallic-Piping-Final-Quiz.html              /courses/non-metallic-piping/quiz.html              301
+
+# ── BASIC CALCULATORS ──
+/pipe-wall-thickness-calculator.html              /calculators/basic/pipe-wall-thickness.html          301
+/pipe-weight-calculator.html                      /calculators/basic/pipe-weight.html                  301
+/unit-converter.html                              /calculators/basic/unit-converter.html               301
+/flange-valve-weight-calculator.html              /calculators/basic/flange-valve-weight.html          301
+/expansion-loop-calculator.html                   /calculators/basic/expansion-loop.html               301
+/l-bend-stress.html                               /calculators/basic/l-bend-stress.html                301
+/flexibility-screening-calculator.html            /calculators/basic/flexibility-screening.html        301
+/pipe-coating-insulation-calculator.html          /calculators/basic/pipe-coating-insulation.html      301
+/piping-work-estimator.html                       /calculators/basic/piping-estimation.html            301
+/pid-mto-calculator.html                          /calculators/basic/pid-mto.html                     301
+/pipe-support-span-calculator.html                /calculators/basic/pipe-support-span.html            301
+/initial-movement.html                            /calculators/basic/initial-movement.html             301
+
+# ── ADVANCED CALCULATORS ──
+/material-compare.html                            /calculators/advanced/material-compare.html          301
+/onshore-pipeline-mech-design.html                /calculators/advanced/onshore-pipeline-mech.html     301
+/buried-pipe-soil-interaction.html                /calculators/advanced/buried-pipe-soil.html          301
+/upheaval-buckling-calculator.html                /calculators/advanced/upheaval-buckling.html         301
+/ductile-fracture-calculator.html                 /calculators/advanced/ductile-fracture.html          301
+/cp-design-calculator.html                        /calculators/advanced/cathodic-protection.html       301
+/sectional-volume-calculator.html                 /calculators/advanced/sectional-volume.html          301
+/pipeline-crossing-calculator.html                /calculators/advanced/pipeline-crossing.html         301
+/special-pipe-support-calculator.html             /calculators/advanced/special-pipe-support.html      301
+/trunnion-calculator.html                         /calculators/advanced/trunnion.html                  301
+/dia-inch-calculator.html                         /calculators/advanced/dia-inch-estimator.html        301
+/stress-critical-line-selector.html               /calculators/advanced/stress-critical-line.html      301
+/flange-leakage-check.html                        /calculators/advanced/flange-leakage.html            301
+/nozzle-loads-checker.html                        /calculators/advanced/nozzle-loads.html              301
+/vibration-fatigue-calculator.html                /calculators/advanced/vibration-fatigue.html         301
+
+# ── DATASHEETS ──
+/material-datasheet.html                          /calculators/datasheets/material-datasheet.html      301
+/valve-datasheet-creator.html                     /calculators/datasheets/valve-datasheet-creator.html 301
+
+# ── CALCULATOR INDEX / OLD TOOLKITS ──
+/calculators.html                                 /calculators/                                       301
+/pipe-mechanical-design-toolkits.html             /calculators/                                       301
+/pipe-stress-calculator-toolkits.html             /calculators/                                       301
+/pipe-support-calculator-toolkits.html            /calculators/                                       301
+/pipeline-calculator-toolkits.html                /calculators/                                       301
+
+# ── GUIDES ──
+/guides.html   /calculators/   301
+/guide-cp-buried-pipeline.html   /calculators/advanced/cathodic-protection-guide.html   301
+/guide-onshore-pipeline-estimation.html   /calculators/advanced/onshore-pipeline-estimation-guide.html   301
+/guide-piping-work-estimation.html   /calculators/basic/piping-estimation-guide.html   301
+
+# ── AI ──
+/ai-tools.html                                    /ai/                                               301
+/ai-mto-estimator.html                            /ai/mto-estimator.html                             301
+/ai-for-engineering.html                          /ai/ai-for-engineering.html                         301
+
+# ── DISCIPLINES ──
+/onshore-pipeline.html   /   301
+/process-piping.html   /   301
+
+# ── LEGAL ──
+/privacy-policy.html                              /legal/privacy-policy.html                          301
+/terms-of-use.html                                /legal/terms-of-use.html                            301
+/legal.html                                       /legal/                                             301
+
+# ── OTHER ──
+/membership-plan.html                             /other/membership-plan.html                         301
+/international-payment.html                       /other/international-payment.html                   301
+/pembayaran-indonesia.html                        /other/pembayaran-indonesia.html                    301
+/awards.html                                      /other/awards.html                                 301
+/jobs.html                                        /other/jobs.html                                   301
+/free-course.html                                 /other/free-course.html                            301
+/thank-you.html                                   /other/thank-you.html                              301
+
+# ── PARKED (redirect to homepage) ──
+/caesar2-prescreener.html                         /                                                   301
+/subsea-pipeline-calculator.html   /calculators/advanced/subsea-pipeline.html   301
+/subsea-pipeline-mechanical-design-analysis.html   /calculators/advanced/subsea-pipeline-guide.html   301
+/complianceiq.html                                /                                                   301
+/complianceiq-plot-plan.html                      /                                                   301
+/hydro-pneumo-test-pack.html                      /                                                   301
+/pipe-material-verification.html                  /                                                   301
+/market-terminal.html                             /                                                   301
+
+# ── OLD/RETIRED ──
+/calculators1.html                                /calculators/                                       301
+/index1.html                                      /                                                   301
+/index-old.html                                   /                                                   301

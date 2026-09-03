@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1e40af">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="PipingPro">
+<link rel="apple-touch-icon" href="/images/icons/ppa-icon-192.png">
+
+  
+  <script data-memberstack-app="app_cmq9fsibv00720sujaqjm734o" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
+  <script src="/js/ppa-tier.js"></script>
+<title>Piping &amp; Pipeline Calculations — PipingPro Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<!-- ===== PipingPro Brand Bridge v1.0 ===== -->
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#faf6ef; --cream:#faf6ef;
+  --paper:#f3ede2; --surface:#f3ede2; --paper2:#f3ede2; --bg2:#f3ede2;
+  --paper3:#e8dfd0; --bg3:#e8dfd0;
+  --ink:#1a1510; --text:#1a1510;
+  --ink2:#4a3f30; --text-2:#4a3f30; --muted:#4a3f30;
+  --ink3:#6b5d49; --text-3:#6b5d49; --muted2:#6b5d49;
+  --accent:#8b3a1a; --accent2:#b8860b;
+  --accent-light:#f6e6df; --accent-border:#c8b89a;
+  --gold:#b8860b; --gold2:#b8860b; --gold-light:#f5e9c8;
+  --rule:#c8b89a; --border:#c8b89a;
+  --serif:'DM Serif Display',Georgia,serif;
+  --font:'DM Sans',system-ui,sans-serif; --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --radius:4px; --radius-lg:6px;
+  --pass:#1a6b5a; --success:#1a6b5a;
+  --fail:#8b3a1a; --danger:#8b3a1a;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6;min-height:100vh;}
+body, p, div, span, td, th, li, label, input, select, textarea, button{font-family:var(--font);}
+h1,h2,h3,h4,h5{font-family:var(--serif);}
+code,pre,.mono,[class*="mono"]{font-family:var(--mono);}
+
+/* ─── NAV ─── */
+nav{background:#1a1510;border-bottom:2px solid #b8860b;padding:0 5%;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:200;}
+.nav-logo{font-family:var(--serif);font-size:1.15rem;color:#d4a017;letter-spacing:.02em;text-decoration:none;}
+.nav-logo span{color:#b8860b;}
+.nav-back{font-size:.82rem;font-weight:500;letter-spacing:.05em;text-transform:uppercase;color:#ccc;text-decoration:none;display:flex;align-items:center;gap:5px;transition:color .2s;}
+.nav-back:hover{color:#d4a017;}
+
+/* ─── HERO ─── */
+.hero{background:var(--ink);color:var(--bg);padding:2.4rem 5% 2rem;border-bottom:3px solid var(--accent);position:relative;overflow:hidden;}
+.hero-inner{position:relative;max-width:900px;margin:0 auto;}
+.hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 60px),repeating-linear-gradient(0deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 60px);}
+.hero-eyebrow{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);margin-bottom:.7rem;font-family:var(--mono);position:relative;}
+.hero h1{font-family:var(--serif);font-size:clamp(2rem,5vw,3rem);line-height:1.12;margin-bottom:.7rem;position:relative;}
+.hero h1 em{font-style:italic;color:#d4a017;}
+.hero p{font-size:.95rem;color:rgba(250,246,239,0.62);max-width:62ch;position:relative;}
+
+/* ─── SECTION HEADERS ─── */
+.section-group{max-width:960px;margin:0 auto;padding:0 1.5rem;}
+.section-header{padding:2.2rem 0 1.2rem;border-bottom:1px solid var(--rule);margin-bottom:1.6rem;}
+.section-header:first-child{padding-top:2.8rem;}
+.section-label{font-family:var(--mono);font-size:.68rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--accent2);margin-bottom:.35rem;}
+.section-title{font-family:var(--serif);font-size:1.5rem;color:var(--ink);line-height:1.2;margin-bottom:.25rem;}
+.section-count{font-family:var(--mono);font-size:.72rem;color:var(--ink3);letter-spacing:.04em;}
+
+/* ─── GRID ─── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1.2rem;margin-bottom:2.8rem;}
+
+/* ─── CALC CARD ─── */
+.calc-card{background:#fff;border:1px solid var(--rule);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer;transition:box-shadow .22s,transform .22s;position:relative;border-top:3px solid var(--gold);}
+.calc-card:hover{box-shadow:0 6px 28px rgba(26,26,24,0.11);transform:translateY(-3px);}
+
+.card-img{height:140px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.card-img.bg-teal{background:linear-gradient(135deg,#1a6b5a 0%,#2d9679 100%);}
+.card-img.bg-accent{background:linear-gradient(135deg,#7a3518 0%,#8b3a1a 100%);}
+.card-img.bg-navy{background:linear-gradient(135deg,#1a2a5a 0%,#2d4a8a 100%);}
+.card-img.bg-slate{background:linear-gradient(135deg,#2a3a4a 0%,#4a6a7a 100%);}
+.card-img.bg-olive{background:linear-gradient(135deg,#3a4a1a 0%,#6a8a2a 100%);}
+.card-img.bg-maroon{background:linear-gradient(135deg,#4a1a1a 0%,#8a2a2a 100%);}
+.card-img.bg-teal2{background:linear-gradient(135deg,#0a4a5a 0%,#1a7a8a 100%);}
+.card-img.bg-purple{background:linear-gradient(135deg,#2a1a5a 0%,#4a2a9a 100%);}
+.card-img.bg-steelblue{background:linear-gradient(135deg,#1a3a5a 0%,#2a6a8a 100%);}
+.card-img.bg-forest{background:linear-gradient(135deg,#1a4a3a 0%,#2a8a6a 100%);}
+.card-img.bg-bronze{background:linear-gradient(135deg,#3a2a1a 0%,#7a5a2a 100%);}
+.card-img.bg-mossy{background:linear-gradient(135deg,#2a3a1a 0%,#4a6a2a 100%);}
+.card-img.bg-steelgrey{background:linear-gradient(135deg,#1a2a4a 0%,#2a4a7a 100%);}
+.card-img.bg-plum{background:linear-gradient(135deg,#3a1a2a 0%,#6a2a4a 100%);}
+.card-img.bg-vibration{background:linear-gradient(135deg,#1a3a4a 0%,#2a6a5a 100%);}
+.card-img.bg-coating{background:linear-gradient(135deg,#2a4a3a 0%,#3a7a5a 100%);}
+.card-img.bg-diainch{background:linear-gradient(135deg,#5a2a0d 0%,#b05730 100%);}
+.card-img.bg-sv{background:linear-gradient(135deg,#3a3320 0%,#7a6a3a 100%);}
+.card-img.bg-datasheet{background:linear-gradient(135deg,#2f2a1c 0%,#8a6420 100%);}
+.card-img.bg-rust{background:linear-gradient(135deg,#6b2a10 0%,#b8501e 100%);}
+
+.card-img svg{width:90px;height:90px;opacity:.9;}
+.card-lock{display:none;}
+.card-lock-icon{width:38px;height:38px;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;}
+.card-badge{position:absolute;top:10px;right:10px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:20px;}
+.badge-member{background:rgba(184,134,11,.85);color:#fff;}
+.badge-unlocked{background:rgba(26,107,90,.85);color:#fff;}
+.badge-crown{background:rgba(184,134,11,.82);color:#fff;}
+.card-badge.badge-soon{background:rgba(26,107,90,.88);color:#fff;}
+
+.card-body{padding:1.2rem 1.3rem 1.4rem;display:flex;flex-direction:column;gap:.7rem;flex:1;}
+.card-name{font-family:var(--serif);font-size:1rem;color:var(--ink);line-height:1.25;}
+.card-desc{font-size:12px;color:var(--ink2);line-height:1.6;}
+.card-tags{display:flex;flex-wrap:wrap;gap:4px;}
+.tag{font-size:10px;font-family:var(--mono);background:var(--paper2);color:var(--ink3);padding:2px 7px;border-radius:4px;}
+.card-action{margin-top:auto;padding-top:.6rem;}
+.card-btn{display:block;text-align:center;padding:9px;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;border:none;cursor:pointer;width:100%;font-family:var(--font);transition:background .18s;}
+.btn-locked{background:var(--paper2);color:var(--ink3);cursor:default;}
+.btn-pro{background:var(--gold);color:var(--ink);}
+.btn-pro:hover{background:#c9a020;}
+.calc-card.soon{cursor:pointer;}
+.calc-card.soon .card-img{filter:grayscale(.35) brightness(.92);}
+.calc-card.soon .card-img::after{content:'';position:absolute;inset:0;background:rgba(26,21,16,.16);pointer-events:none;}
+.card-btn.btn-soon{background:var(--paper2);color:var(--ink2);cursor:pointer;}
+.card-btn.btn-soon:hover{background:var(--paper3);}
+
+/* ─── MODALS ─── */
+.modal-bg,.wip-modal-bg{position:fixed;inset:0;background:rgba(26,26,24,.60);z-index:300;display:flex;align-items:center;justify-content:center;padding:2rem;opacity:0;pointer-events:none;transition:opacity .2s;}
+.modal-bg.show,.wip-modal-bg.show{opacity:1;pointer-events:all;}
+.modal,.wip-modal{background:#fff;border-radius:14px;width:280px;max-width:280px;overflow:hidden;position:relative;transform:translateY(12px);transition:transform .2s;box-shadow:0 16px 60px rgba(0,0,0,.28);}
+.wip-modal{width:300px;max-width:300px;}
+.modal-bg.show .modal,.wip-modal-bg.show .wip-modal{transform:translateY(0);}
+.modal-close,.wip-modal-close{position:absolute;top:10px;right:10px;width:24px;height:24px;border-radius:50%;background:var(--paper2);border:none;cursor:pointer;font-size:13px;color:var(--ink3);display:flex;align-items:center;justify-content:center;line-height:1;z-index:1;}
+.modal-close:hover,.wip-modal-close:hover{background:var(--paper3);}
+.modal-body{padding:1.4rem 1.2rem 1.2rem;}
+.wip-top{background:linear-gradient(140deg,#1a3a6b 0%,#0d2040 100%);padding:1.4rem 1.2rem 1.2rem;text-align:center;}
+.wip-modal-body{padding:1.2rem 1.2rem 1rem;}
+
+/* ─── LOGIN MODAL ─── */
+.login-btn{font-size:12px;font-weight:600;padding:7px 16px;border-radius:6px;background:var(--gold);color:var(--ink);border:none;cursor:pointer;font-family:var(--font);text-transform:uppercase;letter-spacing:.06em;transition:background .18s;}
+.login-btn:hover{background:#c9a020;}
+.login-btn.logged-in{background:var(--pass);color:#fff;}
+.nav-badge{font-size:11px;font-weight:600;padding:5px 11px;border-radius:20px;letter-spacing:.04em;text-transform:uppercase;font-family:var(--font);display:inline-flex;align-items:center;gap:4px;white-space:nowrap;}
+.nav-badge-admin{background:var(--ink);color:var(--accent2);border:1px solid var(--accent2);}
+.nav-badge-sub{background:var(--gold-light);color:#6e4f06;border:1px solid var(--gold);}
+.lmodal-bg{position:fixed;inset:0;background:rgba(26,26,24,.75);z-index:500;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .2s;}
+.lmodal-bg.show{opacity:1;pointer-events:all;}
+.lmodal{background:#fff;border-radius:14px;width:100%;max-width:400px;overflow:hidden;transform:translateY(20px);transition:transform .2s;box-shadow:0 24px 80px rgba(0,0,0,.3);}
+.lmodal-bg.show .lmodal{transform:translateY(0);}
+.lmodal-header{background:var(--ink);padding:1.6rem 1.8rem 1.4rem;position:relative;}
+.lmodal-title{font-family:var(--serif);font-size:1.3rem;color:#fff;margin-bottom:.2rem;}
+.lmodal-sub{font-size:11px;color:rgba(255,255,255,.5);letter-spacing:.06em;text-transform:uppercase;}
+.lmodal-close{position:absolute;top:12px;right:12px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.15);border:none;cursor:pointer;font-size:15px;color:#fff;display:flex;align-items:center;justify-content:center;}
+.lmodal-close:hover{background:rgba(255,255,255,.3);}
+.lmodal-body{padding:1.6rem 1.8rem;}
+.lmodal-field{margin-bottom:1rem;}
+.lmodal-label{display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:.4rem;}
+.lmodal-input{width:100%;padding:10px 12px;border:1px solid var(--rule);border-radius:7px;font-family:var(--font);font-size:13px;color:var(--ink);outline:none;transition:border-color .18s;}
+.lmodal-input:focus{border-color:var(--gold);}
+.lmodal-err{font-size:11px;color:#6e2e14;margin-top:.5rem;display:none;}
+.lmodal-submit{width:100%;padding:11px;background:var(--gold);color:var(--ink);font-weight:700;font-size:13px;letter-spacing:.05em;text-transform:uppercase;border:none;border-radius:8px;cursor:pointer;font-family:var(--font);transition:background .18s;margin-top:.4rem;}
+.lmodal-submit:hover{background:#c9a020;}
+.lmodal-logout{width:100%;padding:10px;background:var(--paper2);color:var(--ink2);font-weight:600;font-size:12px;border:none;border-radius:8px;cursor:pointer;font-family:var(--font);margin-top:.7rem;}
+.lmodal-logout:hover{background:var(--paper3);}
+
+/* ─── FOOTER ─── */
+footer{background:var(--ink);color:rgba(245,242,235,0.5);text-align:center;padding:2rem;font-size:13px;margin-top:2rem;}
+footer a{color:var(--accent2);text-decoration:none;}
+
+@media(max-width:600px){
+  .section-title{font-size:1.25rem;}
+  .grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">Piping<span>Pro</span> Academy</a>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <a href="/" class="nav-back">&larr; Back</a>
+    <div id="nav-auth" style="display:flex;align-items:center;gap:.65rem;">
+      <button class="login-btn" id="nav-login-btn" onclick="openLoginModal()">Login</button>
+    </div>
+  </div>
+</nav>
+
+<!-- LOGIN MODAL -->
+<div class="lmodal-bg" id="lmodal-bg" onclick="closeLModalBg(event)">
+  <div class="lmodal">
+    <div class="lmodal-header">
+      <div class="lmodal-title">Member Login</div>
+      <div class="lmodal-sub">PipingPro Academy</div>
+      <button class="lmodal-close" onclick="closeLModal()">&#10005;</button>
+    </div>
+    <div class="lmodal-body">
+      <div id="lmodal-form-view">
+        <div class="lmodal-field">
+          <label class="lmodal-label">Email</label>
+          <input class="lmodal-input" id="lmodal-email" type="email" placeholder="your@email.com" autocomplete="email"/>
+        </div>
+        <div class="lmodal-field">
+          <label class="lmodal-label">Password</label>
+          <input class="lmodal-input" id="lmodal-password" type="password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" autocomplete="current-password"/>
+        </div>
+        <div class="lmodal-err" id="lmodal-err">Incorrect email or password. Please try again.</div>
+        <button class="lmodal-submit" onclick="doLogin()">Sign In &rarr;</button>
+      </div>
+      <div id="lmodal-member-view" style="display:none;text-align:center;padding:.5rem 0;">
+        <div style="font-size:2.2rem;margin-bottom:.8rem;" id="lmodal-avatar">&#128737;&#65039;</div>
+        <div style="font-family:var(--serif);font-size:1.1rem;color:var(--ink);margin-bottom:.3rem;" id="lmodal-welcome">Admin Access Active</div>
+        <div style="font-size:11px;color:var(--ink3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:1.4rem;" id="lmodal-email-display">Active subscription</div>
+        <button class="lmodal-logout" onclick="doLogout()">Sign Out</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Piping &amp; Pipeline Calculations</div>
+    <h1>Engineering <em>Calculations</em></h1>
+    <p>Professional-grade calculators and datasheets for piping and pipeline engineering &mdash; from basic design checks through advanced specialist analysis &mdash; built on ASME, API, DNV and industry-standard codes.</p>
+  </div>
+</div>
+
+
+<!-- ═══════════════ CALCULATOR SECTIONS ═══════════════ -->
+<div class="section-group">
+
+  <!-- ─── A. BASIC CALCULATIONS ─── -->
+  <div class="section-header" id="basic">
+    <div class="section-label">Section A</div>
+    <div class="section-title">Basic Calculations</div>
+    <div class="section-count">12 calculators</div>
+  </div>
+  <div class="grid" id="grid-basic"></div>
+
+  <!-- ─── B. ADVANCED CALCULATIONS ─── -->
+  <div class="section-header" id="advanced">
+    <div class="section-label">Section B</div>
+    <div class="section-title">Advanced Calculations</div>
+    <div class="section-count">15 live · 1 coming soon</div>
+  </div>
+  <div class="grid" id="grid-advanced"></div>
+
+  <!-- ─── C. DATASHEETS ─── -->
+  <div class="section-header" id="datasheets">
+    <div class="section-label">Section C</div>
+    <div class="section-title">Datasheets</div>
+    <div class="section-count">2 live &middot; 2 coming soon</div>
+  </div>
+  <div class="grid" id="grid-datasheets"></div>
+
+</div>
+
+
+<!-- ═══════════════════ PER-CALCULATOR COMING SOON ═══════════════════ -->
+<div class="wip-modal-bg" id="soon-modal-bg" onclick="closeSoonModalBg(event)">
+  <div class="wip-modal">
+    <button class="wip-modal-close" onclick="closeSoonModal()">&#10005;</button>
+    <div class="wip-top">
+      <div style="font-size:2rem;margin-bottom:.4rem;">&#128197;</div>
+      <div style="font-family:var(--serif);font-size:1rem;color:#fff;line-height:1.3;margin-bottom:.2rem;" id="soon-calc-name">This Calculator</div>
+      <div style="font-size:10px;font-family:var(--mono);color:rgba(255,255,255,.5);letter-spacing:.1em;text-transform:uppercase;">Coming Soon</div>
+    </div>
+    <div class="wip-modal-body">
+      <p style="font-size:12px;color:var(--ink2);line-height:1.7;margin-bottom:.9rem;text-align:center;">
+        This calculator is on the way. We're rolling out new tools every month &mdash; <strong style="color:var(--ink);">28 calculators are live now.</strong><br><br>
+        Members get instant access to each one the moment it goes live.
+      </p>
+      <a href="/other/membership-plan.html" style="display:block;width:100%;padding:9px;background:var(--accent);color:#fff;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;text-align:center;font-family:var(--font);margin-bottom:.6rem;">Become a Member &rarr;</a>
+      <button onclick="closeSoonModal()" style="width:100%;padding:7px;background:none;border:none;font-size:11px;color:var(--ink3);cursor:pointer;font-family:var(--font);">Got it</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ NON-MEMBER POPUP ═══════════════════ -->
+<div class="modal-bg" id="modal-bg" onclick="closeModalBg(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModal()">&#10005;</button>
+    <div class="modal-body">
+      <div style="text-align:center;">
+        <div style="font-size:1.8rem;margin-bottom:.5rem;">&#128274;</div>
+        <div style="font-family:var(--serif);font-size:.95rem;color:var(--ink);margin-bottom:.4rem;line-height:1.3;" id="nonmember-name"></div>
+        <div style="font-size:11px;color:var(--ink3);margin-bottom:1.1rem;line-height:1.6;">This calculator is part of <strong style="color:var(--ink2);">PipingPro Academy</strong>. Start your free trial to unlock the full suite.</div>
+        <a href="/other/membership-plan.html"
+           style="display:block;width:100%;padding:10px;background:var(--gold);color:var(--ink);border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;text-align:center;font-family:var(--font);letter-spacing:.03em;margin-bottom:.7rem;">
+          Start 7-Day Free Trial &rarr;
+        </a>
+        <div style="font-size:11px;color:var(--ink3);font-family:var(--font);">
+          Already a member?
+          <a href="#" onclick="closeModal();openLoginModal();return false;" style="color:var(--accent);font-weight:600;text-decoration:none;">Sign in</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════════
+
+const CALCS = {
+  // ─── BASIC (A) ────────────────────────────────────────────
+  wt: {name:'Pipe Wall Thickness',desc:'Minimum wall thickness per ASME B31.3, B31.4, B31.8 & ISO 13623 with mill tolerance, corrosion allowance, and schedule selection.',tags:['ASME B31.3','B31.4','B31.8','ISO 13623'],file:'/calculators/basic/pipe-wall-thickness.html',bg:'bg-teal',group:'basic'},
+  pw: {name:'Pipe Weight & Section Properties',desc:'Pipe weight per foot, fluid weight, ID, metal area, moment of inertia, section modulus, and radius of gyration per ASME B36.10 and B36.19.',tags:['ASME B36.10','ASME B36.19'],file:'/calculators/basic/pipe-weight.html',bg:'bg-accent',group:'basic'},
+  uc: {name:'Engineering Unit Converter',desc:'Fast unit conversions for piping and process work — pressure, temperature, length, flow, density and more.',tags:['Unit Conversion','SI / US'],file:'/calculators/basic/unit-converter.html',bg:'bg-navy',group:'basic'},
+  vw: {name:'Flange & Valve Weight',desc:'Dry weights for MTO — weld-neck, slip-on and blind flanges from ASME B16.5, plus gate, globe and check valve weights.',tags:['ASME B16.5','Valve MTO'],file:'/calculators/basic/flange-valve-weight.html',bg:'bg-slate',group:'basic'},
+  el: {name:'Expansion Loop Calculator',desc:'Loop leg sizing, thermal expansion, and allowable stress check per ASME B31.3.',tags:['ASME B31.3','Thermal'],file:'/calculators/basic/expansion-loop.html',bg:'bg-olive',group:'basic'},
+  lb: {name:'L-Bend Two-Anchor Stress',desc:'Thermal flexibility of an L-shaped run — displacement stress range, stress ratio, and anchor loads.',tags:['ASME B31.3','Two-Anchor'],file:'/calculators/basic/l-bend-stress.html',bg:'bg-forest',group:'basic'},
+  fx: {name:'Flexibility Screening (B31.3)',desc:'ASME B31.3 §319.4.1(c) empirical check for two-anchor lines.',tags:['ASME B31.3','§319.4.1'],file:'/calculators/basic/flexibility-screening.html',bg:'bg-steelblue',group:'basic'},
+  ci: {name:'Pipe Coating & Insulation',desc:'Paint quantity per coat and hot insulation MTO for O&G plant piping.',tags:['ISO 12944','ASTM C547'],file:'/calculators/basic/pipe-coating-insulation.html',bg:'bg-coating',group:'basic'},
+  pe: {name:'Piping & Pipeline Estimation',desc:'Equipment-factored FEED estimate of bulk piping material, deliverables and man-hours.',tags:['AACE 18R-97','FEED'],file:'/calculators/basic/piping-estimation.html',bg:'bg-bronze',group:'basic'},
+  pm: {name:'P&ID MTO Calculator',desc:'Material take-off from P&IDs — AI reads title blocks and aggregates instruments, equipment, lines, valves.',tags:['P&ID','MTO'],file:'/calculators/basic/pid-mto.html',bg:'bg-purple',group:'basic'},
+  ps: {name:'Pipe Support Span Calculator',desc:'Maximum allowable span — stress, deflection and natural frequency check per M.W. Kellogg / ASME B31.3.',tags:['M.W. Kellogg','ASME B31.3'],file:'/calculators/basic/pipe-support-span.html',bg:'bg-steelgrey',group:'basic'},
+  im: {name:'Initial Movement Calculator',desc:'Quick-estimate anchor/elbow movements from thermal expansion of equipment nozzles before full stress modelling.',tags:['ASME B31.3','Thermal','Movement'],file:'/calculators/basic/initial-movement.html',bg:'bg-mossy',group:'basic'},
+
+  // ─── ADVANCED (B) ─────────────────────────────────────────
+  mc: {name:'Material Comparison',desc:'Compare two piping materials side by side at design temperature per ASME B31.3.',tags:['ASME B31.3','Sh / Sc / Sa'],file:'/calculators/advanced/material-compare.html',bg:'bg-teal',group:'advanced'},
+  opm:{name:'Onshore Pipeline Mechanical Design',desc:'Nine-tab pipeline mechanical design per ASME B31.4, B31.8 and ISO 13623.',tags:['ASME B31.4','B31.8','ISO 13623'],file:'/calculators/advanced/onshore-pipeline-mech.html',bg:'bg-accent',group:'advanced'},
+  bp: {name:'Buried Pipe Soil Interaction',desc:'Soil restraint springs, restrained thermal stress, virtual anchor length and movement at bends per ALA 2001.',tags:['ALA 2001','ASME B31.4/B31.8'],file:'/calculators/advanced/buried-pipe-soil.html',bg:'bg-navy',group:'advanced'},
+  ub: {name:'Upheaval Buckling Calculator',desc:'Buried pipeline stability — driving force, soil resistance, and required cover depth per DNV-RP-F110.',tags:['DNV-RP-F110','Buried Pipeline'],file:'/calculators/advanced/upheaval-buckling.html',bg:'bg-slate',group:'advanced'},
+  df: {name:'Ductile Fracture Propagation',desc:'Battelle Two-Curve Method for gas pipeline arrest toughness per SAES-L-131, API 5L Annex G.',tags:['BTCM','SAES-L-131','API 5L'],file:'/calculators/advanced/ductile-fracture.html',bg:'bg-olive',group:'advanced'},
+  cp: {name:'Cathodic Protection Design',desc:'Buried-pipeline CP design to SAES-X-400 — ICCP/galvanic selection, anode & rectifier sizing.',tags:['SAES-X-400','ISO 15589-1'],file:'/calculators/advanced/cathodic-protection.html',bg:'bg-maroon',group:'advanced'},
+  sv: {name:'Sectional Volume Calculator',desc:'Volume of trench or excavation from cross-sectional areas by station. Average end-area and prismoidal methods.',tags:['End-Area','Prismoidal'],file:'/calculators/advanced/sectional-volume.html',bg:'bg-sv',group:'advanced'},
+  pc: {name:'Pipeline Crossing Calculator',desc:'Road and railway crossing stress analysis per API RP 1102.',tags:['API RP 1102','Road','Rail'],file:'/calculators/advanced/pipeline-crossing.html',bg:'bg-teal2',group:'advanced'},
+  ss: {name:'Special Pipe Support Calculator',desc:'Structural calculator for special pipe supports — load analysis, member sizing, and connection design.',tags:['Structural','Pipe Support'],file:'/calculators/advanced/special-pipe-support.html',bg:'bg-steelblue',group:'advanced'},
+  tr: {name:'Trunnion Support Calculator',desc:'Trunnion pipe support design — local stress at the junction, weld loads, and adequacy check.',tags:['Trunnion','Local Stress'],file:'/calculators/advanced/trunnion.html',bg:'bg-forest',group:'advanced'},
+  di: {name:'Dia-Inch & Change-Order Estimator',desc:'Weld dia-inch take-off converted to welding man-hours and labour cost.',tags:['Dia-Inch','Welding MTO'],file:'/calculators/advanced/dia-inch-estimator.html',bg:'bg-diainch',group:'advanced'},
+  scl:{name:'Stress Critical Line Selector',desc:'Classifies process lines into C1/C2/C3/NC — twelve-criterion LDT screen.',tags:['LDT Screening','C1/C2/C3/NC'],file:'/calculators/advanced/stress-critical-line.html',bg:'bg-plum',group:'advanced'},
+  fl: {name:'Flange Leakage Check',desc:'PEQ method — flange leakage under combined pressure, bending and axial force per ASME B16.5.',tags:['ASME B16.5','PEQ Method'],file:'/calculators/advanced/flange-leakage.html',bg:'bg-bronze',group:'advanced'},
+  nl: {name:'Nozzle Loads Checker',desc:'Nozzle load verification per API 610, API 617, API 661 and WRC 107/297.',tags:['API 610','API 617','WRC 107/297'],file:'/calculators/advanced/nozzle-loads.html',bg:'bg-mossy',group:'advanced'},
+  vf: {name:'Vibration Fatigue Calculator',desc:'Reciprocating compressor piping — MNFP, allowable span, pulsation per API-618.',tags:['API-618','ASME B31.3'],file:'/calculators/advanced/vibration-fatigue.html',bg:'bg-vibration',group:'advanced'},
+  sp: {name:'Subsea Pipeline Mechanical Design',desc:'Offshore pipeline mechanical design — wall thickness, on-bottom stability, free span, and installation analysis.',tags:['DNV-ST-F101','ASME B31.4'],file:'/calculators/advanced/subsea-pipeline.html',bg:'bg-navy',group:'advanced'},
+
+  // ─── DATASHEETS (C) ───────────────────────────────────────
+  md: {name:'Material Property Datasheet',desc:'Material reference lookup per ASME B31.3 — SMYS, SMTS, Sc/Sh, thermal expansion, modulus of elasticity with full temperature interpolation.',tags:['ASME B31.3','App. A / C-1 / C-6'],file:'/calculators/datasheets/material-datasheet.html',bg:'bg-datasheet',group:'datasheets'},
+  vdc:{name:'Valve Datasheet Creator',desc:'Auto-generates valve datasheets from pipe class & service conditions — body, trim, bolting, seat, operator, SAMSS references. PDF export.',tags:['API 6D','ASME B16.34','04-SAMSS-051'],file:'/calculators/datasheets/valve-datasheet-creator.html',bg:'bg-rust',group:'datasheets'},
+  vdv:{name:'Valve Datasheet Verifier',desc:'Checks valve datasheets against generic codes (ASME B16.34, NACE MR-0175) and owner Criteria Profiles.',tags:['NACE MR-0175','ASME B16.34'],file:'#',bg:'bg-steelgrey',group:'datasheets'},
+  vtbe:{name:'Valve TBE — Technical Bid Evaluation',desc:'Audits vendor compliance claims against verified datasheets. AI-powered vendor PDF extraction.',tags:['TBE','AI Extraction'],file:'#',bg:'bg-plum',group:'datasheets'}
+};
+
+const COMING_SOON = new Set(['sp','vdv','vtbe']);
+const FREE = new Set(['uc']);
+
+const GROUPS = {
+  basic:      {grid:'grid-basic',      ids:['wt','pw','uc','vw','el','lb','fx','ci','pe','pm','ps','im']},
+  advanced:   {grid:'grid-advanced',   ids:['mc','opm','bp','ub','df','cp','sv','pc','ss','tr','di','scl','fl','nl','vf','sp']},
+  datasheets: {grid:'grid-datasheets', ids:['md','vdc','vdv','vtbe']}
+};
+
+// ═══════════════════════════════════════════════════════════════
+// SVG ICONS (per bg class)
+// ═══════════════════════════════════════════════════════════════
+const ICONS = {
+  default: '<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="20" stroke="rgba(255,255,255,0.8)" stroke-width="5" fill="none"/><circle cx="32" cy="32" r="13" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none"/><line x1="32" y1="14" x2="32" y2="50" stroke="rgba(255,255,255,0.9)" stroke-width="2"/></svg>'
+};
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER CARDS
+// ═══════════════════════════════════════════════════════════════
+function renderCard(id){
+  const c = CALCS[id];
+  const isSoon = COMING_SOON.has(id);
+  const soonClass = isSoon ? ' soon' : '';
+  const onclick = isSoon
+    ? 'onclick="openSoonModal(\''+id+'\')"'
+    : 'onclick="openModal(\''+id+'\')"';
+
+  return '<div class="calc-card'+soonClass+'" '+onclick+'>'
+    + '<div class="card-img '+(c.bg||'bg-teal')+'">'
+    + (ICONS.default)
+    + '<span class="card-badge" id="badge-'+id+'">'+(isSoon?'Coming Soon':'')+'</span>'
+    + '</div>'
+    + '<div class="card-body">'
+    + '<div class="card-name">'+c.name+'</div>'
+    + '<div class="card-desc">'+c.desc+'</div>'
+    + '<div class="card-tags">'+c.tags.map(function(t){return '<span class="tag">'+t+'</span>';}).join('')+'</div>'
+    + '<div class="card-action"><button class="card-btn '+(isSoon?'btn-soon':'btn-pro')+'" id="btn-'+id+'">'+(isSoon?'Coming Soon':'Open Calculator')+'</button></div>'
+    + '</div></div>';
+}
+
+function renderGrids(){
+  Object.keys(GROUPS).forEach(function(key){
+    var g = GROUPS[key];
+    var el = document.getElementById(g.grid);
+    if(el) el.innerHTML = g.ids.map(renderCard).join('');
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// AUTH & TIER LOGIC
+// ═══════════════════════════════════════════════════════════════
+function isAdmin(){ return localStorage.getItem('ppa_admin')==='1'; }
+function isMember(){
+  if(isAdmin()) return true;
+  var t = window.PPATIER ? window.PPATIER.memberTier() : 'free';
+  return t === 'student' || t === 'professional';
+}
+function canOpen(id){
+  if(FREE.has(id)) return true;
+  return window.PPATIER ? window.PPATIER.hasAccess(id) : false;
+}
+function tierLabel(id){
+  var req = window.PPATIER ? window.PPATIER.requiredTier(id) : 'professional';
+  return req === 'student' ? 'Student' : 'Professional';
+}
+
+function refreshNavAuth(){
+  var el=document.getElementById('nav-auth');
+  if(!el) return;
+  if(isAdmin()){
+    el.innerHTML='<span class="nav-badge nav-badge-admin">&#128737;&#65039; Admin</span><button class="login-btn logged-in" onclick="doLogout()">Logout</button>';
+  } else if(isMember()){
+    el.innerHTML='<span class="nav-badge nav-badge-sub">&#10003; Subscriber</span><button class="login-btn logged-in" onclick="doLogout()">Logout</button>';
+  } else {
+    el.innerHTML='<a href="/other/membership-plan.html" class="login-btn" style="text-decoration:none;display:inline-flex;align-items:center;">Join Now</a><button onclick="openLoginModal()" style="font-size:12px;font-weight:600;padding:7px 14px;border-radius:6px;background:none;border:1px solid rgba(255,255,255,0.45);color:#f5f2eb;cursor:pointer;font-family:var(--font);text-transform:uppercase;letter-spacing:.06em;">Login</button>';
+  }
+}
+
+// ─── LOGIN ───────────────────────────────────────────────────
+function openLoginModal(){
+  var bg=document.getElementById('lmodal-bg');
+  var form=document.getElementById('lmodal-form-view');
+  var member=document.getElementById('lmodal-member-view');
+  if(isMember()){
+    form.style.display='none'; member.style.display='block';
+    var admin=isAdmin();
+    document.getElementById('lmodal-avatar').textContent=admin?'&#128737;':'&#10003;';
+    document.getElementById('lmodal-welcome').textContent=admin?'Admin Access Active':'Subscriber Access Active';
+    var dispEl=document.getElementById('lmodal-email-display');
+    dispEl.textContent=admin?'Admin':'Active subscription';
+    var ms=window.$memberstackDom;
+    if(!admin&&ms&&ms.getCurrentMember){ms.getCurrentMember().then(function(r){var em=r&&r.data&&r.data.auth?r.data.auth.email:null;if(em)dispEl.textContent=em;}).catch(function(){});}
+  } else { form.style.display='block'; member.style.display='none'; var err=document.getElementById('lmodal-err');if(err)err.style.display='none'; }
+  bg.classList.add('show'); document.body.style.overflow='hidden';
+}
+function closeLModal(){var bg=document.getElementById('lmodal-bg');if(bg)bg.classList.remove('show');document.body.style.overflow='';}
+function closeLModalBg(e){if(e.target===document.getElementById('lmodal-bg'))closeLModal();}
+
+async function doLogin(){
+  var email=(document.getElementById('lmodal-email').value||'').trim();
+  var pw=(document.getElementById('lmodal-password').value||'').trim();
+  var err=document.getElementById('lmodal-err'); if(err)err.style.display='none';
+  var ms=window.$memberstackDom;
+  if(!ms||!ms.loginMemberEmailPassword){if(err){err.textContent='Login is temporarily unavailable.';err.style.display='block';}return;}
+  if(!email||!pw){if(err){err.textContent='Please enter your email and password.';err.style.display='block';}return;}
+  try{await ms.loginMemberEmailPassword({email:email,password:pw});if(window.PPATIER)await window.PPATIER.resolveTier();closeLModal();refreshNavAuth();initCards();}catch(_){if(err){err.textContent='Incorrect email or password.';err.style.display='block';}}
+}
+
+function doLogout(){
+  localStorage.removeItem('ppa_admin');localStorage.removeItem('ppa_member');localStorage.removeItem('ppa_member_email');localStorage.removeItem('ppa_tier');
+  closeLModal();
+  var ms=window.$memberstackDom;
+  var done=function(){window.location.href=window.location.pathname;};
+  if(ms&&ms.logout){ms.logout().then(done).catch(done);}else done();
+}
+
+// ─── MODALS ─────────────────────────────────────────────────
+function openModal(id){
+  var c=CALCS[id]; if(!c)return;
+  if(COMING_SOON.has(id)){openSoonModal(id);return;}
+  if(FREE.has(id)){window.location.href=c.file;return;}
+  if(canOpen(id)){window.location.href=c.file;return;}
+  if(isMember()){window.location.href='/other/membership-plan.html';}
+  else{
+    var nameEl=document.getElementById('nonmember-name');
+    if(nameEl)nameEl.textContent=c?c.name:'This calculator';
+    document.getElementById('modal-bg').classList.add('show');
+    document.body.style.overflow='hidden';
+  }
+}
+function closeModal(){document.getElementById('modal-bg').classList.remove('show');document.body.style.overflow='';}
+function closeModalBg(e){if(e.target===document.getElementById('modal-bg'))closeModal();}
+
+function openSoonModal(id){
+  var c=CALCS[id];
+  document.getElementById('soon-calc-name').textContent=c?c.name:'This calculator';
+  document.getElementById('soon-modal-bg').classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function closeSoonModal(){var m=document.getElementById('soon-modal-bg');if(m)m.classList.remove('show');document.body.style.overflow='';}
+function closeSoonModalBg(e){if(e.target===document.getElementById('soon-modal-bg'))closeSoonModal();}
+
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeModal();closeSoonModal();closeLModal();}});
+
+// ─── INIT CARDS ─────────────────────────────────────────────
+function initCards(){
+  Object.keys(CALCS).forEach(function(id){
+    var badge=document.getElementById('badge-'+id);
+    var btn=document.getElementById('btn-'+id);
+    if(!badge||!btn)return;
+    if(COMING_SOON.has(id))return;
+    if(FREE.has(id)){
+      badge.textContent='Free'; badge.style.background='rgba(196,92,42,.9)'; badge.style.color='#fff';
+      btn.textContent='Open Calculator'; btn.className='card-btn'; btn.style.cssText='background:var(--accent);color:#fff;display:block;text-align:center;padding:9px;border-radius:8px;font-size:12px;font-weight:600;border:none;cursor:pointer;width:100%;font-family:var(--font);';
+      return;
+    }
+    if(canOpen(id)){
+      badge.textContent='Unlocked'; badge.style.background='rgba(26,107,90,.85)'; badge.style.color='#fff';
+      btn.textContent='Open Calculator'; btn.className='card-btn'; btn.style.cssText='background:var(--accent);color:#fff;display:block;text-align:center;padding:9px;border-radius:8px;font-size:12px;font-weight:600;border:none;cursor:pointer;width:100%;font-family:var(--font);';
+    } else {
+      var lbl=tierLabel(id);
+      badge.textContent=lbl; badge.style.background='rgba(184,134,11,.82)'; badge.style.color='#fff';
+      btn.textContent=lbl+' Only'; btn.className='card-btn btn-locked';
+    }
+  });
+}
+
+// ─── BOOT ───────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', async function(){
+  renderGrids();
+  try{if(window.PPATIER) await window.PPATIER.resolveTier();}catch(_){}
+  refreshNavAuth();
+  initCards();
+});
+</script>
+
+<footer>
+  <div style="font-family:var(--serif);font-size:1.1rem;color:var(--bg);margin-bottom:.4rem;">PipingPro Academy</div>
+  <div>&copy; 2026 PipingPro Academy. All rights reserved.</div>
+  <script src="/js/counter.js"></script>
+</footer>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function(){ navigator.serviceWorker.register('/service-worker.js'); });
+  }
+</script>
+</body>
+</html>

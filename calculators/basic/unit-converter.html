@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- SEO Meta Tags for Unit Converter -->
+<title>Piping & Process Engineering Unit Converter | SI ⇄ Imperial</title>
+<meta name="description" content="Fast engineering unit converter for piping and process engineers. Instantly switch between SI and US/Imperial units for pressure, temperature, flow, density, and length.">
+<meta name="keywords" content="piping unit converter, engineering unit converter, process unit conversion, SI to imperial engineering, pressure converter piping, flow rate converter">
+
+<!-- Open Graph / Facebook / LinkedIn -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Piping & Process Engineering Unit Converter | SI ⇄ Imperial">
+<meta property="og:description" content="Quickly convert pressure, temperature, flow, and density units. Built specifically for pipeline and piping engineering workflows.">
+<meta property="og:url" content="https://pipingpro-academy.com">
+
+<!-- Twitter -->
+<meta name="twitter:title" content="Piping & Process Engineering Unit Converter | SI ⇄ Imperial">
+<meta name="twitter:description" content="Dedicated unit conversion tool for oil and gas, piping, and process engineering parameters.">
+  
+  <link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Memberstack -->
+<script data-memberstack-app="app_cmq9fsibv00720sujaqjm734o" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
+<!-- Tier library — single source of truth -->
+<script src="/js/ppa-tier.js"></script>
+<!-- PPA ACCESS GATE (canonical Block A) -->
+<script>
+(function(){
+  var THIS_CALC = window.THIS_CALC = 'uc';                       // ← change per page
+  var UPGRADE   = '/membership-plan.html';    // non-members land here
+
+  /* Admin is decided by the logged-in Memberstack member — not a browser flag.
+     Grant admin by ANY ONE of these (set whichever you use; leave the others):
+       • membership of an Admin plan  → put its id in ADMIN_PLAN_IDS
+       • a Memberstack permission     → ADMIN_PERMISSION (attached to a plan)
+       • a custom field  admin = true → set on the member in the dashboard      */
+  var ADMIN_PLAN_IDS   = ['pln_admin-vzd0rgr'];
+  var ADMIN_PERMISSION = 'admin';
+  var EMERGENCY_LOCAL_ADMIN = false;   // ← set true for LOCAL testing only; MUST be false in production
+
+  function memberIsAdmin(m){
+    if(!m) return false;
+    var cf = m.customFields || {};
+    if(cf.admin === 'true' || cf.admin === true || cf.role === 'admin') return true;
+    var perms = m.permissions || [];
+    if(perms.indexOf(ADMIN_PERMISSION) !== -1) return true;
+    var pc = m.planConnections || [];
+    for(var i=0;i<pc.length;i++){
+      if(pc[i] && ADMIN_PLAN_IDS.indexOf(pc[i].planId) !== -1){
+        var st = (pc[i].status || '').toString().toUpperCase();
+        if(st !== 'CANCELED' && st !== 'CANCELLED' && st !== 'EXPIRED' && st !== 'INACTIVE') return true;
+      }
+    }
+    return false;
+  }
+
+  function whenMS(cb, tries){                  // wait for Memberstack to attach (~4 s max)
+    tries = (tries==null) ? 40 : tries;
+    var ms = window.$memberstackDom;
+    if(ms) return cb(ms);
+    if(tries<=0) return cb(null);
+    setTimeout(function(){ whenMS(cb, tries-1); }, 100);
+  }
+  function getMember(){
+    return new Promise(function(resolve){
+      whenMS(function(ms){
+        if(!ms || typeof ms.getCurrentMember !== 'function') return resolve(null);
+        ms.getCurrentMember().then(function(res){ resolve(res ? res.data : null); })
+                             .catch(function(){ resolve(null); });
+      });
+    });
+  }
+
+  /* Emergency local override — keep commented; uncomment only if you lock yourself
+     out before the Memberstack admin marker is set:
+     // if(localStorage.getItem('ppa_admin') === '1') return; */
+
+  function gate(){
+    if(EMERGENCY_LOCAL_ADMIN){
+      try{ if(localStorage.getItem('ppa_admin') === '1') return; }catch(e){}
+    }
+    getMember().then(function(member){
+      if(memberIsAdmin(member)) return;        // admin → full access, no redirect
+      if(!window.PPATIER) return;
+      if(window.PPATIER.requiredTier(THIS_CALC) === 'free') return;
+      return window.PPATIER.resolveTier().then(function(){
+        if(!memberIsAdmin(member) && !window.PPATIER.hasAccess(THIS_CALC)) location.replace(UPGRADE);
+      });
+    }).catch(function(){ /* leave page as-is on error */ });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', gate);
+  else gate();
+})();
+</script>
+  
+<title>Unit Converter — PipingPro Academy</title>
+
+<style>
+:root{
+  --bg:#F7F6F3;--surface:#FFFFFF;--border:#E2E0D8;--border-strong:#C8C5BA;
+  --text:#1A1917;--text-2:#5C5A54;--text-3:#9C9A94;
+  --accent:#8b3a1a;--accent-light:#e7f1ee;
+  --info:#1A4A7A;--info-light:#E8F0F8;--info-border:#A8C4E0;
+  --radius:6px;--radius-lg:10px;
+  --font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.6;min-height:100vh}
+.container{max-width:980px;margin:0 auto;padding:1.5rem 1rem}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1rem}
+.card-title{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border)}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em}
+.field input,.field select{font-size:21px;font-weight:500;padding:11px 12px;border:1px solid var(--border);border-radius:var(--radius);background:#FAFAF8;color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s;font-family:var(--mono)}
+.field input:focus,.field select:focus{border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(139,58,26,.10)}
+.field select{font-size:13.5px;font-family:var(--font);margin-top:8px;cursor:pointer}
+.field input.outval{background:var(--gold-light,#f5e9c8);border-color:#dcc77f;color:#6e4f06;font-weight:600}
+
+/* CATEGORY CHIPS */
+.cats{display:flex;flex-wrap:wrap;gap:7px}
+.cat{appearance:none;border:1px solid var(--border);background:#fff;color:var(--text-2);font-family:var(--font);font-size:13px;font-weight:500;padding:7px 13px;border-radius:var(--radius);cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:7px}
+.cat:hover{border-color:var(--accent);color:var(--accent)}
+.cat.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.cat .dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.5}
+.cat.on .dot{opacity:1}
+
+/* CONVERSION ROW */
+.conv-row{display:grid;grid-template-columns:1fr 54px 1fr;gap:14px;align-items:end}
+@media(max-width:560px){.conv-row{grid-template-columns:1fr;gap:16px}}
+.swapwrap{align-self:center;justify-self:center}
+@media(max-width:560px){.swapwrap{justify-self:start}}
+.swapbtn{width:42px;height:42px;border-radius:50%;border:1px solid var(--border);background:#fff;color:var(--accent);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.swapbtn:hover{background:var(--accent);color:#fff;border-color:var(--accent);transform:rotate(180deg)}
+@media(max-width:560px){.swapbtn:hover{transform:rotate(90deg)}.swapbtn:hover svg{transform:rotate(90deg)}}
+.err{color:#7A4A0A;font-size:12.5px;margin-top:8px;min-height:16px;font-family:var(--mono)}
+
+/* CONTROLS BAR */
+.bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)}
+.sig{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--text-2)}
+.seg{display:inline-flex;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.seg button{border:0;background:#fff;font-family:var(--mono);font-size:12.5px;color:var(--text-2);padding:5px 11px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--border)}
+.seg button.on{background:var(--accent);color:#fff}
+.copybtn{appearance:none;border:1px solid var(--border);background:#fff;color:var(--text);font-family:var(--font);font-size:13px;font-weight:500;padding:8px 15px;border-radius:var(--radius);cursor:pointer;transition:all .12s}
+.copybtn:hover{border-color:var(--accent);color:var(--accent)}
+.copybtn.done{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* ALL UNITS GRID */
+.all-h{display:flex;align-items:center;gap:9px;margin:1.4rem 0 .7rem}
+.all-h h2{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2);margin:0}
+.all-h .ln{flex:1;height:1px;background:var(--border)}
+.all-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
+.all-cell{background:var(--surface);padding:10px 13px;display:flex;justify-content:space-between;align-items:baseline;gap:10px;min-width:0}
+.all-cell.hl{background:var(--accent-light)}
+.all-cell .u{font-size:12px;color:var(--text-2);white-space:nowrap}
+.all-cell .u b{display:block;color:var(--text);font-weight:600;font-size:13px}
+.all-cell .v{font-family:var(--mono);font-size:14px;font-weight:500;color:var(--text);text-align:right;word-break:break-all}
+
+.info-box{font-size:12px;color:var(--info);background:var(--info-light);border:1px solid var(--info-border);border-radius:var(--radius);padding:.65rem .85rem;margin-bottom:1rem;line-height:1.7}
+
+.refs{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-top:1.5rem}
+.refs-title{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem}
+.ref-item{font-size:12px;color:var(--text-2);margin-bottom:0.4rem;padding-left:1rem;position:relative;line-height:1.5}
+.ref-item::before{content:'—';position:absolute;left:0;color:var(--text-3)}
+.footer{text-align:center;padding:2rem 1rem;font-size:11px;color:var(--text-3)}
+
+/* THEORY TAB */
+.ref-section{background:#fff;border:1px solid var(--rule,rgba(26,26,24,0.12));border-radius:12px;padding:1.4rem 1.6rem;margin-bottom:1.1rem;}
+.ref-title{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3,#8a8a80);margin-bottom:.9rem;padding-bottom:.4rem;border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));}
+.ref-note{background:var(--teal-light,#e7f1ee);border:1px solid rgba(26,107,90,.15);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--teal,#1a6b5a);line-height:1.7;margin-top:.5rem;}
+.ref-table-wrap{overflow-x:auto;margin-top:.5rem;}
+.ref-table{width:100%;border-collapse:collapse;font-size:12px;}
+.ref-table th{background:var(--paper3,#e3dfd2);padding:7px 10px;text-align:left;font-weight:600;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2,#4a4a44);border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));}
+.ref-table td{padding:6px 10px;border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));color:var(--ink,#1a1510);vertical-align:top;}
+.ref-table td:first-child{font-weight:600;font-family:monospace;font-size:11px;white-space:nowrap;}
+.ref-table tr:last-child td{border-bottom:none;}
+
+/* THEORY TAB NAV */
+.calc-tabs{display:flex;background:var(--paper2,#ede9de);border-bottom:1px solid var(--rule,rgba(26,26,24,0.12));overflow-x:auto;}
+.calc-tab{padding:.85rem 1.5rem;font-size:13px;font-weight:500;color:var(--ink3,#8a8a80);border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;font-family:'DM Sans',sans-serif;transition:color .2s,border-color .2s;white-space:nowrap;}
+.calc-tab.active{color:var(--accent,#8b3a1a);border-bottom-color:var(--accent,#8b3a1a);}
+.calc-tab:hover:not(.active){color:var(--ink,#1a1510);}
+.calc-panel{display:none;}
+.calc-panel.active{display:block;}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<!-- ===== PipingPro Brand Bridge v1.0 ===== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style id="pp-brand-bridge">
+:root{
+  --bg:#faf6ef; --cream:#faf6ef;
+  --paper:#f3ede2; --surface:#f3ede2; --paper2:#f3ede2; --bg2:#f3ede2;
+  --paper3:#e8dfd0; --bg3:#e8dfd0;
+  --ink:#1a1510; --text:#1a1510;
+  --ink2:#4a3f30; --text-2:#4a3f30; --muted:#4a3f30;
+  --ink3:#6b5d49; --text-3:#6b5d49; --muted2:#6b5d49;
+  --accent:#8b3a1a; --accent2:#b8860b;
+  --accent-light:#f6e6df; --accent-border:#c8b89a;
+  --teal:#1a6b5a; --teal-light:#e7f1ee;
+  --gold:#b8860b; --gold2:#b8860b; --gold-light:#f5e9c8;
+  --rule:#c8b89a; --border:#c8b89a; --border-strong:#b8a87f;
+  --serif:'DM Serif Display',Georgia,serif;
+  --font:'DM Sans',system-ui,sans-serif; --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --radius:4px; --radius-lg:6px;
+  --info:#1a6b5a; --info-light:#e7f1ee; --info-border:#1a6b5a;
+}
+body, p, div, span, td, th, li, label, input, select, textarea, button{
+  font-family:'DM Sans',system-ui,sans-serif;
+}
+h1,h2,h3,h4,h5,.card-title{ font-family:'DM Serif Display',Georgia,serif; }
+code,pre,.mono,[class*="mono"]{ font-family:'IBM Plex Mono',ui-monospace,monospace; }
+body{ background:#faf6ef; color:#1a1510; }
+.field input{ font-family:'IBM Plex Mono',ui-monospace,monospace; }
+.field select{ font-family:'DM Sans',system-ui,sans-serif; }
+
+.ppa-nav{position:sticky; top:0; z-index:100; display:flex; align-items:center; justify-content:space-between;
+  height:60px; padding:0 5%; margin:0; background:#1a1510; border-bottom:2px solid #b8860b;}
+.ppa-nav-logo{ font-family:'DM Serif Display',Georgia,serif; font-size:1.15rem; color:#d4a017 !important; letter-spacing:.02em; text-decoration:none; }
+.ppa-nav-logo span{ color:#b8860b; }
+.ppa-nav-back{ color:#ccc !important; font-family:'DM Sans',sans-serif; font-size:.82rem; font-weight:500; letter-spacing:.05em; text-transform:uppercase; text-decoration:none; }
+.ppa-nav-back:hover{ color:#d4a017 !important; }
+.ppa-hero{ max-width:1040px; margin:0 auto; padding:2.2rem 5% 1.5rem; background:transparent; border:none; text-align:left; }
+.ppa-hero-eyebrow{ font-family:'IBM Plex Mono',ui-monospace,monospace; font-size:.72rem; font-weight:500;
+  text-transform:uppercase; letter-spacing:.12em; color:#b8860b; margin:0 0 .5rem; display:block; }
+.ppa-hero h1{ font-family:'DM Serif Display',Georgia,serif; font-weight:400; font-size:2rem; line-height:1.15; color:#1a1510; margin:0 0 .55rem; }
+.ppa-hero h1 em{ font-style:normal; color:#8b3a1a; }
+.ppa-hero p{ font-family:'DM Sans',sans-serif; font-size:.95rem; line-height:1.6; color:#4a3f30; max-width:66ch; margin:0; }
+.ppa-footer{background:#1a1510;color:rgba(245,242,235,0.5);text-align:center;padding:2rem;font-size:13px;margin-top:3rem;}
+.ppa-footer a{color:#b8860b;text-decoration:none;}
+.ppa-footer-logo{font-family:'DM Serif Display',Georgia,serif;font-size:1.1rem;color:#f3ede2;margin-bottom:.4rem;}
+.ppa-footer-logo span{color:#8b3a1a;}
+</style>
+<!-- ===== end PipingPro Brand Bridge ===== -->
+</head>
+<body>
+<nav class="ppa-nav">
+  <a href="/" class="ppa-nav-logo">Piping<span>Pro</span> Academy</a>
+  <a href="/calculators/" class="ppa-nav-back">← Back to Calculators</a>
+</nav>
+<div class="ppa-hero">
+  <div class="ppa-hero-eyebrow">Members · Engineering Calculator Suite</div>
+  <h1>Unit <em>Converter</em></h1>
+  <p>Engineering &amp; process unit conversions — pressure, stress, flow, viscosity, torque and more. One value, every unit at once. No ads, no tracking.</p>
+</div>
+
+<div class="calc-tabs">
+  <button class="calc-tab active" onclick="showCalcTab('calculator')">⚙ Converter</button>
+  <button class="calc-tab" onclick="showCalcTab('theory')">📚 Reference Factors</button>
+</div>
+
+<!-- ══ CONVERTER PANEL ══ -->
+<div class="calc-panel active" id="calctab-calculator">
+<div class="container">
+
+  <div class="info-box">
+    ℹ️ Select a quantity, type a value, and read the result in every unit at once. All factors use exact SI definitions (e.g. 1&nbsp;psi = 6894.757293168&nbsp;Pa, 1&nbsp;bar = 100&nbsp;000&nbsp;Pa). Temperature uses exact offset conversions. Pure client-side — nothing leaves your browser.
+  </div>
+
+  <!-- CATEGORY -->
+  <div class="card">
+    <div class="card-title">1 — Quantity</div>
+    <div class="cats" id="cats"></div>
+  </div>
+
+  <!-- CONVERSION -->
+  <div class="card">
+    <div class="card-title" id="convTitle">2 — Convert</div>
+    <div class="conv-row">
+      <div class="field">
+        <label for="fromVal">From</label>
+        <input id="fromVal" type="text" inputmode="decimal" value="1" autocomplete="off" spellcheck="false">
+        <select class="unit" id="fromUnit"></select>
+      </div>
+      <div class="swapwrap">
+        <button class="swapbtn" id="swap" title="Swap units" aria-label="Swap units">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        </button>
+      </div>
+      <div class="field">
+        <label for="toVal">To</label>
+        <input id="toVal" class="outval" type="text" readonly>
+        <select class="unit" id="toUnit"></select>
+      </div>
+    </div>
+    <div class="err" id="err"></div>
+    <div class="bar">
+      <div class="sig">
+        <span>Significant figures</span>
+        <div class="seg" id="sig">
+          <button data-s="4">4</button>
+          <button data-s="6" class="on">6</button>
+          <button data-s="8">8</button>
+          <button data-s="12">Full</button>
+        </div>
+      </div>
+      <button class="copybtn" id="copy">Copy result</button>
+    </div>
+  </div>
+
+  <!-- ALL UNITS -->
+  <div class="all-h"><h2 id="allTitle">All units</h2><span class="ln"></span></div>
+  <div class="all-grid" id="grid"></div>
+
+  <div style="text-align:center;margin:1.4rem 0">
+    <button onclick="ppaReportConvert()" style="background:#8b3a1a;color:#fff;border:none;padding:.8rem 1.8rem;font-size:.95rem;font-weight:700;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif">⬇ Download Conversion Sheet (PDF)</button>
+  </div>
+
+  <div class="refs">
+    <div class="refs-title">Basis</div>
+    <div class="ref-item">SI base and derived units — BIPM SI Brochure (9th ed.)</div>
+    <div class="ref-item">Imperial / US customary definitions — NIST Special Publication 811 (Guide for the Use of the SI)</div>
+    <div class="ref-item">1 in = 0.0254 m, 1 lb = 0.45359237 kg, 1 lbf = 4.4482216152605 N (exact, by definition)</div>
+    <div class="ref-item">1 psi = 6894.757293168 Pa · 1 bar = 100 000 Pa · 1 kg/cm² = 98 066.5 Pa · 1 atm = 101 325 Pa</div>
+    <div class="ref-item">Oil barrel = 0.158987294928 m³ · 1 cP = 0.001 Pa·s · 1 cSt = 1×10⁻⁶ m²/s</div>
+  </div>
+
+  <div class="footer">
+    PipingPro Academy · Unit Converter · SI &amp; ASME unit definitions<br>
+    © Zephrum Konsultan Limited · For engineering convenience — verify critical conversions against the governing code edition
+  </div>
+
+</div>
+</div><!-- /calctab-calculator -->
+
+<!-- ══ REFERENCE FACTORS PANEL ══ -->
+<div class="calc-panel" id="calctab-theory">
+<div style="max-width:920px;margin:0 auto;padding:2rem 1.5rem;">
+  <div style="background:var(--accent-light,#f7ede3);border:1px solid rgba(196,92,42,.2);border-radius:8px;padding:.8rem 1rem;font-size:12px;color:var(--accent,#8b3a1a);margin-bottom:1.2rem;line-height:1.7;">
+    📚 The most-used conversion factors in piping &amp; process work, expressed to the SI base unit of each quantity. The converter uses these exact values.
+  </div>
+
+  <div class="ref-section">
+    <div class="ref-title">Pressure &amp; Stress (base: Pascal)</div>
+    <div class="ref-table-wrap"><table class="ref-table">
+      <tr><th>Unit</th><th>= Pascals (exact)</th><th>Note</th></tr>
+      <tr><td>bar</td><td>100 000</td><td>process &amp; line pressure</td></tr>
+      <tr><td>psi</td><td>6894.757293168</td><td>lbf/in²</td></tr>
+      <tr><td>kg/cm²</td><td>98 066.5</td><td>"ata" / technical atmosphere</td></tr>
+      <tr><td>atm</td><td>101 325</td><td>standard atmosphere</td></tr>
+      <tr><td>MPa (N/mm²)</td><td>1 000 000</td><td>allowable stress, SMYS</td></tr>
+      <tr><td>ksi</td><td>6 894 757.293168</td><td>line-pipe grades</td></tr>
+      <tr><td>mmHg</td><td>133.322387415</td><td>vacuum / torr</td></tr>
+      <tr><td>mH₂O</td><td>9806.65</td><td>static head (4 °C)</td></tr>
+    </table></div>
+    <div class="ref-note">Pressure and stress are dimensionally identical (force/area) but kept as separate quantities — line pressure is read in bar / psi / kg/cm², allowable stress in MPa / ksi.</div>
+  </div>
+
+  <div class="ref-section">
+    <div class="ref-title">Volume Flow (base: m³/s) &amp; Temperature</div>
+    <div class="ref-table-wrap"><table class="ref-table">
+      <tr><th>Unit</th><th>= m³/s (exact)</th><th>Note</th></tr>
+      <tr><td>m³/h</td><td>1 / 3600</td><td>≈ 4.4029 US gpm per m³/h</td></tr>
+      <tr><td>US gpm</td><td>0.003785411784 / 60</td><td>US gallon = 3.785411784 L</td></tr>
+      <tr><td>cfm</td><td>0.028316846592 / 60</td><td>actual ft³/min</td></tr>
+      <tr><td>bbl/day</td><td>0.158987294928 / 86400</td><td>oil barrel basis</td></tr>
+    </table></div>
+    <div class="ref-note">Temperature (offset): °F = °C × 9/5 + 32 · K = °C + 273.15 · °R = (°C + 273.15) × 9/5. Note: cfm / bbl-day here are volumetric (actual) flow — standard-condition gas rates (MMSCFD, Sm³/h) depend on reference P &amp; T and are a separate calculation.</div>
+  </div>
+
+  <div class="ref-section">
+    <div class="ref-title">Force, Torque, Viscosity</div>
+    <div class="ref-table-wrap"><table class="ref-table">
+      <tr><th>Unit</th><th>= SI base (exact)</th><th>Quantity</th></tr>
+      <tr><td>kgf</td><td>9.80665 N</td><td>force</td></tr>
+      <tr><td>lbf</td><td>4.4482216152605 N</td><td>force</td></tr>
+      <tr><td>lbf·ft</td><td>1.3558179483314 N·m</td><td>torque</td></tr>
+      <tr><td>cP</td><td>0.001 Pa·s</td><td>dynamic viscosity</td></tr>
+      <tr><td>cSt</td><td>1×10⁻⁶ m²/s</td><td>kinematic viscosity</td></tr>
+    </table></div>
+  </div>
+</div>
+</div><!-- /calctab-theory -->
+
+<footer class="ppa-footer">
+  <div class="ppa-footer-logo">Piping<span>Pro</span> Academy</div>
+  <p>PipingPro Academy is a trademark of <strong style="color:var(--accent2);">Zephrum Konsultan Limited</strong>, registered in England &amp; Wales. Co. No. 13537626.</p>
+  <p style="margin-top:.3rem">© 2026 Zephrum Konsultan Limited. All rights reserved. &nbsp;·&nbsp; <a href="/calculators/">Calculator Suite</a></p>
+</footer>
+<script src="/js/counter.js"></script>
+<script>
+/* =====================================================================
+   CONVERSION DATA — base_value = input * f ; temperature uses to/from
+   ===================================================================== */
+const CATS = {
+  length:{label:"Length", units:[
+    {name:"Millimetre", sym:"mm", f:1e-3},{name:"Centimetre", sym:"cm", f:1e-2},
+    {name:"Metre", sym:"m", f:1},{name:"Kilometre", sym:"km", f:1000},
+    {name:"Mil / thou", sym:"mil", f:2.54e-5},{name:"Inch", sym:"in", f:0.0254},
+    {name:"Foot", sym:"ft", f:0.3048},{name:"Yard", sym:"yd", f:0.9144},
+    {name:"Mile", sym:"mi", f:1609.344},
+  ]},
+  area:{label:"Area", units:[
+    {name:"Square millimetre", sym:"mm²", f:1e-6},{name:"Square centimetre", sym:"cm²", f:1e-4},
+    {name:"Square metre", sym:"m²", f:1},{name:"Square inch", sym:"in²", f:6.4516e-4},
+    {name:"Square foot", sym:"ft²", f:0.09290304},{name:"Hectare", sym:"ha", f:1e4},
+    {name:"Acre", sym:"ac", f:4046.8564224},
+  ]},
+  volume:{label:"Volume", units:[
+    {name:"Millilitre", sym:"mL", f:1e-6},{name:"Litre", sym:"L", f:1e-3},
+    {name:"Cubic metre", sym:"m³", f:1},{name:"Cubic inch", sym:"in³", f:1.6387064e-5},
+    {name:"Cubic foot", sym:"ft³", f:0.028316846592},{name:"US gallon", sym:"US gal", f:0.003785411784},
+    {name:"UK gallon", sym:"UK gal", f:0.00454609},{name:"Barrel (oil)", sym:"bbl", f:0.158987294928},
+  ]},
+  mass:{label:"Mass", units:[
+    {name:"Gram", sym:"g", f:1e-3},{name:"Kilogram", sym:"kg", f:1},
+    {name:"Tonne (metric)", sym:"t", f:1000},{name:"Ounce", sym:"oz", f:0.028349523125},
+    {name:"Pound", sym:"lb", f:0.45359237},{name:"Short ton (US)", sym:"ton (US)", f:907.18474},
+    {name:"Long ton (UK)", sym:"ton (UK)", f:1016.0469088},
+  ]},
+  temperature:{label:"Temperature", units:[
+    {name:"Celsius", sym:"°C", to:x=>x,             from:x=>x},
+    {name:"Fahrenheit", sym:"°F", to:x=>(x-32)*5/9,  from:x=>x*9/5+32},
+    {name:"Kelvin", sym:"K",      to:x=>x-273.15,    from:x=>x+273.15},
+    {name:"Rankine", sym:"°R",    to:x=>x*5/9-273.15, from:x=>(x+273.15)*9/5},
+  ]},
+  pressure:{label:"Pressure", units:[
+    {name:"Pascal", sym:"Pa", f:1},{name:"Kilopascal", sym:"kPa", f:1e3},
+    {name:"Megapascal", sym:"MPa", f:1e6},{name:"Bar", sym:"bar", f:1e5},
+    {name:"Pound / sq inch", sym:"psi", f:6894.757293168},{name:"Kg-force / cm²", sym:"kg/cm²", f:98066.5},
+    {name:"Atmosphere", sym:"atm", f:101325},{name:"Millimetre Hg", sym:"mmHg", f:133.322387415},
+    {name:"Inch Hg", sym:"inHg", f:3386.389},{name:"Metre of water", sym:"mH₂O", f:9806.65},
+    {name:"Inch of water", sym:"inH₂O", f:249.08891},
+  ]},
+  stress:{label:"Stress", units:[
+    {name:"Pascal", sym:"Pa", f:1},{name:"Kilopascal", sym:"kPa", f:1e3},
+    {name:"Megapascal (N/mm²)", sym:"MPa", f:1e6},{name:"Gigapascal", sym:"GPa", f:1e9},
+    {name:"Pound / sq inch", sym:"psi", f:6894.757293168},{name:"Kip / sq inch", sym:"ksi", f:6894757.293168},
+    {name:"Kg-force / cm²", sym:"kgf/cm²", f:98066.5},{name:"Kg-force / mm²", sym:"kgf/mm²", f:9806650},
+  ]},
+  force:{label:"Force", units:[
+    {name:"Newton", sym:"N", f:1},{name:"Kilonewton", sym:"kN", f:1000},
+    {name:"Kilogram-force", sym:"kgf", f:9.80665},{name:"Pound-force", sym:"lbf", f:4.4482216152605},
+    {name:"Kip", sym:"kip", f:4448.2216152605},{name:"Dyne", sym:"dyn", f:1e-5},
+  ]},
+  torque:{label:"Torque", units:[
+    {name:"Newton-metre", sym:"N·m", f:1},{name:"Kilonewton-metre", sym:"kN·m", f:1000},
+    {name:"Kg-force metre", sym:"kgf·m", f:9.80665},{name:"Kg-force cm", sym:"kgf·cm", f:0.0980665},
+    {name:"Pound-force foot", sym:"lbf·ft", f:1.3558179483314},{name:"Pound-force inch", sym:"lbf·in", f:0.112984829027},
+  ]},
+  density:{label:"Density", units:[
+    {name:"Kilogram / m³", sym:"kg/m³", f:1},{name:"Gram / cm³", sym:"g/cm³", f:1000},
+    {name:"Kilogram / litre", sym:"kg/L", f:1000},{name:"Pound / ft³", sym:"lb/ft³", f:16.018463374},
+    {name:"Pound / in³", sym:"lb/in³", f:27679.9047102},{name:"Pound / US gal", sym:"lb/US gal", f:119.8264273},
+  ]},
+  velocity:{label:"Velocity", units:[
+    {name:"Metre / second", sym:"m/s", f:1},{name:"Metre / minute", sym:"m/min", f:1/60},
+    {name:"Kilometre / hour", sym:"km/h", f:1/3.6},{name:"Foot / second", sym:"ft/s", f:0.3048},
+    {name:"Foot / minute", sym:"ft/min", f:0.00508},{name:"Mile / hour", sym:"mph", f:0.44704},
+    {name:"Knot", sym:"kn", f:0.514444444},
+  ]},
+  volflow:{label:"Volume flow", units:[
+    {name:"Cubic metre / second", sym:"m³/s", f:1},{name:"Cubic metre / hour", sym:"m³/h", f:1/3600},
+    {name:"Cubic metre / minute", sym:"m³/min", f:1/60},{name:"Litre / second", sym:"L/s", f:1e-3},
+    {name:"Litre / minute", sym:"L/min", f:1e-3/60},{name:"Litre / hour", sym:"L/h", f:1e-3/3600},
+    {name:"Cubic foot / second", sym:"cfs", f:0.028316846592},{name:"Cubic foot / minute", sym:"cfm", f:0.028316846592/60},
+    {name:"US gallon / minute", sym:"US gpm", f:0.003785411784/60},{name:"US gallon / hour", sym:"US gph", f:0.003785411784/3600},
+    {name:"Barrel / day (oil)", sym:"bbl/day", f:0.158987294928/86400},
+  ]},
+  massflow:{label:"Mass flow", units:[
+    {name:"Kilogram / second", sym:"kg/s", f:1},{name:"Kilogram / hour", sym:"kg/h", f:1/3600},
+    {name:"Kilogram / minute", sym:"kg/min", f:1/60},{name:"Tonne / hour", sym:"t/h", f:1000/3600},
+    {name:"Pound / second", sym:"lb/s", f:0.45359237},{name:"Pound / minute", sym:"lb/min", f:0.45359237/60},
+    {name:"Pound / hour", sym:"lb/h", f:0.45359237/3600},
+  ]},
+  energy:{label:"Energy", units:[
+    {name:"Joule", sym:"J", f:1},{name:"Kilojoule", sym:"kJ", f:1000},
+    {name:"Megajoule", sym:"MJ", f:1e6},{name:"Calorie", sym:"cal", f:4.184},
+    {name:"Kilocalorie", sym:"kcal", f:4184},{name:"Watt-hour", sym:"Wh", f:3600},
+    {name:"Kilowatt-hour", sym:"kWh", f:3.6e6},{name:"BTU", sym:"BTU", f:1055.05585262},
+    {name:"Foot-pound-force", sym:"ft·lbf", f:1.3558179483314},
+  ]},
+  power:{label:"Power", units:[
+    {name:"Watt", sym:"W", f:1},{name:"Kilowatt", sym:"kW", f:1000},
+    {name:"Megawatt", sym:"MW", f:1e6},{name:"Horsepower (mech)", sym:"hp", f:745.69987158227},
+    {name:"Horsepower (metric)", sym:"PS", f:735.49875},{name:"BTU / hour", sym:"BTU/h", f:0.293071070172},
+    {name:"BTU / second", sym:"BTU/s", f:1055.05585262},{name:"Foot-lbf / second", sym:"ft·lbf/s", f:1.3558179483314},
+  ]},
+  dynvisc:{label:"Dyn. viscosity", units:[
+    {name:"Pascal-second", sym:"Pa·s", f:1},{name:"Millipascal-second", sym:"mPa·s", f:1e-3},
+    {name:"Centipoise", sym:"cP", f:1e-3},{name:"Poise", sym:"P", f:0.1},
+  ]},
+  kinvisc:{label:"Kin. viscosity", units:[
+    {name:"Square metre / second", sym:"m²/s", f:1},{name:"Square mm / second", sym:"mm²/s", f:1e-6},
+    {name:"Centistokes", sym:"cSt", f:1e-6},{name:"Stokes", sym:"St", f:1e-4},
+  ]},
+};
+
+const DEFAULTS = {
+  length:[5,6], area:[2,4], volume:[2,4], mass:[1,4], temperature:[0,1],
+  pressure:[3,4], stress:[2,4], force:[1,3], torque:[4,0], density:[0,3],
+  velocity:[0,3], volflow:[1,8], massflow:[3,4], energy:[1,7], power:[1,3],
+  dynvisc:[0,2], kinvisc:[0,2]
+};
+
+let catKey = "pressure";
+let sig = 6;
+const $ = id => document.getElementById(id);
+const els = {fromVal:$("fromVal"), fromUnit:$("fromUnit"), toVal:$("toVal"), toUnit:$("toUnit"),
+  swap:$("swap"), grid:$("grid"), allTitle:$("allTitle"), convTitle:$("convTitle"),
+  copy:$("copy"), err:$("err"), sig:$("sig"), cats:$("cats")};
+
+function toBase(u, x){ return u.f!==undefined ? x*u.f : u.to(x); }
+function fromBase(u, b){ return u.f!==undefined ? b/u.f : u.from(b); }
+
+function fmt(x){
+  if(x===0) return "0";
+  if(!isFinite(x)) return "—";
+  const a=Math.abs(x);
+  let s = (a>=1e9 || a<1e-4) ? x.toExponential(Math.max(0,sig-1)) : x.toPrecision(sig);
+  if(s.indexOf("e")===-1 && s.indexOf(".")!==-1) s=s.replace(/\.?0+$/,"");
+  return s;
+}
+
+function buildCats(){
+  els.cats.innerHTML="";
+  Object.entries(CATS).forEach(([k,c])=>{
+    const b=document.createElement("button");
+    b.className="cat"+(k===catKey?" on":"");
+    b.innerHTML='<span class="dot"></span>'+c.label;
+    b.onclick=()=>{ catKey=k; buildCats(); buildUnits(); calc(); };
+    els.cats.appendChild(b);
+  });
+}
+function buildUnits(){
+  const units=CATS[catKey].units;
+  const opt=()=>units.map((x,i)=>'<option value="'+i+'">'+x.name+' ('+x.sym+')</option>').join("");
+  els.fromUnit.innerHTML=opt(); els.toUnit.innerHTML=opt();
+  const d=DEFAULTS[catKey]||[0,1];
+  els.fromUnit.value=d[0]; els.toUnit.value=d[1];
+  els.allTitle.textContent="All "+CATS[catKey].label.toLowerCase()+" units";
+  els.convTitle.textContent="2 — Convert "+CATS[catKey].label.toLowerCase();
+}
+
+function calc(){
+  const cat=CATS[catKey], units=cat.units;
+  const fu=units[+els.fromUnit.value], tu=units[+els.toUnit.value];
+  const raw=els.fromVal.value.trim().replace(/,/g,"");
+  els.err.textContent="";
+  if(raw===""){ els.toVal.value=""; els.grid.innerHTML=""; window.PPA_REPORT=null; return; }
+  const x=Number(raw);
+  if(!isFinite(x)){ els.err.textContent="Enter a number"; els.toVal.value=""; els.grid.innerHTML=""; window.PPA_REPORT=null; return; }
+  if(catKey==="temperature" && fu.sym==="K" && x<0) els.err.textContent="Note: below absolute zero";
+
+  const base=toBase(fu, x);
+  els.toVal.value=fmt(fromBase(tu, base));
+
+  els.grid.innerHTML="";
+  const allRows=[];
+  units.forEach((u,i)=>{
+    const vv=fmt(fromBase(u, base));
+    allRows.push([u.name, u.sym, vv]);
+    const c=document.createElement("div");
+    c.className="all-cell"+(i==+els.fromUnit.value?" hl":"");
+    c.innerHTML='<span class="u"><b>'+u.sym+'</b>'+u.name+'</span><span class="v">'+vv+'</span>';
+    els.grid.appendChild(c);
+  });
+
+  window.PPA_REPORT={
+    docType:'Unit Conversion', codeNote:'SI / ASME unit definitions',
+    sections:[
+      {title:'Conversion', badge:cat.label, type:'table', head:['','Value','Unit'], rows:[
+        ['From', fmt(x), fu.sym],
+        ['To', els.toVal.value, tu.sym]
+      ]},
+      {title:'All '+cat.label.toLowerCase()+' units (for input '+fmt(x)+' '+fu.sym+')',
+       type:'table', head:['Unit','Symbol','Value'], rows:allRows}
+    ]
+  };
+}
+
+els.fromVal.addEventListener("input",calc);
+els.fromUnit.addEventListener("change",calc);
+els.toUnit.addEventListener("change",calc);
+els.fromVal.addEventListener("focus",()=>els.fromVal.select());
+
+els.swap.addEventListener("click",()=>{
+  const a=els.fromUnit.value; els.fromUnit.value=els.toUnit.value; els.toUnit.value=a;
+  if(els.toVal.value!=="") els.fromVal.value=els.toVal.value;
+  calc();
+});
+els.sig.addEventListener("click",e=>{
+  const btn=e.target.closest("button"); if(!btn) return;
+  sig=+btn.dataset.s;
+  [...els.sig.querySelectorAll("button")].forEach(b=>b.classList.toggle("on",b===btn));
+  calc();
+});
+els.copy.addEventListener("click",()=>{
+  const tu=CATS[catKey].units[+els.toUnit.value];
+  const txt=els.toVal.value+" "+tu.sym;
+  if(navigator.clipboard){ navigator.clipboard.writeText(txt).then(()=>{
+    els.copy.textContent="Copied"; els.copy.classList.add("done");
+    setTimeout(()=>{els.copy.textContent="Copy result";els.copy.classList.remove("done");},1100);
+  }); }
+});
+
+function ppaReportConvert(){ if(!window.PPA_REPORT){ alert('Enter a value to convert first.'); return; } ppaOpenReport(); }
+
+function showCalcTab(name){
+  ['calculator','theory'].forEach(function(t){
+    var btn=document.querySelector('.calc-tab[onclick*="'+t+'"]');
+    var panel=document.getElementById('calctab-'+t);
+    if(btn) btn.classList.toggle('active', t===name);
+    if(panel) panel.classList.toggle('active', t===name);
+  });
+}
+
+buildCats(); buildUnits(); calc();
+</script>
+
+<!-- ════════ PipingPro Shared Report Engine v1.0 ════════ -->
+<div id="ppa-rpt-modal" style="display:none;position:fixed;inset:0;background:rgba(26,21,16,.55);z-index:10000;align-items:center;justify-content:center;padding:1rem">
+  <div style="background:#faf6ef;border-radius:8px;max-width:560px;width:100%;padding:1.6rem 1.8rem;box-shadow:0 10px 40px rgba(26,21,16,.3);font-family:'DM Sans',sans-serif">
+    <h3 style="font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:1.3rem;color:#1a1510;margin:0 0 .3rem">Report Details</h3>
+    <p style="font-size:.82rem;color:#4a3f30;margin:0 0 1.1rem">Project information for the report header. All fields optional.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.7rem .9rem">
+      <div><label class="ppa-rl">Your Company</label><input id="ppa-rpt-company" type="text" placeholder="e.g. Zephrum Konsultan" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Client</label><input id="ppa-rpt-client" type="text" placeholder="e.g. Saudi Aramco" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Project</label><input id="ppa-rpt-project" type="text" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Project No.</label><input id="ppa-rpt-projectno" type="text" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Line / Tag</label><input id="ppa-rpt-line" type="text" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Revision</label><input id="ppa-rpt-rev" type="text" placeholder="0" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Prepared by</label><input id="ppa-rpt-engineer" type="text" class="ppa-ri"></div>
+      <div><label class="ppa-rl">Checked by</label><input id="ppa-rpt-checker" type="text" class="ppa-ri"></div>
+    </div>
+    <div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1.3rem">
+      <button onclick="ppaCloseReport()" style="background:transparent;color:#4a3f30;border:1px solid #c8b89a;padding:.6rem 1.2rem;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600">Cancel</button>
+      <button onclick="ppaGenerateReport()" style="background:#b8860b;color:#1a1510;border:none;padding:.6rem 1.5rem;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:700">Generate Report →</button>
+    </div>
+  </div>
+</div>
+<style>
+.ppa-rl{display:block;font-size:.72rem;font-weight:600;color:#4a3f30;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.25rem}
+.ppa-ri{width:100%;padding:.5rem;border:1px solid #c8b89a;border-radius:4px;background:#fff;font-size:.85rem;font-family:'DM Sans',sans-serif}
+</style>
+<script>
+function ppaOpenReport(){
+  if(!window.PPA_REPORT){ alert('Please run a calculation first.'); return; }
+  try{ const s=JSON.parse(localStorage.getItem('ppa_report_meta')||'{}');
+    [['ppa-rpt-company','company'],['ppa-rpt-client','client'],['ppa-rpt-project','project'],
+     ['ppa-rpt-projectno','projectNo'],['ppa-rpt-engineer','engineer'],['ppa-rpt-checker','checker']]
+     .forEach(([id,k])=>{const el=document.getElementById(id); if(el&&!el.value&&s[k]) el.value=s[k];});
+  }catch(e){}
+  document.getElementById('ppa-rpt-modal').style.display='flex';
+}
+function ppaCloseReport(){ document.getElementById('ppa-rpt-modal').style.display='none'; }
+function ppaGenerateReport(){
+  const R=window.PPA_REPORT; if(!R){ alert('Please run a calculation first.'); return; }
+  const g=id=>(document.getElementById(id)?.value||'').trim();
+  const m={company:g('ppa-rpt-company'),client:g('ppa-rpt-client'),project:g('ppa-rpt-project'),
+    projectNo:g('ppa-rpt-projectno'),line:g('ppa-rpt-line'),engineer:g('ppa-rpt-engineer'),
+    checker:g('ppa-rpt-checker'),rev:g('ppa-rpt-rev')||'0'};
+  try{ localStorage.setItem('ppa_report_meta',JSON.stringify({company:m.company,client:m.client,
+    project:m.project,projectNo:m.projectNo,engineer:m.engineer,checker:m.checker})); }catch(e){}
+  const now=new Date().toLocaleDateString('en-GB');
+  let bodyHtml='';
+  (R.sections||[]).forEach((s,i)=>{
+    bodyHtml+=`<h3>${i+1}. ${s.title}</h3>`;
+    if(s.badge) bodyHtml+=`<div class="code-badge">${s.badge}</div>`;
+    if(s.type==='table'){
+      const head=s.head||['Parameter','Value','Unit'];
+      bodyHtml+=`<table class="d"><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr>`+
+        s.rows.map(r=>`<tr>${r.map((c,ci)=>`<td class="${ci>0?'num':''}">${c}</td>`).join('')}</tr>`).join('')+`</table>`;
+    } else if(s.type==='steps'){ bodyHtml+=`<div class="steps">${s.html}</div>`; }
+    else if(s.type==='text'){ bodyHtml+=`<div class="ptext">${s.html}</div>`; }
+  });
+  let v=''; if(R.verdict){ v=`<div class="verdict ${R.verdict.status}">${R.verdict.text}</div>`; }
+  const html=`<!DOCTYPE html><html><head><meta charset="utf-8"/>
+<title>${R.docType||'Calculation'} Report — ${m.project||'PipingPro'}</title>
+<style>
+@page{margin:18mm 16mm}*{box-sizing:border-box}
+body{font-family:'Helvetica Neue',Arial,sans-serif;font-size:10.5pt;color:#1a1510;margin:0;line-height:1.5}
+.sheet{max-width:780px;margin:0 auto}
+.head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #b8860b;padding-bottom:12px}
+.logo{font-family:Georgia,serif;font-size:19pt;color:#1a1510;font-weight:bold;line-height:1.15}
+.logo span.sub{display:block;font-family:Arial;font-size:8pt;color:#6b5d49;letter-spacing:.08em;font-weight:normal;margin-top:3px}
+.logo span.sub b{font-weight:bold;color:#b8860b}
+.doctype{text-align:right;font-size:8.5pt;color:#4a3f30}
+.doctype b{display:block;font-size:11pt;color:#1a1510;font-family:Georgia,serif}
+.meta{width:100%;border-collapse:collapse;font-size:8.5pt;margin:14px 0 6px}
+.meta td{border:1px solid #c8b89a;padding:4px 8px}
+.meta td.l{background:#f5e9c8;color:#4a3f30;font-weight:bold;width:18%;text-transform:uppercase;font-size:7.5pt;letter-spacing:.04em}
+h3{font-family:Georgia,serif;font-size:12pt;color:#1a1510;border-bottom:1.5px solid #b8860b;padding-bottom:4px;margin:22px 0 8px}
+.code-badge{display:inline-block;background:#1a1510;color:#d4a017;font-family:monospace;font-size:9pt;padding:3px 10px;border-radius:3px;margin-bottom:4px}
+table.d{width:100%;border-collapse:collapse;font-size:9.5pt}
+table.d th{background:#1a1510;color:#d4a017;padding:6px 9px;text-align:left;font-size:8.5pt;text-transform:uppercase;letter-spacing:.03em}
+table.d td{padding:5px 9px;border-bottom:1px solid #e8dfd0}
+table.d td.num{text-align:right;font-family:'IBM Plex Mono',monospace}
+table.d tr:nth-child(even) td{background:#faf6ef}
+.verdict{padding:12px 16px;border-radius:5px;font-weight:bold;font-size:11pt;margin:16px 0;border:1px solid}
+.verdict.pass{background:#e7f1ee;color:#1a6b5a;border-color:#1a6b5a}
+.verdict.fail{background:#f6e6df;color:#8b3a1a;border-color:#8b3a1a}
+.verdict.warn{background:#f5e9c8;color:#6b4e00;border-color:#b8860b}
+.steps{font-family:'IBM Plex Mono',monospace;font-size:8.5pt;background:#faf6ef;border:1px solid #e8dfd0;border-left:3px solid #b8860b;padding:10px 14px;line-height:1.85}
+.ptext{font-size:9.5pt;line-height:1.65;color:#1a1510;white-space:pre-wrap}
+.sig{display:flex;gap:30px;margin-top:26px}
+.sig div{flex:1;border-top:1px solid #1a1510;padding-top:5px;font-size:8pt;color:#4a3f30}
+.disc{font-size:7.5pt;color:#6b5d49;margin-top:22px;line-height:1.55;border-top:1px solid #e8dfd0;padding-top:10px}
+.foot{margin-top:14px;font-size:7.5pt;color:#6b5d49;text-align:center}
+@media print{.noprint{display:none}}
+.noprint{text-align:center;margin:16px 0}
+.noprint button{background:#b8860b;color:#1a1510;border:none;padding:10px 22px;font-size:11pt;font-weight:bold;border-radius:3px;cursor:pointer;font-family:Arial}
+</style></head><body>
+<div class="noprint"><button onclick="window.print()">⬇ Print / Save as PDF</button></div>
+<div class="sheet">
+  <div class="head">
+    <div class="logo">${m.company||'Engineering Calculation'}<span class="sub">Powered by Piping<b>Pro</b> Academy · Calculator Suite</span></div>
+    <div class="doctype"><b>${(R.docType||'CALCULATION').toUpperCase()}</b>Reference Sheet<br/>Doc Rev. ${m.rev} &nbsp;·&nbsp; ${now}</div>
+  </div>
+  <table class="meta">
+    <tr><td class="l">Client</td><td>${m.client||'—'}</td><td class="l">Project</td><td>${m.project||'—'}</td></tr>
+    <tr><td class="l">Project No.</td><td>${m.projectNo||'—'}</td><td class="l">Line / Tag</td><td>${m.line||'—'}</td></tr>
+    <tr><td class="l">Prepared by</td><td>${m.engineer||'—'}</td><td class="l">Checked by</td><td>${m.checker||'—'}</td></tr>
+  </table>
+  ${bodyHtml}
+  ${v}
+  <div class="sig">
+    <div>Prepared: ${m.engineer||'________________'}<br/>Date: ${now}</div>
+    <div>Checked: ${m.checker||'________________'}<br/>Date: ________________</div>
+  </div>
+  <div class="disc"><b>Engineering convenience output</b> — conversion factors per SI / ASME definitions${R.codeNote?(' ('+R.codeNote+')'):''}. Verify critical conversions against the governing code edition and project specifications. Issued subject to the PipingPro Academy Terms of Use. © 2026 Zephrum Konsultan Limited.</div>
+  <div class="foot">${m.company||'PipingPro Academy'} · Generated with PipingPro Academy Calculator Suite · ${now}</div>
+</div></body></html>`;
+  const w=window.open('','_blank'); w.document.write(html); w.document.close(); ppaCloseReport();
+}
+</script>
+<!-- ════════ end Shared Report Engine ════════ -->
+</body>
+</html>

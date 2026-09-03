@@ -243,21 +243,21 @@
 
 <!-- NAV -->
 <nav>
-  <a class="nav-logo" href="/index.html" onclick="event.preventDefault();location.reload();">PipingPro Academy</a>
+  <a class="nav-logo" href="/" onclick="event.preventDefault();location.reload();">PipingPro Academy</a>
   <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()">
     <span></span><span></span><span></span>
   </button>
   <div class="nav-links" id="nav-links">
-    <a href="/courses.html">Courses</a>
-    <a href="/calculators.html">Toolkits</a>
+    <a href="/courses/">Courses</a>
+    <a href="/calculators/">Toolkits</a>
 
     <button class="new-chat-btn" id="newBtn" onclick="resetChat()">New Question</button>
     <span id="nav-auth" style="display:inline-flex;align-items:center;gap:.6rem;">
       <button class="nav-login-btn" id="nav-login-btn" onclick="openLoginModal()">Login</button>
     </span>
     <div class="nav-footer-links">
-      <a href="privacy-policy.html">Privacy Policy</a>
-      <a href="terms-of-use.html">Terms of Use</a>
+      <a href="/legal/privacy-policy.html">Privacy Policy</a>
+      <a href="/legal/terms-of-use.html">Terms of Use</a>
       <a href="https://zephrum-konsultan.co.uk" target="_blank" rel="noopener">Zephrum Konsultan</a>
       <a href="mailto:donny.bachtiar@pipingpro-academy.com">Contact</a>
     </div>
@@ -368,17 +368,17 @@
 <footer class="site-footer">
   <div class="footer-brand">PipingPro Academy</div>
   <div class="footer-links">
-    <a href="privacy-policy.html">Privacy Policy</a>
-    <a href="terms-of-use.html">Terms of Use</a>
+    <a href="/legal/privacy-policy.html">Privacy Policy</a>
+    <a href="/legal/terms-of-use.html">Terms of Use</a>
     <a href="https://zephrum-konsultan.co.uk" target="_blank" rel="noopener">Zephrum Konsultan</a>
     <a href="mailto:donny.bachtiar@pipingpro-academy.com">Contact</a>
   </div>
   <div class="footer-copy">© 2026 PipingPro Academy. All rights reserved.</div>
-  <script src="/counter.js"></script>
+  <script src="/js/counter.js"></script>
 </footer>
-  <script src="/counter.js"></script>
+  <script src="/js/counter.js"></script>
 
-<script src="/ppa-tier.js"></script>
+<script src="/js/ppa-tier.js"></script>
 <script>
 // ═══════════════════════════════════════════════════════════════════════
 // TOOL IMPLEMENTATIONS + DEFINITIONS + AI LOGIC
@@ -393,7 +393,7 @@ function execTool(name, inp) {
   return { error: "Unknown tool" };
 }
 
-const TOOLS=[{name:"route_to_calculator",description:"Route the user to a PipingPro Academy calculator with pre-filled inputs. Use this when the user wants to perform a calculation. Extract parameters from their question, convert units if needed, and provide the calculator URL with query parameters.",input_schema:{type:"object",properties:{calculator:{type:"string",description:"Calculator filename, e.g. 'pipe-wall-thickness-calculator.html'"},params:{type:"object",description:"Key-value pairs of input field IDs and values to pre-fill, e.g. {nps:'8',pres:'8.5',temp:'250','b313-mat':'A106 Gr.B',ca:'3'}"},description:{type:"string",description:"Brief description of what the calculator will compute"}},required:["calculator","params","description"]}}];
+const TOOLS=[{name:"route_to_calculator",description:"Route the user to a PipingPro Academy calculator with pre-filled inputs. Use this when the user wants to perform a calculation. Extract parameters from their question, convert units if needed, and provide the calculator URL with query parameters.",input_schema:{type:"object",properties:{calculator:{type:"string",description:"Calculator path, e.g. 'calculators/basic/pipe-wall-thickness.html'"},params:{type:"object",description:"Key-value pairs of input field IDs and values to pre-fill, e.g. {nps:'8',pres:'8.5',temp:'250','b313-mat':'A106 Gr.B',ca:'3'}"},description:{type:"string",description:"Brief description of what the calculator will compute"}},required:["calculator","params","description"]}}];
 
 const SYSTEM_PROMPT=`You are PipingPro — the AI engineering assistant on PipingPro Academy.
 
@@ -409,131 +409,130 @@ CALCULATOR ROUTING — use the route_to_calculator tool to send users to the rig
 
 === PROCESS PIPING CALCULATORS ===
 
-PIPE WALL THICKNESS (pipe-wall-thickness-calculator.html):
+PIPE WALL THICKNESS (calculators/basic/pipe-wall-thickness.html):
   Fields: nps, pres (MPa), temp (C), ca (mm, default 3), mt (% default 12.5), b313-mat (e.g. "A106 Gr.B"), fluid (liquid/gas/steam)
 
-PIPE WEIGHT & PROPERTIES (pipe-weight-calculator.html):
+PIPE WEIGHT & PROPERTIES (calculators/basic/pipe-weight.html):
   Fields: nps, schedule
 
-EXPANSION LOOP SIZING (expansion-loop-calculator.html):
+EXPANSION LOOP SIZING (calculators/basic/expansion-loop.html):
   Fields: nps, material, temp1 (install temp C), temp2 (operating temp C)
 
-PIPE SUPPORT SPAN (pipe-support-span-calculator.html):
+PIPE SUPPORT SPAN (calculators/basic/pipe-support-span.html):
   Fields: nps, schedule, material, fluid, insulation
 
-FLANGE LEAKAGE CHECK — PCC-1 (flange-leakage-check.html):
+FLANGE LEAKAGE CHECK — PCC-1 (calculators/advanced/flange-leakage.html):
   Fields: nps, class, material, pressure, temperature
 
-MATERIAL DATASHEET VIEWER (material-datasheet.html):
+MATERIAL DATASHEET VIEWER (calculators/datasheets/material-datasheet.html):
   Fields: material, temperature
 
-MATERIAL COMPARISON (material-compare.html):
+MATERIAL COMPARISON (calculators/advanced/material-compare.html):
   Compare toughness, ductility, and properties between materials
 
-FLEXIBILITY SCREENING — B31.3 §319.4.1 (flexibility-screening-calculator.html):
+FLEXIBILITY SCREENING — B31.3 §319.4.1 (calculators/basic/flexibility-screening.html):
   Fields: nps, material, temp
 
-L-BEND STRESS CHECK (l-bend-stress.html):
+L-BEND STRESS CHECK (calculators/basic/l-bend-stress.html):
   Fields: nps, material, temp
 
-VIBRATION FATIGUE ASSESSMENT (vibration-fatigue-calculator.html):
+VIBRATION FATIGUE ASSESSMENT (calculators/advanced/vibration-fatigue.html):
   Fields: nps, schedule, span
 
-FLANGE & VALVE WEIGHT ESTIMATOR (flange-valve-weight-calculator.html):
+FLANGE & VALVE WEIGHT ESTIMATOR (calculators/basic/flange-valve-weight.html):
   Fields: nps, class, type
 
-COATING & INSULATION THICKNESS (pipe-coating-insulation-calculator.html)
+COATING & INSULATION THICKNESS (calculators/basic/pipe-coating-insulation.html)
 
-NOZZLE LOADS CHECKER (nozzle-loads-checker.html):
+NOZZLE LOADS CHECKER (calculators/advanced/nozzle-loads.html):
   Check nozzle forces/moments against API 610/617/661 allowables
 
-SPECIAL PIPE SUPPORT — TRUNNION (special-pipe-support-calculator.html)
+SPECIAL PIPE SUPPORT — TRUNNION (calculators/advanced/special-pipe-support.html)
 
-TRUNNION CALCULATOR (trunnion-calculator.html)
+TRUNNION CALCULATOR (calculators/advanced/trunnion.html)
 
-STRESS CRITICAL LINE SELECTOR (stress-critical-line-selector.html):
+STRESS CRITICAL LINE SELECTOR (calculators/advanced/stress-critical-line.html):
   Screen lines for criticality classification (C1/C2/C3)
 
-CAESAR II PRE-SCREENER (caesar2-prescreener.html):
+CAESAR II PRE-SCREENER (parked/caesar2-prescreener.html):
   Pre-screen piping for CAESAR II analysis requirements
 
-HYDRO/PNEUMATIC TEST PACK (hydro-pneumo-test-pack.html):
+HYDRO/PNEUMATIC TEST PACK (parked/hydro-pneumo-test-pack.html):
   Calculate test pressures and stored energy for hydro/pneumatic testing
 
-PIPING WORK ESTIMATOR (piping-work-estimator.html):
+PIPING WORK ESTIMATOR (calculators/basic/piping-estimation.html):
   Estimate piping man-hours and deliverables
 
-VALVE DATASHEET CREATOR (valve-datasheet-creator.html):
+VALVE DATASHEET CREATOR (calculators/datasheets/valve-datasheet-creator.html):
   Auto-populate valve datasheets from project inputs
 
-SECTIONAL VOLUME CALCULATOR (sectional-volume-calculator.html):
+SECTIONAL VOLUME CALCULATOR (calculators/advanced/sectional-volume.html):
   Calculate pipe sectional volumes for chemical cleaning, flushing, etc.
 
-DIAMETER-INCH CALCULATOR (dia-inch-calculator.html):
+DIAMETER-INCH CALCULATOR (calculators/advanced/dia-inch-estimator.html):
   Calculate total diameter-inches for a piping scope
 
-UNIT CONVERTER (unit-converter.html):
+UNIT CONVERTER (calculators/basic/unit-converter.html):
   Convert between engineering units (pressure, temperature, length, etc.)
 
 === ONSHORE PIPELINE CALCULATORS ===
 
-PIPELINE WALL THICKNESS — B31.4/B31.8 (pipe-wall-thickness-calculator.html):
+PIPELINE WALL THICKNESS — B31.4/B31.8 (calculators/basic/pipe-wall-thickness.html):
   Also supports pipeline codes B31.4 and B31.8
 
-PIPELINE ROAD & RAIL CROSSING — API RP 1102 (pipeline-crossing-calculator.html):
+PIPELINE ROAD & RAIL CROSSING — API RP 1102 (calculators/advanced/pipeline-crossing.html):
   Calculate casing requirements and stresses for road/rail crossings
 
-UPHEAVAL BUCKLING — DNV-RP-F110 (upheaval-buckling-calculator.html):
+UPHEAVAL BUCKLING — DNV-RP-F110 (calculators/advanced/upheaval-buckling.html):
   Check upheaval buckling for buried pipelines
 
-DUCTILE FRACTURE ARREST (ductile-fracture-calculator.html):
+DUCTILE FRACTURE ARREST (calculators/advanced/ductile-fracture.html):
   Ductile fracture propagation and arrest analysis for gas pipelines
 
-CATHODIC PROTECTION DESIGN (cp-design-calculator.html):
+CATHODIC PROTECTION DESIGN (calculators/advanced/cathodic-protection.html):
   Design CP systems for buried pipelines
 
-BURIED PIPE–SOIL INTERACTION (buried-pipe-soil-interaction.html):
+BURIED PIPE–SOIL INTERACTION (calculators/advanced/buried-pipe-soil.html):
   Soil loading and pipe-soil interaction analysis
 
-SUBSEA PIPELINE CALCULATOR (subsea-pipeline-calculator.html):
+SUBSEA PIPELINE CALCULATOR (parked/subsea-pipeline-calculator.html):
   Subsea pipeline mechanical design and analysis
 
-SUBSEA PIPELINE MECHANICAL DESIGN (subsea-pipeline-mechanical-design-analysis.html):
+SUBSEA PIPELINE MECHANICAL DESIGN (parked/subsea-pipeline-mechanical-design-analysis.html):
   Detailed subsea pipeline design per DNV
 
-P&ID MTO CALCULATOR (pid-mto-calculator.html):
+P&ID MTO CALCULATOR (calculators/basic/pid-mto.html):
   Extract material take-off from P&ID data
 
 === AI-POWERED TOOLS ===
 
-AI MTO & ESTIMATION TOOL (ai-mto-estimator.html):
+AI MTO & ESTIMATION TOOL (ai/mto-estimator.html):
   Upload P&IDs for AI-extracted MTO with piping/pipeline cost estimation (AACE Class 4)
 
-PIPE MATERIAL SUITABILITY VERIFICATION (pipe-material-verification.html):
+PIPE MATERIAL SUITABILITY VERIFICATION (parked/pipe-material-verification.html):
   AI-powered material verification against ASME B31.3, NACE MR0175
 
-AI TOOLS OVERVIEW PAGE (ai-tools.html):
+AI TOOLS OVERVIEW PAGE (ai/index.html):
   Browse all AI-powered engineering tools
 
 === COURSES ===
 
-- [Introduction to Process Piping Engineering](course-piping-fundamentals.html) — B31.3 focus
-- [Introduction to Onshore Pipeline Engineering](Fundamental-of-Pipeline-Engineering.html) — B31.4 / B31.8 focus
-- [Static Piping Stress Analysis & CAESAR II](course-static-stress.html) — stress analysis & modelling
-- [Non-Metallic Piping Essential](course-nonmetallic-piping.html) — GRP/GRE piping
-- [All Courses](courses.html) — browse the full course library
+- [Introduction to Process Piping Engineering](courses/piping-fundamentals/) — B31.3 focus
+- [Introduction to Onshore Pipeline Engineering](courses/pipeline-engineering/) — B31.4 / B31.8 focus
+- [Static Piping Stress Analysis & CAESAR II](courses/static-stress/) — stress analysis & modelling
+- [Non-Metallic Piping Essential](courses/non-metallic-piping/) — GRP/GRE piping
+- [All Courses](courses/) — browse the full course library
 
 === TECHNICAL GUIDES ===
 
-- [CP for Buried Pipelines Guide](guide-cp-buried-pipeline.html) — cathodic protection design guide
-- [Onshore Pipeline Estimation Guide](guide-onshore-pipeline-estimation.html) — pipeline cost estimation
-- [Piping Work Estimation Guide](guide-piping-work-estimation.html) — piping man-hour estimation
+- [CP for Buried Pipelines Guide](calculators/advanced/cathodic-protection-guide.html) — cathodic protection design guide
+- [Onshore Pipeline Estimation Guide](calculators/advanced/onshore-pipeline-estimation-guide.html) — pipeline cost estimation
+- [Piping Work Estimation Guide](calculators/basic/piping-estimation-guide.html) — piping man-hour estimation
 
 === KEY PAGES ===
 
-- [Engineering Toolkits](calculators.html) — browse all 27+ calculators
-- [Onshore Pipeline Suite](onshore-pipeline.html) — all pipeline courses & calculators
-- [Pipeline Calculator Toolkits](pipeline-calculator-toolkits.html) — pipeline-specific calculators
+- [Engineering Toolkits](calculators/) — browse all 27+ calculators
+- [Pipeline Calculator Toolkits](calculators/) — pipeline-specific calculators
 
 IMPORTANT: When the user's query matches or closely relates to a calculator topic (e.g. "ductile fracture", "upheaval buckling", "expansion loop", "pipe wall thickness", "CP design", "hydro test", "vibration fatigue", "nozzle loads", "flexibility screening", "buried pipe", "subsea pipeline", "trunnion", "flange leakage"), ALWAYS use route_to_calculator to show the calculator card — even if no numbers are given. Use default or empty params. You can still add a brief 1-2 sentence explanation alongside it. The calculator card helps users discover the tool.
 
@@ -541,12 +540,12 @@ NO-MATCH HANDLING: When the user asks a legitimate piping/pipeline engineering q
 - Answer the question fully and accurately — do NOT refuse or give a vague response just because there is no matching tool.
 - Do NOT use route_to_calculator. Do NOT fabricate a calculator link that does not exist.
 - If a related (but not exact) calculator or course exists that may partially help, mention it naturally at the end with a markdown link.
-- If nothing is even close, end with: "> **PipingPro Tip:** We don't have a dedicated calculator for this topic yet — but it's the kind of tool we're actively developing. Explore our current [Engineering Toolkits](/calculators.html) or browse our [Courses](/courses.html) for related topics."
+- If nothing is even close, end with: "> **PipingPro Tip:** We don't have a dedicated calculator for this topic yet — but it's the kind of tool we're actively developing. Explore our current [Engineering Toolkits](/calculators/) or browse our [Courses](/courses/) for related topics."
 - These answers can be slightly longer (up to 3-4 paragraphs) since the user has no calculator to fall back on — your explanation IS the deliverable.
 
 Keep teaching responses concise — 2-3 short paragraphs max. Engineers want key points, not lectures.
 
-When teaching about codes, standards, or calculation concepts, end with a "PipingPro Tip" blockquote that mentions the most relevant calculators, courses, guides, AND the Engineering Toolkits page. Always use markdown links so they render as clickable gold links. Example: "Explore all our ASME code calculators in the [Engineering Toolkits](/calculators.html)."
+When teaching about codes, standards, or calculation concepts, end with a "PipingPro Tip" blockquote that mentions the most relevant calculators, courses, guides, AND the Engineering Toolkits page. Always use markdown links so they render as clickable gold links. Example: "Explore all our ASME code calculators in the [Engineering Toolkits](/calculators/)."
 
 CRITICAL: When you use route_to_calculator, your text response must be very short — just one sentence like "I've loaded the Wall Thickness calculator with your inputs — click the button to open it." Do NOT repeat the URL, do NOT repeat the parameters, do NOT show markdown links. The card already shows everything the user needs.`;
 

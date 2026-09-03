@@ -19,11 +19,11 @@ const PAGE_CACHE   = `pages-${CACHE_VERSION}`;
 // Add every calculator route your site has.
 // These will be available offline immediately after first visit.
 const PRECACHE_PAGES = [
-  '/calculators.html',
-  '/tools/pipe-wall-thickness-calculator.html',
-  '/tools/pipe-volume-weight-calculator.html',
-  '/tools/pressure-sustaining-calculator.html',
-  '/tools/expansion-loop-calculator.html',
+  '/calculators/',
+  '/calculators/basic/pipe-wall-thickness.html',
+  '/calculators/basic/pipe-weight.html',
+  // removed — old tool,
+  '/calculators/basic/expansion-loop.html',
   // ── Add your other calculator pages below ──
   // '/tools/hydro-pneumo-test-calculator.html',
   // '/tools/pipeline-wall-thickness-calculator.html',
@@ -33,9 +33,9 @@ const PRECACHE_PAGES = [
 // ── Static assets to pre-cache ─────────────────────────────
 // Add your CSS, JS bundles, shared images, and fonts.
 const PRECACHE_ASSETS = [
-  '/ppa-pipe-data.js',
-  '/ppa-materials.js',
-  '/ppa-tier.js',
+  '/js/ppa-pipe-data.js',
+  '/js/ppa-materials.js',
+  '/js/ppa-tier.js',
   // Add your actual CSS/image paths here
   // '/css/main.css',
   // '/images/ppa-logo.png',
