@@ -40,10 +40,14 @@
   // Keep this list as the ONE place access policy lives.
   var CALC_TIER = {
     
-      // Student tier (and above)
+      var CALC_TIER = {
+    
+    // Free tier
+    uc: 'free',
+    wt: 'free',
+
+    // Student tier (and above)
     pw: 'student',
-    wt: 'student',
-    uc: 'student',
     md: 'student',
     vw: 'student',
     ps: 'student',
@@ -52,9 +56,8 @@
     mc: 'student',
     sv: 'student',
     bp: 'student'
-    // everything else (fx, scl, fl, pe, di, ss, tr, pc, ub, df, sp, hp, nl, pm, vf, ci, cp, im)
-    // → professional (the default for anything not listed)
-  };
+    // everything else → professional (default)
+};
 
   function requiredTier(id) {
     return CALC_TIER[id] || 'professional';
