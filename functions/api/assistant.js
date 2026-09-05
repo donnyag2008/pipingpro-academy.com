@@ -521,7 +521,7 @@ export async function onRequestPost(context) {
     }));
 
     // ── Choose max_tokens based on agent (design agent needs more room) ──
-    const maxTokens = (agentId === 'design-agent') ? 16000 : 4096;
+    const maxTokens = (agentId === 'design-agent') ? 8192 : 4096;
 
     // ── Call Claude API ──
     const response = await fetch('https://api.anthropic.com/v1/messages', {
