@@ -507,16 +507,20 @@ CRITICAL: When you use route_to_calculator, your text response must be very shor
 // DESIGN AGENT DETECTION
 // ═══════════════════════════════════════════════════════════════════════
 function isDesignRequest(text) {
-  const q = text.toLowerCase();
+  var q = text.toLowerCase();
   return /design\s+a?\s*\d+.*pipe/i.test(q)
+    || /\d+.*pipe.*design/i.test(q)
     || /full\s+design/i.test(q)
     || /complete\s+(?:design|calculation)/i.test(q)
-    || /pipe\s+design\s+for/i.test(q)
-    || /design\s+(?:a\s+)?pipe\s+for/i.test(q)
+    || /pipe\s+design/i.test(q)
+    || /design\s+(?:a\s+)?pipe/i.test(q)
     || /design\s+(?:a\s+)?piping/i.test(q)
+    || /design\s+data/i.test(q)
     || /material.*wall\s*thickness.*flange/i.test(q)
     || /run\s+(?:the\s+)?design/i.test(q)
-    || /design\s+chain/i.test(q);
+    || /design\s+chain/i.test(q)
+    || /design\s+agent/i.test(q)
+    || /design\s+report/i.test(q);
 }
 
 // ═══════════════════════════════════════════════════════════════════════
