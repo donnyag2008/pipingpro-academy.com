@@ -330,6 +330,7 @@
 </footer>
 
 <script src="/js/ppa-tier.js"></script>
+<script src="/js/ppa-design-report.js"></script>
 <script>
 // ═══════════════════════════════════════════════════════════════════════
 // TOOL IMPLEMENTATIONS + DEFINITIONS + AI LOGIC
@@ -595,11 +596,23 @@ async function submitQuery(text) {
       loadEl.remove();
 
       const daText = daData.reply || daData.error || 'Something went wrong with the Design Agent.';
+      var reportId = 'report-' + Date.now();
       chatInner.insertAdjacentHTML('beforeend',
         `<div class="msg-ai"><div>` +
         `<div class="design-agent-badge">⚙ Piping Design Agent</div>` +
         `<div class="ai-text">${formatAiText(daText)}</div>` +
+        `<div id="${reportId}" style="margin-top:16px;padding:14px;background:var(--paper);border:1px solid var(--paper-dark);border-radius:4px;display:flex;align-items:center;justify-content:space-between;gap:12px;">` +
+        `<div><span style="font-size:0.82rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:0.06em;">📄 Design Report</span><br>` +
+        `<span style="font-size:0.78rem;color:var(--ink-light);">Download as professional Word document</span></div>` +
+        `<button onclick="downloadDesignReport('${reportId}')" ` +
+        `style="background:var(--gold);color:var(--ink);border:none;padding:10px 20px;border-radius:4px;font-weight:800;font-size:0.82rem;cursor:pointer;font-family:DM Sans,sans-serif;text-transform:uppercase;letter-spacing:0.05em;white-space:nowrap;transition:background 0.2s;" ` +
+        `onmouseenter="this.style.background='var(--gold-bright)'" ` +
+        `onmouseleave="this.style.background='var(--gold)'"` +
+        `>Download .docx</button>` +
+        `</div>` +
         `</div></div>`);
+      document.getElementById(reportId).dataset.aiText = daText;
+      document.getElementById(reportId).dataset.query = q;
       messages.push({ role: 'assistant', content: daText });
       incQuestionCount();
       isLoading = false;
@@ -675,6 +688,31 @@ async function submitQuery(text) {
   sendBtn.disabled = !userInput.value.trim();
   scrollToBottom();
   userInput.focus();
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// DESIGN REPORT DOWNLOAD (member-gated)
+// ═══════════════════════════════════════════════════════════════════════
+async function downloadDesignReport(reportId) {
+  var el = document.getElementById(reportId);
+  if (!el) return;
+  if (!isMember()) { openLoginModal(); return; }
+  var btn = el.querySelector('button');
+  var origText = btn.textContent;
+  btn.textContent = 'Generating...';
+  btn.disabled = true;
+  try {
+    var filename = await generateDesignReport(el.dataset.aiText, {
+      query: el.dataset.query,
+      date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+    });
+    btn.textContent = '✓ Downloaded';
+    setTimeout(function() { btn.textContent = origText; btn.disabled = false; }, 3000);
+  } catch (err) {
+    console.error('Report generation failed:', err);
+    btn.textContent = 'Error — retry';
+    btn.disabled = false;
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════════
