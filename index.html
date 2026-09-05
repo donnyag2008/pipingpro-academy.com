@@ -600,5 +600,20 @@ document.addEventListener('DOMContentLoaded',async function(){await msLoadMember
 function toggleMobileMenu(){document.getElementById('nav-hamburger').classList.toggle('open');document.getElementById('nav-links').classList.toggle('open');}
 document.querySelectorAll('.nav-links a, .nav-links button').forEach(el=>{el.addEventListener('click',()=>{document.getElementById('nav-hamburger').classList.remove('open');document.getElementById('nav-links').classList.remove('open');});});
 </script>
+  <!-- 
+  ADD THIS TO index.html (homepage) BEFORE </body>
+  This enables the Design Agent from the homepage chat widget.
+  The widget auto-detects design intent and routes accordingly.
+-->
+
+<script>
+  // Homepage mode — no specific calculator
+  window.PPA_AI_CALCULATOR = 'homepage';
+  
+  // Optional: Override greeting for homepage
+  window.PPA_AI_GREETING = 'PipingPro AI Assistant — ask me anything about piping engineering, or describe a design task and I\'ll run a full calculation chain for you.';
+</script>
+<script src="/ppa-ai-assistant.js"></script>
+
 </body>
 </html>
