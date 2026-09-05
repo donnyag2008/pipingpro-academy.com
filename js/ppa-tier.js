@@ -40,7 +40,7 @@
   // Keep this list as the ONE place access policy lives.
   var CALC_TIER = {
     
-      var CALC_TIER = {
+     
     
     // Free tier
     uc: 'free',
