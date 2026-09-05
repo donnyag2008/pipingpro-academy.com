@@ -73,7 +73,7 @@
       .nav-footer-links a:hover { color: var(--gold); }
     }
 
-    /* ── LOGIN MODAL (from index-old.html) ── */
+    /* ── LOGIN MODAL ── */
     .lmodal-bg{position:fixed;inset:0;background:rgba(26,21,16,.75);z-index:500;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .2s;}
     .lmodal-bg.show{opacity:1;pointer-events:all;}
     .lmodal{background:#fff;border-radius:14px;width:100%;max-width:400px;overflow:hidden;transform:translateY(20px);transition:transform .2s;box-shadow:0 24px 80px rgba(0,0,0,.3);}
@@ -138,6 +138,7 @@
     .ai-text blockquote { border-left: 3px solid var(--gold); padding: 4px 12px; margin: 8px 0; color: var(--ink-light); background: var(--gold-pale); border-radius: 0 4px 4px 0; }
     .ai-text a { color: var(--gold); text-decoration: underline; text-underline-offset: 2px; transition: color 0.2s; }
     .ai-text a:hover { color: var(--gold-bright); }
+    .ai-text pre { background: var(--paper); border: 1px solid var(--paper-dark); border-radius: 4px; padding: 12px 14px; overflow-x: auto; margin: 10px 0; font-size: 0.82rem; font-family: var(--mono); line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
 
     /* ── RESULT CARDS ── */
     .result-card { background: var(--paper); border: 1px solid var(--paper-dark); border-radius: 4px; overflow: hidden; margin-bottom: 10px; }
@@ -150,6 +151,9 @@
     .adequate { background: #ecfdf5; }
     .not-adequate { background: #fef2f2; }
     .result-note { padding: 8px 14px 10px; font-size: 0.72rem; color: var(--ink-light); font-style: italic; border-top: 1px solid var(--paper-dark); }
+
+    /* ── DESIGN AGENT BADGE ── */
+    .design-agent-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--gold-pale); border: 1px solid var(--gold); border-radius: 4px; padding: 6px 12px; font-size: 0.75rem; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; }
 
     /* ── LOADING ── */
     .loading { display: flex; align-items: center; gap: 10px; padding: 4px 0; margin-top: 16px; }
@@ -184,40 +188,6 @@
     .send-btn:active:not(:disabled) { transform: scale(.97); }
     .input-note { max-width: 740px; margin: 6px auto 0; font-size: 0.68rem; color: #888; text-align: center; }
 
-    /* ── DIVIDER ── */
-    .divider { height: 3px; background: linear-gradient(90deg, var(--gold), var(--gold-pale), var(--gold)); }
-
-    /* ── PRICING SECTION (from site) ── */
-    section { padding: 5rem 8%; }
-    .section-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.75rem; }
-    h2 { font-family: 'DM Serif Display', serif; font-size: clamp(1.8rem, 3vw, 2.6rem); color: var(--ink); line-height: 1.2; margin-bottom: 1rem; }
-    .section-intro { font-size: 1rem; color: var(--ink-light); max-width: 580px; margin-bottom: 3rem; }
-    .pricing-section { background: var(--paper); }
-    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px,100%),1fr)); gap: 2rem; max-width: 680px; margin-top: 2.5rem; }
-    .pricing-card { background: var(--cream); border: 2px solid var(--paper-dark); border-radius: 4px; padding: 2.2rem 2rem; position: relative; transition: transform 0.2s, box-shadow 0.2s; }
-    .pricing-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
-    .pricing-card.featured-plan { border-color: var(--gold); background: var(--ink); }
-    .best-value { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--gold); color: var(--ink); font-size: 0.68rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.25rem 0.8rem; border-radius: 20px; white-space: nowrap; }
-    .plan-name { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
-    .plan-price { font-family: 'DM Serif Display', serif; font-size: 3rem; color: var(--ink); line-height: 1; margin-bottom: 0.3rem; }
-    .featured-plan .plan-price { color: #fff; }
-    .plan-price sup { font-size: 1.3rem; vertical-align: top; margin-top: 0.5rem; display: inline-block; }
-    .plan-period { font-size: 1rem; color: var(--ink-light); margin-bottom: 1.6rem; }
-    .featured-plan .plan-period { color: #999; }
-    .plan-features { list-style: none; margin-bottom: 2rem; }
-    .plan-features li { font-size: 0.88rem; color: var(--ink-light); padding: 0.4rem 0; border-bottom: 1px solid var(--paper-dark); display: flex; align-items: center; gap: 0.5rem; }
-    .featured-plan .plan-features li { color: #b0a898; border-bottom-color: #333; }
-    .plan-features li::before { content: '✓'; color: var(--gold); font-weight: 700; }
-    .plan-cta { display: block; width: 100%; padding: 0.85rem; text-align: center; background: var(--gold); color: var(--ink); font-weight: 800; font-size: 0.9rem; letter-spacing: 0.05em; text-transform: uppercase; border: none; border-radius: 2px; cursor: pointer; text-decoration: none; transition: background 0.2s; font-family: 'DM Sans', sans-serif; }
-    .plan-cta:hover { background: var(--gold-bright); }
-    .plan-note { text-align: center; font-size: 0.75rem; color: #aaa; margin-top: 0.8rem; }
-    .billing-toggle{display:inline-flex;background:var(--cream);border:1px solid var(--rule);border-radius:30px;padding:4px;margin:0 0 2.4rem;gap:4px;}
-    .bt-opt{border:none;background:transparent;color:var(--ink-light);font-family:'DM Sans',sans-serif;font-weight:700;font-size:.82rem;letter-spacing:.03em;padding:.5rem 1.2rem;border-radius:24px;cursor:pointer;transition:background .2s,color .2s;}
-    .bt-opt.active{background:var(--gold);color:var(--ink);}
-    .bt-opt small{font-weight:600;opacity:.8;}
-    .geo-note{font-size:.72rem;color:#aaa;margin-top:.4rem;}
-    .plan-period-lg{font-size:1.05rem;font-weight:600;}
-
     /* ── FOOTER ── */
     .site-footer { background: var(--ink); padding: 3rem 8%; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; border-top: 2px solid var(--gold); }
     .footer-brand { font-family: 'DM Serif Display', serif; font-size: 1.1rem; color: var(--gold-bright); }
@@ -250,7 +220,6 @@
   <div class="nav-links" id="nav-links">
     <a href="/courses/">Courses</a>
     <a href="/calculators/">Toolkits</a>
-
     <button class="new-chat-btn" id="newBtn" onclick="resetChat()">New Question</button>
     <span id="nav-auth" style="display:inline-flex;align-items:center;gap:.6rem;">
       <button class="nav-login-btn" id="nav-login-btn" onclick="openLoginModal()">Login</button>
@@ -258,9 +227,8 @@
     <div class="nav-footer-links">
       <a href="/legal/privacy-policy.html">Privacy Policy</a>
       <a href="/legal/terms-of-use.html">Terms of Use</a>
-      </div>
+    </div>
     <div class="footer-copy">© 2026 PipingPro Academy. All rights reserved.</div>
-
   </div>
 </nav>
 
@@ -305,18 +273,12 @@
 
 <!-- APP BODY -->
 <div class="app-body" id="appBody">
-
-  <!-- Chat area -->
   <div class="chat-area" id="chatArea">
     <div class="chat-inner" id="chatInner">
-
-      <!-- Welcome -->
       <div class="welcome" id="welcomeBlock">
         <p class="welcome-eyebrow">Piping & Pipeline Engineering AI Assistant</p>
         <h1>What Do You Want to<br><em>Learn or Calculate</em> Today?</h1>
         <p class="welcome-sub">Ask any piping engineering question — I'll calculate with ASME code databases or explain the concept. Or both.</p>
-
-        <!-- Input moved up into welcome -->
         <div class="welcome-input-wrap" style="max-width:620px;margin:0 auto 2.5rem;display:flex;gap:8px;align-items:flex-end;opacity:0;animation:fadeUp .7s .45s forwards;">
           <textarea id="welcomeInput" rows="1" placeholder="What do you want to learn or calculate today?"
             onkeydown="handleWelcomeKey(event)" oninput="autoResizeWelcome(this)"
@@ -329,7 +291,6 @@
         <div style="max-width:620px;margin:-1.8rem auto 2.5rem;opacity:0;animation:fadeUp .7s .5s forwards;">
           <div class="input-note" style="color:var(--ink-light);">Powered by ASME B31.3 · B16.5 · B16.47 databases — 259+ materials · All NPS sizes · Full PT ratings</div>
         </div>
-
         <div class="ex-section">
           <div class="ex-group">
             <div class="ex-label">⚙ Calculate</div>
@@ -345,11 +306,8 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
-
-  <!-- Input bar -->
   <div class="input-bar">
     <div class="input-wrap">
       <textarea id="userInput" rows="1" placeholder="What do you want to learn or calculate today?" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
@@ -359,22 +317,17 @@
     </div>
     <div class="input-note">Powered by ASME B31.3 · B16.5 · B16.47 databases — 259+ materials · All NPS sizes · Full PT ratings</div>
   </div>
-
 </div>
-
-
 
 <!-- FOOTER -->
 <footer class="site-footer">
-   <div class="footer-brand">PipingPro Academy</div>
-   <div class="footer-links">
+  <div class="footer-brand">PipingPro Academy</div>
+  <div class="footer-links">
     <a href="/legal/privacy-policy.html">Privacy Policy</a>
     <a href="/legal/terms-of-use.html">Terms of Use</a>
-     </div>
+  </div>
   <div class="footer-copy">© 2026 PipingPro Academy. All rights reserved.</div>
-  
 </footer>
- 
 
 <script src="/js/ppa-tier.js"></script>
 <script>
@@ -532,7 +485,9 @@ AI TOOLS OVERVIEW PAGE (ai/index.html):
 - [Engineering Toolkits](calculators/) — browse all 27+ calculators
 - [Pipeline Calculator Toolkits](calculators/) — pipeline-specific calculators
 
-IMPORTANT: When the user's query matches or closely relates to a calculator topic (e.g. "ductile fracture", "upheaval buckling", "expansion loop", "pipe wall thickness", "CP design", "hydro test", "vibration fatigue", "nozzle loads", "flexibility screening", "buried pipe", "subsea pipeline", "trunnion", "flange leakage"), ALWAYS use route_to_calculator to show the calculator card — even if no numbers are given. Use default or empty params. You can still add a brief 1-2 sentence explanation alongside it. The calculator card helps users discover the tool.
+IMPORTANT DESIGN AGENT NOTE: If the user asks for a FULL DESIGN (e.g. "design a pipe", "complete design", "material selection + wall thickness + flange class"), do NOT route to a single calculator. Instead respond: "I can run a full Piping Design Agent chain for this — material selection, wall thickness, flange rating, pipe weight, and CAESAR II input summary. Let me proceed..." and then provide comprehensive engineering calculations directly in your response, showing all formulas and working.
+
+IMPORTANT: When the user query matches or closely relates to a calculator topic (e.g. "ductile fracture", "upheaval buckling", "expansion loop", "pipe wall thickness", "CP design", "hydro test", "vibration fatigue", "nozzle loads", "flexibility screening", "buried pipe", "subsea pipeline", "trunnion", "flange leakage"), ALWAYS use route_to_calculator to show the calculator card — even if no numbers are given. Use default or empty params. You can still add a brief 1-2 sentence explanation alongside it. The calculator card helps users discover the tool.
 
 NO-MATCH HANDLING: When the user asks a legitimate piping/pipeline engineering question that you CAN answer from your knowledge, but NO calculator, course, or guide from the list above is relevant:
 - Answer the question fully and accurately — do NOT refuse or give a vague response just because there is no matching tool.
@@ -546,6 +501,22 @@ Keep teaching responses concise — 2-3 short paragraphs max. Engineers want key
 When teaching about codes, standards, or calculation concepts, end with a "PipingPro Tip" blockquote that mentions the most relevant calculators, courses, guides, AND the Engineering Toolkits page. Always use markdown links so they render as clickable gold links. Example: "Explore all our ASME code calculators in the [Engineering Toolkits](/calculators/)."
 
 CRITICAL: When you use route_to_calculator, your text response must be very short — just one sentence like "I've loaded the Wall Thickness calculator with your inputs — click the button to open it." Do NOT repeat the URL, do NOT repeat the parameters, do NOT show markdown links. The card already shows everything the user needs.`;
+
+// ═══════════════════════════════════════════════════════════════════════
+// DESIGN AGENT DETECTION
+// ═══════════════════════════════════════════════════════════════════════
+function isDesignRequest(text) {
+  const q = text.toLowerCase();
+  return /design\s+a?\s*\d+.*pipe/i.test(q)
+    || /full\s+design/i.test(q)
+    || /complete\s+(?:design|calculation)/i.test(q)
+    || /pipe\s+design\s+for/i.test(q)
+    || /design\s+(?:a\s+)?pipe\s+for/i.test(q)
+    || /design\s+(?:a\s+)?piping/i.test(q)
+    || /material.*wall\s*thickness.*flange/i.test(q)
+    || /run\s+(?:the\s+)?design/i.test(q)
+    || /design\s+chain/i.test(q);
+}
 
 // ═══════════════════════════════════════════════════════════════════════
 // APP STATE & DOM
@@ -566,7 +537,7 @@ function scrollToBottom(){chatArea.scrollTop=chatArea.scrollHeight;window.scroll
 function resetChat(){messages=[];chatInner.innerHTML='';chatInner.appendChild(welcomeBlock);welcomeBlock.style.display='';inputBar.classList.remove('active');newBtn.style.display='none';userInput.value='';userInput.style.height='auto';sendBtn.disabled=true;welcomeInputEl.focus();}
 
 // ── RENDER ──
-function renderResultCard(tr){const r=tr.result;if(r.error)return'';if(tr.name==='route_to_calculator'&&r.url){const calcName=r.calculator.replace('.html','').replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase());let paramsHtml='';if(r.params){for(const[k,v]of Object.entries(r.params)){const dk=k.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase());paramsHtml+=`<div class="result-row"><span class="result-key">${esc(dk)}</span><span class="result-val">${esc(String(v))}</span></div>`;}}return`<div class="result-card"><div class="result-header"><span>⚙ ${esc(calcName)}</span></div>${paramsHtml?'<div>'+paramsHtml+'</div>':''}<div style="padding:12px 14px"><a href="${r.url}" style="display:block;text-align:center;background:var(--gold);color:var(--ink);padding:12px 20px;border-radius:4px;font-weight:800;font-size:0.88rem;text-decoration:none;text-transform:uppercase;letter-spacing:0.05em;transition:background 0.2s;font-family:DM Sans,sans-serif" onmouseenter="this.style.background=\'var(--gold-bright)\'" onmouseleave="this.style.background=\'var(--gold)\'">Open Calculator →</a></div></div>`;}return'';}
+function renderResultCard(tr){const r=tr.result;if(r.error)return'';if(tr.name==='route_to_calculator'&&r.url){const calcName=r.calculator.replace('.html','').replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase());let paramsHtml='';if(r.params){for(const[k,v]of Object.entries(r.params)){const dk=k.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase());paramsHtml+=`<div class="result-row"><span class="result-key">${esc(dk)}</span><span class="result-val">${esc(String(v))}</span></div>`;}}return`<div class="result-card"><div class="result-header"><span>⚙ ${esc(calcName)}</span></div>${paramsHtml?'<div>'+paramsHtml+'</div>':''}<div style="padding:12px 14px"><a href="${r.url}" style="display:block;text-align:center;background:var(--gold);color:var(--ink);padding:12px 20px;border-radius:4px;font-weight:800;font-size:0.88rem;text-decoration:none;text-transform:uppercase;letter-spacing:0.05em;transition:background 0.2s;font-family:DM Sans,sans-serif" onmouseenter="this.style.background='var(--gold-bright)'" onmouseleave="this.style.background='var(--gold)'">Open Calculator →</a></div></div>`;}return'';}
 function rw(k,v){return`<div class="result-row"><span class="result-key">${esc(k)}</span><span class="result-val">${esc(v||'')}</span></div>`;}
 
 function formatAiText(text){const lines=text.split('\n');let html='',i=0,inList=false,listType='';while(i<lines.length){const line=lines[i],trimmed=line.trim();if(!trimmed){if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}i++;continue;}if(/^-{3,}$/.test(trimmed)||/^\*{3,}$/.test(trimmed)){if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}html+='<hr>';i++;continue;}if(trimmed.startsWith('|')&&trimmed.endsWith('|')){if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}const tl=[];while(i<lines.length&&lines[i].trim().startsWith('|')&&lines[i].trim().endsWith('|')){tl.push(lines[i].trim());i++;}html+=renderTable(tl);continue;}const h4=trimmed.match(/^####\s+(.+)/);if(h4){if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}html+=`<h4>${inl(h4[1])}</h4>`;i++;continue;}const h3=trimmed.match(/^###\s+(.+)/);if(h3){if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}html+=`<h3>${inl(h3[1])}</h3>`;i++;continue;}const h2=trimmed.match(/^##\s+(.+)/);if(h2){if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}html+=`<h2>${inl(h2[1])}</h2>`;i++;continue;}if(trimmed.startsWith('>')){if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}html+=`<blockquote>${inl(trimmed.replace(/^>\s*/,''))}</blockquote>`;i++;continue;}if(/^[-•*]\s/.test(trimmed)){if(!inList||listType!=='ul'){if(inList)html+=listType==='ul'?'</ul>':'</ol>';html+='<ul>';inList=true;listType='ul';}html+=`<li>${inl(trimmed.replace(/^[-•*]\s*/,''))}</li>`;i++;continue;}const olM=trimmed.match(/^(\d+)[.)]\s+(.+)/);if(olM){if(!inList||listType!=='ol'){if(inList)html+=listType==='ul'?'</ul>':'</ol>';html+='<ol>';inList=true;listType='ol';}html+=`<li>${inl(olM[2])}</li>`;i++;continue;}if(inList){html+=listType==='ul'?'</ul>':'</ol>';inList=false;}html+=`<p>${inl(trimmed)}</p>`;i++;}if(inList)html+=listType==='ul'?'</ul>':'</ol>';return html;}
@@ -574,7 +545,6 @@ function renderTable(tl){if(tl.length<2)return tl.map(l=>`<p>${inl(l)}</p>`).joi
 function inl(text){let s=esc(text);s=s.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank">$1</a>');s=s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');s=s.replace(/`(.+?)`/g,'<code>$1</code>');s=s.replace(/\*(.+?)\*/g,'<em>$1</em>');return s;}
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 
-// ── SUBMIT ──
 // ── FREE QUESTION LIMIT ──
 const FREE_DAILY_LIMIT = 7;
 function getQuestionCount(){const key='ppa_q_'+new Date().toISOString().slice(0,10);const v=localStorage.getItem(key);return v?parseInt(v):0;}
@@ -582,11 +552,133 @@ function incQuestionCount(){const key='ppa_q_'+new Date().toISOString().slice(0,
 function isLimitReached(){if(isMember())return false;return getQuestionCount()>=FREE_DAILY_LIMIT;}
 function showLimitMessage(){welcomeBlock.style.display='none';newBtn.style.display='';chatInner.insertAdjacentHTML('beforeend',`<div class="msg-ai"><div class="ai-text"><p><strong>You've reached your daily limit of ${FREE_DAILY_LIMIT} free questions.</strong></p><p>Become a member to get unlimited access to PipingPro AI, all engineering calculators, courses with certificates, and more.</p><p><a href="#" onclick="event.preventDefault();openLoginModal();" style="display:inline-block;background:var(--gold);color:var(--ink);padding:10px 24px;border-radius:4px;font-weight:800;text-decoration:none;text-transform:uppercase;letter-spacing:0.05em;font-size:0.85rem;margin-top:8px;">Login or Sign Up →</a></p><p style="margin-top:8px;font-size:0.82rem;color:var(--ink-light);">Your free questions reset tomorrow.</p></div></div>`);chatArea.scrollTop=chatArea.scrollHeight;window.scrollTo(0,0);}
 
-async function submitQuery(text){const q=(text||userInput.value).trim();if(!q||isLoading)return;if(isLimitReached()){showLimitMessage();return;}userInput.value='';userInput.style.height='auto';sendBtn.disabled=true;isLoading=true;welcomeBlock.style.display='none';inputBar.classList.add('active');newBtn.style.display='';messages.push({role:'user',content:q});chatInner.insertAdjacentHTML('beforeend',`<div class="msg-user"><div class="bubble">${esc(q)}</div></div>`);scrollToBottom();const loadEl=document.createElement('div');loadEl.className='loading';loadEl.innerHTML='<div class="dots"><span></span><span></span><span></span></div><span class="load-text">Working on it...</span>';chatInner.appendChild(loadEl);scrollToBottom();try{let apiMessages=messages.map(m=>({role:m.role,content:m.content}));let finalText='',toolResults=[],iterations=0;while(iterations<6){iterations++;const resp=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1500,system:SYSTEM_PROMPT,tools:TOOLS,messages:apiMessages})});const data=await resp.json();if(data.error){finalText='Sorry, something went wrong. Please try again.';break;}const textBlocks=(data.content||[]).filter(b=>b.type==='text');const toolUseBlocks=(data.content||[]).filter(b=>b.type==='tool_use');if(toolUseBlocks.length>0){const results=toolUseBlocks.map(tu=>{const result=execTool(tu.name,tu.input);toolResults.push({id:tu.id,name:tu.name,input:tu.input,result});return{type:'tool_result',tool_use_id:tu.id,content:JSON.stringify(result)};});apiMessages.push({role:'assistant',content:data.content});apiMessages.push({role:'user',content:results});if(data.stop_reason==='end_turn'){finalText=textBlocks.map(b=>b.text).join('\n');break;}}else{finalText=textBlocks.map(b=>b.text).join('\n');break;}}loadEl.remove();let html='<div class="msg-ai"><div>';if(toolResults.length){html+='<div style="margin-bottom:12px">';toolResults.forEach(tr=>{html+=renderResultCard(tr);});html+='</div>';}html+=`<div class="ai-text">${formatAiText(finalText)}</div></div></div>`;chatInner.insertAdjacentHTML('beforeend',html);messages.push({role:'assistant',content:finalText});incQuestionCount();}catch(err){loadEl.remove();chatInner.insertAdjacentHTML('beforeend','<div class="msg-ai"><div class="ai-text"><p>Connection error. Please try again.</p></div></div>');}isLoading=false;sendBtn.disabled=!userInput.value.trim();scrollToBottom();userInput.focus();}
+// ── SUBMIT ──
+async function submitQuery(text) {
+  const q = (text || userInput.value).trim();
+  if (!q || isLoading) return;
+  if (isLimitReached()) { showLimitMessage(); return; }
+
+  userInput.value = '';
+  userInput.style.height = 'auto';
+  sendBtn.disabled = true;
+  isLoading = true;
+  welcomeBlock.style.display = 'none';
+  inputBar.classList.add('active');
+  newBtn.style.display = '';
+
+  messages.push({ role: 'user', content: q });
+  chatInner.insertAdjacentHTML('beforeend', `<div class="msg-user"><div class="bubble">${esc(q)}</div></div>`);
+  scrollToBottom();
+
+  const loadEl = document.createElement('div');
+  loadEl.className = 'loading';
+  loadEl.innerHTML = '<div class="dots"><span></span><span></span><span></span></div><span class="load-text">Working on it...</span>';
+  chatInner.appendChild(loadEl);
+  scrollToBottom();
+
+  try {
+    // ══════════════════════════════════════════════════════════════
+    // DESIGN AGENT — intercept full design requests
+    // ══════════════════════════════════════════════════════════════
+    if (isDesignRequest(q)) {
+      loadEl.querySelector('.load-text').textContent = 'Running Piping Design Agent...';
+
+      const daResp = await fetch('/api/assistant', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: messages.map(m => ({ role: m.role, content: m.content })),
+          calculator: 'design-agent'
+        })
+      });
+      const daData = await daResp.json();
+      loadEl.remove();
+
+      const daText = daData.reply || daData.error || 'Something went wrong with the Design Agent.';
+      chatInner.insertAdjacentHTML('beforeend',
+        `<div class="msg-ai"><div>` +
+        `<div class="design-agent-badge">⚙ Piping Design Agent</div>` +
+        `<div class="ai-text">${formatAiText(daText)}</div>` +
+        `</div></div>`);
+      messages.push({ role: 'assistant', content: daText });
+      incQuestionCount();
+      isLoading = false;
+      sendBtn.disabled = !userInput.value.trim();
+      scrollToBottom();
+      userInput.focus();
+      return;
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // NORMAL FLOW — tool-use via /api/claude
+    // ══════════════════════════════════════════════════════════════
+    let apiMessages = messages.map(m => ({ role: m.role, content: m.content }));
+    let finalText = '', toolResults = [], iterations = 0;
+
+    while (iterations < 6) {
+      iterations++;
+      const resp = await fetch('/api/claude', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 1500,
+          system: SYSTEM_PROMPT,
+          tools: TOOLS,
+          messages: apiMessages
+        })
+      });
+      const data = await resp.json();
+
+      if (data.error) { finalText = 'Sorry, something went wrong. Please try again.'; break; }
+
+      const textBlocks = (data.content || []).filter(b => b.type === 'text');
+      const toolUseBlocks = (data.content || []).filter(b => b.type === 'tool_use');
+
+      if (toolUseBlocks.length > 0) {
+        const results = toolUseBlocks.map(tu => {
+          const result = execTool(tu.name, tu.input);
+          toolResults.push({ id: tu.id, name: tu.name, input: tu.input, result });
+          return { type: 'tool_result', tool_use_id: tu.id, content: JSON.stringify(result) };
+        });
+        apiMessages.push({ role: 'assistant', content: data.content });
+        apiMessages.push({ role: 'user', content: results });
+        if (data.stop_reason === 'end_turn') {
+          finalText = textBlocks.map(b => b.text).join('\n');
+          break;
+        }
+      } else {
+        finalText = textBlocks.map(b => b.text).join('\n');
+        break;
+      }
+    }
+
+    loadEl.remove();
+
+    let html = '<div class="msg-ai"><div>';
+    if (toolResults.length) {
+      html += '<div style="margin-bottom:12px">';
+      toolResults.forEach(tr => { html += renderResultCard(tr); });
+      html += '</div>';
+    }
+    html += `<div class="ai-text">${formatAiText(finalText)}</div></div></div>`;
+    chatInner.insertAdjacentHTML('beforeend', html);
+    messages.push({ role: 'assistant', content: finalText });
+    incQuestionCount();
+
+  } catch (err) {
+    loadEl.remove();
+    chatInner.insertAdjacentHTML('beforeend', '<div class="msg-ai"><div class="ai-text"><p>Connection error. Please try again.</p></div></div>');
+  }
+
+  isLoading = false;
+  sendBtn.disabled = !userInput.value.trim();
+  scrollToBottom();
+  userInput.focus();
+}
 
 // ═══════════════════════════════════════════════════════════════════════
 // MEMBERSTACK AUTH — powered by ppa-tier.js (single source of truth)
-// msLoadMember(), isMember(), memberPlan() are provided by ppa-tier.js
 // ═══════════════════════════════════════════════════════════════════════
 function openLoginModal(){const loggedIn=isMember();document.getElementById('lmodal-form-view').style.display=loggedIn?'none':'block';document.getElementById('lmodal-member-view').style.display=loggedIn?'block':'none';document.getElementById('lmodal-err').style.display='none';if(loggedIn){const admin=window.MS_IS_ADMIN===true;const email=(window.MS_MEMBER&&window.MS_MEMBER.auth&&window.MS_MEMBER.auth.email)||'Active subscription';document.getElementById('lmodal-avatar').textContent=admin?'🛡️':'✓';document.getElementById('lmodal-welcome').textContent=admin?'Admin Access Active':(memberPlan()==='student'?'Student Access Active':'Professional Access Active');document.getElementById('lmodal-email-display').textContent=email;}else{document.getElementById('lmodal-email').value='';document.getElementById('lmodal-password').value='';}document.getElementById('lmodal-bg').classList.add('show');document.body.style.overflow='hidden';if(!loggedIn)setTimeout(()=>document.getElementById('lmodal-email').focus(),200);}
 function closeLModal(){document.getElementById('lmodal-bg').classList.remove('show');document.body.style.overflow='';}
@@ -600,21 +692,6 @@ document.addEventListener('DOMContentLoaded',async function(){await msLoadMember
 function toggleMobileMenu(){document.getElementById('nav-hamburger').classList.toggle('open');document.getElementById('nav-links').classList.toggle('open');}
 document.querySelectorAll('.nav-links a, .nav-links button').forEach(el=>{el.addEventListener('click',()=>{document.getElementById('nav-hamburger').classList.remove('open');document.getElementById('nav-links').classList.remove('open');});});
 </script>
-  <!-- 
-  ADD THIS TO index.html (homepage) BEFORE </body>
-  This enables the Design Agent from the homepage chat widget.
-  The widget auto-detects design intent and routes accordingly.
--->
-
-<script>
-  // Homepage mode — no specific calculator
-  window.PPA_AI_CALCULATOR = 'homepage';
-  
-  // Optional: Override greeting for homepage
-  window.PPA_AI_GREETING = 'PipingPro AI Assistant — ask me anything about piping engineering, or describe a design task and I\'ll run a full calculation chain for you.';
-</script>
-
-  <script src="/js/ppa-ai-assistant.js"></script>
 
 </body>
 </html>
