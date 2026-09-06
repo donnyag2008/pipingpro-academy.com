@@ -16,7 +16,7 @@
   'use strict';
 
   // ── CDN URLS ──
-  const DOCX_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/docx.min.js';
+  const DOCX_CDN = 'https://unpkg.com/docx@8.5.0/build/index.umd.js';
   const SAVER_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js';
 
   // ── COLORS ──
