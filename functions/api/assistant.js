@@ -280,6 +280,7 @@ export async function onRequestPost(context) {
       calculator = '',
       activeTab = '',
       memberstackToken = ''
+      lang = ''   
     } = body;
 
     // ── Resolve which agent to use ──
@@ -291,6 +292,15 @@ export async function onRequestPost(context) {
     }
 
     const { systemPrompt, label } = resolvePrompt(agentId, activeTab);
+
+// ── Language detection: frontend pref → Cloudflare geo → English ──
+const cfCountry = request.headers.get('CF-IPCountry') || 'XX';
+const userLang = lang || (['ID','MY','BN'].includes(cfCountry) ? 'id' : 'en');
+
+let finalPrompt = systemPrompt;
+if (userLang === 'id') {
+  finalPrompt += `\n\nLANGUAGE INSTRUCTION: The user is accessing from ${cfCountry} and prefers Bahasa Indonesia. Respond in Bahasa Indonesia. Keep ALL engineering terms, code references (ASME, API, B31.3, CAESAR II, NPS, DN, etc.), units, numerical values, formulas, and calculation results in English/standard form. Only translate the explanatory text, guidance, methodology discussion, and conclusions into Bahasa Indonesia.`;
+}
 
     // ── Trim conversation to last 20 messages to stay within context limits ──
     const trimmedMessages = messages.slice(-20).map(m => ({
@@ -312,7 +322,7 @@ export async function onRequestPost(context) {
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
         max_tokens: maxTokens,
-        system: systemPrompt,
+        system: finalPrompt,
         messages: trimmedMessages
       })
     });
