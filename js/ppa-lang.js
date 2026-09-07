@@ -183,7 +183,8 @@
     // Text content
     document.querySelectorAll('[data-i18n]').forEach(function (el) {
       var key = el.getAttribute('data-i18n');
-      el.textContent = t(key);
+if (el.hasAttribute('data-i18n-html')) {
+  el.innerHTML = t(key);
     });
 
     // Placeholders (inputs, textareas)
