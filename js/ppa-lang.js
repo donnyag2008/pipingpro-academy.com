@@ -15,6 +15,7 @@
   // ─── UI Translation Strings ──────────────────────────────────
   // Add keys as needed — these cover common PPA UI elements.
   // Engineering terms (ASME, NPS, CAESAR II, etc.) stay in English.
+  
   const STRINGS = {
     // Navigation & Layout
     'nav.home':             { en: 'Home',                    id: 'Beranda' },
@@ -24,30 +25,22 @@
     'nav.login':            { en: 'Log In',                  id: 'Masuk' },
     'nav.signup':           { en: 'Sign Up',                 id: 'Daftar' },
     'nav.pricing':          { en: 'Pricing',                 id: 'Harga' },
-    'home.eyebrow':    { en: 'Piping & Pipeline Engineering AI Assistant',
-                     id: 'Asisten AI Engineering Piping & Pipeline' },
-'home.headline':   { en: 'What Do You Want to<br><em>Learn or Calculate</em> Today?',
-                     id: 'Apa yang Ingin Anda<br><em>Pelajari atau Hitung</em> Hari Ini?' },
-'home.calculate':  { en: '⚙ Calculate',  id: '⚙ Hitung' },
-'home.learn':      { en: '📖 Learn',     id: '📖 Pelajari' },
-'home.newchat':    { en: 'New Question',  id: 'Pertanyaan Baru' },
 
     // Homepage
-    'home.headline':        { en: 'The One Stop Shop for AI-Powered Piping & Pipeline Engineering',
-                              id: 'Pusat Lengkap Engineering Piping & Pipeline Berbasis AI' },
-    'home.subheadline':     { en: 'Calculators, courses, and AI assistants built by engineers, for engineers.',
-                              id: 'Kalkulator, kursus, dan asisten AI dibuat oleh insinyur, untuk insinyur.' },
+    'home.eyebrow':         { en: 'Piping & Pipeline Engineering AI Assistant',
+                              id: 'Asisten AI Engineering Piping & Pipeline' },
+    'home.headline':        { en: 'What Do You Want to<br><em>Learn or Calculate</em> Today?',
+                              id: 'Apa yang Ingin Anda<br><em>Pelajari atau Hitung</em> Hari Ini?' },
+    'home.subheadline':     { en: 'Ask any piping engineering question — I\'ll calculate with ASME code databases or explain the concept. Or both.',
+                              id: 'Tanyakan pertanyaan engineering piping apa saja — saya akan menghitung dengan database kode ASME atau menjelaskan konsepnya. Atau keduanya.' },
+    'home.calculate':       { en: '⚙ Calculate',             id: '⚙ Hitung' },
+    'home.learn':           { en: '📖 Learn',                id: '📖 Pelajari' },
+    'home.newchat':         { en: 'New Question',             id: 'Pertanyaan Baru' },
     'home.cta.trial':       { en: 'Start Free Trial',        id: 'Mulai Uji Coba Gratis' },
     'home.cta.explore':     { en: 'Explore Calculators',     id: 'Jelajahi Kalkulator' },
-
-    // Calculator Groups
-    'calc.group.basic':     { en: 'Basic Calculations',      id: 'Kalkulasi Dasar' },
-    'calc.group.advanced':  { en: 'Advanced Calculations',   id: 'Kalkulasi Lanjutan' },
-    'calc.group.datasheets':{ en: 'Datasheets',              id: 'Datasheet' },
-
     // AI Chat Interface
-    'chat.placeholder':     { en: 'Ask the Chief Engineer anything about piping & pipeline...',
-                              id: 'Tanya Chief Engineer tentang piping & pipeline...' },
+    'chat.placeholder':     { en: 'What do you want to learn or calculate today?',
+                          id: 'Apa yang ingin Anda pelajari atau hitung hari ini?' },
     'chat.thinking':        { en: 'Thinking...',             id: 'Sedang berpikir...' },
     'chat.error':           { en: 'Something went wrong. Please try again.',
                               id: 'Terjadi kesalahan. Silakan coba lagi.' },
