@@ -217,10 +217,14 @@
 <nav>
   <a class="nav-logo" href="/" onclick="event.preventDefault();location.reload();">PipingPro Academy</a>
   <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()">
-    <span></span><span></span><span></span>
+<button onclick="ppaLang.toggleLang()" data-i18n="lang.switch"
+        class="ppa-lang-toggle">
+  🇮🇩 Bahasa Indonesia
+</button>
+   <span></span><span></span><span></span>
   </button>
   <div class="nav-links" id="nav-links">
-    <a href="/courses/" data-i18n="nav.calculators">Courses</a>
+    <a href="/courses/" data-i18n="nav.courses">Courses</a>
     <a href="/calculators/" data-i18n="nav.calculators">Toolkits</a>
     <button class="new-chat-btn" id="newBtn" onclick="resetChat()">New Question</button>
     <span id="nav-auth" style="display:inline-flex;align-items:center;gap:.6rem;">
@@ -242,6 +246,10 @@
       <div class="lmodal-title">Member Login</div>
       <div class="lmodal-sub">PipingPro Academy</div>
       <button class="lmodal-close" onclick="closeLModal()">✕</button>
+   <button onclick="ppaLang.toggleLang()" data-i18n="lang.switch"
+        class="ppa-lang-toggle">
+  🇮🇩 Bahasa Indonesia
+</button>
     </div>
     <div class="lmodal-body">
       <div id="lmodal-form-view">
