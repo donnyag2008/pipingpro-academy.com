@@ -24,6 +24,13 @@
     'nav.login':            { en: 'Log In',                  id: 'Masuk' },
     'nav.signup':           { en: 'Sign Up',                 id: 'Daftar' },
     'nav.pricing':          { en: 'Pricing',                 id: 'Harga' },
+    'home.eyebrow':    { en: 'Piping & Pipeline Engineering AI Assistant',
+                     id: 'Asisten AI Engineering Piping & Pipeline' },
+'home.headline':   { en: 'What Do You Want to<br><em>Learn or Calculate</em> Today?',
+                     id: 'Apa yang Ingin Anda<br><em>Pelajari atau Hitung</em> Hari Ini?' },
+'home.calculate':  { en: '⚙ Calculate',  id: '⚙ Hitung' },
+'home.learn':      { en: '📖 Learn',     id: '📖 Pelajari' },
+'home.newchat':    { en: 'New Question',  id: 'Pertanyaan Baru' },
 
     // Homepage
     'home.headline':        { en: 'The One Stop Shop for AI-Powered Piping & Pipeline Engineering',
@@ -88,7 +95,7 @@
    * Falls back to English if key or language missing.
    * @param {string} key - dot-notation key from STRINGS
    * @param {string} [fallback] - optional fallback if key not found
-   * @returns {string}
+   * @returns {}
    */
   function t(key, fallback) {
     const entry = STRINGS[key];
