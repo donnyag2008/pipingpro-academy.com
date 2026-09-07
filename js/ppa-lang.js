@@ -180,11 +180,13 @@
    * Also handles: data-i18n-placeholder, data-i18n-title
    */
   function _applyTranslations() {
-    // Text content
-    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+document.querySelectorAll('[data-i18n]').forEach(function (el) {
       var key = el.getAttribute('data-i18n');
-if (el.hasAttribute('data-i18n-html')) {
-  el.innerHTML = t(key);
+      if (el.hasAttribute('data-i18n-html')) {
+        el.innerHTML = t(key);
+      } else {
+        el.textContent = t(key);
+      }
     });
 
     // Placeholders (inputs, textareas)
