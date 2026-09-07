@@ -614,7 +614,8 @@ async function submitQuery(text) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: messages.map(m => ({ role: m.role, content: m.content })),
-          calculator: 'design-agent'
+          calculator: 'design-agent',
+         lang: ppaLang.getLang()
         })
       });
       const daData = await daResp.json();
