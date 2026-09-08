@@ -15,7 +15,7 @@
         Object.assign(ppaLang.STRINGS, {
           'home.eyebrow':     { en: 'Piping & Pipeline Engineering AI Assistant', id: 'Asisten AI Engineering Piping & Pipeline' },
           'home.headline':    { en: 'Ask <em>Anything</em>', id: 'Silahkan Tanya <em>Apasaja</em>' },
-          'home.subheadline': { en: "Ask any piping engineering question — I'll calculate with ASME code databases or explain the concept. Or both.", id: 'Tanya apa saja tentang piping engineering — saya akan jawab berdasarkan database dari ASME serat menjelaskan konsepnya.' },
+          'home.subheadline': { en: "Ask any piping engineering question — I'll calculate with ASME code databases or explain the concept. Or both.", id: 'Tanya apa saja tentang piping engineering — saya akan jawab berdasarkan database dari ASME serta penjelasan konsepnya.' },
           'home.calculate':   { en: '⚙ Calculate', id: '⚙ Hitung' },
           'home.learn':       { en: '📖 Learn', id: '📖 Pelajari' },
           'home.newchat':     { en: 'New Question', id: 'Pertanyaan Baru' },
@@ -317,8 +317,8 @@
     <div class="chat-inner" id="chatInner">
       <div class="welcome" id="welcomeBlock">
         <p class="welcome-eyebrow" data-i18n="home.eyebrow">Piping & Pipeline Engineering AI Assistant</p>
-        <h1 data-i18n="home.headline" data-i18n-html>What Do You Want to<br><em>Learn or Calculate</em> Today?</h1>
-        <p class="welcome-sub" data-i18n="home.subheadline">Ask any piping engineering question — I'll calculate with ASME code databases or explain the concept. Or both.</p>
+        <h1 data-i18n="home.headline" data-i18n-html>Ask <em>Anything</em></h1>
+       <p class="welcome-sub" data-i18n="home.subheadline">I'll calculate with ASME code databases, explain the concept, or run a full design chain. Just ask.</p>
         <div class="welcome-input-wrap" style="max-width:620px;margin:0 auto 2.5rem;display:flex;gap:8px;align-items:flex-end;opacity:0;animation:fadeUp .7s .45s forwards;">
           <textarea id="welcomeInput" rows="1" placeholder="" 
             onkeydown="handleWelcomeKey(event)" oninput="autoResizeWelcome(this)"
