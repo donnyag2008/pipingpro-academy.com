@@ -46,7 +46,7 @@
     }
 
     html { scroll-behavior: smooth; }
-    body { font-family: 'DM Sans', sans-serif; background: var(--ink); color: var(--ink); line-height: 1.7; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); line-height: 1.7; }
 
     /* ── NAV ── */
     nav {
@@ -123,11 +123,11 @@
     .lmodal-logout:hover{background:var(--paper-dark);}
 
     /* ── APP LAYOUT ── */
-    .app-body { display: flex; flex-direction: column; min-height: calc(100vh - 60px); background: var(--cream); position: relative; overflow: hidden; }
+    .app-body { display: flex; flex-direction: column; background: var(--cream); position: relative; }
     .app-body::before { display: none; }
 
     /* ── CHAT AREA ── */
-    .chat-area { flex: 1; overflow-y: auto; padding: 0 5%; position: relative; z-index: 1; }
+    .chat-area { overflow-y: auto; padding: 0 5%; position: relative; z-index: 1; }
     .chat-inner { max-width: 740px; margin: 0 auto; padding-bottom: 24px; }
 
     /* ── WELCOME ── */
@@ -608,7 +608,7 @@ function toggleStep(header) {
   const card = header.parentElement;
   card.classList.toggle('open');
 }
-</script>
+
 // ═══════════════════════════════════════════════════════════════════════
 // TOOL IMPLEMENTATIONS + DEFINITIONS + AI LOGIC
 // ═══════════════════════════════════════════════════════════════════════
