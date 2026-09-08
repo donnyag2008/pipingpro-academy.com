@@ -8,6 +8,24 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="/js/ppa-lang.js"></script>
+   <script src="/js/ppa-lang.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      if (window.ppaLang && window.ppaLang.STRINGS) {
+        Object.assign(ppaLang.STRINGS, {
+          'home.eyebrow':     { en: 'Piping & Pipeline Engineering AI Assistant', id: 'Asisten AI Engineering Piping & Pipeline' },
+          'home.headline':    { en: 'What Do You Want to<br><em>Learn or Calculate</em> Today?', id: 'Apa yang Ingin Anda<br><em>Pelajari atau Hitung</em> Hari Ini?' },
+          'home.subheadline': { en: "Ask any piping engineering question — I'll calculate with ASME code databases or explain the concept. Or both.", id: 'Tanyakan pertanyaan engineering piping apa saja — saya akan menghitung dengan database kode ASME atau menjelaskan konsepnya. Atau keduanya.' },
+          'home.calculate':   { en: '⚙ Calculate', id: '⚙ Hitung' },
+          'home.learn':       { en: '📖 Learn', id: '📖 Pelajari' },
+          'home.newchat':     { en: 'New Question', id: 'Pertanyaan Baru' },
+        
+        });
+        ppaLang.setLang(ppaLang.getLang());
+      }
+    });
+  </script>
+  <script data-memberstack-app="app_cmq9fsibv00720sujaqjm734o" ...
   <script data-memberstack-app="app_cmq9fsibv00720sujaqjm734o" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
   <title>PipingPro Academy — Piping & Pipeline Engineering AI Assistant</title>
   <meta name="description" content="Ask any piping or pipeline engineering question. Calculate wall thickness, flange ratings, pipe weight, or learn ASME B31.3, B16.5, and more — powered by 259+ ASME code databases.">
