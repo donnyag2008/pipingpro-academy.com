@@ -279,8 +279,8 @@ export async function onRequestPost(context) {
       messages = [],
       calculator = '',
       activeTab = '',
-      memberstackToken = ''
-      lang = '',   
+      memberstackToken = '',
+      lang = ''   
     } = body;
 
     // ── Resolve which agent to use ──
