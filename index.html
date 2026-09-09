@@ -20,8 +20,16 @@
         
         });
         ppaLang.setLang(ppaLang.getLang());
+     // Patch: re-apply HTML for escaped elements
+    document.querySelectorAll('[data-i18n-html]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      const lang = ppaLang.getLang();
+      if (ppaLang.STRINGS[key] && ppaLang.STRINGS[key][lang]) {
+        el.innerHTML = ppaLang.STRINGS[key][lang];
       }
     });
+  }
+});
   </script>
   <script data-memberstack-app="app_cmq9fsibv00720sujaqjm734o" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
   <title>PipingPro Academy — Step-by-Step Piping Stress Analysis Guide</title>
