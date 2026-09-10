@@ -63,6 +63,22 @@
     return CALC_TIER[id] || 'professional';
   }
 
+// ── Required tier per course id ──────────────────────────────────
+// All courses are student-tier (student + professional can access).
+// Keep in sync with CALC_TIER as the ONE place access policy lives.
+var COURSE_TIER = {
+  course1: 'student',   // Fundamental Piping Engineering
+  course2: 'student',   // Fundamental Pipeline Engineering
+  course3: 'student',   // Static Piping Stress Analysis
+  course4: 'student',   // Non-Metallic Piping Essential
+  course5: 'student'    // Dynamic Piping Stress Analysis
+};
+
+function requiredCourseTier(id) {
+  return COURSE_TIER[id] || 'student';
+}
+
+   
   // ── Resolve member tier from Memberstack (authoritative) & cache ──
   // Call on login and on every page load. Async — reads the live plan.
   async function resolveTier() {
