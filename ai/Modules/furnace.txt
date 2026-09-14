@@ -1,0 +1,9 @@
+## EQUIPMENT-SPECIFIC KNOWLEDGE: FURNACE
+
+## LOAD CASES: FURNACE
+- Design condition
+- Start-up condition
+- Decoking condition
+- Wind effect (if necessary)
+- Earthquake effect
+- Hydrostatic pressure test of insulated piping with blocked spring support (if required)

@@ -1,0 +1,42 @@
+## EQUIPMENT-SPECIFIC KNOWLEDGE: PUMP SUCTION/DISCHARGE LINE
+
+When user has a pump line (suction or discharge), guide them through this COMPLETE workflow:
+
+1. GET THE LINE LIST FROM PROCESS: Find Design Pressure, Design Temperature, Operating Pressure, Operating Temperature, Fluid/service, Insulation type and thickness (if any), one-phase or two-phase flow, and special process requirements.
+
+2. GET THE P&ID — UNDERSTAND PUMP CONFIGURATION: How many pumps? How many in operation, how many standby? A 2+1 standby arrangement means a common header feeding multiple pumps — changes model complexity entirely. Find configuration details from the Stress Analysis Specification or Job Note, along with required temperatures for each operating case.
+
+3. GET THE PIPING LAYOUT: Piping GA drawing or Isometric. Access SmartPlant or Navisworks if available for 3D configurations.
+
+4. IDENTIFY PUMP TYPE: API pump (API 610), ANSI pump, or Reciprocating pump? Get drawings, configurations, and allowable nozzle loads from Machinery Group. If vendor data unavailable, use API 610 or ANSI standard allowables. Check against PPA nozzle load calculator after analysis.
+
+5. CALCULATE INITIAL MOVEMENTS AT NOZZLES: Thermal displacements at suction and discharge nozzles, for BOTH equipment items if the analysis connects two. If analysis covers one equipment to pipe rack, calculate for that equipment but MUST identify the Anchor or Limit Stop location between equipment items.
+
+6. ANCHOR vs LIMIT STOP: The "anchor" point between two equipment items usually CANNOT be modelled as a true ANCHOR in the software — it must be a LIMIT STOP. An ANCHOR restrains all 6 DOF (3 translations + 3 rotations). A LIMIT STOP only restricts translational movement in specified directions but allows rotation. At a pipe rack the "anchor" is typically a limit stop because steel cannot provide true rotational fixity. Using true anchor where limit stop is correct will over-constrain the model and give unrealistic results.
+
+7. GATHER COMPONENT DATA: Dimensions and weights for flanges (including type — weld neck, slip-on), valves (including actuator/operator weight and COG height), orifice flanges.
+
+8. PIPING MATERIAL DATA: Material type per ASME B31.3 or PPA calculator. CAESAR II generates material data automatically on input but VERIFY it — especially allowable stress values at temperature.
+
+9. BIG PICTURE FROM GA/3D MODEL: See overall layout BEFORE creating stress sketch — gives idea about support configurations: where guides, where rest supports, where trunnions.
+
+10. FIRST SUPPORT AFTER NOZZLE = ADJUSTABLE: Minimum adjustable support needed for: (a) connecting at correct nozzle height — adjustment always needed during construction, (b) maintenance — piping must be independently supported when pump is removed.
+
+11. VALVE SUPPORT: Check valve locations and support types. Use trunnion support at elbow near heavy valves rather than conventional shoe. Valve and operator weight must be properly supported — unsupported valve is common cause of high sustained stresses.
+
+12. SPRING HANGERS = LAST RESORT: Do NOT add springs at the beginning. Exhaust all other options first (shoes, guides, line stops, anchors, trunnions). Springs add cost, maintenance burden, and complexity.
+
+13. TWO TYPES OF TEMPERATURE:
+- Design Temperature: check STRESS LEVELS (sustained, expansion, occasional vs code allowable)
+- Operating Temperature: check NOZZLE LOADS against equipment allowable
+Each must be input into correct load cases. Wrong assignment invalidates the analysis.
+
+## LOAD CASES FOR ROTATING EQUIPMENT (Pump, Turbine, Compressor)
+
+For two pumps with one spare (2+1 configuration):
+- Design condition — Pump A and B hot
+- Design condition — Pump A operating, Pump B standby
+- Design condition — Pump B operating, Pump A standby
+- Earthquake effect
+
+Installation temperature for forces and moments evaluation on rotating equipment: 21°C.

@@ -1,0 +1,53 @@
+PUMP SUCTION PIPING LAYOUT
+Source: Brown & Root Engineering, Drawing PI-620, Rev 001 (Sept 1992)
+Scope: Centrifugal pump suction piping arrangement — end suction and side suction pumps
+
+---
+
+ARRANGEMENT TYPES:
+- Figures 1, 2, 3: End suction or side suction pumps (overhead and side entry)
+- Figure 4: Side suction pump with horizontal suction line from below
+- Figure 5: Side suction pump only — requires minimum 3 pipe diameters straight run into eccentric reducer
+
+KEY COMPONENTS IN ALL ARRANGEMENTS:
+- Eccentric reducer (flat side up — FSU) at pump suction nozzle
+- Temporary strainer upstream of pump
+- Drain valve (product per flowsheet)
+- Removable base ell support (Fig 4)
+
+---
+
+DESIGN RULES:
+
+1. SUCTION PIPING LENGTH: Keep suction piping as short as possible with minimum number of fittings.
+
+2. SUPPORT FROM PUMP FOUNDATION: Support piping preferably from pump foundation to prevent nozzle strain. Especially important for hot piping where differential settlement between pump foundation and pipe support foundation may occur. These foundations must be integral.
+
+3. OVERHEAD LOOPS: Avoid overhead loops in piping when possible. If unavoidable, vent the high point.
+
+4. VERTICAL vs HORIZONTAL SUCTION: For side suction pumps, a vertical suction line is preferred.
+
+5. MINIMUM STRAIGHT RUN (SIDE SUCTION): When space does not permit 3 pipe diameters straight run, install a vertical vane in the centre of the long-radius 90° elbow. Check with mechanical or process engineer in conjunction with pump vendor.
+
+6. 90° ELBOW BETWEEN VALVE AND PUMP: A 90° elbow between the valve and pump should be used (as shown in Figures 1, 2, 4, and 5). This is a MUST for ring-type joint flanges — the inflexibility of the piping must not allow spreading of the flanged joint to remove the ring gasket and pipe spool.
+
+7. DRAIN VALVE: The product being pumped dictates the need for a drain valve (per flowsheet).
+
+8. TEMPORARY STRAINER POSITION: Preferred position is at the valve downstream flange with strainer pointed towards pump OR at pump nozzle with strainer pointed away from pump. Alternate positions acceptable. Check with mechanical or process engineer before placing strainer at pump nozzle.
+
+9. STRAINER CLEARANCE: Check clearance of strainer projecting into 90° elbow.
+
+10. CONCENTRIC REDUCER: Use concentric reducer in suction from above ONLY when approved by mechanical or process engineer (default is eccentric reducer, flat side up).
+
+11. FLAT TEMPORARY STRAINERS: If the valve is located close to the pump, flat-type temporary strainers may be inserted in the flanged joint of downstream end of valve.
+
+12. ECCENTRIC REDUCER ORIENTATION: Always flat side up (FSU) to prevent vapour pocket at pump suction.
+
+---
+
+STRESS ENGINEERING NOTES:
+- Short suction piping with minimum fittings reduces pressure drop and turbulence — critical for NPSH
+- Integral foundations prevent differential settlement that causes nozzle overload
+- The 3-pipe-diameter straight run rule ensures uniform flow into the pump impeller
+- Eccentric reducer FSU prevents vapour accumulation that could cause cavitation
+- These layout rules directly affect nozzle loads that the stress engineer must check

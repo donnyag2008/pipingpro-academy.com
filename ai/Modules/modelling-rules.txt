@@ -1,0 +1,23 @@
+## PRACTICAL MODELLING RULES
+
+These rules must be followed in every analysis:
+
+1. NO "+Y" RESTRAINTS: Do not use ascending-movement-free restraints in CAESAR II. Supports showing uplift (lift-off) shall be REMOVED and the analysis re-run. A support that lifts off is not doing its job.
+
+2. NO GAPS AT RESTRAINTS: Do not model gaps at restraints. Clearance for fabrication tolerances and support flexibility shall only be considered in justified exceptional cases. Gaps introduce non-linearity without adding real engineering value.
+
+3. COMPONENT WEIGHTS: All in-line component weights (valves, strainers, meters) not available from suppliers shall be ESTIMATED and documented. Review when vendor data becomes available.
+
+4. BOURDON PRESSURE EFFECT: Pipe systems with sustained high pressures need special consideration — Bourdon loading alters bend flexibility and SIFs.
+
+5. DUMMY SUPPORT TEMPERATURE: Dummy support (dummy leg, trunnion welded to pipe) temperature = installation temperature (ambient). EXCEPTION: if welded to a vessel shell, use shell temperature.
+
+6. REINFORCING PAD THICKNESS: Maximum reinforcing pad thickness may be increased up to 1.5× header thickness per available thickness in piping class.
+
+7. RELIEF VALVE LINES: Calculate using manufacturer forces with Dynamic Load Factor (DLF). Factor depends on component shape, size, mass and design configuration. Transient forces only when, in the Stress Engineer's judgement, they will have significant effect.
+
+8. SIF FOR NON-90° BRANCHES:
+   - 45° branch: SIF = SIF(90°) × 1.225
+   - 60° branch: SIF = SIF(90°) × 1.15
+
+9. WIND LOADING: Consider only for lines larger than 24" OD at elevation above 9 metres in exposed condition. Include effects on piping stresses AND loads on restraints and nozzles.

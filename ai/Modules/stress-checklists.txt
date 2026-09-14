@@ -1,0 +1,107 @@
+PIPING STRESS CALCULATION CHECKLISTS
+Source: Bechtel 3DG-P41B-00002-001, Appendix 5 (SC-I/II) and Appendix 6 (SC-III)
+
+---
+
+SC-I / SC-II PIPING STRESS CALCULATION CHECKLIST
+
+I. GENERAL
+1. Have requirements of QA Procedures been met?
+2. Have all computer runs been identified and stored with file numbers for input/output of final stress runs?
+3. Has the purpose of the stress calculation been clearly defined?
+4. Are all references existing and verifiable?
+
+II. CRITERIA AND DESIGN INPUT
+1. Has Pipe Stress Design Criteria been applied appropriately?
+2. Are analyzed pipe lines in piping isometric in agreement with P&ID?
+3. Are branch connections, major equipment, in-line equipment, valves, wall boxes, equipment nozzles in agreement with P&ID?
+4. Are all materials and properties (pipe, size, thickness, insulation, media) in agreement with Piping Class Sheet?
+5. Are input weight data for pipe insulation, pipe, and fluid correct?
+6. Are all components in piping isometric final? If estimated, are they conservative?
+7. Are input stiffness data for supports, anchors, nozzles, and equipment correct?
+8. Are input weight data for clamps, supports, valves, fittings, flanges correct?
+9. Are input mass data for pipe-mounted equipment and supports per vendor drawings?
+10. Are all thermal cases created per project request and all significant modes considered/enveloped?
+11. Are piping temperatures per load cases correct and applied to appropriate pipe sections?
+12. Are wind load input data correct?
+13. Are thermal expansion coefficient input data correct?
+14. Are Young's Modulus values correct?
+15. Are allowable stresses correct and included for each material?
+16. Is piping safety category per Pipe Stress Design Criteria applied?
+17. Are stress intensification factors (SIF) correct?
+18. Are seismic spectra input data correct?
+19. Is Code Case N-411 (CC-N411) applied?
+20. Are Seismic Anchor Movement (SAM) input data correct?
+21. Are Thermal Anchor Movement (TAM) input data correct?
+22. Are branch connections and pipe connectivity checked for de-coupling appropriately?
+23. Are allowable stresses for equipment and pipe-mounted equipment correct?
+24. Are other input data correct, if any?
+
+III. ASSUMPTIONS
+1. Are assumptions verifiable and acceptable?
+2. Are assumptions included in Unverified Assumptions Report?
+
+IV. METHODOLOGY
+1. Is methodology appropriate?
+2. Are response spectra methodology correct? Is CC-N411 used?
+
+V. COMPUTER MODELING AND CALCULATION
+1. Are any small branch lines de-coupled? If yes, has de-coupling criteria been met?
+2. Are all inline equipment (orifice, flow elements, valves) modeled appropriately?
+3. Are valves modeled with valve body, valve stems, operator mass, motor, and all flanges as lumped mass?
+4. Is node connectivity correct without overlap or disconnect?
+5. Does equipment nozzle modeling correspond to equipment nozzle drawings?
+6. Are Wall Boxes modeled per Wall Box drawings?
+7. Are support locations and types per stress isometric?
+8. Has hot-load spring hanger setting been applied at correct node and modeled correctly?
+9. Are thermal anchor displacements (supports, anchors, equipment, nozzles, Wall Boxes) applied at correct node and direction?
+10. Is cut-off frequency of 33 Hz used for seismic analysis?
+11. Have ALL load cases per Pipe Stress Design Criteria been analyzed?
+12. Are seismic response spectra correctly applied to all supports, nozzles, Wall Boxes, anchors, restraints?
+13. Is correct damping value used for each load case? Is Code Case N-411-1 used?
+14. Are SAM applied at correct node and direction?
+15. Has ZPA of spectra been reached or reconciled?
+16. Are load combinations for all pipe and equipment correct?
+17. Are element sections and types correct?
+18. Are all elbows/bends modeled correctly with radius per isometric drawings?
+19. Are all tees and branch connections modeled correctly?
+20. Are SIFs for components modeled correctly?
+
+VI. CALCULATION RESULTS
+1. Are welding attachments qualified using SIF or local stress analysis method?
+2. Do support tags (ANC, SPD, SPR etc.) exist in hanger guidance?
+3. Does equipment nozzle load summary exist and is it evaluated correctly?
+4. Are valves evaluated correctly and maximum accelerations noted?
+5. Are weight displacements in design equation less than 1/16 inch?
+6. Are stress checks per Equation 2, 3, 4.1, and 4.2 of Pipe Stress Design Criteria satisfied?
+7. Are support, anchor, and nozzle load results acceptable?
+8. Are valve, pump, heater results correct, reasonable, and acceptable?
+9. Have piping components met applicable Code requirement?
+10. Are displacements at firestops negligible?
+11. Have axial stop/anchor locations been coordinated with structural to avoid unacceptable loading?
+
+===
+
+SC-III PIPING STRESS EVALUATION CHECKLIST
+
+For piping isometrics to be evaluated:
+
+1. Is piping seismic category correct?
+2. Has piping been incorporated into formal stress calculation? (If yes → go to conclusion)
+3. Is maximum operating temperature lower than 150°F?
+4. Is maximum operating temperature lower than 250°F and piping flexibility adequate?
+5. Has support span deviated significantly from Span and Support Load Tables?
+6. Are significant external displacements (SAM, TAM) imposed on piping?
+7. Is it cost effective to have piping computer analysis performed?
+8. Are displacements at firestops negligible?
+9. Have axial stop/anchor locations been coordinated with structural?
+
+SC-III CONCLUSION OPTIONS:
+A. Span and Support Tables appropriately applied → piping meets Code, no further analysis required
+B. Piping incorporated into formal stress calculation → no further consideration required
+C. Span tables not applicable and/or computer analysis is cost effective → computer analysis required
+
+SIGN-OFF:
+- Piping isometric approved for release to construction, OR
+- Piping isometric pending release until analysis complete
+- Signed by: Stress Engineer + Stress/Support Supervisor + Date

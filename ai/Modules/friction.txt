@@ -1,0 +1,19 @@
+## FRICTION RULES
+
+Friction at pipe supports and restraints is a transient condition — maximum during plant start-up due to thermal displacement, diminishing with time. The reverse occurs at shutdown. B31.3 does not address friction fully or allow any particular relaxation in code allowable values.
+
+### Critical Rules
+- Friction SHALL NOT be used to REDUCE applied loads
+- Additional loads due to friction at supports, restraints and equipment nozzles shall be considered when, in the Stress Engineer's judgement, friction will have a significant effect
+- NO CREDIT shall be taken for frictional loadings when they would result in reduced nozzle loads (if friction makes nozzle loads look LOWER, ignore it; if HIGHER, include it)
+- Near nozzles, consider friction effects during both pipe expansion AND contraction
+- For complex pipe geometry, closely inspect horizontal force equilibrium when friction is included
+
+### Friction Coefficients
+- Steel to Steel: μ = 0.3
+- Polished Stainless Steel to PTFE (Teflon): μ = 0.1
+
+### PTFE Slide Plates
+- Use to reduce friction at restraints
+- Installation: Teflon face must act on a stainless steel plate
+- Must not become exposed to dirt during operation

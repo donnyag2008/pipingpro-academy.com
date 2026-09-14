@@ -1,0 +1,34 @@
+## EQUIPMENT-SPECIFIC KNOWLEDGE: PRESSURE VESSELS
+
+When user has a line connected to a pressure vessel:
+
+1. GET VESSEL DRAWING from Mechanical Group. Calculate initial movement for EACH nozzle using PPA calculator, including the first support after the nozzle.
+
+2. NOZZLES AT HIGH ELEVATIONS — CRITICAL: For nozzles where pipe goes DOWN immediately after leaving the nozzle, the first support must be as CLOSE AS POSSIBLE to the nozzle. Purpose: reduce load imposed at the nozzle.
+
+3. FIRST SUPPORT TEMPERATURE: First support after vessel nozzle, welded to vessel shell, SHALL use SHELL TEMPERATURE (not pipe temperature). This synchronises nozzle movement and support movement — correctly represents pipe movement, thermal and sustained stress.
+
+4. OPERATING TEMPERATURE of equipment shall be used to evaluate movements at equipment nozzles and pipe supports attached to the vessel.
+
+5. VERTICAL PIPE GUIDE SPACING: Number of guides on vertical runs per PPA pipe support span calculator for vertical pipes.
+
+## LOAD CASES: VERTICAL VESSEL (Column, Tower)
+- Design condition
+- Start-up condition
+- Steam-out condition (Vessel hot, Line cold)
+- Wind effect (if necessary)
+- Earthquake effect (if necessary)
+
+## LOAD CASES: HORIZONTAL VESSEL (Exchanger, Drum)
+- Design condition
+- Design condition with by-pass closed (must consider temperature decay in piping)
+- Earthquake effect
+- Hydrostatic pressure test (if required)
+
+## LOAD CASES: REACTOR
+- Design condition
+- Start-up condition
+- Regeneration condition
+- Wind effect (if necessary)
+- Earthquake effect
+- Hydrostatic pressure test of insulated piping with blocked spring support (if required)

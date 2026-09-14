@@ -1,0 +1,182 @@
+PIPING LAYOUT AND SUPPORT SPACING — GENERAL GUIDANCE
+Source: Bechtel 3DG-P41B-00002-001, Rev 001 (Dec 2004), ASME B31.3
+Prepared by: Chii Chern | Checked: Jack Shen/Rob Fultz | Approved: Mike Pitluk
+
+---
+
+PURPOSE:
+- Guidance for pipe layout designers to properly route pipe
+- Guidance for stress and support engineers to locate supports, select support types, and demonstrate Code compliance
+- Identifies appropriate analysis method: engineering judgment, simplified (Cook Book) method, or rigorous computer analysis based on pipe classification
+
+---
+
+PIPE CLASSIFICATIONS (SEISMIC CATEGORIES):
+
+SC-I: Piping important to safety and which has a seismic safety function.
+- Most stringent design rules and allowables (1.33 Sh for B31.3)
+- Shorter seismic support spans required
+- Computer stress analysis generally required
+
+SC-II: Piping important to safety whose failure during a seismic event could prevent a SC-I component from performing its seismic safety function.
+- Same support spacing as SC-I
+- Same design requirements as SC-I — cost effective to route and support together with SC-I piping
+
+SC-III: Piping NOT important to safety, no chemical release hazard, but requires seismic protection per UBC seismic force.
+- Higher allowables (3.0 Sh) — longer support spans permitted
+- Engineering judgment or span tables based on UBC seismic loads is acceptable without further analysis
+- Route separately from SC-I/II piping where possible
+
+Note: SC-III allowables (3.0 Sh) are established based on engineering judgment and studies, similar to Level D service limit in ASME Section III, widely used in nuclear industry for functional capability requirement.
+
+---
+
+GENERAL PIPE LAYOUT RULES:
+
+GROUPING PIPELINES IN BANKS:
+- Group same category pipelines together where possible
+- Route parallel in same pipe-way, supported by same pipe rack or gang support
+- SC-I and SC-II piping: recommended to route in same bank (same support design requirements)
+- SC-III piping: route separately from SC-I/II; may share SC-I/II racks if cost effective, but support must be designed to the more stringent rule
+- Group smaller pipes near edges (near concrete walls) for easy intermediate supports; larger pipes span between widely spaced racks
+
+---
+
+FLEXIBILITY CONSIDERATION:
+
+Pipelines shall have sufficient flexibility to absorb thermal expansion/contraction movements of supports and terminals (equipment nozzles, anchors).
+
+Key rules:
+a) Duplicate or replace with as few changes as possible a system with successful service record or previously analyzed system.
+
+b) Avoid imbalanced systems — imbalance causes localized excessive strain from:
+   - Highly stressed small pipe in series with large/stiff pipe
+   - Local reduction in size or wall thickness
+   - Local use of material with reduced yield strength (e.g. weaker girth welds)
+   - Using an offset to absorb large expansion of major run pipe
+
+c) Means of increasing flexibility:
+   - Layout changes of direction provide inherent flexibility
+   - Add bends, expansion loops, offsets
+   - Swivel joints, expansion joints, bellows
+   - Locate flexibility provisions near equipment nozzles where design conditions permit
+
+SIMPLIFIED FLEXIBILITY RULE (uniform size, no more than two fixation points, no intermediate restraints):
+   D_o × y / (L - U)² ≤ K1
+
+   Where:
+   D_o = outside diameter of pipe (inches)
+   y = resultant of total displacement strains (inches)
+   L = developed length of piping between anchors (feet)
+   U = anchor distance, straight line between anchors (feet)
+   K1 = 0.03
+
+   L is the minimum required developed length including offsets and expansion loops.
+
+WORKED EXAMPLE:
+   C.S. pipe, D_o = 3.5 in, Design Temp = 300°F
+   L = 6+8+6 = 20 ft, U = 14.4 ft
+   α = 1.82 in/100ft for CS at 300°F
+   Displacement y = sqrt((6×0.0182 + 6×0.0182)² + (8×0.0182)²) = 0.262 in
+   D_o × y / (L-U)² = 3.5 × 0.262 / (20-14.4)² = 0.02924 < 0.03 → Acceptable
+
+---
+
+SEISMIC LAYOUT CONSIDERATIONS:
+
+a) After routing for flexibility, support based on weight span tables.
+
+b) Lateral supports for long horizontal pipe:
+   - SC-I/II: at every SECOND weight support
+   - SC-III: at every THIRD weight support
+
+c) Seismic support at direction changes: total length of piping between supports at a bend shall not exceed 0.75 × seismic span from span tables.
+
+d) First seismic lateral support: do NOT locate too close to equipment nozzle if nozzle is at high elevation or equipment is at high temperature. Use offset length tables.
+
+e) Attaching pipe support to equipment minimises relative movement — no offset length limitation in this case.
+
+f) First seismic support on small branch: evaluate carefully — main line movement may require the branch support to be located away from the main run.
+
+g) Route piping under and near structural steel beams, adjacent to columns, close to ground, or parallel along walls — for lateral stiffness.
+
+h) Maintain sufficient clearance between pipelines to prevent interference during seismic event.
+
+---
+
+WEIGHT LAYOUT CONSIDERATIONS:
+
+Weight supports usually require more supports than seismic or thermal loads.
+
+a) Below ~200°F: rigid weight supports are adequate.
+
+b) Spring hangers: may be required near vessel nozzles or branch piping near large headers to release pipe stress due to large differential movements.
+
+c) Support placement sequence: start from nozzle/branch/anchor, work toward next nozzle/branch/anchor using weight span tables.
+
+d) Support at direction changes: locate immediately adjacent to any change in direction.
+
+e) Support near concentrated loads: always locate at or near heavy valves or concentrated loads.
+
+f) Riser supports: acceptable to locate weight support on a long riser — recommended in top one-third for stability. Spring hanger may be required when thermal movement on riser is significant.
+
+g) Unsupported riser length: maximum ≈ half of weight span from tables.
+
+h) Co-locate weight and seismic supports: seismic spans are ~2× (SC-I/II) or ~3× (SC-III) the weight spans, so a seismic support at every 2nd or 3rd weight support is a natural fit.
+
+COST PRINCIPLE: Use existing steel, pipe racks, embedded plates, and common (gang) supports as top priority — even if it means more supports with shorter spans. Generally more cost effective than individual supports with individual space frames away from existing steel.
+
+---
+
+DESIGN PROCESS (STEP-BY-STEP):
+1. Identify proper pipe category on the Line List
+2. Route pipe based on guidance for each category (flexibility, seismic, weight)
+3. Stress engineers demonstrate Code compliance per Pipe Stress Design Criteria
+4. Support engineers design supports per Pipe Support Design Criteria
+
+For SC-I/II: computer stress analysis generally required
+For SC-III: engineering judgment or span tables acceptable
+
+---
+
+SPAN TABLE DESIGN RULES:
+1. Span tolerances: +10% and -50%. If spans vary within +10%, tabulated support loads remain unchanged.
+2. SC-I/II seismic spans ≈ 2× weight spans; SC-III seismic spans ≈ 3× weight spans.
+3. Weight support loads: direction of gravity. Seismic support loads: lateral direction. Vertical seismic load = 2/3 of lateral seismic load. Combine vertical seismic with weight for rigid vertical support design.
+
+B31.3 NOTE: Span tables shown are based on nominal wall per B31.1/Section III. Per B31.3, sustained/occasional load stresses use nominal thickness minus mechanical, corrosion, and erosion allowance. Therefore B31.3 support spans should be reduced from the tabulated values. Weight loads should still be based on nominal thickness.
+
+---
+
+EXPANSION LOOP DESIGN (KELLOGG METHOD):
+
+For symmetrical expansion loop between anchors A' and B':
+- L = distance A to B (ft)
+- K1×L = half-width of loop (ft)
+- K2×L = height of loop (ft)
+- Lc = guide distance from loop = 0.5×L×(1-K1)
+
+Step 1: Calculate L²×Sa / (10⁷×D×Δ)
+Step 2: Enter Chart C-11 with this value, read K2 for given K1
+Step 3: K2×L = required loop height
+
+Forces and moments:
+- I/Δ×L³ and I/Δ×L² ratios → enter Chart C-12
+- Read A1 and A2 coefficients
+- FxA = -FxB = -10⁶×A1×I×Δ/L³
+- MxA = -MxB = 10⁶×A2×I×Δ/L²
+
+WORKED EXAMPLE:
+20 in OD × 1/2 in wall, ASTM A-135 Grade A
+Anchor distance = 100 ft, K1×L = 20 ft (K1=0.5)
+Line temp = 425°F, α = 0.030 in/ft, Δ = 3.0 in
+Sa = 19,890 psi, I = 1,457 in⁴
+
+L²×Sa/(10⁷×D×Δ) = 0.0531
+Chart C-11 at K1=0.5 → K2 = 0.32
+Loop height = 40 × 0.32 = 12.80 ft
+
+I×Δ/L³ = 0.0683, I×Δ/L² = 2.73
+Chart C-12 at K1=0.5, K2=0.32 → A1=0.55, A2=0.86
+FxA = -68,300 × 0.55 = -37,600 lb
+MxA = 273,000 × 0.86 = 235,000 ft-lb

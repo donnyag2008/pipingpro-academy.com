@@ -1,0 +1,15 @@
+## EQUIPMENT-SPECIFIC KNOWLEDGE: AIR COOLER
+
+## LOAD CASES: AIR COOLER
+- Design condition
+- Start-up condition (if required)
+- Shutdown (if required)
+- Steam-out condition (if required)
+- Hydrostatic pressure test
+
+## AIR COOLER MODELLING REQUIREMENTS
+- Analysis SHALL include headers taking into account friction effect and tube bundle resistance
+- PTFE sliding plates may be used to reduce friction effect
+- Clearance at header ends to accommodate thermal expansion shall be checked
+- Presetting of header shall be indicated on vendor drawing if required
+- Calculated loads shall be per applicable code or transmitted to air cooler supplier for approval

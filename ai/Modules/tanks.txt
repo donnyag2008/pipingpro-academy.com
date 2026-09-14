@@ -1,0 +1,15 @@
+## EQUIPMENT-SPECIFIC KNOWLEDGE: STORAGE TANKS
+
+## LOAD CASES: STORAGE TANK
+- Design condition
+- Settlement (residual after hydrostatic test)
+- Bulging effect
+- Hydrostatic pressure test of insulated piping with blocked spring support (if required)
+
+## TANK NOZZLE BOUNDARY CONDITIONS
+Lines shall be analysed with the following boundary conditions at tank nozzles (furnished by tank supplier):
+- Stiffness coefficients of nozzle for axial load, longitudinal moment and circumferential moment
+- Radial movement of nozzle due to maximum service temperature and full of product
+- Rotation of nozzle due to maximum service temperature and full of product
+
+Allowable loads shall be according to vendor allowable or applicable code.
