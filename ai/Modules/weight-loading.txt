@@ -1,0 +1,52 @@
+## WEIGHT LOADING RULES
+
+### Items to include in weight loading:
+- Pipes
+- Valves and strainers
+- Flanges and blinds
+- Fittings
+- Insulation material and covers (cladding)
+- Fluid in the pipe — especially important for spring supported piping
+- Others as necessary (snow, ice for exposed piping)
+
+### Fluid Weight for Analysis
+
+Unless otherwise specified, weight of fluid shall be taken as follows:
+
+For LIQUID service: 100% of full water weight
+
+For VAPOR, GAS and STEAM service:
+- Up to 14" diameter: 10% of full water weight
+- 16" and larger: 5% of full water weight
+
+For FLARE HEADER: 
+- Up to 10" diameter: 100% of full water weight
+- 12" and larger: dead load of pipe only (no fluid weight)
+
+When spring supports are used, the ACTUAL weight of fluid shall be taken as much as possible (not the simplified rules above).
+
+### Pipe Wall Thickness for Weight Calculation
+
+Unit weight of pipe included in computer program shall be input using "Nominal Wall Thickness" — no matter whether mill tolerance and corrosion allowance are considered in the analysis or not.
+
+### Pipe Wall Retirement Thickness
+
+When calculated pressure design thickness is less than retirement thickness, use the retirement thickness:
+
+Size Range | Retirement Thickness
+1/2" to 4" (50-100mm) | 0.06" (1.52mm)
+6" to 12" (150-300mm) | 0.09" (2.29mm)
+14" to 24" (350-600mm) | 0.12" (3.05mm)
+26" to 46" (650-1150mm) | 0.15" (3.81mm)
+48" and above (1200mm+) | 0.20" (5.08mm)
+
+Minimum wall thickness shall not be thinner than:
+- Alloy/Carbon Steel: 1/2"-2" = Sch 80; 3"-24" = Sch STD
+- Stainless Steel: 1/2"-2" = Sch 80S; 3"-10" = Sch 40S; 12"-24" = Sch 10S
+
+### Hydrotest Weight Consideration
+
+If system is 14" diameter or larger, normally gas filled, and will be hydrotested:
+- Establish resulting support loads
+- Determine if temporary supports are needed
+- Temporary supports may be required for spring-supported systems during hydrotest

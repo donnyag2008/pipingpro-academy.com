@@ -1,0 +1,83 @@
+## NOZZLE MOVEMENT CALCULATION METHODS
+
+Operating temperature of equipment shall be used for nozzle movement calculations.
+
+### 1. Column and Vertical Vessel
+- Neutral point of expansion = equipment supporting level (base)
+- Prepare elongation charts showing vertical movement at each nozzle point
+- For equipment temperature >200°C: also consider circumferential direction movement of nozzle and support
+- Vertical movement at nozzle height H: displacement = H x e (where e = unit thermal expansion at operating temp)
+- Temperature at each level uses average of adjacent nozzle outlet temperatures: (T1+T2)/2, (T2+T3)/2, etc.
+
+### 2. Pump, Steam Turbine and Centrifugal Compressor
+- Use operating temperature (pump, turbine inlet, compressor operating temp) as calculation temperature
+- Vertical movement: H x e (H = nozzle height above base)
+- Horizontal movement: W x e (W = horizontal offset from centerline to nozzle)
+- Where e = unit thermal expansion at operating temperature
+
+### 3. Reciprocating Compressor
+- Use compressor operating temperature as calculation temperature
+- Movements calculated same as centrifugal: H x e vertical, F x e horizontal
+
+### 4. Air-Fin Cooler (AFC)
+- Use mean operating temperature of inlet and outlet as calculation temperature
+- Header box movements:
+  - Vertical: L3 x e (from fixed point at bottom)
+  - Horizontal: L4 x e (lateral from fixed point)
+  - Note 1: Bundle design shall accommodate movement due to piping thermal loads
+  - Note 2: For specific occasions, fixed point may be established when required
+- AFC tube bundle RESISTANCE (reaction force "R") due to piping force (thermal expansion + friction force "F"):
+  - If R > F: Restraint condition of nozzle point may be taken as free point for displacement and rotation, friction force "F" shall be considered as nozzle reaction force
+  - If R <= F: Restraint condition of nozzle point shall be taken as fixed point
+
+### 5. Heat Exchanger (Shell and Tube type)
+Case 1 (Same Service — both shells same fluid):
+- Longitudinal: use mean operating temp of shell inlet and outlet x unit expansion
+  - L1 x es for nozzles C&D, L2 x es for nozzles A,B,H&I
+- Circumferential: use mean operating temp of tube OR shell inlet/outlet
+  - Different e values (et for tube, es for shell) at different nozzle locations
+
+Case 2 (Differential Service — different fluids shell/tube):
+- More complex: nozzle movements depend on combined shell and tube temperatures
+- Nozzle A: (H3 x e1) + (H4 x e4)
+- Nozzle F&G: (E1 x H3) - (H6 x e2)
+- Each nozzle has unique formula based on geometry and which fluid temperature applies
+
+### 6. Horizontal Vessel
+- Operating temperature of vessel used as calculation temperature
+- Longitudinal movement: L x e for each nozzle from fixed/slide saddle
+- Circumferential movement: H x e for each nozzle height above centerline
+
+### 7. Reactor
+- Mean operating temperature of inlet and outlet = calculation temperature
+- Neutral point of expansion = shell supporting level
+
+### 8. Tank
+- Tank nozzle movements per specific tank rules (bulging, settlement, rotation from vendor)
+
+### SKIRT EXPANSION (for vessels on skirts)
+Average skirt temperature formula:
+  T_skirt = (T_top - T_ambient) x F + T_ambient
+Where F depends on insulation:
+  K = 1.0 for firebrick insulated
+  K = 1.6 for non-insulated
+And F is a function of K, skirt height (h), and skirt wall thickness (t).
+
+### AROUND COLUMNS AND VERTICAL VESSELS — MODELLING RULES
+
+Hanging Down Line (pipe going down from nozzle):
+- Calculate nozzle movement at Point A (top) and Point B (bottom of vertical run)
+- YB = YA - (H x e) where H = vertical distance between nozzle and lower point
+- Consider weight support and expansion loop if stress/nozzle loads not acceptable
+
+Bottom Line (Elbow Nozzle at skirt opening):
+- Nozzle neck shall be taken as fixed point
+- For displacement at skirt opening: check Y and Z clearance against "C" (skirt opening dimension)
+- If sqrt(Y^2 + Z^2) <= C: support condition at skirt opening may be free point to displacement and rotation
+- If sqrt(Y^2 + Z^2) > C: skirt opening shall be taken as restraint point and displacement "C" shall be considered as forced displacement
+
+Steam Out Condition:
+- Piping stress analysis for occasional condition — take most severe of:
+  Case 1: Both towers hot
+  Case 2: Tower A hot, Tower B cold
+  Case 3: Tower A cold, Tower B hot

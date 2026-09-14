@@ -1,0 +1,38 @@
+## THERMAL LOADS AND TEMPERATURE CONSIDERATIONS
+
+### Elastic Modulus Rules
+- Thermal LOADS: use elastic modulus at MAXIMUM temperature (hot lines) or MINIMUM temperature (cold lines)
+- Thermal STRESSES: use elastic modulus at 21°C (70°F) for ALL hot lines, and at minimum temperature for cold lines
+- Hot lines = primarily subject to thermal expansion; Cold lines = primarily subject to thermal contraction
+
+### Flexibility Temperatures — All Types to Consider
+
+a) DESIGN TEMPERATURE: Maximum temperature from line designation tables. Used for code stress compliance.
+
+b) NORMAL OPERATING TEMPERATURE: From line designation tables. Generally NOT considered UNLESS adjacent pipe or equipment have higher differential operating temperatures than design temperatures.
+
+c) SOLAR AND AMBIENT TEMPERATURES: Must be considered when calculating stress range. MUST be considered for applied loads if higher than Design temperature.
+- Typical values: Ambient 3°C to 43°C, Installation 21°C, Solar 65°C (project-specific — verify)
+
+d) STEAM-OUT: Establish steam-out temperatures and which lines will be steamed out with the Process/Facilities group.
+- Consider if steam-out temperature exceeds design conditions
+- Equipment loads for steam-out may be increased by up to 2x for short-term duration — confirm with equipment manufacturer
+- Consider whether equipment and piping are steamed out TOGETHER or SEPARATELY
+
+e) STEAM TRACING: Use steam tracing temperature for flexibility if greater than design temperature. Electrically traced lines use design temperature.
+
+f) REGENERATION: Consider carefully — obtain accurate temperature, frequency and duration. Allowable stress range may need reduction per B31.3 Table 302.3.5 to avoid fatigue failure.
+
+g) DECOKE: Extreme condition of short duration — must be considered in flexibility analysis where appropriate.
+
+h) FIRE: Special consideration — design principle is that system may be over-strained but MUST NOT FAIL under fire conditions. After a fire, all affected piping would be replaced.
+
+i) INTERNALLY LINED PIPE:
+- Concrete-lined water piping: use Solar temperature for expansion. If buried or externally insulated, use ambient.
+- Refractory-lined pipe: metal temperature significantly less than commodity temperature — get accurate skin temperature from Process group.
+
+j) PIPE BOWING: When differential temperature exists around pipe circumference:
+- Flare line subject to radiant heat on top
+- LNG line at start-up (lower half cools before line fills and cools upper half)
+- Get temperature differentials from Process group
+- First estimate for LNG differential temperature: 30°C

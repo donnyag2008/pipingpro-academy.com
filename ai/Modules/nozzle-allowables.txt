@@ -1,0 +1,51 @@
+## STANDARD ALLOWABLE EQUIPMENT NOZZLE LOADS
+
+These are starting-point values — ALWAYS confirm with the vessel/equipment engineer. Recommended to quote these to equipment vendor during bid stage.
+
+### Pumps
+- API 610 pumps: API 610 Table 2 values x factor of 2.0
+- Appendix F requirements NOT applied
+- Non-API pumps: aim for 1.0 x Table 2, to be agreed with Mechanical Department
+- Do NOT place anchors immediately adjacent to pump nozzles
+- Supports and restraints local to pump should be ADJUSTABLE
+- Full investigation of ALL possible operating configurations (2+1 standby etc.) before selecting worst case
+
+### Compressors
+- Allowable loads: 3.0 x NEMA SM-23 values
+- Confirm with Mechanical Department
+- Dead-weight loads on nozzles should be designed as close to ZERO as possible using constant spring supports (per NEMA SM-23 commentary)
+- Variable springs may be considered if movement is small
+- Spring variability around equipment should be kept as LOW as practical to minimise cold nozzle loads
+- Piping with Mission-Duo type check valves: support well due to rotational creeping of flange faces from long stud bolts
+
+### Turbines
+- API 612 values (which are NEMA SM-23 values)
+- Turbine analysis should include bypass line HOT with trip and throttle valve closed (equipment COLD), plus all operating and upset conditions
+- Supports and restraints local to machine should be ADJUSTABLE
+
+### Heaters/Furnaces
+- API 560 values x factor of 3
+- Full consultation with heater vendor — understand ALL expansions and movements within the heater before rigorous analysis
+
+### Air Coolers
+- Twice (2x) the values in API 661 Table 3 (Rev 1992)
+- Air coolers tend to present special problems — treat with care
+
+### Shell and Tube Exchangers
+- Multiply standard allowable table values by 0.75
+- Torsional moment (MT) must not exceed resultant bending moment
+- If MT is only high moment, check shear stress (SS) in shell at nozzle: SS < Sh (allowable hot stress)
+- If nozzle loads only slightly higher than allowables, consult Facilities engineer
+- Ensure fixed and sliding ends are located for best advantage
+- Stacked exchangers: ALL interconnecting pipes reviewed by stress
+- Exchangers with bellows: check for loading, deflection, angulation — usually not designed for appreciable lateral deflection
+
+### Vessels (Columns, Drums, etc.)
+- Per project mechanical specification allowable tables
+- Nozzle flexibility can be used to REDUCE loads by modelling flexibility instead of rigid anchor
+- Methods: BS5500 Appendix G, WRC Bulletin 107/297, Bijlaard method
+
+### Equipment Loads — General Rules
+- Maximum operating case loads based on REALISTIC coincident combinations
+- Wind loads should generally be included, but if excessive nozzle loads result, consider actual site conditions
+- No clearly established code limit for earthquake loads on nozzles — seek individual approval from Mechanical if exceeded

@@ -1,0 +1,110 @@
+## EQUIPMENT-SPECIFIC KNOWLEDGE: COMPRESSORS
+
+### CENTRIFUGAL COMPRESSORS (API 617)
+
+Nozzle Load Check Equations (API-617, Sixth Ed., Feb 1995):
+
+Individual nozzle check:
+  Fr + 1.09 x Mr <= 54.1 x De  (Metric SI: N, N.m, mm)
+  3Fr + Mr <= 927 x De  (US Customary: lbs, ft-lbs, inches)
+
+Where:
+  Fr = sqrt(Fx^2 + Fy^2 + Fz^2) — resultant force
+  Mr = sqrt(Mx^2 + My^2 + Mz^2) — resultant moment
+  De = nominal pipe diameter for sizes <= 200mm (8")
+  De = (400 + Dnom)/3 for sizes > 200mm (8") in mm
+  De = (16 + Dnom)/3 for sizes > 8" in inches
+
+Combined resultant check (inlet + sidestream + discharge):
+  Fc + 1.64 x Mc <= 40.4 x Dc  (Metric SI)
+  2Fc + Mc <= 462 x Dc  (US Customary)
+
+Where Dc = equivalent pipe diameter of one circular opening equal to total area of all openings.
+For Dc > 200mm: Dc = (460 + Equivalent diameter)/3
+
+Individual component limits at each nozzle (Metric SI):
+  Fx = 16.1 Dc, Fy = 40.5 Dc, Fz = 32.4 Dc
+  Mx = 24.6 Dc, My = 12.3 Dc, Mz = 12.3 Dc
+
+These values pertain to compressor structure only. Forces and moments in connecting pipes, flanges, and bolting must not exceed those allowed by applicable codes.
+
+Loads may be increased by mutual agreement between purchaser and vendor, but expected operating loads must be minimized.
+
+### CENTRIFUGAL COMPRESSOR SPECIAL REQUIREMENTS
+
+1. Very careful investigation of each pipe line connected to the compressor — check supports.
+2. Each line should be stopped at a location giving LEAST thermal expansion at that point. Stop location does not necessarily mean support point.
+3. Field note on isometric drawing highlighting that the "stop" shall be connected to compressor nozzle.
+4. First two supports nearest compressor nozzle should ALWAYS be spring supports — compensates for vertical thermal expansion and reduces time to connect pipe to nozzle.
+5. Stops should be designed for minimum practical deflection — check combined deflection of stops and structural members they attach to in flexibility analysis.
+6. Dead-weight loads on nozzles should be as close to ZERO as possible using constant spring supports (per NEMA SM-23 commentary). Variable springs acceptable if movement is small.
+7. Spring variability around equipment should be kept as LOW as practical to minimise cold nozzle loads.
+
+### RECIPROCATING COMPRESSORS (API 618)
+
+Early discovery is critical — the later a reciprocating compressor is discovered on a job, the fewer changes can be made to limit vibration-prone piping, increasing cost.
+
+PULSE BOTTLE SIZING:
+- Pulsation suppression bottles per API-618 para 3.9.2.2 for suction (Vs) and discharge (Vd)
+- Total cylinder displacement (one cylinder):
+  Head end displacement = 0.785 x (bore)^2 x (stroke)
+  Total displacement approx 1.18 x (gas volume per min) / (RPM x no. cylinders per stage)
+- Major volume = (major volume factor) x (total cylinder displacement)
+
+EXTENT OF VIBRATION:
+- Pressure pulses travel from compressor through suction AND discharge until meeting a "stop point"
+- All piping between compressor and stop points is "subject to vibration"
+- Stop points: vessel with enough vapor volume (>= major volume), point where pressure drop equals/exceeds average line pressure upstream of orifice, blind or always-closed valve
+- All BRANCHES from vibrating piping are also subject to vibration (including branch-of-branch)
+- Exception: branch within fitting distance of a "major volume" vessel nozzle
+- Liquid lines from vessel subject to vibration are NOT considered vibrating
+
+PIPING DESIGN FOR VIBRATION CONTROL:
+- Do not use unreinforced branch connections
+- Eliminate as many bends as possible
+- Avoid long overhangs and long unguided risers
+- Group pipe lines together, run as close to grade as practical
+- Trunnions for support can be same sizes as main pipes to increase thickness
+- Cinch anchors shall NOT be used for anchoring or stopping pulsating lines
+- Use adjustable type (wedge) supports for volume bottles located directly under the compressor
+
+VIBRATION SUPPORT LOCATIONS:
+- Every vibrating line must be restrained perpendicular to pipe longitudinal axis in BOTH directions
+- Vibration supports provided for TWO POSITIONS past each stop point
+- Place vibration supports at: heavy load locations, piping discontinuities (reducers, tees, branches), piping changes in direction (bends, elbows)
+- Adjacent spans should NOT have identical frequencies — vary span lengths
+- Line up vibration supports on parallel lines to reduce number of piers
+- Anchors and stops at all support points where possible — must not interfere with thermal movements
+- Pulsating lines should NEVER be stopped/anchored to building steel or platforms — use independent foundations
+
+### ROTATING EQUIPMENT — GENERAL RULES
+
+- Rotating equipment allowable loads are permissible for LONG TERM CONTINUOUS operation
+- Compare calculated piping loads based on NORMAL OPERATING TEMPERATURE — not design temperature, not seismic, not short-term conditions
+- Thermal and weight nozzle loads are compared to allowables from pump vendors or industry standards
+- Field millwright provides proper alignment by adjusting support systems and/or localized heating to parallel flanges
+- However, thermal alone AND weight alone must each meet nozzle load allowables
+- Various load cases (steam-out, settlement) may use increased allowable nozzle limits — typically 1.5 or 2 times, as agreed by client
+- Reaction loads calculated using COLD modulus of elasticity — may be reduced by ratio of hot/cold modulus to bring within allowable
+- Systems satisfying rotating equipment nozzle loads at operating conditions will generally have pipe stresses less than 1/3 of code allowables — stress compliance check typically not required unless significant design or flexibility temperature variations exist
+- Use of COLD SPRING for piping connected to rotating equipment is PROHIBITED
+
+### STANDBY EQUIPMENT TEMPERATURE RULES (from IKPT-KBR)
+
+For lines connected to two or more equipment with one spare:
+
+Two pumps/turbines with one spare — 3 cases:
+- Case 1: A-hot, B-hot (both operating)
+- Case 2: A-hot, B-cold (A operating, B standby)
+- Case 3: A-cold, B-hot (B operating, A standby)
+
+Three pumps/turbines with one spare — 4 cases:
+- Case 1: A-hot, B-hot, C-hot
+- Case 2: A-hot, B-hot, C-cold
+- Case 3: A-hot, B-cold, C-hot
+- Case 4: A-cold, B-hot, C-hot
+
+STANDBY PUMP TEMPERATURE:
+- For lines with warm-up BY-PASS: standby pump temperature = 70% of operating temperature
+- For INSULATED lines without bypass (TS-RUN): standby = 50% of operating temperature
+- For NON-INSULATED lines without bypass (TS-RUN): standby = 25% of operating temperature

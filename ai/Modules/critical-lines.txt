@@ -1,0 +1,78 @@
+## CRITICAL LINE SELECTION AND ANALYSIS CATEGORIES
+
+### PIPING CATEGORIES (KBR Method — 5 Categories)
+
+Category 1 (Most Critical): Special systems beyond normal code methods
+- High pressure service exceeding ASME B16.5 Class 2500 rating
+- Category M fluid
+- Design metal temperature exceeds 1000°F (538°C)
+- Lines designed for >22,000 cycles (fatigue)
+- Response spectrum / dynamic analysis for earthquake
+- Unrestrained metallic expansion joints
+- Large diameter pipe (>48")
+- Piping subject to thermal bowing
+- Any piping that in analyst's judgement needs Category 1 treatment
+
+Category 2: Large/complex systems needing additional consideration
+- Ethylene transfer piping, refractory lined piping
+- Static earthquake or wind analysis required
+- Acoustic study required
+
+Category 3: Lines needing formal analysis due to diameter/temperature or connection to sensitive equipment
+Lines connected to LOAD SENSITIVE equipment:
+- Reciprocating pumps/compressors, centrifugal compressors, turbines >=3" at operating temp >250°F (121°C)
+- Non-reciprocating pumps: >=4" at >=300°F, or >=12" at >=250°F, or one size larger than nozzle at >=250°F
+- Air-cooler piping
+
+Lines connected to STRESS SENSITIVE equipment:
+- ASME VIII Div 2 vessels
+- Fired heaters or furnaces
+- Aluminum equipment
+
+Category 4: Lines connected to sensitive equipment not meeting Category 3 size/temperature thresholds
+- Approximate methods acceptable (Kellogg, Grinnell, Tube Turn)
+
+Category 5: Low/ambient temperature, small size
+- Visual inspection only with guided cantilever check
+- No formal documentation required
+
+### WHEN IS COMPUTER ANALYSIS NEEDED vs VISUAL/APPROXIMATE
+
+Visual or approximate methods acceptable for (design temperatures):
+- All lines <=4" NB
+- 6" NB under 155°C (311°F)
+- 8" NB under 145°C (293°F)
+- 10" NB under 130°C (266°F)
+- 12" NB under 120°C (248°F)
+- 14" NB under 100°C (212°F)
+- 16" NB under 90°C (194°F)
+Must also be above -45°C (-43°F). For special piping (e.g. lined), computer calculation always considered.
+
+Computer calculations required for:
+- All critical lines not covered above
+- Lines over 3" NB attached to sensitive equipment
+
+### FLEXIBILITY ANALYSIS GRADES (IKPT-KBR Method — Grades A, B, C)
+
+Grade A — Review by Piping Engineer:
+- Normally no stress analysis required
+- Piping engineer reviews and may upgrade if judged necessary
+
+Grade B — Simplified Method:
+- Analysis using ANSI/ASME B31.3 formula 319.4.1
+- Or simplified flexibility check form
+
+Grade C — Detail Analysis:
+- Full computer analysis per ASME B31.3 requirements
+
+Classification charts determine grade based on:
+- Chart 1: Lines NOT connected to rotating equipment or AFC — by pipe size and temperature
+- Chart 2: Lines connected to rotating equipment — by pipe size and temperature (lower thresholds)
+- Chart 3: Lines connected to tanks without flexible joints — by pipe size and temperature
+
+Lines always classified Grade C regardless of size and temperature:
+- High pressure (>20 barg) steam lines
+- Flare lines subject to sudden temperature change >300°C
+- All process, regeneration and decoking lines to/from fired heaters and steam generators
+- All process lines to/from centrifugal compressors and blowers
+- All steam lines to/from turbines

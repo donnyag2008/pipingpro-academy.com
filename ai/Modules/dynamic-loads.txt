@@ -1,0 +1,70 @@
+## DYNAMIC AND SPECIAL LOADS
+
+### PSV and Rupture Disc Reaction Forces
+The load when a PSV opens or rupture disc ruptures must ALWAYS be considered.
+
+PSV Reaction (including impact factor of 2):
+  F = 0.6 x (K0 + 1) x A x P
+
+Rupture Disc Reaction (including impact factor of 2):
+  F = 0.378 x (K0 + 1) x A x P
+
+Where:
+  K0 = Cp/Cv (ratio of specific heats)
+  A = Orifice Area
+  P = Absolute Pressure
+  (All in consistent units)
+
+### Slug Flow and Water Hammer
+Slug flow = bolus of liquid flowing along a pipe. Similar effect from sudden valve closure/opening (water hammer).
+
+Static force on a 90 deg elbow due to slug flow (with 2x impact factor):
+  F = 2.8 x rho x A x V^2 / g
+
+Where:
+  F = Force
+  rho = Density of fluid
+  A = Pipe internal area
+  V = Fluid velocity
+  g = Gravitational constant
+  (All in consistent units)
+
+Force direction: 45 deg to direction of flow into the elbow, radially outward from the elbow centre.
+
+Impact of slug or wave front onto an elbow can be EXCESSIVE — consider alternative designs where possible.
+
+### Seismic
+- Horizontal seismic coefficient typically h = 0.34 (project-specific — verify from UBC Zone or local code)
+- Dynamic response spectrum analysis only if equipment or piping arrangement appears unusually sensitive to vibration
+- Alternatively, response spectrum method may be used
+- No clearly established limit in codes for earthquake loads on equipment nozzles — if loads exceed allowable, seek approval from Mechanical group on individual basis
+
+### Wind Loads
+- Consider for large lines in exposed condition (typically >24" OD above 9m)
+- Wind load: F = design wind pressure x Cf x exposed area
+- Cf = 0.7 for cylindrical pipes
+- Include effect on stresses AND loads on restraints/nozzles
+- If wind causes excessive nozzle loads, consider actual site conditions, elevation, local obstructions, and frequency of design wind speed
+
+### Wind Deflection of Columns and Structures
+Initial calculation value: L/200 where L = elevation of column/structure.
+Confirm with vessel/structural group for specific column as soon as possible.
+
+### High Pressure Drop at Control Valves
+Where high pressure drop exists across control valves:
+- Expect high fluid velocities and extreme noise levels
+- Downstream piping shall be analysed to prevent excessive vibration and noise
+- Size and configuration downstream of valve are critical
+
+### Settlement
+- Consider differential settlement between supports and equipment
+- May use adjustable supports where standard maintenance is assured
+- May require pipe flexibility and spring supports
+- Typical initial values: Gross settlement <= 25mm (takes place before pipe hook-up due to equipment mass)
+- Differential settlement between foundations: 13mm as design figure
+- Tankage: design for 25mm (low mass = little initial settlement until filled)
+
+### Large Displacement Warning
+Where large thermal or other displacements exceed 50mm:
+- Check pipe does not impact adjacent lines, equipment, or structure
+- Check supports do not run off their structural base

@@ -1,0 +1,50 @@
+## GENERAL PHILOSOPHY AND WORKING METHODS
+
+### Core Principles
+The basic responsibility of the Stress Engineer is to ensure piping is routed and supported so that no damage occurs to the pipe or associated equipment due to thermal expansion/contraction, weight, pressure, wind, earthquake, pulsation, shock, settlement, etc.
+
+Key principles that MUST guide every analysis:
+- Only enter ESSENTIAL comments on calculation title pages. Extraneous information wastes time and may confuse.
+- Identify WORST CASE operating conditions BEFORE running computer checks, then run these cases only.
+- If worst case is not immediately obvious, run necessary cases but after review choose only the EXTREME cases for detailed review with a note explaining the conclusion.
+- Review configurations visually/approximately PRIOR to computer calculations so obvious problems can be discussed with piping designers before embarking on a computer run.
+- Inform Piping Design of any configurations that have been passed but have loads/stresses CLOSE to allowable values, and FREEZE the arrangement.
+- Keep designs REALISTIC: Minimise use of "super" special supports requiring high tolerances or complex designs. If these are required, it tends to indicate a RE-ROUTE is necessary.
+- Wherever possible, AVOID flexible connectors (bellows, expansion joints) and springs.
+- Use of COLD SPRING should be kept to a minimum.
+- Where temperatures appear high compared to other data, discuss with Systems/Process engineer BEFORE calculation — highlight the impact on piping/equipment if the temperature proves inaccurate.
+
+### When to Use Computer Analysis vs Visual/Approximate
+(Design temperatures used for these thresholds)
+
+VISUAL or APPROXIMATE methods acceptable for:
+- Lines of 4" NB (100mm) and under
+- 6" NB under 155°C (311°F)
+- 8" NB under 145°C (293°F)
+- 10" NB under 130°C (266°F)
+- 12" NB under 120°C (248°F)
+- 14" NB under 100°C (212°F)
+- 16" NB under 90°C (194°F)
+Note: The above must also be above -45°C (-43°F). This list is a guide only — for special piping (e.g. lined pipe), computer calculations should always be considered.
+
+COMPUTER CALCULATIONS required for:
+- All critical lines not covered above
+- Lines over 3" NB attached to sensitive equipment (pumps, compressors, turbines)
+
+### Calculation Checking Categories
+All calculations must be checked by another stress engineer before issue.
+
+COMPLETE CHECK required for:
+- Air fan piping
+- Compressor piping
+- Turbine piping
+- Three-pump hookups at elevated temperatures
+- All equipment where nozzle loads are above 75% of allowable
+- All systems where stress range is above 75% of basic SA value
+- All systems with design temperature ≥ 300°C
+
+GENERAL CHECK required for:
+- All other computer calculations not requiring complete check
+
+GENERAL REVIEW required for:
+- All non-computer calculations (approximate and visual review)
